@@ -1,0 +1,44 @@
+#ifndef MODULEBASE_H
+#define MODULEBASE_H
+
+#include <string>
+#include <memory>
+#include <functional>
+
+#include "BPModule/base/ModuleClass.h"
+
+namespace bpmodule {
+
+class ModuleBase
+{
+public:
+  ModuleBase(ModuleClass mclass, ModuleType mtype,
+             const std::string & name, const std::string & authors, 
+             const std::string & version, const std::string & description);
+
+
+  ModuleClass MClass(void) const { return mclass_; }
+  ModuleType MType(void) const { return mtype_; }
+
+  const std::string & Name(void) const { return name_; }
+  const std::string & Authors(void) const { return authors_; }
+  const std::string & Version(void) const { return version_; }
+  const std::string & Description(void) const { return description_; }
+
+private:
+  ModuleClass mclass_;
+  ModuleType mtype_;
+
+  std::string name_;
+  std::string authors_;
+  std::string version_;
+  std::string description_;
+};
+
+typedef std::unique_ptr<ModuleBase> ModuleBaseUPtr;
+typedef std::function<ModuleBase * (void)> ModuleGeneratorFunc;
+
+
+} // close namespace bpmodule
+
+#endif
