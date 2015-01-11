@@ -7,34 +7,34 @@
 using namespace bpmodule;
 
 
-class TestModule3 : public ModuleBase
+class TestModule1 : public ModuleBase
 {
 public:
-    TestModule3(const std::string & filename) 
+    TestModule1(const std::string & filename) 
                    : ModuleBase(
                      filename,
                      ModuleClass::MCLASS_TEST,
                      ModuleType::MTYPE_TEST,
-                     "SIMPLETEST3",
+                     "SIMPLETEST1",
                      "Yo-Yo Mama",
-                     "3.0",
+                     "1.0",
                      "Just a simple test module component")
     {
     }
                                   
 };
 
-class TestModule4 : public ModuleBase
+class TestModule2 : public ModuleBase
 {
 public:
-    TestModule4(const std::string & filename) 
+    TestModule2(const std::string & filename) 
                    : ModuleBase(
                      filename,
                      ModuleClass::MCLASS_TEST,
                      ModuleType::MTYPE_TEST,
-                     "SIMPLETEST4",
+                     "SIMPLETEST2",
                      "Yo-Yo Mama",
-                     "4.0",
+                     "2.0",
                      "Just a simple test module component")
     {
     }
@@ -42,8 +42,8 @@ public:
 };
 
 
-ModuleBase * NewTestModule3(const std::string & filename) { return new TestModule3(filename); }
-ModuleBase * NewTestModule4(const std::string & filename) { return new TestModule4(filename); }
+ModuleBase * NewTestModule1(const std::string & filename) { return new TestModule1(filename); }
+ModuleBase * NewTestModule2(const std::string & filename) { return new TestModule2(filename); }
 
 
 extern "C" {
@@ -51,8 +51,8 @@ extern "C" {
 StoreType GetComponents(void)
 {
     StoreType st;
-    st["TEST3"] = NewTestModule3;
-    st["TEST4"] = NewTestModule4;
+    st["TEST1"] = NewTestModule1;
+    st["TEST2"] = NewTestModule2;
     return st;
 }
 

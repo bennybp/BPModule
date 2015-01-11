@@ -3,7 +3,7 @@
 ##################################################
 add_library(testmodule 
             MODULE
-            testmodule.cpp
+            testmodule1.cpp
             )
 
 add_library(testmodule2

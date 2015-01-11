@@ -7,21 +7,20 @@
 namespace bpmodule {
 
 
-void ModuleStore::Add(StorePair sp)
+bool ModuleStore::Merge(const std::string & filepath, const StoreType & st)
 {
-    store_.insert(std::move(sp));
-}
+    for(auto & it : st)
+    {
+        if(store_.count(it.first) > 0)
+        {
+            std::cout << "Duplicate module: " << it.first << "\n";
+            return false;
+        }
 
+        store_[it.first] = std::bind(it.second, filepath); 
+    }
 
-void ModuleStore::Add(std::string id, ModuleGeneratorFunc mgen)
-{
-    store_.insert(StorePair(std::move(id), std::move(mgen)));
-}
-
-
-void ModuleStore::Delete(const std::string & id)
-{
-    store_.erase(id);
+    return true;
 }
 
 
@@ -47,6 +46,8 @@ void ModuleStore::DumpInfo(void) const
                   << it.first << "\n"
                   << "---------------------------------\n"
                   << "    Name: " << mbptr->Name() << "\n"
+                  << " Version: " << mbptr->Version() << "\n"
+                  << "    Path: " << mbptr->Filepath() << "\n"
                   << "   Class: " << MClassToString(mbptr->MClass()) << "\n"
                   << "    Type: " << MTypeToString(mbptr->MType()) << "\n"
                   << " Authors: " << mbptr->Authors() << "\n"

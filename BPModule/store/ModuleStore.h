@@ -10,25 +10,26 @@ namespace bpmodule {
 
 
 class ModuleBase;
-typedef std::function<ModuleBase *(void)> ModuleGeneratorFunc;
+typedef std::function<ModuleBase *(const std::string &)> ModuleGeneratorFunc;
+typedef std::unordered_map<std::string,  ModuleGeneratorFunc> StoreType;
 typedef std::unique_ptr<ModuleBase> ModuleBaseUPtr;
 
-typedef std::unordered_map<std::string,  ModuleGeneratorFunc> StoreType;
-typedef StoreType::value_type StorePair;
-typedef std::vector<StorePair> StorePairVec;
 
 class ModuleStore
 {
 public:
   size_t Count(void) const;
-  void Add(StorePair sp);
-  void Add(std::string id, ModuleGeneratorFunc mgen);
-  void Delete(const std::string & id);
+  bool Merge(const std::string & filepath, const StoreType & sp);
   ModuleBaseUPtr Get(const std::string & id);
   void DumpInfo(void) const;
 
 private:
-  StoreType store_;
+  // The store stores a std::bind version of the generator that automatically binds the filename
+  // as the only argument
+  typedef std::function<ModuleBase *()> StoredModuleGeneratorFunc;
+  typedef std::unordered_map<std::string,  StoredModuleGeneratorFunc> InternalStoreType;
+
+  InternalStoreType store_;
 };
 
 } // close namespace bpmodule
