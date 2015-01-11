@@ -5,7 +5,7 @@
 #include <memory>
 #include <functional>
 
-#include "BPModule/base/ModuleClass.h"
+#include "BPModule/core/ModuleClass.h"
 
 namespace bpmodule {
 

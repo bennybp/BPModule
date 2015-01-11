@@ -22,7 +22,7 @@ set_target_properties(bpmodule_store PROPERTIES INCLUDE_DIRECTORIES "${BPMODULE_
 string(REPLACE ";" " " BPMODULE_STORE_CXX_FLAGS "${BPMODULE_STORE_CXX_FLAGS}")
 set_target_properties(bpmodule_storepy PROPERTIES COMPILE_FLAGS "${BPMODULE_STORE_CXX_FLAGS}")
 set_target_properties(bpmodule_storepy PROPERTIES INCLUDE_DIRECTORIES "${BPMODULE_STORE_CXX_INCLUDES}")
-target_link_libraries(bpmodule_storepy bpmodule_store bpmodule_base)  # order is important!
+target_link_libraries(bpmodule_storepy bpmodule_store bpmodule_core)  # order is important!
 
 
 # For now, install all header files

@@ -8,7 +8,7 @@
 #include <dlfcn.h>
 
 #include "BPModule/store/ModuleStore.h"
-#include "BPModule/base/ModuleBase.h"
+#include "BPModule/core/ModuleBase.h"
 
 
 namespace bpmodule {
