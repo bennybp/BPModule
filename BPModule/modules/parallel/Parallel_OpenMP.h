@@ -27,6 +27,7 @@ public:
 
   virtual int Size(void) const { return 1; };
   virtual int Rank(void) const { return 0; };
+  virtual int Threads(void) const { return nthreads_local; };
 
   virtual bool Init(void)
   {
@@ -37,11 +38,11 @@ public:
   virtual void Finalize(void) { }
 
 protected:
-  virtual void ParallelFor_(Range range, ParallelFunc pf)
+  virtual void ParallelFor_(Range range, ParallelFunc pf, int rank)
   {
     #pragma omp parallel for num_threads(nthreads_local)
     for(long i = range.first; i < range.second; i++)
-      pf(i);
+      pf(i, rank, omp_get_thread_num());
   }
 
 private:

@@ -35,7 +35,8 @@ Parallel_Base::Range Parallel_Base::GetRange_(long totalsize) const
 
 void Parallel_Base::ParallelFor(long totalsize, ParallelFunc pf)
 {
-    ParallelFor_(GetRange_(totalsize), pf);
+    // ParallelPtr is pointer to void(long)
+    ParallelFor_(GetRange_(totalsize), pf, Rank());
 }
 
 } // close namespace bpmodule

@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <random>
 
 #include "BPModule/core/ModuleStore.h"
 #include "BPModule/modules/base/Test_Base.h"
@@ -30,12 +29,18 @@ public:
         std::unique_ptr<Parallel_Base> ptr = mstore_.Get<Parallel_Base>("PARALLEL");
         std::cout << "Obtained parallelizer: " << ptr->Name() << " (type " << ptr->MTypeStr() << ")\n";
         std::cout << "This is process " << ptr->Rank() << " of " << ptr->Size() << "\n";
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<> dis(0,100);
-        double sum;
-        ptr->ParallelFor(1000000, [&dis, &gen, &sum](long i) { sum += dis(gen); });
-        std::cout << "Sum is: " << sum << "\n";
+        int nthread = ptr->Threads();
+        double * sum = new double[nthread];
+        std::fill(sum, sum+nthread, 0.0);
+
+        ptr->ParallelFor(1e10l, [sum](long i, long r, long t) { sum[t] += 3.14*static_cast<double>(i/(i+2)); });
+
+        // accumulate
+        double allsum = 0;
+        for(int i = 0; i < nthread; i++)
+            allsum += sum[i];
+        std::cout << "Sum is: " << allsum << "\n";
+        delete [] sum;
     }
 
 };

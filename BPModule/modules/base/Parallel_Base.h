@@ -9,7 +9,7 @@
 
 namespace bpmodule {
 
-typedef std::function<void(long)> ParallelFunc;
+typedef std::function<void(long, int, int)> ParallelFunc;
 
 class Parallel_Base : public ModuleBase
 {
@@ -22,6 +22,7 @@ public:
 
   virtual int Size(void) const = 0;
   virtual int Rank(void) const = 0;
+  virtual int Threads(void) const = 0;
   virtual bool Init(void) = 0;
   virtual void Finalize(void) = 0;
 
@@ -32,7 +33,7 @@ protected:
 
   Range GetRange_(long totalsize) const;
 
-  virtual void ParallelFor_(Range range, ParallelFunc pf) = 0;
+  virtual void ParallelFor_(Range range, ParallelFunc pf, int rank) = 0;
 };
 
 } // close namespace bpmodule

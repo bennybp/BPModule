@@ -32,6 +32,7 @@ bool ModuleStore::Merge(const std::string & filepath, void * handle, const Store
             return false;
         }
 
+        // \todo check for stuff
         store_[it.first] = std::bind(it.second, this, filepath); 
     }
 
@@ -88,6 +89,8 @@ bool ModuleStore::LoadSO(const char * modulepath, const char * components)
     if(!handle)
     {
         std::cout << "Error - unable to open SO file: " << modulepath << "\n";
+        error = dlerror();
+        std::cout << error << "\n";
         return false;
     }
     else

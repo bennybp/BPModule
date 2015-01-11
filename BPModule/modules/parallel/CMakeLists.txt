@@ -23,6 +23,7 @@ if(OPENMP_FOUND)
               )
   set_target_properties(parallel_openmp PROPERTIES COMPILE_FLAGS "${BPMODULE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
   set_target_properties(parallel_openmp PROPERTIES INCLUDE_DIRECTORIES "${BPMODULE_CXX_INCLUDES}")
+  target_link_libraries(parallel_openmp "${OpenMP_CXX_FLAGS}")
 endif()
 
 # For now, install all header files
