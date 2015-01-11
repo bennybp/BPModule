@@ -21,9 +21,22 @@ class ModuleStore
 {
 public:
   size_t Count(void) const;
-  ModuleBaseUPtr Get(const std::string & id);
   void DumpInfo(void) const;
 
+  template<typename T>
+  std::unique_ptr<T> Get(const std::string & id)
+  {
+      // \todo change away from at()?
+      ModuleBase * mbptr = (store_.at(id)()); // must remember to delete it
+
+      T * dptr = dynamic_cast<T *>(mbptr);
+      if(dptr == nullptr)
+      {
+          delete mbptr;
+          throw std::runtime_error("Unable to cast pointer");
+      }
+      return std::unique_ptr<T>(dptr);
+  }
 
   ModuleStore();
   ~ModuleStore();
@@ -35,7 +48,7 @@ public:
   void Lock(void);
 
 private:
-  // The store stores a std::bind version of the generator that automatically binds the filename
+  // The store stores a std::bind version of the generator that automatically binds the filepath
   // and store pointer as the arguments
   typedef std::function<ModuleBase *()> StoredModuleGeneratorFunc;
   typedef std::unordered_map<std::string, StoredModuleGeneratorFunc> InternalStoreType;

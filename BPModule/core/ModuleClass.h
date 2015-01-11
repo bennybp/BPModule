@@ -7,18 +7,20 @@ namespace bpmodule {
 
 enum class ModuleClass
 {
-   MCLASS_TEST,
-   MCLASS_1E_INTEGRAL
+   TEST,
+   PARALLEL,
 };
 
 
 enum class ModuleType
 {
    // MODULE_TEST
-   MTYPE_TEST,
+   TEST,
 
-   // MODULE_1E_INTEGRAL
-   MTYPE_STD
+   // MODULE_PARALLEL
+   SERIAL,
+   LOCAL,
+   DISTRIBUTED
 };
 
 const char * MClassToString(ModuleClass mc);

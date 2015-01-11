@@ -1,7 +1,8 @@
 #include <iostream>
 
-
 #include "BPModule/core/ModuleStore.h"
+#include "BPModule/modules/base/Test_Base.h"
+#include "BPModule/modules/base/Parallel_Base.h"
 
 using namespace bpmodule;
 
@@ -29,5 +30,23 @@ void DumpInfo(void)
     mstore_.DumpInfo();
 }
 
+void RunTest(const char * modname)
+{
+    std::cout << "Test: " << modname << "\n";
+    std::unique_ptr<Test_Base> tptr = mstore_.Get<Test_Base>(modname);
+    tptr->RunTest();
+}
+
+void InitParallel(void)
+{
+    std::unique_ptr<Parallel_Base> ptr = mstore_.Get<Parallel_Base>("PARALLEL");
+    ptr->Init();
+}
+
+void FinalizeParallel(void)
+{
+    std::unique_ptr<Parallel_Base> ptr = mstore_.Get<Parallel_Base>("PARALLEL");
+    ptr->Finalize();
+}
 
 } // close extern C

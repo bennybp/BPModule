@@ -41,12 +41,6 @@ bool ModuleStore::Merge(const std::string & filepath, void * handle, const Store
 }
 
 
-ModuleBaseUPtr ModuleStore::Get(const std::string & id)
-{
-    //! \todo Change this of course
-    return ModuleBaseUPtr(store_.at(id)());
-}
-
 size_t ModuleStore::Count(void) const
 {
     return store_.size();
@@ -90,7 +84,7 @@ bool ModuleStore::LoadSO(const char * modulepath, const char * components)
 
     // open the module
     std::cout << "Looking to open so file: " << modulepath << "\n";
-    void * handle = dlopen(modulepath, RTLD_LAZY);
+    void * handle = dlopen(modulepath, RTLD_LAZY | RTLD_GLOBAL);
     if(!handle)
     {
         std::cout << "Error - unable to open SO file: " << modulepath << "\n";

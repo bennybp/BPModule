@@ -10,6 +10,10 @@ parser.add_argument("modfile", help="Path to module directory")
 args = parser.parse_args()
 
 
+def MakeCStr(s):
+  return ctypes.create_string_buffer(s.encode('ascii', 'ignore'))
+
+
 if not os.path.isfile(args.sofile):
   raise RuntimeError("SO File does not exist!")
 
@@ -30,9 +34,23 @@ for s in sofiles:
 
 for s in sofiles:
   fullpath = os.path.abspath(s);
-  stbuf = ctypes.create_string_buffer(fullpath.encode('ascii', 'ignore'))
-  stbuf2 = ctypes.create_string_buffer("".encode('ascii', 'ignore'))
+  stbuf = MakeCStr(fullpath)
+  stbuf2 = MakeCStr("")
   if loader(stbuf, stbuf2) == False:
     raise RuntimeError("Unable to load modules. Aborting...")
 
 mstore.DumpInfo()
+
+
+print("Initializing parallel module")
+mstore.InitParallel();
+
+print("====TESTS====")
+mstore.RunTest(MakeCStr("TEST1"))
+mstore.RunTest(MakeCStr("TEST2"))
+mstore.RunTest(MakeCStr("TEST3"))
+mstore.RunTest(MakeCStr("TEST4"))
+print("=====END=====")
+
+print("Finalizing parallel module")
+mstore.FinalizeParallel();
