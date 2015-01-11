@@ -1,7 +1,7 @@
 #include <iostream>
 
 
-#include "BPModule/store/ModuleStore.h"
+#include "BPModule/core/ModuleStore.h"
 
 using namespace bpmodule;
 
@@ -13,14 +13,9 @@ namespace {
 extern "C" {
 
 
-bool LoadModule(const char * modulepath, const char * components)
+bool LoadSO(const char * modulepath, const char * components)
 {
-    return mstore_.LoadModule(modulepath, components);
-}
-
-void CloseAll(void)
-{
-    mstore_.CloseAll();
+    return mstore_.LoadSO(modulepath, components);
 }
 
 int Count(void)

@@ -1,7 +1,6 @@
-#include <iostream>
 #include <vector>
 
-#include "BPModule/store/ModuleStore.h"
+#include "BPModule/core/ModuleStore.h"
 #include "BPModule/core/ModuleBase.h"
 
 using namespace bpmodule;
@@ -10,8 +9,9 @@ using namespace bpmodule;
 class TestModule1 : public ModuleBase
 {
 public:
-    TestModule1(const std::string & filename) 
+    TestModule1(ModuleStore * mstore, const std::string & filename)
                    : ModuleBase(
+                     mstore,
                      filename,
                      ModuleClass::MCLASS_TEST,
                      ModuleType::MTYPE_TEST,
@@ -21,14 +21,15 @@ public:
                      "Just a simple test module component")
     {
     }
-                                  
+
 };
 
 class TestModule2 : public ModuleBase
 {
 public:
-    TestModule2(const std::string & filename) 
+    TestModule2(ModuleStore * mstore, const std::string & filename)
                    : ModuleBase(
+                     mstore,
                      filename,
                      ModuleClass::MCLASS_TEST,
                      ModuleType::MTYPE_TEST,
@@ -38,12 +39,12 @@ public:
                      "Just a simple test module component")
     {
     }
-                                  
+
 };
 
 
-ModuleBase * NewTestModule1(const std::string & filename) { return new TestModule1(filename); }
-ModuleBase * NewTestModule2(const std::string & filename) { return new TestModule2(filename); }
+ModuleBase * NewTestModule1(ModuleStore * mstore, const std::string & filename) { return new TestModule1(mstore, filename); }
+ModuleBase * NewTestModule2(ModuleStore * mstore, const std::string & filename) { return new TestModule2(mstore, filename); }
 
 
 extern "C" {

@@ -10,7 +10,9 @@ namespace bpmodule {
 
 
 class ModuleBase;
-typedef std::function<ModuleBase *(const std::string &)> ModuleGeneratorFunc;
+class ModuleStore;
+
+typedef std::function<ModuleBase *(ModuleStore *, const std::string &)> ModuleGeneratorFunc;
 typedef std::unordered_map<std::string,  ModuleGeneratorFunc> StoreType;
 typedef std::unique_ptr<ModuleBase> ModuleBaseUPtr;
 
@@ -22,14 +24,19 @@ public:
   ModuleBaseUPtr Get(const std::string & id);
   void DumpInfo(void) const;
 
-  void CloseAll(void);
-  bool LoadModule(const char * modulepath, const char * components);
 
+  ModuleStore();
   ~ModuleStore();
+
+  ModuleStore & operator=(const ModuleStore & rhs) = delete;
+  ModuleStore(const ModuleStore & rhs) = delete;
+
+  bool LoadSO(const char * modulepath, const char * components);
+  void Lock(void);
 
 private:
   // The store stores a std::bind version of the generator that automatically binds the filename
-  // as the only argument
+  // and store pointer as the arguments
   typedef std::function<ModuleBase *()> StoredModuleGeneratorFunc;
   typedef std::unordered_map<std::string, StoredModuleGeneratorFunc> InternalStoreType;
 
@@ -38,8 +45,10 @@ private:
 
   InternalStoreType store_;
   HandleMap handles_;
+  bool locked_;
 
   bool Merge(const std::string & filepath, void * handle, const StoreType & sp);
+  void CloseAll(void);
 };
 
 } // close namespace bpmodule

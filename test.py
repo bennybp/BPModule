@@ -18,7 +18,7 @@ mstore = ctypes.CDLL(args.sofile)
 flist = [ x.strip() for x in open(args.modfile).readlines() ]
 sofiles = [ x for x in flist if x.endswith(".so") and not x.startswith('#') ]
 
-loader = mstore.LoadModule
+loader = mstore.LoadSO
 loader.restype = ctypes.c_bool
 
 # Check all files first
@@ -32,7 +32,7 @@ for s in sofiles:
   fullpath = os.path.abspath(s);
   stbuf = ctypes.create_string_buffer(fullpath.encode('ascii', 'ignore'))
   stbuf2 = ctypes.create_string_buffer("".encode('ascii', 'ignore'))
-  if mstore.LoadModule(stbuf, stbuf2) == False:
+  if loader(stbuf, stbuf2) == False:
     raise RuntimeError("Unable to load modules. Aborting...")
 
 mstore.DumpInfo()

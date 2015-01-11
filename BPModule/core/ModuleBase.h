@@ -9,10 +9,13 @@
 
 namespace bpmodule {
 
+class ModuleStore;
+
 class ModuleBase
 {
 public:
-  ModuleBase(const std::string & filepath,
+  ModuleBase(ModuleStore * mstore,
+             const std::string & filepath,
              ModuleClass mclass, ModuleType mtype,
              const std::string & name, const std::string & authors, 
              const std::string & version, const std::string & description);
@@ -27,6 +30,8 @@ public:
   const std::string & Description(void) const { return description_; }
   const std::string & Filepath(void) const { return filepath_; }
 
+protected:
+  ModuleStore & mstore_;
 
 private:
   std::string filepath_;
@@ -41,7 +46,6 @@ private:
 };
 
 typedef std::unique_ptr<ModuleBase> ModuleBaseUPtr;
-typedef std::function<ModuleBase * (const std::string &)> ModuleGeneratorFunc;
 
 
 } // close namespace bpmodule

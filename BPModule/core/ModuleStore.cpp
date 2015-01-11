@@ -7,7 +7,7 @@
 
 #include <dlfcn.h>
 
-#include "BPModule/store/ModuleStore.h"
+#include "BPModule/core/ModuleStore.h"
 #include "BPModule/core/ModuleBase.h"
 
 
@@ -32,7 +32,7 @@ bool ModuleStore::Merge(const std::string & filepath, void * handle, const Store
             return false;
         }
 
-        store_[it.first] = std::bind(it.second, filepath); 
+        store_[it.first] = std::bind(it.second, this, filepath); 
     }
 
     handles_.insert(HandleMapPair(filepath, handle));
@@ -74,8 +74,14 @@ void ModuleStore::DumpInfo(void) const
 }
 
 
-bool ModuleStore::LoadModule(const char * modulepath, const char * components)
+bool ModuleStore::LoadSO(const char * modulepath, const char * components)
 {
+    if(locked_)
+    {
+        std::cout << "Store is locked. No more loading!\n";
+        return false;
+    }
+
     //! \todo Wrap handle obeject in a smart-ptr type thing
     //        Also store that in the handle map
     typedef StoreType (*getptr)(void);
@@ -222,6 +228,17 @@ void ModuleStore::CloseAll(void)
     }
     handles_.clear();
 }
+
+void ModuleStore::Lock(void)
+{
+    locked_ = true;
+}
+
+ModuleStore::ModuleStore()
+{
+    locked_ = false;
+}
+
 
 ModuleStore::~ModuleStore()
 {
