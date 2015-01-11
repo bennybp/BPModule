@@ -17,11 +17,15 @@ mstore = ctypes.CDLL(args.sofile)
 
 sofiles = [ x for x in os.listdir(args.moddir) if x.endswith(".so") ]
 
+loader = mstore.LoadModule
+loader.restype = ctypes.c_bool
+
 for s in sofiles:
   print("PYTHON: loading " + s);
-  fullpath = os.path.join(args.moddir, s);
+  fullpath = os.path.abspath(os.path.join(args.moddir, s));
   stbuf = ctypes.create_string_buffer(fullpath.encode('ascii', 'ignore'))
   stbuf2 = ctypes.create_string_buffer("".encode('ascii', 'ignore'))
-  mstore.LoadModule(stbuf, stbuf2)
+  if mstore.LoadModule(stbuf, stbuf2) == False:
+    raise RuntimeError("Unable to load modules. Aborting...")
 
 mstore.DumpInfo()
