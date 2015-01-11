@@ -19,17 +19,27 @@ class ModuleStore
 {
 public:
   size_t Count(void) const;
-  bool Merge(const std::string & filepath, const StoreType & sp);
   ModuleBaseUPtr Get(const std::string & id);
   void DumpInfo(void) const;
+
+  void CloseAll(void);
+  bool LoadModule(const char * modulepath, const char * components);
+
+  ~ModuleStore();
 
 private:
   // The store stores a std::bind version of the generator that automatically binds the filename
   // as the only argument
   typedef std::function<ModuleBase *()> StoredModuleGeneratorFunc;
-  typedef std::unordered_map<std::string,  StoredModuleGeneratorFunc> InternalStoreType;
+  typedef std::unordered_map<std::string, StoredModuleGeneratorFunc> InternalStoreType;
+
+  typedef std::unordered_map<std::string, void *> HandleMap; 
+  typedef HandleMap::value_type HandleMapPair;
 
   InternalStoreType store_;
+  HandleMap handles_;
+
+  bool Merge(const std::string & filepath, void * handle, const StoreType & sp);
 };
 
 } // close namespace bpmodule
