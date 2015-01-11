@@ -84,7 +84,7 @@ bool ModuleStore::LoadSO(const char * modulepath, const char * components)
 
     // open the module
     std::cout << "Looking to open so file: " << modulepath << "\n";
-    void * handle = dlopen(modulepath, RTLD_LAZY | RTLD_GLOBAL);
+    void * handle = dlopen(modulepath, RTLD_NOW | RTLD_GLOBAL);
     if(!handle)
     {
         std::cout << "Error - unable to open SO file: " << modulepath << "\n";

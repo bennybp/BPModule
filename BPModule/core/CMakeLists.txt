@@ -2,16 +2,22 @@
 # Actual library
 ##################################################
 add_library(bpmodule_core
-            STATIC
+            MODULE
             ModuleBase.cpp
             ModuleClass.cpp
             ModuleStore.cpp
             )
 
-add_library(bpmodule_store
+add_library(bpmodule_python
             MODULE
-            ModuleStore_global.cpp
+            Module_python.cpp
            )
+
+add_library(bpmodule_pythonloader
+            MODULE
+            Python_Loader.cpp
+           )
+
 
 ##############################################
 # Compiler flags, etc
@@ -22,9 +28,11 @@ string(REPLACE ";" " " BPMODULE_CORE_CXX_FLAGS "${BPMODULE_CORE_CXX_FLAGS}")
 set_target_properties(bpmodule_core PROPERTIES COMPILE_FLAGS "${BPMODULE_CORE_CXX_FLAGS}")
 set_target_properties(bpmodule_core PROPERTIES INCLUDE_DIRECTORIES "${BPMODULE_CORE_CXX_INCLUDES}")
 
-set_target_properties(bpmodule_store PROPERTIES COMPILE_FLAGS "${BPMODULE_CORE_CXX_FLAGS}")
-set_target_properties(bpmodule_store PROPERTIES INCLUDE_DIRECTORIES "${BPMODULE_CORE_CXX_INCLUDES}")
-target_link_libraries(bpmodule_store bpmodule_core)
+set_target_properties(bpmodule_python PROPERTIES COMPILE_FLAGS "${BPMODULE_CORE_CXX_FLAGS}")
+set_target_properties(bpmodule_python PROPERTIES INCLUDE_DIRECTORIES "${BPMODULE_CORE_CXX_INCLUDES}")
+
+set_target_properties(bpmodule_pythonloader PROPERTIES COMPILE_FLAGS "${BPMODULE_CORE_CXX_FLAGS}")
+set_target_properties(bpmodule_pythonloader PROPERTIES INCLUDE_DIRECTORIES "${BPMODULE_CORE_CXX_INCLUDES}")
 
 # For now, install all header files
 #file(GLOB HFILES "${CMAKE_CURRENT_SOURCE_DIR}/*.h")

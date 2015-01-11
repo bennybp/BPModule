@@ -1,4 +1,5 @@
 #include <iostream>
+#include <dlfcn.h>
 
 #include "BPModule/core/ModuleStore.h"
 #include "BPModule/modules/base/Test_Base.h"
@@ -12,7 +13,6 @@ namespace {
 }
 
 extern "C" {
-
 
 bool LoadSO(const char * modulepath, const char * components)
 {
