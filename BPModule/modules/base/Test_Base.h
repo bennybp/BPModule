@@ -1,9 +1,6 @@
 #ifndef TEST_BASE_H
 #define TEST_BASE_H
 
-#include <vector>
-
-#include "BPModule/core/ModuleStore.h"
 #include "BPModule/core/ModuleBase.h"
 
 using namespace bpmodule;

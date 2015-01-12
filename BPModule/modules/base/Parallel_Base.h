@@ -1,8 +1,6 @@
 #ifndef PARALLEL_BASE_H
 #define PARALLEL_BASE_H
 
-#include <string>
-#include <memory>
 #include <functional>
 
 #include "BPModule/core/ModuleBase.h"

@@ -1,5 +1,6 @@
 set(BASE_MODULE_FILES
                 Test_Base.cpp
+                Math_Base.cpp
                 Parallel_Base.cpp
 )
 

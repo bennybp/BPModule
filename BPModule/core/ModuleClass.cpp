@@ -7,7 +7,9 @@ const char * MClassToString(ModuleClass mc)
     switch(mc)
     {
         case ModuleClass::TEST:
-          return "Test";
+          return "TEST";
+        case ModuleClass::MATH:
+          return "MATH";
         case ModuleClass::PARALLEL:
           return "PARALLEL";
         default:
@@ -27,6 +29,8 @@ const char * MTypeToString(ModuleType mt)
           return "LOCAL";
         case ModuleType::DISTRIBUTED:
           return "DISTRIBUTED";
+        case ModuleType::GENERAL:
+          return "GENERAL";
         default:
           return "???";
     }

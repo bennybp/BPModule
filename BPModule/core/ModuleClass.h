@@ -8,6 +8,7 @@ namespace bpmodule {
 enum class ModuleClass
 {
    TEST,
+   MATH,
    PARALLEL,
 };
 
@@ -16,6 +17,9 @@ enum class ModuleType
 {
    // MODULE_TEST
    TEST,
+
+   //Misc
+   GENERAL,
 
    // MODULE_PARALLEL
    SERIAL,

@@ -1,17 +1,13 @@
 #ifndef MATH_BASE_H
 #define MATH_BASE_H
 
-#include <vector>
-
-#include "BPModule/core/ModuleStore.h"
 #include "BPModule/core/ModuleBase.h"
 
 using namespace bpmodule;
 
-
 namespace bpmodule {
 
-class Test_Base : public ModuleBase
+class Math_Base : public ModuleBase
 {
 public:
   Math_Base(ModuleStore * mstore,
