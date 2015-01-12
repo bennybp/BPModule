@@ -33,12 +33,16 @@ public:
         double * sum = new double[nthread];
         std::fill(sum, sum+nthread, 0.0);
 
-        ptr->ParallelFor(1e10l, [sum](long i, long r, long t) { sum[t] += 3.14*static_cast<double>(i/(i+2)); });
+        //ptr->ParallelFor(1e10l, [sum](long i, long r, long t) { sum[t] += 3.14*static_cast<double>(i/(i+2)); });
+
+        double allsum = 0;
+        #pragma omp parallel for
+        for(long i = 0; i < 10000000000; i++)
+            allsum += 3.14*static_cast<double>(i/(i+2));
 
         // accumulate
-        double allsum = 0;
-        for(int i = 0; i < nthread; i++)
-            allsum += sum[i];
+        //for(int i = 0; i < nthread; i++)
+        //    allsum += sum[i];
         std::cout << "Sum is: " << allsum << "\n";
         delete [] sum;
     }
