@@ -11,69 +11,20 @@ using namespace bpmodule;
 class TestModule1 : public Test_Base
 {
 public:
-    TestModule1(ModuleStore * mstore, const std::string & filepath)
-                   : Test_Base(
-                     mstore,
-                     filepath,
-                     ModuleType::TEST,
-                     "SIMPLETEST1",
-                     "Yo-Yo Mama",
-                     "1.0",
-                     "Just a simple test module component")
+    TestModule1(ModuleStore * mstore, const OptionMap & options)
+                   : Test_Base(mstore, options)
     {
     }
 
     void RunTest(void)
     {
         std::cout << "I am TestModule 1. Running tests...\n";
-        std::unique_ptr<Parallel_Base> ptr = mstore_.Get<Parallel_Base>("PARALLEL");
-        std::cout << "Obtained parallelizer: " << ptr->Name() << " (type " << ptr->MTypeStr() << ")\n";
-        std::cout << "This is process " << ptr->Rank() << " of " << ptr->Size() << "\n";
-        int nthread = ptr->Threads();
-        double * sum = new double[nthread];
-        std::fill(sum, sum+nthread, 0.0);
-
-        //ptr->ParallelFor(1e10l, [sum](long i, long r, long t) { sum[t] += 3.14*static_cast<double>(i/(i+2)); });
-
-        double allsum = 0;
-        #pragma omp parallel for
-        for(long i = 0; i < 10000000000; i++)
-            allsum += 3.14*static_cast<double>(i/(i+2));
-
-        // accumulate
-        //for(int i = 0; i < nthread; i++)
-        //    allsum += sum[i];
-        std::cout << "Sum is: " << allsum << "\n";
-        delete [] sum;
     }
 
 };
 
-class TestModule2 : public Test_Base
-{
-public:
-    TestModule2(ModuleStore * mstore, const std::string & filepath)
-                   : Test_Base(
-                     mstore,
-                     filepath,
-                     ModuleType::TEST,
-                     "SIMPLETEST2",
-                     "Yo-Yo Mama",
-                     "2.0",
-                     "Just a simple test module component")
-    {
-    }
-
-    void RunTest(void)
-    {
-        std::cout << "I am TestModule 2. Running tests...\n";
-    }
-
-};
-
-
-ModuleBase * NewTestModule1(ModuleStore * mstore, const std::string & filepath) { return new TestModule1(mstore, filepath); }
-ModuleBase * NewTestModule2(ModuleStore * mstore, const std::string & filepath) { return new TestModule2(mstore, filepath); }
+ModuleBase * NewTestModule1(ModuleStore * mstore, const OptionMap & options)
+{ return new TestModule1(mstore, options); }
 
 
 extern "C" {
@@ -81,8 +32,26 @@ extern "C" {
 StoreType GetComponents(void)
 {
     StoreType st;
-    st["TEST1"] = NewTestModule1;
-    st["TEST2"] = NewTestModule2;
+
+    OptionMap testops;
+    testops.Set("DOUBLE", static_cast<double>(2.0));
+    testops.Set("STRING", std::string("Some string"));
+    testops.Set("CSTRING", "Some C string");
+
+    st.insert(StoreType::value_type(
+                    "TEST1",
+                  { 
+                    "Test1Module",
+                    ModuleClass::TEST,
+                    ModuleType::TEST,
+                    "Y. O. Mama",
+                    "0.1a",
+                    "Just a simple test module",
+                    "No refs",
+                    NewTestModule1,
+                    testops
+                  }));
+                   
     return st;
 }
 

@@ -33,10 +33,14 @@ bool ModuleStore::Merge(const std::string & filepath, void * handle, const Store
         }
 
         // \todo check for stuff
-        store_[it.first] = std::bind(it.second, this, filepath); 
     }
 
-    handles_.insert(HandleMapPair(filepath, handle));
+    store_.insert(st.begin(), st.end());    
+
+    for(auto & it : st)
+        sofiles_.insert(SOFileMap::value_type(it.first, filepath));
+
+    handles_.insert(HandleMap::value_type(filepath, handle));
 
     return true;
 }
@@ -50,22 +54,127 @@ size_t ModuleStore::Count(void) const
 void ModuleStore::DumpInfo(void) const
 {
     std::cout << "Count: " << store_.size() << "\n";
-    for(auto & it : store_)
+    for(const auto & it : store_)
     {
-        ModuleBaseUPtr mbptr(it.second());
-
         std::cout << "---------------------------------\n"
                   << it.first << "\n"
                   << "---------------------------------\n"
-                  << "    Name: " << mbptr->Name() << "\n"
-                  << " Version: " << mbptr->Version() << "\n"
-                  << "    Path: " << mbptr->Filepath() << "\n"
-                  << "   Class: " << MClassToString(mbptr->MClass()) << "\n"
-                  << "    Type: " << MTypeToString(mbptr->MType()) << "\n"
-                  << " Authors: " << mbptr->Authors() << "\n"
-                  << "    Desc: " << mbptr->Description() << "\n"
-                  << "\n\n";
+                  << "    Name: " << it.second.name << "\n"
+                  << " Version: " << it.second.version << "\n"
+                  << "    Path: " << sofiles_.at(it.first) << "\n"
+                  << "   Class: " << MClassToString(it.second.mclass) << "\n"
+                  << "    Type: " << MTypeToString(it.second.mtype) << "\n"
+                  << " Authors: " << it.second.authors << "\n"
+                  << "    Desc: " << it.second.description << "\n"
+                  << "    Refs: " << it.second.refs << "\n"
+                  << " OPTIONS: " << it.second.options.Count() << "\n";
+        auto opmap = it.second.options.DumpMap();
+        for(auto & it : opmap)
+            std::cout << "    " << it.first << "   =   " << it.second << "\n";
+        std::cout << "\n\n";
     }
+}
+
+
+bool ModuleStore::SelectComponents(const std::string & components, StoreType & st)
+{
+    // this whole function is ugly
+
+
+    // Tokenize the component string
+    std::vector<std::string> compadd, compdel;
+    std::stringstream ss(components);
+    std::string tok;
+    while(std::getline(ss, tok, ' '))
+    {
+        if(tok.length() > 0)
+        {
+            if(tok[0] == '-')
+                compdel.push_back(tok.substr(1, std::string::npos));
+            else if(tok[0] == '+')
+                compadd.push_back(tok.substr(1, std::string::npos));
+            else
+                compadd.push_back(tok.substr(0, std::string::npos));
+        }
+    }
+    
+
+    std::cout << "To add:\n";
+    for(auto & it : compadd)
+        std::cout << "'" << it << "'\n";
+    std::cout << "To remove:\n";
+    for(auto & it : compdel)
+        std::cout << "'" << it << "'\n";
+
+    // 1.) Check to make sure all add and del components are available
+    for(auto & it : compadd)
+    {
+        if(st.count(it) == 0)
+        {
+            std::cout << "Component " << it << " not provided by module!\n";
+            return false;
+        }
+    }
+    for(auto & it : compdel)
+    {
+        if(st.count(it) == 0)
+        {
+            std::cout << "Component " << it << " not provided by module!\n";
+            return false;
+        }
+    }
+
+
+    // 2.) Make sure if compadd and compdel are separate (if both specified)
+    //     and only add
+    //! \todo check for duplicates
+    StoreType toadd;
+    if(compadd.size() == 0 && compdel.size() == 0)
+        toadd = st;  // add them all
+    else if(compadd.size() > 0 && compdel.size() > 0)
+    {
+        // just check if any are in both and return false if so
+        for(auto & it : compadd)
+        {
+            auto findit = std::find_if(compdel.begin(),
+                                       compdel.end(),
+                                       [it](const std::string & st) { return st == it; } );
+            if(findit != compdel.end())
+            {
+                std::cout << "Can't both add and remove a component from a module!\n";
+                return false;
+            }
+
+            // there's probably to be a better way to do this
+            for(auto & it : compadd)
+                toadd[it] = st[it];
+        }
+    }
+
+    // 3.) There are only adds 
+    else if(compdel.size() == 0)
+    {
+        for(auto & it : compadd)
+            toadd[it] = st[it];
+    }
+    else if(compadd.size() == 0)
+    {
+        toadd = st;
+        // only want to delete some
+        for(auto & it : compdel)
+           toadd.erase(it); 
+    }
+
+    // Do we have anything to add?
+    if(toadd.size() == 0)
+    {
+        std::cout << "Umm.... This module adds nothing?\n";
+        return false;
+    }
+
+    // store the results
+    st = toadd;
+    return true;
 }
 
 
@@ -111,102 +220,14 @@ bool ModuleStore::LoadSO(const char * modulepath, const char * components)
     for(auto & it : st)
         std::cout << "  " << it.first << "\n";
 
-
-    // Tokenize the component string
-    std::vector<std::string> compadd, compdel;
-    std::stringstream ss(components);
-    std::string tok;
-    while(std::getline(ss, tok, ' '))
+    if(SelectComponents(components, st) == false)
     {
-        if(tok.length() > 0)
-        {
-            if(tok[0] == '-')
-                compdel.push_back(tok.substr(1, std::string::npos));
-            else if(tok[0] == '+')
-                compadd.push_back(tok.substr(1, std::string::npos));
-            else
-                compadd.push_back(tok.substr(0, std::string::npos));
-        }
-    }
-    
-
-    std::cout << "To add:\n";
-    for(auto & it : compadd)
-        std::cout << "'" << it << "'\n";
-    std::cout << "To remove:\n";
-    for(auto & it : compdel)
-        std::cout << "'" << it << "'\n";
-
-    // 1.) Check to make sure all add and del components are available
-    for(auto & it : compadd)
-    {
-        if(st.count(it) == 0)
-        {
-            std::cout << "Component " << it << " not provided by module " << modulepath << "\n";
-            dlclose(handle);
-            return false;
-        }
-    }
-    for(auto & it : compdel)
-    {
-        if(st.count(it) == 0)
-        {
-            std::cout << "Component " << it << " not provided by module " << modulepath << "\n";
-            dlclose(handle);
-            return false;
-        }
-    }
-
-
-    // 2.) Make sure if compadd and compdel are separate (if both specified)
-    //     and only add
-    //! \todo check for duplicates
-    StoreType toadd;
-    if(compadd.size() == 0 && compdel.size() == 0)
-        toadd = st;  // add them all
-    else if(compadd.size() > 0 && compdel.size() > 0)
-    {
-        // just check if any are in both and return false if so
-        for(auto & it : compadd)
-        {
-            auto findit = std::find_if(compdel.begin(),
-                                       compdel.end(),
-                                       [it](const std::string & st) { return st == it; } );
-            if(findit != compdel.end())
-            {
-                std::cout << "Can't both add and remove a component from a module!\n";
-                return false;
-            }
-
-            // there's got to be a better way to do this
-            for(auto & it : compadd)
-                toadd[it] = st[it];
-        }
-    }
-
-    // 3.) There are only adds 
-    else if(compdel.size() == 0)
-    {
-        for(auto & it : compadd)
-            toadd[it] = st[it];
-    }
-    else if(compadd.size() == 0)
-    {
-        toadd = st;
-        // only want to delete some
-        for(auto & it : compdel)
-           toadd.erase(it); 
-    }
-
-    // Do we have anything to add?
-    if(toadd.size() == 0)
-    {
-        std::cout << "Umm.... This module adds nothing?\n";
+        dlclose(handle);
         return false;
     }
 
     // Add the components
-    if(Merge(modulepath, handle, toadd) == false)
+    if(Merge(modulepath, handle, st) == false)
     {
         std::cout << "Error adding module " << modulepath << "\n";
         return false;

@@ -71,9 +71,6 @@ mstore.InitParallel();
 
 print("====TESTS====")
 mstore.RunTest(MakeCStr("TEST1"))
-mstore.RunTest(MakeCStr("TEST2"))
-mstore.RunTest(MakeCStr("TEST3"))
-mstore.RunTest(MakeCStr("TEST4"))
 print("=====END=====")
 
 print("Finalizing parallel module")

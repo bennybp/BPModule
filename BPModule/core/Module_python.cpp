@@ -33,20 +33,16 @@ void DumpInfo(void)
 void RunTest(const char * modname)
 {
     std::cout << "Test: " << modname << "\n";
-    std::unique_ptr<Test_Base> tptr = mstore_.Get<Test_Base>(modname);
+    std::unique_ptr<Test_Base> tptr = mstore_.GetModule<Test_Base>(modname);
     tptr->RunTest();
 }
 
 void InitParallel(void)
 {
-    std::unique_ptr<Parallel_Base> ptr = mstore_.Get<Parallel_Base>("PARALLEL");
-    ptr->Init();
 }
 
 void FinalizeParallel(void)
 {
-    std::unique_ptr<Parallel_Base> ptr = mstore_.Get<Parallel_Base>("PARALLEL");
-    ptr->Finalize();
 }
 
 } // close extern C

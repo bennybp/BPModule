@@ -6,48 +6,61 @@
 #include <functional>
 
 #include "BPModule/core/ModuleClass.h"
+#include "BPModule/core/OptionMap.h"
 
 namespace bpmodule {
 
 class ModuleStore;
 
+
 class ModuleBase
 {
 public:
-  ModuleBase(ModuleStore * mstore,
-             const std::string & filepath,
-             ModuleClass mclass, ModuleType mtype,
-             const std::string & name, const std::string & authors, 
-             const std::string & version, const std::string & description);
-
-
-  ModuleClass MClass(void) const { return mclass_; }
-  ModuleType MType(void) const { return mtype_; }
-
-  std::string MClassStr(void) const { return MClassToString(mclass_); }
-  std::string MTypeStr(void) const { return MTypeToString(mtype_); }
-
-  const std::string & Name(void) const { return name_; }
-  const std::string & Authors(void) const { return authors_; }
-  const std::string & Version(void) const { return version_; }
-  const std::string & Description(void) const { return description_; }
-  const std::string & Filepath(void) const { return filepath_; }
+  ModuleBase(ModuleStore * mstore, const OptionMap & options);
 
   virtual ~ModuleBase() { }
 
+
+  template<typename T>
+  const T & GetTrait(const std::string & key) const
+  {
+    return traits_.Get<T>(key);
+  }
+
+  bool HasTrait(const std::string & key) const
+  {
+    return traits_.HasOption(key);
+  }
+
+  template<typename T>
+  const T & GetOption(const std::string & key) const
+  {
+    return options_.Get<T>(key);
+  }
+
+  bool HasOption(const std::string & key) const
+  {
+    return options_.HasOption(key);
+  }
+
+  template<typename T>
+  void SetOption(const std::string & key, const T & value)
+  {
+    options_.Set(key, value);
+  }
+
 protected:
-  ModuleStore & mstore_;
+  const ModuleStore & mstore_;
+
+  template<typename T>
+  void SetTrait(const std::string & key, const T & value)
+  {
+    traits_.Set(key, value);
+  }
 
 private:
-  std::string filepath_;
-
-  ModuleClass mclass_;
-  ModuleType mtype_;
-
-  std::string name_;
-  std::string authors_;
-  std::string version_;
-  std::string description_;
+  OptionMap traits_;
+  OptionMap options_;
 };
 
 typedef std::unique_ptr<ModuleBase> ModuleBaseUPtr;

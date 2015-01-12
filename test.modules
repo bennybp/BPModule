@@ -1,4 +1,1 @@
 BPModule/modules/test/libtestmodule1.so
-BPModule/modules/test/libtestmodule2.so
-#BPModule/modules/parallel/libparallel_serial.so
-BPModule/modules/parallel/libparallel_openmp.so

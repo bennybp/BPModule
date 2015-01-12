@@ -6,14 +6,32 @@
 #include <string>
 #include <vector>
 
+#include "BPModule/core/OptionMap.h"
+
 namespace bpmodule {
 
 
 class ModuleBase;
 class ModuleStore;
+enum class ModuleClass;
+enum class ModuleType;
 
-typedef std::function<ModuleBase *(ModuleStore *, const std::string &)> ModuleGeneratorFunc;
-typedef std::unordered_map<std::string,  ModuleGeneratorFunc> StoreType;
+typedef std::function<ModuleBase *(ModuleStore *, const OptionMap &)> ModuleGeneratorFunc;
+
+struct ModuleInfo
+{
+  std::string name;
+  ModuleClass mclass;
+  ModuleType mtype;
+  std::string authors;
+  std::string version;
+  std::string description;
+  std::string refs;
+  ModuleGeneratorFunc genfunc;
+  OptionMap options;
+};
+
+typedef std::unordered_map<std::string,  ModuleInfo> StoreType;
 typedef std::unique_ptr<ModuleBase> ModuleBaseUPtr;
 
 
@@ -24,10 +42,12 @@ public:
   void DumpInfo(void) const;
 
   template<typename T>
-  std::unique_ptr<T> Get(const std::string & id)
+  std::unique_ptr<T> GetModule(const std::string & id)
   {
       // \todo change away from at()?
-      ModuleBase * mbptr = (store_.at(id)()); // must remember to delete it
+      ModuleInfo minfo = store_.at(id);
+
+      ModuleBase * mbptr = (minfo.genfunc(this, minfo.options)); // must remember to delete it
 
       T * dptr = dynamic_cast<T *>(mbptr);
       if(dptr == nullptr)
@@ -48,18 +68,15 @@ public:
   void Lock(void);
 
 private:
-  // The store stores a std::bind version of the generator that automatically binds the filepath
-  // and store pointer as the arguments
-  typedef std::function<ModuleBase *()> StoredModuleGeneratorFunc;
-  typedef std::unordered_map<std::string, StoredModuleGeneratorFunc> InternalStoreType;
-
   typedef std::unordered_map<std::string, void *> HandleMap; 
-  typedef HandleMap::value_type HandleMapPair;
+  typedef std::unordered_map<std::string, std::string> SOFileMap; 
 
-  InternalStoreType store_;
+  StoreType store_;
   HandleMap handles_;
+  SOFileMap sofiles_;
   bool locked_;
 
+  bool SelectComponents(const std::string & components, StoreType & st);
   bool Merge(const std::string & filepath, void * handle, const StoreType & sp);
   void CloseAll(void);
 };
