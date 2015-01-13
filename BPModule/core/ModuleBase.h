@@ -19,6 +19,10 @@ public:
 
   virtual ~ModuleBase() { }
 
+  ModuleBase(const ModuleBase & rhs) = delete;
+  ModuleBase(ModuleBase && rhs) = delete;
+  ModuleBase & operator= (const ModuleBase & rhs) = delete;
+  ModuleBase & operator= (ModuleBase && rhs) = delete;
 
   template<typename T>
   const T & GetTrait(const std::string & key) const

@@ -29,7 +29,7 @@ void ModuleStore::Dump(void) const
                   << "---------------------------------\n"
                   << "    Name: " << it.second.name << "\n"
                   << " Version: " << it.second.version << "\n"
-                  << "    Path: " << it.second.soname << "\n"
+                  << "    Path: " << it.second.sopath << "\n"
                   << "    Desc: " << it.second.description << "\n";
         if(it.second.authors.size() > 0)
         {
@@ -63,14 +63,14 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
     char * error; // for dlerror
 
     // see if the module is loaded. If so, 
-    if(handles_.count(sopath) > 0)
-        minfo.handle = handles_[sopath];
-    else
+    void * handle;
+
+    if(handles_.count(sopath) == 0)
     {
         std::cout << "Looking to open so file: " << sopath << "\n";
-        minfo.handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
+        handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
         // open the module
-        if(!minfo.handle)
+        if(!handle)
         {
             std::cout << "Error - unable to open SO file: " << sopath << "\n";
             error = dlerror();
@@ -79,25 +79,28 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
         }
         std::cout << "Successfully opened " << sopath << "\n";
     }
+    else
+        handle = handles_[sopath];
 
     typedef ModuleBase * (*getptr)(const std::string &, ModuleStore *, const OptionMap &);
 
-    getptr fn = reinterpret_cast<getptr>(dlsym(minfo.handle, "CreateModule"));
+    getptr fn = reinterpret_cast<getptr>(dlsym(handle, "CreateModule"));
     if((error = dlerror()) != NULL)
     {
         std::cout << "Error - unable to find CreateModule!\n";
         std::cout << error << "\n";
-        dlclose(minfo.handle);
+        dlclose(handle);
         return false;
     }
         
-    minfo.createfunc = std::bind(fn, minfo.name, std::placeholders::_1, std::placeholders::_2);
+    minfo.createfunc = std::bind(fn, key, std::placeholders::_1, std::placeholders::_2);
+    minfo.sopath = sopath;
 
     // add to store
     //! \todo Check for duplicates
-    store_[sopath] = minfo;
+    store_[key] = minfo;
     if(handles_.count(sopath) == 0)
-        handles_[sopath] = minfo.handle;
+        handles_[sopath] = handle;
 
     return true;
 }
@@ -126,6 +129,7 @@ ModuleStore::ModuleStore()
 
 ModuleStore::~ModuleStore()
 {
+    std::cout << "MODULESTORE DESTRUCTOR\n";
     CloseAll();
 }
 

@@ -20,6 +20,11 @@ public:
         std::cout << "I am TestModule 1. Running tests...\n";
     }
 
+    virtual ~TestModule1()
+    {
+        std::cout << "I am TestModule 1. Destructing\n";
+    }
+
 };
 
 

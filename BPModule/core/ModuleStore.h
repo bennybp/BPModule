@@ -28,8 +28,8 @@ struct ModuleInfo
   std::vector<std::string> refs;
   OptionMap options;
 
-  void * handle;
   ModuleGeneratorFunc createfunc;
+  std::string sopath;
 };
 
 typedef std::unique_ptr<ModuleBase> ModuleBaseUPtr;
@@ -42,7 +42,7 @@ public:
   void Dump(void) const;
 
   template<typename T>
-  std::unique_ptr<T> GetModule(const std::string & id)
+  T * GetModule(const std::string & id)
   {
       // \todo change away from at()?
       ModuleInfo minfo = store_.at(id);
@@ -55,7 +55,8 @@ public:
           delete mbptr;
           throw std::runtime_error("Unable to cast pointer");
       }
-      return std::unique_ptr<T>(dptr);
+      //return std::unique_ptr<T>(dptr);
+      return dptr;
   }
 
   ModuleStore();

@@ -1,6 +1,10 @@
 #include "BPModule/core/OptionMap.h"
 #include "BPModule/core/ModuleStore.h"
 
+
+#include "BPModule/core/ModuleBase.h"
+#include "BPModule/core/base/Test_Base.h"
+
 #include <iostream>
 #include <boost/python.hpp>
 
@@ -61,10 +65,21 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def("LoadSO", &ModuleStore::LoadSO)
            .def("Lock", &ModuleStore::Lock)
            .def("Size", &ModuleStore::Size)
-           .def("Dump", &ModuleStore::Dump);
+           .def("Dump", &ModuleStore::Dump)
+           .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_value_policy<manage_new_object>())
+           .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_value_policy<manage_new_object>());
 
     def("MakeInfo", MakeInfo);
+
+
+    //class_<ModuleBase, boost::noncopyable>("ModuleBase", init<ModuleStore *, const OptionMap &>())
+    class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
+           .def("HasOption", &ModuleBase::HasOption);
+
+    class_<Test_Base, bases<ModuleBase>, boost::noncopyable>("Test_Base", no_init)
+           .def("RunTest", &Test_Base::RunTest);
 }
+
 
 
 } // close namespace bpmodule

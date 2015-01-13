@@ -42,4 +42,6 @@ for key,value in t1.modinfo.minfo.items():
 
   mst.LoadSO(key, fullpath, mi)
   mst.Dump()
+  b = mst.GetModule_Test("TESTMOD1")
+  b.RunTest()
 
