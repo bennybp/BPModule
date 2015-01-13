@@ -18,3 +18,6 @@ set(PYLOADER_FILES
 ADD_MODULE(bpmodule_core "${CORE_FILES}" "" "" "") 
 ADD_MODULE(bpmodule_python "${PYTHON_FILES}" "" "" "") 
 ADD_MODULE(bpmodule_pythonloader "${PYLOADER_FILES}" "" "" "") 
+
+
+add_subdirectory(base)

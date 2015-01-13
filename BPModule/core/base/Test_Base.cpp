@@ -1,4 +1,4 @@
-#include "BPModule/modules/base/Test_Base.h"
+#include "BPModule/core/base/Test_Base.h"
 
 namespace bpmodule {
 

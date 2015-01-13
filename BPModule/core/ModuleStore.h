@@ -21,17 +21,19 @@ typedef std::function<ModuleBase *(ModuleStore *, const OptionMap &)> ModuleGene
 struct ModuleInfo
 {
   std::string name;
+  std::string version;
   ModuleClass mclass;
   ModuleType mtype;
-  std::string authors;
-  std::string version;
+  std::vector<std::string> authors;
   std::string description;
-  std::string refs;
-  ModuleGeneratorFunc genfunc;
+  std::vector<std::string> refs;
   OptionMap options;
+  std::string sofile;
+
+  void * handle;
+  ModuleGeneratorFunc createfunc;
 };
 
-typedef std::unordered_map<std::string,  ModuleInfo> StoreType;
 typedef std::unique_ptr<ModuleBase> ModuleBaseUPtr;
 
 
@@ -47,7 +49,7 @@ public:
       // \todo change away from at()?
       ModuleInfo minfo = store_.at(id);
 
-      ModuleBase * mbptr = (minfo.genfunc(this, minfo.options)); // must remember to delete it
+      ModuleBase * mbptr = (minfo.createfunc(this, minfo.options)); // must remember to delete it
 
       T * dptr = dynamic_cast<T *>(mbptr);
       if(dptr == nullptr)
@@ -64,20 +66,17 @@ public:
   ModuleStore & operator=(const ModuleStore & rhs) = delete;
   ModuleStore(const ModuleStore & rhs) = delete;
 
-  bool LoadSO(const char * modulepath, const char * components);
+  bool LoadSO(const std::string & modulepath, ModuleInfo minfo);
   void Lock(void);
 
 private:
+  typedef std::unordered_map<std::string, ModuleInfo> StoreType;
   typedef std::unordered_map<std::string, void *> HandleMap; 
-  typedef std::unordered_map<std::string, std::string> SOFileMap; 
 
   StoreType store_;
   HandleMap handles_;
-  SOFileMap sofiles_;
   bool locked_;
 
-  bool SelectComponents(const std::string & components, StoreType & st);
-  bool Merge(const std::string & filepath, void * handle, const StoreType & sp);
   void CloseAll(void);
 };
 

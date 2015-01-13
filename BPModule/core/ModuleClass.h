@@ -1,15 +1,12 @@
 #ifndef MODULECLASS_H
 #define MODULECLASS_H
 
-#include <string>
-
 namespace bpmodule {
 
 enum class ModuleClass
 {
    TEST,
-   MATH,
-   PARALLEL,
+   MATH
 };
 
 
@@ -19,16 +16,13 @@ enum class ModuleType
    TEST,
 
    //Misc
-   GENERAL,
-
-   // MODULE_PARALLEL
-   SERIAL,
-   LOCAL,
-   DISTRIBUTED
+   GENERAL
 };
 
 const char * MClassToString(ModuleClass mc);
 const char * MTypeToString(ModuleType mt);
+ModuleClass StringToMClass(const char * str);
+ModuleType StringToMType(const char * str);
 
 } // close namespace bpmodule
 

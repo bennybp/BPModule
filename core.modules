@@ -1,2 +1,2 @@
 BPModule/core/libbpmodule_core.so
-BPModule/modules/base/libbpmodule_base.so
+BPModule/core/base/libbpmodule_base.so
