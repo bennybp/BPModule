@@ -21,14 +21,12 @@ typedef std::function<ModuleBase *(ModuleStore *, const OptionMap &)> ModuleGene
 struct ModuleInfo
 {
   std::string name;
+  std::string soname;
   std::string version;
-  ModuleClass mclass;
-  ModuleType mtype;
   std::vector<std::string> authors;
   std::string description;
   std::vector<std::string> refs;
   OptionMap options;
-  std::string sofile;
 
   void * handle;
   ModuleGeneratorFunc createfunc;
@@ -40,8 +38,8 @@ typedef std::unique_ptr<ModuleBase> ModuleBaseUPtr;
 class ModuleStore
 {
 public:
-  size_t Count(void) const;
-  void DumpInfo(void) const;
+  size_t Size(void) const;
+  void Dump(void) const;
 
   template<typename T>
   std::unique_ptr<T> GetModule(const std::string & id)
@@ -66,7 +64,7 @@ public:
   ModuleStore & operator=(const ModuleStore & rhs) = delete;
   ModuleStore(const ModuleStore & rhs) = delete;
 
-  bool LoadSO(const std::string & modulepath, ModuleInfo minfo);
+  bool LoadSO(const std::string & key, const std::string & sopath, ModuleInfo minfo);
   void Lock(void);
 
 private:

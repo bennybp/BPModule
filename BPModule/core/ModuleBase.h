@@ -5,7 +5,6 @@
 #include <memory>
 #include <functional>
 
-#include "BPModule/core/ModuleClass.h"
 #include "BPModule/core/OptionMap.h"
 
 namespace bpmodule {
@@ -29,7 +28,7 @@ public:
 
   bool HasTrait(const std::string & key) const
   {
-    return traits_.HasOption(key);
+    return traits_.Has(key);
   }
 
   template<typename T>
@@ -40,7 +39,7 @@ public:
 
   bool HasOption(const std::string & key) const
   {
-    return options_.HasOption(key);
+    return options_.Has(key);
   }
 
   template<typename T>

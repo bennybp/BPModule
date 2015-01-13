@@ -1,107 +1,45 @@
 #!/usr/bin/env python3
 
+
 import argparse
-import ctypes
 import os
 import importlib
 import sys
 
-parser = argparse.ArgumentParser(description="Testing")
-parser.add_argument("pyso", help="Path to python loader so file")
-parser.add_argument("sofiles", help="Path to file with list of core so files")
-parser.add_argument("mainso", help="Path to main python so file")
-parser.add_argument("modfiles", help="Path to file with list of module so files")
-args = parser.parse_args()
+oldldflag = sys.getdlopenflags()
+sys.path.append("/home/ben/programming/BPModule/build/BPModule/core")
+sys.path.append("/home/ben/programming/BPModule/build/BPModule/modules")
 
-def MakeCStr(s):
-  return ctypes.create_string_buffer(s.encode('ascii', 'ignore'))
-
-def MakeCStrVec(s):
-  vec = (ctypes.c_char_p * len(s))()
-  idx = 0
-  for a in [ x.strip() for x in s]:
-    vec[idx] = bytes(str(a), 'ascii')
-    idx += 1
-  return vec
-
-def MakeCOpts(s):
-  vec = ((ctypes.c_char_p * 3)*len(s))()
-  idx = 0
-  for a in s:
-    print(a)
-    vec[idx][0] = bytes(str(a[0]), 'ascii')
-    vec[idx][1] = bytes(str(a[1]), 'ascii')
-    vec[idx][2] = bytes(str(a[2]), 'ascii')
-    idx += 1
-  return vec
+sys.setdlopenflags(os.RTLD_GLOBAL | os.RTLD_NOW)
+import bpmodule_core as bp
+sys.setdlopenflags(oldldflag)
   
 
-# Load bootstrap loader
-pyload = ctypes.CDLL(args.pyso)
-initer = pyload.PythonLoader
-initer.restype = ctypes.c_bool
+def MakeInfo(minfo):
+  op = bp.OptionMap()
+  for o in minfo["options"]:
+    op.Set(o[0], o[1], o[2])
 
-# Initialize with core sos first
-flist = [ x.strip() for x in open(args.sofiles).readlines() ]
-sofiless = [ x for x in flist if x.endswith(".so") and not x.startswith('#') ]
+  mi = bp.MakeInfo(value, op)
+  return mi
+  
 
-for s in sofiless:
-  fullpath = os.path.abspath(s);
+sys.setdlopenflags(os.RTLD_GLOBAL | os.RTLD_NOW)
+import test1 as t1
+sys.setdlopenflags(oldldflag)
+
+
+mst = bp.ModuleStore()
+
+
+for key,value in t1.modinfo.minfo.items():
+  mi = MakeInfo(value)
+
+  # find the full path of the so file
+  fullpath = os.path.join(t1.modinfo.moddir, value["soname"]) + ".so" 
   if not os.path.isfile(fullpath):
-    raise RuntimeError("SO module doesn't exist or is not readable: '{}'".format(fullpath)) 
+    raise RuntimeError("Error - {} does not exist or is not a file!".format(fullpath))
 
-for s in sofiless:
-  fullpath = os.path.abspath(s);
-  print("Loading core so: {}".format(fullpath))
-  stbuf = MakeCStr(fullpath)
-  if initer(stbuf) == False:
-    raise RuntimeError("Unable to load modules. Aborting...")
+  mst.LoadSO(key, fullpath, mi)
+  mst.Dump()
 
-
-# Now the main python module, since the dependencies are loaded
-mstore = ctypes.CDLL(args.mainso)
-loader = mstore.LoadSO
-loader.restype = ctypes.c_bool
-
-# Now the rest of the modules
-flist = [ x.strip() for x in open(args.modfiles).readlines() ]
-pyfiles = [ x for x in flist if not x.startswith('#') ]
-
-# Import python modules
-for s in pyfiles:
-  fullpath = os.path.abspath(s);
-  mod1, mod2 = os.path.split(fullpath)
-  sys.path.append(mod1)
-  f = importlib.import_module(mod2 + ".modinfo")
-
-  # parse out the module info
-  for k,v in f.compinfo.items():
-    mpath = MakeCStr(os.path.join(fullpath, k))
-    mname = MakeCStr(v["name"])
-    mversion = MakeCStr(v["version"])
-    mdesc = MakeCStr(v["description"])
-    mclass = MakeCStr(v["class"])
-    mtype = MakeCStr(v["type"])
-    mauth = MakeCStrVec(v["authors"])
-    mrefs = MakeCStrVec(v["refs"])
-    mopts = MakeCOpts(v["options"])
-
-    if loader(mpath, mname, mversion, mclass, mtype, mdesc, 
-              len(v["authors"]), mauth,
-              len(v["refs"]), mrefs,
-              0, mopts) == False:
-              #len(v["options"]), mopts) == False:
-      raise RuntimeError("Unable to load modules. Aborting...")
-    
-mstore.DumpInfo()
-
-
-print("Initializing parallel module")
-mstore.InitParallel();
-
-print("====TESTS====")
-mstore.RunTest(MakeCStr("TESTMOD1"))
-print("=====END=====")
-
-print("Finalizing parallel module")
-mstore.FinalizeParallel();

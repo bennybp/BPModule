@@ -5,6 +5,10 @@
 #include <sstream>
 #include <string>
 
+#include <boost/lexical_cast.hpp>
+
+using boost::lexical_cast;
+
 //! An interface to a templated class that can hold anything
 /*!
     This allows for use in containers, etc.
@@ -40,31 +44,15 @@ public:
     OptionHolder(const OptionHolder<T> & g) : obj(g.obj) { }
 
     //! Returns a pointer to a copy of this object
-    virtual OptionHolder * Clone(void) const
-    {
-        return new OptionHolder<T>(*this);
-    }
+    virtual OptionHolder * Clone(void) const { return new OptionHolder<T>(*this); }
 
     //! Returns a reference to the data
-    T & GetRef(void)
-    {
-        return obj;
-    }
+    T & GetRef(void) { return obj; }
 
     //! Returns a reference to the data
-    const T & GetRef(void) const
-    {
-        return obj;
-    }
+    const T & GetRef(void) const { return obj; }
 
-    virtual std::string ToString(void) const
-    {
-        // \todo ok?
-        // \todo overload for a string type?
-        std::stringstream ss;
-        ss << obj;
-        return ss.str();
-    }
+    virtual std::string ToString(void) const { return boost::lexical_cast<std::string>(obj); }
 
 private:
     T obj;
@@ -76,6 +64,7 @@ class OptionMap
 {
 public:
     OptionMap(void) = default;
+    ~OptionMap(void) = default;
 
     OptionMap(OptionMap && rhs)
     {
@@ -97,7 +86,7 @@ public:
     }
 
     template<typename T>
-    const T & Get(const std::string & key) const
+    T Get(const std::string & key) const
     {
         //! \todo make invalid cast exception class
         const OptionPlaceholder * oph = opmap_.at(key);
@@ -107,18 +96,40 @@ public:
         return oh->GetRef();
     }
 
+    std::string GetString(const std::string & key)
+    {
+        return opmap_.at(key)->ToString();
+    }
+
     template<typename T>
-    void Set(const std::string & key, const T & value)
+    void Set(const std::string & key, const T & value, const std::string & help)
     {
         Erase(key);
         opmap_[key] = new OptionHolder<T>(value); 
+        help_[key] = help;
     }
 
-    // "specialization" for const char *
-    void Set(const std::string & key, const char * value)
+    bool Has(const std::string & key) const
     {
-        Set(key, std::string(value));
+        return opmap_.count(key);
     }
+
+    std::unordered_map<std::string, std::string> Dump(void) const
+    {
+        std::unordered_map<std::string, std::string> m;
+        for(const auto & it : opmap_)
+            m.insert(std::unordered_map<std::string, std::string>::value_type(it.first, it.second->ToString()));
+        return m;
+    }
+
+    size_t Size(void) const
+    {
+        return opmap_.size();
+    }
+
+private:
+    std::unordered_map<std::string, OptionPlaceholder *> opmap_;
+    std::unordered_map<std::string, std::string> help_;
 
 
     void Merge(const OptionMap & rhs)
@@ -130,34 +141,16 @@ public:
         }
     }
 
-    bool HasOption(const std::string & key) const
-    {
-        return opmap_.count(key);
-    }
-
-    std::unordered_map<std::string, std::string> DumpMap(void) const
-    {
-        std::unordered_map<std::string, std::string> m;
-        for(const auto & it : opmap_)
-            m.insert(std::unordered_map<std::string, std::string>::value_type(it.first, it.second->ToString()));
-        return m;
-    }
-
-    size_t Count(void) const
-    {
-        return opmap_.size();
-    }
-
-private:
-    std::unordered_map<std::string, OptionPlaceholder *> opmap_;
-
     size_t Erase(const std::string & key)
     {
         // erase any previously stored
         if(opmap_.count(key))
             delete opmap_[key]; // delete the ptr
+
+        help_.erase(key);
         return opmap_.erase(key);       
     }
+
 
     friend void Swap(OptionMap & first, OptionMap & second)
     {

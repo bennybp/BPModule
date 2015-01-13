@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 
-compinfo = { "libtestmodule1.so" :
-              {
-                "name"        : "TESTMOD1",
-                "version"     : "0.1a",
-                "description" : "Some test module",
-                "authors"     : ["me", "myself", "I"],
-                "refs"        : ["some paper", "some other paper"],
-                "class"       : "TEST",
-                "type"        : "TEST",
-              }
-            }
+moddir = "/home/ben/programming/BPModule/build/BPModule/modules/test1/"
+minfo = { "TESTMOD1" :
+  {
+    "name"        : "Some test",
+    "soname"      : "testmodule1",
+    "version"     : "0.1a",
+    "description" : "Some test module",
+    "authors"     : ["me", "myself", "I"],
+    "refs"        : ["some paper", "some other paper"],
+    "options"     : [ 
+                        ("adouble", "0.0", "Some help string"),
+                        ("aint", "1", "Some help string2"),
+                        ("double2", 2.1, "Some help string3")
+                    ]
+  }
+}
 
 
-options = [ 
-            ("adouble", "double", "0.0"),
-            ("aint", "int", "1")
-          ]

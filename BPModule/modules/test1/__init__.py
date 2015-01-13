@@ -1,1 +1,1 @@
-somevar="alsjd"
+from . import modinfo

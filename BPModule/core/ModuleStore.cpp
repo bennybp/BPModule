@@ -14,14 +14,14 @@
 namespace bpmodule {
 
 
-size_t ModuleStore::Count(void) const
+size_t ModuleStore::Size(void) const
 {
     return store_.size();
 }
 
-void ModuleStore::DumpInfo(void) const
+void ModuleStore::Dump(void) const
 {
-    std::cout << "Count: " << store_.size() << "\n";
+    std::cout << "Size: " << store_.size() << "\n";
     for(const auto & it : store_)
     {
         std::cout << "---------------------------------\n"
@@ -29,9 +29,7 @@ void ModuleStore::DumpInfo(void) const
                   << "---------------------------------\n"
                   << "    Name: " << it.second.name << "\n"
                   << " Version: " << it.second.version << "\n"
-                  << "    Path: " << it.second.sofile << "\n"
-                  << "   Class: " << MClassToString(it.second.mclass) << "\n"
-                  << "    Type: " << MTypeToString(it.second.mtype) << "\n"
+                  << "    Path: " << it.second.soname << "\n"
                   << "    Desc: " << it.second.description << "\n";
         if(it.second.authors.size() > 0)
         {
@@ -45,8 +43,8 @@ void ModuleStore::DumpInfo(void) const
             for(size_t i = 1; i < it.second.refs.size(); i++)
                 std::cout << "          " << it.second.refs[i] << "\n";
         }
-        std::cout << " OPTIONS: " << it.second.options.Count() << "\n";
-        auto opmap = it.second.options.DumpMap();
+        std::cout << " OPTIONS: " << it.second.options.Size() << "\n";
+        auto opmap = it.second.options.Dump();
         for(auto & it : opmap)
             std::cout << "    " << it.first << "   =   " << it.second << "\n";
         std::cout << "\n\n";
@@ -54,7 +52,7 @@ void ModuleStore::DumpInfo(void) const
 }
 
 
-bool ModuleStore::LoadSO(const std::string & modulepath, ModuleInfo minfo)
+bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, ModuleInfo minfo)
 {
     if(locked_)
     {
@@ -65,21 +63,21 @@ bool ModuleStore::LoadSO(const std::string & modulepath, ModuleInfo minfo)
     char * error; // for dlerror
 
     // see if the module is loaded. If so, 
-    if(handles_.count(modulepath) > 0)
-        minfo.handle = handles_[modulepath];
+    if(handles_.count(sopath) > 0)
+        minfo.handle = handles_[sopath];
     else
     {
-        std::cout << "Looking to open so file: " << modulepath << "\n";
-        minfo.handle = dlopen(modulepath.c_str(), RTLD_NOW | RTLD_GLOBAL);
+        std::cout << "Looking to open so file: " << sopath << "\n";
+        minfo.handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
         // open the module
         if(!minfo.handle)
         {
-            std::cout << "Error - unable to open SO file: " << modulepath << "\n";
+            std::cout << "Error - unable to open SO file: " << sopath << "\n";
             error = dlerror();
             std::cout << error << "\n";
             return false;
         }
-        std::cout << "Successfully opened " << modulepath << "\n";
+        std::cout << "Successfully opened " << sopath << "\n";
     }
 
     typedef ModuleBase * (*getptr)(const std::string &, ModuleStore *, const OptionMap &);
@@ -97,9 +95,9 @@ bool ModuleStore::LoadSO(const std::string & modulepath, ModuleInfo minfo)
 
     // add to store
     //! \todo Check for duplicates
-    store_[modulepath] = minfo;
-    if(handles_.count(modulepath) == 0)
-        handles_[modulepath] = minfo.handle;
+    store_[sopath] = minfo;
+    if(handles_.count(sopath) == 0)
+        handles_[sopath] = minfo.handle;
 
     return true;
 }
