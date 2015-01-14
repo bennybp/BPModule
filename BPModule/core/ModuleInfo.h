@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "BPModule/core/OptionMap.h"
 
@@ -20,6 +21,9 @@ struct ModuleInfo
   OptionMap options;
 
   std::string sopath;
+
+  void Dump(std::ostream & out) const;
+  void Help(std::ostream & out) const;
 };
 
 

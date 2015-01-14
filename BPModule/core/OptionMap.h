@@ -2,7 +2,6 @@
 #define OPTION_MAP
 
 #include <unordered_map>
-#include <sstream>
 #include <string>
 
 #include <boost/lexical_cast.hpp>
@@ -83,6 +82,9 @@ public:
         // need to Clone new elements
         for(auto & it : rhs.opmap_)
             opmap_[it.first] = it.second->Clone();
+
+        // copy the help
+        help_ = rhs.help_;
     }
 
     template<typename T>
@@ -114,11 +116,11 @@ public:
         return opmap_.count(key);
     }
 
-    std::unordered_map<std::string, std::string> Dump(void) const
+    std::unordered_map<std::string, std::pair<std::string, std::string>> Dump(void) const
     {
-        std::unordered_map<std::string, std::string> m;
+        std::unordered_map<std::string, std::pair<std::string, std::string>> m;
         for(const auto & it : opmap_)
-            m.insert(std::unordered_map<std::string, std::string>::value_type(it.first, it.second->ToString()));
+            m[it.first] = std::pair<std::string, std::string>(it.second->ToString(), help_.at(it.first));
         return m;
     }
 
@@ -156,6 +158,7 @@ private:
     {
         using std::swap;
         swap(first.opmap_, second.opmap_);
+        swap(first.help_, second.help_);
     } 
 
 

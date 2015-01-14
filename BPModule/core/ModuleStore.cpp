@@ -21,34 +21,14 @@ size_t ModuleStore::Size(void) const
 
 void ModuleStore::Dump(void) const
 {
-    std::cout << "Size: " << store_.size() << "\n";
+    (*out_) << "Size: " << store_.size() << "\n";
     for(const auto & it : store_)
     {
         auto & minfo = it.second.first;   // it.second = a pair<ModuleInfo, Func>
-        std::cout << "---------------------------------\n"
+        (*out_) << "---------------------------------\n"
                   << it.first << "\n"
-                  << "---------------------------------\n"
-                  << "    Name: " << minfo.name << "\n"
-                  << " Version: " << minfo.version << "\n"
-                  << "    Path: " << minfo.sopath << "\n"
-                  << "    Desc: " << minfo.description << "\n";
-        if(minfo.authors.size() > 0)
-        {
-            std::cout << " Authors: " << minfo.authors[0] << "\n";
-            for(size_t i = 1; i < minfo.authors.size(); i++)
-                std::cout << "          " << minfo.authors[i] << "\n";
-        }
-        if(minfo.refs.size() > 0)
-        {
-            std::cout << "    Refs: " << minfo.refs[0] << "\n";
-            for(size_t i = 1; i < minfo.refs.size(); i++)
-                std::cout << "          " << minfo.refs[i] << "\n";
-        }
-        std::cout << " OPTIONS: " << minfo.options.Size() << "\n";
-        auto opmap = minfo.options.Dump();
-        for(auto & it2 : opmap)
-            std::cout << "    " << it2.first << "   =   " << it2.second << "\n";
-        std::cout << "\n\n";
+                  << "---------------------------------\n";
+        minfo.Dump(*out_);
     }
 }
 
@@ -57,7 +37,7 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
 {
     if(locked_)
     {
-        std::cout << "Store is locked. No more loading!\n";
+        (*out_) << "Store is locked. No more loading!\n";
         return false;
     }
 
@@ -68,17 +48,17 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
 
     if(handles_.count(sopath) == 0)
     {
-        std::cout << "Looking to open so file: " << sopath << "\n";
+        (*out_) << "Looking to open so file: " << sopath << "\n";
         handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
         // open the module
         if(!handle)
         {
-            std::cout << "Error - unable to open SO file: " << sopath << "\n";
+            (*out_) << "Error - unable to open SO file: " << sopath << "\n";
             error = dlerror();
-            std::cout << error << "\n";
+            (*out_) << error << "\n";
             return false;
         }
-        std::cout << "Successfully opened " << sopath << "\n";
+        (*out_) << "Successfully opened " << sopath << "\n";
     }
     else
         handle = handles_[sopath];
@@ -88,8 +68,8 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
     getptr fn = reinterpret_cast<getptr>(dlsym(handle, "CreateModule"));
     if((error = dlerror()) != NULL)
     {
-        std::cout << "Error - unable to find CreateModule!\n";
-        std::cout << error << "\n";
+        (*out_) << "Error - unable to find CreateModule!\n";
+        (*out_) << error << "\n";
         dlclose(handle);
         return false;
     }
@@ -117,13 +97,18 @@ ModuleInfo ModuleStore::ModuleInfoFromKey(const std::string & key) const
 {
     return store_.at(key).first;
 }
+  
+std::string ModuleStore::KeyFromID(long id) const
+{
+    return idmap_.at(id);
+}
 
 void ModuleStore::CloseAll(void)
 {
     store_.clear();
     for(auto it : handles_)
     {
-        std::cout << "Closing " << it.first << "\n";
+        (*out_) << "Closing " << it.first << "\n";
         dlclose(it.second);
     }
     handles_.clear();
@@ -138,12 +123,23 @@ ModuleStore::ModuleStore()
 {
     locked_ = false;
     curid_ = 0;
+    out_ = &std::cout;
+}
+
+std::ostream & ModuleStore::GetOutput(void) const
+{
+    return *out_;
+}
+
+void ModuleStore::Help(const std::string & key) const
+{
+    store_.at(key).first.Help(*out_);
 }
 
 
 ModuleStore::~ModuleStore()
 {
-    std::cout << "MODULESTORE DESTRUCTOR\n";
+    (*out_) << "MODULESTORE DESTRUCTOR\n";
     CloseAll();
 }
 

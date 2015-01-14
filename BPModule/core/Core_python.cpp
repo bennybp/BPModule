@@ -5,7 +5,6 @@
 #include "BPModule/core/ModuleBase.h"
 #include "BPModule/core/Test_Base.h"
 
-#include <iostream>
 #include <boost/python.hpp>
 
 using namespace boost::python;
@@ -53,6 +52,8 @@ BOOST_PYTHON_MODULE(bpmodule_core)
         .def("Dump", &OptionMap::Dump);
 
     class_<ModuleInfo>("ModuleInfo")
+           .def("Dump", &ModuleInfo::Dump)
+           .def("Help", &ModuleInfo::Help)
            .def_readwrite("name", &ModuleInfo::name)
            .def_readwrite("soname", &ModuleInfo::soname)
            .def_readwrite("version", &ModuleInfo::version)
@@ -69,6 +70,8 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def("Lock", &ModuleStore::Lock)
            .def("Size", &ModuleStore::Size)
            .def("Dump", &ModuleStore::Dump)
+           .def("Help", &ModuleStore::Help)
+           .def("KeyFromID", &ModuleStore::KeyFromID)
            .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
            .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_value_policy<manage_new_object>())
            .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_value_policy<manage_new_object>());
@@ -78,7 +81,9 @@ BOOST_PYTHON_MODULE(bpmodule_core)
 
     //class_<ModuleBase, boost::noncopyable>("ModuleBase", init<ModuleStore *, const OptionMap &>())
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
-           .def("HasOption", &ModuleBase::HasOption);
+           .def("HasOption", &ModuleBase::HasOption)
+           .def("Dump", &ModuleBase::Dump)
+           .def("Help", &ModuleBase::Help);
 
     class_<Test_Base, bases<ModuleBase>, boost::noncopyable>("Test_Base", no_init)
            .def("RunTest", &Test_Base::RunTest);

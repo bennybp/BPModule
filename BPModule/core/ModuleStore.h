@@ -4,9 +4,11 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
-#include <vector>
 #include <atomic>
 #include <utility>
+
+#include <iostream>
+#include <fstream>
 
 #include "BPModule/core/ModuleInfo.h"
 
@@ -41,7 +43,6 @@ public:
           delete mbptr;
           throw std::runtime_error("Unable to cast pointer");
       }
-      //return std::unique_ptr<T>(dptr);
       return dptr;
   }
 
@@ -55,11 +56,17 @@ public:
   void Lock(void);
   ModuleInfo ModuleInfoFromID(long id) const;
   ModuleInfo ModuleInfoFromKey(const std::string & key) const;
+  std::string KeyFromID(long id) const;
+  std::ostream & GetOutput(void) const;
+  void Help(const std::string & key) const;
 
 private:
   typedef std::unordered_map<std::string, std::pair<ModuleInfo, ModuleGeneratorFunc>> StoreType;
   typedef std::unordered_map<std::string, void *> HandleMap; 
   typedef std::unordered_map<long, std::string> IDMap; 
+
+  std::ostream * out_;
+  std::unique_ptr<std::fstream> fout_;
 
   std::atomic<long> curid_;
   StoreType store_;
