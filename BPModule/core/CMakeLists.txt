@@ -11,7 +11,7 @@ set(CORE_FILES
             ModuleBase.cpp
             ModuleStore.cpp
             Core_python.cpp
-            base/Test_Base.cpp
+            Test_Base.cpp
             )
 
 

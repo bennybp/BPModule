@@ -5,34 +5,18 @@
 #include <unordered_map>
 #include <string>
 #include <vector>
+#include <atomic>
+#include <utility>
 
-#include "BPModule/core/OptionMap.h"
+#include "BPModule/core/ModuleInfo.h"
 
 namespace bpmodule {
 
 
 class ModuleBase;
 class ModuleStore;
-enum class ModuleClass;
-enum class ModuleType;
 
-typedef std::function<ModuleBase *(ModuleStore *, const OptionMap &)> ModuleGeneratorFunc;
-
-struct ModuleInfo
-{
-  std::string name;
-  std::string soname;
-  std::string version;
-  std::vector<std::string> authors;
-  std::string description;
-  std::vector<std::string> refs;
-  OptionMap options;
-
-  ModuleGeneratorFunc createfunc;
-  std::string sopath;
-};
-
-typedef std::unique_ptr<ModuleBase> ModuleBaseUPtr;
+typedef std::function<ModuleBase *(long, ModuleStore *, const OptionMap &)> ModuleGeneratorFunc;
 
 
 class ModuleStore
@@ -42,12 +26,14 @@ public:
   void Dump(void) const;
 
   template<typename T>
-  T * GetModule(const std::string & id)
+  T * GetModule(const std::string & key)
   {
       // \todo change away from at()?
-      ModuleInfo minfo = store_.at(id);
+      auto minfo = store_.at(key);
 
-      ModuleBase * mbptr = (minfo.createfunc(this, minfo.options)); // must remember to delete it
+      ModuleBase * mbptr = (minfo.second(curid_, this, minfo.first.options)); // must remember to delete it
+      idmap_[curid_] = key;
+      curid_++;
 
       T * dptr = dynamic_cast<T *>(mbptr);
       if(dptr == nullptr)
@@ -67,13 +53,18 @@ public:
 
   bool LoadSO(const std::string & key, const std::string & sopath, ModuleInfo minfo);
   void Lock(void);
+  ModuleInfo ModuleInfoFromID(long id) const;
+  ModuleInfo ModuleInfoFromKey(const std::string & key) const;
 
 private:
-  typedef std::unordered_map<std::string, ModuleInfo> StoreType;
+  typedef std::unordered_map<std::string, std::pair<ModuleInfo, ModuleGeneratorFunc>> StoreType;
   typedef std::unordered_map<std::string, void *> HandleMap; 
+  typedef std::unordered_map<long, std::string> IDMap; 
 
+  std::atomic<long> curid_;
   StoreType store_;
   HandleMap handles_;
+  IDMap idmap_;
   bool locked_;
 
   void CloseAll(void);

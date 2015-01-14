@@ -2,10 +2,9 @@
 #define MODULEBASE_H
 
 #include <string>
-#include <memory>
 #include <functional>
 
-#include "BPModule/core/OptionMap.h"
+#include "BPModule/core/ModuleInfo.h" // includes optionmap
 
 namespace bpmodule {
 
@@ -15,7 +14,7 @@ class ModuleStore;
 class ModuleBase
 {
 public:
-  ModuleBase(ModuleStore * mstore, const OptionMap & options);
+  ModuleBase(long id, ModuleStore * mstore, const OptionMap & options);
 
   virtual ~ModuleBase() { }
 
@@ -52,8 +51,10 @@ public:
     options_.Set(key, value);
   }
 
+  ModuleInfo MyInfo(void) const;
+
 protected:
-  const ModuleStore & mstore_;
+  ModuleStore & mstore_;
 
   template<typename T>
   void SetTrait(const std::string & key, const T & value)
@@ -62,11 +63,10 @@ protected:
   }
 
 private:
+  long id_;
   OptionMap traits_;
   OptionMap options_;
 };
-
-typedef std::unique_ptr<ModuleBase> ModuleBaseUPtr;
 
 
 } // close namespace bpmodule

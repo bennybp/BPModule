@@ -3,7 +3,7 @@
 
 
 #include "BPModule/core/ModuleBase.h"
-#include "BPModule/core/base/Test_Base.h"
+#include "BPModule/core/Test_Base.h"
 
 #include <iostream>
 #include <boost/python.hpp>
@@ -61,11 +61,15 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def_readwrite("refs", &ModuleInfo::refs)
            .def_readwrite("options", &ModuleInfo::options);
 
+    // specify the overloads
+    //ModuleInfo (MIFromInt*)(int);  // not needed right now 
+    //ModuleInfo (MIFromKey*)(std::string);   
     class_<ModuleStore, boost::noncopyable>("ModuleStore")
            .def("LoadSO", &ModuleStore::LoadSO)
            .def("Lock", &ModuleStore::Lock)
            .def("Size", &ModuleStore::Size)
            .def("Dump", &ModuleStore::Dump)
+           .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
            .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_value_policy<manage_new_object>())
            .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_value_policy<manage_new_object>());
 

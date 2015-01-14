@@ -24,29 +24,30 @@ void ModuleStore::Dump(void) const
     std::cout << "Size: " << store_.size() << "\n";
     for(const auto & it : store_)
     {
+        auto & minfo = it.second.first;   // it.second = a pair<ModuleInfo, Func>
         std::cout << "---------------------------------\n"
                   << it.first << "\n"
                   << "---------------------------------\n"
-                  << "    Name: " << it.second.name << "\n"
-                  << " Version: " << it.second.version << "\n"
-                  << "    Path: " << it.second.sopath << "\n"
-                  << "    Desc: " << it.second.description << "\n";
-        if(it.second.authors.size() > 0)
+                  << "    Name: " << minfo.name << "\n"
+                  << " Version: " << minfo.version << "\n"
+                  << "    Path: " << minfo.sopath << "\n"
+                  << "    Desc: " << minfo.description << "\n";
+        if(minfo.authors.size() > 0)
         {
-            std::cout << " Authors: " << it.second.authors[0] << "\n";
-            for(size_t i = 1; i < it.second.authors.size(); i++)
-                std::cout << "          " << it.second.authors[i] << "\n";
+            std::cout << " Authors: " << minfo.authors[0] << "\n";
+            for(size_t i = 1; i < minfo.authors.size(); i++)
+                std::cout << "          " << minfo.authors[i] << "\n";
         }
-        if(it.second.refs.size() > 0)
+        if(minfo.refs.size() > 0)
         {
-            std::cout << "    Refs: " << it.second.refs[0] << "\n";
-            for(size_t i = 1; i < it.second.refs.size(); i++)
-                std::cout << "          " << it.second.refs[i] << "\n";
+            std::cout << "    Refs: " << minfo.refs[0] << "\n";
+            for(size_t i = 1; i < minfo.refs.size(); i++)
+                std::cout << "          " << minfo.refs[i] << "\n";
         }
-        std::cout << " OPTIONS: " << it.second.options.Size() << "\n";
-        auto opmap = it.second.options.Dump();
-        for(auto & it : opmap)
-            std::cout << "    " << it.first << "   =   " << it.second << "\n";
+        std::cout << " OPTIONS: " << minfo.options.Size() << "\n";
+        auto opmap = minfo.options.Dump();
+        for(auto & it2 : opmap)
+            std::cout << "    " << it2.first << "   =   " << it2.second << "\n";
         std::cout << "\n\n";
     }
 }
@@ -82,7 +83,7 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
     else
         handle = handles_[sopath];
 
-    typedef ModuleBase * (*getptr)(const std::string &, ModuleStore *, const OptionMap &);
+    typedef ModuleBase * (*getptr)(const std::string &, long, ModuleStore *, const OptionMap &);
 
     getptr fn = reinterpret_cast<getptr>(dlsym(handle, "CreateModule"));
     if((error = dlerror()) != NULL)
@@ -93,16 +94,28 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
         return false;
     }
         
-    minfo.createfunc = std::bind(fn, key, std::placeholders::_1, std::placeholders::_2);
+    ModuleGeneratorFunc createfunc = std::bind(fn, key, std::placeholders::_1,
+                                                       std::placeholders::_2,
+                                                       std::placeholders::_3);
     minfo.sopath = sopath;
 
     // add to store
     //! \todo Check for duplicates
-    store_[key] = minfo;
+    store_[key] = std::pair<ModuleInfo, ModuleGeneratorFunc>(minfo, createfunc);
     if(handles_.count(sopath) == 0)
         handles_[sopath] = handle;
 
     return true;
+}
+
+ModuleInfo ModuleStore::ModuleInfoFromID(long id) const
+{
+    return store_.at(idmap_.at(id)).first;
+}
+
+ModuleInfo ModuleStore::ModuleInfoFromKey(const std::string & key) const
+{
+    return store_.at(key).first;
 }
 
 void ModuleStore::CloseAll(void)
@@ -124,6 +137,7 @@ void ModuleStore::Lock(void)
 ModuleStore::ModuleStore()
 {
     locked_ = false;
+    curid_ = 0;
 }
 
 
