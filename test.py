@@ -10,6 +10,10 @@ sys.path.append("/home/ben/programming/BPModule/python")
 import bpmodule as bp
 
 bpcore = bp.loader.LoadModule("bpmodule_core", "/home/ben/programming/BPModule/build/BPModule/core")
+
+bpcore.SetOut_Stdout()
+
+
 t1 = bp.loader.LoadModule("test1", "/home/ben/programming/BPModule/build/BPModule/modules")
 
 mst = bpcore.ModuleStore()

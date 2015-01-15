@@ -11,6 +11,7 @@
 #include "BPModule/core/Exception.h"
 #include "BPModule/core/ModuleStore.h"
 #include "BPModule/core/ModuleBase.h"
+#include "BPModule/core/Output.h"
 
 
 namespace bpmodule {
@@ -24,18 +25,18 @@ size_t ModuleStore::Size(void) const
 void ModuleStore::Help(const std::string & key) const
 {
     const StoreEntry & se = GetOrThrow(key);
-    se.mi.Help(*out_);
+    se.mi.Help();
 }
 
 void ModuleStore::Info(void) const
 {
-    (*out_) << "Size: " << store_.size() << "\n";
+    bpmodule::Output("Size: %1%\n", store_.size());
     for(const auto & it : store_)
     {
-        (*out_) << "---------------------------------\n"
-                  << it.first << "\n"
-                  << "---------------------------------\n";
-        it.second.mi.Info(*out_);
+        bpmodule::Output("---------------------------------\n");
+        bpmodule::Output("%1%\n", it.first);
+        bpmodule::Output("---------------------------------\n");
+        it.second.mi.Info();
     }
 }
 
@@ -46,7 +47,7 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
 
     if(locked_)
     {
-        (*out_) << "Store is locked. No more loading!\n";
+        bpmodule::Output("Store is locked. No more loading!\n");
         return false;
     }
 
@@ -57,17 +58,17 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
 
     if(handles_.count(sopath) == 0)
     {
-        (*out_) << "Looking to open so file: " << sopath << "\n";
+        bpmodule::Output("Looking to open so file: %1%\n", sopath);
         handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
         // open the module
         if(!handle)
         {
-            (*out_) << "Error - unable to open SO file: " << sopath << "\n";
+            bpmodule::Output("Error - unable to open SO file: %1%\n", sopath);
             error = dlerror();
-            (*out_) << error << "\n";
+            bpmodule::Output("%1%\n", error);
             return false;
         }
-        (*out_) << "Successfully opened " << sopath << "\n";
+        bpmodule::Output("Successfully opened %1%\n", sopath);
     }
     else
         handle = handles_[sopath];
@@ -76,8 +77,8 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
     getptr fn = reinterpret_cast<getptr>(dlsym(handle, "CreateModule"));
     if((error = dlerror()) != NULL)
     {
-        (*out_) << "Error - unable to find CreateModule!\n";
-        (*out_) << error << "\n";
+        bpmodule::Output("Error - unable to find CreateModule!\n");
+        bpmodule::Output("%1%\n", error);
         dlclose(handle);
         return false;
     }
@@ -118,7 +119,7 @@ void ModuleStore::CloseAll(void)
     store_.clear();
     for(auto it : handles_)
     {
-        (*out_) << "Closing " << it.first << "\n";
+        bpmodule::Output("Closing %1%\n", it.first);
         dlclose(it.second);
     }
     handles_.clear();
@@ -133,12 +134,6 @@ ModuleStore::ModuleStore()
 {
     locked_ = false;
     curid_ = 0;
-    out_ = &std::cout;
-}
-
-std::ostream & ModuleStore::GetOutput(void) const
-{
-    return *out_;
 }
 
 const ModuleStore::StoreEntry & ModuleStore::GetOrThrow(const std::string & key) const
@@ -160,7 +155,6 @@ const std::string & ModuleStore::GetOrThrow(long id) const
 
 ModuleStore::~ModuleStore()
 {
-    (*out_) << "MODULESTORE DESTRUCTOR\n";
     CloseAll();
 }
 

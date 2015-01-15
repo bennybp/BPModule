@@ -13,6 +13,7 @@ set(CORE_FILES
             ModuleStore.cpp
             Core_python.cpp
             Test_Base.cpp
+            Output.cpp
             )
 
 

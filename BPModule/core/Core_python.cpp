@@ -1,4 +1,5 @@
 #include "BPModule/core/OptionMap.h"
+#include "BPModule/core/Output.h"
 #include "BPModule/core/ModuleStore.h"
 
 #include "BPModule/core/ModuleBase.h"
@@ -49,8 +50,9 @@ BOOST_PYTHON_MODULE(bpmodule_core)
 {
     register_exception_translator<BPModuleException>(&TranslateException);
 
-//    class_<BPModuleException, boost::noncopyable>("BPModuleException", no_init)
-//        .def("MakeString", &BPModuleException::MakeString);
+    def("SetOut_Stdout", bpmodule::SetOut_Stdout);
+    def("SetOut_Stderr", bpmodule::SetOut_Stderr);
+    def("SetOut_File", bpmodule::SetOut_File);
 
     class_<OptionMap>("OptionMap")
         .def("Set", &OptionMap::Set<int>)

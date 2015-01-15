@@ -5,3 +5,4 @@ def MakeInfo(minfo, bpcore):
 
   mi = bpcore.MakeInfo(minfo, op)
   return mi
+

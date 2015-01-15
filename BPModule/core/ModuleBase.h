@@ -3,7 +3,6 @@
 
 #include <string>
 #include <functional>
-#include <iostream>
 
 #include "BPModule/core/ModuleInfo.h" // includes optionmap
 
@@ -60,7 +59,6 @@ public:
 
 protected:
   ModuleStore & mstore_;
-  std::ostream & out_;
 
   template<typename T>
   void SetTrait(const std::string & key, const T & value)

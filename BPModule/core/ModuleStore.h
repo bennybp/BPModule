@@ -7,9 +7,6 @@
 #include <atomic>
 #include <utility>
 
-#include <iostream>
-#include <fstream>
-
 #include "BPModule/core/ModuleInfo.h"
 
 namespace bpmodule {
@@ -39,7 +36,6 @@ public:
   ModuleInfo ModuleInfoFromKey(const std::string & key) const;
   std::string KeyFromID(long id) const;
 
-  std::ostream & GetOutput(void) const;
   size_t Size(void) const;
   void Help(const std::string & key) const;
   void Info(void) const;
@@ -80,9 +76,6 @@ private:
   typedef std::unordered_map<long, std::string> IDMap; 
   typedef IDMap::value_type IDMapValue;
 
-
-  std::ostream * out_;
-  std::unique_ptr<std::fstream> fout_;
 
   std::atomic<long> curid_;
   StoreMap store_;

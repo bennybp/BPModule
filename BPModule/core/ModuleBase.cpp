@@ -1,10 +1,11 @@
 #include "BPModule/core/ModuleBase.h"
 #include "BPModule/core/ModuleStore.h"
+#include "BPModule/core/Output.h"
 
 namespace bpmodule {
 
 ModuleBase::ModuleBase(long id, ModuleStore * mstore, const OptionMap & options)
-    : mstore_(*mstore), out_(mstore->GetOutput()), id_(id), options_(options)
+    : mstore_(*mstore), id_(id), options_(options)
 {
 }
 
@@ -22,19 +23,19 @@ void ModuleBase::Info(void) const
 {
     ModuleInfo minfo = MyInfo();
     
-    out_ << "---------------------------------\n"
-         << MyKey() << "  [ID " << id_ << "]\n"
-         << "---------------------------------\n";
-    minfo.Info(out_);
+    bpmodule::Output("---------------------------------\n");
+    bpmodule::Output("%1% [ID %2%]\n", MyKey(), id_);
+    bpmodule::Output("---------------------------------\n");
+    minfo.Info();
 }
   
 void ModuleBase::Help(void) const
 {
     ModuleInfo minfo = MyInfo();
-    out_ << "---------------------------------\n"
-         << MyKey() << "  [ID " << id_ << "]\n"
-         << "---------------------------------\n";
-    minfo.Help(out_); 
+    bpmodule::Output("---------------------------------\n");
+    bpmodule::Output("%1% [ID %2%]\n", MyKey(), id_);
+    bpmodule::Output("---------------------------------\n");
+    minfo.Help(); 
 }
 
 
