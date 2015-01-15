@@ -5,6 +5,7 @@
 #include <string>
 
 #include "BPModule/core/Exception.h"
+#include "BPModule/core/Output.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -72,12 +73,16 @@ public:
         return opmap_.count(key);
     }
 
-    std::unordered_map<std::string, std::pair<std::string, std::string>> Info(void) const
+    void Info(void) const
     {
-        std::unordered_map<std::string, std::pair<std::string, std::string>> m;
         for(const auto & it : opmap_)
-            m[it.first] = std::pair<std::string, std::string>(it.second.oph->ToString(), it.second.help);
-        return m;
+            Output("%|16| : %|-22| : %|-|\n", it.first, it.second.oph->ToString(), it.second.help);
+    }
+
+    void Help(void) const
+    {
+        for(const auto & it : opmap_)
+            Output("%|16| : %|-|\n", it.first, it.second.help);
     }
 
     size_t Size(void) const

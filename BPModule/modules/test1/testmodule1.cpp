@@ -3,6 +3,7 @@
 
 #include "BPModule/core/ModuleStore.h"
 #include "BPModule/core/Test_Base.h"
+#include "BPModule/core/Output.h"
 
 using namespace bpmodule;
 
@@ -17,12 +18,13 @@ public:
 
     void RunTest(void)
     {
-        std::cout << "I am TestModule 1. Running tests...\n";
+        Output("This is regular output\n");
+        Warning("This is warning output\n");
+        Error("This is error output\n");
     }
 
     virtual ~TestModule1()
     {
-        std::cout << "I am TestModule 1. Destructing\n";
     }
 
 };

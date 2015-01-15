@@ -24,22 +24,65 @@ size_t ModuleStore::Size(void) const
 
 void ModuleStore::Help(const std::string & key) const
 {
-    const StoreEntry & se = GetOrThrow(key);
-    se.mi.Help();
+    if(Has(key))
+    {
+        const StoreEntry & se = GetOrThrow(key);
+        se.mi.Help();
+    }
+    else
+        Warning("Cannot find module \"%1%\". Not loaded?\n", key);
+}
+
+void ModuleStore::Info(const std::string & key) const
+{
+    if(Has(key))
+    {
+        const StoreEntry & se = GetOrThrow(key);
+        se.mi.Info();
+    }
+    else
+        Warning("Cannot find module \"%1%\". Not loaded?\n", key);
+}
+
+void ModuleStore::Help(void) const
+{
+    Output(Line('*'));
+    for(const auto & it : store_)
+    {
+        Output(Line('-'));
+        Output("KEY: %1%\n", it.first);
+        Output(Line('-'));
+        Help(it.first);
+    }
 }
 
 void ModuleStore::Info(void) const
 {
-    bpmodule::Output("Size: %1%\n", store_.size());
+    Output(Line('*'));
+    Output("Module store: Size: %1%\n", store_.size());
     for(const auto & it : store_)
     {
-        bpmodule::Output("---------------------------------\n");
-        bpmodule::Output("%1%\n", it.first);
-        bpmodule::Output("---------------------------------\n");
-        it.second.mi.Info();
+        Output(Line('-'));
+        Output("KEY: %1%\n", it.first);
+        Output(Line('-'));
+        Info(it.first);
     }
+    Output(Line('*'));
 }
 
+void ModuleStore::Keys(void) const
+{
+    Output(Line('*'));
+    Output("Module store: Size: %1%\n", store_.size());
+    for(const auto & it : store_)
+        Output("%1%\n", it.first);
+    Output(Line('*'));
+}
+
+bool ModuleStore::Has(const std::string & key) const
+{
+    return store_.count(key);
+}
 
 bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, ModuleInfo minfo)
 {
@@ -47,7 +90,7 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
 
     if(locked_)
     {
-        bpmodule::Output("Store is locked. No more loading!\n");
+        Warning("Store is locked. No more loading!\n");
         return false;
     }
 
@@ -58,17 +101,16 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
 
     if(handles_.count(sopath) == 0)
     {
-        bpmodule::Output("Looking to open so file: %1%\n", sopath);
+        Output("Looking to open so file: %1%\n", sopath);
         handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
         // open the module
         if(!handle)
         {
-            bpmodule::Output("Error - unable to open SO file: %1%\n", sopath);
+            Error("Unable to open SO file: %1%\n", sopath);
             error = dlerror();
-            bpmodule::Output("%1%\n", error);
+            Error("%1%\n", error);
             return false;
         }
-        bpmodule::Output("Successfully opened %1%\n", sopath);
     }
     else
         handle = handles_[sopath];
@@ -77,8 +119,8 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
     getptr fn = reinterpret_cast<getptr>(dlsym(handle, "CreateModule"));
     if((error = dlerror()) != NULL)
     {
-        bpmodule::Output("Error - unable to find CreateModule!\n");
-        bpmodule::Output("%1%\n", error);
+        Error("Unable to find CreateModule!\n");
+        Error("%1%\n", error);
         dlclose(handle);
         return false;
     }
@@ -95,6 +137,7 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
     if(handles_.count(sopath) == 0)
         handles_.insert(HandleMapValue(sopath, handle));
 
+    Success("Successfully opened %1%\n", sopath);
     return true;
 }
 
@@ -119,7 +162,7 @@ void ModuleStore::CloseAll(void)
     store_.clear();
     for(auto it : handles_)
     {
-        bpmodule::Output("Closing %1%\n", it.first);
+        Output("Closing %1%\n", it.first);
         dlclose(it.second);
     }
     handles_.clear();

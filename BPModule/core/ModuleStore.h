@@ -37,8 +37,13 @@ public:
   std::string KeyFromID(long id) const;
 
   size_t Size(void) const;
+
+  bool Has(const std::string & key) const;
   void Help(const std::string & key) const;
+  void Info(const std::string & key) const;
+  void Help(void) const;
   void Info(void) const;
+  void Keys(void) const;
 
 
   template<typename T>

@@ -12,6 +12,8 @@ import bpmodule as bp
 bpcore = bp.loader.LoadModule("bpmodule_core", "/home/ben/programming/BPModule/build/BPModule/core")
 
 bpcore.SetOut_Stdout()
+#bpcore.SetOut_File("test.out")
+bpcore.SetColor(True)
 
 
 t1 = bp.loader.LoadModule("test1", "/home/ben/programming/BPModule/build/BPModule/modules")
@@ -30,10 +32,16 @@ for key,value in t1.modinfo.minfo.items():
   #mst.Dump()
 
 b1 = mst.GetModule_Test("TESTMOD1")
-#b1.Help()
+b1.Help()
+b1.Info()
+b1.RunTest()
 
 try:
-  mst.Help("TESTMOD1")
+  mst.Help("TESTMOD18")
+  mst.Info("TESTMOD1")
+  mst.Info()
+  mst.Help()
+  mst.Keys()
 
 except RuntimeError as e:
   print(e)

@@ -42,7 +42,7 @@ ModuleInfo MakeInfo(const boost::python::dict dictionary, const OptionMap & opma
 // the main exception translator
 void TranslateException(const BPModuleException & ex)
 {
-    PyErr_SetString(PyExc_RuntimeError, ex.MakeString().c_str());
+    PyErr_SetString(PyExc_RuntimeError, bpmodule::ExceptionString(ex).c_str());
 }
 
 
@@ -51,8 +51,8 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     register_exception_translator<BPModuleException>(&TranslateException);
 
     def("SetOut_Stdout", bpmodule::SetOut_Stdout);
-    def("SetOut_Stderr", bpmodule::SetOut_Stderr);
     def("SetOut_File", bpmodule::SetOut_File);
+    def("SetColor", bpmodule::SetColor);
 
     class_<OptionMap>("OptionMap")
         .def("Set", &OptionMap::Set<int>)
@@ -75,14 +75,20 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def_readwrite("options", &ModuleInfo::options);
 
     // specify the overloads
-    //ModuleInfo (MIFromInt*)(int);  // not needed right now 
-    //ModuleInfo (MIFromKey*)(std::string);   
+    void (ModuleStore::*Help1)(const std::string &) const = &ModuleStore::Help;
+    void (ModuleStore::*HelpAll)(void) const = &ModuleStore::Help;
+    void (ModuleStore::*Info1)(const std::string &) const = &ModuleStore::Info;
+    void (ModuleStore::*InfoAll)(void) const = &ModuleStore::Info;
     class_<ModuleStore, boost::noncopyable>("ModuleStore")
            .def("LoadSO", &ModuleStore::LoadSO)
            .def("Lock", &ModuleStore::Lock)
            .def("Size", &ModuleStore::Size)
-           .def("Info", &ModuleStore::Info)
-           .def("Help", &ModuleStore::Help)
+           .def("Has", &ModuleStore::Has)
+           .def("Info", Info1)
+           .def("Info", InfoAll)
+           .def("Help", Help1)
+           .def("Help", HelpAll)
+           .def("Keys", &ModuleStore::Keys)
            .def("KeyFromID", &ModuleStore::KeyFromID)
            .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
            .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_value_policy<manage_new_object>())

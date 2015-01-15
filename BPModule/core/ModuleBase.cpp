@@ -23,18 +23,18 @@ void ModuleBase::Info(void) const
 {
     ModuleInfo minfo = MyInfo();
     
-    bpmodule::Output("---------------------------------\n");
-    bpmodule::Output("%1% [ID %2%]\n", MyKey(), id_);
-    bpmodule::Output("---------------------------------\n");
+    Output(Line('-'));
+    Output("KEY: %1% [ID %2%]\n", MyKey(), id_);
+    Output(Line('-'));
     minfo.Info();
 }
   
 void ModuleBase::Help(void) const
 {
     ModuleInfo minfo = MyInfo();
-    bpmodule::Output("---------------------------------\n");
-    bpmodule::Output("%1% [ID %2%]\n", MyKey(), id_);
-    bpmodule::Output("---------------------------------\n");
+    Output(Line('-'));
+    Output("KEY: %1% [ID %2%]\n", MyKey(), id_);
+    Output(Line('-'));
     minfo.Help(); 
 }
 

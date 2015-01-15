@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-#include <sstream>
+#include <fstream>
 #include <vector>
 #include <string>
 #include <utility>
@@ -19,20 +19,68 @@ public:
     typedef std::vector<ExceptionInfoPair> ExceptionInfo;
     virtual ExceptionInfo GetInfo(void) const = 0;
 
-    std::string MakeString(void) const
-    {
-        ExceptionInfo ex(GetInfo());
-        std::stringstream ss;
-        ss << what() << "\n";
-        for(auto & it : ex)
-        {
-            if(it.second.length() > 0)
-                ss << it.first << " : " << it.second << "\n";
-        }
-
-        return ss.str();
-    }
+    virtual ~BPModuleException() { };
 };
+
+
+class BPOutputException : public BPModuleException
+{
+public:
+    enum class Type
+    {
+        NullPtr,
+        BadFile
+    };
+
+    BPOutputException(std::string filepath, const std::ofstream & of)
+                : type_(Type::BadFile),
+                  filepath(std::move(filepath)),
+                  isopen_(of.is_open()), 
+                  badbit_(of.bad()), 
+                  eofbit_(of.eof()),
+                  failbit_(of.fail())
+    {
+    }
+
+    BPOutputException() // nullptr
+                : type_(Type::NullPtr)
+    {
+    }
+
+    const char * what(void) const noexcept
+    {
+        switch(type_)
+        {
+            case Type::BadFile:
+                return "Bad file";
+            default:
+                return "UNKNOWN";
+        }
+    }
+
+    virtual ExceptionInfo GetInfo(void) const
+    {
+        if(type_ == Type::BadFile)
+        {
+            ExceptionInfo ex(5);
+            ex[0] = ExceptionInfoPair("File", filepath);
+            ex[1] = ExceptionInfoPair("IsOpen", isopen_ ? "1" : "0");
+            ex[2] = ExceptionInfoPair("Badbit", badbit_ ? "1" : "0");
+            ex[3] = ExceptionInfoPair("EOFbit", eofbit_ ? "1" : "0");
+            ex[4] = ExceptionInfoPair("Failbit", failbit_ ? "1" : "0");
+            return ex;
+        }
+        else
+            return ExceptionInfo();
+    }
+
+private:
+    Type type_;
+    std::string filepath;
+    bool isopen_, badbit_, eofbit_, failbit_;
+ 
+};
+
 
 
 class MapException : public BPModuleException
