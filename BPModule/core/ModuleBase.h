@@ -54,8 +54,8 @@ public:
   std::string MyKey(void) const;
   ModuleInfo MyInfo(void) const;
 
-  void Info(void) const;
-  void Help(void) const;
+  void PrintInfo(void) const;
+  void PrintHelp(void) const;
 
 protected:
   ModuleStore & mstore_;

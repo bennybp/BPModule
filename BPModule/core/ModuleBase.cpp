@@ -19,23 +19,23 @@ ModuleInfo ModuleBase::MyInfo(void) const
     return mstore_.ModuleInfoFromID(id_);
 }
  
-void ModuleBase::Info(void) const
+void ModuleBase::PrintInfo(void) const
 {
     ModuleInfo minfo = MyInfo();
     
     Output(Line('-'));
     Output("KEY: %1% [ID %2%]\n", MyKey(), id_);
     Output(Line('-'));
-    minfo.Info();
+    minfo.PrintInfo();
 }
   
-void ModuleBase::Help(void) const
+void ModuleBase::PrintHelp(void) const
 {
     ModuleInfo minfo = MyInfo();
     Output(Line('-'));
     Output("KEY: %1% [ID %2%]\n", MyKey(), id_);
     Output(Line('-'));
-    minfo.Help(); 
+    minfo.PrintHelp(); 
 }
 
 

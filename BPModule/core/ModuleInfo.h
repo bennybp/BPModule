@@ -21,8 +21,8 @@ struct ModuleInfo
 
   std::string sopath;
 
-  void Info(void) const;
-  void Help(void) const;
+  void PrintInfo(void) const;
+  void PrintHelp(void) const;
 };
 
 

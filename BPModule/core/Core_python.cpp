@@ -22,6 +22,13 @@ static std::vector<std::string> ConvertStringList(const boost::python::list & li
     return ret;
 }
 
+static boost::python::list ConvertListString(const std::vector<std::string> & v)
+{
+    list result;
+    for(auto & it : v)
+        result.append(it);    
+    return result;
+}
 
 // opmap is passed in because it's easier to do in python
 // and you don't have to pass in the type that way
@@ -46,9 +53,21 @@ void TranslateException(const BPModuleException & ex)
 }
 
 
+// some wrappers
+boost::python::list Wrap_ModuleStore_Keys(const ModuleStore * m)
+{
+    return ConvertListString(m->Keys());
+}
+
+
 BOOST_PYTHON_MODULE(bpmodule_core)
 {
     register_exception_translator<BPModuleException>(&TranslateException);
+
+    // for vector of strings
+    //class_<std::vector<std::string>>("StringVec")
+    //    .def(vector_indexing_suite<std::vector<std::string>>());
+
 
     def("SetOut_Stdout", bpmodule::SetOut_Stdout);
     def("SetOut_File", bpmodule::SetOut_File);
@@ -61,11 +80,11 @@ BOOST_PYTHON_MODULE(bpmodule_core)
         .def("Get", &OptionMap::GetString)
         .def("Has", &OptionMap::Has)
         .def("Size", &OptionMap::Size)
-        .def("Info", &OptionMap::Info);
+        .def("PrintInfo", &OptionMap::PrintInfo);
 
     class_<ModuleInfo>("ModuleInfo")
-           .def("Info", &ModuleInfo::Info)
-           .def("Help", &ModuleInfo::Help)
+           .def("PrintInfo", &ModuleInfo::PrintInfo)
+           .def("PrintHelp", &ModuleInfo::PrintHelp)
            .def_readwrite("name", &ModuleInfo::name)
            .def_readwrite("soname", &ModuleInfo::soname)
            .def_readwrite("version", &ModuleInfo::version)
@@ -75,20 +94,21 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def_readwrite("options", &ModuleInfo::options);
 
     // specify the overloads
-    void (ModuleStore::*Help1)(const std::string &) const = &ModuleStore::Help;
-    void (ModuleStore::*HelpAll)(void) const = &ModuleStore::Help;
-    void (ModuleStore::*Info1)(const std::string &) const = &ModuleStore::Info;
-    void (ModuleStore::*InfoAll)(void) const = &ModuleStore::Info;
+    void (ModuleStore::*PrintHelp1)(const std::string &) const = &ModuleStore::PrintHelp;
+    void (ModuleStore::*PrintHelpAll)(void) const = &ModuleStore::PrintHelp;
+    void (ModuleStore::*PrintInfo1)(const std::string &) const = &ModuleStore::PrintInfo;
+    void (ModuleStore::*PrintInfoAll)(void) const = &ModuleStore::PrintInfo;
     class_<ModuleStore, boost::noncopyable>("ModuleStore")
            .def("LoadSO", &ModuleStore::LoadSO)
            .def("Lock", &ModuleStore::Lock)
            .def("Size", &ModuleStore::Size)
            .def("Has", &ModuleStore::Has)
-           .def("Info", Info1)
-           .def("Info", InfoAll)
-           .def("Help", Help1)
-           .def("Help", HelpAll)
-           .def("Keys", &ModuleStore::Keys)
+           .def("Keys", Wrap_ModuleStore_Keys)
+           .def("PrintInfo", PrintInfo1)
+           .def("PrintInfo", PrintInfoAll)
+           .def("PrintHelp", PrintHelp1)
+           .def("PrintHelp", PrintHelpAll)
+           .def("PrintKeys", &ModuleStore::PrintKeys)
            .def("KeyFromID", &ModuleStore::KeyFromID)
            .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
            .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_value_policy<manage_new_object>())
@@ -100,8 +120,8 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     //class_<ModuleBase, boost::noncopyable>("ModuleBase", init<ModuleStore *, const OptionMap &>())
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
            .def("HasOption", &ModuleBase::HasOption)
-           .def("Info", &ModuleBase::Info)
-           .def("Help", &ModuleBase::Help);
+           .def("PrintInfo", &ModuleBase::PrintInfo)
+           .def("PrintHelp", &ModuleBase::PrintHelp);
 
     class_<Test_Base, bases<ModuleBase>, boost::noncopyable>("Test_Base", no_init)
            .def("RunTest", &Test_Base::RunTest);

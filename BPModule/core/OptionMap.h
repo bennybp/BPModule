@@ -73,13 +73,13 @@ public:
         return opmap_.count(key);
     }
 
-    void Info(void) const
+    void PrintInfo(void) const
     {
         for(const auto & it : opmap_)
             Output("%|16| : %|-22| : %|-|\n", it.first, it.second.oph->ToString(), it.second.help);
     }
 
-    void Help(void) const
+    void PrintHelp(void) const
     {
         for(const auto & it : opmap_)
             Output("%|16| : %|-|\n", it.first, it.second.help);

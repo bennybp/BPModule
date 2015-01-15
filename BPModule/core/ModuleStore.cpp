@@ -22,29 +22,29 @@ size_t ModuleStore::Size(void) const
     return store_.size();
 }
 
-void ModuleStore::Help(const std::string & key) const
+void ModuleStore::PrintHelp(const std::string & key) const
 {
     if(Has(key))
     {
         const StoreEntry & se = GetOrThrow(key);
-        se.mi.Help();
+        se.mi.PrintHelp();
     }
     else
         Warning("Cannot find module \"%1%\". Not loaded?\n", key);
 }
 
-void ModuleStore::Info(const std::string & key) const
+void ModuleStore::PrintInfo(const std::string & key) const
 {
     if(Has(key))
     {
         const StoreEntry & se = GetOrThrow(key);
-        se.mi.Info();
+        se.mi.PrintInfo();
     }
     else
         Warning("Cannot find module \"%1%\". Not loaded?\n", key);
 }
 
-void ModuleStore::Help(void) const
+void ModuleStore::PrintHelp(void) const
 {
     Output(Line('*'));
     for(const auto & it : store_)
@@ -52,11 +52,11 @@ void ModuleStore::Help(void) const
         Output(Line('-'));
         Output("KEY: %1%\n", it.first);
         Output(Line('-'));
-        Help(it.first);
+        PrintHelp(it.first);
     }
 }
 
-void ModuleStore::Info(void) const
+void ModuleStore::PrintInfo(void) const
 {
     Output(Line('*'));
     Output("Module store: Size: %1%\n", store_.size());
@@ -65,18 +65,27 @@ void ModuleStore::Info(void) const
         Output(Line('-'));
         Output("KEY: %1%\n", it.first);
         Output(Line('-'));
-        Info(it.first);
+        PrintInfo(it.first);
     }
     Output(Line('*'));
 }
 
-void ModuleStore::Keys(void) const
+void ModuleStore::PrintKeys(void) const
 {
     Output(Line('*'));
     Output("Module store: Size: %1%\n", store_.size());
     for(const auto & it : store_)
         Output("%1%\n", it.first);
     Output(Line('*'));
+}
+
+std::vector<std::string> ModuleStore::Keys(void) const
+{
+    std::vector<std::string> vec;
+    vec.reserve(store_.size());
+    for(const auto & it : store_)
+        vec.push_back(it.first);
+    return vec;
 }
 
 bool ModuleStore::Has(const std::string & key) const

@@ -32,16 +32,16 @@ for key,value in t1.modinfo.minfo.items():
   #mst.Dump()
 
 b1 = mst.GetModule_Test("TESTMOD1")
-b1.Help()
-b1.Info()
+b1.PrintHelp()
+b1.PrintInfo()
 b1.RunTest()
 
 try:
-  mst.Help("TESTMOD18")
-  mst.Info("TESTMOD1")
-  mst.Info()
-  mst.Help()
-  mst.Keys()
+  mst.PrintHelp("TESTMOD18")
+  mst.PrintInfo("TESTMOD1")
+  mst.PrintInfo()
+  mst.PrintHelp()
+  mst.PrintKeys()
 
 except RuntimeError as e:
   print(e)

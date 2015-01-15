@@ -5,17 +5,17 @@
 namespace bpmodule {
 
 
-void ModuleInfo::Help(void) const
+void ModuleInfo::PrintHelp(void) const
 {
         Output("%|12| : %|-2|\n", "Name", name);
         Output("%|12| : %|-2|\n", "Description", description);
         Output("%|12| : %|-2|\n", "Options", options.Size());
         Output(" OPTIONS: %1%\n", options.Size());
-        options.Help();
+        options.PrintHelp();
         Output("\n\n");
 }
 
-void ModuleInfo::Info(void) const
+void ModuleInfo::PrintInfo(void) const
 {
         Output("%|12| : %|-2|\n", "Name", name);
         Output("%|12| : %|-2|\n", "Version", version);
@@ -35,7 +35,7 @@ void ModuleInfo::Info(void) const
                 Output("%|12|   %|-2|\n", "", refs[i]);
         }
         Output("%|12| : %|-2|\n", "Options", options.Size());
-        options.Info();
+        options.PrintInfo();
         Output("\n\n");
 }
 
