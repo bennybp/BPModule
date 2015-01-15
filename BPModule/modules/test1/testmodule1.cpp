@@ -35,7 +35,7 @@ ModuleBase * CreateModule(const std::string name, long id, ModuleStore * mstore,
     if(name == "TESTMOD1")
         return new TestModule1(id, mstore, options);
     else
-        throw std::runtime_error("No module by that name");
+        throw ModuleException(ModuleException::Type::BadKey, __FILE__, name);
 }
 
 

@@ -41,24 +41,22 @@ public:
     return options_.Get<T>(key);
   }
 
-  bool HasOption(const std::string & key) const
-  {
-    return options_.Has(key);
-  }
-
   template<typename T>
   void SetOption(const std::string & key, const T & value)
   {
     options_.Set(key, value);
   }
 
-  void Dump(void) const;
+  bool HasOption(const std::string & key) const
+  {
+    return options_.Has(key);
+  }
 
   std::string MyKey(void) const;
-
-  void Help(void) const;
-
   ModuleInfo MyInfo(void) const;
+
+  void Info(void) const;
+  void Help(void) const;
 
 protected:
   ModuleStore & mstore_;

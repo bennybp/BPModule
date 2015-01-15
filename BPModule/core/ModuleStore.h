@@ -24,27 +24,7 @@ typedef std::function<ModuleBase *(long, ModuleStore *, const OptionMap &)> Modu
 class ModuleStore
 {
 public:
-  size_t Size(void) const;
-  void Dump(void) const;
 
-  template<typename T>
-  T * GetModule(const std::string & key)
-  {
-      // \todo change away from at()?
-      auto minfo = store_.at(key);
-
-      ModuleBase * mbptr = (minfo.second(curid_, this, minfo.first.options)); // must remember to delete it
-      idmap_[curid_] = key;
-      curid_++;
-
-      T * dptr = dynamic_cast<T *>(mbptr);
-      if(dptr == nullptr)
-      {
-          delete mbptr;
-          throw std::runtime_error("Unable to cast pointer");
-      }
-      return dptr;
-  }
 
   ModuleStore();
   ~ModuleStore();
@@ -54,25 +34,64 @@ public:
 
   bool LoadSO(const std::string & key, const std::string & sopath, ModuleInfo minfo);
   void Lock(void);
+
   ModuleInfo ModuleInfoFromID(long id) const;
   ModuleInfo ModuleInfoFromKey(const std::string & key) const;
   std::string KeyFromID(long id) const;
+
   std::ostream & GetOutput(void) const;
+  size_t Size(void) const;
   void Help(const std::string & key) const;
+  void Info(void) const;
+
+
+  template<typename T>
+  T * GetModule(const std::string & key)
+  {
+      const StoreEntry & se = GetOrThrow(key);
+
+      ModuleBase * mbptr = se.func(curid_, this, se.mi.options); // must remember to delete it
+      idmap_[curid_] = key;
+      curid_++;
+
+      T * dptr = dynamic_cast<T *>(mbptr);
+      if(dptr == nullptr)
+      {
+          delete mbptr;
+            throw MapException("ModuleStore", key, typeid(mbptr).name(), typeid(T *).name());
+      }
+      return dptr;
+  }
 
 private:
-  typedef std::unordered_map<std::string, std::pair<ModuleInfo, ModuleGeneratorFunc>> StoreType;
+
+  struct StoreEntry
+  {
+    ModuleInfo mi;
+    ModuleGeneratorFunc func;
+  };
+
+  typedef std::unordered_map<std::string, StoreEntry> StoreMap;
+  typedef StoreMap::value_type StoreMapValue;
+
   typedef std::unordered_map<std::string, void *> HandleMap; 
+  typedef HandleMap::value_type HandleMapValue;
+
   typedef std::unordered_map<long, std::string> IDMap; 
+  typedef IDMap::value_type IDMapValue;
+
 
   std::ostream * out_;
   std::unique_ptr<std::fstream> fout_;
 
   std::atomic<long> curid_;
-  StoreType store_;
+  StoreMap store_;
   HandleMap handles_;
   IDMap idmap_;
   bool locked_;
+
+  const StoreEntry & GetOrThrow(const std::string & key) const;
+  const std::string & GetOrThrow(long id) const;
 
   void CloseAll(void);
 };

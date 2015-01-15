@@ -1,7 +1,6 @@
 #include "BPModule/core/OptionMap.h"
 #include "BPModule/core/ModuleStore.h"
 
-
 #include "BPModule/core/ModuleBase.h"
 #include "BPModule/core/Test_Base.h"
 
@@ -39,9 +38,20 @@ ModuleInfo MakeInfo(const boost::python::dict dictionary, const OptionMap & opma
     return ret;
 }
 
+// the main exception translator
+void TranslateException(const BPModuleException & ex)
+{
+    PyErr_SetString(PyExc_RuntimeError, ex.MakeString().c_str());
+}
+
 
 BOOST_PYTHON_MODULE(bpmodule_core)
 {
+    register_exception_translator<BPModuleException>(&TranslateException);
+
+//    class_<BPModuleException, boost::noncopyable>("BPModuleException", no_init)
+//        .def("MakeString", &BPModuleException::MakeString);
+
     class_<OptionMap>("OptionMap")
         .def("Set", &OptionMap::Set<int>)
         .def("Set", &OptionMap::Set<double>)
@@ -49,10 +59,10 @@ BOOST_PYTHON_MODULE(bpmodule_core)
         .def("Get", &OptionMap::GetString)
         .def("Has", &OptionMap::Has)
         .def("Size", &OptionMap::Size)
-        .def("Dump", &OptionMap::Dump);
+        .def("Info", &OptionMap::Info);
 
     class_<ModuleInfo>("ModuleInfo")
-           .def("Dump", &ModuleInfo::Dump)
+           .def("Info", &ModuleInfo::Info)
            .def("Help", &ModuleInfo::Help)
            .def_readwrite("name", &ModuleInfo::name)
            .def_readwrite("soname", &ModuleInfo::soname)
@@ -69,7 +79,7 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def("LoadSO", &ModuleStore::LoadSO)
            .def("Lock", &ModuleStore::Lock)
            .def("Size", &ModuleStore::Size)
-           .def("Dump", &ModuleStore::Dump)
+           .def("Info", &ModuleStore::Info)
            .def("Help", &ModuleStore::Help)
            .def("KeyFromID", &ModuleStore::KeyFromID)
            .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
@@ -82,11 +92,12 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     //class_<ModuleBase, boost::noncopyable>("ModuleBase", init<ModuleStore *, const OptionMap &>())
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
            .def("HasOption", &ModuleBase::HasOption)
-           .def("Dump", &ModuleBase::Dump)
+           .def("Info", &ModuleBase::Info)
            .def("Help", &ModuleBase::Help);
 
     class_<Test_Base, bases<ModuleBase>, boost::noncopyable>("Test_Base", no_init)
            .def("RunTest", &Test_Base::RunTest);
+
 }
 
 

@@ -22,7 +22,7 @@ struct ModuleInfo
 
   std::string sopath;
 
-  void Dump(std::ostream & out) const;
+  void Info(std::ostream & out) const;
   void Help(std::ostream & out) const;
 };
 

@@ -4,9 +4,11 @@
 #include <iterator>
 #include <sstream>
 #include <algorithm>
+#include <boost/lexical_cast.hpp>
 
 #include <dlfcn.h>
 
+#include "BPModule/core/Exception.h"
 #include "BPModule/core/ModuleStore.h"
 #include "BPModule/core/ModuleBase.h"
 
@@ -19,22 +21,29 @@ size_t ModuleStore::Size(void) const
     return store_.size();
 }
 
-void ModuleStore::Dump(void) const
+void ModuleStore::Help(const std::string & key) const
+{
+    const StoreEntry & se = GetOrThrow(key);
+    se.mi.Help(*out_);
+}
+
+void ModuleStore::Info(void) const
 {
     (*out_) << "Size: " << store_.size() << "\n";
     for(const auto & it : store_)
     {
-        auto & minfo = it.second.first;   // it.second = a pair<ModuleInfo, Func>
         (*out_) << "---------------------------------\n"
                   << it.first << "\n"
                   << "---------------------------------\n";
-        minfo.Dump(*out_);
+        it.second.mi.Info(*out_);
     }
 }
 
 
 bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, ModuleInfo minfo)
 {
+    typedef ModuleBase * (*getptr)(const std::string &, long, ModuleStore *, const OptionMap &);
+
     if(locked_)
     {
         (*out_) << "Store is locked. No more loading!\n";
@@ -63,7 +72,6 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
     else
         handle = handles_[sopath];
 
-    typedef ModuleBase * (*getptr)(const std::string &, long, ModuleStore *, const OptionMap &);
 
     getptr fn = reinterpret_cast<getptr>(dlsym(handle, "CreateModule"));
     if((error = dlerror()) != NULL)
@@ -81,26 +89,28 @@ bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, Mo
 
     // add to store
     //! \todo Check for duplicates
-    store_[key] = std::pair<ModuleInfo, ModuleGeneratorFunc>(minfo, createfunc);
+    store_.insert(StoreMapValue(key, StoreEntry({minfo, createfunc})));
+
     if(handles_.count(sopath) == 0)
-        handles_[sopath] = handle;
+        handles_.insert(HandleMapValue(sopath, handle));
 
     return true;
 }
 
 ModuleInfo ModuleStore::ModuleInfoFromID(long id) const
 {
-    return store_.at(idmap_.at(id)).first;
+    const std::string & key = GetOrThrow(id);
+    return GetOrThrow(key).mi;
 }
 
 ModuleInfo ModuleStore::ModuleInfoFromKey(const std::string & key) const
 {
-    return store_.at(key).first;
+    return GetOrThrow(key).mi;
 }
   
 std::string ModuleStore::KeyFromID(long id) const
 {
-    return idmap_.at(id);
+    return GetOrThrow(id);
 }
 
 void ModuleStore::CloseAll(void)
@@ -131,9 +141,20 @@ std::ostream & ModuleStore::GetOutput(void) const
     return *out_;
 }
 
-void ModuleStore::Help(const std::string & key) const
+const ModuleStore::StoreEntry & ModuleStore::GetOrThrow(const std::string & key) const
 {
-    store_.at(key).first.Help(*out_);
+    if(store_.count(key))
+        return store_.at(key);
+    else
+        throw MapException("ModuleStore::StoreMap", key);
+}
+
+const std::string & ModuleStore::GetOrThrow(long id) const
+{
+    if(idmap_.count(id))
+        return idmap_.at(id);
+    else
+        throw MapException("ModuleStore::IDMap", boost::lexical_cast<std::string>(id));
 }
 
 

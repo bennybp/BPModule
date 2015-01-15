@@ -10,13 +10,13 @@ void ModuleInfo::Help(std::ostream & out) const
         out << "    Name: " << name << "\n"
             << "    Desc: " << description << "\n"
             << " OPTIONS: " << options.Size() << "\n";
-        auto opmap = options.Dump();
+        auto opmap = options.Info();
         for(auto & it2 : opmap)
             out << "    " << it2.first << "   :   " << it2.second.second << "\n";
         out << "\n\n";
 }
 
-void ModuleInfo::Dump(std::ostream & out) const
+void ModuleInfo::Info(std::ostream & out) const
 {
         out << "    Name: " << name << "\n"
             << " Version: " << version << "\n"
@@ -35,7 +35,7 @@ void ModuleInfo::Dump(std::ostream & out) const
                 out << "          " << refs[i] << "\n";
         }
         out << " OPTIONS: " << options.Size() << "\n";
-        auto opmap = options.Dump();
+        auto opmap = options.Info();
         for(auto & it2 : opmap)
             out << "    " << it2.first << "   =   " << it2.second.first << "\n";
         out << "\n\n";

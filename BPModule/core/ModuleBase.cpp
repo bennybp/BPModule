@@ -18,14 +18,14 @@ ModuleInfo ModuleBase::MyInfo(void) const
     return mstore_.ModuleInfoFromID(id_);
 }
  
-void ModuleBase::Dump(void) const
+void ModuleBase::Info(void) const
 {
     ModuleInfo minfo = MyInfo();
     
     out_ << "---------------------------------\n"
          << MyKey() << "  [ID " << id_ << "]\n"
          << "---------------------------------\n";
-    minfo.Dump(out_);
+    minfo.Info(out_);
 }
   
 void ModuleBase::Help(void) const
