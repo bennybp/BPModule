@@ -9,11 +9,12 @@ find_package(PythonLibs REQUIRED)
 
 set(CORE_FILES
             ModuleInfo.cpp
-            ModuleBase.cpp
             ModuleStore.cpp
             Core_python.cpp
-            Test_Base.cpp
             Output.cpp
+            OptionMap.cpp
+            ModuleBase.cpp
+            Test_Base.cpp
             )
 
 

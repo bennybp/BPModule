@@ -56,7 +56,7 @@ void TranslateException(const BPModuleException & ex)
 // some wrappers
 boost::python::list Wrap_ModuleStore_Keys(const ModuleStore * m)
 {
-    return ConvertListString(m->Keys());
+    return ConvertListString(m->GetKeys());
 }
 
 
@@ -77,14 +77,11 @@ BOOST_PYTHON_MODULE(bpmodule_core)
         .def("Set", &OptionMap::Set<int>)
         .def("Set", &OptionMap::Set<double>)
         .def("Set", &OptionMap::Set<std::string>)
-        .def("Get", &OptionMap::GetString)
+        .def("GetValueStr", &OptionMap::GetValueStr)
         .def("Has", &OptionMap::Has)
-        .def("Size", &OptionMap::Size)
-        .def("PrintInfo", &OptionMap::PrintInfo);
+        .def("Size", &OptionMap::Size);
 
     class_<ModuleInfo>("ModuleInfo")
-           .def("PrintInfo", &ModuleInfo::PrintInfo)
-           .def("PrintHelp", &ModuleInfo::PrintHelp)
            .def_readwrite("name", &ModuleInfo::name)
            .def_readwrite("soname", &ModuleInfo::soname)
            .def_readwrite("version", &ModuleInfo::version)
@@ -93,22 +90,12 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def_readwrite("refs", &ModuleInfo::refs)
            .def_readwrite("options", &ModuleInfo::options);
 
-    // specify the overloads
-    void (ModuleStore::*PrintHelp1)(const std::string &) const = &ModuleStore::PrintHelp;
-    void (ModuleStore::*PrintHelpAll)(void) const = &ModuleStore::PrintHelp;
-    void (ModuleStore::*PrintInfo1)(const std::string &) const = &ModuleStore::PrintInfo;
-    void (ModuleStore::*PrintInfoAll)(void) const = &ModuleStore::PrintInfo;
     class_<ModuleStore, boost::noncopyable>("ModuleStore")
            .def("LoadSO", &ModuleStore::LoadSO)
            .def("Lock", &ModuleStore::Lock)
            .def("Size", &ModuleStore::Size)
            .def("Has", &ModuleStore::Has)
-           .def("Keys", Wrap_ModuleStore_Keys)
-           .def("PrintInfo", PrintInfo1)
-           .def("PrintInfo", PrintInfoAll)
-           .def("PrintHelp", PrintHelp1)
-           .def("PrintHelp", PrintHelpAll)
-           .def("PrintKeys", &ModuleStore::PrintKeys)
+           .def("GetKeys", Wrap_ModuleStore_Keys)
            .def("KeyFromID", &ModuleStore::KeyFromID)
            .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
            .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_value_policy<manage_new_object>())

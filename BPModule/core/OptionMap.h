@@ -5,11 +5,17 @@
 #include <string>
 
 #include "BPModule/core/Exception.h"
-#include "BPModule/core/Output.h"
 
 #include <boost/lexical_cast.hpp>
 
-using boost::lexical_cast;
+// for friend
+namespace bpmodule {
+class OptionMap;
+}
+
+void swap(bpmodule::OptionMap & first, bpmodule::OptionMap & second);
+
+
 
 namespace bpmodule {
 
@@ -19,30 +25,10 @@ public:
     OptionMap(void) = default;
     ~OptionMap(void) = default;
 
-    friend void swap(OptionMap & first, OptionMap & second)
-    {
-        using std::swap;
-        swap(first.opmap_, second.opmap_);
-    } 
 
-    OptionMap(OptionMap && rhs)
-    {
-        swap(*this, rhs);
-    }
-
-    // copy and swap
-    OptionMap & operator=(OptionMap rhs)
-    {
-        swap(*this, rhs);
-        return *this;
-    }
-
-    OptionMap(const OptionMap & rhs)
-    {
-        // need to Clone new elements
-        for(auto & it : rhs.opmap_)
-            opmap_.insert(OpMapValue(it.first, OpMapEntry({it.second.oph->Clone(), it.second.help})));
-    }
+    OptionMap(OptionMap && rhs);
+    OptionMap & operator=(OptionMap rhs);
+    OptionMap(const OptionMap & rhs);
 
     template<typename T>
     T Get(const std::string & key) const
@@ -56,10 +42,6 @@ public:
         return oh->GetRef();
     }
 
-    std::string GetString(const std::string & key)
-    {
-        return GetOrThrow(key).oph->ToString();
-    }
 
     template<typename T>
     void Set(const std::string & key, const T & value, const std::string & help)
@@ -68,27 +50,19 @@ public:
         opmap_.insert(OpMapValue(key, OpMapEntry({new OptionHolder<T>(value), help}))); 
     }
 
-    bool Has(const std::string & key) const
-    {
-        return opmap_.count(key);
-    }
+    bool Has(const std::string & key) const;
 
-    void PrintInfo(void) const
-    {
-        for(const auto & it : opmap_)
-            Output("%|16| : %|-22| : %|-|\n", it.first, it.second.oph->ToString(), it.second.help);
-    }
+    std::string GetHelp(const std::string & key) const;
 
-    void PrintHelp(void) const
-    {
-        for(const auto & it : opmap_)
-            Output("%|16| : %|-|\n", it.first, it.second.help);
-    }
+    std::unordered_map<std::string, std::string> GetAllHelp(void) const;
 
-    size_t Size(void) const
-    {
-        return opmap_.size();
-    }
+    std::string GetValueStr(const std::string & key) const;
+
+    std::unordered_map<std::string, std::string> GetAllValueStr(void) const;
+
+    size_t Size(void) const;
+
+    friend void ::swap(OptionMap & first, OptionMap & second);
 
 
 private:
@@ -147,26 +121,10 @@ private:
 
     OpMap opmap_;
 
+    size_t Erase(const std::string & key);
 
-    size_t Erase(const std::string & key)
-    {
-        // delete pointer if necessary
-        if(opmap_.count(key))
-            delete opmap_.at(key).oph; // delete the ptr
+    const OpMapEntry & GetOrThrow(const std::string & key) const;
 
-        return opmap_.erase(key);       
-    }
-
-
-
-
-    const OpMapEntry & GetOrThrow(const std::string & key) const
-    {
-        if(opmap_.count(key))
-            return opmap_.at(key);
-        else
-            throw MapException("OptionMap", key);
-    }
 
 };
 

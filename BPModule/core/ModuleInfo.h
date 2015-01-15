@@ -20,9 +20,6 @@ struct ModuleInfo
   OptionMap options;
 
   std::string sopath;
-
-  void PrintInfo(void) const;
-  void PrintHelp(void) const;
 };
 
 

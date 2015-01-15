@@ -39,12 +39,7 @@ public:
   size_t Size(void) const;
 
   bool Has(const std::string & key) const;
-  void PrintHelp(const std::string & key) const;
-  void PrintInfo(const std::string & key) const;
-  void PrintHelp(void) const;
-  void PrintInfo(void) const;
-  void PrintKeys(void) const;
-  std::vector<std::string> Keys(void) const;
+  std::vector<std::string> GetKeys(void) const;
 
 
   template<typename T>

@@ -22,64 +22,7 @@ size_t ModuleStore::Size(void) const
     return store_.size();
 }
 
-void ModuleStore::PrintHelp(const std::string & key) const
-{
-    if(Has(key))
-    {
-        const StoreEntry & se = GetOrThrow(key);
-        se.mi.PrintHelp();
-    }
-    else
-        Warning("Cannot find module \"%1%\". Not loaded?\n", key);
-}
-
-void ModuleStore::PrintInfo(const std::string & key) const
-{
-    if(Has(key))
-    {
-        const StoreEntry & se = GetOrThrow(key);
-        se.mi.PrintInfo();
-    }
-    else
-        Warning("Cannot find module \"%1%\". Not loaded?\n", key);
-}
-
-void ModuleStore::PrintHelp(void) const
-{
-    Output(Line('*'));
-    for(const auto & it : store_)
-    {
-        Output(Line('-'));
-        Output("KEY: %1%\n", it.first);
-        Output(Line('-'));
-        PrintHelp(it.first);
-    }
-}
-
-void ModuleStore::PrintInfo(void) const
-{
-    Output(Line('*'));
-    Output("Module store: Size: %1%\n", store_.size());
-    for(const auto & it : store_)
-    {
-        Output(Line('-'));
-        Output("KEY: %1%\n", it.first);
-        Output(Line('-'));
-        PrintInfo(it.first);
-    }
-    Output(Line('*'));
-}
-
-void ModuleStore::PrintKeys(void) const
-{
-    Output(Line('*'));
-    Output("Module store: Size: %1%\n", store_.size());
-    for(const auto & it : store_)
-        Output("%1%\n", it.first);
-    Output(Line('*'));
-}
-
-std::vector<std::string> ModuleStore::Keys(void) const
+std::vector<std::string> ModuleStore::GetKeys(void) const
 {
     std::vector<std::string> vec;
     vec.reserve(store_.size());
