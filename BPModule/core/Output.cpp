@@ -120,6 +120,9 @@ std::ostream & GetOut(void)
 void PrintException(const BPModuleException & ex)
 {
     BPModuleException::ExceptionInfo exinfo = ex.GetInfo();
+    Error(Line('*'));
+    Error("Exception thrown!\n");
+    Error("what() = %1%\n", ex.what());
     for(auto & it : exinfo)
     {
         if(it.second.size())
@@ -131,6 +134,9 @@ std::string ExceptionString(const BPModuleException & ex)
 {
     BPModuleException::ExceptionInfo exinfo = ex.GetInfo();
     std::stringstream ss;
+    Error(ss, Line('*'));
+    Error(ss, "Exception thrown!\n");
+    Error(ss, "what() = %1%\n", ex.what());
     for(auto & it : exinfo)
         if(it.second.size())
           Error(ss, "%|16| : %|-16|\n", it.first, it.second);
