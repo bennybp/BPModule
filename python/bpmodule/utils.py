@@ -3,6 +3,7 @@ def MakeInfo(minfo, bpcore):
   for o in minfo["options"]:
     op.Set(o[0], o[1], o[2])
 
-  mi = bpcore.MakeInfo(minfo, op)
+  mi = minfo
+  mi["options"] = op
   return mi
 

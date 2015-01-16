@@ -122,7 +122,7 @@ void PrintException(const BPModuleException & ex)
     BPModuleException::ExceptionInfo exinfo = ex.GetInfo();
     for(auto & it : exinfo)
     {
-        if(it.first.size() || it.second.size())
+        if(it.second.size())
             Error("%|16| : %|-16|", it.first, it.second);
     }
 }
@@ -132,7 +132,8 @@ std::string ExceptionString(const BPModuleException & ex)
     BPModuleException::ExceptionInfo exinfo = ex.GetInfo();
     std::stringstream ss;
     for(auto & it : exinfo)
-        Error(ss, "%|16| : %|-16|\n", it.first, it.second);
+        if(it.second.size())
+          Error(ss, "%|16| : %|-16|\n", it.first, it.second);
     return ss.str();
 }
 

@@ -34,11 +34,10 @@ for key,value in t1.modinfo.minfo.items():
 
 try:
   b1 = mst.GetModule_Test("TESTMOD1")
-  b1.RunTest()
-  opt = b1.Options()
-  tr = b1.Traits()
-  inf = b1.Info()
-  k = b1.Key()
+  #b1.RunTest()
+  print(mst.ModuleInfoFromID(0))
+  print(mst.ModuleInfoFromKey("TESTMOD1"))
+  print(mst.KeyFromID(1))
  
 except RuntimeError as e:
   print(e)
