@@ -26,8 +26,8 @@ public:
   OptionMap Traits(void) const;
   OptionMap Options(void) const;
 
-  std::string MyKey(void) const;
-  ModuleInfo MyInfo(void) const;
+  std::string Key(void) const;
+  ModuleInfo Info(void) const;
 
 protected:
   ModuleStore & mstore_;

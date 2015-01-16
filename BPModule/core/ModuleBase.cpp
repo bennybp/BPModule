@@ -9,12 +9,12 @@ ModuleBase::ModuleBase(long id, ModuleStore * mstore, const OptionMap & options)
 {
 }
 
-std::string ModuleBase::MyKey(void) const
+std::string ModuleBase::Key(void) const
 {
     return mstore_.KeyFromID(id_);
 }
 
-ModuleInfo ModuleBase::MyInfo(void) const
+ModuleInfo ModuleBase::Info(void) const
 {
     return mstore_.ModuleInfoFromID(id_);
 }

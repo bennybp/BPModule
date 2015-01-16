@@ -111,8 +111,8 @@ BOOST_PYTHON_MODULE(bpmodule_core)
 
     //class_<ModuleBase, boost::noncopyable>("ModuleBase", init<ModuleStore *, const OptionMap &>())
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
-           .def("MyInfo", &ModuleBase::MyInfo)
-           .def("MyKey", &ModuleBase::MyKey)
+           .def("Info", &ModuleBase::Info)
+           .def("Key", &ModuleBase::Key)
            .def("Traits", &ModuleBase::Traits)
            .def("Options", &ModuleBase::Options);
 
