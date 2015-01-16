@@ -31,18 +31,11 @@ for key,value in t1.modinfo.minfo.items():
   mst.LoadSO(key, fullpath, mi)
   #mst.Dump()
 
-b1 = mst.GetModule_Test("TESTMOD1")
-b1.PrintHelp()
-b1.PrintInfo()
-b1.RunTest()
 
 try:
-  mst.PrintHelp("TESTMOD18")
-  mst.PrintInfo("TESTMOD1")
-  mst.PrintInfo()
-  mst.PrintHelp()
-  mst.PrintKeys()
-
+  b1 = mst.GetModule_Test("TESTMOD1")
+  b1.RunTest()
+ 
 except RuntimeError as e:
   print(e)
 

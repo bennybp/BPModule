@@ -19,6 +19,7 @@ struct ModuleInfo
   std::vector<std::string> refs;
   OptionMap options;
 
+  // set by module store
   std::string sopath;
 };
 

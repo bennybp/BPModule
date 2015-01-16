@@ -1,25 +1,8 @@
 #include "BPModule/core/OptionMap.h"
 #include "BPModule/core/Output.h"
 
-void swap(bpmodule::OptionMap & first, bpmodule::OptionMap & second)
-{
-    std::swap(first.opmap_, second.opmap_);
-} 
-
 namespace bpmodule {
 
-
-OptionMap::OptionMap(OptionMap && rhs)
-{
-    swap(*this, rhs);
-}
-
-// copy and swap
-OptionMap & OptionMap::operator=(OptionMap rhs)
-{
-    swap(*this, rhs);
-    return *this;
-}
 
 OptionMap::OptionMap(const OptionMap & rhs)
 {
@@ -28,12 +11,21 @@ OptionMap::OptionMap(const OptionMap & rhs)
         opmap_.insert(OpMapValue(it.first, OpMapEntry({it.second.oph->Clone(), it.second.help})));
 }
 
+OptionMap & OptionMap::operator=(const OptionMap & rhs)
+{
+    using std::swap;
+    OptionMap tmp(rhs);
+    swap(*this, tmp);
+    return *this;
+}
+
 bool OptionMap::Has(const std::string & key) const
 {
     return opmap_.count(key);
 }
 
-std::string OptionMap::GetHelp(const std::string & key) const
+std::string
+OptionMap::GetHelp(const std::string & key) const
 {
     if(Has(key))
         return opmap_.at(key).help;
@@ -44,15 +36,17 @@ std::string OptionMap::GetHelp(const std::string & key) const
     }
 }
 
-std::unordered_map<std::string, std::string> OptionMap::GetAllHelp(void) const
+std::map<std::string, std::string>
+OptionMap::GetAllHelp(void) const
 {
-    std::unordered_map<std::string, std::string> m;
+    std::map<std::string, std::string> m;
     for(auto & it : opmap_)
         m.insert(std::pair<std::string, std::string>(it.first, it.second.help));
     return m;
 }
 
-std::string OptionMap::GetValueStr(const std::string & key) const
+std::string
+OptionMap::GetValueStr(const std::string & key) const
 {
     if(Has(key))
         return opmap_.at(key).oph->ToString();
@@ -63,14 +57,24 @@ std::string OptionMap::GetValueStr(const std::string & key) const
     }
 }
 
-std::unordered_map<std::string, std::string> OptionMap::GetAllValueStr(void) const
+std::map<std::string, std::string>
+OptionMap::GetAllValueStr(void) const
 {
-    std::unordered_map<std::string, std::string> m;
+    std::map<std::string, std::string> m;
     for(auto & it : opmap_)
         m.insert(std::pair<std::string, std::string>(it.first, it.second.oph->ToString()));
     return m;
 }
 
+std::vector<std::string>
+OptionMap::GetKeys(void) const
+{
+    std::vector<std::string> v;
+    v.reserve(opmap_.size());
+    for(auto & it : opmap_)
+        v.push_back(it.first);
+    return v;
+}
 
 size_t OptionMap::Size(void) const
 {

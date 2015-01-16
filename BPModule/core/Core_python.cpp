@@ -77,16 +77,20 @@ BOOST_PYTHON_MODULE(bpmodule_core)
         .def("Set", &OptionMap::Set<int>)
         .def("Set", &OptionMap::Set<double>)
         .def("Set", &OptionMap::Set<std::string>)
-        .def("GetValueStr", &OptionMap::GetValueStr)
         .def("Has", &OptionMap::Has)
+        .def("GetHelp", &OptionMap::GetHelp)
+        .def("GetAllHelp", &OptionMap::GetAllHelp)
+        .def("GetValueStr", &OptionMap::GetValueStr)
+        .def("GetAllValueStr", &OptionMap::GetAllValueStr)
+        .def("GetKeys", &OptionMap::GetKeys)
         .def("Size", &OptionMap::Size);
 
     class_<ModuleInfo>("ModuleInfo")
            .def_readwrite("name", &ModuleInfo::name)
            .def_readwrite("soname", &ModuleInfo::soname)
            .def_readwrite("version", &ModuleInfo::version)
-           .def_readwrite("description", &ModuleInfo::description)
            .def_readwrite("authors", &ModuleInfo::authors)
+           .def_readwrite("description", &ModuleInfo::description)
            .def_readwrite("refs", &ModuleInfo::refs)
            .def_readwrite("options", &ModuleInfo::options);
 
@@ -96,8 +100,9 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def("Size", &ModuleStore::Size)
            .def("Has", &ModuleStore::Has)
            .def("GetKeys", Wrap_ModuleStore_Keys)
-           .def("KeyFromID", &ModuleStore::KeyFromID)
+           .def("ModuleInfoFromID", &ModuleStore::ModuleInfoFromID)
            .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
+           .def("KeyFromID", &ModuleStore::KeyFromID)
            .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_value_policy<manage_new_object>())
            .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_value_policy<manage_new_object>());
 
@@ -106,9 +111,10 @@ BOOST_PYTHON_MODULE(bpmodule_core)
 
     //class_<ModuleBase, boost::noncopyable>("ModuleBase", init<ModuleStore *, const OptionMap &>())
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
-           .def("HasOption", &ModuleBase::HasOption)
-           .def("PrintInfo", &ModuleBase::PrintInfo)
-           .def("PrintHelp", &ModuleBase::PrintHelp);
+           .def("MyInfo", &ModuleBase::MyInfo)
+           .def("MyKey", &ModuleBase::MyKey)
+           .def("Traits", &ModuleBase::Traits)
+           .def("Options", &ModuleBase::Options);
 
     class_<Test_Base, bases<ModuleBase>, boost::noncopyable>("Test_Base", no_init)
            .def("RunTest", &Test_Base::RunTest);

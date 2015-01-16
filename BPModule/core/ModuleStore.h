@@ -32,6 +32,7 @@ public:
   bool LoadSO(const std::string & key, const std::string & sopath, ModuleInfo minfo);
   void Lock(void);
 
+  std::vector<std::string> GetKeys(void) const;
   ModuleInfo ModuleInfoFromID(long id) const;
   ModuleInfo ModuleInfoFromKey(const std::string & key) const;
   std::string KeyFromID(long id) const;
@@ -39,8 +40,6 @@ public:
   size_t Size(void) const;
 
   bool Has(const std::string & key) const;
-  std::vector<std::string> GetKeys(void) const;
-
 
   template<typename T>
   T * GetModule(const std::string & key)

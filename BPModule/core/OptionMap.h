@@ -1,20 +1,12 @@
 #ifndef OPTION_MAP
 #define OPTION_MAP
 
-#include <unordered_map>
+#include <map>
 #include <string>
 
 #include "BPModule/core/Exception.h"
 
 #include <boost/lexical_cast.hpp>
-
-// for friend
-namespace bpmodule {
-class OptionMap;
-}
-
-void swap(bpmodule::OptionMap & first, bpmodule::OptionMap & second);
-
 
 
 namespace bpmodule {
@@ -25,10 +17,11 @@ public:
     OptionMap(void) = default;
     ~OptionMap(void) = default;
 
+    OptionMap(OptionMap && rhs) = default;
+    OptionMap & operator=(OptionMap && rhs) = default;
 
-    OptionMap(OptionMap && rhs);
-    OptionMap & operator=(OptionMap rhs);
     OptionMap(const OptionMap & rhs);
+    OptionMap & operator=(const OptionMap & rhs);
 
     template<typename T>
     T Get(const std::string & key) const
@@ -52,17 +45,22 @@ public:
 
     bool Has(const std::string & key) const;
 
-    std::string GetHelp(const std::string & key) const;
+    std::string 
+    GetHelp(const std::string & key) const;
 
-    std::unordered_map<std::string, std::string> GetAllHelp(void) const;
+    std::map<std::string, std::string>
+    GetAllHelp(void) const;
 
-    std::string GetValueStr(const std::string & key) const;
+    std::string
+    GetValueStr(const std::string & key) const;
 
-    std::unordered_map<std::string, std::string> GetAllValueStr(void) const;
+    std::map<std::string, std::string> 
+    GetAllValueStr(void) const;
+
+    std::vector<std::string>
+    GetKeys(void) const;
 
     size_t Size(void) const;
-
-    friend void ::swap(OptionMap & first, OptionMap & second);
 
 
 private:
@@ -96,13 +94,19 @@ private:
     
     public:
         OptionHolder(const T & m) : obj(m) { }
-        OptionHolder(const OptionHolder<T> & g) : obj(g.obj) { }
+        OptionHolder(const OptionHolder & oph) : obj(oph.obj) {  };
     
         virtual OptionHolder * Clone(void) const { return new OptionHolder<T>(*this); }
+
         T & GetRef(void) { return obj; }
         const T & GetRef(void) const { return obj; }
+
         virtual std::string ToString(void) const { return boost::lexical_cast<std::string>(obj); }
         virtual const char * Type(void) const { return typeid(T).name(); }
+
+        OptionHolder & operator=(const OptionHolder & oph) = delete;
+        OptionHolder & operator=(OptionHolder && oph) = delete;
+        OptionHolder(OptionHolder && oph) = default;
 
     private:
         T obj;
@@ -115,7 +119,7 @@ private:
         std::string help;
     };
 
-    typedef std::unordered_map<std::string, OpMapEntry> OpMap;
+    typedef std::map<std::string, OpMapEntry> OpMap;
     typedef OpMap::value_type OpMapValue;
 
 

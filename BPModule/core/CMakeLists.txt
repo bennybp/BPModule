@@ -8,13 +8,12 @@ set(Python_ADDITIONAL_VERSIONS "3.3;3.4")
 find_package(PythonLibs REQUIRED)
 
 set(CORE_FILES
-            ModuleInfo.cpp
             ModuleStore.cpp
-            Core_python.cpp
             Output.cpp
             OptionMap.cpp
             ModuleBase.cpp
             Test_Base.cpp
+            Core_python.cpp
             )
 
 

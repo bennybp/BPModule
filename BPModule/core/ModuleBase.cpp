@@ -18,25 +18,15 @@ ModuleInfo ModuleBase::MyInfo(void) const
 {
     return mstore_.ModuleInfoFromID(id_);
 }
+
+OptionMap ModuleBase::Traits(void) const
+{
+    return traits_;
+}
  
-void ModuleBase::PrintInfo(void) const
+OptionMap ModuleBase::Options(void) const
 {
-    ModuleInfo minfo = MyInfo();
-    
-    Output(Line('-'));
-    Output("KEY: %1% [ID %2%]\n", MyKey(), id_);
-    Output(Line('-'));
-    minfo.PrintInfo();
+    return options_;
 }
-  
-void ModuleBase::PrintHelp(void) const
-{
-    ModuleInfo minfo = MyInfo();
-    Output(Line('-'));
-    Output("KEY: %1% [ID %2%]\n", MyKey(), id_);
-    Output(Line('-'));
-    minfo.PrintHelp(); 
-}
-
-
+ 
 } // close namespace bpmodule
