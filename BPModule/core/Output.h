@@ -15,7 +15,8 @@ enum class OutputType
   Output,
   Success,
   Warning,
-  Error
+  Error,
+  Debug
 };
 
 // in cpp file
@@ -24,6 +25,7 @@ void Output_(std::ostream & out, OutputType type, boost::format & bfmt);
 void SetOut_Stdout(void);
 bool SetOut_File(const std::string & filepath);
 void SetColor(bool usecolor);
+void SetDebug(bool debug);
 
 std::ostream & GetOut(void);
 void PrintException(const BPModuleException & ex);
@@ -99,6 +101,17 @@ void Success(std::string fmt, Targs... Fargs)
     Success(GetOut(), fmt, Fargs...);
 }
 
+template<typename... Targs>
+void Debug(std::ostream & out, std::string fmt, Targs... Fargs)
+{
+    Output_(out, OutputType::Debug, fmt, Fargs...);
+}
+
+template<typename... Targs>
+void Debug(std::string fmt, Targs... Fargs)
+{
+    Debug(GetOut(), fmt, Fargs...);
+}
 
 
 } // close namespace bpmodule

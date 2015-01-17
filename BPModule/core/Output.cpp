@@ -20,7 +20,8 @@ namespace {
   std::unique_ptr<std::ofstream> file_;
   std::string filepath_;
   bool usefile_ = false;
-  bool color_;
+  bool color_ = false;
+  bool debug_ = false;
 }
 
 
@@ -28,6 +29,8 @@ namespace bpmodule {
 
 void Output_(std::ostream & out, OutputType type, boost::format & bfmt)
 {
+    if(type == OutputType::Debug && !debug_)
+        return;
     if(color_)
     {
         std::string st = bfmt.str();
@@ -43,6 +46,9 @@ void Output_(std::ostream & out, OutputType type, boost::format & bfmt)
         {
             case OutputType::Success:
                 out << "\033[32m" << st << "\033[0m";
+                break;
+            case OutputType::Debug:
+                out << "\033[35m" << st << "\033[0m";
                 break;
             case OutputType::Warning:
                 out << "\033[33m" << st << "\033[0m";
@@ -91,6 +97,12 @@ bool SetOut_File(const std::string & filepath)
 void SetColor(bool usecolor)
 {
     color_ = usecolor;
+}
+
+void SetDebug(bool debug)
+{
+    debug_ = debug;
+    Debug("Debugging now: %1%\n", debug);
 }
 
 std::string Line(char c, int n)

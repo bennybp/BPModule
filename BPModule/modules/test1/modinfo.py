@@ -11,7 +11,7 @@ minfo = { "TESTMOD1" :
     "refs"        : ["some paper", "some other paper"],
     "options"     : [ 
                         ("adouble", "0.0", "Some help string"),
-                        ("aint", "1", "Some help string2"),
+                        ("aint", 1, "Some help string2"),
                         ("double2", 2.1, "Some help string3")
                     ]
   }

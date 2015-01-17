@@ -5,107 +5,136 @@
 #include "BPModule/core/ModuleBase.h"
 #include "BPModule/core/Test_Base.h"
 
+#include "BPModule/core/Python_stdconvert.h"
+
 #include <boost/python.hpp>
 
 using namespace boost::python;
 
 namespace bpmodule {
 
-template<typename T>
-static
-std::vector<T> ConvertListToVec(const list & list)
+// Some wrappers for OptionMap Get/Set member
+void OptionMap_Set_Helper(OptionMap * op, const std::string & key, 
+                                                 const boost::python::object & value,
+                                                 const std::string & help)
 {
-    int length = extract<int>(list.attr("__len__")());
-    std::vector<T> ret;
-    ret.reserve(length);
+    std::string cl = extract<std::string>(value.attr("__class__").attr("__name__"));
 
-    for (int i = 0; i < length; i++)
-        ret.push_back(extract<std::string>(list[i]));
-
-    return ret;
-}
-
-/*
-template<typename T>
-static 
-T ConvertDictToMap(const dict & d)
-{
-    T m;
-    int length = extract<int>(list.attr("__len__")());
-    for(int i = 0; i < length; i++)
-    
-
-    return m;
-}
-*/
-
-template<typename T>
-static
-list ConvertVecToList(const std::vector<T> & v)
-{
-    list result;
-    for(auto & it : v)
-        result.append(it);    
-    return result;
-}
-
-template<typename T>
-static
-dict ConvertMapToDict(const T & m)
-{
-    dict d;
-    for(auto & it : m)
-        d[it.first] = it.second;
-    return d;
-}
-
-
-
-template<typename T>
-struct VectorConverter
-{
-    static PyObject* convert(const std::vector<T> & v)
+    if(cl == "int")
+        op->Set(key, static_cast<int>(extract<int>(value)), help);
+    else if(cl == "float")
+        op->Set(key, static_cast<double>(extract<double>(value)), help);
+    else if(cl == "str")
+        op->Set(key, static_cast<std::string>(extract<std::string>(value)), help);
+    else if(cl == "list")
     {
-      boost::python::list lst = ConvertVecToList(v);
-      return boost::python::incref(lst.ptr());
+        // get type of first element
+        boost::python::list lst = boost::python::extract<boost::python::list>(value);
+        int length = extract<int>(lst.attr("__len__")());
+        if(length == 0)
+        {
+            // plain string vector if empty
+            std::vector<std::string> v;
+            op->Set(key, std::vector<std::string>(), help);
+        } 
+        else
+        {
+            std::string cl2 = extract<std::string>(lst[0].attr("__class__").attr("__name__"));
+            if(cl2 == "int")
+                op->Set(key, ConvertListToVec<int>(lst), help);
+            else if(cl2 == "float")
+                op->Set(key, ConvertListToVec<double>(lst), help);
+            else if(cl2 == "str")
+                op->Set(key, ConvertListToVec<std::string>(lst), help);
+            else
+                Error("Unknown type %1% in list for key %2%\n", cl, key);
+        }
     }
-};
+    else
+        Error("Unknown type %1% for key %2%\n", cl, key);
+}
 
 
-template<class T1, class T2>
-struct PairConverter
+boost::python::object OptionMap_Get_Helper(const OptionMap * op, const std::string & key)
 {
-    static PyObject* convert(const std::pair<T1, T2>& pair)
-    {
-      return incref(make_tuple(pair.first, pair.second).ptr());
-    }
-};
+    std::string type = op->GetType(key);
 
-template<typename T>
-struct MapConverter
+    if(type.size() == 0)
+        return object();
+    else if(type == typeid(int).name())
+        return object(op->Get<int>(key));
+    else if(type == typeid(double).name())
+        return object(op->Get<double>(key));
+    else if(type == typeid(std::string).name())
+        return object(op->Get<std::string>(key));
+    else if(type == typeid(std::vector<int>).name())
+        return object(op->Get<std::vector<int>>(key));
+    else if(type == typeid(std::vector<double>).name())
+        return object(op->Get<std::vector<double>>(key));
+    else if(type == typeid(std::vector<std::string>).name())
+        return object(op->Get<std::vector<std::string>>(key));
+    else
+    {
+        Error("Unable to deduce type: %1%\n", type);
+        return object();
+    }
+}
+
+
+// Convert lists <-> OptionMaps
+OptionMap ListToOptionMap(const boost::python::list & olist)
 {
-    static PyObject* convert(const T & m)
+    OptionMap op;
+    int optlen = extract<int>(olist.attr("__len__")());
+
+    for(int i = 0; i < optlen; i++)
     {
-      boost::python::dict d = ConvertMapToDict(m);
-      return boost::python::incref(d.ptr());
+        std::string key = extract<std::string>(olist[i][0]);
+        std::string help = extract<std::string>(olist[i][2]);
+        OptionMap_Set_Helper(&op, key, olist[i][1], help); 
     }
-};
+    return op;
+}
+
+boost::python::list OptionMapToList(const OptionMap & op)
+{
+    boost::python::list lst;
+    auto keys = op.GetKeys();
+
+    for(auto & it : keys)
+        lst.append(boost::python::make_tuple(it, OptionMap_Get_Helper(&op, it), op.GetHelp(it)));
+
+    return lst;
+}
 
 
-// the "options" element of the dict must be an OptionMap, not a list of tuples
+
+
+// the "options" element of the dict must be a list of tuples
 ModuleInfo DictToModuleInfo(const dict & dictionary)
 {
     ModuleInfo ret;
-    ret.name = extract<std::string>(dictionary["name"]);
-    ret.soname = extract<std::string>(dictionary["soname"]);
-    ret.version = extract<std::string>(dictionary["version"]);
-    ret.description = extract<std::string>(dictionary["description"]);
-    ret.authors = ConvertListToVec<std::string>(extract<list>(dictionary["authors"]));
-    ret.refs = ConvertListToVec<std::string>(extract<list>(dictionary["refs"]));
-    ret.options = extract<OptionMap>(dictionary["options"]);
+    try {
+        ret.name = extract<std::string>(dictionary["name"]);
+        ret.soname = extract<std::string>(dictionary["soname"]);
+        ret.version = extract<std::string>(dictionary["version"]);
+        ret.description = extract<std::string>(dictionary["description"]);
+        ret.authors = ConvertListToVec<std::string>(extract<list>(dictionary["authors"]));
+        ret.refs = ConvertListToVec<std::string>(extract<list>(dictionary["refs"]));
+
+        OptionMap op;
+        boost::python::list olist = extract<boost::python::list>(dictionary["options"]);
+        ret.options = ListToOptionMap(olist);
+    }
+    catch(...)
+    {
+        Error("HEREEEE\n");
+    }   
 
     return ret;
 }
+
+
 
 dict ModuleInfoToDict(const ModuleInfo & mi)
 {
@@ -116,25 +145,30 @@ dict ModuleInfoToDict(const ModuleInfo & mi)
     d["soname"] = mi.soname;
     d["version"] = mi.version;
     d["description"] = mi.description;
+    d["sopath"] = mi.sopath;
 
     // now lists of strings
     d["authors"] = ConvertVecToList(mi.authors);
     d["refs"] = ConvertVecToList(mi.refs);
 
     // now options
-    // \todo only creates strings for values right now
-
-    list opd;
-    auto keys = mi.options.GetKeys();
-    for(auto & k : keys)
-        opd.append(boost::python::make_tuple(k, mi.options.GetValueStr(k), mi.options.GetHelp(k)));
-
-    d["options"] = opd; 
+    d["options"] = OptionMapToList(mi.options); 
 
     return d;
 }
 
 
+// Converter for OptionMap
+struct OptionMapConverter
+{
+    static PyObject* convert(const OptionMap & op)
+    {
+      boost::python::list lst = OptionMapToList(op);
+      return boost::python::incref(lst.ptr());
+    }
+};
+
+// Converter for ModuleInfo
 struct ModuleInfoConverter
 {
     static PyObject* convert(const ModuleInfo & m)
@@ -152,14 +186,12 @@ void TranslateException(const BPModuleException & ex)
 }
 
 
-// some wrappers
-// wraps ModuleStore::LoadSO so that it can take a dict
+// wraps ModuleStore::LoadSO so that it can take a dict for the ModuleInfo
 bool Wrap_ModuleStore_LoadSO(ModuleStore * ms, const std::string & key,
                              const std::string & sopath, const boost::python::dict & d)
 {
     return ms->LoadSO(key, sopath, DictToModuleInfo(d));
 }
-
 
 
 
@@ -171,39 +203,44 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     register_exception_translator<BPModuleException>(&TranslateException);
 
     // converting pairs
+    to_python_converter<std::pair<int, int>, PairConverter<int, int>>();
+    to_python_converter<std::pair<double, double>, PairConverter<double, double>>();
     to_python_converter<std::pair<std::string, std::string>, PairConverter<std::string, std::string>>();
 
-    // converting vector of string
+    // converting vectors
+    to_python_converter<std::vector<int>, VectorConverter<int>>();
+    to_python_converter<std::vector<double>, VectorConverter<double>>();
     to_python_converter<std::vector<std::string>, VectorConverter<std::string>>();
-
-    // converting vector of string pairs
-    to_python_converter<std::vector<std::pair<std::string, std::string>>, VectorConverter<std::pair<std::string, std::string>>>();
-
-    // convert module info to dict
-    to_python_converter<ModuleInfo, ModuleInfoConverter>();
 
     // convert map to dict
     to_python_converter<std::map<std::string, std::string>, MapConverter<std::map<std::string, std::string>>>();
     to_python_converter<std::unordered_map<std::string, std::string>, MapConverter<std::unordered_map<std::string, std::string>>>();
 
+    // convert module info to dict
+    to_python_converter<ModuleInfo, ModuleInfoConverter>();
+
+    // convert optionmap to dict
+    to_python_converter<OptionMap, OptionMapConverter>();
 
     // setting the output
     def("SetOut_Stdout", bpmodule::SetOut_Stdout);
     def("SetOut_File", bpmodule::SetOut_File);
     def("SetColor", bpmodule::SetColor);
+    def("SetDebug", bpmodule::SetDebug);
 
+/*
+    // commented since it is now converted to a list
     class_<OptionMap>("OptionMap")
-        .def("Set", &OptionMap::Set<int>)
-        .def("Set", &OptionMap::Set<double>)
-        .def("Set", &OptionMap::Set<std::string>)
+        .def("Set", Wrap_OptionMap_Set)
+        .def("Set", OptionMap_Set_Helper)
+        .def("Get", OptionMap_Get_Helper)
         .def("Has", &OptionMap::Has)
+        .def("GetType", &OptionMap::GetType)
         .def("GetHelp", &OptionMap::GetHelp)
         .def("GetAllHelp", &OptionMap::GetAllHelp)
-        .def("GetValueStr", &OptionMap::GetValueStr)
-        .def("GetAllValueStr", &OptionMap::GetAllValueStr)
         .def("GetKeys", &OptionMap::GetKeys)
         .def("Size", &OptionMap::Size);
-
+*/
 /*
     // commented since it is now converted to a dict
     class_<ModuleInfo>("ModuleInfo")
@@ -229,11 +266,9 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_value_policy<manage_new_object>());
 
 
-
-    //class_<ModuleBase, boost::noncopyable>("ModuleBase", init<ModuleStore *, const OptionMap &>())
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
-           .def("Info", &ModuleBase::Info)
            .def("Key", &ModuleBase::Key)
+           .def("Info", &ModuleBase::Info)
            .def("Traits", &ModuleBase::Traits)
            .def("Options", &ModuleBase::Options);
 

@@ -35,6 +35,16 @@ public:
         return oh->GetRef();
     }
 
+    template<typename T>
+    void Set(const std::string & key, const T & value)
+    {
+        std::string help;
+        if(Has(key))
+            help = GetHelp(key);
+
+        Erase(key);
+        Set(key, value, help);
+    }
 
     template<typename T>
     void Set(const std::string & key, const T & value, const std::string & help)
@@ -48,14 +58,10 @@ public:
     std::string 
     GetHelp(const std::string & key) const;
 
+    std::string GetType(const std::string & key) const;
+
     std::map<std::string, std::string>
     GetAllHelp(void) const;
-
-    std::string
-    GetValueStr(const std::string & key) const;
-
-    std::map<std::string, std::string> 
-    GetAllValueStr(void) const;
 
     std::vector<std::string>
     GetKeys(void) const;
@@ -76,7 +82,6 @@ private:
     public:
         //! Returns a pointer to a copy of this object
         virtual OptionPlaceholder * Clone(void) const = 0;
-        virtual std::string ToString(void) const = 0;
         virtual const char * Type(void) const = 0;
         virtual ~OptionPlaceholder() { }
     
@@ -94,6 +99,7 @@ private:
     
     public:
         OptionHolder(const T & m) : obj(m) { }
+        OptionHolder(T && m) : obj(std::move(m)) { }
         OptionHolder(const OptionHolder & oph) : obj(oph.obj) {  };
     
         virtual OptionHolder * Clone(void) const { return new OptionHolder<T>(*this); }
@@ -101,7 +107,6 @@ private:
         T & GetRef(void) { return obj; }
         const T & GetRef(void) const { return obj; }
 
-        virtual std::string ToString(void) const { return boost::lexical_cast<std::string>(obj); }
         virtual const char * Type(void) const { return typeid(T).name(); }
 
         OptionHolder & operator=(const OptionHolder & oph) = delete;

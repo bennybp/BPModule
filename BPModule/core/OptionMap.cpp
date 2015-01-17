@@ -31,7 +31,7 @@ OptionMap::GetHelp(const std::string & key) const
         return opmap_.at(key).help;
     else
     {
-        Warning("Cannot find entry for key \"%1%\"", key);
+        Warning("Cannot find entry for key \"%1%\"\n", key);
         return "";
     }
 }
@@ -45,26 +45,19 @@ OptionMap::GetAllHelp(void) const
     return m;
 }
 
-std::string
-OptionMap::GetValueStr(const std::string & key) const
+
+std::string OptionMap::GetType(const std::string & key) const
 {
     if(Has(key))
-        return opmap_.at(key).oph->ToString();
+        return opmap_.at(key).oph->Type();
     else
     {
-        Warning("Cannot find entry for key \"%1%\"", key);
+        Warning("Cannot find entry for key \"%1%\"\n", key);
         return "";
     }
 }
 
-std::map<std::string, std::string>
-OptionMap::GetAllValueStr(void) const
-{
-    std::map<std::string, std::string> m;
-    for(auto & it : opmap_)
-        m.insert(std::pair<std::string, std::string>(it.first, it.second.oph->ToString()));
-    return m;
-}
+
 
 std::vector<std::string>
 OptionMap::GetKeys(void) const

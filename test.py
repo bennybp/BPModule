@@ -14,30 +14,36 @@ bpcore = bp.loader.LoadModule("bpmodule_core", "/home/ben/programming/BPModule/b
 bpcore.SetOut_Stdout()
 #bpcore.SetOut_File("test.out")
 bpcore.SetColor(True)
+bpcore.SetDebug(True)
 
 
 t1 = bp.loader.LoadModule("test1", "/home/ben/programming/BPModule/build/BPModule/modules")
 
 mst = bpcore.ModuleStore()
 
-for key,value in t1.modinfo.minfo.items():
-  mi = bp.utils.MakeInfo(value, bpcore)
-
+for key,minfo in t1.modinfo.minfo.items():
   # find the full path of the so file
-  fullpath = os.path.join(t1.modinfo.moddir, value["soname"]) + ".so" 
+  fullpath = os.path.join(t1.modinfo.moddir, minfo["soname"]) + ".so" 
   if not os.path.isfile(fullpath):
     raise RuntimeError("Error - {} does not exist or is not a file!".format(fullpath))
 
-  mst.LoadSO(key, fullpath, mi)
+  print(key)
+  print(fullpath)
+  print(minfo)
+  mst.LoadSO(key, fullpath, minfo)
   #mst.Dump()
 
 
 try:
   b1 = mst.GetModule_Test("TESTMOD1")
   #b1.RunTest()
-  print(mst.ModuleInfoFromID(0))
-  print(mst.ModuleInfoFromKey("TESTMOD1"))
-  print(mst.KeyFromID(1))
+  #print(mst.ModuleInfoFromKey("TESTMOD1"))
+  #print(mst.KeyFromID(0))
+  #print(mst.GetKeys())
+  opt = b1.Options()
+  inf = b1.Info()
+  print(opt)
+  print(inf)
  
 except RuntimeError as e:
   print(e)
