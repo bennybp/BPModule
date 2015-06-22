@@ -5,7 +5,6 @@
 #include <unordered_map>
 #include <string>
 #include <atomic>
-#include <utility>
 
 #include "BPModule/core/ModuleInfo.h"
 
@@ -40,28 +39,34 @@ public:
   bool Has(const std::string & key) const;
 
   template<typename T>
-  T * GetModule(const std::string & key)
+  T & GetModule(const std::string & key)
   {
+      // obtain the creator
       const StoreEntry & se = GetOrThrow(key);
 
-      ModuleBase * mbptr = se.func(curid_, this, se.mi.options); // must remember to delete it
-      curid_++;
+      // create
+      ModuleBase * mbptr = se.func(curid_, this, se.mi.options);
 
+      // test & store
       T * dptr = dynamic_cast<T *>(mbptr);
       if(dptr == nullptr)
-      {
-          delete mbptr;
-            throw MapException("ModuleStore", key, typeid(mbptr).name(), typeid(T *).name());
-      }
-      return dptr;
+          throw MapException("ModuleStore", key, typeid(mbptr).name(), typeid(T *).name());
+
+      // store for later deletion
+      objects_.insert(ObjectMapValue(curid_, std::unique_ptr<ModuleBase>(dptr)));
+
+      // next id
+      curid_++;
+
+      return *dptr;
   }
 
 private:
 
   struct StoreEntry
   {
-    ModuleInfo mi;
-    ModuleGeneratorFunc func;
+      ModuleInfo mi;
+      ModuleGeneratorFunc func;
   };
 
   typedef std::unordered_map<std::string, StoreEntry> StoreMap;
@@ -70,10 +75,14 @@ private:
   typedef std::unordered_map<std::string, void *> HandleMap; 
   typedef HandleMap::value_type HandleMapValue;
 
+  typedef std::unordered_map<unsigned long, std::unique_ptr<ModuleBase>> ObjectMap;
+  typedef ObjectMap::value_type ObjectMapValue;
+
 
   std::atomic<unsigned long> curid_;
   StoreMap store_;
   HandleMap handles_;
+  ObjectMap objects_;
   bool locked_;
 
   const StoreEntry & GetOrThrow(const std::string & key) const;

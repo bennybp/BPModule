@@ -268,8 +268,8 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def("Has", &ModuleStore::Has)
            .def("GetKeys", &ModuleStore::GetKeys)
            .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
-           .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_value_policy<manage_new_object>())
-           .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_value_policy<manage_new_object>());
+           .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_internal_reference<>())
+           .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_internal_reference<>());
 
 
     ///////////////////////

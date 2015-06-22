@@ -150,6 +150,7 @@ const ModuleStore::StoreEntry & ModuleStore::GetOrThrow(const std::string & key)
 
 ModuleStore::~ModuleStore()
 {
+    objects_.clear();
     CloseAll();
 }
 

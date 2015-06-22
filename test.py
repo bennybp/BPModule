@@ -43,14 +43,8 @@ t1 = bp.loader.LoadModule("testmodule1", modpath, mst)
 # Test
 try:
   b1 = mst.GetModule_Test("TESTMOD1")
-  print(b1)
+  #print(b1)
   b1.RunTest()
  
 except RuntimeError as e:
   print(e)
-
-
-# manually destroy all objects? then the store
-# A hack for now
-b1 = None
-gc.collect()

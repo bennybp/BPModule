@@ -3,7 +3,7 @@ project(BPModule CXX)
 
 set(CMAKE_SHARED_MODULE_PREFIX "")
 
-set(BPMODULE_CXX_FLAGS "-std=c++11" "-Wall" "-pedantic")
+set(BPMODULE_CXX_FLAGS "-std=c++11" "-Wall" "-pedantic -g -O0")
 set(BPMODULE_CXX_INCLUDES "${CMAKE_SOURCE_DIR}")
 set(BPMODULE_CXX_LINK_FLAGS "")
 

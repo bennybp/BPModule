@@ -9,6 +9,11 @@ ModuleBase::ModuleBase(unsigned long id, ModuleStore * mstore, const OptionMap &
 {
 }
 
+ModuleBase::~ModuleBase()
+{
+    Debug("Deleting Module %1%\n", id_);
+}
+
 OptionMap ModuleBase::Traits(void) const
 {
     return traits_;

@@ -16,7 +16,7 @@ class ModuleBase
 public:
   ModuleBase(unsigned long id, ModuleStore * mstore, const OptionMap & options);
 
-  virtual ~ModuleBase() { }
+  virtual ~ModuleBase();
 
   ModuleBase(const ModuleBase & rhs) = delete;
   ModuleBase(ModuleBase && rhs) = delete;
