@@ -7,13 +7,12 @@ import importlib
 import sys
 
 basepath = "/home/ben/programming/BPModule/install"
-bppypath = os.path.join(basepath, "python")
 modpath = os.path.join(basepath, "modules")
 
-
 # import bpmodule python helpers
-sys.path.append(bppypath)
-import bpmodule as bp
+# the path should be the highest priority
+sys.path.insert(0, basepath)
+import bppython as bp
 
 
 # Load the core module
@@ -68,12 +67,12 @@ for key,minfo in t1.minfo.items():
 # Test
 try:
   b1 = mst.GetModule_Test("TESTMOD1")
-  #b1.RunTest()
-  #print(mst.ModuleInfoFromKey("TESTMOD1"))
-  #print(mst.KeyFromID(0))
-  #print(mst.GetKeys())
-  opt = b1.Options()
-  inf = b1.Info()
+  b1.RunTest()
+  print(mst.ModuleInfoFromKey("TESTMOD1"))
+  print(mst.KeyFromID(0))
+  print(mst.GetKeys())
+  #opt = b1.Options()
+  #inf = b1.Info()
  
 except RuntimeError as e:
   print(e)
