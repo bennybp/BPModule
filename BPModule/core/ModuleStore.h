@@ -15,7 +15,7 @@ namespace bpmodule {
 class ModuleBase;
 class ModuleStore;
 
-typedef std::function<ModuleBase *(long, ModuleStore *, const OptionMap &)> ModuleGeneratorFunc;
+typedef std::function<ModuleBase *(unsigned long, ModuleStore *, const OptionMap &)> ModuleGeneratorFunc;
 
 
 class ModuleStore
@@ -33,9 +33,9 @@ public:
   void Lock(void);
 
   std::vector<std::string> GetKeys(void) const;
-  ModuleInfo ModuleInfoFromID(long id) const;
+  ModuleInfo ModuleInfoFromID(unsigned long id) const;
   ModuleInfo ModuleInfoFromKey(const std::string & key) const;
-  std::string KeyFromID(long id) const;
+  std::string KeyFromID(unsigned long id) const;
 
   size_t Size(void) const;
 
@@ -73,18 +73,18 @@ private:
   typedef std::unordered_map<std::string, void *> HandleMap; 
   typedef HandleMap::value_type HandleMapValue;
 
-  typedef std::unordered_map<long, std::string> IDMap; 
+  typedef std::unordered_map<unsigned long, std::string> IDMap; 
   typedef IDMap::value_type IDMapValue;
 
 
-  std::atomic<long> curid_;
+  std::atomic<unsigned long> curid_;
   StoreMap store_;
   HandleMap handles_;
   IDMap idmap_;
   bool locked_;
 
   const StoreEntry & GetOrThrow(const std::string & key) const;
-  const std::string & GetOrThrow(long id) const;
+  const std::string & GetOrThrow(unsigned long id) const;
 
   void CloseAll(void);
 };

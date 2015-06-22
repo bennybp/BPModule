@@ -2,8 +2,9 @@
 #include <vector>
 
 #include "BPModule/core/ModuleStore.h"
-#include "BPModule/core/Test_Base.h"
 #include "BPModule/core/Output.h"
+
+#include "BPModule/modulebase/Test_Base.h"
 
 using namespace bpmodule;
 
@@ -32,7 +33,7 @@ public:
 
 extern "C" {
 
-ModuleBase * CreateModule(const std::string name, long id, ModuleStore * mstore, const OptionMap & options)
+ModuleBase * CreateModule(const std::string & name, long id, ModuleStore * mstore, const OptionMap & options)
 {
     if(name == "TESTMOD1")
         return new TestModule1(id, mstore, options);

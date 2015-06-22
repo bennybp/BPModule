@@ -38,6 +38,7 @@ public:
     template<typename T>
     void Set(const std::string & key, const T & value)
     {
+        // copy existing help if it exists
         std::string help;
         if(Has(key))
             help = GetHelp(key);

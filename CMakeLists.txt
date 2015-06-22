@@ -17,4 +17,7 @@ else()
 endif()
 
 add_subdirectory(BPModule)
+add_subdirectory(modules)
 
+
+install(DIRECTORY python DESTINATION ${CMAKE_INSTALL_PREFIX})

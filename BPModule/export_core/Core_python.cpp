@@ -3,7 +3,7 @@
 #include "BPModule/core/ModuleStore.h"
 
 // All the module base classes
-#include "BPModule/core/ModuleBase.h"
+#include "BPModule/modulebase/All.h"
 
 // python stuff
 #include "BPModule/core/Python_stdconvert.h"
@@ -270,19 +270,21 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def("ModuleInfoFromID", &ModuleStore::ModuleInfoFromID)
            .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
            .def("KeyFromID", &ModuleStore::KeyFromID)
-           .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_value_policy<manage_new_object>());
-
-//           .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_value_policy<manage_new_object>());
-//    class_<Test_Base, bases<ModuleBase>, boost::noncopyable>("Test_Base", no_init)
-//           .def("RunTest", &Test_Base::RunTest);
+           .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_value_policy<manage_new_object>())
+           .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_value_policy<manage_new_object>());
 
 
+    ///////////////////////
+    // Module Base classes
+    ///////////////////////
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
            .def("Key", &ModuleBase::Key)
            .def("Info", &ModuleBase::Info)
            .def("Traits", &ModuleBase::Traits)
            .def("Options", &ModuleBase::Options);
 
+    class_<Test_Base, bases<ModuleBase>, boost::noncopyable>("Test_Base", no_init)
+           .def("RunTest", &Test_Base::RunTest);
 
 }
 

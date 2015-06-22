@@ -14,7 +14,7 @@ class ModuleStore;
 class ModuleBase
 {
 public:
-  ModuleBase(long id, ModuleStore * mstore, const OptionMap & options);
+  ModuleBase(unsigned long id, ModuleStore * mstore, const OptionMap & options);
 
   virtual ~ModuleBase() { }
 
@@ -45,7 +45,7 @@ protected:
   }
 
 private:
-  long id_;
+  unsigned long id_;
   OptionMap traits_;
   OptionMap options_;
 };

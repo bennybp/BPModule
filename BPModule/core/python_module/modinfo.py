@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
-moddir = "/home/ben/programming/BPModule/build/BPModule/modules/test1/"
+import os
+
 minfo = { "TESTMOD1" :
   {
     "name"        : "Some test",

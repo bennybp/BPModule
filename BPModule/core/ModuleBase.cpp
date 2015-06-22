@@ -4,7 +4,7 @@
 
 namespace bpmodule {
 
-ModuleBase::ModuleBase(long id, ModuleStore * mstore, const OptionMap & options)
+ModuleBase::ModuleBase(unsigned long id, ModuleStore * mstore, const OptionMap & options)
     : mstore_(*mstore), id_(id), options_(options)
 {
 }
