@@ -33,9 +33,7 @@ public:
   void Lock(void);
 
   std::vector<std::string> GetKeys(void) const;
-  ModuleInfo ModuleInfoFromID(unsigned long id) const;
   ModuleInfo ModuleInfoFromKey(const std::string & key) const;
-  std::string KeyFromID(unsigned long id) const;
 
   size_t Size(void) const;
 
@@ -47,7 +45,6 @@ public:
       const StoreEntry & se = GetOrThrow(key);
 
       ModuleBase * mbptr = se.func(curid_, this, se.mi.options); // must remember to delete it
-      idmap_[curid_] = key;
       curid_++;
 
       T * dptr = dynamic_cast<T *>(mbptr);
@@ -73,18 +70,13 @@ private:
   typedef std::unordered_map<std::string, void *> HandleMap; 
   typedef HandleMap::value_type HandleMapValue;
 
-  typedef std::unordered_map<unsigned long, std::string> IDMap; 
-  typedef IDMap::value_type IDMapValue;
-
 
   std::atomic<unsigned long> curid_;
   StoreMap store_;
   HandleMap handles_;
-  IDMap idmap_;
   bool locked_;
 
   const StoreEntry & GetOrThrow(const std::string & key) const;
-  const std::string & GetOrThrow(unsigned long id) const;
 
   void CloseAll(void);
 };

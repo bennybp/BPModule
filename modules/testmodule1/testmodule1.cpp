@@ -19,9 +19,12 @@ public:
 
     void RunTest(void)
     {
-        Output("This is regular output\n");
-        Warning("This is warning output\n");
-        Error("This is error output\n");
+        Output("\nIn TestModule1: Testing different outputs\n");
+        Debug("This is debugging output: %1% %2% %3%\n", 5, 2.4, "Hello");
+        Output("This is regular output %1% %2% %3%\n", 5, 2.4, "Hello");
+        Warning("This is warning output %1% %2% %3%\n", 5, 2.4, "Hello");
+        Error("This is error output %1% %2% %3%\n", 5, 2.4, "Hello");
+        Output("Done testing outputs\n\n");
     }
 
     virtual ~TestModule1()

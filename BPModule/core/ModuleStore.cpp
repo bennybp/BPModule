@@ -103,14 +103,6 @@ bool ModuleStore::Has(const std::string & key) const
 
 
 
-ModuleInfo ModuleStore::ModuleInfoFromID(unsigned long id) const
-{
-    const std::string & key = GetOrThrow(id);
-    return GetOrThrow(key).mi;
-}
-
-
-
 ModuleInfo ModuleStore::ModuleInfoFromKey(const std::string & key) const
 {
     return GetOrThrow(key).mi;
@@ -118,13 +110,6 @@ ModuleInfo ModuleStore::ModuleInfoFromKey(const std::string & key) const
 
 
   
-std::string ModuleStore::KeyFromID(unsigned long id) const
-{
-    return GetOrThrow(id);
-}
-
-
-
 void ModuleStore::CloseAll(void)
 {
     store_.clear();
@@ -159,16 +144,6 @@ const ModuleStore::StoreEntry & ModuleStore::GetOrThrow(const std::string & key)
         return store_.at(key);
     else
         throw MapException("ModuleStore::StoreMap", key);
-}
-
-
-
-const std::string & ModuleStore::GetOrThrow(unsigned long id) const
-{
-    if(idmap_.count(id))
-        return idmap_.at(id);
-    else
-        throw MapException("ModuleStore::IDMap", boost::lexical_cast<std::string>(id));
 }
 
 

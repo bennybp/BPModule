@@ -9,16 +9,6 @@ ModuleBase::ModuleBase(unsigned long id, ModuleStore * mstore, const OptionMap &
 {
 }
 
-std::string ModuleBase::Key(void) const
-{
-    return mstore_.KeyFromID(id_);
-}
-
-ModuleInfo ModuleBase::Info(void) const
-{
-    return mstore_.ModuleInfoFromID(id_);
-}
-
 OptionMap ModuleBase::Traits(void) const
 {
     return traits_;

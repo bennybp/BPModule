@@ -267,9 +267,7 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def("Size", &ModuleStore::Size)
            .def("Has", &ModuleStore::Has)
            .def("GetKeys", &ModuleStore::GetKeys)
-           .def("ModuleInfoFromID", &ModuleStore::ModuleInfoFromID)
            .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
-           .def("KeyFromID", &ModuleStore::KeyFromID)
            .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_value_policy<manage_new_object>())
            .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_value_policy<manage_new_object>());
 
@@ -278,8 +276,6 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     // Module Base classes
     ///////////////////////
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
-           .def("Key", &ModuleBase::Key)
-           .def("Info", &ModuleBase::Info)
            .def("Traits", &ModuleBase::Traits)
            .def("Options", &ModuleBase::Options);
 
