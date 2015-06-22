@@ -6,7 +6,7 @@
 #include "BPModule/modulebase/All.h"
 
 // python stuff
-#include "BPModule/core/Python_stdconvert.h"
+#include "BPModule/export_core/Python_stdconvert.h"
 #include <boost/python.hpp>
 
 using namespace boost::python;
