@@ -1,6 +1,7 @@
 #include "BPModule/core/OptionMap.h"
 #include "BPModule/core/Output.h"
 #include "BPModule/core/ModuleStore.h"
+#include "BPModule/core/CModuleLoader.h"
 
 // All the module base classes
 #include "BPModule/modulebase/All.h"
@@ -194,11 +195,11 @@ void TranslateException(const BPModuleException & ex)
 
 
 
-// wraps ModuleStore::LoadSO so that it can take a dict for the ModuleInfo
-bool Wrap_ModuleStore_LoadSO(ModuleStore * ms, const std::string & key,
+// wraps CModuleLoader::LoadSO so that it can take a dict for the ModuleInfo
+bool Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key,
                              const std::string & sopath, const boost::python::dict & d)
 {
-    return ms->LoadSO(key, sopath, DictToModuleInfo(d));
+   return ml->LoadSO(key, sopath, DictToModuleInfo(d));
 }
 
 
@@ -262,20 +263,24 @@ BOOST_PYTHON_MODULE(bpmodule_core)
 */
 
     class_<ModuleStore, boost::noncopyable>("ModuleStore")
-           .def("LoadSO", Wrap_ModuleStore_LoadSO)
            .def("Lock", &ModuleStore::Lock)
            .def("Size", &ModuleStore::Size)
            .def("Has", &ModuleStore::Has)
+           .def("Delete", &ModuleStore::Delete)
            .def("GetKeys", &ModuleStore::GetKeys)
            .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
            .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_internal_reference<>())
            .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_internal_reference<>());
 
 
+    class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleStore *>())
+           .def("LoadSO", Wrap_CModuleLoader_LoadSO);
+
     ///////////////////////
     // Module Base classes
     ///////////////////////
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
+           .def("ID", &ModuleBase::ID)
            .def("Traits", &ModuleBase::Traits)
            .def("Options", &ModuleBase::Options);
 

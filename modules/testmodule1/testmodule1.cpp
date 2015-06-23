@@ -12,7 +12,7 @@ using namespace bpmodule;
 class TestModule1 : public Test_Base
 {
 public:
-    TestModule1(long id, ModuleStore * mstore, const OptionMap & options)
+    TestModule1(unsigned long id, ModuleStore * mstore, const OptionMap & options)
                    : Test_Base(id, mstore, options)
     {
     }
@@ -20,10 +20,13 @@ public:
     void RunTest(void)
     {
         Output("\nIn TestModule1: Testing different outputs\n");
+
         Debug("This is debugging output: %1% %2% %3%\n", 5, 2.4, "Hello");
         Output("This is regular output %1% %2% %3%\n", 5, 2.4, "Hello");
+        Success("This is success output %1% %2% %3%\n", 5, 2.4, "Hello");
         Warning("This is warning output %1% %2% %3%\n", 5, 2.4, "Hello");
         Error("This is error output %1% %2% %3%\n", 5, 2.4, "Hello");
+
         Output("Done testing outputs\n\n");
     }
 
@@ -36,7 +39,7 @@ public:
 
 extern "C" {
 
-ModuleBase * CreateModule(const std::string & name, long id, ModuleStore * mstore, const OptionMap & options)
+ModuleBase * CreateModule(const std::string & name, unsigned long id, ModuleStore * mstore, const OptionMap & options)
 {
     if(name == "TESTMOD1")
         return new TestModule1(id, mstore, options);

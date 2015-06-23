@@ -25,6 +25,7 @@ public:
 
   OptionMap Traits(void) const;
   OptionMap Options(void) const;
+  unsigned long ID(void) const;
 
 protected:
   ModuleStore & mstore_;

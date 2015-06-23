@@ -5,6 +5,7 @@
 set(CORE_FILES
             ModuleBase.cpp
             ModuleStore.cpp
+            CModuleLoader.cpp
             Output.cpp
             OptionMap.cpp
    )

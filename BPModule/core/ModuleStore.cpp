@@ -1,78 +1,16 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <iterator>
-#include <sstream>
-#include <algorithm>
-#include <boost/lexical_cast.hpp>
-
-#include <dlfcn.h>
-
 #include "BPModule/core/Exception.h"
 #include "BPModule/core/ModuleStore.h"
 #include "BPModule/core/Output.h"
-
-#include "BPModule/core/ModuleBase.h"
 
 
 namespace bpmodule {
 
 
-bool ModuleStore::LoadSO(const std::string & key, const std::string & sopath, ModuleInfo minfo)
+bool ModuleStore::AddCreateFunc(const std::string & key, ModuleGeneratorFunc func, ModuleDeleterFunc dfunc, const ModuleInfo & minfo)
 {
-    typedef ModuleBase * (*getptr)(const std::string &, unsigned long, ModuleStore *, const OptionMap &);
-
-    if(locked_)
-    {
-        Warning("Store is locked. No more loading!\n");
-        return false;
-    }
-
-    char * error; // for dlerror
-    void * handle;
-
-    // see if the module is loaded
-    // if so, reuse that handle
-    if(handles_.count(sopath) > 0)
-        handle = handles_[sopath];
-    else
-    {
-        Output("Looking to open so file: %1%\n", sopath);
-        handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
-        // open the module
-        if(!handle)
-        {
-            Error("Unable to open SO file: %1%\n", sopath);
-            error = dlerror();
-            Error("%1%\n", error);
-            return false;
-        }
-    }
-
-
-    // get the pointer to the CreateModule function
-    getptr fn = reinterpret_cast<getptr>(dlsym(handle, "CreateModule"));
-    if((error = dlerror()) != NULL)
-    {
-        Error("Unable to find CreateModule!\n");
-        Error("%1%\n", error);
-        dlclose(handle);
-        return false;
-    }
-        
-    ModuleGeneratorFunc createfunc = std::bind(fn, key, std::placeholders::_1,
-                                                        std::placeholders::_2,
-                                                        std::placeholders::_3);
-    minfo.sopath = sopath;
-
     // add to store
     //! \todo Check for duplicates
-    store_.insert(StoreMapValue(key, StoreEntry{minfo, createfunc}));
-
-    if(handles_.count(sopath) == 0)
-        handles_.insert(HandleMapValue(sopath, handle));
-
-    Success("Successfully opened %1%\n", sopath);
+    store_.insert(StoreMap::value_type(key, StoreEntry{minfo, func, dfunc}));
     return true;
 }
 
@@ -105,24 +43,11 @@ bool ModuleStore::Has(const std::string & key) const
 
 ModuleInfo ModuleStore::ModuleInfoFromKey(const std::string & key) const
 {
-    return GetOrThrow(key).mi;
+    return GetOrThrow_(key).mi;
 }
 
 
   
-void ModuleStore::CloseAll(void)
-{
-    store_.clear();
-    for(auto it : handles_)
-    {
-        Output("Closing %1%\n", it.first);
-        dlclose(it.second);
-    }
-    handles_.clear();
-}
-
-
-
 void ModuleStore::Lock(void)
 {
     locked_ = true;
@@ -130,15 +55,25 @@ void ModuleStore::Lock(void)
 
 
 
+void ModuleStore::Delete(unsigned long id)
+{
+    if(deletemap_.count(id))
+    {
+        deletemap_[id](id);
+        deletemap_.erase(id);
+    }
+}
+
+
 ModuleStore::ModuleStore()
 {
-    locked_ = false;
     curid_ = 0;
+    locked_ = false;
 }
 
 
 
-const ModuleStore::StoreEntry & ModuleStore::GetOrThrow(const std::string & key) const
+const ModuleStore::StoreEntry & ModuleStore::GetOrThrow_(const std::string & key) const
 {
     if(store_.count(key))
         return store_.at(key);
@@ -150,8 +85,11 @@ const ModuleStore::StoreEntry & ModuleStore::GetOrThrow(const std::string & key)
 
 ModuleStore::~ModuleStore()
 {
-    objects_.clear();
-    CloseAll();
+    // it is the responsiblility of the various
+    // loaders to be responsible for deleting all
+    // the objects. The deletion functors aren't
+    // called here since this should be destructed
+    // after all the loaders
 }
 
 
