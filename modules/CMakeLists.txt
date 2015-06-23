@@ -1,1 +1,2 @@
 add_subdirectory(testmodule1)
+add_subdirectory(testpymodule1)

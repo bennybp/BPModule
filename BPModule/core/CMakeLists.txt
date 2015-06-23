@@ -6,6 +6,7 @@ set(CORE_FILES
             ModuleBase.cpp
             ModuleStore.cpp
             CModuleLoader.cpp
+            PyModuleLoader.cpp
             Output.cpp
             OptionMap.cpp
    )

@@ -2,6 +2,7 @@
 #include "BPModule/core/Output.h"
 #include "BPModule/core/ModuleStore.h"
 #include "BPModule/core/CModuleLoader.h"
+#include "BPModule/core/PyModuleLoader.h"
 
 // All the module base classes
 #include "BPModule/modulebase/All.h"
@@ -196,11 +197,34 @@ void TranslateException(const BPModuleException & ex)
 
 
 // wraps CModuleLoader::LoadSO so that it can take a dict for the ModuleInfo
-bool Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key,
-                             const std::string & sopath, const boost::python::dict & d)
+bool Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & sopath,
+                             const std::string & key, const boost::python::dict & d)
 {
-   return ml->LoadSO(key, sopath, DictToModuleInfo(d));
+   return ml->LoadSO(sopath, key, DictToModuleInfo(d));
 }
+
+// wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
+bool Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml, const std::string & path,
+                                     const std::string & key, boost::python::object func,
+                                     const boost::python::dict & d)
+{
+   return ml->AddPyModule(path, key, func, DictToModuleInfo(d));
+}
+
+
+
+class Test_Base_Wrap : public Test_Base, public wrapper<Test_Base>
+{
+    public:
+        Test_Base_Wrap(unsigned long id, ModuleStore * mstore, const OptionMap & options)
+            : Test_Base(id, mstore, options)
+        {}
+
+        virtual void RunTest(void)
+        {
+            this->get_override("RunTest")();
+        }
+};
 
 
 
@@ -276,6 +300,9 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleStore *>())
            .def("LoadSO", Wrap_CModuleLoader_LoadSO);
 
+    class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleStore *>())
+          .def("AddPyModule", Wrap_PyModuleLoader_AddPyModule);
+
     ///////////////////////
     // Module Base classes
     ///////////////////////
@@ -284,8 +311,8 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def("Traits", &ModuleBase::Traits)
            .def("Options", &ModuleBase::Options);
 
-    class_<Test_Base, bases<ModuleBase>, boost::noncopyable>("Test_Base", no_init)
-           .def("RunTest", &Test_Base::RunTest);
+    class_<Test_Base_Wrap, bases<ModuleBase>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore *, const OptionMap &>())
+           .def("RunTest", pure_virtual(&Test_Base::RunTest));
 
 }
 

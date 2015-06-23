@@ -30,9 +30,11 @@ bpcore.SetDebug(True)
 # Create the module store and loaders
 mst = bpcore.ModuleStore()
 cml = bpcore.CModuleLoader(mst)
+pml = bpcore.PyModuleLoader(mst)
 
 # Load the python modules
 t1 = bp.loader.LoadCModule("testmodule1", modpath, cml)
+t2 = bp.loader.LoadPyModule("testpymodule1", modpath, pml)
 
 
 # Test

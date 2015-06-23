@@ -75,3 +75,29 @@ def LoadCModule(name, path, cml):
   return m
   
 
+def LoadPyModule(name, path, pml):
+  # store the path, etc. We will reset later
+  oldpath = sys.path
+  olddl = sys.getdlopenflags()
+
+  sys.path.append(path)
+  sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
+  m = importlib.import_module(name)
+
+  # reset the path, etc
+  sys.path = oldpath
+  sys.setdlopenflags(olddl)
+
+
+  for key,minfo in m.minfo.items():
+
+    fullpath = os.path.join(path, name)
+
+    # Dump some info
+    utils.PrintModuleInfo(key, fullpath, minfo)
+
+    # load & insert into the modulestore
+    #pml.AddPyModule(fullpath, key, m.CreateModule, minfo)
+
+
+  return m
