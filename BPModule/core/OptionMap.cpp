@@ -8,7 +8,13 @@ OptionMap::OptionMap(const OptionMap & rhs)
 {
     // need to Clone new elements
     for(auto & it : rhs.opmap_)
-        opmap_.insert(OpMapValue(it.first, OpMapEntry({it.second.oph->Clone(), it.second.help})));
+        opmap_.insert(OpMapValue(
+                                 it.first,
+                                 OpMapEntry{
+                                            std::unique_ptr<OptionPlaceholder>(it.second.oph->Clone()),
+                                            it.second.help
+                                           }
+                                ));
 }
 
 OptionMap & OptionMap::operator=(const OptionMap & rhs)
@@ -78,8 +84,9 @@ size_t OptionMap::Size(void) const
 size_t OptionMap::Erase(const std::string & key)
 {
     // delete pointer if necessary
-    if(opmap_.count(key))
-        delete opmap_.at(key).oph; // delete the ptr
+    // now handled by unique_ptr
+    //if(opmap_.count(key))
+    //    delete opmap_.at(key).oph; // delete the ptr
 
     return opmap_.erase(key);       
 }

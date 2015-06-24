@@ -28,7 +28,7 @@ public:
     {
         //! \todo make invalid cast exception class
         const OpMapEntry & opm = GetOrThrow(key);
-        const OptionHolder<T> * oh = dynamic_cast<const OptionHolder<T> *>(opm.oph);
+        const OptionHolder<T> * oh = dynamic_cast<const OptionHolder<T> *>(opm.oph.get());
         if(oh == nullptr)
             throw MapException("OptionMap", key, opm.oph->Type(), typeid(T).name());
 
@@ -51,7 +51,13 @@ public:
     void Set(const std::string & key, const T & value, const std::string & help)
     {
         Erase(key);
-        opmap_.insert(OpMapValue(key, OpMapEntry({new OptionHolder<T>(value), help}))); 
+        opmap_.insert(OpMapValue(
+                                 key, 
+                                 OpMapEntry{
+                                            std::unique_ptr<OptionPlaceholder>(new OptionHolder<T>(value)),
+                                            help
+                                            }
+                                )); 
     }
 
     bool Has(const std::string & key) const;
@@ -121,7 +127,7 @@ private:
 
     struct OpMapEntry
     {
-        OptionPlaceholder * oph;
+        std::unique_ptr<OptionPlaceholder> oph;
         std::string help;
     };
 
