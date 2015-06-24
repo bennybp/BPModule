@@ -4,6 +4,9 @@
 
 set(BPMODULE_PYTHON_FILES
             Core_python.cpp
+            OptionMap_python.cpp
+            ModuleInfo_python.cpp
+            Output_python.cpp
    )
 
 

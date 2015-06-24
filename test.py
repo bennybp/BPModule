@@ -18,6 +18,15 @@ bp.bpcore.SetOut_Stdout()
 bp.bpcore.SetColor(True)
 bp.bpcore.SetDebug(True)
 
+
+bp.Output("******************************\n")
+bp.Output("* Testing output             *\n")
+bp.Output("****************************** %1% %2% %3%\n", "Hi there", 3, 3.1415)
+bp.Success("****************************** %1% %2% %3%\n", "Hi there", 3, 3.1415)
+bp.Warning("****************************** %1% %2% %3%\n", "Hi there", 3, 3.1415)
+bp.Error("****************************** %1% %2% %3%\n", "Hi there", 3, 3.1415)
+bp.Debug("****************************** %1% %2% %3%\n", "Hi there", 3, 3.1415)
+
 # Load the python modules
 bp.LoadModules(
                [

@@ -1,14 +1,17 @@
 import sys
 import os
 import importlib
-from .utils import *
 
+# Important! Symbols must be loaded now and available
+# globally! WILL NOT WORK WITHOUT
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 import bpmodule_core as bpcore
 
+from .utils import *
+
 
 # Print info about the core module
-print(bpcore.minfo)
+#print(bpcore.minfo)
 for key,minfo in bpcore.minfo.items():
   minfo["path"] = os.path.dirname(bpcore.__file__) + "/"
   PrintModuleInfo(key, minfo)
@@ -57,9 +60,9 @@ def LoadModule(name):
     return m
 
 
-
 def LoadModules(names):
     mods = []
     for name in names:
         mods.append(LoadModule(name))
     return mods
+

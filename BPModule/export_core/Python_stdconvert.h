@@ -7,6 +7,8 @@
 #include <boost/python.hpp>
 
 namespace bpmodule {
+namespace export_python {
+
 
 template<typename T>
 static
@@ -92,6 +94,7 @@ struct MapConverter
 
 
 
+} // close namespace export_python
 } // close namespace bpmodule
 
 #endif

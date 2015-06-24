@@ -1,205 +1,25 @@
-#include "BPModule/core/OptionMap.h"
-#include "BPModule/core/Output.h"
 #include "BPModule/core/ModuleStore.h"
 #include "BPModule/core/CModuleLoader.h"
 #include "BPModule/core/PyModuleLoader.h"
 
-// All the module base classes
-#include "BPModule/modulebase/All.h"
 
-// python stuff
+// helpers and wrappers
+#include "BPModule/export_core/ModulesWrap_python.h"
 #include "BPModule/export_core/Python_stdconvert.h"
-#include <boost/python.hpp>
+#include "BPModule/export_core/OptionMap_python.h"
+#include "BPModule/export_core/ModuleInfo_python.h"
+#include "BPModule/export_core/Output_python.h"
 
 using namespace boost::python;
 
 namespace bpmodule {
-
-// Some wrappers for OptionMap Get/Set member
-void OptionMap_Set_Helper(OptionMap * op, const std::string & key, 
-                          const boost::python::object & value,
-                          const std::string & help)
-{
-    std::string cl = extract<std::string>(value.attr("__class__").attr("__name__"));
-
-    if(cl == "int")
-        op->Set(key, static_cast<int>(extract<int>(value)), help);
-    else if(cl == "float")
-        op->Set(key, static_cast<double>(extract<double>(value)), help);
-    else if(cl == "str")
-        op->Set(key, static_cast<std::string>(extract<std::string>(value)), help);
-    else if(cl == "list")
-    {
-        // get type of first element
-        boost::python::list lst = boost::python::extract<boost::python::list>(value);
-        int length = extract<int>(lst.attr("__len__")());
-        if(length == 0)
-        {
-            // plain string vector if empty
-            std::vector<std::string> v;
-            op->Set(key, std::vector<std::string>(), help);
-        } 
-        else
-        {
-            std::string cl2 = extract<std::string>(lst[0].attr("__class__").attr("__name__"));
-            if(cl2 == "int")
-                op->Set(key, ConvertListToVec<int>(lst), help);
-            else if(cl2 == "float")
-                op->Set(key, ConvertListToVec<double>(lst), help);
-            else if(cl2 == "str")
-                op->Set(key, ConvertListToVec<std::string>(lst), help);
-            else
-                Error("Unknown type %1% in list for key %2%\n", cl, key);
-        }
-    }
-    else
-        Error("Unknown type %1% for key %2%\n", cl, key);
-}
-
-
-
-boost::python::object OptionMap_Get_Helper(const OptionMap * op, const std::string & key)
-{
-    std::string type = op->GetType(key);
-
-    if(type.size() == 0)
-        return object();
-    else if(type == typeid(int).name())
-        return object(op->Get<int>(key));
-    else if(type == typeid(double).name())
-        return object(op->Get<double>(key));
-    else if(type == typeid(std::string).name())
-        return object(op->Get<std::string>(key));
-    else if(type == typeid(std::vector<int>).name())
-        return object(op->Get<std::vector<int>>(key));
-    else if(type == typeid(std::vector<double>).name())
-        return object(op->Get<std::vector<double>>(key));
-    else if(type == typeid(std::vector<std::string>).name())
-        return object(op->Get<std::vector<std::string>>(key));
-    else
-    {
-        Error("Unable to deduce type: %1%\n", type);
-        return object();
-    }
-}
-
-
-
-// Convert lists <-> OptionMaps
-OptionMap ListToOptionMap(const boost::python::list & olist)
-{
-    OptionMap op;
-    int optlen = extract<int>(olist.attr("__len__")());
-
-    for(int i = 0; i < optlen; i++)
-    {
-        std::string key = extract<std::string>(olist[i][0]);
-        std::string help = extract<std::string>(olist[i][2]);
-        OptionMap_Set_Helper(&op, key, olist[i][1], help); 
-    }
-    return op;
-}
-
-
-
-boost::python::list OptionMapToList(const OptionMap & op)
-{
-    boost::python::list lst;
-    auto keys = op.GetKeys();
-
-    for(auto & it : keys)
-        lst.append(boost::python::make_tuple(it, OptionMap_Get_Helper(&op, it), op.GetHelp(it)));
-
-    return lst;
-}
-
-
-
-
-// the "options" element of the dict must be a list of tuples
-ModuleInfo DictToModuleInfo(const dict & dictionary)
-{
-    ModuleInfo ret;
-    try {
-        ret.name = extract<std::string>(dictionary["name"]);
-        ret.type = extract<std::string>(dictionary["type"]);
-        ret.path = extract<std::string>(dictionary["path"]);
-        ret.version = extract<std::string>(dictionary["version"]);
-        ret.description = extract<std::string>(dictionary["description"]);
-        ret.authors = ConvertListToVec<std::string>(extract<list>(dictionary["authors"]));
-        ret.refs = ConvertListToVec<std::string>(extract<list>(dictionary["refs"]));
-
-        OptionMap op;
-        boost::python::list olist = extract<boost::python::list>(dictionary["options"]);
-        ret.options = ListToOptionMap(olist);
-
-        if(dictionary.has_key("soname"))
-            ret.soname = extract<std::string>(dictionary["soname"]);
-
-        //if(dictionary.has_key("path"))
-
-    }
-    catch(...)
-    {
-        Error("HEREEEE\n");
-    }   
-
-    return ret;
-}
-
-
-
-dict ModuleInfoToDict(const ModuleInfo & mi)
-{
-    dict d;
-
-    //simple ones first
-    d["name"] = mi.name;
-    d["type"] = mi.type;
-    d["path"] = mi.path;
-    d["soname"] = mi.soname;
-    d["version"] = mi.version;
-    d["description"] = mi.description;
-
-    // now lists of strings
-    d["authors"] = ConvertVecToList(mi.authors);
-    d["refs"] = ConvertVecToList(mi.refs);
-
-    // now options
-    d["options"] = OptionMapToList(mi.options); 
-
-    return d;
-}
-
-
-// Converter for OptionMap
-struct OptionMapConverter
-{
-    static PyObject* convert(const OptionMap & op)
-    {
-      boost::python::list lst = OptionMapToList(op);
-      return boost::python::incref(lst.ptr());
-    }
-};
-
-
-
-// Converter for ModuleInfo
-struct ModuleInfoConverter
-{
-    static PyObject* convert(const ModuleInfo & m)
-    {
-      boost::python::dict d = ModuleInfoToDict(m);
-      return boost::python::incref(d.ptr());
-    }
-};
-
+namespace export_python {
 
 
 // the main exception translator
 void TranslateException(const BPModuleException & ex)
 {
-    PyErr_SetString(PyExc_RuntimeError, bpmodule::ExceptionString(ex).c_str());
+    PyErr_SetString(PyExc_RuntimeError, ExceptionString(ex).c_str());
 }
 
 
@@ -217,26 +37,6 @@ bool Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
 {
    return ml->AddPyModule(key, func, DictToModuleInfo(d));
 }
-
-
-
-class Test_Base_Wrap : public Test_Base, public wrapper<Test_Base>
-{
-    public:
-        Test_Base_Wrap(unsigned long id, ModuleStore & mstore, boost::python::list opt)
-            : Test_Base(id, mstore, ListToOptionMap(opt))
-        {}
-
-        virtual void RunTest(void)
-        {
-            this->get_override("RunTest")();
-        }
-
-        virtual void RunCallTest(const std::string & other)
-        {
-            this->get_override("RunCallTest")(other);
-        }
-};
 
 
 
@@ -268,35 +68,17 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     to_python_converter<OptionMap, OptionMapConverter>();
 
     // setting the output
-    def("SetOut_Stdout", bpmodule::SetOut_Stdout);
-    def("SetOut_File", bpmodule::SetOut_File);
-    def("SetColor", bpmodule::SetColor);
-    def("SetDebug", bpmodule::SetDebug);
+    def("SetOut_Stdout", SetOut_Stdout);
+    def("SetOut_File", SetOut_File);
+    def("SetColor", SetColor);
+    def("SetDebug", SetDebug);
 
-/*
-    // commented since it is now converted to a list
-    class_<OptionMap>("OptionMap")
-        .def("Set", Wrap_OptionMap_Set)
-        .def("Set", OptionMap_Set_Helper)
-        .def("Get", OptionMap_Get_Helper)
-        .def("Has", &OptionMap::Has)
-        .def("GetType", &OptionMap::GetType)
-        .def("GetHelp", &OptionMap::GetHelp)
-        .def("GetAllHelp", &OptionMap::GetAllHelp)
-        .def("GetKeys", &OptionMap::GetKeys)
-        .def("Size", &OptionMap::Size);
-*/
-/*
-    // commented since it is now converted to a dict
-    class_<ModuleInfo>("ModuleInfo")
-           .def_readwrite("name", &ModuleInfo::name)
-           .def_readwrite("soname", &ModuleInfo::soname)
-           .def_readwrite("version", &ModuleInfo::version)
-           .def_readwrite("authors", &ModuleInfo::authors)
-           .def_readwrite("description", &ModuleInfo::description)
-           .def_readwrite("refs", &ModuleInfo::refs)
-           .def_readwrite("options", &ModuleInfo::options);
-*/
+    // printing to output
+    def("Output", Output_Wrap_Output);
+    def("Success", Output_Wrap_Success);
+    def("Warning", Output_Wrap_Warning);
+    def("Error", Output_Wrap_Error);
+    def("Debug", Output_Wrap_Debug);
 
     class_<ModuleStore, boost::noncopyable>("ModuleStore")
            .def("Lock", &ModuleStore::Lock)
@@ -334,6 +116,6 @@ BOOST_PYTHON_MODULE(bpmodule_core)
 }
 
 
-
+} // close namespace export_python
 } // close namespace bpmodule
 
