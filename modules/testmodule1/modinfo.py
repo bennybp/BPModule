@@ -3,7 +3,8 @@
 minfo = { "TESTMOD1" :
   {
     "name"        : "Some test",
-    "soname"      : "testmodule1",
+    "type"        : "c_module",
+    "soname"      : "testmodule1.so",
     "version"     : "0.1a",
     "description" : "Some test module",
     "authors"     : ["me", "myself", "I"],

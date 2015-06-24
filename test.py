@@ -40,3 +40,10 @@ try:
  
 except RuntimeError as e:
   print(e)
+
+
+pml.DeleteAll()
+cml.DeleteAll()
+cml.CloseHandles()
+
+

@@ -1,10 +1,10 @@
-import os
+def PrintModuleInfo(key, minfo):
 
-def PrintModuleInfo(key, fullpath, minfo):
-
+  print()
   print("  ++ Module: {}".format(key))
-  print("            Path: {}".format(fullpath))
   print("            Name: {}".format(minfo["name"]))
+  print("            Type: {}".format(minfo["type"]))
+  print("            Path: {}".format(minfo["path"]))
 
   if "soname" in minfo:
       print("          SOName: {}".format(minfo["soname"]))
@@ -23,6 +23,6 @@ def PrintModuleInfo(key, fullpath, minfo):
   print("         Options: {}".format(len(minfo["options"])))
   for opt in minfo["options"]:
       print("                  {:<12}  :  {:<12}  : {}".format(opt[0], opt[1], opt[2]))
-
+  print()
 
 

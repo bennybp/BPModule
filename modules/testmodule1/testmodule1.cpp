@@ -12,7 +12,7 @@ using namespace bpmodule;
 class TestModule1 : public Test_Base
 {
 public:
-    TestModule1(unsigned long id, ModuleStore * mstore, const OptionMap & options)
+    TestModule1(unsigned long id, ModuleStore & mstore, const OptionMap & options)
                    : Test_Base(id, mstore, options)
     {
     }
@@ -39,7 +39,7 @@ public:
 
 extern "C" {
 
-ModuleBase * CreateModule(const std::string & name, unsigned long id, ModuleStore * mstore, const OptionMap & options)
+ModuleBase * CreateModule(const std::string & name, unsigned long id, ModuleStore & mstore, const OptionMap & options)
 {
     if(name == "TESTMOD1")
         return new TestModule1(id, mstore, options);

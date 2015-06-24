@@ -14,7 +14,7 @@ class ModuleStore;
 class ModuleBase
 {
 public:
-  ModuleBase(unsigned long id, ModuleStore * mstore, const OptionMap & options);
+  ModuleBase(unsigned long id, ModuleStore & mstore, const OptionMap & options);
 
   virtual ~ModuleBase();
 

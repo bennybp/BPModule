@@ -122,7 +122,8 @@ ModuleInfo DictToModuleInfo(const dict & dictionary)
     ModuleInfo ret;
     try {
         ret.name = extract<std::string>(dictionary["name"]);
-        ret.soname = extract<std::string>(dictionary["soname"]);
+        ret.type = extract<std::string>(dictionary["type"]);
+        ret.path = extract<std::string>(dictionary["path"]);
         ret.version = extract<std::string>(dictionary["version"]);
         ret.description = extract<std::string>(dictionary["description"]);
         ret.authors = ConvertListToVec<std::string>(extract<list>(dictionary["authors"]));
@@ -131,6 +132,12 @@ ModuleInfo DictToModuleInfo(const dict & dictionary)
         OptionMap op;
         boost::python::list olist = extract<boost::python::list>(dictionary["options"]);
         ret.options = ListToOptionMap(olist);
+
+        if(dictionary.has_key("soname"))
+            ret.soname = extract<std::string>(dictionary["soname"]);
+
+        //if(dictionary.has_key("path"))
+
     }
     catch(...)
     {
@@ -148,10 +155,11 @@ dict ModuleInfoToDict(const ModuleInfo & mi)
 
     //simple ones first
     d["name"] = mi.name;
+    d["type"] = mi.type;
+    d["path"] = mi.path;
     d["soname"] = mi.soname;
     d["version"] = mi.version;
     d["description"] = mi.description;
-    d["sopath"] = mi.sopath;
 
     // now lists of strings
     d["authors"] = ConvertVecToList(mi.authors);
@@ -197,18 +205,17 @@ void TranslateException(const BPModuleException & ex)
 
 
 // wraps CModuleLoader::LoadSO so that it can take a dict for the ModuleInfo
-bool Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & sopath,
-                             const std::string & key, const boost::python::dict & d)
+bool Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const boost::python::dict & d)
 {
-   return ml->LoadSO(sopath, key, DictToModuleInfo(d));
+   return ml->LoadSO(key, DictToModuleInfo(d));
 }
 
 // wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
-bool Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml, const std::string & path,
+bool Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
                                      const std::string & key, boost::python::object func,
                                      const boost::python::dict & d)
 {
-   return ml->AddPyModule(path, key, func, DictToModuleInfo(d));
+   return ml->AddPyModule(key, func, DictToModuleInfo(d));
 }
 
 
@@ -216,8 +223,8 @@ bool Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml, const std::string & pa
 class Test_Base_Wrap : public Test_Base, public wrapper<Test_Base>
 {
     public:
-        Test_Base_Wrap(unsigned long id, ModuleStore * mstore, const OptionMap & options)
-            : Test_Base(id, mstore, options)
+        Test_Base_Wrap(unsigned long id, ModuleStore & mstore, boost::python::list opt)
+            : Test_Base(id, mstore, ListToOptionMap(opt))
         {}
 
         virtual void RunTest(void)
@@ -298,20 +305,23 @@ BOOST_PYTHON_MODULE(bpmodule_core)
 
 
     class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleStore *>())
+           .def("CloseHandles", &CModuleLoader::CloseHandles)
+           .def("DeleteAll", &CModuleLoader::DeleteAll)
            .def("LoadSO", Wrap_CModuleLoader_LoadSO);
 
     class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleStore *>())
-          .def("AddPyModule", Wrap_PyModuleLoader_AddPyModule);
+           .def("DeleteAll", &PyModuleLoader::DeleteAll)
+           .def("AddPyModule", Wrap_PyModuleLoader_AddPyModule);
 
     ///////////////////////
     // Module Base classes
     ///////////////////////
-    class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
+    class_<ModuleBase, boost::noncopyable>("ModuleBase", init<unsigned long, ModuleStore &, const OptionMap &>())
            .def("ID", &ModuleBase::ID)
            .def("Traits", &ModuleBase::Traits)
            .def("Options", &ModuleBase::Options);
 
-    class_<Test_Base_Wrap, bases<ModuleBase>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore *, const OptionMap &>())
+    class_<Test_Base_Wrap, bases<ModuleBase>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, boost::python::list>())
            .def("RunTest", pure_virtual(&Test_Base::RunTest));
 
 }

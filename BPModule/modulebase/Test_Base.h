@@ -11,7 +11,7 @@ namespace bpmodule {
 class Test_Base : public ModuleBase
 {
 public:
-  Test_Base(unsigned long id, ModuleStore * mstore, const OptionMap & options);
+  Test_Base(unsigned long id, ModuleStore & mstore, const OptionMap & options);
 
   virtual void RunTest(void) = 0;
 };

@@ -15,7 +15,6 @@ class ModuleStore;
 class OptionMap;
 class ModuleInfo;
 
-typedef ModuleBase *(*CreateFunc)(const std::string &, unsigned long, ModuleStore *, const OptionMap &);
 typedef std::function<ModuleBase *(const std::string &, unsigned long, const OptionMap &)> ModuleGeneratorFunc;
 typedef std::function<void(unsigned long)> ModuleDeleterFunc;
 
@@ -30,8 +29,10 @@ public:
   PyModuleLoader & operator=(const PyModuleLoader & rhs) = delete;
   PyModuleLoader(const PyModuleLoader & rhs) = delete;
 
-  bool AddPyModule(const std::string & path, const std::string & key,
+  bool AddPyModule(const std::string & key,
                    boost::python::object func, const ModuleInfo & minfo);
+
+  void DeleteAll(void);
 
 private:
   ModuleStore * mst_;
@@ -40,7 +41,6 @@ private:
 
   ObjectMap objects_;
 
-  void CloseAll_(void);
 
   ModuleBase * FuncWrapper_(boost::python::object fn, const std::string & key,
                             unsigned long id,

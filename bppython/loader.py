@@ -12,11 +12,13 @@ def LoadCoreModule(name):
   m = importlib.import_module(name)
   sys.setdlopenflags(olddl)
 
-  path = os.path.dirname(m.__file__)
+  path = os.path.dirname(m.__file__) + "/"
 
   for key,minfo in m.minfo.items():
+    minfo["path"] = path
+
     # Dump some info
-    utils.PrintModuleInfo(key, path, minfo)
+    utils.PrintModuleInfo(key, minfo)
   return m
   
 
@@ -27,21 +29,22 @@ def LoadCModule(name, cml):
   m = importlib.import_module(name)
   sys.setdlopenflags(olddl)
 
-  path = os.path.dirname(m.__file__)
+  path = os.path.dirname(m.__file__) + "/"
 
   for key,minfo in m.minfo.items():
-
-    sopath = os.path.join(path, minfo["soname"]) + ".so"
+    # set the path for all
+    minfo["path"] = path
 
     # Dump some info
-    utils.PrintModuleInfo(key, path, minfo)
+    utils.PrintModuleInfo(key, minfo)
 
-    # find the full path of the so file
+    # find the full path of the so file and test here
+    sopath = os.path.join(path, minfo["soname"])
     if not os.path.isfile(sopath):
       raise RuntimeError("Error - {} does not exist or is not a file!".format(sopath))
 
     # load & insert into the modulestore
-    cml.LoadSO(sopath, key, minfo)
+    cml.LoadSO(key, minfo)
 
 
   return m
@@ -53,14 +56,17 @@ def LoadPyModule(name, pml):
   m = importlib.import_module(name)
   sys.setdlopenflags(olddl)
 
-  path = os.path.dirname(m.__file__)
+  path = os.path.dirname(m.__file__) + "/"
 
   for key,minfo in m.minfo.items():
+    # set the path for all
+    minfo["path"] = path
+
     # Dump some info
-    utils.PrintModuleInfo(key, path, minfo)
+    utils.PrintModuleInfo(key, minfo)
 
     # load & insert into the modulestore
-    pml.AddPyModule(path, key, m.CreateModule, minfo)
+    pml.AddPyModule(key, m.CreateModule, minfo)
 
 
   return m

@@ -3,7 +3,7 @@
 minfo = { "TESTPYMOD1" :
   {
     "name"        : "Some test",
-    "soname"      : "",
+    "type"        : "python_module",
     "version"     : "0.1a",
     "description" : "Some test module",
     "authors"     : ["me", "myself", "I"],

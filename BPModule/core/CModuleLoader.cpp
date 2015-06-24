@@ -12,7 +12,7 @@ ModuleBase * CModuleLoader::FuncWrapper_(CreateFunc fn, const std::string & key,
                                          unsigned long id,
                                          const OptionMap & options)
 {
-    ModuleBase * newobj = fn(key, id, mst_, options);
+    ModuleBase * newobj = fn(key, id, *mst_, options);
     objects_[id] = std::unique_ptr<ModuleBase>(newobj);
     return newobj;
 }
@@ -24,10 +24,12 @@ void CModuleLoader::DeleteWrapper_(unsigned long id)
 }
 
 
-bool CModuleLoader::LoadSO(const std::string & sopath,
-                           const std::string & key,
+bool CModuleLoader::LoadSO(const std::string & key,
                            const ModuleInfo & minfo)
 {
+    // trailing slash on path should have been added by python scripts
+    std::string sopath = minfo.path + minfo.soname;
+
     char * error; // for dlerror
     void * handle;
 
@@ -71,10 +73,7 @@ bool CModuleLoader::LoadSO(const std::string & sopath,
                                                         std::placeholders::_3);
 
     ModuleDeleterFunc dfunc = std::bind(&CModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
-
-    ModuleInfo minfo2(minfo);
-    minfo2.sopath = sopath;
-    return mst_->AddCreateFunc(key, cfunc, dfunc, minfo2);
+    return mst_->AddCreateFunc(key, cfunc, dfunc, minfo);
 }
 
 
@@ -85,9 +84,15 @@ void CModuleLoader::DeleteObject_(unsigned long id)
 
 
 
-void CModuleLoader::CloseAll_(void)
+void CModuleLoader::DeleteAll(void)
 {
     objects_.clear();
+}
+
+
+
+void CModuleLoader::CloseHandles(void)
+{
     for(auto it : handles_)
     {
         Output("Closing %1%\n", it.first);
@@ -107,7 +112,8 @@ CModuleLoader::CModuleLoader(ModuleStore * mst)
 
 CModuleLoader::~CModuleLoader()
 {
-    CloseAll_();
+    DeleteAll();
+    CloseHandles();
 }
 
 
