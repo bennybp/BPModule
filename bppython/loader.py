@@ -5,99 +5,62 @@ import importlib
 import os
 from . import utils
 
-def LoadModule(name, path, modulestore):
+def LoadCoreModule(name):
   # store the path, etc. We will reset later
-  oldpath = sys.path
   olddl = sys.getdlopenflags()
-
-  sys.path.append(path)
   sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
   m = importlib.import_module(name)
-
-  # reset the path, etc
-  sys.path = oldpath
   sys.setdlopenflags(olddl)
 
+  path = os.path.dirname(m.__file__)
 
   for key,minfo in m.minfo.items():
-
-    if "soname" in minfo:
-      fullpath = os.path.join(path, name, minfo["soname"]) + ".so"
-    else:
-      fullpath = path
-
     # Dump some info
-    utils.PrintModuleInfo(key, fullpath, minfo)
-
-    # if given a modulestore
-    # (should only NOT be given when loading core)
-    if modulestore and "soname" in minfo:
-      # find the full path of the so file
-      if not os.path.isfile(fullpath):
-        raise RuntimeError("Error - {} does not exist or is not a file!".format(fullpath))
-
-      # insert into the modulestore
-      modulestore.LoadSO(key, fullpath, minfo)
-
+    utils.PrintModuleInfo(key, path, minfo)
   return m
   
 
 
-def LoadCModule(name, path, cml):
-  # store the path, etc. We will reset later
-  oldpath = sys.path
+def LoadCModule(name, cml):
   olddl = sys.getdlopenflags()
-
-  sys.path.append(path)
   sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
   m = importlib.import_module(name)
-
-  # reset the path, etc
-  sys.path = oldpath
   sys.setdlopenflags(olddl)
 
+  path = os.path.dirname(m.__file__)
 
   for key,minfo in m.minfo.items():
 
-    fullpath = os.path.join(path, name, minfo["soname"]) + ".so"
+    sopath = os.path.join(path, minfo["soname"]) + ".so"
 
     # Dump some info
-    utils.PrintModuleInfo(key, fullpath, minfo)
+    utils.PrintModuleInfo(key, path, minfo)
 
     # find the full path of the so file
-    if not os.path.isfile(fullpath):
-      raise RuntimeError("Error - {} does not exist or is not a file!".format(fullpath))
+    if not os.path.isfile(sopath):
+      raise RuntimeError("Error - {} does not exist or is not a file!".format(sopath))
 
     # load & insert into the modulestore
-    cml.LoadSO(fullpath, key, minfo)
+    cml.LoadSO(sopath, key, minfo)
 
 
   return m
   
 
-def LoadPyModule(name, path, pml):
-  # store the path, etc. We will reset later
-  oldpath = sys.path
+def LoadPyModule(name, pml):
   olddl = sys.getdlopenflags()
-
-  sys.path.append(path)
   sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
   m = importlib.import_module(name)
-
-  # reset the path, etc
-  sys.path = oldpath
   sys.setdlopenflags(olddl)
 
+  path = os.path.dirname(m.__file__)
 
   for key,minfo in m.minfo.items():
-
-    fullpath = os.path.join(path, name)
-
     # Dump some info
-    utils.PrintModuleInfo(key, fullpath, minfo)
+    utils.PrintModuleInfo(key, path, minfo)
 
     # load & insert into the modulestore
-    #pml.AddPyModule(fullpath, key, m.CreateModule, minfo)
+    pml.AddPyModule(path, key, m.CreateModule, minfo)
 
 
   return m

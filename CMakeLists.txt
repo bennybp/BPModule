@@ -131,4 +131,4 @@ add_subdirectory(BPModule)
 add_subdirectory(modules)
 
 
-install(DIRECTORY bppython DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY bppython DESTINATION ${CMAKE_INSTALL_PREFIX}/modules)
