@@ -28,5 +28,10 @@ OptionMap ModuleBase::Options(void) const
 {
     return options_;
 }
+
+ModuleStore & ModuleBase::MStore(void)
+{
+    return mstore_;
+}
  
 } // close namespace bpmodule

@@ -26,10 +26,9 @@ public:
   OptionMap Traits(void) const;
   OptionMap Options(void) const;
   unsigned long ID(void) const;
+  ModuleStore & MStore(void);
 
 protected:
-  ModuleStore & mstore_;
-
   template<typename T>
   void SetTrait(const std::string & key, const T & value)
   {
@@ -44,8 +43,9 @@ protected:
 
 private:
   unsigned long id_;
-  OptionMap traits_;
+  ModuleStore & mstore_;
   OptionMap options_;
+  OptionMap traits_;
 };
 
 

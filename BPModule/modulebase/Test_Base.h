@@ -14,6 +14,7 @@ public:
   Test_Base(unsigned long id, ModuleStore & mstore, const OptionMap & options);
 
   virtual void RunTest(void) = 0;
+  virtual void RunCallTest(const std::string & other) = 0;
 };
 
 }

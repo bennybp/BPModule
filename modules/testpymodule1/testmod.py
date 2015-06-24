@@ -6,7 +6,15 @@ class TestPyModule(bp.bpcore.Test_Base):
 
 
   def RunTest(self):
-    print("Running test from PyModule")
+    print("+++ Inside TestPyModule: RunTest")
+
+  def RunCallTest(self, s):
+    print("+++ Inside TestPyModule: RunCallTest with {}".format(s))
+    tb = self.MStore().GetModule_Test(s)
+    print("  + Obtained module ID {}".format(tb.ID()))
+    tb.RunTest()
+    print("  + Finished with {}. Deleting".format(tb.ID()))
+    self.MStore().Delete(tb.ID())
 
 
 

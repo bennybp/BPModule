@@ -231,6 +231,11 @@ class Test_Base_Wrap : public Test_Base, public wrapper<Test_Base>
         {
             this->get_override("RunTest")();
         }
+
+        virtual void RunCallTest(const std::string & other)
+        {
+            this->get_override("RunCallTest")(other);
+        }
 };
 
 
@@ -317,12 +322,14 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     // Module Base classes
     ///////////////////////
     class_<ModuleBase, boost::noncopyable>("ModuleBase", init<unsigned long, ModuleStore &, const OptionMap &>())
+           .def("MStore", &ModuleBase::MStore, return_internal_reference<>())
            .def("ID", &ModuleBase::ID)
            .def("Traits", &ModuleBase::Traits)
            .def("Options", &ModuleBase::Options);
 
     class_<Test_Base_Wrap, bases<ModuleBase>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, boost::python::list>())
-           .def("RunTest", pure_virtual(&Test_Base::RunTest));
+           .def("RunTest", pure_virtual(&Test_Base::RunTest))
+           .def("RunCallTest", pure_virtual(&Test_Base::RunCallTest));
 
 }
 

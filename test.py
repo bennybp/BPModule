@@ -30,13 +30,22 @@ t2 = bp.loader.LoadPyModule("testpymodule1", pml)
 try:
   b1 = mst.GetModule_Test("TESTMOD1")
   b2 = mst.GetModule_Test("TESTPYMOD1")
-  print("Module ID: {}  :  {}".format(b1.ID(), b1))
-  print("Module ID: {}  :  {}".format(b2.ID(), b2))
 
-  #mst.Delete(1)
- 
   b1.RunTest()
+  print()
+  b1.RunCallTest("TESTMOD1")
+  print()
+  b1.RunCallTest("TESTPYMOD1")
+  print()
+
   b2.RunTest()
+  print()
+  b2.RunCallTest("TESTMOD1")
+  print()
+  b2.RunCallTest("TESTPYMOD1")
+  print()
+
+  print("\nDone testing\n")
  
 except RuntimeError as e:
   print(e)
