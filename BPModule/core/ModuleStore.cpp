@@ -1,6 +1,7 @@
 #include "BPModule/core/Exception.h"
 #include "BPModule/core/ModuleStore.h"
 #include "BPModule/core/Output.h"
+#include "BPModule/core/ModuleBase.h"
 
 
 namespace bpmodule {
@@ -62,6 +63,11 @@ void ModuleStore::Delete(unsigned long id)
         deletemap_[id](id);
         deletemap_.erase(id);
     }
+}
+
+void ModuleStore::Delete(ModuleBase * mb)
+{
+    Delete(mb->ID());
 }
 
 

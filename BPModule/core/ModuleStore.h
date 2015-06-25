@@ -18,6 +18,14 @@ typedef std::function<ModuleBase *(const std::string &, unsigned long, const Opt
 typedef std::function<void(unsigned long)> ModuleDeleterFunc;
 
 
+template<typename T>
+using ScopedModule = std::unique_ptr<T, std::function<void(ModuleBase *)>>;
+
+template<typename T>
+using SharedModule = std::shared_ptr<T>;
+
+
+
 class ModuleStore
 {
 public:
@@ -60,7 +68,18 @@ public:
       return *dptr;
   }
 
+
+  template<typename T>
+  ScopedModule<T> GetScopedModule(const std::string & key)
+  {
+      T & mod = GetModule<T>(key);
+      std::function<void(ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(ModuleBase *)>(&ModuleStore::Delete), this, std::placeholders::_1);
+      return ScopedModule<T>(&mod, dfunc);
+  }
+
   void Delete(unsigned long id);
+
+  void Delete(ModuleBase * mb);
 
 
 private:

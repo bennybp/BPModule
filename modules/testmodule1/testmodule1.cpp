@@ -34,11 +34,21 @@ public:
     virtual void RunCallTest(const std::string & other)
     {
         Output("+++ In TestModule1: RunCallTest with %1%\n", other);
+
+        ScopedModule<Test_Base> tb2 = MStore().GetScopedModule<Test_Base>(other);
+        Output("  + Obtained scoped module ID %1%\n", tb2->ID());
+        tb2->RunTest();
+        Output("  + Finished with scoped module %1%. Deleting automatically\n", tb2->ID());
+
         Test_Base & tb = MStore().GetModule<Test_Base>(other);
         Output("  + Obtained module ID %1%\n", tb.ID());
         tb.RunTest();
-        Output("  + Finished with %1%. Deleting\n", tb.ID());
+        Output("  + Finished with module %1%. Deleting\n", tb.ID());
         MStore().Delete(tb.ID());
+
+        Output("+++Done\n");
+
+
     }
 
     virtual ~TestModule1()

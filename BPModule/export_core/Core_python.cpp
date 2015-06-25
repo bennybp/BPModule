@@ -39,6 +39,14 @@ bool Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
 }
 
 
+template<typename T>
+boost::shared_ptr<T> Wrap_GetScopedModule(ModuleStore * ms, const std::string & key)
+{
+    T & mod = ms->GetModule<T>(key);
+    std::function<void(ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(ModuleBase *)>(&ModuleStore::Delete), ms, std::placeholders::_1);
+    return boost::shared_ptr<T>(&mod, dfunc);
+}
+
 
 ////////////////////////////
 // Main boost python part
@@ -84,11 +92,13 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def("Lock", &ModuleStore::Lock)
            .def("Size", &ModuleStore::Size)
            .def("Has", &ModuleStore::Has)
-           .def("Delete", &ModuleStore::Delete)
+           .def("Delete", static_cast<void(ModuleStore::*)(unsigned long)>(&ModuleStore::Delete))
            .def("GetKeys", &ModuleStore::GetKeys)
            .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
            .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_internal_reference<>())
-           .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_internal_reference<>());
+           .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_internal_reference<>())
+           .def("GetScopedModule", Wrap_GetScopedModule<ModuleBase>)
+           .def("GetScopedModule_Test", Wrap_GetScopedModule<Test_Base>);
 
 
     class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleStore *>())
@@ -109,6 +119,7 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def("Traits", &ModuleBase::Traits)
            .def("Options", &ModuleBase::Options);
 
+    register_ptr_to_python< boost::shared_ptr<Test_Base> >();
     class_<Test_Base_Wrap, bases<ModuleBase>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, boost::python::list>())
            .def("RunTest", pure_virtual(&Test_Base::RunTest))
            .def("RunCallTest", pure_virtual(&Test_Base::RunCallTest));
