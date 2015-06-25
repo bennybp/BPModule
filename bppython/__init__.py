@@ -30,9 +30,13 @@ def Init():
 
 
 def Finalize():
+    print("Deleting python modules")
     pml.DeleteAll()
+    print("Deleting C modules")
     cml.DeleteAll()
+    print("Closing C handles")
     cml.CloseHandles()
+    print("BPModule finalized")
 
 
 def LoadModule(name):
