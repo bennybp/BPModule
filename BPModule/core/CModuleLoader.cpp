@@ -8,7 +8,23 @@
 namespace bpmodule {
 
 
-ModuleBase * CModuleLoader::FuncWrapper_(CreateFunc fn, const std::string & key,
+
+CModuleLoader::CModuleLoader(ModuleStore * mst)
+    : mst_(mst)
+{
+}
+
+
+
+CModuleLoader::~CModuleLoader()
+{
+    DeleteAll();
+    CloseHandles();
+}
+
+
+
+ModuleBase * CModuleLoader::CreateWrapper_(CreateFunc fn, const std::string & key,
                                          unsigned long id,
                                          const OptionMap & options)
 {
@@ -18,10 +34,12 @@ ModuleBase * CModuleLoader::FuncWrapper_(CreateFunc fn, const std::string & key,
 }
 
 
+
 void CModuleLoader::DeleteWrapper_(unsigned long id)
 {
     DeleteObject_(id);
 }
+
 
 
 bool CModuleLoader::LoadSO(const std::string & key,
@@ -67,7 +85,7 @@ bool CModuleLoader::LoadSO(const std::string & key,
 
     Success("Successfully opened %1%\n", sopath);
 
-    ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::FuncWrapper_, this, fn, 
+    ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::CreateWrapper_, this, fn, 
                                                         std::placeholders::_1,
                                                         std::placeholders::_2,
                                                         std::placeholders::_3);
@@ -75,6 +93,7 @@ bool CModuleLoader::LoadSO(const std::string & key,
     ModuleDeleterFunc dfunc = std::bind(&CModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
     return mst_->AddCreateFunc(key, cfunc, dfunc, minfo);
 }
+
 
 
 void CModuleLoader::DeleteObject_(unsigned long id)
@@ -101,20 +120,6 @@ void CModuleLoader::CloseHandles(void)
     handles_.clear();
 }
 
-
-
-CModuleLoader::CModuleLoader(ModuleStore * mst)
-    : mst_(mst)
-{
-}
-
-
-
-CModuleLoader::~CModuleLoader()
-{
-    DeleteAll();
-    CloseHandles();
-}
 
 
 } // close namespace bpmodule

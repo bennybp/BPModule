@@ -29,24 +29,22 @@ public:
   CModuleLoader(const CModuleLoader & rhs) = delete;
 
   bool LoadSO(const std::string & key, const ModuleInfo & minfo);
+
   void DeleteAll(void);
   void CloseHandles(void);
 
 private:
-  ModuleStore * mst_;
-
   typedef std::unordered_map<std::string, void *> HandleMap; 
   typedef std::unordered_map<unsigned long, std::unique_ptr<ModuleBase>> ObjectMap;
 
+  ModuleStore * mst_;
   HandleMap handles_;
   ObjectMap objects_;
 
-
-  ModuleBase * FuncWrapper_(CreateFunc fn, const std::string & key,
-                                           unsigned long id,
-                                           const OptionMap & options);
-  void DeleteWrapper_(unsigned long id);
   void DeleteObject_(unsigned long id);
+
+  ModuleBase * CreateWrapper_(CreateFunc fn, const std::string & key, unsigned long id, const OptionMap & options);
+  void DeleteWrapper_(unsigned long id);
 };
 
 } // close namespace bpmodule
