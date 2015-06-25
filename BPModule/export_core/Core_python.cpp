@@ -119,8 +119,8 @@ BOOST_PYTHON_MODULE(bpmodule_core)
            .def("Traits", &ModuleBase::Traits)
            .def("Options", &ModuleBase::Options);
 
-    register_ptr_to_python< boost::shared_ptr<Test_Base> >();
-    class_<Test_Base_Wrap, bases<ModuleBase>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, boost::python::list>())
+    register_ptr_to_python<boost::shared_ptr<Test_Base>>();
+    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, boost::python::list>())
            .def("RunTest", pure_virtual(&Test_Base::RunTest))
            .def("RunCallTest", pure_virtual(&Test_Base::RunCallTest));
 

@@ -20,7 +20,7 @@ class TestPyModule(bp.bpcore.Test_Base):
     bp.Output("  + Obtained module ID %1%\n", tb2.ID())
     tb2.RunTest()
     bp.Output("  + Finished with module %1%. Deleting\n", tb2.ID())
-    self.MStore().Delete(tb2.ID())
+    #self.MStore().Delete(tb2.ID())
 
     bp.Output("+++Done\n");
 
