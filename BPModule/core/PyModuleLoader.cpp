@@ -25,7 +25,7 @@ ModuleBase * PyModuleLoader::CreateWrapper_(boost::python::object fn, const std:
                                             unsigned long id,
                                             const ModuleInfo & minfo)
 {
-    boost::python::object newobj = fn(key, id, boost::ref(*mst_), minfo);
+    boost::python::object newobj = fn(key, id, boost::ref(*mst_), boost::ref(minfo));
     objects_[id] = newobj;
     return boost::python::extract<ModuleBase *>(newobj);
 }

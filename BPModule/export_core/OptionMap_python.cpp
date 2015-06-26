@@ -5,106 +5,113 @@
 #include <boost/python.hpp>
 
 namespace out = bpmodule::output;
+namespace bpy = boost::python;
+
+
 
 namespace bpmodule {
 namespace export_python {
 
 
-// Some wrappers for OptionMap Get/Set member
-void OptionMap_Set_Helper(OptionMap * op, const std::string & key,
-                          const boost::python::object & value,
-                          const std::string & help)
+std::unique_ptr<OptionPlaceholder> OptionPlaceholder_FromPython(const bpy::object & value)
 {
-    std::string cl = boost::python::extract<std::string>(value.attr("__class__").attr("__name__"));
+    std::string cl = bpy::extract<std::string>(value.attr("__class__").attr("__name__"));
 
     if(cl == "int")
-        op->Set(key, static_cast<long>(boost::python::extract<long>(value)), help);
+        return std::unique_ptr<OptionPlaceholder>(new OptionHolder<long>(bpy::extract<long>(value)));
     else if(cl == "float")
-        op->Set(key, static_cast<double>(boost::python::extract<double>(value)), help);
+        return std::unique_ptr<OptionPlaceholder>(new OptionHolder<double>(bpy::extract<double>(value)));
     else if(cl == "str")
-        op->Set(key, static_cast<std::string>(boost::python::extract<std::string>(value)), help);
+        return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::string>(bpy::extract<std::string>(value)));
     else if(cl == "list")
     {
         // get type of first element
-        boost::python::list lst = boost::python::extract<boost::python::list>(value);
-        int length = boost::python::extract<int>(lst.attr("__len__")());
+        bpy::list lst = bpy::extract<bpy::list>(value);
+        int length = bpy::extract<int>(lst.attr("__len__")());
         if(length == 0)
         {
-            // plain string vector if empty
-            std::vector<std::string> v;
-            op->Set(key, std::vector<std::string>(), help);
+            out::Error("Empty list: %\n", cl);
+            return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::string>("????"));
         }
         else
         {
-            std::string cl2 = boost::python::extract<std::string>(lst[0].attr("__class__").attr("__name__"));
+            // todo - check all
+            // check the first elements or find a heterogeneous container
+            std::string cl2 = bpy::extract<std::string>(lst[0].attr("__class__").attr("__name__"));
             if(cl2 == "int")
-                op->Set(key, ConvertListToVec<long>(lst), help);
+                return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::vector<long>>(ConvertListToVec<long>(lst)));
             else if(cl2 == "float")
-                op->Set(key, ConvertListToVec<double>(lst), help);
+                return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::vector<double>>(ConvertListToVec<double>(lst)));
             else if(cl2 == "str")
-                op->Set(key, ConvertListToVec<std::string>(lst), help);
+                return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::vector<std::string>>(ConvertListToVec<std::string>(lst)));
             else
-                out::Error("Unknown type %1% in list for key %2%\n", cl, key);
+            {
+                out::Error("Unknown type %1% in list\n", cl);
+                return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::string>("????"));
+            }
         }
     }
     else
-        out::Error("Unknown type %1% for key %2%\n", cl, key);
+    {
+        out::Error("Unknown type %1%\n", cl);
+        return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::string>("????"));
+    }
+}
+
+
+void OptionMap_Change_Helper(OptionMap * op, const std::string & key, const bpy::object & value)
+{
+    op->Change(key, OptionPlaceholder_FromPython(value));
+}
+
+
+void OptionMap_InitDefault_Helper(OptionMap * op, const std::string & key, const bpy::object & def, const std::string & help)
+{
+    op->InitDefault(key, OptionPlaceholder_FromPython(def), help);
 }
 
 
 
-boost::python::object OptionMap_Get_Helper(const OptionMap * op, const std::string & key)
+bpy::object OptionMap_Get_Helper(const OptionMap * op, const std::string & key)
 {
     std::string type = op->GetType(key);
 
     if(type == typeid(long).name())
-        return boost::python::object(op->Get<long>(key));
+        return bpy::object(op->Get<long>(key));
     else if(type == typeid(double).name())
-        return boost::python::object(op->Get<double>(key));
+        return bpy::object(op->Get<double>(key));
     else if(type == typeid(std::string).name())
-        return boost::python::object(op->Get<std::string>(key));
+        return bpy::object(op->Get<std::string>(key));
     else if(type == typeid(std::vector<long>).name())
-        return boost::python::object(op->Get<std::vector<long>>(key));
+        return bpy::object(op->Get<std::vector<long>>(key));
     else if(type == typeid(std::vector<double>).name())
-        return boost::python::object(op->Get<std::vector<double>>(key));
+        return bpy::object(op->Get<std::vector<double>>(key));
     else if(type == typeid(std::vector<std::string>).name())
-        return boost::python::object(op->Get<std::vector<std::string>>(key));
+        return bpy::object(op->Get<std::vector<std::string>>(key));
     else
     {
         out::Error("Unable to deduce type: %1%\n", type);
-        return boost::python::object();
+        return bpy::object();
     }
 }
 
 
 
-// Convert lists <-> OptionMaps
-OptionMap ListToOptionMap(const boost::python::list & olist)
+OptionMap OptionMap_InitFromList_Helper(const bpy::list & olist)
 {
     OptionMap op;
-    int optlen = boost::python::extract<int>(olist.attr("__len__")());
+    int optlen = bpy::extract<int>(olist.attr("__len__")());
 
     for(int i = 0; i < optlen; i++)
     {
-        std::string key = boost::python::extract<std::string>(olist[i][0]);
-        std::string help = boost::python::extract<std::string>(olist[i][2]);
-        OptionMap_Set_Helper(&op, key, olist[i][1], help);
+        std::string key = bpy::extract<std::string>(olist[i][0]);
+        std::string help = bpy::extract<std::string>(olist[i][2]);
+        OptionMap_InitDefault_Helper(&op, key, olist[i][1], help);
     }
+
     return op;
 }
 
-
-
-boost::python::list OptionMapToList(const OptionMap & op)
-{
-    boost::python::list lst;
-    auto keys = op.GetKeys();
-
-    for(auto & it : keys)
-        lst.append(boost::python::make_tuple(it, OptionMap_Get_Helper(&op, it), op.GetHelp(it)));
-
-    return lst;
-}
 
 
 } // close namespace export_python

@@ -11,6 +11,9 @@
 #include "BPModule/export_core/Output_python.hpp"
 
 using namespace boost::python;
+namespace bpy = boost::python;
+
+
 
 namespace bpmodule {
 namespace export_python {
@@ -25,15 +28,15 @@ void TranslateException(const BPModuleException & ex)
 
 
 // wraps CModuleLoader::LoadSO so that it can take a dict for the ModuleInfo
-bool Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const boost::python::dict & d)
+bool Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const bpy::dict & d)
 {
     return ml->LoadSO(key, DictToModuleInfo(d));
 }
 
 // wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
 bool Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
-                                     const std::string & key, boost::python::object func,
-                                     const boost::python::dict & d)
+                                     const std::string & key, bpy::object func,
+                                     const bpy::dict & d)
 {
     return ml->AddPyModule(key, func, DictToModuleInfo(d));
 }
@@ -71,12 +74,6 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     to_python_converter<std::map<std::string, std::string>, MapConverter<std::map<std::string, std::string>>>();
     to_python_converter<std::unordered_map<std::string, std::string>, MapConverter<std::unordered_map<std::string, std::string>>>();
 
-    // convert module info to dict
-    to_python_converter<ModuleInfo, ModuleInfoConverter>();
-
-    // convert optionmap to dict
-    to_python_converter<OptionMap, OptionMapConverter>();
-
     // setting the output
     def("SetOut_Stdout", &output::SetOut_Stdout);
     def("SetOut_Stderr", &output::SetOut_Stderr);
@@ -91,6 +88,12 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     def("Warning", Output_Wrap_Warning);
     def("Error", Output_Wrap_Error);
     def("Debug", Output_Wrap_Debug);
+
+
+    // This is only needed because we pass through python
+    // No need to do declare all the members, etc 
+    class_<ModuleInfo, boost::noncopyable>("ModuleInfo");
+
 
     class_<ModuleStore, boost::noncopyable>("ModuleStore")
     .def("Lock", &ModuleStore::Lock)
@@ -124,12 +127,10 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     .def("ID", &ModuleBase::ID)
     .def("Key", &ModuleBase::Key, return_value_policy<copy_const_reference>())
     .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
-    .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>())
-    .def("Traits", &ModuleBase::Traits)
-    .def("Options", &ModuleBase::Options);
+    .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>());
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
-    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, boost::python::dict>())
+    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, const ModuleInfo &>())
     .def("RunTest", pure_virtual(&Test_Base::RunTest))
     .def("RunCallTest", pure_virtual(&Test_Base::RunCallTest));
 

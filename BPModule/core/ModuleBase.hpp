@@ -28,8 +28,6 @@ class ModuleBase
         const std::string & Name(void) const;
         const std::string & Version(void) const;
 
-        OptionMap Traits(void) const;
-        OptionMap Options(void) const;
         ModuleStore & MStore(void);
 
     protected:
@@ -40,9 +38,9 @@ class ModuleBase
         }
 
         template<typename T>
-        void SetTrait(const std::string & key, const T & value)
+        void ChangeTrait(const std::string & key, const T & value)
         {
-            traits_.Set(key, value);
+            traits_.Change(key, value);
         }
 
         template<typename T>
@@ -52,9 +50,9 @@ class ModuleBase
         }
 
         template<typename T>
-        void SetOption(const std::string & key, const T & value)
+        void ChangeOption(const std::string & key, const T & value)
         {
-            options_.Set(key, value);
+            options_.Change(key, value);
         }
 
 

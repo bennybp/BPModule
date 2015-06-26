@@ -5,34 +5,22 @@
 
 #include <boost/python.hpp>
 
+namespace bpy = boost::python;
+
+
+
 namespace bpmodule {
 
 namespace export_python {
 
 
-boost::python::list OptionMapToList(const OptionMap & op);
+std::unique_ptr<OptionPlaceholder> OptionPlaceholder_FromPython(const bpy::object & value);
 
+bpy::object OptionMap_Get_Helper(const OptionMap * op, const std::string & key);
+void OptionMap_Change_Helper(OptionMap * op, const std::string & key, const bpy::object & value);
+void OptionMap_InitDefault_Helper(OptionMap * op, const std::string & key, const bpy::object & def, const std::string & help);
 
-void OptionMap_Set_Helper(OptionMap * op, const std::string & key,
-                          const boost::python::object & value,
-                          const std::string & help);
-
-
-boost::python::object OptionMap_Get_Helper(const OptionMap * op, const std::string & key);
-
-
-OptionMap ListToOptionMap(const boost::python::list & olist);
-
-
-// Converter for OptionMap
-struct OptionMapConverter
-{
-    static PyObject* convert(const OptionMap & op)
-    {
-        boost::python::list lst = OptionMapToList(op);
-        return boost::python::incref(lst.ptr());
-    }
-};
+OptionMap OptionMap_InitFromList_Helper(const bpy::list & olist);
 
 
 } // close namespace export_python

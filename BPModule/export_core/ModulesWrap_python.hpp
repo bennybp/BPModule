@@ -13,8 +13,8 @@ namespace export_python {
 class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base>
 {
     public:
-        Test_Base_Wrap(unsigned long id, ModuleStore & mstore, boost::python::dict minfo)
-            : Test_Base(id, mstore, DictToModuleInfo(minfo))
+        Test_Base_Wrap(unsigned long id, ModuleStore & mstore, const ModuleInfo & minfo)
+            : Test_Base(id, mstore, minfo)
         {}
 
         virtual void RunTest(void)

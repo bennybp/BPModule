@@ -4,31 +4,32 @@
 #include "BPModule/export_core/ModuleInfo_python.hpp"
 
 namespace out = bpmodule::output;
+namespace bpy = boost::python;
 
 namespace bpmodule {
 namespace export_python {
 
 // the "options" element of the dict must be a list of tuples
-ModuleInfo DictToModuleInfo(const boost::python::dict & dictionary)
+ModuleInfo DictToModuleInfo(const bpy::dict & dictionary)
 {
     ModuleInfo ret;
     try
     {
-        ret.key = boost::python::extract<std::string>(dictionary["key"]);
-        ret.name = boost::python::extract<std::string>(dictionary["name"]);
-        ret.type = boost::python::extract<std::string>(dictionary["type"]);
-        ret.path = boost::python::extract<std::string>(dictionary["path"]);
-        ret.version = boost::python::extract<std::string>(dictionary["version"]);
-        ret.description = boost::python::extract<std::string>(dictionary["description"]);
-        ret.authors = ConvertListToVec<std::string>(boost::python::extract<boost::python::list>(dictionary["authors"]));
-        ret.refs = ConvertListToVec<std::string>(boost::python::extract<boost::python::list>(dictionary["refs"]));
+        ret.key = bpy::extract<std::string>(dictionary["key"]);
+        ret.name = bpy::extract<std::string>(dictionary["name"]);
+        ret.type = bpy::extract<std::string>(dictionary["type"]);
+        ret.path = bpy::extract<std::string>(dictionary["path"]);
+        ret.version = bpy::extract<std::string>(dictionary["version"]);
+        ret.description = bpy::extract<std::string>(dictionary["description"]);
+        ret.authors = ConvertListToVec<std::string>(bpy::extract<bpy::list>(dictionary["authors"]));
+        ret.refs = ConvertListToVec<std::string>(bpy::extract<bpy::list>(dictionary["refs"]));
 
         OptionMap op;
-        boost::python::list olist = boost::python::extract<boost::python::list>(dictionary["options"]);
-        ret.options = ListToOptionMap(olist);
+        bpy::list olist = bpy::extract<bpy::list>(dictionary["options"]);
+        ret.options = OptionMap_InitFromList_Helper(olist);
 
         if(dictionary.has_key("soname"))
-            ret.soname = boost::python::extract<std::string>(dictionary["soname"]);
+            ret.soname = bpy::extract<std::string>(dictionary["soname"]);
 
         //if(dictionary.has_key("path"))
 
@@ -39,31 +40,6 @@ ModuleInfo DictToModuleInfo(const boost::python::dict & dictionary)
     }
 
     return ret;
-}
-
-
-
-boost::python::dict ModuleInfoToDict(const ModuleInfo & mi)
-{
-    boost::python::dict d;
-
-    //simple ones first
-    d["key"] = mi.key;
-    d["name"] = mi.name;
-    d["type"] = mi.type;
-    d["path"] = mi.path;
-    d["soname"] = mi.soname;
-    d["version"] = mi.version;
-    d["description"] = mi.description;
-
-    // now lists of strings
-    d["authors"] = ConvertVecToList(mi.authors);
-    d["refs"] = ConvertVecToList(mi.refs);
-
-    // now options
-    d["options"] = OptionMapToList(mi.options);
-
-    return d;
 }
 
 

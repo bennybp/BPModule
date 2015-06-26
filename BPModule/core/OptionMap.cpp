@@ -14,10 +14,26 @@ OptionMap::OptionMap(const OptionMap & rhs)
                           it.first,
                           OpMapEntry
     {
-        std::unique_ptr<OptionPlaceholder>(it.second.oph->Clone()),
+        it.second.changed,
+        std::unique_ptr<OptionPlaceholder>(it.second.value->Clone()),
         it.second.help
     }
                   ));
+}
+
+
+void OptionMap::Change(const std::string & key, std::unique_ptr<OptionPlaceholder> && value)
+{
+    OpMapEntry & opme = GetOrThrow_(key);
+    opme.value = std::move(value);
+    opme.changed = true;
+}
+
+
+
+void OptionMap::InitDefault(const std::string & key, std::unique_ptr<OptionPlaceholder> && def, const std::string & help)
+{
+    opmap_.insert(OpMapValue(key, OpMapEntry{true, std::move(def), help}));
 }
 
 
@@ -39,8 +55,7 @@ bool OptionMap::Has(const std::string & key) const
 
 
 
-std::string
-OptionMap::GetHelp(const std::string & key) const
+const std::string OptionMap::GetHelp(const std::string & key) const
 {
     if(Has(key))
         return opmap_.at(key).help;
@@ -53,21 +68,10 @@ OptionMap::GetHelp(const std::string & key) const
 
 
 
-std::map<std::string, std::string>
-OptionMap::GetAllHelp(void) const
-{
-    std::map<std::string, std::string> m;
-    for(auto & it : opmap_)
-        m.insert(std::pair<std::string, std::string>(it.first, it.second.help));
-    return m;
-}
-
-
-
 std::string OptionMap::GetType(const std::string & key) const
 {
     if(Has(key))
-        return opmap_.at(key).oph->Type();
+        return opmap_.at(key).value->Type();
     else
     {
         out::Warning("Cannot find entry for key \"%1%\"\n", key);
@@ -96,25 +100,30 @@ size_t OptionMap::Size(void) const
 
 
 
-size_t OptionMap::Erase(const std::string & key)
+size_t OptionMap::Erase_(const std::string & key)
 {
-    // delete pointer if necessary
-    // now handled by unique_ptr
-    //if(opmap_.count(key))
-    //    delete opmap_.at(key).oph; // delete the ptr
-
     return opmap_.erase(key);
 }
 
 
 
-const OptionMap::OpMapEntry & OptionMap::GetOrThrow(const std::string & key) const
+const OptionMap::OpMapEntry & OptionMap::GetOrThrow_(const std::string & key) const
 {
     if(opmap_.count(key))
         return opmap_.at(key);
     else
         throw MapException("OptionMap", key);
 }
+
+
+OptionMap::OpMapEntry & OptionMap::GetOrThrow_(const std::string & key)
+{
+    if(opmap_.count(key))
+        return opmap_.at(key);
+    else
+        throw MapException("OptionMap", key);
+}
+
 
 } // close namespace bpmodule
 

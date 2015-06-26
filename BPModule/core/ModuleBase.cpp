@@ -37,16 +37,6 @@ const std::string & ModuleBase::Version(void) const
     return version_;
 }
 
-OptionMap ModuleBase::Traits(void) const
-{
-    return traits_;
-}
-
-OptionMap ModuleBase::Options(void) const
-{
-    return options_;
-}
-
 ModuleStore & ModuleBase::MStore(void)
 {
     return mstore_;

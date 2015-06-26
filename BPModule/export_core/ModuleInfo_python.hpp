@@ -5,24 +5,13 @@
 
 #include <boost/python.hpp>
 
+namespace bpy = boost::python;
+
 
 namespace bpmodule {
 namespace export_python {
 
-ModuleInfo DictToModuleInfo(const boost::python::dict & dictionary);
-
-boost::python::dict ModuleInfoToDict(const ModuleInfo & mi);
-
-
-struct ModuleInfoConverter
-{
-    static PyObject* convert(const ModuleInfo & m)
-    {
-        boost::python::dict d = ModuleInfoToDict(m);
-        return boost::python::incref(d.ptr());
-    }
-};
-
+ModuleInfo DictToModuleInfo(const bpy::dict & dictionary);
 
 
 } // close namespace export_python
