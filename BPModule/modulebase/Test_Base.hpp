@@ -1,7 +1,7 @@
 #ifndef TEST_BASE_H
 #define TEST_BASE_H
 
-#include "BPModule/core/ModuleBase.h"
+#include "BPModule/core/ModuleBase.hpp"
 
 using namespace bpmodule;
 

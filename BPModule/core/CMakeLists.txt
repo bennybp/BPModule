@@ -12,8 +12,8 @@ set(CORE_FILES
    )
 
 set(CORE_HEADERS
-            ModuleBase.h
-            ModuleStore.h
+            ModuleBase.hpp
+            ModuleStore.hpp
    )
 
 set(CORE_LIBS

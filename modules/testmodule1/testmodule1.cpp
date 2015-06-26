@@ -1,10 +1,10 @@
 #include <iostream>
 #include <vector>
 
-#include "BPModule/core/ModuleStore.h"
-#include "BPModule/core/Output.h"
+#include "BPModule/core/ModuleStore.hpp"
+#include "BPModule/core/Output.hpp"
 
-#include "BPModule/modulebase/Test_Base.h"
+#include "BPModule/modulebase/Test_Base.hpp"
 
 using namespace bpmodule;
 namespace out = bpmodule::output;

@@ -1,6 +1,6 @@
-#include "BPModule/core/Output.h"
-#include "BPModule/export_core/OptionMap_python.h"
-#include "BPModule/export_core/Python_stdconvert.h"
+#include "BPModule/core/Output.hpp"
+#include "BPModule/export_core/OptionMap_python.hpp"
+#include "BPModule/export_core/Python_stdconvert.hpp"
 
 #include <boost/python.hpp>
 

@@ -5,7 +5,7 @@
 #include <string>
 #include <memory>
 
-#include "BPModule/core/Exception.h"
+#include "BPModule/core/Exception.hpp"
 
 
 namespace bpmodule {

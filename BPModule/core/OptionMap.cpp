@@ -1,5 +1,5 @@
-#include "BPModule/core/OptionMap.h"
-#include "BPModule/core/Output.h"
+#include "BPModule/core/OptionMap.hpp"
+#include "BPModule/core/Output.hpp"
 
 namespace out = bpmodule::output;
 

@@ -1,7 +1,7 @@
-#include "BPModule/core/Exception.h"
-#include "BPModule/core/ModuleStore.h"
-#include "BPModule/core/Output.h"
-#include "BPModule/core/ModuleBase.h"
+#include "BPModule/core/Exception.hpp"
+#include "BPModule/core/ModuleStore.hpp"
+#include "BPModule/core/Output.hpp"
+#include "BPModule/core/ModuleBase.hpp"
 
 
 namespace bpmodule {

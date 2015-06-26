@@ -8,7 +8,7 @@ set(MODULEBASE_FILES
 
 
 set(MODULEBASE_HEADERS
-            Test_Base.h
+            Test_Base.hpp
    )
 
 ADD_CORELIB(bpmodule_modulebase "${MODULEBASE_FILES}" "" "" "")

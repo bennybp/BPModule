@@ -1,14 +1,14 @@
-#include "BPModule/core/ModuleStore.h"
-#include "BPModule/core/CModuleLoader.h"
-#include "BPModule/core/PyModuleLoader.h"
+#include "BPModule/core/ModuleStore.hpp"
+#include "BPModule/core/CModuleLoader.hpp"
+#include "BPModule/core/PyModuleLoader.hpp"
 
 
 // helpers and wrappers
-#include "BPModule/export_core/ModulesWrap_python.h"
-#include "BPModule/export_core/Python_stdconvert.h"
-#include "BPModule/export_core/OptionMap_python.h"
-#include "BPModule/export_core/ModuleInfo_python.h"
-#include "BPModule/export_core/Output_python.h"
+#include "BPModule/export_core/ModulesWrap_python.hpp"
+#include "BPModule/export_core/Python_stdconvert.hpp"
+#include "BPModule/export_core/OptionMap_python.hpp"
+#include "BPModule/export_core/ModuleInfo_python.hpp"
+#include "BPModule/export_core/Output_python.hpp"
 
 using namespace boost::python;
 

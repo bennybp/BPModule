@@ -4,7 +4,7 @@
 #include <string>
 #include <functional>
 
-#include "BPModule/core/ModuleInfo.h" // includes optionmap
+#include "BPModule/core/ModuleInfo.hpp"
 
 namespace bpmodule {
 

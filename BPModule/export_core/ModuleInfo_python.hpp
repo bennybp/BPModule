@@ -1,7 +1,7 @@
 #ifndef MODULEINFO_PYTHON_H
 #define MODULEINFO_PYTHON_H
 
-#include "BPModule/core/ModuleInfo.h"
+#include "BPModule/core/ModuleInfo.hpp"
 
 #include <boost/python.hpp>
 

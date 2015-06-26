@@ -6,8 +6,8 @@
 
 #include <boost/format.hpp>
 
-#include "BPModule/core/Exception.h"
-#include "BPModule/core/Output.h"
+#include "BPModule/core/Exception.hpp"
+#include "BPModule/core/Output.hpp"
 
 
 // This should be safe, right?

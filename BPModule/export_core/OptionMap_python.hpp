@@ -1,7 +1,7 @@
 #ifndef OPTIONMAP_PYTHON_H
 #define OPTIONMAP_PYTHON_H
 
-#include "BPModule/core/OptionMap.h"
+#include "BPModule/core/OptionMap.hpp"
 
 #include <boost/python.hpp>
 

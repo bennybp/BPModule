@@ -6,7 +6,7 @@
 #include <string>
 #include <atomic>
 
-#include "BPModule/core/ModuleInfo.h"
+#include "BPModule/core/ModuleInfo.hpp"
 
 namespace bpmodule {
 

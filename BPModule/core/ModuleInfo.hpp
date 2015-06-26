@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "BPModule/core/OptionMap.h"
+#include "BPModule/core/OptionMap.hpp"
 
 namespace bpmodule {
 

@@ -1,7 +1,7 @@
 #ifndef OUTPUT_PYTHON_H
 #define OUTPUT_PYTHON_H
 
-#include "BPModule/core/Output.h"
+#include "BPModule/core/Output.hpp"
 #include <boost/python.hpp>
 
 namespace bpmodule {
