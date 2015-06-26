@@ -11,13 +11,16 @@ OptionMap::OptionMap(const OptionMap & rhs)
     // need to Clone new elements
     for(auto & it : rhs.opmap_)
         opmap_.insert(OpMapValue(
-                                 it.first,
-                                 OpMapEntry{
-                                            std::unique_ptr<OptionPlaceholder>(it.second.oph->Clone()),
-                                            it.second.help
-                                           }
-                                ));
+                          it.first,
+                          OpMapEntry
+    {
+        std::unique_ptr<OptionPlaceholder>(it.second.oph->Clone()),
+        it.second.help
+    }
+                  ));
 }
+
+
 
 OptionMap & OptionMap::operator=(const OptionMap & rhs)
 {
@@ -27,10 +30,14 @@ OptionMap & OptionMap::operator=(const OptionMap & rhs)
     return *this;
 }
 
+
+
 bool OptionMap::Has(const std::string & key) const
 {
     return opmap_.count(key);
 }
+
+
 
 std::string
 OptionMap::GetHelp(const std::string & key) const
@@ -44,6 +51,8 @@ OptionMap::GetHelp(const std::string & key) const
     }
 }
 
+
+
 std::map<std::string, std::string>
 OptionMap::GetAllHelp(void) const
 {
@@ -52,6 +61,7 @@ OptionMap::GetAllHelp(void) const
         m.insert(std::pair<std::string, std::string>(it.first, it.second.help));
     return m;
 }
+
 
 
 std::string OptionMap::GetType(const std::string & key) const
@@ -77,10 +87,13 @@ OptionMap::GetKeys(void) const
     return v;
 }
 
+
+
 size_t OptionMap::Size(void) const
 {
     return opmap_.size();
 }
+
 
 
 size_t OptionMap::Erase(const std::string & key)
@@ -90,8 +103,9 @@ size_t OptionMap::Erase(const std::string & key)
     //if(opmap_.count(key))
     //    delete opmap_.at(key).oph; // delete the ptr
 
-    return opmap_.erase(key);       
+    return opmap_.erase(key);
 }
+
 
 
 const OptionMap::OpMapEntry & OptionMap::GetOrThrow(const std::string & key) const

@@ -15,12 +15,14 @@
 // unloading. In which case all the other functions will be unavailable anyway
 
 namespace {
-  std::ostream * out_ = nullptr;
-  std::unique_ptr<std::ofstream> file_;
-  std::string filepath_;
-  bool usefile_ = false;
-  bool color_ = false;
-  bool debug_ = false;
+
+std::ostream * out_ = nullptr;
+std::unique_ptr<std::ofstream> file_;
+std::string filepath_;
+bool usefile_ = false;
+bool color_ = false;
+bool debug_ = false;
+
 }
 
 
@@ -184,7 +186,7 @@ std::string ExceptionString(const BPModuleException & ex)
     Error(ss, "what() = %1%\n", ex.what());
     for(auto & it : exinfo)
         if(it.second.size())
-          Error(ss, "%|16| : %|-16|\n", it.first, it.second);
+            Error(ss, "%|16| : %|-16|\n", it.first, it.second);
     return ss.str();
 }
 

@@ -12,7 +12,8 @@ namespace export_python {
 ModuleInfo DictToModuleInfo(const boost::python::dict & dictionary)
 {
     ModuleInfo ret;
-    try {
+    try
+    {
         ret.key = boost::python::extract<std::string>(dictionary["key"]);
         ret.name = boost::python::extract<std::string>(dictionary["name"]);
         ret.type = boost::python::extract<std::string>(dictionary["type"]);
@@ -35,7 +36,7 @@ ModuleInfo DictToModuleInfo(const boost::python::dict & dictionary)
     catch(...)
     {
         out::Error("HEREEEE\n");
-    }   
+    }
 
     return ret;
 }
@@ -60,7 +61,7 @@ boost::python::dict ModuleInfoToDict(const ModuleInfo & mi)
     d["refs"] = ConvertVecToList(mi.refs);
 
     // now options
-    d["options"] = OptionMapToList(mi.options); 
+    d["options"] = OptionMapToList(mi.options);
 
     return d;
 }

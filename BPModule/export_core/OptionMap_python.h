@@ -13,7 +13,7 @@ namespace export_python {
 boost::python::list OptionMapToList(const OptionMap & op);
 
 
-void OptionMap_Set_Helper(OptionMap * op, const std::string & key, 
+void OptionMap_Set_Helper(OptionMap * op, const std::string & key,
                           const boost::python::object & value,
                           const std::string & help);
 
@@ -29,8 +29,8 @@ struct OptionMapConverter
 {
     static PyObject* convert(const OptionMap & op)
     {
-      boost::python::list lst = OptionMapToList(op);
-      return boost::python::incref(lst.ptr());
+        boost::python::list lst = OptionMapToList(op);
+        return boost::python::incref(lst.ptr());
     }
 };
 

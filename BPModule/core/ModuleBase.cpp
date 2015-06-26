@@ -5,14 +5,16 @@
 namespace bpmodule {
 
 ModuleBase::ModuleBase(unsigned long id, ModuleStore & mstore, const ModuleInfo & minfo)
-    : id_(id), key_(minfo.key), name_(minfo.name), version_(minfo.version), options_(minfo.options),
+    : id_(id), key_(minfo.key), name_(minfo.name),
+      version_(minfo.version), options_(minfo.options),
       mstore_(mstore)
 {
+    output::Debug("Constructed module [%1%] : %2% v%3%\n", id_, name_, version_);
 }
 
 ModuleBase::~ModuleBase()
 {
-    output::Debug("Destructor called for module %1%\n", id_);
+    output::Debug("Destructed module [%1%] : %2% v%3%\n", id_, name_, version_);
 }
 
 unsigned long ModuleBase::ID(void) const
@@ -39,7 +41,7 @@ OptionMap ModuleBase::Traits(void) const
 {
     return traits_;
 }
- 
+
 OptionMap ModuleBase::Options(void) const
 {
     return options_;
@@ -49,5 +51,5 @@ ModuleStore & ModuleBase::MStore(void)
 {
     return mstore_;
 }
- 
+
 } // close namespace bpmodule

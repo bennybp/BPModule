@@ -11,7 +11,7 @@ bool ModuleStore::AddCreateFunc(const std::string & key, ModuleGeneratorFunc fun
 {
     // add to store
     //! \todo Check for duplicates
-    store_.insert(StoreMap::value_type(key, StoreEntry{minfo, func, dfunc}));
+    store_.insert(StoreMap::value_type(key, StoreEntry {minfo, func, dfunc}));
     return true;
 }
 
@@ -48,7 +48,7 @@ ModuleInfo ModuleStore::ModuleInfoFromKey(const std::string & key) const
 }
 
 
-  
+
 void ModuleStore::Lock(void)
 {
     locked_ = true;

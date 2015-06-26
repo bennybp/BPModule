@@ -27,7 +27,7 @@ void TranslateException(const BPModuleException & ex)
 // wraps CModuleLoader::LoadSO so that it can take a dict for the ModuleInfo
 bool Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const boost::python::dict & d)
 {
-   return ml->LoadSO(key, DictToModuleInfo(d));
+    return ml->LoadSO(key, DictToModuleInfo(d));
 }
 
 // wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
@@ -35,7 +35,7 @@ bool Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
                                      const std::string & key, boost::python::object func,
                                      const boost::python::dict & d)
 {
-   return ml->AddPyModule(key, func, DictToModuleInfo(d));
+    return ml->AddPyModule(key, func, DictToModuleInfo(d));
 }
 
 
@@ -93,26 +93,26 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     def("Debug", Output_Wrap_Debug);
 
     class_<ModuleStore, boost::noncopyable>("ModuleStore")
-           .def("Lock", &ModuleStore::Lock)
-           .def("Size", &ModuleStore::Size)
-           .def("Has", &ModuleStore::Has)
-           .def("Delete", static_cast<void(ModuleStore::*)(unsigned long)>(&ModuleStore::Delete))
-           .def("GetKeys", &ModuleStore::GetKeys)
-           .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
-           .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_internal_reference<>())
-           .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_internal_reference<>())
-           .def("GetScopedModule", Wrap_GetScopedModule<ModuleBase>)
-           .def("GetScopedModule_Test", Wrap_GetScopedModule<Test_Base>);
+    .def("Lock", &ModuleStore::Lock)
+    .def("Size", &ModuleStore::Size)
+    .def("Has", &ModuleStore::Has)
+    .def("Delete", static_cast<void(ModuleStore::*)(unsigned long)>(&ModuleStore::Delete))
+    .def("GetKeys", &ModuleStore::GetKeys)
+    .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
+    .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_internal_reference<>())
+    .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_internal_reference<>())
+    .def("GetScopedModule", Wrap_GetScopedModule<ModuleBase>)
+    .def("GetScopedModule_Test", Wrap_GetScopedModule<Test_Base>);
 
 
     class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleStore *>())
-           .def("CloseHandles", &CModuleLoader::CloseHandles)
-           .def("DeleteAll", &CModuleLoader::DeleteAll)
-           .def("LoadSO", Wrap_CModuleLoader_LoadSO);
+    .def("CloseHandles", &CModuleLoader::CloseHandles)
+    .def("DeleteAll", &CModuleLoader::DeleteAll)
+    .def("LoadSO", Wrap_CModuleLoader_LoadSO);
 
     class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleStore *>())
-           .def("DeleteAll", &PyModuleLoader::DeleteAll)
-           .def("AddPyModule", Wrap_PyModuleLoader_AddPyModule);
+    .def("DeleteAll", &PyModuleLoader::DeleteAll)
+    .def("AddPyModule", Wrap_PyModuleLoader_AddPyModule);
 
     ///////////////////////
     // Module Base classes
@@ -120,18 +120,18 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     //class_<ModuleBase, boost::noncopyable>("ModuleBase", init<unsigned long, ModuleStore &, const ModuleInfo &>())
     // python should never derive from ModuleBase, so a constructor should not be needed
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
-           .def("MStore", &ModuleBase::MStore, return_internal_reference<>())
-           .def("ID", &ModuleBase::ID)
-           .def("Key", &ModuleBase::Key, return_value_policy<copy_const_reference>())
-           .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
-           .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>()) 
-           .def("Traits", &ModuleBase::Traits)
-           .def("Options", &ModuleBase::Options);
+    .def("MStore", &ModuleBase::MStore, return_internal_reference<>())
+    .def("ID", &ModuleBase::ID)
+    .def("Key", &ModuleBase::Key, return_value_policy<copy_const_reference>())
+    .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
+    .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>())
+    .def("Traits", &ModuleBase::Traits)
+    .def("Options", &ModuleBase::Options);
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
     class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, boost::python::dict>())
-           .def("RunTest", pure_virtual(&Test_Base::RunTest))
-           .def("RunCallTest", pure_virtual(&Test_Base::RunCallTest));
+    .def("RunTest", pure_virtual(&Test_Base::RunTest))
+    .def("RunCallTest", pure_virtual(&Test_Base::RunCallTest));
 
 }
 

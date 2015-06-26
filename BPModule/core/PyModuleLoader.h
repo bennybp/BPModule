@@ -17,28 +17,28 @@ class ModuleInfo;
 
 class PyModuleLoader
 {
-public:
+    public:
 
-  PyModuleLoader(ModuleStore * mst);
-  ~PyModuleLoader();
+        PyModuleLoader(ModuleStore * mst);
+        ~PyModuleLoader();
 
-  PyModuleLoader & operator=(const PyModuleLoader & rhs) = delete;
-  PyModuleLoader(const PyModuleLoader & rhs) = delete;
+        PyModuleLoader & operator=(const PyModuleLoader & rhs) = delete;
+        PyModuleLoader(const PyModuleLoader & rhs) = delete;
 
-  bool AddPyModule(const std::string & key, boost::python::object func, const ModuleInfo & minfo);
+        bool AddPyModule(const std::string & key, boost::python::object func, const ModuleInfo & minfo);
 
-  void DeleteAll(void);
+        void DeleteAll(void);
 
-private:
-  typedef std::unordered_map<unsigned long, boost::python::object> ObjectMap;
+    private:
+        typedef std::unordered_map<unsigned long, boost::python::object> ObjectMap;
 
-  ModuleStore * mst_;
-  ObjectMap objects_;
+        ModuleStore * mst_;
+        ObjectMap objects_;
 
-  void DeleteObject_(unsigned long id);
+        void DeleteObject_(unsigned long id);
 
-  ModuleBase * CreateWrapper_(boost::python::object fn, const std::string & key, unsigned long id, const ModuleInfo & options);
-  void DeleteWrapper_(unsigned long id);
+        ModuleBase * CreateWrapper_(boost::python::object fn, const std::string & key, unsigned long id, const ModuleInfo & options);
+        void DeleteWrapper_(unsigned long id);
 };
 
 } // close namespace bpmodule

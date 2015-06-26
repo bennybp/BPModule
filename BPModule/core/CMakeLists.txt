@@ -22,8 +22,8 @@ set(CORE_LIBS
    )
 
 
-ADD_MODULE(bpmodule_core "${CORE_FILES};${CORE_LIBS}" 
-                         "" 
+ADD_MODULE(bpmodule_core "${CORE_FILES};${CORE_LIBS}"
+                         ""
                          "${Boost_LIBRARIES};${PYTHON_LIBRARIES}"
                          "${Boost_INCLUDE_DIRS};${PYTHON_INCLUDE_DIRS}")
 

@@ -49,7 +49,7 @@ def LoadModule(name):
     path = os.path.dirname(m.__file__) + "/"
 
     for key,minfo in m.minfo.items():
-        # Copy the key to the dict 
+        # Copy the key to the dict
         minfo["key"] = key
 
         # set the path for all

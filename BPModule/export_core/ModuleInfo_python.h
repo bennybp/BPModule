@@ -18,8 +18,8 @@ struct ModuleInfoConverter
 {
     static PyObject* convert(const ModuleInfo & m)
     {
-      boost::python::dict d = ModuleInfoToDict(m);
-      return boost::python::incref(d.ptr());
+        boost::python::dict d = ModuleInfoToDict(m);
+        return boost::python::incref(d.ptr());
     }
 };
 

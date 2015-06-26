@@ -16,11 +16,11 @@ namespace output {
 
 enum class OutputType
 {
-  Output,
-  Success,
-  Warning,
-  Error,
-  Debug
+    Output,
+    Success,
+    Warning,
+    Error,
+    Debug
 };
 
 // in cpp file

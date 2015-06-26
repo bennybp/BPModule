@@ -11,7 +11,7 @@ namespace export_python {
 
 
 // Some wrappers for OptionMap Get/Set member
-void OptionMap_Set_Helper(OptionMap * op, const std::string & key, 
+void OptionMap_Set_Helper(OptionMap * op, const std::string & key,
                           const boost::python::object & value,
                           const std::string & help)
 {
@@ -33,7 +33,7 @@ void OptionMap_Set_Helper(OptionMap * op, const std::string & key,
             // plain string vector if empty
             std::vector<std::string> v;
             op->Set(key, std::vector<std::string>(), help);
-        } 
+        }
         else
         {
             std::string cl2 = boost::python::extract<std::string>(lst[0].attr("__class__").attr("__name__"));
@@ -88,7 +88,7 @@ OptionMap ListToOptionMap(const boost::python::list & olist)
     {
         std::string key = boost::python::extract<std::string>(olist[i][0]);
         std::string help = boost::python::extract<std::string>(olist[i][2]);
-        OptionMap_Set_Helper(&op, key, olist[i][1], help); 
+        OptionMap_Set_Helper(&op, key, olist[i][1], help);
     }
     return op;
 }

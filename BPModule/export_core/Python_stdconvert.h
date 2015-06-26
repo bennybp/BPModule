@@ -26,13 +26,13 @@ std::vector<T> ConvertListToVec(const boost::python::list & list)
 
 /*
 template<typename T>
-static 
+static
 T ConvertDictToMap(const dict & d)
 {
     T m;
     int length = boost::python::extract<int>(list.attr("__len__")());
     for(int i = 0; i < length; i++)
-    
+
 
     return m;
 }
@@ -43,7 +43,7 @@ boost::python::list ConvertVecToList(const std::vector<T> & v)
 {
     boost::python::list result;
     for(auto & it : v)
-        result.append(it);    
+        result.append(it);
     return result;
 }
 
@@ -67,8 +67,8 @@ struct VectorConverter
 {
     static PyObject* convert(const std::vector<T> & v)
     {
-      boost::python::list lst = ConvertVecToList(v);
-      return boost::python::incref(lst.ptr());
+        boost::python::list lst = ConvertVecToList(v);
+        return boost::python::incref(lst.ptr());
     }
 };
 
@@ -78,7 +78,7 @@ struct PairConverter
 {
     static PyObject* convert(const std::pair<T1, T2>& pair)
     {
-      return boost::python::incref(boost::python::make_tuple(pair.first, pair.second).ptr());
+        return boost::python::incref(boost::python::make_tuple(pair.first, pair.second).ptr());
     }
 };
 
@@ -87,8 +87,8 @@ struct MapConverter
 {
     static PyObject* convert(const T & m)
     {
-      boost::python::dict d = ConvertMapToDict(m);
-      return boost::python::incref(d.ptr());
+        boost::python::dict d = ConvertMapToDict(m);
+        return boost::python::incref(d.ptr());
     }
 };
 

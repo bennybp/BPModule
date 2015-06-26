@@ -27,6 +27,4 @@ class TestPyModule(bp.bpcore.Test_Base):
 
 def CreateModule(name, myid, mstore, minfo):
     return TestPyModule(myid, mstore, minfo)
-  
-
 
