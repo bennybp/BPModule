@@ -2,7 +2,7 @@
 #define MODULESWRAP_PYTHON_H
 
 #include "BPModule/modulebase/All.h"  // All the module base classes
-#include "BPModule/export_core/OptionMap_python.h"
+#include "BPModule/export_core/ModuleInfo_python.h"
 
 #include <boost/python.hpp>
 
@@ -12,8 +12,8 @@ namespace export_python {
 class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base>
 {
     public:
-        Test_Base_Wrap(unsigned long id, ModuleStore & mstore, boost::python::list opt)
-            : Test_Base(id, mstore, ListToOptionMap(opt))
+        Test_Base_Wrap(unsigned long id, ModuleStore & mstore, boost::python::dict minfo)
+            : Test_Base(id, mstore, DictToModuleInfo(minfo))
         {}
 
         virtual void RunTest(void)

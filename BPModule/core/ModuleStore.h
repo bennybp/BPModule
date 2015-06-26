@@ -14,21 +14,17 @@ namespace bpmodule {
 class ModuleBase;
 class ModuleStore;
 
-typedef std::function<ModuleBase *(const std::string &, unsigned long, const OptionMap &)> ModuleGeneratorFunc;
-typedef std::function<void(unsigned long)> ModuleDeleterFunc;
-
 
 template<typename T>
 using ScopedModule = std::unique_ptr<T, std::function<void(ModuleBase *)>>;
-
-template<typename T>
-using SharedModule = std::shared_ptr<T>;
 
 
 
 class ModuleStore
 {
 public:
+  typedef std::function<ModuleBase *(const std::string &, unsigned long, const ModuleInfo &)> ModuleGeneratorFunc;
+  typedef std::function<void(unsigned long)> ModuleDeleterFunc;
 
   ModuleStore();
   ~ModuleStore();
@@ -51,7 +47,7 @@ public:
       const StoreEntry & se = GetOrThrow_(key);
 
       // create
-      ModuleBase * mbptr = se.func(key, curid_, se.mi.options);
+      ModuleBase * mbptr = se.func(key, curid_, se.mi);
 
       // test
       T * dptr = dynamic_cast<T *>(mbptr);

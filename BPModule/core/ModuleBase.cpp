@@ -4,8 +4,9 @@
 
 namespace bpmodule {
 
-ModuleBase::ModuleBase(unsigned long id, ModuleStore & mstore, const OptionMap & options)
-    : id_(id), mstore_(mstore), options_(options)
+ModuleBase::ModuleBase(unsigned long id, ModuleStore & mstore, const ModuleInfo & minfo)
+    : id_(id), key_(minfo.key), name_(minfo.name), version_(minfo.version), options_(minfo.options),
+      mstore_(mstore)
 {
 }
 
@@ -17,6 +18,21 @@ ModuleBase::~ModuleBase()
 unsigned long ModuleBase::ID(void) const
 {
     return id_;
+}
+
+const std::string & ModuleBase::Key(void) const
+{
+    return key_;
+}
+
+const std::string & ModuleBase::Name(void) const
+{
+    return name_;
+}
+
+const std::string & ModuleBase::Version(void) const
+{
+    return version_;
 }
 
 OptionMap ModuleBase::Traits(void) const

@@ -1,15 +1,15 @@
 import bppython as bp
 
 class TestPyModule(bp.bpcore.Test_Base):
-  def __init__(self, myid, mstore, options):
-    super(TestPyModule, self).__init__(myid, mstore, options)
+  def __init__(self, myid, mstore, minfo):
+    super(TestPyModule, self).__init__(myid, mstore, minfo)
 
 
   def RunTest(self):
-    bp.Output("+++ Inside TestPyModule: RunTest\n")
+    bp.Output("+++ In TestPyModule: RunTest. Info: (%1%) %2% %3% v%4%\n", self.ID(), self.Key(), self.Name(), self.Version());
 
   def RunCallTest(self, s):
-    bp.Output("+++ Inside TestPyModule: RunCallTest with %1%\n", s)
+    bp.Output("+++ In TestPyModule: RunCallTest with %1%\n", s)
 
     tb = self.MStore().GetScopedModule_Test(s)
     bp.Output("  + Obtained scoped module ID %1%\n", tb.ID())
@@ -25,8 +25,8 @@ class TestPyModule(bp.bpcore.Test_Base):
     bp.Output("+++Done\n");
 
 
-def CreateModule(name, myid, mstore, options):
-    return TestPyModule(myid, mstore, options)
+def CreateModule(name, myid, mstore, minfo):
+    return TestPyModule(myid, mstore, minfo)
   
 
 

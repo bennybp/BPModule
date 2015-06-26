@@ -13,6 +13,7 @@ ModuleInfo DictToModuleInfo(const boost::python::dict & dictionary)
 {
     ModuleInfo ret;
     try {
+        ret.key = boost::python::extract<std::string>(dictionary["key"]);
         ret.name = boost::python::extract<std::string>(dictionary["name"]);
         ret.type = boost::python::extract<std::string>(dictionary["type"]);
         ret.path = boost::python::extract<std::string>(dictionary["path"]);
@@ -46,6 +47,7 @@ boost::python::dict ModuleInfoToDict(const ModuleInfo & mi)
     boost::python::dict d;
 
     //simple ones first
+    d["key"] = mi.key;
     d["name"] = mi.name;
     d["type"] = mi.type;
     d["path"] = mi.path;

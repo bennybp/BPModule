@@ -12,11 +12,7 @@ namespace bpmodule {
 
 class ModuleBase;
 class ModuleStore;
-class OptionMap;
 class ModuleInfo;
-
-typedef std::function<ModuleBase *(const std::string &, unsigned long, const OptionMap &)> ModuleGeneratorFunc;
-typedef std::function<void(unsigned long)> ModuleDeleterFunc;
 
 
 class PyModuleLoader
@@ -41,7 +37,7 @@ private:
 
   void DeleteObject_(unsigned long id);
 
-  ModuleBase * CreateWrapper_(boost::python::object fn, const std::string & key, unsigned long id, const OptionMap & options);
+  ModuleBase * CreateWrapper_(boost::python::object fn, const std::string & key, unsigned long id, const ModuleInfo & options);
   void DeleteWrapper_(unsigned long id);
 };
 

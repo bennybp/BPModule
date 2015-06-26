@@ -57,11 +57,13 @@ BOOST_PYTHON_MODULE(bpmodule_core)
 
     // converting pairs
     to_python_converter<std::pair<int, int>, PairConverter<int, int>>();
+    to_python_converter<std::pair<long, long>, PairConverter<long, long>>();
     to_python_converter<std::pair<double, double>, PairConverter<double, double>>();
     to_python_converter<std::pair<std::string, std::string>, PairConverter<std::string, std::string>>();
 
     // converting vectors
     to_python_converter<std::vector<int>, VectorConverter<int>>();
+    to_python_converter<std::vector<long>, VectorConverter<long>>();
     to_python_converter<std::vector<double>, VectorConverter<double>>();
     to_python_converter<std::vector<std::string>, VectorConverter<std::string>>();
 
@@ -115,14 +117,19 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     ///////////////////////
     // Module Base classes
     ///////////////////////
-    class_<ModuleBase, boost::noncopyable>("ModuleBase", init<unsigned long, ModuleStore &, const OptionMap &>())
+    //class_<ModuleBase, boost::noncopyable>("ModuleBase", init<unsigned long, ModuleStore &, const ModuleInfo &>())
+    // python should never derive from ModuleBase, so a constructor should not be needed
+    class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
            .def("MStore", &ModuleBase::MStore, return_internal_reference<>())
            .def("ID", &ModuleBase::ID)
+           .def("Key", &ModuleBase::Key, return_value_policy<copy_const_reference>())
+           .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
+           .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>()) 
            .def("Traits", &ModuleBase::Traits)
            .def("Options", &ModuleBase::Options);
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
-    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, boost::python::list>())
+    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, boost::python::dict>())
            .def("RunTest", pure_virtual(&Test_Base::RunTest))
            .def("RunCallTest", pure_virtual(&Test_Base::RunCallTest));
 

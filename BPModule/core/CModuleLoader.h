@@ -10,18 +10,12 @@ namespace bpmodule {
 
 class ModuleBase;
 class ModuleStore;
-class OptionMap;
 class ModuleInfo;
-
-typedef ModuleBase *(*CreateFunc)(const std::string &, unsigned long, ModuleStore &, const OptionMap &);
-typedef std::function<ModuleBase *(const std::string &, unsigned long, const OptionMap &)> ModuleGeneratorFunc;
-typedef std::function<void(unsigned long)> ModuleDeleterFunc;
 
 
 class CModuleLoader
 {
 public:
-
   CModuleLoader(ModuleStore * mst);
   ~CModuleLoader();
 
@@ -34,6 +28,8 @@ public:
   void CloseHandles(void);
 
 private:
+  typedef ModuleBase *(*CreateFunc)(const std::string &, unsigned long, ModuleStore &, const ModuleInfo &);
+
   typedef std::unordered_map<std::string, void *> HandleMap; 
   typedef std::unordered_map<unsigned long, std::unique_ptr<ModuleBase>> ObjectMap;
 
@@ -43,7 +39,7 @@ private:
 
   void DeleteObject_(unsigned long id);
 
-  ModuleBase * CreateWrapper_(CreateFunc fn, const std::string & key, unsigned long id, const OptionMap & options);
+  ModuleBase * CreateWrapper_(CreateFunc fn, const std::string & key, unsigned long id, const ModuleInfo & minfo);
   void DeleteWrapper_(unsigned long id);
 };
 

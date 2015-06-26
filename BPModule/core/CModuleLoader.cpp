@@ -27,9 +27,9 @@ CModuleLoader::~CModuleLoader()
 
 ModuleBase * CModuleLoader::CreateWrapper_(CreateFunc fn, const std::string & key,
                                          unsigned long id,
-                                         const OptionMap & options)
+                                         const ModuleInfo & minfo)
 {
-    ModuleBase * newobj = fn(key, id, *mst_, options);
+    ModuleBase * newobj = fn(key, id, *mst_, minfo);
     objects_[id] = std::unique_ptr<ModuleBase>(newobj);
     return newobj;
 }
@@ -86,12 +86,12 @@ bool CModuleLoader::LoadSO(const std::string & key,
 
     out::Success("out::Successfully opened %1%\n", sopath);
 
-    ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::CreateWrapper_, this, fn, 
+    ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::CreateWrapper_, this, fn, 
                                                         std::placeholders::_1,
                                                         std::placeholders::_2,
                                                         std::placeholders::_3);
 
-    ModuleDeleterFunc dfunc = std::bind(&CModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
+    ModuleStore::ModuleDeleterFunc dfunc = std::bind(&CModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
     return mst_->AddCreateFunc(key, cfunc, dfunc, minfo);
 }
 

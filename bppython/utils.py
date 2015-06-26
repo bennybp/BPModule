@@ -28,6 +28,7 @@ def PrintModuleInfo(key, minfo):
 
   print()
   print("  ++ Module: {}".format(key))
+  print("             Key: {}".format(minfo["key"]))
   print("            Name: {}".format(minfo["name"]))
   print("            Type: {}".format(minfo["type"]))
   print("            Path: {}".format(minfo["path"]))
@@ -50,38 +51,4 @@ def PrintModuleInfo(key, minfo):
   for opt in minfo["options"]:
       print("                  {:<12}  :  {:<12}  : {}".format(opt[0], opt[1], opt[2]))
   print()
-
-
-
-
-def LoadModule(name):
-    olddl = sys.getdlopenflags()
-    sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
-    m = importlib.import_module(name)
-    sys.setdlopenflags(olddl)
-
-    path = os.path.dirname(m.__file__) + "/"
-
-    for key,minfo in m.minfo.items():
-        # set the path for all
-        minfo["path"] = path
-
-        # Dump some info
-        PrintModuleInfo(key, minfo)
-
-        # Load & insert
-        # skip core types and others
-        if minfo["type"] == "c_module":
-            cml.LoadSO(key, minfo)
-        elif minfo["type"] == "python_module":
-            pml.AddPyModule(key, m.CreateModule, minfo)
-
-    return m
-
-
-def LoadModules(names):
-    mods = []
-    for name in names:
-        mods.append(LoadModule(name))
-    return mods
 

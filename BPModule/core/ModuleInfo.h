@@ -11,6 +11,7 @@ namespace bpmodule {
 
 struct ModuleInfo
 {
+  std::string key;
   std::string name;
   std::string type;
   std::string path;

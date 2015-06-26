@@ -13,6 +13,7 @@ from .utils import *
 # Print info about the core module
 #print(bpcore.minfo)
 for key,minfo in bpcore.minfo.items():
+  minfo["key"] = key
   minfo["path"] = os.path.dirname(bpcore.__file__) + "/"
   PrintModuleInfo(key, minfo)
 
@@ -48,6 +49,9 @@ def LoadModule(name):
     path = os.path.dirname(m.__file__) + "/"
 
     for key,minfo in m.minfo.items():
+        # Copy the key to the dict 
+        minfo["key"] = key
+
         # set the path for all
         minfo["path"] = path
 

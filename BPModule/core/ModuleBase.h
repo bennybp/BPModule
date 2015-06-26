@@ -14,7 +14,7 @@ class ModuleStore;
 class ModuleBase
 {
 public:
-  ModuleBase(unsigned long id, ModuleStore & mstore, const OptionMap & options);
+  ModuleBase(unsigned long id, ModuleStore & mstore, const ModuleInfo & minfo);
 
   virtual ~ModuleBase();
 
@@ -23,9 +23,13 @@ public:
   ModuleBase & operator= (const ModuleBase & rhs) = delete;
   ModuleBase & operator= (ModuleBase && rhs) = delete;
 
+  unsigned long ID(void) const;
+  const std::string & Key(void) const;
+  const std::string & Name(void) const;
+  const std::string & Version(void) const;
+
   OptionMap Traits(void) const;
   OptionMap Options(void) const;
-  unsigned long ID(void) const;
   ModuleStore & MStore(void);
 
 protected:
@@ -56,9 +60,14 @@ protected:
 
 private:
   unsigned long id_;
-  ModuleStore & mstore_;
+  std::string key_;
+  std::string name_;
+  std::string version_;
   OptionMap options_;
+
   OptionMap traits_;
+
+  ModuleStore & mstore_;
 };
 
 
