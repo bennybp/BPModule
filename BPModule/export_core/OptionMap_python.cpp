@@ -4,6 +4,8 @@
 
 #include <boost/python.hpp>
 
+namespace out = bpmodule::output;
+
 namespace bpmodule {
 namespace export_python {
 
@@ -16,7 +18,7 @@ void OptionMap_Set_Helper(OptionMap * op, const std::string & key,
     std::string cl = boost::python::extract<std::string>(value.attr("__class__").attr("__name__"));
 
     if(cl == "int")
-        op->Set(key, static_cast<int>(boost::python::extract<int>(value)), help);
+        op->Set(key, static_cast<long>(boost::python::extract<long>(value)), help);
     else if(cl == "float")
         op->Set(key, static_cast<double>(boost::python::extract<double>(value)), help);
     else if(cl == "str")
@@ -36,17 +38,17 @@ void OptionMap_Set_Helper(OptionMap * op, const std::string & key,
         {
             std::string cl2 = boost::python::extract<std::string>(lst[0].attr("__class__").attr("__name__"));
             if(cl2 == "int")
-                op->Set(key, ConvertListToVec<int>(lst), help);
+                op->Set(key, ConvertListToVec<long>(lst), help);
             else if(cl2 == "float")
                 op->Set(key, ConvertListToVec<double>(lst), help);
             else if(cl2 == "str")
                 op->Set(key, ConvertListToVec<std::string>(lst), help);
             else
-                Error("Unknown type %1% in list for key %2%\n", cl, key);
+                out::Error("Unknown type %1% in list for key %2%\n", cl, key);
         }
     }
     else
-        Error("Unknown type %1% for key %2%\n", cl, key);
+        out::Error("Unknown type %1% for key %2%\n", cl, key);
 }
 
 
@@ -55,23 +57,21 @@ boost::python::object OptionMap_Get_Helper(const OptionMap * op, const std::stri
 {
     std::string type = op->GetType(key);
 
-    if(type.size() == 0)
-        return boost::python::object();
-    else if(type == typeid(int).name())
-        return boost::python::object(op->Get<int>(key));
+    if(type == typeid(long).name())
+        return boost::python::object(op->Get<long>(key));
     else if(type == typeid(double).name())
         return boost::python::object(op->Get<double>(key));
     else if(type == typeid(std::string).name())
         return boost::python::object(op->Get<std::string>(key));
-    else if(type == typeid(std::vector<int>).name())
-        return boost::python::object(op->Get<std::vector<int>>(key));
+    else if(type == typeid(std::vector<long>).name())
+        return boost::python::object(op->Get<std::vector<long>>(key));
     else if(type == typeid(std::vector<double>).name())
         return boost::python::object(op->Get<std::vector<double>>(key));
     else if(type == typeid(std::vector<std::string>).name())
         return boost::python::object(op->Get<std::vector<std::string>>(key));
     else
     {
-        Error("Unable to deduce type: %1%\n", type);
+        out::Error("Unable to deduce type: %1%\n", type);
         return boost::python::object();
     }
 }

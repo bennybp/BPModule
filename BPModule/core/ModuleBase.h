@@ -30,9 +30,21 @@ public:
 
 protected:
   template<typename T>
+  T GetTrait(const std::string & key) const
+  {
+    return traits_.Get<T>(key);
+  }
+
+  template<typename T>
   void SetTrait(const std::string & key, const T & value)
   {
     traits_.Set(key, value);
+  }
+
+  template<typename T>
+  T GetOption(const std::string & key) const
+  {
+    return options_.Get<T>(key);
   }
 
   template<typename T>
@@ -40,6 +52,7 @@ protected:
   {
     options_.Set(key, value);
   }
+
 
 private:
   unsigned long id_;

@@ -1,6 +1,8 @@
 #include "BPModule/core/OptionMap.h"
 #include "BPModule/core/Output.h"
 
+namespace out = bpmodule::output;
+
 namespace bpmodule {
 
 
@@ -37,7 +39,7 @@ OptionMap::GetHelp(const std::string & key) const
         return opmap_.at(key).help;
     else
     {
-        Warning("Cannot find entry for key \"%1%\"\n", key);
+        out::Warning("Cannot find entry for key \"%1%\"\n", key);
         return "";
     }
 }
@@ -58,7 +60,7 @@ std::string OptionMap::GetType(const std::string & key) const
         return opmap_.at(key).oph->Type();
     else
     {
-        Warning("Cannot find entry for key \"%1%\"\n", key);
+        out::Warning("Cannot find entry for key \"%1%\"\n", key);
         return "";
     }
 }

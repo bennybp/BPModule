@@ -1,6 +1,5 @@
 //#include <iostream>
 //#include <fstream>
-#include <sstream>
 #include <memory>
 
 #include <cassert>
@@ -26,6 +25,7 @@ namespace {
 
 
 namespace bpmodule {
+namespace output {
 
 void Output_(std::ostream & out, OutputType type, boost::format & bfmt)
 {
@@ -68,12 +68,25 @@ void Output_(std::ostream & out, OutputType type, boost::format & bfmt)
         out << bfmt;
 }
 
+
+
 void SetOut_Stdout(void)
 {
     out_ = &std::cout;
     usefile_ = false;
     file_.reset();
 }
+
+
+
+void SetOut_Stderr(void)
+{
+    out_ = &std::cerr;
+    usefile_ = false;
+    file_.reset();
+}
+
+
 
 bool SetOut_File(const std::string & filepath)
 {
@@ -94,20 +107,44 @@ bool SetOut_File(const std::string & filepath)
     }
 }
 
+
+
 void SetColor(bool usecolor)
 {
     color_ = usecolor;
 }
 
+
+
 void SetDebug(bool debug)
 {
     debug_ = debug;
-    Debug("Debugging now: %1%\n", debug);
+    Debug("Debugging now: %1%\n", debug ? "On" : "Off");
 }
+
+
 
 std::string Line(char c, int n)
 {
     return std::string(n, c) + "\n";
+}
+
+
+
+bool Valid(void)
+{
+    assert(!usefile_ || file_);
+    if(out_ == nullptr)
+        return false;
+
+    if(usefile_ && !file_->good())
+        return false;
+
+    if(!out_->good())
+        return false;
+
+    else
+        return true;
 }
 
 std::ostream & GetOut(void)
@@ -129,18 +166,14 @@ std::ostream & GetOut(void)
 }
 
 
+
 void PrintException(const BPModuleException & ex)
 {
     BPModuleException::ExceptionInfo exinfo = ex.GetInfo();
-    Error(Line('*'));
-    Error("Exception thrown!\n");
-    Error("what() = %1%\n", ex.what());
-    for(auto & it : exinfo)
-    {
-        if(it.second.size())
-            Error("%|16| : %|-16|", it.first, it.second);
-    }
+    Output(ExceptionString(ex)); // Just output - color is handled by ExceptionString
 }
+
+
 
 std::string ExceptionString(const BPModuleException & ex)
 {
@@ -156,4 +189,5 @@ std::string ExceptionString(const BPModuleException & ex)
 }
 
 
+} // close namespace output
 } // close namespace bpmodule

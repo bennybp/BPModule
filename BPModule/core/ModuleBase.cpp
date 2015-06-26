@@ -11,7 +11,7 @@ ModuleBase::ModuleBase(unsigned long id, ModuleStore & mstore, const OptionMap &
 
 ModuleBase::~ModuleBase()
 {
-    Debug("Destructor called for module %1%\n", id_);
+    output::Debug("Destructor called for module %1%\n", id_);
 }
 
 unsigned long ModuleBase::ID(void) const

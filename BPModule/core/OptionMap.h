@@ -3,10 +3,9 @@
 
 #include <map>
 #include <string>
+#include <memory>
 
 #include "BPModule/core/Exception.h"
-
-#include <boost/lexical_cast.hpp>
 
 
 namespace bpmodule {

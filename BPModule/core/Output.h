@@ -2,12 +2,16 @@
 #define OUTPUT_H
 
 #include <iostream>
+#include <sstream>
 
 #include <boost/format.hpp>
 
 namespace bpmodule {
 
 class BPModuleException;
+
+
+namespace output {
 
 
 enum class OutputType
@@ -22,7 +26,9 @@ enum class OutputType
 // in cpp file
 void Output_(std::ostream & out, OutputType type, boost::format & bfmt);
 
+bool Valid(void);
 void SetOut_Stdout(void);
+void SetOut_Stderr(void);
 bool SetOut_File(const std::string & filepath);
 void SetColor(bool usecolor);
 void SetDebug(bool debug);
@@ -50,12 +56,14 @@ void Output_(std::ostream & out, OutputType type, std::string fmt, Targs... Farg
 
 
 
+/////////////////////
+// Output
+/////////////////////
 template<typename... Targs>
 void Output(std::ostream & out, std::string fmt, Targs... Fargs)
 {
     Output_(out, OutputType::Output, fmt, Fargs...);
 }
-
 
 template<typename... Targs>
 void Output(std::string fmt, Targs... Fargs)
@@ -63,7 +71,18 @@ void Output(std::string fmt, Targs... Fargs)
     Output(GetOut(), fmt, Fargs...);
 }
 
+template<typename... Targs>
+std::string OutputStr(std::string fmt, Targs... Fargs)
+{
+    std::stringstream ss;
+    Output(ss, fmt, Fargs...);
+    return ss.str();
+}
 
+
+/////////////////////
+// Error
+/////////////////////
 template<typename... Targs>
 void Error(std::ostream & out, std::string fmt, Targs... Fargs)
 {
@@ -76,7 +95,17 @@ void Error(std::string fmt, Targs... Fargs)
     Error(GetOut(), fmt, Fargs...);
 }
 
+template<typename... Targs>
+std::string ErrorStr(std::string fmt, Targs... Fargs)
+{
+    std::stringstream ss;
+    Error(ss, fmt, Fargs...);
+    return ss.str();
+}
 
+/////////////////////
+// Warning
+/////////////////////
 template<typename... Targs>
 void Warning(std::ostream & out, std::string fmt, Targs... Fargs)
 {
@@ -90,6 +119,17 @@ void Warning(std::string fmt, Targs... Fargs)
 }
 
 template<typename... Targs>
+std::string WarningStr(std::string fmt, Targs... Fargs)
+{
+    std::stringstream ss;
+    Warning(ss, fmt, Fargs...);
+    return ss.str();
+}
+
+/////////////////////
+// Success
+/////////////////////
+template<typename... Targs>
 void Success(std::ostream & out, std::string fmt, Targs... Fargs)
 {
     Output_(out, OutputType::Success, fmt, Fargs...);
@@ -102,6 +142,17 @@ void Success(std::string fmt, Targs... Fargs)
 }
 
 template<typename... Targs>
+std::string SuccessStr(std::string fmt, Targs... Fargs)
+{
+    std::stringstream ss;
+    Success(ss, fmt, Fargs...);
+    return ss.str();
+}
+
+/////////////////////
+// Debug
+/////////////////////
+template<typename... Targs>
 void Debug(std::ostream & out, std::string fmt, Targs... Fargs)
 {
     Output_(out, OutputType::Debug, fmt, Fargs...);
@@ -113,7 +164,16 @@ void Debug(std::string fmt, Targs... Fargs)
     Debug(GetOut(), fmt, Fargs...);
 }
 
+template<typename... Targs>
+std::string DebugStr(std::string fmt, Targs... Fargs)
+{
+    std::stringstream ss;
+    Debug(ss, fmt, Fargs...);
+    return ss.str();
+}
 
+
+} // close namespace output
 } // close namespace bpmodule
 
 

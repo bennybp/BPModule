@@ -7,7 +7,7 @@
 namespace bpmodule {
 namespace export_python {
 
-void Output_Wrap(bpmodule::OutputType type, const std::string fmt, boost::python::list args);
+void Output_Wrap(bpmodule::output::OutputType type, const std::string fmt, boost::python::list args);
 
 void Output_Wrap_Output(const std::string fmt, boost::python::list args);
 

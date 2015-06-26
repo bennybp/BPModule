@@ -19,7 +19,7 @@ namespace export_python {
 // the main exception translator
 void TranslateException(const BPModuleException & ex)
 {
-    PyErr_SetString(PyExc_RuntimeError, ExceptionString(ex).c_str());
+    PyErr_SetString(PyExc_RuntimeError, bpmodule::output::ExceptionString(ex).c_str());
 }
 
 
@@ -76,10 +76,12 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     to_python_converter<OptionMap, OptionMapConverter>();
 
     // setting the output
-    def("SetOut_Stdout", SetOut_Stdout);
-    def("SetOut_File", SetOut_File);
-    def("SetColor", SetColor);
-    def("SetDebug", SetDebug);
+    def("SetOut_Stdout", &output::SetOut_Stdout);
+    def("SetOut_Stderr", &output::SetOut_Stderr);
+    def("SetOut_File", &output::SetOut_File);
+    def("SetColor", &output::SetColor);
+    def("SetDebug", &output::SetDebug);
+    def("Valid", &output::Valid);
 
     // printing to output
     def("Output", Output_Wrap_Output);

@@ -7,6 +7,7 @@
 
 namespace bpmodule {
 
+namespace out = bpmodule::output;
 
 
 CModuleLoader::CModuleLoader(ModuleStore * mst)
@@ -57,14 +58,14 @@ bool CModuleLoader::LoadSO(const std::string & key,
         handle = handles_[sopath];
     else
     {
-        Output("Looking to open so file: %1%\n", sopath);
+        out::Output("Looking to open so file: %1%\n", sopath);
         handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
         // open the module
         if(!handle)
         {
-            Error("Unable to open SO file: %1%\n", sopath);
+            out::Error("Unable to open SO file: %1%\n", sopath);
             error = dlerror();
-            Error("%1%\n", error);
+            out::Error("%1%\n", error);
             return false;
         }
     }
@@ -74,8 +75,8 @@ bool CModuleLoader::LoadSO(const std::string & key,
     CreateFunc fn = reinterpret_cast<CreateFunc>(dlsym(handle, "CreateModule"));
     if((error = dlerror()) != NULL)
     {
-        Error("Unable to find CreateModule!\n");
-        Error("%1%\n", error);
+        out::Error("Unable to find CreateModule!\n");
+        out::Error("%1%\n", error);
         dlclose(handle);
         return false;
     }
@@ -83,7 +84,7 @@ bool CModuleLoader::LoadSO(const std::string & key,
     if(handles_.count(sopath) == 0)
         handles_.insert(HandleMap::value_type(sopath, handle));
 
-    Success("Successfully opened %1%\n", sopath);
+    out::Success("out::Successfully opened %1%\n", sopath);
 
     ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::CreateWrapper_, this, fn, 
                                                         std::placeholders::_1,
@@ -114,7 +115,7 @@ void CModuleLoader::CloseHandles(void)
 {
     for(auto it : handles_)
     {
-        Output("Closing %1%\n", it.first);
+        out::Output("Closing %1%\n", it.first);
         dlclose(it.second);
     }
     handles_.clear();

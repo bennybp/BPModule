@@ -3,6 +3,8 @@
 #include "BPModule/export_core/Python_stdconvert.h"
 #include "BPModule/export_core/ModuleInfo_python.h"
 
+namespace out = bpmodule::output;
+
 namespace bpmodule {
 namespace export_python {
 
@@ -31,7 +33,7 @@ ModuleInfo DictToModuleInfo(const boost::python::dict & dictionary)
     }
     catch(...)
     {
-        Error("HEREEEE\n");
+        out::Error("HEREEEE\n");
     }   
 
     return ret;
