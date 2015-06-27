@@ -28,9 +28,6 @@ ModuleInfo::ModuleInfo(const bpy::dict & dictionary)
 
         if(dictionary.has_key("soname"))
             soname = bpy::extract<std::string>(dictionary["soname"]);
-
-        //if(dictionary.has_key("path"))
-
     }
     catch(...)
     {

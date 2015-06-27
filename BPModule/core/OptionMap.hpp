@@ -5,93 +5,12 @@
 #include <string>
 #include <memory>
 
+#include "BPModule/core/BoostPython_fwd.hpp"
 #include "BPModule/core/Exception.hpp"
-
-
-namespace boost {
-namespace python {
-namespace api {
-
-class object;
-
-}
-
-class list;
-
-}
-}
-
-
 
 
 namespace bpmodule {
 
-
-
-//! An interface to a templated class that can hold anything
-/*!
-    This allows for use in containers, etc.
-
-    \todo Serialization does not work
- */
-class OptionPlaceholder
-{
-    public:
-        //! Returns a pointer to a copy of this object
-        virtual OptionPlaceholder * Clone(void) const = 0;
-        virtual ~OptionPlaceholder() { }
-
-        virtual const char * Type(void) const = 0;
-
-        OptionPlaceholder(void) = default;
-        OptionPlaceholder & operator=(const OptionPlaceholder & rhs) = delete;
-        OptionPlaceholder & operator=(const OptionPlaceholder && rhs) = delete;
-        OptionPlaceholder(const OptionPlaceholder & rhs) = delete;
-        OptionPlaceholder(const OptionPlaceholder && rhs) = delete;
-};
-
-
-
-template<typename T>
-class OptionHolder : public OptionPlaceholder
-{
-    public:
-        OptionHolder(const T & m) : obj(m) { }
-        OptionHolder(T && m) : obj(std::move(m)) { }
-        OptionHolder(const OptionHolder & oph) : obj(oph.obj) {  };
-
-        OptionHolder & operator=(const OptionHolder & oph) = delete;
-        OptionHolder & operator=(OptionHolder && oph) = delete;
-        OptionHolder(OptionHolder && oph) = default;
-
-        virtual OptionHolder * Clone(void) const
-        {
-            return new OptionHolder<T>(*this);
-        }
-
-        T & GetRef(void)
-        {
-            return obj;
-        }
-
-        const T & GetRef(void) const
-        {
-            return obj;
-        }
-
-        T & Get(void) const
-        {
-            return obj;
-        }
-
-        const char * Type(void) const
-        {
-            return typeid(T).name();
-        }
-
-    private:
-        T obj;
-};
 
 
 
@@ -147,6 +66,72 @@ class OptionMap
 
 
     private:
+        //! An interface to a templated class that can hold anything
+        /*!
+            This allows for use in containers, etc.
+
+            \todo Serialization does not work
+         */
+        class OptionPlaceholder
+        {
+            public:
+                //! Returns a pointer to a copy of this object
+                virtual OptionPlaceholder * Clone(void) const = 0;
+                virtual ~OptionPlaceholder() { }
+
+                virtual const char * Type(void) const = 0;
+
+                OptionPlaceholder(void) = default;
+                OptionPlaceholder & operator=(const OptionPlaceholder & rhs) = delete;
+                OptionPlaceholder & operator=(const OptionPlaceholder && rhs) = delete;
+                OptionPlaceholder(const OptionPlaceholder & rhs) = delete;
+                OptionPlaceholder(const OptionPlaceholder && rhs) = delete;
+        };
+
+
+
+        template<typename T>
+        class OptionHolder : public OptionPlaceholder
+        {
+            public:
+                OptionHolder(const T & m) : obj(m) { }
+                OptionHolder(T && m) : obj(std::move(m)) { }
+                OptionHolder(const OptionHolder & oph) : obj(oph.obj) {  };
+
+                OptionHolder & operator=(const OptionHolder & oph) = delete;
+                OptionHolder & operator=(OptionHolder && oph) = delete;
+                OptionHolder(OptionHolder && oph) = default;
+
+                virtual OptionHolder * Clone(void) const
+                {
+                    return new OptionHolder<T>(*this);
+                }
+
+                T & GetRef(void)
+                {
+                    return obj;
+                }
+
+                const T & GetRef(void) const
+                {
+                    return obj;
+                }
+
+                T & Get(void) const
+                {
+                    return obj;
+                }
+
+                const char * Type(void) const
+                {
+                    return typeid(T).name();
+                }
+
+            private:
+                T obj;
+        };
+
+
         struct OpMapEntry
         {
             bool changed;

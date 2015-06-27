@@ -21,7 +21,7 @@ OptionMap::OptionMap(const bpy::list & olist)
     {
         std::string key = bpy::extract<std::string>(olist[i][0]);
         std::string help = bpy::extract<std::string>(olist[i][2]);
-        InitDefault_(key, OptionPlaceholder_(olist[i][1]), help);
+        InitDefault_(key, OptionMap::OptionPlaceholder_(olist[i][1]), help);
     }
 }
 
@@ -54,21 +54,21 @@ bpy::object OptionMap::Get(const std::string & key) const
 template<>
 void OptionMap::Change(const std::string & key, const bpy::object & value)
 {
-    Change_(key, OptionPlaceholder_(value));
+    Change_(key, OptionMap::OptionPlaceholder_(value));
 }
 
 
 
-std::unique_ptr<OptionPlaceholder> OptionMap::OptionPlaceholder_(const bpy::object & value)
+std::unique_ptr<OptionMap::OptionPlaceholder> OptionMap::OptionMap::OptionPlaceholder_(const bpy::object & value)
 {
     std::string cl = bpy::extract<std::string>(value.attr("__class__").attr("__name__"));
 
     if(cl == "int")
-        return std::unique_ptr<OptionPlaceholder>(new OptionHolder<long>(bpy::extract<long>(value)));
+        return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<long>(bpy::extract<long>(value)));
     else if(cl == "float")
-        return std::unique_ptr<OptionPlaceholder>(new OptionHolder<double>(bpy::extract<double>(value)));
+        return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<double>(bpy::extract<double>(value)));
     else if(cl == "str")
-        return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::string>(bpy::extract<std::string>(value)));
+        return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<std::string>(bpy::extract<std::string>(value)));
     else if(cl == "list")
     {
         // get type of first element
@@ -77,7 +77,7 @@ std::unique_ptr<OptionPlaceholder> OptionMap::OptionPlaceholder_(const bpy::obje
         if(length == 0)
         {
             out::Error("Empty list: %\n", cl);
-            return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::string>("????"));
+            return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<std::string>("????"));
         }
         else
         {
@@ -85,22 +85,22 @@ std::unique_ptr<OptionPlaceholder> OptionMap::OptionPlaceholder_(const bpy::obje
             // check the first elements or find a heterogeneous container
             std::string cl2 = bpy::extract<std::string>(lst[0].attr("__class__").attr("__name__"));
             if(cl2 == "int")
-                return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::vector<long>>(ConvertListToVec<long>(lst)));
+                return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<std::vector<long>>(ConvertListToVec<long>(lst)));
             else if(cl2 == "float")
-                return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::vector<double>>(ConvertListToVec<double>(lst)));
+                return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<std::vector<double>>(ConvertListToVec<double>(lst)));
             else if(cl2 == "str")
-                return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::vector<std::string>>(ConvertListToVec<std::string>(lst)));
+                return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<std::vector<std::string>>(ConvertListToVec<std::string>(lst)));
             else
             {
                 out::Error("Unknown type %1% in list\n", cl);
-                return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::string>("????"));
+                return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<std::string>("????"));
             }
         }
     }
     else
     {
         out::Error("Unknown type %1%\n", cl);
-        return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::string>("????"));
+        return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<std::string>("????"));
     }
 }
 
