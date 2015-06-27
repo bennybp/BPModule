@@ -32,7 +32,13 @@ struct ModuleInfo
     std::vector<std::string> refs;
     OptionMap options;
 
-    void FromPythonDict(const boost::python::dict & dictionary);
+    ModuleInfo(void) = default;
+    ModuleInfo(const ModuleInfo & rhs) = default;
+    ModuleInfo(ModuleInfo && rhs) = default;
+    ~ModuleInfo(void) = default;
+
+    // for python
+    ModuleInfo(const boost::python::dict & dictionary);
 };
 
 

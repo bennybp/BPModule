@@ -142,9 +142,8 @@ class OptionMap
 
 
         // For python
-        boost::python::api::object Get(const std::string & key);
-        void Change(const std::string & key, const boost::python::api::object & value);
-        void InitFromList(const boost::python::list & olist);
+        OptionMap(const boost::python::list & olist);
+        
 
 
     private:
@@ -168,11 +167,22 @@ class OptionMap
 
         void Change_(const std::string & key, std::unique_ptr<OptionPlaceholder> && value);
         void InitDefault_(const std::string & key, std::unique_ptr<OptionPlaceholder> && def, const std::string & help);
-        void InitDefault_(const std::string & key, const boost::python::api::object & def, const std::string & help);
+
+        // for python
         std::unique_ptr<OptionPlaceholder> OptionPlaceholder_(const boost::python::api::object & value);
 };
 
+
+// specialize the templates
+template<>
+boost::python::api::object OptionMap::Get<>(const std::string & key) const;
+
+template<>
+void OptionMap::Change<>(const std::string & key, const boost::python::api::object & value);
+
+
 } // close namespace bpmodule
+
 
 
 #endif

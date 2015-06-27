@@ -1,5 +1,4 @@
 #include "BPModule/core/Output.hpp"
-#include "BPModule/core/OptionMap.hpp"
 #include "BPModule/core/ModuleInfo.hpp"
 #include "BPModule/export_core/Python_stdconvert.hpp"
 
@@ -10,7 +9,7 @@ using bpmodule::export_python::ConvertListToVec;
 namespace bpmodule {
 
 // the "options" element of the dict must be a list of tuples
-void ModuleInfo::FromPythonDict(const bpy::dict & dictionary)
+ModuleInfo::ModuleInfo(const bpy::dict & dictionary)
 {
     try
     {
@@ -25,7 +24,7 @@ void ModuleInfo::FromPythonDict(const bpy::dict & dictionary)
 
         OptionMap op;
         bpy::list olist = bpy::extract<bpy::list>(dictionary["options"]);
-        options.InitFromList(olist);
+        options = OptionMap(olist);
 
         if(dictionary.has_key("soname"))
             soname = bpy::extract<std::string>(dictionary["soname"]);

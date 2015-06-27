@@ -4,16 +4,8 @@
 #include <string>
 #include <functional>
 
+#include "BPModule/core/BoostPython_fwd.hpp"
 #include "BPModule/core/ModuleInfo.hpp"
-
-
-namespace boost {
-namespace python {
-
-class object;
-
-}
-}
 
 
 
@@ -54,15 +46,18 @@ class ModuleBase
         }
 
         template<typename T>
+        void ChangeTrait(const std::string & key, const T & value)
+        {
+            traits_.Change(key, value);
+        }
+
+        template<typename T>
         void ChangeOption(const std::string & key, const T & value)
         {
             options_.Change(key, value);
         }
 
 
-        // For use from python
-        boost::python::object GetTrait(const std::string & key) const;
-        boost::python::object GetOption(const std::string & key) const;
 
         // For use from python classes derived from this
         ModuleStore & MStore(void);
@@ -70,11 +65,6 @@ class ModuleBase
 
 
     protected:
-        template<typename T>
-        void ChangeTrait(const std::string & key, const T & value)
-        {
-            traits_.Change(key, value);
-        }
 
     private:
         unsigned long id_;
@@ -87,6 +77,12 @@ class ModuleBase
 
         ModuleStore & mstore_;
 };
+
+// Specializations for use from python
+template<> boost::python::object ModuleBase::GetTrait<>(const std::string & key) const;
+template<> boost::python::object ModuleBase::GetOption<>(const std::string & key) const;
+template<> void ModuleBase::ChangeTrait<>(const std::string & key, const boost::python::object & value);
+template<> void ModuleBase::ChangeOption<>(const std::string & key, const boost::python::object & value);
 
 
 } // close namespace bpmodule

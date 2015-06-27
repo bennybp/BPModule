@@ -12,6 +12,52 @@ using bpmodule::export_python::ConvertListToVec;
 
 namespace bpmodule {
 
+// construct from python list
+OptionMap::OptionMap(const bpy::list & olist)
+{
+    int optlen = bpy::extract<int>(olist.attr("__len__")());
+
+    for(int i = 0; i < optlen; i++)
+    {
+        std::string key = bpy::extract<std::string>(olist[i][0]);
+        std::string help = bpy::extract<std::string>(olist[i][2]);
+        InitDefault_(key, OptionPlaceholder_(olist[i][1]), help);
+    }
+}
+
+
+template<>
+bpy::object OptionMap::Get(const std::string & key) const
+{
+    std::string type = GetType(key);
+
+    if(type == typeid(long).name())
+        return bpy::object(Get<long>(key));
+    else if(type == typeid(double).name())
+        return bpy::object(Get<double>(key));
+    else if(type == typeid(std::string).name())
+        return bpy::object(Get<std::string>(key));
+    else if(type == typeid(std::vector<long>).name())
+        return bpy::object(Get<std::vector<long>>(key));
+    else if(type == typeid(std::vector<double>).name())
+        return bpy::object(Get<std::vector<double>>(key));
+    else if(type == typeid(std::vector<std::string>).name())
+        return bpy::object(Get<std::vector<std::string>>(key));
+    else
+    {
+        out::Error("Unable to deduce type: %1%\n", type);
+        return bpy::object();
+    }
+}
+
+
+template<>
+void OptionMap::Change(const std::string & key, const bpy::object & value)
+{
+    Change_(key, OptionPlaceholder_(value));
+}
+
+
 
 std::unique_ptr<OptionPlaceholder> OptionMap::OptionPlaceholder_(const bpy::object & value)
 {
@@ -57,60 +103,6 @@ std::unique_ptr<OptionPlaceholder> OptionMap::OptionPlaceholder_(const bpy::obje
         return std::unique_ptr<OptionPlaceholder>(new OptionHolder<std::string>("????"));
     }
 }
-
-
-
-bpy::object OptionMap::Get(const std::string & key)
-{
-    std::string type = GetType(key);
-
-    if(type == typeid(long).name())
-        return bpy::object(Get<long>(key));
-    else if(type == typeid(double).name())
-        return bpy::object(Get<double>(key));
-    else if(type == typeid(std::string).name())
-        return bpy::object(Get<std::string>(key));
-    else if(type == typeid(std::vector<long>).name())
-        return bpy::object(Get<std::vector<long>>(key));
-    else if(type == typeid(std::vector<double>).name())
-        return bpy::object(Get<std::vector<double>>(key));
-    else if(type == typeid(std::vector<std::string>).name())
-        return bpy::object(Get<std::vector<std::string>>(key));
-    else
-    {
-        out::Error("Unable to deduce type: %1%\n", type);
-        return bpy::object();
-    }
-}
-
-
-
-void OptionMap::Change(const std::string & key, const bpy::object & value)
-{
-    Change_(key, OptionPlaceholder_(value));
-}
-
-
-
-void OptionMap::InitDefault_(const std::string & key, const bpy::object & def, const std::string & help)
-{
-    InitDefault_(key, OptionPlaceholder_(def), help);
-}
-
-
-
-void OptionMap::InitFromList(const bpy::list & olist)
-{
-    int optlen = bpy::extract<int>(olist.attr("__len__")());
-
-    for(int i = 0; i < optlen; i++)
-    {
-        std::string key = bpy::extract<std::string>(olist[i][0]);
-        std::string help = bpy::extract<std::string>(olist[i][2]);
-        InitDefault_(key, olist[i][1], help);
-    }
-}
-
 
 
 } // close namespace bpmodule

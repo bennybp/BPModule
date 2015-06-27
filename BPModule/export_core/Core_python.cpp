@@ -26,20 +26,18 @@ void TranslateException(const BPModuleException & ex)
 
 
 // wraps CModuleLoader::LoadSO so that it can take a dict for the ModuleInfo
-bool Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const bpy::dict & d)
+bool Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const bpy::dict & minfo)
 {
-    ModuleInfo minfo;
-    minfo.FromPythonDict(d);
+    // dictionary is converted to ModuleInfo via constructor
     return ml->LoadSO(key, minfo);
 }
 
 // wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
 bool Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
                                      const std::string & key, bpy::object func,
-                                     const bpy::dict & d)
+                                     const bpy::dict & minfo)
 {
-    ModuleInfo minfo;
-    minfo.FromPythonDict(d);
+    // dictionary is converted to ModuleInfo via constructor
     return ml->AddPyModule(key, func, minfo);
 }
 
@@ -129,7 +127,11 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     .def("ID", &ModuleBase::ID)
     .def("Key", &ModuleBase::Key, return_value_policy<copy_const_reference>())
     .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
-    .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>());
+    .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>())
+    .def("GetTrait", &ModuleBase::GetTrait<bpy::object>)
+    .def("GetOption", &ModuleBase::GetOption<bpy::object>) 
+    .def("ChangeTrait", &ModuleBase::ChangeTrait<bpy::object>)
+    .def("ChangeOption", &ModuleBase::ChangeOption<bpy::object>);
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
     class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, const ModuleInfo &>())
