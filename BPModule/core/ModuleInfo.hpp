@@ -6,6 +6,16 @@
 
 #include "BPModule/core/OptionMap.hpp"
 
+
+namespace boost {
+namespace python {
+
+class dict;
+
+}
+}
+
+
 namespace bpmodule {
 
 
@@ -21,6 +31,8 @@ struct ModuleInfo
     std::string description;
     std::vector<std::string> refs;
     OptionMap options;
+
+    void FromPythonDict(const boost::python::dict & dictionary);
 };
 
 

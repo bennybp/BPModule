@@ -8,6 +8,22 @@
 #include "BPModule/core/Exception.hpp"
 
 
+namespace boost {
+namespace python {
+namespace api {
+
+class object;
+
+}
+
+class list;
+
+}
+}
+
+
+
+
 namespace bpmodule {
 
 
@@ -44,6 +60,10 @@ class OptionHolder : public OptionPlaceholder
         OptionHolder(T && m) : obj(std::move(m)) { }
         OptionHolder(const OptionHolder & oph) : obj(oph.obj) {  };
 
+        OptionHolder & operator=(const OptionHolder & oph) = delete;
+        OptionHolder & operator=(OptionHolder && oph) = delete;
+        OptionHolder(OptionHolder && oph) = default;
+
         virtual OptionHolder * Clone(void) const
         {
             return new OptionHolder<T>(*this);
@@ -59,14 +79,15 @@ class OptionHolder : public OptionPlaceholder
             return obj;
         }
 
-        virtual const char * Type(void) const
+        T & Get(void) const
+        {
+            return obj;
+        }
+
+        const char * Type(void) const
         {
             return typeid(T).name();
         }
-
-        OptionHolder & operator=(const OptionHolder & oph) = delete;
-        OptionHolder & operator=(OptionHolder && oph) = delete;
-        OptionHolder(OptionHolder && oph) = default;
 
     private:
         T obj;
@@ -98,11 +119,12 @@ class OptionMap
         }
 
 
+
         template<typename T>
         void Change(const std::string & key, const T & value)
         {
             auto v = std::unique_ptr<OptionPlaceholder>(new OptionHolder<T>(value));
-            Change(key, v);
+            Change_(key, std::move(v));
         }
 
 
@@ -118,18 +140,12 @@ class OptionMap
         size_t Size(void) const;
 
 
-        /*
-        template<typename T>
-        void InitDefault(const std::string & key, T & def, const std::string & help)
-        {
-            auto v = std::unique_ptr<OptionPlaceholder>(new OptionHolder<T>(def));
-            InitDefault(key, v, help);
-        }
-        */
 
-        // Take ownership!
-        void Change(const std::string & key, std::unique_ptr<OptionPlaceholder> && value);
-        void InitDefault(const std::string & key, std::unique_ptr<OptionPlaceholder> && def, const std::string & help);
+        // For python
+        boost::python::api::object Get(const std::string & key);
+        void Change(const std::string & key, const boost::python::api::object & value);
+        void InitFromList(const boost::python::list & olist);
+
 
     private:
         struct OpMapEntry
@@ -150,7 +166,10 @@ class OptionMap
         const OpMapEntry & GetOrThrow_(const std::string & key) const;
         OpMapEntry & GetOrThrow_(const std::string & key);
 
-
+        void Change_(const std::string & key, std::unique_ptr<OptionPlaceholder> && value);
+        void InitDefault_(const std::string & key, std::unique_ptr<OptionPlaceholder> && def, const std::string & help);
+        void InitDefault_(const std::string & key, const boost::python::api::object & def, const std::string & help);
+        std::unique_ptr<OptionPlaceholder> OptionPlaceholder_(const boost::python::api::object & value);
 };
 
 } // close namespace bpmodule

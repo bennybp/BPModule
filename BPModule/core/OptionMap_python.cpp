@@ -1,5 +1,5 @@
 #include "BPModule/core/Output.hpp"
-#include "BPModule/export_core/OptionMap_python.hpp"
+#include "BPModule/core/OptionMap.hpp"
 #include "BPModule/export_core/Python_stdconvert.hpp"
 
 #include <boost/python.hpp>
@@ -7,13 +7,13 @@
 namespace out = bpmodule::output;
 namespace bpy = boost::python;
 
+using bpmodule::export_python::ConvertListToVec;
 
 
 namespace bpmodule {
-namespace export_python {
 
 
-std::unique_ptr<OptionPlaceholder> OptionPlaceholder_FromPython(const bpy::object & value)
+std::unique_ptr<OptionPlaceholder> OptionMap::OptionPlaceholder_(const bpy::object & value)
 {
     std::string cl = bpy::extract<std::string>(value.attr("__class__").attr("__name__"));
 
@@ -59,35 +59,23 @@ std::unique_ptr<OptionPlaceholder> OptionPlaceholder_FromPython(const bpy::objec
 }
 
 
-void OptionMap_Change_Helper(OptionMap * op, const std::string & key, const bpy::object & value)
+
+bpy::object OptionMap::Get(const std::string & key)
 {
-    op->Change(key, OptionPlaceholder_FromPython(value));
-}
-
-
-void OptionMap_InitDefault_Helper(OptionMap * op, const std::string & key, const bpy::object & def, const std::string & help)
-{
-    op->InitDefault(key, OptionPlaceholder_FromPython(def), help);
-}
-
-
-
-bpy::object OptionMap_Get_Helper(const OptionMap * op, const std::string & key)
-{
-    std::string type = op->GetType(key);
+    std::string type = GetType(key);
 
     if(type == typeid(long).name())
-        return bpy::object(op->Get<long>(key));
+        return bpy::object(Get<long>(key));
     else if(type == typeid(double).name())
-        return bpy::object(op->Get<double>(key));
+        return bpy::object(Get<double>(key));
     else if(type == typeid(std::string).name())
-        return bpy::object(op->Get<std::string>(key));
+        return bpy::object(Get<std::string>(key));
     else if(type == typeid(std::vector<long>).name())
-        return bpy::object(op->Get<std::vector<long>>(key));
+        return bpy::object(Get<std::vector<long>>(key));
     else if(type == typeid(std::vector<double>).name())
-        return bpy::object(op->Get<std::vector<double>>(key));
+        return bpy::object(Get<std::vector<double>>(key));
     else if(type == typeid(std::vector<std::string>).name())
-        return bpy::object(op->Get<std::vector<std::string>>(key));
+        return bpy::object(Get<std::vector<std::string>>(key));
     else
     {
         out::Error("Unable to deduce type: %1%\n", type);
@@ -97,23 +85,33 @@ bpy::object OptionMap_Get_Helper(const OptionMap * op, const std::string & key)
 
 
 
-OptionMap OptionMap_InitFromList_Helper(const bpy::list & olist)
+void OptionMap::Change(const std::string & key, const bpy::object & value)
 {
-    OptionMap op;
+    Change_(key, OptionPlaceholder_(value));
+}
+
+
+
+void OptionMap::InitDefault_(const std::string & key, const bpy::object & def, const std::string & help)
+{
+    InitDefault_(key, OptionPlaceholder_(def), help);
+}
+
+
+
+void OptionMap::InitFromList(const bpy::list & olist)
+{
     int optlen = bpy::extract<int>(olist.attr("__len__")());
 
     for(int i = 0; i < optlen; i++)
     {
         std::string key = bpy::extract<std::string>(olist[i][0]);
         std::string help = bpy::extract<std::string>(olist[i][2]);
-        OptionMap_InitDefault_Helper(&op, key, olist[i][1], help);
+        InitDefault_(key, olist[i][1], help);
     }
-
-    return op;
 }
 
 
 
-} // close namespace export_python
 } // close namespace bpmodule
 

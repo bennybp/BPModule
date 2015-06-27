@@ -22,7 +22,18 @@ OptionMap::OptionMap(const OptionMap & rhs)
 }
 
 
-void OptionMap::Change(const std::string & key, std::unique_ptr<OptionPlaceholder> && value)
+
+OptionMap & OptionMap::operator=(const OptionMap & rhs)
+{
+    using std::swap;
+    OptionMap tmp(rhs);
+    swap(*this, tmp);
+    return *this;
+}
+
+
+
+void OptionMap::Change_(const std::string & key, std::unique_ptr<OptionPlaceholder> && value)
 {
     OpMapEntry & opme = GetOrThrow_(key);
     opme.value = std::move(value);
@@ -31,19 +42,9 @@ void OptionMap::Change(const std::string & key, std::unique_ptr<OptionPlaceholde
 
 
 
-void OptionMap::InitDefault(const std::string & key, std::unique_ptr<OptionPlaceholder> && def, const std::string & help)
+void OptionMap::InitDefault_(const std::string & key, std::unique_ptr<OptionPlaceholder> && def, const std::string & help)
 {
     opmap_.insert(OpMapValue(key, OpMapEntry{true, std::move(def), help}));
-}
-
-
-
-OptionMap & OptionMap::operator=(const OptionMap & rhs)
-{
-    using std::swap;
-    OptionMap tmp(rhs);
-    swap(*this, tmp);
-    return *this;
 }
 
 

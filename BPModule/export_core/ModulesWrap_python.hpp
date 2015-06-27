@@ -1,9 +1,10 @@
 #ifndef MODULESWRAP_PYTHON_H
 #define MODULESWRAP_PYTHON_H
 
+#include "BPModule/core/ModuleInfo.hpp"
+
 // All the module base classes
 #include "BPModule/modulebase/All.hpp"
-#include "BPModule/export_core/ModuleInfo_python.hpp"
 
 #include <boost/python.hpp>
 

@@ -6,8 +6,6 @@
 // helpers and wrappers
 #include "BPModule/export_core/ModulesWrap_python.hpp"
 #include "BPModule/export_core/Python_stdconvert.hpp"
-#include "BPModule/export_core/OptionMap_python.hpp"
-#include "BPModule/export_core/ModuleInfo_python.hpp"
 #include "BPModule/export_core/Output_python.hpp"
 
 using namespace boost::python;
@@ -30,7 +28,9 @@ void TranslateException(const BPModuleException & ex)
 // wraps CModuleLoader::LoadSO so that it can take a dict for the ModuleInfo
 bool Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const bpy::dict & d)
 {
-    return ml->LoadSO(key, DictToModuleInfo(d));
+    ModuleInfo minfo;
+    minfo.FromPythonDict(d);
+    return ml->LoadSO(key, minfo);
 }
 
 // wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
@@ -38,7 +38,9 @@ bool Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
                                      const std::string & key, bpy::object func,
                                      const bpy::dict & d)
 {
-    return ml->AddPyModule(key, func, DictToModuleInfo(d));
+    ModuleInfo minfo;
+    minfo.FromPythonDict(d);
+    return ml->AddPyModule(key, func, minfo);
 }
 
 

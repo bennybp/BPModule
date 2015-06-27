@@ -9,6 +9,8 @@ set(CORE_FILES
             PyModuleLoader.cpp
             Output.cpp
             OptionMap.cpp
+            OptionMap_python.cpp
+            ModuleInfo_python.cpp
    )
 
 set(CORE_HEADERS

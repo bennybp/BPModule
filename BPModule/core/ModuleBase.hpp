@@ -6,9 +6,21 @@
 
 #include "BPModule/core/ModuleInfo.hpp"
 
+
+namespace boost {
+namespace python {
+
+class object;
+
+}
+}
+
+
+
 namespace bpmodule {
 
 class ModuleStore;
+
 
 
 class ModuleBase
@@ -28,19 +40,11 @@ class ModuleBase
         const std::string & Name(void) const;
         const std::string & Version(void) const;
 
-        ModuleStore & MStore(void);
-
-    protected:
+        
         template<typename T>
         T GetTrait(const std::string & key) const
         {
             return traits_.Get<T>(key);
-        }
-
-        template<typename T>
-        void ChangeTrait(const std::string & key, const T & value)
-        {
-            traits_.Change(key, value);
         }
 
         template<typename T>
@@ -55,6 +59,22 @@ class ModuleBase
             options_.Change(key, value);
         }
 
+
+        // For use from python
+        boost::python::object GetTrait(const std::string & key) const;
+        boost::python::object GetOption(const std::string & key) const;
+
+        // For use from python classes derived from this
+        ModuleStore & MStore(void);
+        
+
+
+    protected:
+        template<typename T>
+        void ChangeTrait(const std::string & key, const T & value)
+        {
+            traits_.Change(key, value);
+        }
 
     private:
         unsigned long id_;
