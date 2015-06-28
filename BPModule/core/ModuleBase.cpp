@@ -17,6 +17,19 @@ ModuleBase::~ModuleBase()
     output::Debug("Destructed module [%1%] : %2% v%3%\n", id_, name_, version_);
 }
 
+
+void ModuleBase::ThrowException(const std::string & exwhat,
+                                const BPModuleException::ExceptionInfo & exinfo) const
+{
+    BPModuleException::ExceptionInfo exinfo2{
+                                              { "Module Key", key_ },
+                                              { "Module Name", name_ }
+                                            };
+    exinfo2.insert(exinfo2.end(), exinfo.begin(), exinfo.end());
+    throw BPModuleException(exwhat, exinfo2);
+}
+
+
 unsigned long ModuleBase::ID(void) const
 {
     return id_;

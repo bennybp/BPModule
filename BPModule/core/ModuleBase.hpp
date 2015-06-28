@@ -44,6 +44,9 @@ class ModuleBase
         // For use from python classes derived from this
         ModuleStore & MStore(void);
 
+        void ThrowException(const std::string & exwhat,
+                            const BPModuleException::ExceptionInfo & exinfo) const;
+
     private:
         unsigned long id_;
         std::string key_;

@@ -43,7 +43,7 @@ void CModuleLoader::DeleteWrapper_(unsigned long id)
 
 
 
-bool CModuleLoader::LoadSO(const std::string & key,
+void CModuleLoader::LoadSO(const std::string & key,
                            const ModuleInfo & minfo)
 {
     // trailing slash on path should have been added by python scripts
@@ -58,16 +58,17 @@ bool CModuleLoader::LoadSO(const std::string & key,
         handle = handles_[sopath];
     else
     {
-        out::Output("Looking to open so file: %1%\n", sopath);
+        out::Debug("Looking to open so file: %1%\n", sopath);
         handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
         // open the module
         if(!handle)
-        {
-            out::Error("Unable to open SO file: %1%\n", sopath);
-            error = dlerror();
-            out::Error("%1%\n", error);
-            return false;
-        }
+            throw BPModuleException(
+                                     "Cannot load SO file",
+                                     {
+                                         { "File", sopath },
+                                         { "Error", dlerror() }
+                                     }
+                                   );
     }
 
 
@@ -75,16 +76,21 @@ bool CModuleLoader::LoadSO(const std::string & key,
     CreateFunc fn = reinterpret_cast<CreateFunc>(dlsym(handle, "CreateModule"));
     if((error = dlerror()) != NULL)
     {
-        out::Error("Unable to find CreateModule!\n");
-        out::Error("%1%\n", error);
         dlclose(handle);
-        return false;
+        throw BPModuleException(
+                                 "Cannot find function in SO file",
+                                 {
+                                     { "File", sopath },
+                                     { "Function", "CreateModule" },
+                                     { "Error", error }
+                                 }
+                               );
     }
 
     if(handles_.count(sopath) == 0)
         handles_.insert(HandleMap::value_type(sopath, handle));
 
-    out::Success("out::Successfully opened %1%\n", sopath);
+    out::Success("Successfully opened %1%\n", sopath);
 
     ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::CreateWrapper_, this, fn,
                                                        std::placeholders::_1,
@@ -92,7 +98,7 @@ bool CModuleLoader::LoadSO(const std::string & key,
                                                        std::placeholders::_3);
 
     ModuleStore::ModuleDeleterFunc dfunc = std::bind(&CModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
-    return mst_->AddCreateFunc(key, cfunc, dfunc, minfo);
+    mst_->AddCreateFunc(key, cfunc, dfunc, minfo);
 }
 
 

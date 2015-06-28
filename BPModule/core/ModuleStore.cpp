@@ -10,7 +10,16 @@ namespace bpmodule {
 bool ModuleStore::AddCreateFunc(const std::string & key, ModuleGeneratorFunc func, ModuleDeleterFunc dfunc, const ModuleInfo & minfo)
 {
     // add to store
-    //! \todo Check for duplicates
+    // but throw if key already exists
+    if(Has(key))
+        throw BPModuleException(
+                                 "Attempt to add duplicate key",
+                                 {
+                                     { "Location", "ModuleStore"},
+                                     { "Key", key }
+                                 }
+                               );
+
     store_.insert(StoreMap::value_type(key, StoreEntry {minfo, func, dfunc}));
     return true;
 }
@@ -84,7 +93,13 @@ const ModuleStore::StoreEntry & ModuleStore::GetOrThrow_(const std::string & key
     if(store_.count(key))
         return store_.at(key);
     else
-        throw MapException("ModuleStore::StoreMap", key);
+        throw BPModuleException(
+                                 "Missing key",
+                                 {
+                                     { "Location", "ModuleStore"},
+                                     { "Key", key }
+                                 }
+                               );
 }
 
 

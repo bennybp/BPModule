@@ -52,7 +52,16 @@ class ModuleStore
             // test
             T * dptr = dynamic_cast<T *>(mbptr);
             if(dptr == nullptr)
-                throw MapException("ModuleStore", key, typeid(mbptr).name(), typeid(T *).name());
+                throw BPModuleException(
+                                 "Bad cast for module",
+                                 {
+                                     { "Location", "ModuleStore"},
+                                     { "Key", key },
+                                     { "From", typeid(mbptr).name() },
+                                     { "To", typeid(T *).name() }
+                                 }
+                               );
+
 
             // store the deleter
             deletemap_.insert(DeleterMap::value_type(curid_, se.dfunc));

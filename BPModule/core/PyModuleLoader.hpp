@@ -25,7 +25,7 @@ class PyModuleLoader
         PyModuleLoader & operator=(const PyModuleLoader & rhs) = delete;
         PyModuleLoader(const PyModuleLoader & rhs) = delete;
 
-        bool AddPyModule(const std::string & key, boost::python::object func, const ModuleInfo & minfo);
+        void AddPyModule(const std::string & key, boost::python::object func, const ModuleInfo & minfo);
 
         void DeleteAll(void);
 

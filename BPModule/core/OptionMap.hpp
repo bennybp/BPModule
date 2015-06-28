@@ -32,7 +32,14 @@ class OptionMap
             const OpMapEntry & opm = GetOrThrow_(key);
             const OptionHolder<T> * oh = dynamic_cast<const OptionHolder<T> *>(opm.value.get());
             if(oh == nullptr)
-                throw MapException("OptionMap", key, opm.value->Type(), typeid(T).name());
+                throw BPModuleException(
+                                         "Bad cast",
+                                         {
+                                            { "Location", "OptionMap" },
+                                            { "From", opm.value->Type() },
+                                            { "  To", typeid(T).name() }
+                                         }
+                                       );
 
             return oh->GetRef();
         }

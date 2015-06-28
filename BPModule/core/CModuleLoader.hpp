@@ -22,7 +22,7 @@ class CModuleLoader
         CModuleLoader & operator=(const CModuleLoader & rhs) = delete;
         CModuleLoader(const CModuleLoader & rhs) = delete;
 
-        bool LoadSO(const std::string & key, const ModuleInfo & minfo);
+        void LoadSO(const std::string & key, const ModuleInfo & minfo);
 
         void DeleteAll(void);
         void CloseHandles(void);

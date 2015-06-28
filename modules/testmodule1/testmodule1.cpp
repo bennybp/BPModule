@@ -60,12 +60,19 @@ public:
 
 extern "C" {
 
-ModuleBase * CreateModule(const std::string & name, unsigned long id, ModuleStore & mstore, const ModuleInfo & minfo)
+ModuleBase * CreateModule(const std::string & key, unsigned long id, ModuleStore & mstore, const ModuleInfo & minfo)
 {
-    if(name == "TESTMOD1")
+    if(key == "TESTMOD1")
         return new TestModule1(id, mstore, minfo);
     else
-        throw ModuleException(ModuleException::Type::BadKey, __FILE__, name);
+        throw BPModuleException(
+                                 "Unknown key",
+                                 {
+                                     { "Module", minfo.name },
+                                     { "Path", minfo.path },
+                                     { "Key", key }
+                                 }
+                               );
 }
 
 

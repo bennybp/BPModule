@@ -26,14 +26,14 @@ void TranslateException(const BPModuleException & ex)
 
 
 // wraps CModuleLoader::LoadSO so that it can take a dict for the ModuleInfo
-bool Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const bpy::dict & minfo)
+void Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const bpy::dict & minfo)
 {
     // dictionary is converted to ModuleInfo via constructor
     return ml->LoadSO(key, minfo);
 }
 
 // wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
-bool Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
+void Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
                                      const std::string & key, bpy::object func,
                                      const bpy::dict & minfo)
 {

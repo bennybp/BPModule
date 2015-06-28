@@ -156,12 +156,17 @@ std::ostream & GetOut(void)
     if(out_ == nullptr)
     {
         out_ = &std::cerr;
-        throw BPOutputException();
+        throw BPModuleException("General output destination is a null pointer");
     }
     else if(usefile_ && !file_->good())
     {
         out_ = &std::cerr;
-        throw BPOutputException(filepath_, *file_);
+        throw BPModuleException(
+                                 "General output file no longer \"good\"",
+                                 {
+                                     { "File", filepath_ }
+                                 }
+                               );
     }
     else
         return *out_;

@@ -39,7 +39,7 @@ void PyModuleLoader::DeleteWrapper_(unsigned long id)
 
 
 
-bool PyModuleLoader::AddPyModule(const std::string & key,
+void PyModuleLoader::AddPyModule(const std::string & key,
                                  boost::python::object func, const ModuleInfo & minfo)
 {
 
@@ -49,7 +49,7 @@ bool PyModuleLoader::AddPyModule(const std::string & key,
                                                        std::placeholders::_3);
 
     ModuleStore::ModuleDeleterFunc dfunc = std::bind(&PyModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
-    return mst_->AddCreateFunc(key, cfunc, dfunc, minfo);
+    mst_->AddCreateFunc(key, cfunc, dfunc, minfo);
 }
 
 
