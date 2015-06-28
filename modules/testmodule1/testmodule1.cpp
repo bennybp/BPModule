@@ -51,6 +51,20 @@ public:
 
     }
 
+
+    virtual void Throw(void)
+    {
+        out::Warning("+++ In TestModule1: Throwing an exception!\n");
+        ThrowException(
+                        "This is a test exception", 
+                        {
+                           { "Data 1", "Hi" },
+                           { "Data 2", "Hello" }
+                        }
+                      );
+                       
+    }
+
     virtual ~TestModule1()
     {
     }

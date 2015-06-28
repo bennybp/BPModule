@@ -54,6 +54,19 @@ try:
   b2.RunCallTest("TESTPYMOD1")
   print()
 
+  print("\n!!!Testing exceptions\n")
+  try:
+    b1.Throw()
+  except RuntimeError as e2:
+    print(e2)
+
+  try:
+    b2.Throw()
+  except RuntimeError as e2:
+    print(e2)
+
+
+
   print("\nDone testing\n")
 
 except RuntimeError as e:

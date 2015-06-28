@@ -81,6 +81,7 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     def("SetColor", &output::SetColor);
     def("SetDebug", &output::SetDebug);
     def("Valid", &output::Valid);
+    def("Flush", &output::Flush);
 
     // printing to output
     def("Output", Output_Wrap_Output);
@@ -132,9 +133,10 @@ BOOST_PYTHON_MODULE(bpmodule_core)
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
     class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, const ModuleInfo &>())
+    .def("MStore", &Test_Base_Wrap::MStore, return_internal_reference<>())
     .def("RunTest", pure_virtual(&Test_Base::RunTest))
     .def("RunCallTest", pure_virtual(&Test_Base::RunCallTest))
-    .def("MStore", &Test_Base_Wrap::MStore, return_internal_reference<>());
+    .def("Throw", pure_virtual(&Test_Base::Throw));
 
 }
 

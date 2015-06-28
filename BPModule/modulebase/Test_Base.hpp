@@ -15,6 +15,7 @@ class Test_Base : public ModuleBase
 
         virtual void RunTest(void) = 0;
         virtual void RunCallTest(const std::string & other) = 0;
+        virtual void Throw(void) = 0;
 };
 
 }

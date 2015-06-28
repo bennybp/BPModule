@@ -22,6 +22,9 @@ def Error(s, *args):
 def Debug(s, *args):
     bpcore.Debug(s, list(args))
 
+def Flush():
+    bpcore.Flush()
+
 
 
 def PrintModuleInfo(key, minfo):

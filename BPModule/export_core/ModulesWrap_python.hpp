@@ -29,6 +29,11 @@ class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base
         {
             this->get_override("RunCallTest")(other);
         }
+
+        virtual void Throw(void)
+        {
+            this->get_override("Throw")();
+        }
 };
 
 

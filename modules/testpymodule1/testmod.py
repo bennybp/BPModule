@@ -24,6 +24,10 @@ class TestPyModule(bp.bpcore.Test_Base):
 
     bp.Output("+++Done\n");
 
+  def Throw(self):
+    bp.Warning("+++ In TestPyModule: Throwing an exception!\n")
+    raise RuntimeError("This is a test exception")
+
 
 def CreateModule(name, myid, mstore, minfo):
     return TestPyModule(myid, mstore, minfo)
