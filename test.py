@@ -97,13 +97,15 @@ try:
 
   print()
 
+  raise bp.BPModuleException("Test exception from input", [ ( "Hi", "There" ) ])
+
 
   print("\nDone testing\n")
 
-except RuntimeError as e:
+except Exception as e:
   print("Caught exception in main handler")
   traceback.print_exc()
-  print(e)
+  bp.Error(str(e))
 
 
 bp.Finalize()

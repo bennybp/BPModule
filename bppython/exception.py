@@ -10,7 +10,7 @@ class BPModuleException(Exception):
 
     if info:
         for i in info:
-          self.s += "{:24>} : {:<}\n".format(i[0], i[1])
+          self.s += "{:>24} : {:<}\n".format(i[0], i[1])
 
 
   def __str__(self):
