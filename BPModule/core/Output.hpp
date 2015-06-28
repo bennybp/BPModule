@@ -32,6 +32,7 @@ void SetOut_Stderr(void);
 bool SetOut_File(const std::string & filepath);
 void SetColor(bool usecolor);
 void SetDebug(bool debug);
+void Flush(void);
 
 std::ostream & GetOut(void);
 void PrintException(const BPModuleException & ex);

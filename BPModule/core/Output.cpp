@@ -111,6 +111,13 @@ bool SetOut_File(const std::string & filepath)
 
 
 
+void Flush(void)
+{
+    GetOut().flush();    
+}
+
+
+
 void SetColor(bool usecolor)
 {
     color_ = usecolor;
@@ -156,20 +163,15 @@ std::ostream & GetOut(void)
     if(out_ == nullptr)
     {
         out_ = &std::cerr;
-        throw BPModuleException("General output destination is a null pointer");
+        Error("General output destination is a null pointer. Using stderr");
     }
     else if(usefile_ && !file_->good())
     {
         out_ = &std::cerr;
-        throw BPModuleException(
-                                 "General output file no longer \"good\"",
-                                 {
-                                     { "File", filepath_ }
-                                 }
-                               );
+        Error("General output file %1% no longer \"good\". Using stderr", filepath_);
     }
-    else
-        return *out_;
+
+    return *out_;
 }
 
 
