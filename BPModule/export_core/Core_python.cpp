@@ -47,6 +47,10 @@ boost::shared_ptr<T> Wrap_GetScopedModule(ModuleStore * ms, const std::string & 
 ////////////////////////////
 // Main boost python part
 ////////////////////////////
+
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ThrowException_overloads, ThrowException, 1, 2)
+
+
 BOOST_PYTHON_MODULE(bpmodule_core)
 {
     // set the translator for exceptions
@@ -128,7 +132,7 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
     class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, const ModuleInfo &>())
     .def("MStore", &Test_Base_Wrap::MStore, return_internal_reference<>())
-    .def("ThrowException", &Test_Base_Wrap::ThrowException)
+    .def("ThrowException", &Test_Base_Wrap::ThrowException, ThrowException_overloads())
     .def("RunTest", pure_virtual(&Test_Base::RunTest))
     .def("CallRunTest", pure_virtual(&Test_Base::CallRunTest))
     .def("Throw", pure_virtual(&Test_Base::Throw))

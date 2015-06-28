@@ -26,7 +26,7 @@ class TestPyModule(bp.bpcore.Test_Base):
 
   def Throw(self):
     bp.Warning("+++ In TestPyModule: Throwing an exception!\n")
-    self.ThrowException("This is a test exception from python", [])
+    self.ThrowException("This is a test exception from python")
 
   def CallThrow(self, s):
     bp.Output("+++ In TestPyModule: CallRunTest with %1%\n", s)

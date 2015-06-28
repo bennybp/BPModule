@@ -41,7 +41,7 @@ class ModuleBase
         
     protected:
         void ThrowException(const std::string & exwhat,
-                            const BPModuleException::ExceptionInfo & exinfo) const;
+                            const BPModuleException::ExceptionInfo & exinfo = {}) const;
 
         // For use from python classes derived from this
         ModuleStore & MStore(void);

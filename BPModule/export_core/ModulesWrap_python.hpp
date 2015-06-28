@@ -39,7 +39,7 @@ class Test_Base_Wrap : public Test_Base, public bpy::wrapper<Test_Base>
         {}
 
         // expose protected member functions
-        void ThrowException(const std::string & exwhat, const bpy::list & exinfo)
+        void ThrowException(const std::string & exwhat, const bpy::list & exinfo = bpy::list())
         {
             ModuleBase::ThrowException(exwhat, PythonListToPairVec(exinfo));
         }
@@ -67,7 +67,6 @@ class Test_Base_Wrap : public Test_Base, public bpy::wrapper<Test_Base>
             }
             catch(bpy::error_already_set & e)
             {
-                out::Error("Caught python exception for override in Throw()\n");
                 throw;
             }
         }
@@ -79,7 +78,6 @@ class Test_Base_Wrap : public Test_Base, public bpy::wrapper<Test_Base>
             }
             catch(bpy::error_already_set & e)
             {
-                out::Error("Caught python exception for override in CallThrow()\n");
                 throw;
             }
         }
