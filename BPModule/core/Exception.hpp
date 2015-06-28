@@ -18,17 +18,18 @@ class BPModuleException : public std::exception
         typedef std::pair<std::string, std::string> ExceptionInfoPair;
         typedef std::vector<ExceptionInfoPair> ExceptionInfo;
 
-        BPModuleException(std::string whatstr, ExceptionInfo exinfo)
+        BPModuleException(std::string whatstr, ExceptionInfo exinfo = {})
             : whatstr_(std::move(whatstr)), exinfo_(std::move(exinfo))
-        { }
-
-        BPModuleException(std::string whatstr)
-            : whatstr_(std::move(whatstr))
         { }
 
         const ExceptionInfo GetInfo(void) const
         {
             return exinfo_;
+        }
+
+        void AppendInfo(const ExceptionInfo & toappend)
+        {
+            exinfo_.insert(exinfo_.end(), toappend.begin(), toappend.end());
         }
 
         const char * what(void) const noexcept

@@ -59,52 +59,52 @@ try:
   print("\n!!!Testing exceptions\n")
   try:
     b1.Throw()
-  except RuntimeError as e2:
+  except Exception as e2:
     bp.Error(str(e2))
 
   print()
 
   try:
     b2.Throw()
-  except RuntimeError as e2:
+  except Exception as e2:
     bp.Error(str(e2))
 
   print()
 
   try:
     b1.CallThrow("TESTMOD1")
-  except RuntimeError as e2:
+  except Exception as e2:
     bp.Error(str(e2))
 
   print()
 
   try:
     b2.CallThrow("TESTPYMOD1")
-  except RuntimeError as e2:
+  except Exception as e2:
     bp.Error(str(e2))
 
   try:
     b2.CallThrow("TESTMOD1")
-  except RuntimeError as e2:
+  except Exception as e2:
     bp.Error(str(e2))
 
   print()
 
   try:
     b1.CallThrow("TESTMOD1")
-  except RuntimeError as e2:
+  except Exception as e2:
     bp.Error(str(e2))
 
   print()
 
-  raise bp.BPModuleException("Test exception from input", [ ( "Hi", "There" ) ])
+  raise bp.BPModuleException("Test exception from input", [ ( "Hi2", "There2" ) ])
 
 
   print("\nDone testing\n")
 
 except Exception as e:
   print("Caught exception in main handler")
-  traceback.print_exc()
+  #traceback.print_exc()
   bp.Error(str(e))
 
 

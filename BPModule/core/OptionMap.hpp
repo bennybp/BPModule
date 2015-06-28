@@ -57,7 +57,7 @@ class OptionMap
 
         bool Has(const std::string & key) const;
 
-        const std::string GetHelp(const std::string & key) const;
+        std::string GetHelp(const std::string & key) const;
 
         std::string GetType(const std::string & key) const;
 
@@ -160,7 +160,7 @@ class OptionMap
         void Change_(const std::string & key, std::unique_ptr<OptionPlaceholder> && value);
         void InitDefault_(const std::string & key, std::unique_ptr<OptionPlaceholder> && def, const std::string & help);
 
-        // for python
+        // for initializing from python
         std::unique_ptr<OptionPlaceholder> OptionPlaceholder_(const boost::python::api::object & value);
 };
 

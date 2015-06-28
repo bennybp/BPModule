@@ -1,7 +1,5 @@
 #include "BPModule/core/OptionMap.hpp"
-#include "BPModule/core/Output.hpp"
 
-namespace out = bpmodule::output;
 
 namespace bpmodule {
 
@@ -13,14 +11,14 @@ OptionMap::OptionMap(const OptionMap & rhs)
         opmap_.insert(OpMapValue(
                           it.first,
                           OpMapEntry
-    {
-        it.second.changed,
-        std::unique_ptr<OptionPlaceholder>(it.second.value->Clone()),
-        it.second.help
-    }
-                  ));
+                            {
+                                it.second.changed,
+                                std::unique_ptr<OptionPlaceholder>(it.second.value->Clone()),
+                                it.second.help
+                            }
+                                )
+                      );
 }
-
 
 
 OptionMap & OptionMap::operator=(const OptionMap & rhs)
@@ -56,28 +54,16 @@ bool OptionMap::Has(const std::string & key) const
 
 
 
-const std::string OptionMap::GetHelp(const std::string & key) const
+std::string OptionMap::GetHelp(const std::string & key) const
 {
-    if(Has(key))
-        return opmap_.at(key).help;
-    else
-    {
-        out::Warning("Cannot find entry for key \"%1%\"\n", key);
-        return "";
-    }
+    return GetOrThrow_(key).help;
 }
 
 
 
 std::string OptionMap::GetType(const std::string & key) const
 {
-    if(Has(key))
-        return opmap_.at(key).value->Type();
-    else
-    {
-        out::Warning("Cannot find entry for key \"%1%\"\n", key);
-        return "";
-    }
+    return GetOrThrow_(key).value->Type();
 }
 
 
@@ -139,5 +125,4 @@ OptionMap::OpMapEntry & OptionMap::GetOrThrow_(const std::string & key)
 
 
 } // close namespace bpmodule
-
 
