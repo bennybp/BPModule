@@ -34,37 +34,15 @@ class ModuleBase
 
         
         template<typename T>
-        T GetTrait(const std::string & key) const
-        {
-            return traits_.Get<T>(key);
-        }
-
-        template<typename T>
         T GetOption(const std::string & key) const
         {
             return options_.Get<T>(key);
         }
 
-        template<typename T>
-        void ChangeTrait(const std::string & key, const T & value)
-        {
-            traits_.Change(key, value);
-        }
-
-        template<typename T>
-        void ChangeOption(const std::string & key, const T & value)
-        {
-            options_.Change(key, value);
-        }
-
-
-
+        
+    protected:
         // For use from python classes derived from this
         ModuleStore & MStore(void);
-        
-
-
-    protected:
 
     private:
         unsigned long id_;
@@ -73,16 +51,11 @@ class ModuleBase
         std::string version_;
         OptionMap options_;
 
-        OptionMap traits_;
-
         ModuleStore & mstore_;
 };
 
 // Specializations for use from python
-template<> boost::python::object ModuleBase::GetTrait<>(const std::string & key) const;
 template<> boost::python::object ModuleBase::GetOption<>(const std::string & key) const;
-template<> void ModuleBase::ChangeTrait<>(const std::string & key, const boost::python::object & value);
-template<> void ModuleBase::ChangeOption<>(const std::string & key, const boost::python::object & value);
 
 
 } // close namespace bpmodule

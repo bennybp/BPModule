@@ -18,6 +18,8 @@ class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base
             : Test_Base(id, mstore, minfo)
         {}
 
+        ModuleStore & MStore(void) { return ModuleBase::MStore(); }
+
         virtual void RunTest(void)
         {
             this->get_override("RunTest")();

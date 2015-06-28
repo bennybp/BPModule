@@ -117,26 +117,24 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     .def("DeleteAll", &PyModuleLoader::DeleteAll)
     .def("AddPyModule", Wrap_PyModuleLoader_AddPyModule);
 
+
     ///////////////////////
     // Module Base classes
     ///////////////////////
-    //class_<ModuleBase, boost::noncopyable>("ModuleBase", init<unsigned long, ModuleStore &, const ModuleInfo &>())
     // python should never derive from ModuleBase, so a constructor should not be needed
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
-    .def("MStore", &ModuleBase::MStore, return_internal_reference<>())
+//    .def("MStore", &ModuleBase::MStore, return_internal_reference<>())
     .def("ID", &ModuleBase::ID)
     .def("Key", &ModuleBase::Key, return_value_policy<copy_const_reference>())
     .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
     .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>())
-    .def("GetTrait", &ModuleBase::GetTrait<bpy::object>)
-    .def("GetOption", &ModuleBase::GetOption<bpy::object>) 
-    .def("ChangeTrait", &ModuleBase::ChangeTrait<bpy::object>)
-    .def("ChangeOption", &ModuleBase::ChangeOption<bpy::object>);
+    .def("GetOption", &ModuleBase::GetOption<bpy::object>); 
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
     class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, const ModuleInfo &>())
     .def("RunTest", pure_virtual(&Test_Base::RunTest))
-    .def("RunCallTest", pure_virtual(&Test_Base::RunCallTest));
+    .def("RunCallTest", pure_virtual(&Test_Base::RunCallTest))
+    .def("MStore", &Test_Base_Wrap::MStore, return_internal_reference<>());
 
 }
 
