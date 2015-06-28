@@ -1,3 +1,4 @@
+#include "BPModule/core/Exception.hpp"
 #include "BPModule/export_core/Output_python.hpp"
 
 namespace bpy = boost::python;

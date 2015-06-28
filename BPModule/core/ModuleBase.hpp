@@ -4,7 +4,6 @@
 #include <string>
 #include <functional>
 
-#include "BPModule/core/BoostPython_fwd.hpp"
 #include "BPModule/core/ModuleInfo.hpp"
 
 
@@ -41,11 +40,14 @@ class ModuleBase
 
         
     protected:
+        void ThrowException(const std::string & exwhat,
+                            const BPModuleException::ExceptionInfo & exinfo) const;
+
         // For use from python classes derived from this
         ModuleStore & MStore(void);
 
         void ThrowException(const std::string & exwhat,
-                            const BPModuleException::ExceptionInfo & exinfo) const;
+                            const boost::python::list & exinfo);
 
     private:
         unsigned long id_;
@@ -58,7 +60,7 @@ class ModuleBase
 };
 
 // Specializations for use from python
-template<> boost::python::object ModuleBase::GetOption<>(const std::string & key) const;
+//template<> boost::python::object ModuleBase::GetOption<>(const std::string & key) const;
 
 
 } // close namespace bpmodule

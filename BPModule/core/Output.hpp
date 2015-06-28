@@ -35,8 +35,6 @@ void SetDebug(bool debug);
 void Flush(void);
 
 std::ostream & GetOut(void);
-void PrintException(const BPModuleException & ex);
-std::string ExceptionString(const BPModuleException & ex);
 
 std::string Line(char c, int n = 80);
 

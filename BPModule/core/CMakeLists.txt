@@ -10,7 +10,6 @@ set(CORE_FILES
             Output.cpp
             OptionMap.cpp
 
-            ModuleBase_python.cpp
             OptionMap_python.cpp
             ModuleInfo_python.cpp
    )

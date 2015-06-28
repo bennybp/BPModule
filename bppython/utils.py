@@ -7,20 +7,35 @@ from bppython import *
 # for output:
 # package args into a list then pass to bpcore
 def Output(s, *args):
-    bpcore.Output(s, list(args))
+    if(len(args)) > 0:
+      bpcore.Output(s, list(args))
+    else:
+      bpcore.Output(s, [])
 
 
 def Success(s, *args):
-    bpcore.Success(s, list(args))
+    if(len(args)) > 0:
+      bpcore.Success(s, list(args))
+    else:
+      bpcore.Success(s, [])
 
 def Warning(s, *args):
-    bpcore.Warning(s, list(args))
+    if(len(args)) > 0:
+      bpcore.Warning(s, list(args))
+    else:
+      bpcore.Warning(s, [])
 
 def Error(s, *args):
-    bpcore.Error(s, list(args))
+    if(len(args)) > 0:
+      bpcore.Error(s, list(args))
+    else:
+      bpcore.Error(s, [])
 
 def Debug(s, *args):
-    bpcore.Debug(s, list(args))
+    if(len(args)) > 0:
+      bpcore.Debug(s, list(args))
+    else:
+      bpcore.Debug(s, [])
 
 def Flush():
     bpcore.Flush()

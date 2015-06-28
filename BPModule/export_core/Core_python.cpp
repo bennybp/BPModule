@@ -7,6 +7,7 @@
 #include "BPModule/export_core/ModulesWrap_python.hpp"
 #include "BPModule/export_core/Python_stdconvert.hpp"
 #include "BPModule/export_core/Output_python.hpp"
+#include "BPModule/export_core/Exception_python.hpp"
 
 using namespace boost::python;
 namespace bpy = boost::python;
@@ -15,14 +16,6 @@ namespace bpy = boost::python;
 
 namespace bpmodule {
 namespace export_python {
-
-
-// the main exception translator
-void TranslateException(const BPModuleException & ex)
-{
-    PyErr_SetString(PyExc_RuntimeError, bpmodule::output::ExceptionString(ex).c_str());
-}
-
 
 
 // wraps CModuleLoader::LoadSO so that it can take a dict for the ModuleInfo
@@ -56,6 +49,7 @@ boost::shared_ptr<T> Wrap_GetScopedModule(ModuleStore * ms, const std::string & 
 ////////////////////////////
 BOOST_PYTHON_MODULE(bpmodule_core)
 {
+    // set the translator for exceptions
     register_exception_translator<BPModuleException>(&TranslateException);
 
     // converting pairs
@@ -129,14 +123,16 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     .def("Key", &ModuleBase::Key, return_value_policy<copy_const_reference>())
     .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
     .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>())
-    .def("GetOption", &ModuleBase::GetOption<bpy::object>); 
+    .def("GetOption", &ModuleBase::GetOption<bpy::object>);
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
     class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, const ModuleInfo &>())
     .def("MStore", &Test_Base_Wrap::MStore, return_internal_reference<>())
+    .def("ThrowException", &Test_Base_Wrap::ThrowException)
     .def("RunTest", pure_virtual(&Test_Base::RunTest))
-    .def("RunCallTest", pure_virtual(&Test_Base::RunCallTest))
-    .def("Throw", pure_virtual(&Test_Base::Throw));
+    .def("CallRunTest", pure_virtual(&Test_Base::CallRunTest))
+    .def("Throw", pure_virtual(&Test_Base::Throw))
+    .def("CallThrow", pure_virtual(&Test_Base::CallThrow));
 
 }
 

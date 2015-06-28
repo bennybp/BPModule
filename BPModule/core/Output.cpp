@@ -175,28 +175,5 @@ std::ostream & GetOut(void)
 }
 
 
-
-void PrintException(const BPModuleException & ex)
-{
-    BPModuleException::ExceptionInfo exinfo = ex.GetInfo();
-    Output(ExceptionString(ex)); // Just output - color is handled by ExceptionString
-}
-
-
-
-std::string ExceptionString(const BPModuleException & ex)
-{
-    BPModuleException::ExceptionInfo exinfo = ex.GetInfo();
-    std::stringstream ss;
-    Error(ss, Line('*'));
-    Error(ss, "Exception thrown!\n");
-    Error(ss, "what() = %1%\n", ex.what());
-    for(auto & it : exinfo)
-        if(it.second.size())
-            Error(ss, "%|16| : %|-16|\n", it.first, it.second);
-    return ss.str();
-}
-
-
 } // close namespace output
 } // close namespace bpmodule

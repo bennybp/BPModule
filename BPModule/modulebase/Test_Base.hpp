@@ -14,8 +14,9 @@ class Test_Base : public ModuleBase
         Test_Base(unsigned long id, ModuleStore & mstore, const ModuleInfo & minfo);
 
         virtual void RunTest(void) = 0;
-        virtual void RunCallTest(const std::string & other) = 0;
+        virtual void CallRunTest(const std::string & other) = 0;
         virtual void Throw(void) = 0;
+        virtual void CallThrow(const std::string & other) = 0;
 };
 
 }

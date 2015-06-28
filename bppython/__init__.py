@@ -8,7 +8,7 @@ sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 import bpmodule_core as bpcore
 
 from .utils import *
-
+from .exception import *
 
 # Print info about the core module
 #print(bpcore.minfo)

@@ -31,9 +31,9 @@ public:
         */
     }
 
-    virtual void RunCallTest(const std::string & other)
+    virtual void CallRunTest(const std::string & other)
     {
-        out::Output("+++ In TestModule1: RunCallTest with %1%\n", other);
+        out::Output("+++ In TestModule1: CallRunTest with %1%\n", other);
 
         ScopedModule<Test_Base> tb2 = MStore().GetScopedModule<Test_Base>(other);
         out::Output("  + Obtained scoped module ID %1%\n", tb2->ID());
@@ -47,8 +47,6 @@ public:
         MStore().Delete(tb.ID());
 
         out::Output("+++Done\n");
-
-
     }
 
 
@@ -63,6 +61,19 @@ public:
                         }
                       );
                        
+    }
+
+
+    virtual void CallThrow(const std::string & other)
+    {
+        out::Output("+++ In TestModule1: CallThrowTest with %1%\n", other);
+
+        ScopedModule<Test_Base> tb2 = MStore().GetScopedModule<Test_Base>(other);
+        out::Output("  + Obtained scoped module ID %1%\n", tb2->ID());
+        tb2->Throw();
+
+        // shouldn't be called
+        out::Output("+++Done\n");
     }
 
     virtual ~TestModule1()
