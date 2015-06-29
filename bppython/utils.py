@@ -19,11 +19,13 @@ def Success(s, *args):
     else:
       bpcore.Success(s, [])
 
+
 def Warning(s, *args):
     if(len(args)) > 0:
       bpcore.Warning(s, list(args))
     else:
       bpcore.Warning(s, [])
+
 
 def Error(s, *args):
     if(len(args)) > 0:
@@ -31,42 +33,101 @@ def Error(s, *args):
     else:
       bpcore.Error(s, [])
 
+
 def Debug(s, *args):
     if(len(args)) > 0:
       bpcore.Debug(s, list(args))
     else:
       bpcore.Debug(s, [])
 
+
+def Changed(s, *args):
+    if(len(args)) > 0:
+      bpcore.Changed(s, list(args))
+    else:
+      bpcore.Changed(s, [])
+
+
 def Flush():
     bpcore.Flush()
+
+
+def Line(char, n = 80):
+    return char * n + "\n" 
 
 
 
 def PrintModuleInfo(key, minfo):
 
-  print()
-  print("  ++ Module: {}".format(key))
-  print("             Key: {}".format(minfo["key"]))
-  print("            Name: {}".format(minfo["name"]))
-  print("            Type: {}".format(minfo["type"]))
-  print("            Path: {}".format(minfo["path"]))
+  Output("\n")
+  Output("  ++ Module: %1%\n", key)
+  Output("             Key: %1%\n", minfo["key"])
+  Output("            Name: %1%\n", minfo["name"])
+  Output("            Type: %1%\n", minfo["type"])
+  Output("            Path: %1%\n", minfo["path"])
 
   if "soname" in minfo:
-      print("          SOName: {}".format(minfo["soname"]))
+      Output("          SOName: %1%\n", minfo["soname"])
 
-  print("         Version: {}".format(minfo["version"]))
-  print("     Description: {}".format(minfo["description"]))
+  Output("         Version: %1%\n", minfo["version"])
+  Output("     Description: %1%\n", minfo["description"])
 
-  print("         Authors: {}".format(len(minfo["authors"])))
+  Output("         Authors: %1%\n", len(minfo["authors"]))
   for aut in minfo["authors"]:
-      print("                  {}".format(aut))
+      Output("                  %1%\n", aut)
 
-  print("      References: {}".format(len(minfo["refs"])))
+  Output("      References: %1%\n", len(minfo["refs"]))
   for ref in minfo["refs"]:
-      print("                  {}".format(ref))
+      Output("                  %1%\n", ref)
 
-  print("         Options: {}".format(len(minfo["options"])))
-  for opt in minfo["options"]:
-      print("                  {:<12}  :  {:<12}  : {}".format(opt[0], opt[1], opt[2]))
-  print()
+  nopt = len(minfo["passedoptions"])
+  Output("         Options: %1%\n", nopt)
+
+  if nopt > 0:
+      Output("\n")
+      l = "-"*20
+      Output("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", "Option", "Default", "Value", "Description")
+      Output("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", l, l, l, l)
+
+      defopt = minfo["options"]
+      for opt in minfo["passedoptions"]:
+          d = defopt[opt[0]]
+          help = d[3]
+
+          if type(d[0]) == type:
+            dv = "({})".format(d[0].__name__)
+          elif type(d[0]) == list and type(d[0][0]) == type:
+            dv = "[ ({}) ]".format(d[0][0].__name__)
+          else:
+            dv = d[0]
+
+          # if not the same, highlight change
+          if dv != opt[1]:
+              OutFunc = Changed
+          else:
+              OutFunc = Output
+  
+          if type(opt[1]) == list:  # note - zero elements not allowed
+            if type(dv) == list:
+              nel = max(len(opt[1]), len(dv))
+            else:
+              nel = len(opt[1])
+
+
+            # first row
+            if type(dv) == list:
+              OutFunc("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", opt[0], dv[0], opt[1][0], help)
+            else: 
+              OutFunc("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", opt[0], dv, opt[1][0], help)
+
+            for i in range(1, nel):
+              dstr = dv[i] if (type(dv) == list and i < len(dv)) else ""
+              vstr = opt[1][i] if (i < len(opt[1])) else ""
+
+              OutFunc("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", "", dstr, vstr, "")
+    
+          else:        
+            OutFunc("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", opt[0], dv, opt[1], help)
+
+  Output("\n")
 

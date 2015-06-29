@@ -14,7 +14,6 @@ OptionMap::OptionMap(const OptionMap & rhs)
                             {
                                 it.second.changed,
                                 std::unique_ptr<OptionPlaceholder>(it.second.value->Clone()),
-                                it.second.help
                             }
                                 )
                       );
@@ -40,9 +39,9 @@ void OptionMap::Change_(const std::string & key, std::unique_ptr<OptionPlacehold
 
 
 
-void OptionMap::InitDefault_(const std::string & key, std::unique_ptr<OptionPlaceholder> && def, const std::string & help)
+void OptionMap::InitDefault_(const std::string & key, std::unique_ptr<OptionPlaceholder> && def)
 {
-    opmap_.insert(OpMapValue(key, OpMapEntry{true, std::move(def), help}));
+    opmap_.insert(OpMapValue(key, OpMapEntry{true, std::move(def)}));
 }
 
 
@@ -50,13 +49,6 @@ void OptionMap::InitDefault_(const std::string & key, std::unique_ptr<OptionPlac
 bool OptionMap::Has(const std::string & key) const
 {
     return opmap_.count(key);
-}
-
-
-
-std::string OptionMap::GetHelp(const std::string & key) const
-{
-    return GetOrThrow_(key).help;
 }
 
 

@@ -86,6 +86,7 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     def("Success", Output_Wrap_Success);
     def("Warning", Output_Wrap_Warning);
     def("Error", Output_Wrap_Error);
+    def("Changed", Output_Wrap_Changed);
     def("Debug", Output_Wrap_Debug);
 
 

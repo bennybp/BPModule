@@ -8,11 +8,12 @@ minfo = { "TESTPYMOD1" :
     "description" : "Some test module",
     "authors"     : ["me", "myself", "I"],
     "refs"        : ["some paper", "some other paper"],
-    "options"     : [
-                        ("adouble", "0.0", "Some help string"),
-                        ("aint", 1, "Some help string2"),
-                        ("double2", 2.1, "Some help string3")
-                    ]
+    "options"     : {
+                        # Key               Default    Req     Check   Help
+                        "double_opt_def":  (   1.0,    False,   None,  "Some help string"),
+                        "double_opt":      ( float,    False,   None,  "Some help string"),
+                        "double_req":      ( float,    False,   None,  "Some help string")
+                    }
   }
 }
 

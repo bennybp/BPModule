@@ -20,15 +20,25 @@ public:
     virtual void RunTest(void)
     {
         out::Output("+++ In TestModule1: RunTest. Info: (%1%) %2% %3% v%4%\n", ID(), Key(), Name(), Version());
-        /*
-        out::Output("\nIn TestModule1: Testing different outputs\n");
-        out::Debug("This is debugging output: %1% %2% %3%\n", 5, 2.4, "Hello");
-        out::Output("This is regular output %1% %2% %3%\n", 5, 2.4, "Hello");
-        out::Success("This is success output %1% %2% %3%\n", 5, 2.4, "Hello");
-        out::Warning("This is warning output %1% %2% %3%\n", 5, 2.4, "Hello");
-        out::Error("This is error output %1% %2% %3%\n", 5, 2.4, "Hello");
-        out::Output("Done testing outputs\n\n");
-        */
+        out::Output("   double_opt_def:    %1%\n", GetOption<double>("double_opt_def"));
+        out::Output("      int_opt_def:    %1%\n", GetOption<long>("int_opt_def"));
+        out::Output("     bool_opt_def:    %1%\n", GetOption<bool>("bool_opt_def"));
+        out::Output("      str_opt_def:    %1%\n", GetOption<std::string>("str_opt_def"));
+        out::Output("\n");
+        out::Output("       double_req:    %1%\n", GetOption<double>("double_req"));
+        out::Output("          int_req:    %1%\n", GetOption<long>("int_req"));
+        out::Output("         bool_req:    %1%\n", GetOption<bool>("bool_req"));
+        out::Output("          str_req:    %1%\n", GetOption<std::string>("str_req"));
+        out::Output("\n");
+        if(HasOption("double_opt"))
+            out::Output("       double_opt:    %1%\n", GetOption<double>("double_opt"));
+        if(HasOption("int_opt"))
+            out::Output("          int_opt:    %1%\n", GetOption<long>("int_opt"));
+        if(HasOption("bool_opt"))
+            out::Output("         bool_opt:    %1%\n", GetOption<bool>("bool_opt"));
+        if(HasOption("str_opt"))
+            out::Output("          str_opt:    %1%\n", GetOption<std::string>("str_opt"));
+       
     }
 
     virtual void CallRunTest(const std::string & other)
@@ -62,6 +72,7 @@ public:
                       );
                        
     }
+
 
 
     virtual void CallThrow(const std::string & other)

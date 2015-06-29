@@ -48,6 +48,13 @@ void Output_Wrap_Success(const std::string fmt, bpy::list args)
 
 
 
+void Output_Wrap_Changed(const std::string fmt, bpy::list args)
+{
+    Output_Wrap(bpmodule::output::OutputType::Changed, fmt, args);
+}
+
+
+
 void Output_Wrap_Warning(const std::string fmt, bpy::list args)
 {
     Output_Wrap(bpmodule::output::OutputType::Warning, fmt, args);

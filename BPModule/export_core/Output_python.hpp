@@ -17,6 +17,8 @@ void Output_Wrap_Output(const std::string fmt, bpy::list args);
 
 void Output_Wrap_Success(const std::string fmt, bpy::list args);
 
+void Output_Wrap_Changed(const std::string fmt, bpy::list args);
+
 void Output_Wrap_Warning(const std::string fmt, bpy::list args);
 
 void Output_Wrap_Error(const std::string fmt, bpy::list args);

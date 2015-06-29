@@ -49,6 +49,9 @@ void Output_(std::ostream & out, OutputType type, boost::format & bfmt)
             case OutputType::Success:
                 out << "\033[32m" << st << "\033[0m";
                 break;
+            case OutputType::Changed:
+                out << "\033[91m" << st << "\033[0m";
+                break;
             case OutputType::Debug:
                 out << "\033[35m" << st << "\033[0m";
                 break;

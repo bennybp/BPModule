@@ -57,8 +57,6 @@ class OptionMap
 
         bool Has(const std::string & key) const;
 
-        std::string GetHelp(const std::string & key) const;
-
         std::string GetType(const std::string & key) const;
 
         std::vector<std::string> GetKeys(void) const;
@@ -143,7 +141,6 @@ class OptionMap
         {
             bool changed;
             std::unique_ptr<OptionPlaceholder> value;
-            std::string help;
         };
 
         typedef std::map<std::string, OpMapEntry> OpMap;
@@ -158,7 +155,7 @@ class OptionMap
         OpMapEntry & GetOrThrow_(const std::string & key);
 
         void Change_(const std::string & key, std::unique_ptr<OptionPlaceholder> && value);
-        void InitDefault_(const std::string & key, std::unique_ptr<OptionPlaceholder> && def, const std::string & help);
+        void InitDefault_(const std::string & key, std::unique_ptr<OptionPlaceholder> && def);
 
         // for initializing from python
         std::unique_ptr<OptionPlaceholder> OptionPlaceholder_(const boost::python::api::object & value);

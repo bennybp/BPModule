@@ -55,5 +55,10 @@ ModuleStore & ModuleBase::MStore(void)
     return mstore_;
 }
 
+bool ModuleBase::HasOption(const std::string & key) const
+{
+    return options_.Has(key);
+}
+
 
 } // close namespace bpmodule

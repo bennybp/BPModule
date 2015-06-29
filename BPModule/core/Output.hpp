@@ -18,6 +18,7 @@ enum class OutputType
 {
     Output,
     Success,
+    Changed,
     Warning,
     Error,
     Debug
@@ -79,6 +80,32 @@ std::string OutputStr(std::string fmt, Targs... Fargs)
 }
 
 
+
+/////////////////////
+// Changed
+/////////////////////
+template<typename... Targs>
+void Changed(std::ostream & out, std::string fmt, Targs... Fargs)
+{
+    Output_(out, OutputType::Changed, fmt, Fargs...);
+}
+
+template<typename... Targs>
+void Changed(std::string fmt, Targs... Fargs)
+{
+    Changed(GetOut(), fmt, Fargs...);
+}
+
+template<typename... Targs>
+std::string ChangedStr(std::string fmt, Targs... Fargs)
+{
+    std::stringstream ss;
+    Changed(ss, fmt, Fargs...);
+    return ss.str();
+}
+
+
+
 /////////////////////
 // Error
 /////////////////////
@@ -101,6 +128,8 @@ std::string ErrorStr(std::string fmt, Targs... Fargs)
     Error(ss, fmt, Fargs...);
     return ss.str();
 }
+
+
 
 /////////////////////
 // Warning
@@ -125,6 +154,8 @@ std::string WarningStr(std::string fmt, Targs... Fargs)
     return ss.str();
 }
 
+
+
 /////////////////////
 // Success
 /////////////////////
@@ -148,6 +179,8 @@ std::string SuccessStr(std::string fmt, Targs... Fargs)
     return ss.str();
 }
 
+
+
 /////////////////////
 // Debug
 /////////////////////
@@ -170,7 +203,6 @@ std::string DebugStr(std::string fmt, Targs... Fargs)
     Debug(ss, fmt, Fargs...);
     return ss.str();
 }
-
 
 } // close namespace output
 } // close namespace bpmodule

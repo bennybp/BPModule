@@ -20,8 +20,7 @@ OptionMap::OptionMap(const bpy::list & olist)
     for(int i = 0; i < optlen; i++)
     {
         std::string key = bpy::extract<std::string>(olist[i][0]);
-        std::string help = bpy::extract<std::string>(olist[i][2]);
-        InitDefault_(key, OptionMap::OptionPlaceholder_(olist[i][1]), help);
+        InitDefault_(key, OptionMap::OptionPlaceholder_(olist[i][1]));
     }
 }
 

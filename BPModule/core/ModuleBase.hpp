@@ -35,9 +35,19 @@ class ModuleBase
         template<typename T>
         T GetOption(const std::string & key) const
         {
-            return options_.Get<T>(key);
+            try {
+                return options_.Get<T>(key);
+            }
+            catch(BPModuleException & ex)
+            {
+                // rethrow with module info
+                ThrowException(ex.what(), ex.GetInfo());
+                return T(); // to make compilers happy
+            }
         }
 
+
+        bool HasOption(const std::string & key) const;
         
     protected:
         void ThrowException(const std::string & exwhat,

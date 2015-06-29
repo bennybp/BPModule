@@ -8,7 +8,7 @@ minfo = { "CORE" :
     "description" : "Core functions and classes for BPModule",
     "authors"     : [],
     "refs"        : [],
-    "options"     : []
+    "options"     : {}
   }
 }
 
