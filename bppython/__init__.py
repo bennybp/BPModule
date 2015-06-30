@@ -68,7 +68,7 @@ def Finalize():
 
 
 
-def LoadModule(name, useropt = {}):
+def LoadModule(name, useropt = {}, test = False):
     Output(Line('*'))
     Output("Importing module %1%\n", name)
 
@@ -117,14 +117,17 @@ def LoadModule(name, useropt = {}):
         # Dump some info
         PrintModuleInfo(key, minfo)
 
-        # Load & insert
+        # Load & insert if not testing
         # skip core types and others
-        if minfo["type"] == "c_module":
-            cml.LoadSO(key, minfo)
-        elif minfo["type"] == "python_module":
-            pml.AddPyModule(key, m.CreateModule, minfo)
+        if not test:
+          if minfo["type"] == "c_module":
+              cml.LoadSO(key, minfo)
+          elif minfo["type"] == "python_module":
+              pml.AddPyModule(key, m.CreateModule, minfo)
+          Debug("Done importing module %1%\n", name)
+        else:
+          Debug("Not inserting since test = True")
 
-    Debug("Done importing module %1%\n", name)
     Output("\n")
     return m
 
