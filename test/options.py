@@ -27,29 +27,30 @@ bp.Debug("****************************** %1% %2% %3%\n", "Hi there", 3, 3.1415)
 # Test
 try:
   bp.LoadModule("testmodule1", 
-                  { 
-                    "double_req" : 2.0,
-                    "int_req": 5,
-                    "str_req": "Hello",
-                    "bool_req": False,
+                  { "TESTMOD1": 
+                    { 
+                        "double_req" : 2.0,
+                        "int_req": 5,
+                        "str_req": "Hello",
+                        "bool_req": False,
 
-                    "str_opt": "Optional",
-                    "int_opt_def": 5,
+                        "str_opt": "Optional",
+                        "int_opt_def": 5,
 
 
-                    "strvec_opt_def" : [ "I", "Am" ],
-                    "intvec_opt_def" : [ 5, 10, 15, 20, 25 ],
+                        "strvec_opt_def" : [ "I", "Am" ],
+                        "intvec_opt_def" : [ 5, 10, 15, 20, 25 ],
 
-                    "strvec_req" : ["Super", "Dork"],
-                    "intvec_req" : [ 6, 10 ],
-                    "doublevec_req" : [ 6.0, 10.123 ],
-                    "boolvec_req" : [True],
+                        "strvec_req" : ["Super", "Dork"],
+                        "intvec_req" : [ 6, 10 ],
+                        "doublevec_req" : [ 6.0, 10.123 ],
+                        "boolvec_req" : [True],
 
-                    "strvec_opt" : ["Super", "Dork"],
-                    #"intvec_opt" : [ 6, 10 ],
-                    #"doublevec_opt" : [ 6.0, 10.123 ],
-                    #"boolvec_opt" : [True],
-                    
+                        "strvec_opt" : ["Super", "Dork"],
+                        #"intvec_opt" : [ 6, 10 ],
+                        #"doublevec_opt" : [ 6.0, 10.123 ],
+                        #"boolvec_opt" : [True],
+                    }    
                   }
                )
 

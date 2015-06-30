@@ -95,9 +95,14 @@ def LoadModule(name, useropt = {}):
         minfo["path"] = path
 
         # merge the options
+        if key in useropt:  #the user specified options for this key
+          user = useropt[key]
+        else:
+          user = {}
+   
         defopt = minfo["options"]
         try:
-          newopt = MergeAndCheckOptions(defopt, useropt)
+          newopt = MergeAndCheckOptions(defopt, user)
         except BPModuleException as e:
           e.Append([ 
                      ("ModuleName", minfo["name"]),
