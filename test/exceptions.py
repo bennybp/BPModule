@@ -20,60 +20,50 @@ bp.bpcore.SetColor(True)
 bp.bpcore.SetDebug(True)
 
 
-bp.Output("******************************\n")
-bp.Output("* Testing output             *\n")
-bp.Output("****************************** %1% %2% %3%\n", "Hi there", 3, 3.1415)
-bp.Success("****************************** %1% %2% %3%\n", "Hi there", 3, 3.1415)
-bp.Changed("****************************** %1% %2% %3%\n", "Hi there", 3, 3.1415)
-bp.Warning("****************************** %1% %2% %3%\n", "Hi there", 3, 3.1415)
-bp.Error("****************************** %1% %2% %3%\n", "Hi there", 3, 3.1415)
-bp.Debug("****************************** %1% %2% %3%\n", "Hi there", 3, 3.1415)
-
 # Load the python modules
-bp.LoadModule("testmodule1")
-bp.LoadModule("testpymodule1")
+bp.LoadModule("testmodule1", "TESTMOD1")
+bp.LoadModule("testpymodule1", "TESTPYMOD1")
 
 # Test
 try:
   b1 = bp.mst.GetModule_Test("TESTMOD1")
   b2 = bp.mst.GetModule_Test("TESTPYMOD1")
-  print(b2)
 
   b1.RunTest()
-  print()
+  bp.Output("\n")
   b1.CallRunTest("TESTMOD1")
-  print()
+  bp.Output("\n")
   b1.CallRunTest("TESTPYMOD1")
-  print()
+  bp.Output("\n")
 
   b2.RunTest()
-  print()
+  bp.Output("\n")
   b2.CallRunTest("TESTMOD1")
-  print()
+  bp.Output("\n")
   b2.CallRunTest("TESTPYMOD1")
-  print()
+  bp.Output("\n")
 
-  print("\n!!!Testing exceptions\n")
+  bp.Output("\n!!!Testing exceptions\n")
   try:
     b1.Throw()
   except Exception as e2:
     bp.Error(str(e2))
 
-  print()
+  bp.Output("\n")
 
   try:
     b2.Throw()
   except Exception as e2:
     bp.Error(str(e2))
 
-  print()
+  bp.Output("\n")
 
   try:
     b1.CallThrow("TESTMOD1")
   except Exception as e2:
     bp.Error(str(e2))
 
-  print()
+  bp.Output("\n")
 
   try:
     b2.CallThrow("TESTPYMOD1")
@@ -85,23 +75,23 @@ try:
   except Exception as e2:
     bp.Error(str(e2))
 
-  print()
+  bp.Output("\n")
 
   try:
     b1.CallThrow("TESTMOD1")
   except Exception as e2:
     bp.Error(str(e2))
 
-  print()
+  bp.Output("\n")
 
   raise bp.BPModuleException("Test exception from input", [ ( "Hi2", "There2" ) ])
 
 
-  print("\nDone testing\n")
+  bp.Output("\nDone testing\n")
 
 except Exception as e:
-  print("Caught exception in main handler")
-  #traceback.print_exc()
+  bp.Output("Caught exception in main handler\n")
+  #traceback.bp.Output_exc()
   bp.Error(str(e))
 
 

@@ -12,7 +12,6 @@ minfo = { "TESTPYMOD1" :
                         # Key               Default    Req     Check   Help
                         "double_opt_def":  (   1.0,    False,   None,  "Some help string"),
                         "double_opt":      ( float,    False,   None,  "Some help string"),
-                        "double_req":      ( float,    False,   None,  "Some help string")
                     }
   }
 }

@@ -25,11 +25,6 @@ public:
         out::Output("     bool_opt_def:    %1%\n", GetOption<bool>("bool_opt_def"));
         out::Output("      str_opt_def:    %1%\n", GetOption<std::string>("str_opt_def"));
         out::Output("\n");
-        out::Output("       double_req:    %1%\n", GetOption<double>("double_req"));
-        out::Output("          int_req:    %1%\n", GetOption<long>("int_req"));
-        out::Output("         bool_req:    %1%\n", GetOption<bool>("bool_req"));
-        out::Output("          str_req:    %1%\n", GetOption<std::string>("str_req"));
-        out::Output("\n");
         if(HasOption("double_opt"))
             out::Output("       double_opt:    %1%\n", GetOption<double>("double_opt"));
         if(HasOption("int_opt"))

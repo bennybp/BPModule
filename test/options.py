@@ -52,9 +52,32 @@ try:
   # Test loading with various options
   # Including successes and failures
   ###################################
-  ShouldSucceed("test_options", "TEST_INT", { 'int_req': 100 } );
+  ShouldSucceed("test_options", "TEST_INT", { 'int_req': 100 } )
   ShouldFail("test_options", "TEST_INT", { 'int_req' : "Hi" })
+  ShouldFail("test_options", "TEST_INT", { 'int_req' : [10] })
+  ShouldFail("test_options", "TEST_INT", { 'int_req' : 5.0 })
   ShouldFail("test_options", "TEST_INT", {})
+  ShouldFail("test_options", "TEST_INT", { 'int_opt' : "Hi" })
+  ShouldFail("test_options", "TEST_INT", { 'int_opt' : [10] })
+  ShouldFail("test_options", "TEST_INT", { 'int_opt' : 5.0 })
+  ShouldFail("test_options", "TEST_INT", { 'int_opt_def' : "Hi" })
+  ShouldFail("test_options", "TEST_INT", { 'int_opt_def' : [10] })
+  ShouldFail("test_options", "TEST_INT", { 'int_opt_def' : 5.0 })
+  ShouldFail("test_options", "TEST_INT", { 'int_not_exist' : 5 })
+
+  ShouldSucceed("test_options", "TEST_FLOAT", { 'float_req': 10.0 } )
+  ShouldFail("test_options", "TEST_FLOAT", { 'float_req' : "Hi" })
+  ShouldFail("test_options", "TEST_FLOAT", { 'float_req' : [10.0] })
+  ShouldFail("test_options", "TEST_FLOAT", { 'float_req' : 5 })
+  ShouldFail("test_options", "TEST_FLOAT", {})
+  ShouldFail("test_options", "TEST_FLOAT", { 'float_opt' : "Hi" })
+  ShouldFail("test_options", "TEST_FLOAT", { 'float_opt' : [10.0] })
+  ShouldFail("test_options", "TEST_FLOAT", { 'float_opt' : 5 })
+  ShouldFail("test_options", "TEST_FLOAT", { 'float_opt_def' : "Hi" })
+  ShouldFail("test_options", "TEST_FLOAT", { 'float_opt_def' : [10.0] })
+  ShouldFail("test_options", "TEST_FLOAT", { 'float_opt_def' : 5.0 })
+  ShouldFail("test_options", "TEST_FLOAT", { 'float_not_exist' : 5.0 })
+
 
 
 
