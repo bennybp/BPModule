@@ -35,6 +35,12 @@ void Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
 }
 
 
+void Wrap_ModuleStore_SetOptions(ModuleStore * mst, const std::string & key, bpy::list & opt)
+{
+    // OptionMap has a conversion constructor
+    mst->SetOptions(key, opt);
+}
+
 template<typename T>
 boost::shared_ptr<T> Wrap_GetScopedModule(ModuleStore * ms, const std::string & key)
 {
@@ -100,6 +106,7 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     .def("Size", &ModuleStore::Size)
     .def("Has", &ModuleStore::Has)
     .def("Delete", static_cast<void(ModuleStore::*)(unsigned long)>(&ModuleStore::Delete))
+    .def("SetOptions", Wrap_ModuleStore_SetOptions)
     .def("GetKeys", &ModuleStore::GetKeys)
     .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
     .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_internal_reference<>())

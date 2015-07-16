@@ -12,33 +12,33 @@ sys.path.insert(0, modpath)
 import bppython as bp
 
 
-def ShouldFail(supermodule, modkey, opt):
+def ShouldFail(key, opt):
   try:
-    bp.LoadModule(supermodule, modkey, opt, test = True)
+    bp.SetOptions(key, opt)
   except Exception as e:
     bp.Output("\n")
     bp.Error(str(e))
     bp.Output("\n")
     #traceback.print_exc()
-    print("Module that should have failed did fail")
+    print("Test that should have failed did fail")
     return True
 
-  print("Module that should have failed did NOT fail")
+  print("Test that should have failed did NOT fail")
   return False
 
 
-def ShouldSucceed(supermodule, modkey, opt):
+def ShouldSucceed(key, opt):
   try:
-    bp.LoadModule(supermodule, modkey, opt, test = True)
+    bp.SetOptions(key, opt)
   except Exception as e:
     bp.Output("\n")
     bp.Error(str(e))
     bp.Output("\n")
     #traceback.print_exc()
-    print("Module that should have succeeded did NOT succeed")
+    print("Test that should have succeeded did NOT succeed")
     return False
 
-  print("Module that should have succeeded did succeed")
+  print("Test that should have succeeded did succeed")
   return True
 
 
@@ -48,35 +48,38 @@ bp.Init(debug = True, output="/tmp/test.out")
 
 try:
 
+  bp.LoadModule("test_options", "TEST_INT")
+  bp.LoadModule("test_options", "TEST_FLOAT")
+
   ###################################
   # Test loading with various options
   # Including successes and failures
   ###################################
-  ShouldSucceed("test_options", "TEST_INT", { 'int_req': 100 } )
-  ShouldFail("test_options", "TEST_INT", { 'int_req' : "Hi" })
-  ShouldFail("test_options", "TEST_INT", { 'int_req' : [10] })
-  ShouldFail("test_options", "TEST_INT", { 'int_req' : 5.0 })
-  ShouldFail("test_options", "TEST_INT", {})
-  ShouldFail("test_options", "TEST_INT", { 'int_opt' : "Hi" })
-  ShouldFail("test_options", "TEST_INT", { 'int_opt' : [10] })
-  ShouldFail("test_options", "TEST_INT", { 'int_opt' : 5.0 })
-  ShouldFail("test_options", "TEST_INT", { 'int_opt_def' : "Hi" })
-  ShouldFail("test_options", "TEST_INT", { 'int_opt_def' : [10] })
-  ShouldFail("test_options", "TEST_INT", { 'int_opt_def' : 5.0 })
-  ShouldFail("test_options", "TEST_INT", { 'int_not_exist' : 5 })
+  ShouldSucceed("TEST_INT", { 'int_req': 100 } )
+  ShouldFail("TEST_INT", { 'int_req' : "Hi" })
+  ShouldFail("TEST_INT", { 'int_req' : [10] })
+  ShouldFail("TEST_INT", { 'int_req' : 5.0 })
+  ShouldFail("TEST_INT", {})
+  ShouldFail("TEST_INT", { 'int_opt' : "Hi" })
+  ShouldFail("TEST_INT", { 'int_opt' : [10] })
+  ShouldFail("TEST_INT", { 'int_opt' : 5.0 })
+  ShouldFail("TEST_INT", { 'int_opt_def' : "Hi" })
+  ShouldFail("TEST_INT", { 'int_opt_def' : [10] })
+  ShouldFail("TEST_INT", { 'int_opt_def' : 5.0 })
+  ShouldFail("TEST_INT", { 'int_not_exist' : 5 })
 
-  ShouldSucceed("test_options", "TEST_FLOAT", { 'float_req': 10.0 } )
-  ShouldFail("test_options", "TEST_FLOAT", { 'float_req' : "Hi" })
-  ShouldFail("test_options", "TEST_FLOAT", { 'float_req' : [10.0] })
-  ShouldFail("test_options", "TEST_FLOAT", { 'float_req' : 5 })
-  ShouldFail("test_options", "TEST_FLOAT", {})
-  ShouldFail("test_options", "TEST_FLOAT", { 'float_opt' : "Hi" })
-  ShouldFail("test_options", "TEST_FLOAT", { 'float_opt' : [10.0] })
-  ShouldFail("test_options", "TEST_FLOAT", { 'float_opt' : 5 })
-  ShouldFail("test_options", "TEST_FLOAT", { 'float_opt_def' : "Hi" })
-  ShouldFail("test_options", "TEST_FLOAT", { 'float_opt_def' : [10.0] })
-  ShouldFail("test_options", "TEST_FLOAT", { 'float_opt_def' : 5.0 })
-  ShouldFail("test_options", "TEST_FLOAT", { 'float_not_exist' : 5.0 })
+  ShouldSucceed("TEST_FLOAT", { 'float_req': 10.0 } )
+  ShouldFail("TEST_FLOAT", { 'float_req' : "Hi" })
+  ShouldFail("TEST_FLOAT", { 'float_req' : [10.0] })
+  ShouldFail("TEST_FLOAT", { 'float_req' : 5 })
+  ShouldFail("TEST_FLOAT", {})
+  ShouldFail("TEST_FLOAT", { 'float_opt' : "Hi" })
+  ShouldFail("TEST_FLOAT", { 'float_opt' : [10.0] })
+  ShouldFail("TEST_FLOAT", { 'float_opt' : 5 })
+  ShouldFail("TEST_FLOAT", { 'float_opt_def' : "Hi" })
+  ShouldFail("TEST_FLOAT", { 'float_opt_def' : [10.0] })
+  ShouldFail("TEST_FLOAT", { 'float_opt_def' : 5.0 })
+  ShouldFail("TEST_FLOAT", { 'float_not_exist' : 5.0 })
 
 
 

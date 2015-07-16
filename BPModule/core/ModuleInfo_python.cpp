@@ -20,9 +20,12 @@ ModuleInfo::ModuleInfo(const bpy::dict & dictionary)
     authors = ConvertListToVec<std::string>(bpy::extract<bpy::list>(dictionary["authors"]));
     refs = ConvertListToVec<std::string>(bpy::extract<bpy::list>(dictionary["refs"]));
 
-    OptionMap op;
-    bpy::list olist = bpy::extract<bpy::list>(dictionary["passedoptions"]);
-    options = OptionMap(olist);
+    if(dictionary.has_key("passedoptions"))
+    {
+        OptionMap op;
+        bpy::list olist = bpy::extract<bpy::list>(dictionary["passedoptions"]);
+        options = OptionMap(olist);
+    }
 
     if(dictionary.has_key("soname"))
         soname = bpy::extract<std::string>(dictionary["soname"]);

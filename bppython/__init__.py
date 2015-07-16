@@ -16,7 +16,7 @@ from .optionvalidate import *
 mst = None
 cml = None
 pml = None
-
+modmap = {}
 
 def Init(output = "stdout", color = True, debug = False):
   global mst
@@ -64,12 +64,13 @@ def Finalize():
     Output("Deleting C modules\n")
     cml.DeleteAll()
     Output("Closing C handles\n")
+
     cml.CloseHandles()
     Output("BPModule finalized\n")
 
 
 
-def LoadModule(supermodule, key, useropt = {}, test = False):
+def LoadModule(supermodule, key):
     Output("Importing %1% module from supermodule %2%\n", key, supermodule)
 
     try:
@@ -108,37 +109,81 @@ def LoadModule(supermodule, key, useropt = {}, test = False):
     # set the path for all
     minfo["path"] = path
 
-    # merge the options
+
+    # Dump some info
+    PrintModuleInfo(key, minfo)
+
+    if minfo["type"] == "c_module":
+        cml.LoadSO(key, minfo)
+    elif minfo["type"] == "python_module":
+        pml.AddPyModule(key, m.CreateModule, minfo)
+    Debug("Done importing module %1% from %2%\n", key, supermodule)
+    Output("\n")
+
+    modmap[key] = minfo;
+
+
+
+
+def SetOptions(key, useropt):
+    global mst
+
+    if not key in modmap:
+        raise BPModuleException(
+                                 "Key not loaded, so I can't change the options!",
+                                [
+                                  ("Key", key)
+                                ]
+                               )
+
+    minfo = modmap[key]
     defopt = minfo["options"]
+
     try:
       newopt = MergeAndCheckOptions(defopt, useropt)
     except BPModuleException as e:
       e.Append([ 
-                 ("Supermodule", supermodule),
                  ("ModuleName", minfo["name"]),
                  ("ModuleKey", minfo["key"]),
                  ("ModulePath", minfo["path"])
               ])
       raise e
-               
+    
     # Add to the moduleinfo
     minfo["passedoptions"] = newopt
 
-    # Dump some info
-    PrintModuleInfo(key, minfo)
-
-    # Load & insert if not testing
-    # skip core types and others
-    if not test:
-      if minfo["type"] == "c_module":
-          cml.LoadSO(key, minfo)
-      elif minfo["type"] == "python_module":
-          pml.AddPyModule(key, m.CreateModule, minfo)
-      Debug("Done importing module %1% from %2%\n", key, supermodule)
-    else:
-      Debug("Not inserting since test = True")
+    mst.SetOptions(key, minfo["passedoptions"]);
 
 
-    Output("\n")
-    return m
 
+
+
+def CommitOptions():
+    err = False
+
+    for k,m in modmap.items():
+        # if passedoptions are there already, then they have been set
+        if not "passedoptions" in m:
+            # the passed options are the defaults.
+            # Check if any are required. If so, bail out
+            for ok,ov in m["options"].items():
+                if ov[1] == True:
+                    Error("Option \"%1%\" for key \"%2\" is not specified, but is required", ok, k)
+                    err = True
+
+            if err:
+                raise BPModuleException("Error setting default options", 
+                                      [ 
+                                         ("ModuleName", m["name"]),
+                                         ("ModuleKey", m["key"]),
+                                         ("ModulePath", m["path"])
+                                      ])
+
+            # create the passed options
+            passedopt = {}
+            for ok,ov in m["options"].items():
+                if HasDefault(ov[0]):
+                  passedopt[ok] = ov[0]
+
+            SetOptions(k, passedopt)
+            

@@ -33,7 +33,9 @@ class ModuleStore
         ModuleStore(const ModuleStore & rhs) = delete;
 
         void Lock(void);
-        bool AddCreateFunc(const std::string & key, ModuleGeneratorFunc func, ModuleDeleterFunc dfunc, const ModuleInfo & minfo);
+        void AddCreateFunc(const std::string & key, ModuleGeneratorFunc func, ModuleDeleterFunc dfunc, const ModuleInfo & minfo);
+
+        void SetOptions(const std::string & key, const OptionMap & opt);
 
         size_t Size(void) const;
         std::vector<std::string> GetKeys(void) const;

@@ -24,8 +24,11 @@ bp.bpcore.SetDebug(True)
 bp.LoadModule("testmodule1", "TESTMOD1")
 bp.LoadModule("testpymodule1", "TESTPYMOD1")
 
+
 # Test
 try:
+  bp.CommitOptions()
+
   b1 = bp.mst.GetModule_Test("TESTMOD1")
   b2 = bp.mst.GetModule_Test("TESTPYMOD1")
 
@@ -89,9 +92,10 @@ try:
 
   bp.Output("\nDone testing\n")
 
+
 except Exception as e:
   bp.Output("Caught exception in main handler\n")
-  #traceback.bp.Output_exc()
+  #traceback.print_exc()
   bp.Error(str(e))
 
 

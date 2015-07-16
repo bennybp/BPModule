@@ -103,7 +103,7 @@ def HasDefault(opt):
 def MergeAndCheckOptions(defaults, userset):
     newopt = [ ]
 
-    ret = True
+    ok = True
 
     # Are all types valid for 
     # both defaults and userset
@@ -119,14 +119,14 @@ def MergeAndCheckOptions(defaults, userset):
 
     # Check the types passed in
     if not IsValidUserTypes(userset):
-      ret = False
+      ok = False
 
 
     # are all required keys specified
     for k,v in defaults.items():
         if v[1] == True and not k in userset:
             Error("Option \"%1%\" not specified, but is required\n", k)
-            ret = False
+            ok = False
 
 
     # Are all user keys in the default set?
@@ -134,15 +134,16 @@ def MergeAndCheckOptions(defaults, userset):
     for k,v in userset.items():
         if not k in defaults:
             Error("Option \"%1%\" not valid for this module\n", k)
-            ret = False
+            ok = False
 
-        res, err = CompareTypes(defaults[k][0], v) 
-        if not res:
-            Error("Value for option \"%1%\" is not the correct type: %2%\n", k, err)
-            ret = False
+        else:
+          res, err = CompareTypes(defaults[k][0], v) 
+          if not res:
+              Error("Value for option \"%1%\" is not the correct type: %2%\n", k, err)
+              ok = False
 
 
-    if ret == False:
+    if ok == False:
         raise BPModuleException("Error parsing options")
 
 
@@ -164,9 +165,9 @@ def MergeAndCheckOptions(defaults, userset):
       if checkfunc != None:
         if checkfunc(k, v[1]) == False:
           Error("Validation failed for option \"%1%\"", k)
-          ret = False 
+          ok = False 
         
-    if ret == False:
+    if ok == False:
         raise BPModuleException("Error parsing options")
  
     return newopt

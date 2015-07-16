@@ -7,7 +7,7 @@
 namespace bpmodule {
 
 
-bool ModuleStore::AddCreateFunc(const std::string & key, ModuleGeneratorFunc func, ModuleDeleterFunc dfunc, const ModuleInfo & minfo)
+void ModuleStore::AddCreateFunc(const std::string & key, ModuleGeneratorFunc func, ModuleDeleterFunc dfunc, const ModuleInfo & minfo)
 {
     // add to store
     // but throw if key already exists
@@ -21,7 +21,24 @@ bool ModuleStore::AddCreateFunc(const std::string & key, ModuleGeneratorFunc fun
                                );
 
     store_.insert(StoreMap::value_type(key, StoreEntry {minfo, func, dfunc}));
-    return true;
+}
+
+
+
+void ModuleStore::SetOptions(const std::string & key, const OptionMap & opt)
+{
+    if(!Has(key))
+        throw BPModuleException(
+                                 "Attempt to set options for nonexistant key",
+                                 {
+                                     { "Location", "ModuleStore"},
+                                     { "Key", key }
+                                 }
+                               );
+   
+
+    ModuleStore::StoreEntry & se = store_.at(key); 
+    se.mi.options = opt;    
 }
 
 
@@ -90,7 +107,7 @@ ModuleStore::ModuleStore()
 
 const ModuleStore::StoreEntry & ModuleStore::GetOrThrow_(const std::string & key) const
 {
-    if(store_.count(key))
+    if(Has(key))
         return store_.at(key);
     else
         throw BPModuleException(
