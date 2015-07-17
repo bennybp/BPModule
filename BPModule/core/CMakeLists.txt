@@ -8,9 +8,9 @@ set(CORE_FILES
             CModuleLoader.cpp
             PyModuleLoader.cpp
             Output.cpp
-            OptionMap.cpp
+            PropertyMap.cpp
 
-            OptionMap_python.cpp
+            PropertyMap_python.cpp
             ModuleInfo_python.cpp
    )
 

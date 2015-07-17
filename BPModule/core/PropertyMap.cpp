@@ -1,59 +1,59 @@
-#include "BPModule/core/OptionMap.hpp"
+#include "BPModule/core/PropertyMap.hpp"
 
 
 namespace bpmodule {
 
 
-OptionMap::OptionMap(const OptionMap & rhs)
+PropertyMap::PropertyMap(const PropertyMap & rhs)
 {
     // need to Clone new elements
     for(auto & it : rhs.opmap_)
-        opmap_.insert(OpMapValue(
+        opmap_.insert(PropMapValue(
                           it.first,
-                          OpMapEntry
+                          PropMapEntry
                             {
                                 it.second.changed,
-                                std::unique_ptr<OptionPlaceholder>(it.second.value->Clone()),
+                                std::unique_ptr<PropPlaceholder>(it.second.value->Clone()),
                             }
                                 )
                       );
 }
 
 
-OptionMap & OptionMap::operator=(const OptionMap & rhs)
+PropertyMap & PropertyMap::operator=(const PropertyMap & rhs)
 {
     using std::swap;
-    OptionMap tmp(rhs);
+    PropertyMap tmp(rhs);
     swap(*this, tmp);
     return *this;
 }
 
 
 
-void OptionMap::Change_(const std::string & key, std::unique_ptr<OptionPlaceholder> && value)
+void PropertyMap::Change_(const std::string & key, std::unique_ptr<PropPlaceholder> && value)
 {
-    OpMapEntry & opme = GetOrThrow_(key);
+    PropMapEntry & opme = GetOrThrow_(key);
     opme.value = std::move(value);
     opme.changed = true;
 }
 
 
 
-void OptionMap::InitDefault_(const std::string & key, std::unique_ptr<OptionPlaceholder> && def)
+void PropertyMap::InitDefault_(const std::string & key, std::unique_ptr<PropPlaceholder> && def)
 {
-    opmap_.insert(OpMapValue(key, OpMapEntry{true, std::move(def)}));
+    opmap_.insert(PropMapValue(key, PropMapEntry{true, std::move(def)}));
 }
 
 
 
-bool OptionMap::Has(const std::string & key) const
+bool PropertyMap::Has(const std::string & key) const
 {
     return opmap_.count(key);
 }
 
 
 
-std::string OptionMap::GetType(const std::string & key) const
+std::string PropertyMap::GetType(const std::string & key) const
 {
     return GetOrThrow_(key).value->Type();
 }
@@ -61,7 +61,7 @@ std::string OptionMap::GetType(const std::string & key) const
 
 
 std::vector<std::string>
-OptionMap::GetKeys(void) const
+PropertyMap::GetKeys(void) const
 {
     std::vector<std::string> v;
     v.reserve(opmap_.size());
@@ -72,21 +72,21 @@ OptionMap::GetKeys(void) const
 
 
 
-size_t OptionMap::Size(void) const
+size_t PropertyMap::Size(void) const
 {
     return opmap_.size();
 }
 
 
 
-size_t OptionMap::Erase_(const std::string & key)
+size_t PropertyMap::Erase_(const std::string & key)
 {
     return opmap_.erase(key);
 }
 
 
 
-const OptionMap::OpMapEntry & OptionMap::GetOrThrow_(const std::string & key) const
+const PropertyMap::PropMapEntry & PropertyMap::GetOrThrow_(const std::string & key) const
 {
     if(opmap_.count(key))
         return opmap_.at(key);
@@ -94,14 +94,14 @@ const OptionMap::OpMapEntry & OptionMap::GetOrThrow_(const std::string & key) co
         throw BPModuleException(
                                  "Key not found",
                                  {
-                                     { "Location", "OptionMap" },
+                                     { "Location", "PropertyMap" },
                                      { "Key", key }
                                  }
                                );
 }
 
 
-OptionMap::OpMapEntry & OptionMap::GetOrThrow_(const std::string & key)
+PropertyMap::PropMapEntry & PropertyMap::GetOrThrow_(const std::string & key)
 {
     if(opmap_.count(key))
         return opmap_.at(key);
@@ -109,7 +109,7 @@ OptionMap::OpMapEntry & OptionMap::GetOrThrow_(const std::string & key)
         throw BPModuleException(
                                  "Key not found",
                                  {
-                                     { "Location", "OptionMap" },
+                                     { "Location", "PropertyMap" },
                                      { "Key", key }
                                  }
                                );

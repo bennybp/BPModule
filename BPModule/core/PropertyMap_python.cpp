@@ -1,5 +1,5 @@
 #include "BPModule/core/Output.hpp"
-#include "BPModule/core/OptionMap.hpp"
+#include "BPModule/core/PropertyMap.hpp"
 #include "BPModule/export_core/Python_stdconvert.hpp"
 
 #include <boost/python.hpp>
@@ -13,20 +13,20 @@ using bpmodule::export_python::ConvertListToVec;
 namespace bpmodule {
 
 // construct from python list
-OptionMap::OptionMap(const bpy::list & olist)
+PropertyMap::PropertyMap(const bpy::list & olist)
 {
     int optlen = bpy::extract<int>(olist.attr("__len__")());
 
     for(int i = 0; i < optlen; i++)
     {
         std::string key = bpy::extract<std::string>(olist[i][0]);
-        InitDefault_(key, OptionMap::OptionPlaceholder_(olist[i][1]));
+        InitDefault_(key, PropertyMap::PropPlaceholder_(olist[i][1]));
     }
 }
 
 
 template<>
-bpy::object OptionMap::Get(const std::string & key) const
+bpy::object PropertyMap::Get(const std::string & key) const
 {
     // some of the dirty details handled by to_python converters
     // see Python_stdconvert.hpp
@@ -57,7 +57,7 @@ bpy::object OptionMap::Get(const std::string & key) const
     else
         throw BPModuleException("Unable to convert C++ type to python",
                                  {
-                                    { "Location", "OptionMap" },
+                                    { "Location", "PropertyMap" },
                                     { "Key", key },
                                     { "Type", type }
                                  }
@@ -66,10 +66,10 @@ bpy::object OptionMap::Get(const std::string & key) const
 
 
 template<>
-void OptionMap::Change(const std::string & key, const bpy::object & value)
+void PropertyMap::Change(const std::string & key, const bpy::object & value)
 {
     try {
-        Change_(key, OptionMap::OptionPlaceholder_(value));
+        Change_(key, PropertyMap::PropPlaceholder_(value));
     }
     catch(BPModuleException & bpe)
     {
@@ -83,17 +83,17 @@ void OptionMap::Change(const std::string & key, const bpy::object & value)
 
 
 
-std::unique_ptr<OptionMap::OptionPlaceholder> OptionMap::OptionMap::OptionPlaceholder_(const bpy::object & value)
+std::unique_ptr<PropertyMap::PropPlaceholder> PropertyMap::PropertyMap::PropPlaceholder_(const bpy::object & value)
 {
     std::string cl = bpy::extract<std::string>(value.attr("__class__").attr("__name__"));
     if(cl == "bool")
-        return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<bool>(bpy::extract<bool>(value)));
+        return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<bool>(bpy::extract<bool>(value)));
     else if(cl == "int")
-        return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<long>(bpy::extract<long>(value)));
+        return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<long>(bpy::extract<long>(value)));
     else if(cl == "float")
-        return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<double>(bpy::extract<double>(value)));
+        return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<double>(bpy::extract<double>(value)));
     else if(cl == "str")
-        return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<std::string>(bpy::extract<std::string>(value)));
+        return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<std::string>(bpy::extract<std::string>(value)));
     else if(cl == "list")
     {
         // get type of first element
@@ -119,18 +119,18 @@ std::unique_ptr<OptionMap::OptionPlaceholder> OptionMap::OptionMap::OptionPlaceh
 
         // now parse list
         if(cl2 == "bool")
-            return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<std::vector<bool>>(ConvertListToVec<bool>(lst)));
+            return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<std::vector<bool>>(ConvertListToVec<bool>(lst)));
         if(cl2 == "int")
-            return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<std::vector<long>>(ConvertListToVec<long>(lst)));
+            return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<std::vector<long>>(ConvertListToVec<long>(lst)));
         else if(cl2 == "float")
-            return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<std::vector<double>>(ConvertListToVec<double>(lst)));
+            return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<std::vector<double>>(ConvertListToVec<double>(lst)));
         else if(cl2 == "str")
-            return std::unique_ptr<OptionMap::OptionPlaceholder>(new OptionHolder<std::vector<std::string>>(ConvertListToVec<std::string>(lst)));
+            return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<std::vector<std::string>>(ConvertListToVec<std::string>(lst)));
         else
         {
             throw BPModuleException("Unable to convert python type to C++ (for list)",
                                      {
-                                        { "Location", "OptionMap" },
+                                        { "Location", "PropertyMap" },
                                         { "Type", cl2 }
                                      }
                                    );
@@ -140,7 +140,7 @@ std::unique_ptr<OptionMap::OptionPlaceholder> OptionMap::OptionMap::OptionPlaceh
     {
         throw BPModuleException("Unable to convert python type to C++",
                                  {
-                                    { "Location", "OptionMap" },
+                                    { "Location", "PropertyMap" },
                                     { "Type", cl }
                                  }
                                );

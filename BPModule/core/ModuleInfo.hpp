@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "BPModule/core/BoostPython_fwd.hpp"
-#include "BPModule/core/OptionMap.hpp"
+#include "BPModule/core/PropertyMap.hpp"
 
 
 namespace bpmodule {
