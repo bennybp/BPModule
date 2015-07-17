@@ -106,12 +106,9 @@ def LoadModule(supermodule, key):
     # Copy the key to the dict
     minfo["key"] = key
 
-    # set the path for all
+    # set the path
     minfo["path"] = path
 
-
-    # Dump some info
-    PrintModuleInfo(key, minfo)
 
     if minfo["type"] == "c_module":
         cml.LoadSO(key, minfo)
@@ -186,4 +183,11 @@ def CommitOptions():
                   passedopt[ok] = ov[0]
 
             SetOptions(k, passedopt)
-            
+           
+
+def DumpModuleInfo():
+    for k,m in modmap.items():
+        # Dump some info
+        PrintModuleInfo(k, m)
+
+ 

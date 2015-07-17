@@ -20,14 +20,18 @@ bp.bpcore.SetColor(True)
 bp.bpcore.SetDebug(True)
 
 
-# Load the python modules
-bp.LoadModule("testmodule1", "TESTMOD1")
-bp.LoadModule("testpymodule1", "TESTPYMOD1")
 
 
 # Test
 try:
+  # Load the python modules
+  bp.LoadModule("testmodule1", "TESTMOD1")
+  bp.LoadModule("testpymodule1", "TESTPYMOD1")
+
+  bp.SetOptions("TESTMOD1", { "double_opt_def": 1.111 })
   bp.CommitOptions()
+  bp.DumpModuleInfo()
+
 
   b1 = bp.mst.GetModule_Test("TESTMOD1")
   b2 = bp.mst.GetModule_Test("TESTPYMOD1")
