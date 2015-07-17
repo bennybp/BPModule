@@ -5,7 +5,7 @@
 #include <functional>
 
 #include "BPModule/core/ModuleInfo.hpp"
-
+#include "BPModule/core/CalcData.hpp"
 
 
 namespace bpmodule {
@@ -64,6 +64,11 @@ class ModuleBase
         std::string name_;
         std::string version_;
         OptionMap options_;
+
+
+        // main calculation information
+        CalcInputs inputs_;
+        CalcResults results_;
 
         ModuleStore & mstore_;
 };

@@ -11,7 +11,7 @@ PropertyMap::PropertyMap(const PropertyMap & rhs)
                           it.first,
                           PropMapEntry
                             {
-                                std::unique_ptr<PropPlaceholder>(it.second.value->Clone())
+                                PropPlaceholderPtr(it.second.value->Clone())
                             }
                                   )
                       );
@@ -27,7 +27,7 @@ PropertyMap & PropertyMap::operator=(const PropertyMap & rhs)
 }
 
 
-void PropertyMap::Add_(const std::string & key, std::unique_ptr<PropPlaceholder> && value)
+void PropertyMap::Add_(const std::string & key, PropPlaceholderPtr && value)
 {
     
     if(Has(key))
@@ -44,7 +44,7 @@ void PropertyMap::Add_(const std::string & key, std::unique_ptr<PropPlaceholder>
 }
 
 
-void PropertyMap::Change_(const std::string & key, std::unique_ptr<PropPlaceholder> && value)
+void PropertyMap::Replace_(const std::string & key, PropPlaceholderPtr && value)
 {
     PropMapEntry & phe = GetOrThrow_(key);
     phe.value = std::move(value);
@@ -60,6 +60,27 @@ size_t PropertyMap::Erase(const std::string & key)
 size_t PropertyMap::Erase_(const std::string & key)
 {
     return opmap_.erase(key);
+}
+
+
+void PropertyMap::AddRef(const PropertyMap & pm, const std::string & key)
+{
+    if(Has(key))
+        throw BPModuleException(
+                                 "Adding duplicate key",
+                                 {
+                                     { "Location", "PropertyMap" },
+                                     { "Key", key }
+                                 }
+                               );
+    
+
+    // get the shared ptr, etc, from the other property map
+    // This should copy the shared_ptr
+    PropMapEntry pe = pm.GetOrThrow_(key);
+
+    // add it here
+    opmap_.insert(PropMapValue{key, std::move(pe)});    
 }
 
 

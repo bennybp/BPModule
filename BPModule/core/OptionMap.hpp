@@ -1,11 +1,6 @@
 #ifndef OPTIONMAP_HPP
 #define OPTIONMAP_HPP
 
-#include <map>
-#include <string>
-#include <memory>
-
-#include "BPModule/core/BoostPython_fwd.hpp"
 #include "BPModule/core/PropertyMap.hpp"
 
 

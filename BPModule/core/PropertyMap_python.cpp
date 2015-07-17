@@ -83,10 +83,10 @@ void PropertyMap::Add(const std::string & key, const bpy::object & value)
 
 
 template<>
-void PropertyMap::Change(const std::string & key, const bpy::object & value)
+void PropertyMap::Replace(const std::string & key, const bpy::object & value)
 {
     try {
-        Change_(key, PropertyMap::PropPlaceholder_(value));
+        Replace_(key, PropertyMap::PropPlaceholder_(value));
     }
     catch(BPModuleException & bpe)
     {
@@ -100,17 +100,17 @@ void PropertyMap::Change(const std::string & key, const bpy::object & value)
 
 
 
-std::unique_ptr<PropertyMap::PropPlaceholder> PropertyMap::PropertyMap::PropPlaceholder_(const bpy::object & value)
+PropertyMap::PropPlaceholderPtr PropertyMap::PropertyMap::PropPlaceholder_(const bpy::object & value)
 {
     std::string cl = bpy::extract<std::string>(value.attr("__class__").attr("__name__"));
     if(cl == "bool")
-        return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<bool>(bpy::extract<bool>(value)));
+        return PropertyMap::PropPlaceholderPtr(new PropHolder<bool>(bpy::extract<bool>(value)));
     else if(cl == "int")
-        return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<long>(bpy::extract<long>(value)));
+        return PropertyMap::PropPlaceholderPtr(new PropHolder<long>(bpy::extract<long>(value)));
     else if(cl == "float")
-        return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<double>(bpy::extract<double>(value)));
+        return PropertyMap::PropPlaceholderPtr(new PropHolder<double>(bpy::extract<double>(value)));
     else if(cl == "str")
-        return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<std::string>(bpy::extract<std::string>(value)));
+        return PropertyMap::PropPlaceholderPtr(new PropHolder<std::string>(bpy::extract<std::string>(value)));
     else if(cl == "list")
     {
         // get type of first element
@@ -136,13 +136,13 @@ std::unique_ptr<PropertyMap::PropPlaceholder> PropertyMap::PropertyMap::PropPlac
 
         // now parse list
         if(cl2 == "bool")
-            return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<std::vector<bool>>(ConvertListToVec<bool>(lst)));
+            return PropertyMap::PropPlaceholderPtr(new PropHolder<std::vector<bool>>(ConvertListToVec<bool>(lst)));
         if(cl2 == "int")
-            return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<std::vector<long>>(ConvertListToVec<long>(lst)));
+            return PropertyMap::PropPlaceholderPtr(new PropHolder<std::vector<long>>(ConvertListToVec<long>(lst)));
         else if(cl2 == "float")
-            return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<std::vector<double>>(ConvertListToVec<double>(lst)));
+            return PropertyMap::PropPlaceholderPtr(new PropHolder<std::vector<double>>(ConvertListToVec<double>(lst)));
         else if(cl2 == "str")
-            return std::unique_ptr<PropertyMap::PropPlaceholder>(new PropHolder<std::vector<std::string>>(ConvertListToVec<std::string>(lst)));
+            return PropertyMap::PropPlaceholderPtr(new PropHolder<std::vector<std::string>>(ConvertListToVec<std::string>(lst)));
         else
         {
             throw BPModuleException("Unable to convert python type to C++ (for list)",

@@ -46,12 +46,14 @@ class PropertyMap
             return ph->GetRef();
         }
 
+        /*
         template<typename T>
         T & GetRef(const std::string & key)
         {
             PropHolder<T> * ph = GetOrThrow_Cast_<T>(key);
             return ph->GetRef();
         }
+        */
 
         template<typename T>
         T GetCopy(const std::string & key) const
@@ -63,7 +65,7 @@ class PropertyMap
         template<typename T>
         void Add(const std::string & key, const T & value)
         {
-            auto v = std::unique_ptr<PropPlaceholder>(new PropHolder<T>(value));
+            auto v = PropPlaceholderPtr(new PropHolder<T>(value));
             Add_(key, std::move(v));
         }
 
@@ -71,25 +73,30 @@ class PropertyMap
         template<typename T>
         void Add(const std::string & key, T && value)
         {
-            auto v = std::unique_ptr<PropPlaceholder>(new PropHolder<T>(std::move(value)));
+            auto v = PropPlaceholderPtr(new PropHolder<T>(std::move(value)));
             Add_(key, std::move(v));
         }
         
 
         template<typename T>
-        void Change(const std::string & key, const T & value)
+        void Replace(const std::string & key, const T & value)
         {
-            auto v = std::unique_ptr<PropPlaceholder>(new PropHolder<T>(value));
-            Change_(key, std::move(v));
+            auto v = PropPlaceholderPtr(new PropHolder<T>(value));
+            Replace_(key, std::move(v));
         }
 
         template<typename T>
-        void Change(const std::string & key, T && value)
+        void Replace(const std::string & key, T && value)
         {
-            auto v = std::unique_ptr<PropPlaceholder>(new PropHolder<T>(std::move(value)));
-            Change_(key, std::move(v));
+            auto v = PropPlaceholderPtr(new PropHolder<T>(std::move(value)));
+            Replace_(key, std::move(v));
         }
 
+
+        // since data is read-only once added, it makes sense that
+        // the other map can be const. Changing/replacing it here
+        // will only change this map, not the other
+        void AddRef(const PropertyMap & pm, const std::string & key);
 
         size_t Erase(const std::string & key);
 
@@ -122,6 +129,7 @@ class PropertyMap
         };
 
 
+        typedef std::shared_ptr<PropPlaceholder> PropPlaceholderPtr;
 
         template<typename T>
         class PropHolder : public PropPlaceholder
@@ -166,7 +174,7 @@ class PropertyMap
         struct PropMapEntry
         {
             // may be more added here in the future
-            std::unique_ptr<PropPlaceholder> value;
+            PropPlaceholderPtr value;
         };
 
 
@@ -199,6 +207,7 @@ class PropertyMap
         }
 
 
+        /*
         template<typename T>
         PropHolder<T> * GetOrThrow_Cast_(const std::string & key)
         {
@@ -216,14 +225,14 @@ class PropertyMap
 
             return ph;
         }
+        */
 
-
-        void Add_(const std::string & key, std::unique_ptr<PropPlaceholder> && value);
-        void Change_(const std::string & key, std::unique_ptr<PropPlaceholder> && value);
+        void Add_(const std::string & key, PropPlaceholderPtr && value);
+        void Replace_(const std::string & key, PropPlaceholderPtr && value);
         size_t Erase_(const std::string & key);
 
         // Creating a PropPlaceHolder from python object
-        std::unique_ptr<PropPlaceholder> PropPlaceholder_(const boost::python::api::object & value);
+        PropPlaceholderPtr PropPlaceholder_(const boost::python::api::object & value);
 
 };
 
@@ -236,7 +245,7 @@ template<>
 void PropertyMap::Add<>(const std::string & key, const boost::python::api::object & value);
 
 template<>
-void PropertyMap::Change<>(const std::string & key, const boost::python::api::object & value);
+void PropertyMap::Replace<>(const std::string & key, const boost::python::api::object & value);
 
 
 } // close namespace bpmodule
