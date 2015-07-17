@@ -20,38 +20,12 @@ class PropertyMap
         PropertyMap(void) = default;
         ~PropertyMap(void) = default;
 
-        PropertyMap(PropertyMap && rhs) = default;
-        PropertyMap & operator=(PropertyMap && rhs) = default;
-
         PropertyMap(const PropertyMap & rhs);
         PropertyMap & operator=(const PropertyMap & rhs);
 
-        template<typename T>
-        T Get(const std::string & key) const
-        {
-            const PropMapEntry & opm = GetOrThrow_(key);
-            const PropHolder<T> * oh = dynamic_cast<const PropHolder<T> *>(opm.value.get());
-            if(oh == nullptr)
-                throw BPModuleException(
-                                         "Bad cast",
-                                         {
-                                            { "Location", "PropertyMap" },
-                                            { "From", opm.value->Type() },
-                                            { "  To", typeid(T).name() }
-                                         }
-                                       );
+        PropertyMap(PropertyMap && rhs) = default;
+        PropertyMap & operator=(PropertyMap && rhs) = default;
 
-            return oh->GetRef();
-        }
-
-
-
-        template<typename T>
-        void Change(const std::string & key, const T & value)
-        {
-            auto v = std::unique_ptr<PropPlaceholder>(new PropHolder<T>(value));
-            Change_(key, std::move(v));
-        }
 
 
 
@@ -64,10 +38,61 @@ class PropertyMap
         size_t Size(void) const;
 
 
+    protected:  // to be exposed selectively by derived classes
+        template<typename T>
+        const T & GetRef(const std::string & key) const
+        {
+            const PropHolder<T> * ph = GetOrThrow_Cast_<T>(key);
+            return ph->GetRef();
+        }
 
-        // For python
-        PropertyMap(const boost::python::list & olist);
+        template<typename T>
+        T & GetRef(const std::string & key)
+        {
+            PropHolder<T> * ph = GetOrThrow_Cast_<T>(key);
+            return ph->GetRef();
+        }
+
+        template<typename T>
+        T GetCopy(const std::string & key) const
+        {
+            return GetRef<T>(key);
+        }
+
+
+        template<typename T>
+        void Add(const std::string & key, const T & value)
+        {
+            auto v = std::unique_ptr<PropPlaceholder>(new PropHolder<T>(value));
+            Add_(key, std::move(v));
+        }
+
+
+        template<typename T>
+        void Add(const std::string & key, T && value)
+        {
+            auto v = std::unique_ptr<PropPlaceholder>(new PropHolder<T>(std::move(value)));
+            Add_(key, std::move(v));
+        }
         
+
+        template<typename T>
+        void Change(const std::string & key, const T & value)
+        {
+            auto v = std::unique_ptr<PropPlaceholder>(new PropHolder<T>(value));
+            Change_(key, std::move(v));
+        }
+
+        template<typename T>
+        void Change(const std::string & key, T && value)
+        {
+            auto v = std::unique_ptr<PropPlaceholder>(new PropHolder<T>(std::move(value)));
+            Change_(key, std::move(v));
+        }
+
+
+        // construct from a python list of tuples
+        PropertyMap(const boost::python::list & olist);
 
 
     private:
@@ -101,15 +126,18 @@ class PropertyMap
             public:
                 PropHolder(const T & m) : obj(m) { }
                 PropHolder(T && m) : obj(std::move(m)) { }
-                PropHolder(const PropHolder & oph) : obj(oph.obj) {  };
 
+                ~PropHolder() = default;
+
+                PropHolder(const PropHolder & oph) = delete;
+                PropHolder(PropHolder && oph) = delete;
                 PropHolder & operator=(const PropHolder & oph) = delete;
                 PropHolder & operator=(PropHolder && oph) = delete;
-                PropHolder(PropHolder && oph) = default;
+
 
                 virtual PropHolder * Clone(void) const
                 {
-                    return new PropHolder<T>(*this);
+                    return new PropHolder<T>(obj);
                 }
 
                 T & GetRef(void)
@@ -118,11 +146,6 @@ class PropertyMap
                 }
 
                 const T & GetRef(void) const
-                {
-                    return obj;
-                }
-
-                T & Get(void) const
                 {
                     return obj;
                 }
@@ -139,41 +162,78 @@ class PropertyMap
 
         struct PropMapEntry
         {
-            bool changed;
+            // may be more added here in the future
             std::unique_ptr<PropPlaceholder> value;
         };
+
 
         typedef std::map<std::string, PropMapEntry> PropMap;
         typedef PropMap::value_type PropMapValue;
 
-
         PropMap opmap_;
 
-        size_t Erase_(const std::string & key);
 
         const PropMapEntry & GetOrThrow_(const std::string & key) const;
         PropMapEntry & GetOrThrow_(const std::string & key);
 
-        void Change_(const std::string & key, std::unique_ptr<PropPlaceholder> && value);
-        void InitDefault_(const std::string & key, std::unique_ptr<PropPlaceholder> && def);
 
-        // for initializing from python
+        template<typename T>
+        const PropHolder<T> * GetOrThrow_Cast_(const std::string & key) const
+        {
+            const PropMapEntry & pme = GetOrThrow_(key);
+            const PropHolder<T> * ph = dynamic_cast<const PropHolder<T> *>(pme.value.get());
+            if(ph == nullptr)
+                throw BPModuleException(
+                                         "Bad cast",
+                                         {
+                                            { "Location", "PropertyMap" },
+                                            { "From", pme.value->Type() },
+                                            { "  To", typeid(T).name() }
+                                         }
+                                       );
+
+            return ph;
+        }
+
+
+        template<typename T>
+        PropHolder<T> * GetOrThrow_Cast_(const std::string & key)
+        {
+            PropMapEntry & pme = GetOrThrow_(key);
+            PropHolder<T> * ph = dynamic_cast<PropHolder<T> *>(pme.value.get());
+            if(ph == nullptr)
+                throw BPModuleException(
+                                         "Bad cast",
+                                         {
+                                            { "Location", "PropertyMap" },
+                                            { "From", pme.value->Type() },
+                                            { "  To", typeid(T).name() }
+                                         }
+                                       );
+
+            return ph;
+        }
+
+
+        void Add_(const std::string & key, std::unique_ptr<PropPlaceholder> && value);
+        void Change_(const std::string & key, std::unique_ptr<PropPlaceholder> && value);
+        size_t Erase_(const std::string & key);
+
+        // Creating a PropPlaceHolder from python object
         std::unique_ptr<PropPlaceholder> PropPlaceholder_(const boost::python::api::object & value);
+
 };
 
 
-// specialize the templates
+// specialize templates for python
 template<>
-boost::python::api::object PropertyMap::Get<>(const std::string & key) const;
+boost::python::api::object PropertyMap::GetCopy<>(const std::string & key) const;
+
+template<>
+void PropertyMap::Add<>(const std::string & key, const boost::python::api::object & value);
 
 template<>
 void PropertyMap::Change<>(const std::string & key, const boost::python::api::object & value);
-
-
-
-// Some semantic typedefs
-typedef PropertyMap OptionMap;
-
 
 
 } // close namespace bpmodule

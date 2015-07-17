@@ -3,7 +3,6 @@
 
 namespace bpmodule {
 
-
 PropertyMap::PropertyMap(const PropertyMap & rhs)
 {
     // need to Clone new elements
@@ -12,10 +11,9 @@ PropertyMap::PropertyMap(const PropertyMap & rhs)
                           it.first,
                           PropMapEntry
                             {
-                                it.second.changed,
-                                std::unique_ptr<PropPlaceholder>(it.second.value->Clone()),
+                                std::unique_ptr<PropPlaceholder>(it.second.value->Clone())
                             }
-                                )
+                                  )
                       );
 }
 
@@ -29,21 +27,34 @@ PropertyMap & PropertyMap::operator=(const PropertyMap & rhs)
 }
 
 
+void PropertyMap::Add_(const std::string & key, std::unique_ptr<PropPlaceholder> && value)
+{
+    
+    if(Has(key))
+        throw BPModuleException(
+                                 "Adding duplicate key",
+                                 {
+                                     { "Location", "PropertyMap" },
+                                     { "Key", key }
+                                 }
+                               );
+
+    PropMapEntry phe{std::move(value)};
+    opmap_.insert(PropMapValue{key, std::move(phe) });
+}
+
 
 void PropertyMap::Change_(const std::string & key, std::unique_ptr<PropPlaceholder> && value)
 {
-    PropMapEntry & opme = GetOrThrow_(key);
-    opme.value = std::move(value);
-    opme.changed = true;
+    PropMapEntry & phe = GetOrThrow_(key);
+    phe.value = std::move(value);
 }
 
 
-
-void PropertyMap::InitDefault_(const std::string & key, std::unique_ptr<PropPlaceholder> && def)
+size_t PropertyMap::Erase_(const std::string & key)
 {
-    opmap_.insert(PropMapValue(key, PropMapEntry{true, std::move(def)}));
+    return opmap_.erase(key);
 }
-
 
 
 bool PropertyMap::Has(const std::string & key) const
@@ -79,10 +90,6 @@ size_t PropertyMap::Size(void) const
 
 
 
-size_t PropertyMap::Erase_(const std::string & key)
-{
-    return opmap_.erase(key);
-}
 
 
 

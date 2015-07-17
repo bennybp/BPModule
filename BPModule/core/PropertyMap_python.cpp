@@ -20,13 +20,13 @@ PropertyMap::PropertyMap(const bpy::list & olist)
     for(int i = 0; i < optlen; i++)
     {
         std::string key = bpy::extract<std::string>(olist[i][0]);
-        InitDefault_(key, PropertyMap::PropPlaceholder_(olist[i][1]));
+        Add_(key, PropertyMap::PropPlaceholder_(olist[i][1]));
     }
 }
 
 
 template<>
-bpy::object PropertyMap::Get(const std::string & key) const
+bpy::object PropertyMap::GetCopy<>(const std::string & key) const
 {
     // some of the dirty details handled by to_python converters
     // see Python_stdconvert.hpp
@@ -34,25 +34,25 @@ bpy::object PropertyMap::Get(const std::string & key) const
     std::string type = GetType(key);
 
     if(type == typeid(bool).name())
-        return bpy::object(Get<bool>(key));
+        return bpy::object(GetRef<bool>(key));
 
     else if(type == typeid(long).name())
-        return bpy::object(Get<long>(key));
+        return bpy::object(GetRef<long>(key));
 
     else if(type == typeid(double).name())
-        return bpy::object(Get<double>(key));
+        return bpy::object(GetRef<double>(key));
 
     else if(type == typeid(std::string).name())
-        return bpy::object(Get<std::string>(key));
+        return bpy::object(GetRef<std::string>(key));
 
     else if(type == typeid(std::vector<long>).name())
-        return bpy::object(Get<std::vector<long>>(key));
+        return bpy::object(GetRef<std::vector<long>>(key));
 
     else if(type == typeid(std::vector<double>).name())
-        return bpy::object(Get<std::vector<double>>(key));
+        return bpy::object(GetRef<std::vector<double>>(key));
 
     else if(type == typeid(std::vector<std::string>).name())
-        return bpy::object(Get<std::vector<std::string>>(key));
+        return bpy::object(GetRef<std::vector<std::string>>(key));
 
     else
         throw BPModuleException("Unable to convert C++ type to python",
@@ -62,6 +62,23 @@ bpy::object PropertyMap::Get(const std::string & key) const
                                     { "Type", type }
                                  }
                                );
+}
+
+
+template<>
+void PropertyMap::Add(const std::string & key, const bpy::object & value)
+{
+    try {
+        Add_(key, PropertyMap::PropPlaceholder_(value));
+    }
+    catch(BPModuleException & bpe)
+    {
+        // append key info
+        bpe.AppendInfo({
+                         {"Key", key}
+                       });
+        throw bpe;
+    }
 }
 
 

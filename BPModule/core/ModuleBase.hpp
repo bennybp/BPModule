@@ -53,7 +53,6 @@ class ModuleBase
         void ThrowException(const std::string & exwhat,
                             const BPModuleException::ExceptionInfo & exinfo = {}) const;
 
-        // For use from python classes derived from this
         ModuleStore & MStore(void);
 
         void ThrowException(const std::string & exwhat,
@@ -68,9 +67,6 @@ class ModuleBase
 
         ModuleStore & mstore_;
 };
-
-// Specializations for use from python
-//template<> boost::python::object ModuleBase::GetOption<>(const std::string & key) const;
 
 
 } // close namespace bpmodule
