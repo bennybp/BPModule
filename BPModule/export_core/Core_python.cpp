@@ -135,6 +135,7 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     .def("Key", &ModuleBase::Key, return_value_policy<copy_const_reference>())
     .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
     .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>())
+    .def("HasOption", &ModuleBase::HasOption)
     .def("GetOption", &ModuleBase::GetOption<bpy::object>);
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();

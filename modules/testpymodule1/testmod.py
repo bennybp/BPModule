@@ -7,6 +7,19 @@ class TestPyModule(bp.bpcore.Test_Base):
 
   def RunTest(self):
     bp.Output("+++ In TestPyModule: RunTest. Info: (%1%) %2% %3% v%4%\n", self.ID(), self.Key(), self.Name(), self.Version());
+    bp.Output("   double_opt_def:    %1%\n", self.GetOption("double_opt_def"));
+    bp.Output("      int_opt_def:    %1%\n", self.GetOption("int_opt_def"));
+    bp.Output("     bool_opt_def:    %1%\n", self.GetOption("bool_opt_def"));
+    bp.Output("      str_opt_def:    %1%\n", self.GetOption("str_opt_def"));
+    bp.Output("\n");
+    if self.HasOption("double_opt"):
+        bp.Output("       double_opt:    %1%\n", self.GetOption("double_opt"));
+    if self.HasOption("int_opt"):
+        bp.Output("          int_opt:    %1%\n", self.GetOption("int_opt"));
+    if self.HasOption("bool_opt"):
+        bp.Output("         bool_opt:    %1%\n", self.GetOption("bool_opt"));
+    if self.HasOption("str_opt"):
+        bp.Output("          str_opt:    %1%\n", self.GetOption("str_opt"));
 
   def CallRunTest(self, s):
     bp.Output("+++ In TestPyModule: CallRunTest with %1%\n", s)
