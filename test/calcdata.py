@@ -28,7 +28,7 @@ try:
   bp.LoadModule("testmodule1", "TESTMOD1")
   bp.LoadModule("testpymodule1", "TESTPYMOD1")
 
-  bp.SetOptions("TESTMOD1", { "double_opt_def": 1.111 })
+  bp.SetOptions("TESTMOD1", { "double_opt_def": 1.111, "int_opt_def" : 55 })
   bp.CommitOptions()
   bp.DumpModuleInfo()
 
@@ -36,49 +36,13 @@ try:
   b1 = bp.mst.GetModule_Test("TESTMOD1")
   b2 = bp.mst.GetModule_Test("TESTPYMOD1")
 
-  bp.Output("\n!!!Testing exceptions\n")
-  try:
-    b1.Throw()
-  except Exception as e2:
-    bp.Error(str(e2))
+  inp = bp.bpcore.CalcData()
+  inp.Add("TEST_INPUT_1", 10.00)
+  b1_r = b1.CalcTest(inp)
+  bp.Output("B1 results: %1%\n", b1_r.GetCopy("TEST_RESULT_1"))
 
-  bp.Output("\n")
-
-  try:
-    b2.Throw()
-  except Exception as e2:
-    bp.Error(str(e2))
-
-  bp.Output("\n")
-
-  try:
-    b1.CallThrow("TESTMOD1")
-  except Exception as e2:
-    bp.Error(str(e2))
-
-  bp.Output("\n")
-
-  try:
-    b2.CallThrow("TESTPYMOD1")
-  except Exception as e2:
-    bp.Error(str(e2))
-
-  try:
-    b2.CallThrow("TESTMOD1")
-  except Exception as e2:
-    bp.Error(str(e2))
-
-  bp.Output("\n")
-
-  try:
-    b1.CallThrow("TESTMOD1")
-  except Exception as e2:
-    bp.Error(str(e2))
-
-  bp.Output("\n")
-
-  raise bp.BPModuleException("Test exception from input", [ ( "Hi2", "There2" ) ])
-
+  b2_r = b2.CalcTest(inp)
+  bp.Output("B2 results: %1%\n", b2_r.GetCopy("TEST_RESULT_1"))
 
   bp.Output("\nDone testing\n")
 

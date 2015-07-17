@@ -14,9 +14,8 @@ class CalcData : public PropertyMap
         CalcData(void) = default;
         ~CalcData(void) = default;
 
-        // CalcData cannot be copied
-        CalcData(const CalcData & rhs) = delete;
-        CalcData & operator=(const CalcData & rhs) = delete;
+        CalcData(const CalcData & rhs) = default;
+        CalcData & operator=(const CalcData & rhs) = default;
         CalcData(CalcData && rhs) = default;
         CalcData & operator=(CalcData && rhs) = default;
 
@@ -44,22 +43,9 @@ class CalcData : public PropertyMap
         }
 
         template<typename T>
-        void Add(const std::string & key, T && value)
+        void Take(const std::string & key, T && value)
         {
-            PropertyMap::Add(key, std::move(value));
-        }
-
-        // can replace information
-        template<typename T>
-        void Replace(const std::string & key, const T & value)
-        {
-            PropertyMap::Replace(key, value);
-        }
-
-        template<typename T>
-        void Replace(const std::string & key, T && value)
-        {
-            PropertyMap::Replace(key, std::move(value));
+            PropertyMap::Take(key, std::move(value));
         }
 
         // and erase
@@ -75,11 +61,6 @@ class CalcData : public PropertyMap
             PropertyMap::AddRef(ci, key);
         }
 };
-
-
-// some typedefs
-typedef CalcData CalcInputs;
-typedef CalcData CalcResults;
 
 
 } // close namespace bpmodule

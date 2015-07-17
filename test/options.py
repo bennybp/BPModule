@@ -88,8 +88,9 @@ except Exception as e:
   bp.Output("\n\n")
   bp.Error("***Caught exception in main handler\n")
   traceback.print_exc()
+  bp.Error("\n")
   bp.Error(str(e))
-  bp.Output("\n\n")
+  bp.Error("\n")
 
 
 bp.Finalize()

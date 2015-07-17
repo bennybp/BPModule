@@ -46,7 +46,7 @@ class Test_Base_Wrap : public Test_Base, public bpy::wrapper<Test_Base>
 
         ModuleStore & MStore(void)
         {
-          return ModuleBase::MStore();
+            return ModuleBase::MStore();
         }
 
         // Provide overrides for protected member functions
@@ -75,6 +75,17 @@ class Test_Base_Wrap : public Test_Base, public bpy::wrapper<Test_Base>
         {
             try {
                 this->get_override("CallThrow")(other);
+            }
+            catch(bpy::error_already_set & e)
+            {
+                throw;
+            }
+        }
+
+        virtual CalcData CalcTest(CalcData inputs)
+        {
+            try {
+                return this->get_override("CalcData")(inputs);
             }
             catch(bpy::error_already_set & e)
             {

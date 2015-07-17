@@ -33,7 +33,6 @@ public:
             out::Output("         bool_opt:    %1%\n", GetOption<bool>("bool_opt"));
         if(HasOption("str_opt"))
             out::Output("          str_opt:    %1%\n", GetOption<std::string>("str_opt"));
-       
     }
 
     virtual void CallRunTest(const std::string & other)
@@ -81,6 +80,26 @@ public:
         // shouldn't be called
         out::Output("+++Done\n");
     }
+
+
+
+    virtual CalcData CalcTest(CalcData inputs)
+    {
+        CalcData output;
+
+        // generate some data
+        long i = GetOption<long>("int_opt_def");
+        double d = GetOption<double>("double_opt_def");
+        double d2 = d * double(i);
+
+        if(inputs.Has("TEST_INPUT_1"))
+            d2 *= inputs.GetRef<double>("TEST_INPUT_1");
+
+        output.Add("TEST_RESULT_1", d2);
+
+        return output;
+    }
+
 
     virtual ~TestModule1()
     {

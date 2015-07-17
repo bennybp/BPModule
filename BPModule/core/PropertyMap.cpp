@@ -3,51 +3,20 @@
 
 namespace bpmodule {
 
-PropertyMap::PropertyMap(const PropertyMap & rhs)
-{
-    // need to Clone new elements
-    for(auto & it : rhs.opmap_)
-        opmap_.insert(PropMapValue(
-                          it.first,
-                          PropMapEntry
-                            {
-                                PropPlaceholderPtr(it.second.value->Clone())
-                            }
-                                  )
-                      );
-}
-
-
-PropertyMap & PropertyMap::operator=(const PropertyMap & rhs)
-{
-    using std::swap;
-    PropertyMap tmp(rhs);
-    swap(*this, tmp);
-    return *this;
-}
-
 
 void PropertyMap::Add_(const std::string & key, PropPlaceholderPtr && value)
 {
     
     if(Has(key))
-        throw BPModuleException(
-                                 "Adding duplicate key",
-                                 {
-                                     { "Location", "PropertyMap" },
-                                     { "Key", key }
-                                 }
-                               );
-
-    PropMapEntry phe{std::move(value)};
-    opmap_.insert(PropMapValue{key, std::move(phe) });
-}
-
-
-void PropertyMap::Replace_(const std::string & key, PropPlaceholderPtr && value)
-{
-    PropMapEntry & phe = GetOrThrow_(key);
-    phe.value = std::move(value);
+    {
+        PropMapEntry & phe = GetOrThrow_(key);
+        phe.value = std::move(value);
+    }
+    else
+    {
+        PropMapEntry phe{std::move(value)};
+        opmap_.insert(PropMapValue{key, std::move(phe) });
+    }
 }
 
 

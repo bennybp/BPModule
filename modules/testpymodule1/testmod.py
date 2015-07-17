@@ -52,6 +52,21 @@ class TestPyModule(bp.bpcore.Test_Base):
     bp.Output("+++Done\n");
 
 
+  def CalcTest(self, inputs):
+    output = bp.bpcore.CalcData()
+
+    i = self.GetOption("int_opt_def")
+    d = self.GetOption("double_opt_def")
+    d2 = d * i;
+
+    if inputs.Has("TEST_INPUT_1"):
+        d2 *= inputs.GetCopy("TEST_INPUT_1")
+
+    output.Add("TEST_RESULT_1", d2)
+    return output
+
+
+
 def CreateModule(name, myid, mstore, minfo):
     return TestPyModule(myid, mstore, minfo)
 

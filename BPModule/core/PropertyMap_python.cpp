@@ -82,24 +82,6 @@ void PropertyMap::Add(const std::string & key, const bpy::object & value)
 }
 
 
-template<>
-void PropertyMap::Replace(const std::string & key, const bpy::object & value)
-{
-    try {
-        Replace_(key, PropertyMap::PropPlaceholder_(value));
-    }
-    catch(BPModuleException & bpe)
-    {
-        // append key info
-        bpe.AppendInfo({
-                         {"Key", key}
-                       });
-        throw bpe;
-    }
-}
-
-
-
 PropertyMap::PropPlaceholderPtr PropertyMap::PropertyMap::PropPlaceholder_(const bpy::object & value)
 {
     std::string cl = bpy::extract<std::string>(value.attr("__class__").attr("__name__"));

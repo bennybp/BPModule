@@ -20,13 +20,11 @@ class PropertyMap
         PropertyMap(void) = default;
         ~PropertyMap(void) = default;
 
-        PropertyMap(const PropertyMap & rhs);
-        PropertyMap & operator=(const PropertyMap & rhs);
+        PropertyMap(const PropertyMap & rhs) = default;
+        PropertyMap & operator=(const PropertyMap & rhs) = default;
 
         PropertyMap(PropertyMap && rhs) = default;
         PropertyMap & operator=(PropertyMap && rhs) = default;
-
-
 
 
         bool Has(const std::string & key) const;
@@ -46,14 +44,6 @@ class PropertyMap
             return ph->GetRef();
         }
 
-        /*
-        template<typename T>
-        T & GetRef(const std::string & key)
-        {
-            PropHolder<T> * ph = GetOrThrow_Cast_<T>(key);
-            return ph->GetRef();
-        }
-        */
 
         template<typename T>
         T GetCopy(const std::string & key) const
@@ -71,27 +61,12 @@ class PropertyMap
 
 
         template<typename T>
-        void Add(const std::string & key, T && value)
+        void Take(const std::string & key, T && value)
         {
             auto v = PropPlaceholderPtr(new PropHolder<T>(std::move(value)));
             Add_(key, std::move(v));
         }
         
-
-        template<typename T>
-        void Replace(const std::string & key, const T & value)
-        {
-            auto v = PropPlaceholderPtr(new PropHolder<T>(value));
-            Replace_(key, std::move(v));
-        }
-
-        template<typename T>
-        void Replace(const std::string & key, T && value)
-        {
-            auto v = PropPlaceholderPtr(new PropHolder<T>(std::move(value)));
-            Replace_(key, std::move(v));
-        }
-
 
         // since data is read-only once added, it makes sense that
         // the other map can be const. Changing/replacing it here
@@ -207,28 +182,7 @@ class PropertyMap
         }
 
 
-        /*
-        template<typename T>
-        PropHolder<T> * GetOrThrow_Cast_(const std::string & key)
-        {
-            PropMapEntry & pme = GetOrThrow_(key);
-            PropHolder<T> * ph = dynamic_cast<PropHolder<T> *>(pme.value.get());
-            if(ph == nullptr)
-                throw BPModuleException(
-                                         "Bad cast",
-                                         {
-                                            { "Location", "PropertyMap" },
-                                            { "From", pme.value->Type() },
-                                            { "  To", typeid(T).name() }
-                                         }
-                                       );
-
-            return ph;
-        }
-        */
-
         void Add_(const std::string & key, PropPlaceholderPtr && value);
-        void Replace_(const std::string & key, PropPlaceholderPtr && value);
         size_t Erase_(const std::string & key);
 
         // Creating a PropPlaceHolder from python object
@@ -243,9 +197,6 @@ boost::python::api::object PropertyMap::GetCopy<>(const std::string & key) const
 
 template<>
 void PropertyMap::Add<>(const std::string & key, const boost::python::api::object & value);
-
-template<>
-void PropertyMap::Replace<>(const std::string & key, const boost::python::api::object & value);
 
 
 } // close namespace bpmodule

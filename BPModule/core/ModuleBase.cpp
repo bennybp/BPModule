@@ -60,5 +60,4 @@ bool ModuleBase::HasOption(const std::string & key) const
     return options_.Has(key);
 }
 
-
 } // close namespace bpmodule

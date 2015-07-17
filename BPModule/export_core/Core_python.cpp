@@ -125,6 +125,19 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     .def("AddPyModule", Wrap_PyModuleLoader_AddPyModule);
 
 
+    /////////////////////////
+    // CalcData
+    /////////////////////////
+    class_<CalcData>("CalcData", init<>())
+    .def(init<const CalcData &>())
+    .def("Has", &CalcData::Has)
+    .def("GetCopy", &CalcData::GetCopy<bpy::object>)
+    .def("GetRef", &CalcData::GetRef<bpy::object>, return_internal_reference<>()) 
+    .def("Add", &CalcData::Add<bpy::object>)
+    .def("Erase", &CalcData::Erase)
+    .def("AddRef", &CalcData::AddRef);
+
+
     ///////////////////////
     // Module Base classes
     ///////////////////////
@@ -138,6 +151,8 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     .def("HasOption", &ModuleBase::HasOption)
     .def("GetOption", &ModuleBase::GetOption<bpy::object>);
 
+
+
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
     class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, const ModuleInfo &>())
     .def("MStore", &Test_Base_Wrap::MStore, return_internal_reference<>())
@@ -145,7 +160,8 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     .def("RunTest", pure_virtual(&Test_Base::RunTest))
     .def("CallRunTest", pure_virtual(&Test_Base::CallRunTest))
     .def("Throw", pure_virtual(&Test_Base::Throw))
-    .def("CallThrow", pure_virtual(&Test_Base::CallThrow));
+    .def("CallThrow", pure_virtual(&Test_Base::CallThrow))
+    .def("CalcTest", pure_virtual(&Test_Base::CalcTest), return_value_policy<return_by_value>());
 
 }
 

@@ -48,6 +48,7 @@ class ModuleBase
 
 
         bool HasOption(const std::string & key) const;
+
         
     protected:
         void ThrowException(const std::string & exwhat,
@@ -58,17 +59,13 @@ class ModuleBase
         void ThrowException(const std::string & exwhat,
                             const boost::python::list & exinfo);
 
+
     private:
         unsigned long id_;
         std::string key_;
         std::string name_;
         std::string version_;
         OptionMap options_;
-
-
-        // main calculation information
-        CalcInputs inputs_;
-        CalcResults results_;
 
         ModuleStore & mstore_;
 };
