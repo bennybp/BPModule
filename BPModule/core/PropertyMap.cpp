@@ -51,6 +51,12 @@ void PropertyMap::Change_(const std::string & key, std::unique_ptr<PropPlacehold
 }
 
 
+size_t PropertyMap::Erase(const std::string & key)
+{
+    return opmap_.erase(key);
+}
+
+
 size_t PropertyMap::Erase_(const std::string & key)
 {
     return opmap_.erase(key);

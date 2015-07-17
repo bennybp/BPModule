@@ -91,6 +91,9 @@ class PropertyMap
         }
 
 
+        size_t Erase(const std::string & key);
+
+
         // construct from a python list of tuples
         PropertyMap(const boost::python::list & olist);
 
