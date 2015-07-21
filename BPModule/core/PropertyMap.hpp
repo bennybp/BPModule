@@ -53,10 +53,10 @@ class PropertyMap
 
 
         template<typename T>
-        void Add(const std::string & key, const T & value)
+        void Set(const std::string & key, const T & value)
         {
             auto v = PropPlaceholderPtr(new PropHolder<T>(value));
-            Add_(key, std::move(v));
+            Set_(key, std::move(v));
         }
 
 
@@ -64,14 +64,15 @@ class PropertyMap
         void Take(const std::string & key, T && value)
         {
             auto v = PropPlaceholderPtr(new PropHolder<T>(std::move(value)));
-            Add_(key, std::move(v));
+            Set_(key, std::move(v));
         }
         
 
         // since data is read-only once added, it makes sense that
         // the other map can be const. Changing/replacing it here
         // will only change this map, not the other
-        void AddRef(const PropertyMap & pm, const std::string & key);
+        void SetRef(const PropertyMap & pm, const std::string & key, const std::string & newkey);
+        void SetRef(const PropertyMap & pm, const std::string & key);
 
         size_t Erase(const std::string & key);
 
@@ -182,7 +183,7 @@ class PropertyMap
         }
 
 
-        void Add_(const std::string & key, PropPlaceholderPtr && value);
+        void Set_(const std::string & key, PropPlaceholderPtr && value);
         size_t Erase_(const std::string & key);
 
         // Creating a PropPlaceHolder from python object
@@ -196,7 +197,7 @@ template<>
 boost::python::api::object PropertyMap::GetCopy<>(const std::string & key) const;
 
 template<>
-void PropertyMap::Add<>(const std::string & key, const boost::python::api::object & value);
+void PropertyMap::Set<>(const std::string & key, const boost::python::api::object & value);
 
 
 } // close namespace bpmodule

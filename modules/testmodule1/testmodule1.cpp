@@ -95,7 +95,7 @@ public:
         if(inputs.Has("TEST_INPUT_1"))
             d2 *= inputs.GetRef<double>("TEST_INPUT_1");
 
-        output.Add("TEST_RESULT_1", d2);
+        output.Set("TEST_RESULT_1", d2);
 
         return output;
     }

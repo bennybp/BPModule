@@ -20,7 +20,7 @@ PropertyMap::PropertyMap(const bpy::list & olist)
     for(int i = 0; i < optlen; i++)
     {
         std::string key = bpy::extract<std::string>(olist[i][0]);
-        Add_(key, PropertyMap::PropPlaceholder_(olist[i][1]));
+        Set_(key, PropertyMap::PropPlaceholder_(olist[i][1]));
     }
 }
 
@@ -66,10 +66,10 @@ bpy::object PropertyMap::GetCopy<>(const std::string & key) const
 
 
 template<>
-void PropertyMap::Add(const std::string & key, const bpy::object & value)
+void PropertyMap::Set(const std::string & key, const bpy::object & value)
 {
     try {
-        Add_(key, PropertyMap::PropPlaceholder_(value));
+        Set_(key, PropertyMap::PropPlaceholder_(value));
     }
     catch(BPModuleException & bpe)
     {

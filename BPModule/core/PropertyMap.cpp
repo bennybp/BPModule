@@ -4,7 +4,7 @@
 namespace bpmodule {
 
 
-void PropertyMap::Add_(const std::string & key, PropPlaceholderPtr && value)
+void PropertyMap::Set_(const std::string & key, PropPlaceholderPtr && value)
 {
     
     if(Has(key))
@@ -32,26 +32,21 @@ size_t PropertyMap::Erase_(const std::string & key)
 }
 
 
-void PropertyMap::AddRef(const PropertyMap & pm, const std::string & key)
+void PropertyMap::SetRef(const PropertyMap & pm, const std::string & key, const std::string & newkey)
 {
-    if(Has(key))
-        throw BPModuleException(
-                                 "Adding duplicate key",
-                                 {
-                                     { "Location", "PropertyMap" },
-                                     { "Key", key }
-                                 }
-                               );
-    
-
     // get the shared ptr, etc, from the other property map
     // This should copy the shared_ptr
     PropMapEntry pe = pm.GetOrThrow_(key);
 
     // add it here
-    opmap_.insert(PropMapValue{key, std::move(pe)});    
+    opmap_.insert(PropMapValue{newkey, std::move(pe)});    
 }
 
+void PropertyMap::SetRef(const PropertyMap & pm, const std::string & key)
+{
+    //Setref with the same key
+    SetRef(pm, key, key);
+}
 
 bool PropertyMap::Has(const std::string & key) const
 {

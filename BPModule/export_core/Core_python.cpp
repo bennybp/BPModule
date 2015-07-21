@@ -132,10 +132,11 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     .def(init<const CalcData &>())
     .def("Has", &CalcData::Has)
     .def("GetCopy", &CalcData::GetCopy<bpy::object>)
-    .def("GetRef", &CalcData::GetRef<bpy::object>, return_internal_reference<>()) 
-    .def("Add", &CalcData::Add<bpy::object>)
+//    .def("GetRef", &CalcData::GetRef<bpy::object>, return_value_policy<copy_const_reference>()) 
+    .def("Set", &CalcData::Set<bpy::object>)
     .def("Erase", &CalcData::Erase)
-    .def("AddRef", &CalcData::AddRef);
+    .def("SetRef", static_cast<void(CalcData::*)(const CalcData &, const std::string &, const std::string &)>(&CalcData::SetRef))
+    .def("SetRef", static_cast<void(CalcData::*)(const CalcData &, const std::string &)>(&CalcData::SetRef));
 
 
     ///////////////////////

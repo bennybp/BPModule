@@ -37,9 +37,9 @@ class CalcData : public PropertyMap
 
         // can add information
         template<typename T>
-        void Add(const std::string & key, const T & value)
+        void Set(const std::string & key, const T & value)
         {
-            PropertyMap::Add(key, value);
+            PropertyMap::Set(key, value);
         }
 
         template<typename T>
@@ -56,9 +56,14 @@ class CalcData : public PropertyMap
 
 
         // add a reference to existing data
-        void AddRef(const CalcData & ci, const std::string & key)
+        void SetRef(const CalcData & ci, const std::string & key, const std::string & newkey)
         {
-            PropertyMap::AddRef(ci, key);
+            PropertyMap::SetRef(ci, key, newkey);
+        }
+
+        void SetRef(const CalcData & ci, const std::string & key)
+        {
+            PropertyMap::SetRef(ci, key);
         }
 };
 
