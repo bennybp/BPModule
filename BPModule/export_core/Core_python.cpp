@@ -9,6 +9,11 @@
 #include "BPModule/export_core/Output_python.hpp"
 #include "BPModule/export_core/Exception_python.hpp"
 
+
+// MPI
+#include "BPModule/mpi/MPI.hpp"
+
+
 using namespace boost::python;
 namespace bpy = boost::python;
 
@@ -95,6 +100,9 @@ BOOST_PYTHON_MODULE(bpmodule_core)
     def("Changed", Output_Wrap_Changed);
     def("Debug", Output_Wrap_Debug);
 
+    // MPI
+    def("InitMPI", &mpi::InitMPI);
+    def("FinalizeMPI", &mpi::FinalizeMPI);
 
     // This is only needed because we pass through python
     // No need to do declare all the members, etc 
