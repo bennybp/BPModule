@@ -37,7 +37,7 @@ try:
   b2 = bp.mst.GetModule_Test("TESTPYMOD1")
 
   inp = bp.bpcore.CalcData()
-  inp.Add("TEST_INPUT_1", 10.00)
+  inp.Set("TEST_INPUT_1", 10.00)
   b1_r = b1.CalcTest(inp)
   bp.Output("B1 results: %1%\n", b1_r.GetCopy("TEST_RESULT_1"))
 

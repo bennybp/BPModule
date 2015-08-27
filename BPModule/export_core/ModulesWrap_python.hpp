@@ -62,35 +62,17 @@ class Test_Base_Wrap : public Test_Base, public bpy::wrapper<Test_Base>
 
         virtual void Throw(void)
         {
-            try {
-                this->get_override("Throw")();
-            }
-            catch(bpy::error_already_set & e)
-            {
-                throw;
-            }
+            this->get_override("Throw")();
         }
 
         virtual void CallThrow(const std::string & other)
         {
-            try {
-                this->get_override("CallThrow")(other);
-            }
-            catch(bpy::error_already_set & e)
-            {
-                throw;
-            }
+            this->get_override("CallThrow")(other);
         }
 
         virtual CalcData CalcTest(CalcData inputs)
         {
-            try {
-                return this->get_override("CalcData")(inputs);
-            }
-            catch(bpy::error_already_set & e)
-            {
-                throw;
-            }
+            return this->get_override("CalcData")(inputs);
         }
 };
 
