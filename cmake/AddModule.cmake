@@ -29,9 +29,6 @@ macro(ADD_MODULE MODULE_NAME
       message(STATUS "${MODULE_NAME} cxx includes: ${${MODULE_NAME}_CXX_INCLUDES}")
 
       # Linker flags
-      message(STATUS "HERE: ${OpenMP_CXX_FLAGS}")
-      message(STATUS "HERE: ${MPI_CXX_LINK_FLAGS}")
-      message(STATUS "HERE: ${MPI_CXX_LIBRARIES}")
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${MODULE_CXX_LINK_FLAGS}")
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${OpenMP_CXX_FLAGS}")
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")
