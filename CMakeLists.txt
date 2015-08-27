@@ -10,6 +10,7 @@ include("cmake/Common.cmake")
 include("cmake/AddModule.cmake")
 include("cmake/AddCore.cmake")
 include("cmake/Install.cmake")
+include("cmake/Cyclops.cmake")
 
 
 #################################

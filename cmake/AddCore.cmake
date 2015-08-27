@@ -1,5 +1,3 @@
-include("cmake/Common.cmake")
-
 # Adds a core library target
 macro(ADD_CORELIB LIB_NAME
                   LIB_FILES
@@ -21,8 +19,6 @@ macro(ADD_CORELIB LIB_NAME
   # Includes
   list(APPEND ${LIB_NAME}_CXX_INCLUDES "${BPMODULE_PATH}")
   list(APPEND ${LIB_NAME}_CXX_INCLUDES "${LIB_CXX_INCLUDES}")
-  list(APPEND ${LIB_NAME}_CXX_INCLUDES "${Boost_INCLUDE_DIRS}")
-  list(APPEND ${LIB_NAME}_CXX_INCLUDES "${PYTHON_INCLUDE_DIRS}")
   set_target_properties(${LIB_NAME} PROPERTIES INCLUDE_DIRECTORIES "${${LIB_NAME}_CXX_INCLUDES}")
   message(STATUS "${LIB_NAME} cxx includes: ${${LIB_NAME}_CXX_INCLUDES}")
 

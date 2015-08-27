@@ -1,6 +1,9 @@
-
 # Find openmp, boost, and python
 find_package(OpenMP)
+if(NOT OPENMP_FOUND) 
+  message(FATAL_ERROR "Error - OpenMP is required!")
+endif()
+
 find_package(Boost COMPONENTS python3 REQUIRED)
 
 set(Python_ADDITIONAL_VERSIONS "3.3;3.4")

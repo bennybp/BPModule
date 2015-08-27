@@ -9,5 +9,7 @@ set(BPMODULE_PYTHON_FILES
    )
 
 
-ADD_CORELIB(bpmodule_python "${BPMODULE_PYTHON_FILES}" "" "")
+ADD_CORELIB(bpmodule_python "${BPMODULE_PYTHON_FILES}"
+                            ""
+                            "${Boost_INCLUDE_DIRS};${PYTHON_INCLUDE_DIRS}")
 

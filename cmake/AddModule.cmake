@@ -1,5 +1,3 @@
-include("cmake/Common.cmake")
-
 # Creates a target for a module
 macro(ADD_MODULE MODULE_NAME
                  MODULE_FILES
