@@ -1,3 +1,5 @@
+include("cmake/Common.cmake")
+
 # Adds a core library target
 macro(ADD_CORELIB LIB_NAME
                   LIB_FILES
@@ -9,6 +11,7 @@ macro(ADD_CORELIB LIB_NAME
 
   # CXX Flags
   list(APPEND ${LIB_NAME}_CXX_FLAGS "${LIB_CXX_FLAGS}")
+  list(APPEND ${LIB_NAME}_CXX_FLAGS "${OpenMP_CXX_FLAGS}")
   list(APPEND ${LIB_NAME}_CXX_FLAGS "-fPIC")
   list(APPEND ${LIB_NAME}_CXX_FLAGS "-std=c++11;-Wall;-pedantic")
   string(REPLACE ";" " " ${LIB_NAME}_CXX_FLAGS "${${LIB_NAME}_CXX_FLAGS}")

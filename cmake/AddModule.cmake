@@ -1,3 +1,5 @@
+include("cmake/Common.cmake")
+
 # Creates a target for a module
 macro(ADD_MODULE MODULE_NAME
                  MODULE_FILES
@@ -11,6 +13,7 @@ macro(ADD_MODULE MODULE_NAME
 
       # CXX Flags
       list(APPEND ${MODULE_NAME}_CXX_FLAGS "${MODULE_CXX_FLAGS}")
+      list(APPEND ${MODULE_NAME}_CXX_FLAGS "${OpenMP_CXX_FLAGS}")
       list(APPEND ${MODULE_NAME}_CXX_FLAGS "-fPIC")
       list(APPEND ${MODULE_NAME}_CXX_FLAGS "-std=c++11;-Wall;-pedantic")
       string(REPLACE ";" " " ${MODULE_NAME}_CXX_FLAGS "${${MODULE_NAME}_CXX_FLAGS}")
@@ -26,6 +29,7 @@ macro(ADD_MODULE MODULE_NAME
 
       # Linker flags
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${MODULE_CXX_LINK_FLAGS}")
+      list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${OpenMP_CXX_FLAGS}")
       target_link_libraries(${MODULE_NAME} "${${MODULE_NAME}_CXX_LINK_FLAGS}")
       message(STATUS "${MODULE_NAME} cxx link flags: ${${MODULE_NAME}_CXX_LINK_FLAGS}")
 
