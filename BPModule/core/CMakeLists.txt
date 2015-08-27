@@ -29,6 +29,7 @@ set(CORE_HEADERS
 set(CORE_LIBS
             $<TARGET_OBJECTS:bpmodule_modulebase>
             $<TARGET_OBJECTS:bpmodule_python>
+            ${BPMODULE_CYCLOPS_PATH}/lib/libctf.a
    )
 
 
