@@ -15,8 +15,15 @@ set(CORE_FILES
    )
 
 set(CORE_HEADERS
-            ModuleBase.hpp
-            ModuleStore.hpp
+        CalcData.hpp
+        Exception.hpp
+        ModuleBase.hpp
+        ModuleInfo.hpp
+        OptionMap.hpp
+        Output.hpp
+        PropertyMap.hpp
+        BoostPython_fwd.hpp
+        ModuleStore.hpp
    )
 
 set(CORE_LIBS

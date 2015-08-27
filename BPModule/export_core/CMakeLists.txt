@@ -9,5 +9,5 @@ set(BPMODULE_PYTHON_FILES
    )
 
 
-ADD_CORELIB(bpmodule_python "${BPMODULE_PYTHON_FILES}" "" "" "")
+ADD_CORELIB(bpmodule_python "${BPMODULE_PYTHON_FILES}" "" "")
 

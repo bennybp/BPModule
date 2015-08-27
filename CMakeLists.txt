@@ -5,14 +5,18 @@ project(BPModule CXX)
 #################################
 # Load macros
 #################################
+set(BPMODULE_PATH ${CMAKE_SOURCE_DIR})
 include("cmake/Common.cmake")
+include("cmake/AddModule.cmake")
+include("cmake/AddCore.cmake")
+include("cmake/Install.cmake")
 
 
 #################################
 # Add the various subdirectories
 #################################
 add_subdirectory(BPModule)
-add_subdirectory(modules)
 
 
 install(DIRECTORY bppython DESTINATION ${CMAKE_INSTALL_PREFIX}/modules)
+install(DIRECTORY cmake DESTINATION ${CMAKE_INSTALL_PREFIX})
