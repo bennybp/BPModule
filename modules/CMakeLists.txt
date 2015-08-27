@@ -1,3 +1,0 @@
-add_subdirectory(testmodule1)
-add_subdirectory(testpymodule1)
-add_subdirectory(test_options)
