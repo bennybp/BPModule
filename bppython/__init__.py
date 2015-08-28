@@ -7,6 +7,7 @@ import importlib
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 import bpmodule_base as bpbase
 
+from .output import *
 from .utils import *
 from .exception import *
 from .optioncheck import *
