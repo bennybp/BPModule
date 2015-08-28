@@ -1,17 +1,16 @@
-#include "BPModule/core/ModuleStore.hpp"
-#include "BPModule/core/CModuleLoader.hpp"
-#include "BPModule/core/PyModuleLoader.hpp"
-
-
-// helpers and wrappers
-#include "BPModule/export_core/ModulesWrap_python.hpp"
-#include "BPModule/export_core/Python_stdconvert.hpp"
-#include "BPModule/export_core/Output_python.hpp"
-#include "BPModule/export_core/Exception_python.hpp"
+// helpers
+#include "BPModule/python_helper/Python_stdconvert.hpp"
 
 
 // MPI
 #include "BPModule/mpi/MPI.hpp"
+
+// Various components
+#include "BPModule/core/ModuleStore.hpp"
+#include "BPModule/core/CModuleLoader.hpp"
+#include "BPModule/core/PyModuleLoader.hpp"
+#include "BPModule/core/Exception.hpp"
+#include "BPModule/modulebase/All_python.hpp"
 
 
 using namespace boost::python;
@@ -22,29 +21,6 @@ namespace bpy = boost::python;
 namespace bpmodule {
 namespace export_python {
 
-
-// wraps CModuleLoader::LoadSO so that it can take a dict for the ModuleInfo
-void Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const bpy::dict & minfo)
-{
-    // dictionary is converted to ModuleInfo via constructor
-    return ml->LoadSO(key, minfo);
-}
-
-// wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
-void Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
-                                     const std::string & key, bpy::object func,
-                                     const bpy::dict & minfo)
-{
-    // dictionary is converted to ModuleInfo via constructor
-    return ml->AddPyModule(key, func, minfo);
-}
-
-
-void Wrap_ModuleStore_SetOptions(ModuleStore * mst, const std::string & key, bpy::list & opt)
-{
-    // OptionMap has a conversion constructor
-    mst->SetOptions(key, opt);
-}
 
 template<typename T>
 boost::shared_ptr<T> Wrap_GetScopedModule(ModuleStore * ms, const std::string & key)
@@ -62,7 +38,7 @@ boost::shared_ptr<T> Wrap_GetScopedModule(ModuleStore * ms, const std::string & 
 BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ThrowException_overloads, ThrowException, 1, 2)
 
 
-BOOST_PYTHON_MODULE(bpmodule_core)
+BOOST_PYTHON_MODULE(bpmodule_base)
 {
     // set the translator for exceptions
     register_exception_translator<BPModuleException>(&TranslateException);

@@ -1,4 +1,4 @@
 from .modinfo import *
 
 # SO file
-from .bpmodule_core import *
+from .bpmodule_base import *

@@ -14,10 +14,10 @@ import bppython as bp
 bp.Init(sys.argv)
 
 # Set some outputs
-bp.bpcore.SetOut_Stdout()
-#bpcore.SetOut_File("test.out")
-bp.bpcore.SetColor(True)
-bp.bpcore.SetDebug(True)
+bp.bpbase.SetOut_Stdout()
+#bpbase.SetOut_File("test.out")
+bp.bpbase.SetColor(True)
+bp.bpbase.SetDebug(True)
 
 
 # Test

@@ -3,11 +3,11 @@
 
 #include <stdexcept>
 
-#include <fstream>
 #include <vector>
 #include <string>
 #include <utility>
 
+#include "BPModule/core/Output.hpp"
 
 
 namespace bpmodule {
@@ -41,6 +41,20 @@ class BPModuleException : public std::exception
         std::string whatstr_;
         ExceptionInfo exinfo_;
 };
+
+
+
+std::string ExceptionString(const BPModuleException & ex);
+
+
+
+namespace export_python {
+
+void TranslateException(const BPModuleException & ex);
+
+} // close namespace export_python
+
+
 
 
 } // close namespace bpmodule

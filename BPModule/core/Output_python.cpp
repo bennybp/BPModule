@@ -1,5 +1,5 @@
-#include "BPModule/core/Exception.hpp"
-#include "BPModule/export_core/Output_python.hpp"
+#include <boost/python.hpp>
+#include "BPModule/core/Output.hpp"
 
 namespace bpy = boost::python;
 
@@ -9,7 +9,7 @@ namespace bpmodule {
 namespace export_python {
 
 // Wrap printing
-void Output_Wrap(output::OutputType type, const std::string fmt, bpy::list args)
+void Output_Wrap(output::OutputType type, const std::string fmt, const bpy::list & args)
 {
     boost::format bfmt(fmt);
 
@@ -34,42 +34,42 @@ void Output_Wrap(output::OutputType type, const std::string fmt, bpy::list args)
 
 
 
-void Output_Wrap_Output(const std::string fmt, bpy::list args)
+void Output_Wrap_Output(const std::string fmt, const bpy::list & args)
 {
     Output_Wrap(bpmodule::output::OutputType::Output, fmt, args);
 }
 
 
 
-void Output_Wrap_Success(const std::string fmt, bpy::list args)
+void Output_Wrap_Success(const std::string fmt, const bpy::list & args)
 {
     Output_Wrap(bpmodule::output::OutputType::Success, fmt, args);
 }
 
 
 
-void Output_Wrap_Changed(const std::string fmt, bpy::list args)
+void Output_Wrap_Changed(const std::string fmt, const bpy::list & args)
 {
     Output_Wrap(bpmodule::output::OutputType::Changed, fmt, args);
 }
 
 
 
-void Output_Wrap_Warning(const std::string fmt, bpy::list args)
+void Output_Wrap_Warning(const std::string fmt, const bpy::list & args)
 {
     Output_Wrap(bpmodule::output::OutputType::Warning, fmt, args);
 }
 
 
 
-void Output_Wrap_Error(const std::string fmt, bpy::list args)
+void Output_Wrap_Error(const std::string fmt, const bpy::list & args)
 {
     Output_Wrap(bpmodule::output::OutputType::Error, fmt, args);
 }
 
 
 
-void Output_Wrap_Debug(const std::string fmt, bpy::list args)
+void Output_Wrap_Debug(const std::string fmt, const bpy::list & args)
 {
     Output_Wrap(bpmodule::output::OutputType::Debug, fmt, args);
 }

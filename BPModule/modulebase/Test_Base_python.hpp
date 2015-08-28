@@ -1,8 +1,8 @@
 #ifndef MODULESWRAP_PYTHON_H
 #define MODULESWRAP_PYTHON_H
 
-#include "BPModule/core/ModuleInfo.hpp"
 #include "BPModule/core/Output.hpp"
+#include "BPModule/core/Exception.hpp"
 
 // All the module base classes
 #include "BPModule/modulebase/All.hpp"
@@ -12,24 +12,10 @@
 namespace bpy = boost::python;
 namespace out = bpmodule::output;
 
-static BPModuleException::ExceptionInfo
-PythonListToPairVec(const bpy::list & exinfo)
-{
-    int length = bpy::extract<int>(exinfo.attr("__len__")());
-    BPModuleException::ExceptionInfo inf;
-    inf.reserve(length);
-
-    for (int i = 0; i < length; i++)
-        inf.push_back({
-                        bpy::extract<std::string>(exinfo[i][0]),
-                        bpy::extract<std::string>(exinfo[i][1]),
-                      });
-
-    return inf;
-}
 
 namespace bpmodule {
 namespace export_python {
+
 
 class Test_Base_Wrap : public Test_Base, public bpy::wrapper<Test_Base>
 {
@@ -74,7 +60,27 @@ class Test_Base_Wrap : public Test_Base, public bpy::wrapper<Test_Base>
         {
             return this->get_override("CalcData")(inputs);
         }
+
+
+    private:
+        static BPModuleException::ExceptionInfo
+        PythonListToPairVec(const bpy::list & exinfo)
+        {
+            int length = bpy::extract<int>(exinfo.attr("__len__")());
+            BPModuleException::ExceptionInfo inf;
+            inf.reserve(length);
+
+            for (int i = 0; i < length; i++)
+                inf.push_back({
+                                bpy::extract<std::string>(exinfo[i][0]),
+                                bpy::extract<std::string>(exinfo[i][1]),
+                              });
+
+            return inf;
+        }
+
 };
+
 
 
 } // close namespace export_python

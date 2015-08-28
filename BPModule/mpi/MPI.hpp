@@ -1,4 +1,4 @@
-#include "BPModule/core/BoostPython_fwd.hpp"
+#include "BPModule/python_helper/BoostPython_fwd.hpp"
 
 namespace bpy = boost::python;
 

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "BPModule/core/BoostPython_fwd.hpp"
+#include "BPModule/python_helper/BoostPython_fwd.hpp"
 #include "BPModule/core/OptionMap.hpp"
 
 

@@ -1,6 +1,6 @@
 #include "BPModule/core/Output.hpp"
 #include "BPModule/core/ModuleInfo.hpp"
-#include "BPModule/export_core/Python_stdconvert.hpp"
+#include "BPModule/python_helper/Python_stdconvert.hpp"
 
 namespace out = bpmodule::output;
 namespace bpy = boost::python;

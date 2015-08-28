@@ -5,7 +5,7 @@ import importlib
 # Important! Symbols must be loaded now and available
 # globally! WILL NOT WORK WITHOUT
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
-import bpmodule_core as bpcore
+import bpmodule_base as bpbase
 
 from .utils import *
 from .exception import *
@@ -24,22 +24,22 @@ def Init(argv, output = "stdout", color = True, debug = False):
   global pml
 
   if output == "stdout":
-    bpcore.SetOut_Stdout()
+    bpbase.SetOut_Stdout()
   else:
-    bpcore.SetOut_File(output)
+    bpbase.SetOut_File(output)
 
-  bpcore.SetColor(color)
-  bpcore.SetDebug(debug) 
+  bpbase.SetColor(color)
+  bpbase.SetDebug(debug) 
 
 
   # Initialize MPI
-  bpcore.InitMPI(argv)
+  bpbase.InitMPI(argv)
 
 
-  # Print info about the core module
-  for key,minfo in bpcore.minfo.items():
+  # Print info about the base module
+  for key,minfo in bpbase.minfo.items():
       minfo["key"] = key
-      minfo["path"] = os.path.dirname(bpcore.__file__) + "/"
+      minfo["path"] = os.path.dirname(bpbase.__file__) + "/"
 
       # merge the options
       defopt = minfo["options"]
@@ -56,9 +56,9 @@ def Init(argv, output = "stdout", color = True, debug = False):
 
 
   # Create the various stores and loaders
-  mst = bpcore.ModuleStore()
-  cml = bpcore.CModuleLoader(mst)
-  pml = bpcore.PyModuleLoader(mst)
+  mst = bpbase.ModuleStore()
+  cml = bpbase.CModuleLoader(mst)
+  pml = bpbase.PyModuleLoader(mst)
 
 
 
@@ -73,7 +73,7 @@ def Finalize():
     cml.CloseHandles()
     Output("BPModule finalized\n")
 
-    bpcore.FinalizeMPI()
+    bpbase.FinalizeMPI()
 
 
 

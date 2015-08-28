@@ -1,12 +1,9 @@
+#include <sstream>
+
 #include "BPModule/core/Exception.hpp"
-#include "BPModule/core/Output.hpp"
 
-#include <boost/python.hpp>
-
-using namespace boost::python;
 
 namespace bpmodule {
-namespace export_python {
 
 std::string ExceptionString(const BPModuleException & ex)
 {
@@ -21,14 +18,6 @@ std::string ExceptionString(const BPModuleException & ex)
     return ss.str();
 }
 
-// the main exception translator
-void TranslateException(const BPModuleException & ex)
-{
-    PyErr_SetString(PyExc_RuntimeError, ExceptionString(ex).c_str());
-}
 
 
-
-} // close namespace export_python
 } // close namespace bpmodule
-

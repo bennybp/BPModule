@@ -1,6 +1,3 @@
-#ifndef EXCEPTION_PYTHON_HPP
-#define EXCEPTION_PYTHON_HPP
-
 #include "BPModule/core/Exception.hpp"
 
 #include <boost/python.hpp>
@@ -10,11 +7,14 @@ using namespace boost::python;
 namespace bpmodule {
 namespace export_python {
 
-void TranslateException(const BPModuleException & ex);
+// the main exception translator
+void TranslateException(const BPModuleException & ex)
+{
+    PyErr_SetString(PyExc_RuntimeError, ExceptionString(ex).c_str());
+}
 
-std::string ExceptionString(const BPModuleException & ex);
+
 
 } // close namespace export_python
 } // close namespace bpmodule
 
-#endif

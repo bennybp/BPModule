@@ -14,10 +14,10 @@ import bppython as bp
 bp.Init(sys.argv)
 
 # Set some outputs
-bp.bpcore.SetOut_Stdout()
-#bpcore.SetOut_File("test.out")
-bp.bpcore.SetColor(True)
-bp.bpcore.SetDebug(True)
+bp.bpbase.SetOut_Stdout()
+#bpbase.SetOut_File("test.out")
+bp.bpbase.SetColor(True)
+bp.bpbase.SetDebug(True)
 
 
 # Test
@@ -34,7 +34,7 @@ try:
   b1 = bp.mst.GetModule_Test("TESTMOD1")
   b2 = bp.mst.GetModule_Test("TESTPYMOD1")
 
-  inp = bp.bpcore.CalcData()
+  inp = bp.bpbase.CalcData()
   inp.Set("TEST_INPUT_1", 10.00)
   b1_r = b1.CalcTest(inp)
   bp.Output("B1 results: %1%\n", b1_r.GetCopy("TEST_RESULT_1"))

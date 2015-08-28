@@ -6,6 +6,9 @@
 #include <string>
 
 #include <boost/python.hpp>
+namespace bpy = boost::python;
+
+
 
 namespace bpmodule {
 
@@ -25,21 +28,31 @@ class PyModuleLoader
         PyModuleLoader & operator=(const PyModuleLoader & rhs) = delete;
         PyModuleLoader(const PyModuleLoader & rhs) = delete;
 
-        void AddPyModule(const std::string & key, boost::python::object func, const ModuleInfo & minfo);
+        void AddPyModule(const std::string & key, bpy::object func, const ModuleInfo & minfo);
 
         void DeleteAll(void);
 
     private:
-        typedef std::unordered_map<unsigned long, boost::python::object> ObjectMap;
+        typedef std::unordered_map<unsigned long, bpy::object> ObjectMap;
 
         ModuleStore * mst_;
         ObjectMap objects_;
 
         void DeleteObject_(unsigned long id);
 
-        ModuleBase * CreateWrapper_(boost::python::object fn, const std::string & key, unsigned long id, const ModuleInfo & options);
+        ModuleBase * CreateWrapper_(bpy::object fn, const std::string & key, unsigned long id, const ModuleInfo & options);
         void DeleteWrapper_(unsigned long id);
 };
+
+
+namespace export_python {
+
+void Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
+                                     const std::string & key, bpy::object func,
+                                     const bpy::dict & minfo);
+
+} // close namespace export_python
+
 
 } // close namespace bpmodule
 

@@ -5,51 +5,51 @@ from bppython import *
 
 
 # for output:
-# package args into a list then pass to bpcore
+# package args into a list then pass to bpbase
 def Output(s, *args):
     if(len(args)) > 0:
-      bpcore.Output(s, list(args))
+      bpbase.Output(s, list(args))
     else:
-      bpcore.Output(s, [])
+      bpbase.Output(s, [])
 
 
 def Success(s, *args):
     if(len(args)) > 0:
-      bpcore.Success(s, list(args))
+      bpbase.Success(s, list(args))
     else:
-      bpcore.Success(s, [])
+      bpbase.Success(s, [])
 
 
 def Warning(s, *args):
     if(len(args)) > 0:
-      bpcore.Warning(s, list(args))
+      bpbase.Warning(s, list(args))
     else:
-      bpcore.Warning(s, [])
+      bpbase.Warning(s, [])
 
 
 def Error(s, *args):
     if(len(args)) > 0:
-      bpcore.Error(s, list(args))
+      bpbase.Error(s, list(args))
     else:
-      bpcore.Error(s, [])
+      bpbase.Error(s, [])
 
 
 def Debug(s, *args):
     if(len(args)) > 0:
-      bpcore.Debug(s, list(args))
+      bpbase.Debug(s, list(args))
     else:
-      bpcore.Debug(s, [])
+      bpbase.Debug(s, [])
 
 
 def Changed(s, *args):
     if(len(args)) > 0:
-      bpcore.Changed(s, list(args))
+      bpbase.Changed(s, list(args))
     else:
-      bpcore.Changed(s, [])
+      bpbase.Changed(s, [])
 
 
 def Flush():
-    bpcore.Flush()
+    bpbase.Flush()
 
 
 def Line(char, n = 80):

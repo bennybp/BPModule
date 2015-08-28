@@ -6,9 +6,11 @@
 
 #include <boost/format.hpp>
 
-namespace bpmodule {
+#include "BPModule/python_helper/BoostPython_fwd.hpp"
+namespace bpy = boost::python;
 
-class BPModuleException;
+
+namespace bpmodule {
 
 
 namespace output {
@@ -26,7 +28,6 @@ enum class OutputType
 
 // in cpp file
 void Output_(std::ostream & out, OutputType type, boost::format & bfmt);
-
 bool Valid(void);
 void SetOut_Stdout(void);
 void SetOut_Stderr(void);
@@ -34,10 +35,11 @@ bool SetOut_File(const std::string & filepath);
 void SetColor(bool usecolor);
 void SetDebug(bool debug);
 void Flush(void);
-
 std::ostream & GetOut(void);
-
 std::string Line(char c, int n = 80);
+
+
+
 
 template<typename T, typename... Targs>
 void Output_(std::ostream & out, OutputType type, boost::format & bfmt, T targ, Targs... Fargs)
@@ -205,6 +207,27 @@ std::string DebugStr(std::string fmt, Targs... Fargs)
 }
 
 } // close namespace output
+
+
+
+////////////////////////////////
+// Wrappers for use from Python
+// (in Output_python.cpp)
+////////////////////////////////
+namespace export_python {
+
+void Output_Wrap(bpmodule::output::OutputType type, const std::string fmt, const bpy::list & args);
+void Output_Wrap_Output(const std::string fmt, const bpy::list & args);
+void Output_Wrap_Success(const std::string fmt, const bpy::list & args);
+void Output_Wrap_Changed(const std::string fmt, const bpy::list & args);
+void Output_Wrap_Warning(const std::string fmt, const bpy::list & args);
+void Output_Wrap_Error(const std::string fmt, const bpy::list & args);
+void Output_Wrap_Debug(const std::string fmt, const bpy::list & args);
+
+} // close namespace export_python
+
+
+
 } // close namespace bpmodule
 
 

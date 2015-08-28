@@ -1,6 +1,6 @@
 #include "BPModule/core/Output.hpp"
 #include "BPModule/core/PropertyMap.hpp"
-#include "BPModule/export_core/Python_stdconvert.hpp"
+#include "BPModule/python_helper/Python_stdconvert.hpp"
 
 #include <boost/python.hpp>
 

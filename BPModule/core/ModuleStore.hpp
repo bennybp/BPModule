@@ -7,6 +7,9 @@
 #include <atomic>
 
 #include "BPModule/core/ModuleInfo.hpp"
+#include "BPModule/python_helper/BoostPython_fwd.hpp"
+namespace bpy = boost::python;
+
 
 namespace bpmodule {
 
@@ -109,6 +112,16 @@ class ModuleStore
 
         const StoreEntry & GetOrThrow_(const std::string & key) const;
 };
+
+
+
+
+
+
+namespace export_python {
+void Wrap_ModuleStore_SetOptions(ModuleStore * mst, const std::string & key, bpy::list & opt);
+}
+
 
 } // close namespace bpmodule
 
