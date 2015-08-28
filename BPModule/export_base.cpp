@@ -25,7 +25,7 @@ template<typename T>
 boost::shared_ptr<T> Wrap_GetScopedModule(ModuleStore * ms, const std::string & key)
 {
     T & mod = ms->GetModule<T>(key);
-    std::function<void(ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(ModuleBase *)>(&ModuleStore::Delete), ms, std::placeholders::_1);
+    std::function<void(ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(ModuleBase *)>(&ModuleStore::RemoveModule), ms, std::placeholders::_1);
     return boost::shared_ptr<T>(&mod, dfunc);
 }
 
@@ -85,13 +85,12 @@ BOOST_PYTHON_MODULE(bpmodule_base)
 
 
     class_<ModuleStore, boost::noncopyable>("ModuleStore")
-    .def("Lock", &ModuleStore::Lock)
     .def("Size", &ModuleStore::Size)
     .def("Has", &ModuleStore::Has)
-    .def("Delete", static_cast<void(ModuleStore::*)(unsigned long)>(&ModuleStore::Delete))
+    .def("RemoveModule", static_cast<void(ModuleStore::*)(unsigned long)>(&ModuleStore::RemoveModule))
     .def("SetOptions", Wrap_ModuleStore_SetOptions)
     .def("GetKeys", &ModuleStore::GetKeys)
-    .def("ModuleInfoFromKey", &ModuleStore::ModuleInfoFromKey)
+    .def("KeyInfo", &ModuleStore::KeyInfo)
     .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_internal_reference<>())
     .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_internal_reference<>())
     .def("GetScopedModule", Wrap_GetScopedModule<ModuleBase>)
@@ -100,11 +99,11 @@ BOOST_PYTHON_MODULE(bpmodule_base)
 
     class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleStore *>())
     .def("CloseHandles", &CModuleLoader::CloseHandles)
-    .def("DeleteAll", &CModuleLoader::DeleteAll)
+    .def("UnloadAll", &CModuleLoader::UnloadAll)
     .def("LoadSO", Wrap_CModuleLoader_LoadSO);
 
     class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleStore *>())
-    .def("DeleteAll", &PyModuleLoader::DeleteAll)
+    .def("UnloadAll", &PyModuleLoader::UnloadAll)
     .def("AddPyModule", Wrap_PyModuleLoader_AddPyModule);
 
 

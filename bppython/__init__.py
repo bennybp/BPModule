@@ -65,9 +65,9 @@ def Init(argv, output = "stdout", color = True, debug = False):
 
 def Finalize():
     Output("Deleting python modules\n")
-    pml.DeleteAll()
+    pml.UnloadAll()
     Output("Deleting C modules\n")
-    cml.DeleteAll()
+    cml.UnloadAll()
     Output("Closing C handles\n")
 
     cml.CloseHandles()

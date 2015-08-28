@@ -30,7 +30,7 @@ class PyModuleLoader
 
         void AddPyModule(const std::string & key, bpy::object func, const ModuleInfo & minfo);
 
-        void DeleteAll(void);
+        void UnloadAll(void);
 
     private:
         typedef std::unordered_map<unsigned long, bpy::object> ObjectMap;

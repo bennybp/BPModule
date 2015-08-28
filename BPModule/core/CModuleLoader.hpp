@@ -13,6 +13,7 @@ namespace bpy = boost::python;
 namespace bpmodule {
 
 
+// Forward declarations
 class ModuleBase;
 class ModuleStore;
 class ModuleInfo;
@@ -29,7 +30,7 @@ class CModuleLoader
 
         void LoadSO(const std::string & key, const ModuleInfo & minfo);
 
-        void DeleteAll(void);
+        void UnloadAll(void);
         void CloseHandles(void);
 
     private:

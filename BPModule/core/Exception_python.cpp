@@ -10,7 +10,7 @@ namespace export_python {
 // the main exception translator
 void TranslateException(const BPModuleException & ex)
 {
-    PyErr_SetString(PyExc_RuntimeError, ExceptionString(ex).c_str());
+    PyErr_SetString(PyExc_RuntimeError, ex.ExceptionString().c_str());
 }
 
 

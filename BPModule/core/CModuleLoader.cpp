@@ -19,7 +19,7 @@ CModuleLoader::CModuleLoader(ModuleStore * mst)
 
 CModuleLoader::~CModuleLoader()
 {
-    DeleteAll();
+    UnloadAll();
     CloseHandles();
 }
 
@@ -97,8 +97,8 @@ void CModuleLoader::LoadSO(const std::string & key,
                                                        std::placeholders::_2,
                                                        std::placeholders::_3);
 
-    ModuleStore::ModuleDeleterFunc dfunc = std::bind(&CModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
-    mst_->AddCreateFunc(key, cfunc, dfunc, minfo);
+    ModuleStore::ModuleRemoverFunc dfunc = std::bind(&CModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
+    mst_->AddModule(key, cfunc, dfunc, minfo);
 }
 
 
@@ -110,7 +110,7 @@ void CModuleLoader::DeleteObject_(unsigned long id)
 
 
 
-void CModuleLoader::DeleteAll(void)
+void CModuleLoader::UnloadAll(void)
 {
     objects_.clear();
 }

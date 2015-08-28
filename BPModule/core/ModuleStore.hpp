@@ -27,7 +27,7 @@ class ModuleStore
 {
     public:
         typedef std::function<ModuleBase *(const std::string &, unsigned long, const ModuleInfo &)> ModuleGeneratorFunc;
-        typedef std::function<void(unsigned long)> ModuleDeleterFunc;
+        typedef std::function<void(unsigned long)> ModuleRemoverFunc;
 
         ModuleStore();
         ~ModuleStore();
@@ -35,15 +35,19 @@ class ModuleStore
         ModuleStore & operator=(const ModuleStore & rhs) = delete;
         ModuleStore(const ModuleStore & rhs) = delete;
 
-        void Lock(void);
-        void AddCreateFunc(const std::string & key, ModuleGeneratorFunc func, ModuleDeleterFunc dfunc, const ModuleInfo & minfo);
+        size_t Size(void) const;
+        std::vector<std::string> GetKeys(void) const;
+        ModuleInfo KeyInfo(const std::string & key) const;
+        bool Has(const std::string & key) const;
+
+
+        void AddModule(const std::string & key, ModuleGeneratorFunc func, ModuleRemoverFunc dfunc, const ModuleInfo & minfo);
+        void RemoveModule(unsigned long id);
+        void RemoveModule(ModuleBase * mb);
 
         void SetOptions(const std::string & key, const OptionMap & opt);
 
-        size_t Size(void) const;
-        std::vector<std::string> GetKeys(void) const;
-        ModuleInfo ModuleInfoFromKey(const std::string & key) const;
-        bool Has(const std::string & key) const;
+
 
         template<typename T>
         T & GetModule(const std::string & key)
@@ -69,7 +73,7 @@ class ModuleStore
 
 
             // store the deleter
-            deletemap_.insert(DeleterMap::value_type(curid_, se.dfunc));
+            removemap_.insert(RemoverMap::value_type(curid_, se.dfunc));
 
 
             // next id
@@ -83,13 +87,13 @@ class ModuleStore
         ScopedModule<T> GetScopedModule(const std::string & key)
         {
             T & mod = GetModule<T>(key);
-            std::function<void(ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(ModuleBase *)>(&ModuleStore::Delete), this, std::placeholders::_1);
+            std::function<void(ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(ModuleBase *)>(&ModuleStore::RemoveModule),
+                                                                this,
+                                                                std::placeholders::_1);
+
             return ScopedModule<T>(&mod, dfunc);
         }
 
-        void Delete(unsigned long id);
-
-        void Delete(ModuleBase * mb);
 
 
     private:
@@ -98,17 +102,15 @@ class ModuleStore
         {
             ModuleInfo mi;
             ModuleGeneratorFunc func;
-            ModuleDeleterFunc dfunc;
+            ModuleRemoverFunc dfunc;
         };
 
         typedef std::unordered_map<std::string, StoreEntry> StoreMap;
-        typedef std::unordered_map<unsigned long, ModuleDeleterFunc> DeleterMap;
+        typedef std::unordered_map<unsigned long, ModuleRemoverFunc> RemoverMap;
 
         StoreMap store_;
-        DeleterMap deletemap_;
+        RemoverMap removemap_;
         std::atomic<unsigned long> curid_;
-
-        bool locked_;
 
         const StoreEntry & GetOrThrow_(const std::string & key) const;
 };

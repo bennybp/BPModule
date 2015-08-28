@@ -7,7 +7,7 @@
 namespace bpmodule {
 
 
-void ModuleStore::AddCreateFunc(const std::string & key, ModuleGeneratorFunc func, ModuleDeleterFunc dfunc, const ModuleInfo & minfo)
+void ModuleStore::AddModule(const std::string & key, ModuleGeneratorFunc func, ModuleRemoverFunc dfunc, const ModuleInfo & minfo)
 {
     // add to store
     // but throw if key already exists
@@ -68,39 +68,30 @@ bool ModuleStore::Has(const std::string & key) const
 
 
 
-ModuleInfo ModuleStore::ModuleInfoFromKey(const std::string & key) const
+ModuleInfo ModuleStore::KeyInfo(const std::string & key) const
 {
     return GetOrThrow_(key).mi;
 }
 
 
-
-void ModuleStore::Lock(void)
+void ModuleStore::RemoveModule(unsigned long id)
 {
-    locked_ = true;
-}
-
-
-
-void ModuleStore::Delete(unsigned long id)
-{
-    if(deletemap_.count(id))
+    if(removemap_.count(id))
     {
-        deletemap_[id](id);
-        deletemap_.erase(id);
+        removemap_[id](id);
+        removemap_.erase(id);
     }
 }
 
-void ModuleStore::Delete(ModuleBase * mb)
+void ModuleStore::RemoveModule(ModuleBase * mb)
 {
-    Delete(mb->ID());
+    RemoveModule(mb->ID());
 }
 
 
 ModuleStore::ModuleStore()
 {
     curid_ = 0;
-    locked_ = false;
 }
 
 

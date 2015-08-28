@@ -20,7 +20,7 @@ PyModuleLoader::PyModuleLoader(ModuleStore * mst)
 
 PyModuleLoader::~PyModuleLoader()
 {
-    DeleteAll();
+    UnloadAll();
 }
 
 
@@ -52,8 +52,8 @@ void PyModuleLoader::AddPyModule(const std::string & key,
                                                        std::placeholders::_2,
                                                        std::placeholders::_3);
 
-    ModuleStore::ModuleDeleterFunc dfunc = std::bind(&PyModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
-    mst_->AddCreateFunc(key, cfunc, dfunc, minfo);
+    ModuleStore::ModuleRemoverFunc dfunc = std::bind(&PyModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
+    mst_->AddModule(key, cfunc, dfunc, minfo);
 }
 
 
@@ -65,7 +65,7 @@ void PyModuleLoader::DeleteObject_(unsigned long id)
 
 
 
-void PyModuleLoader::DeleteAll(void)
+void PyModuleLoader::UnloadAll(void)
 {
     objects_.clear();
 }

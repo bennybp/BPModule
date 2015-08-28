@@ -1,20 +1,44 @@
 #include <sstream>
 
 #include "BPModule/core/Exception.hpp"
+#include "BPModule/core/Output.hpp"
 
 
 namespace bpmodule {
 
-std::string ExceptionString(const BPModuleException & ex)
+BPModuleException::BPModuleException(std::string whatstr, ExceptionInfo exinfo)
+    : whatstr_(std::move(whatstr)), exinfo_(std::move(exinfo))
+{ }
+
+
+const BPModuleException::ExceptionInfo BPModuleException::GetInfo(void) const
 {
-    BPModuleException::ExceptionInfo exinfo = ex.GetInfo();
+    return exinfo_;
+}
+
+
+void BPModuleException::AppendInfo(const ExceptionInfo & toappend)
+{
+    exinfo_.insert(exinfo_.end(), toappend.begin(), toappend.end());
+}
+
+
+const char * BPModuleException::what(void) const noexcept
+{
+    return whatstr_.c_str();
+}
+
+
+std::string BPModuleException::ExceptionString(void) const
+{
+    ExceptionInfo exinfo = GetInfo();
     std::stringstream ss;
-    bpmodule::output::Output(ss, bpmodule::output::Line('*'));
-    bpmodule::output::Output(ss, "Exception thrown!\n");
-    bpmodule::output::Output(ss, "what() = %1%\n", ex.what());
+    output::Output(ss, output::Line('*'));
+    output::Output(ss, "Exception thrown!\n");
+    output::Output(ss, "what() = %1%\n", what());
     for(auto & it : exinfo)
         if(it.second.size())
-            bpmodule::output::Output(ss, "%|24| : %|-|\n", it.first, it.second);
+            output::Output(ss, "%|24| : %|-|\n", it.first, it.second);
     return ss.str();
 }
 

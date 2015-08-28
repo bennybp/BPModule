@@ -7,7 +7,6 @@
 #include <string>
 #include <utility>
 
-#include "BPModule/core/Output.hpp"
 
 
 namespace bpmodule {
@@ -18,33 +17,21 @@ class BPModuleException : public std::exception
         typedef std::pair<std::string, std::string> ExceptionInfoPair;
         typedef std::vector<ExceptionInfoPair> ExceptionInfo;
 
-        BPModuleException(std::string whatstr, ExceptionInfo exinfo = {})
-            : whatstr_(std::move(whatstr)), exinfo_(std::move(exinfo))
-        { }
+        BPModuleException(std::string whatstr, ExceptionInfo exinfo = {});
 
-        const ExceptionInfo GetInfo(void) const
-        {
-            return exinfo_;
-        }
+        const ExceptionInfo GetInfo(void) const;
 
-        void AppendInfo(const ExceptionInfo & toappend)
-        {
-            exinfo_.insert(exinfo_.end(), toappend.begin(), toappend.end());
-        }
+        void AppendInfo(const ExceptionInfo & toappend);
 
-        const char * what(void) const noexcept
-        {
-            return whatstr_.c_str();
-        }
+        const char * what(void) const noexcept;
+
+        std::string ExceptionString(void) const;
 
     private:
         std::string whatstr_;
         ExceptionInfo exinfo_;
 };
 
-
-
-std::string ExceptionString(const BPModuleException & ex);
 
 
 
