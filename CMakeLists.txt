@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(BPModule CXX)
-
+enable_language(C) # for find_package(LAPACK)
 
 
 #################################

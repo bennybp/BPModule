@@ -1,14 +1,16 @@
 #include "BPModule/tensor/Tensor.hpp"
 
+#include <memory>
+
 namespace {
-  CTF::World world_;
+  std::unique_ptr<CTF::World> world_;
 
 }
 
 
 void InitTensor(int argc, char ** argv)
 {
-    world_ = CTF::World(argc, argv);
+    world_ = std::unique_ptr<CTF::World>(new CTF::World(argc, argv));
 }
 
 void FinalizeTensor(void)
@@ -18,6 +20,6 @@ void FinalizeTensor(void)
 
 CTF::World & GetWorld(void)
 {
-    return world_;
+    return *world_;
 }
 
