@@ -4,6 +4,9 @@
 #include <ctf.hpp>
 
 
+namespace bpmodule {
+namespace tensor {
+
 typedef CTF::Scalar<double, false> Scalar;
 typedef CTF::Vector<double, false> Vector;
 typedef CTF::Matrix<double, false> Matrix;
@@ -15,6 +18,8 @@ void FinalizeTensor(void);
 CTF::World & GetWorld(void);
 
 
+} // close namespace tensor
+} // close namespace bpmodule
 
 
 #endif
