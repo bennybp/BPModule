@@ -43,9 +43,7 @@ def ShouldSucceed(key, opt):
 
 
 
-bp.Init(debug = True, output="/tmp/test.out")
-bp.bpcore.InitMPI(sys.argv)
-
+bp.Init(sys.argv, debug = True, output="/tmp/test.out")
 
 
 try:
@@ -95,5 +93,4 @@ except Exception as e:
   bp.Error("\n")
 
 
-bp.bpcore.FinalizeMPI()
 bp.Finalize()

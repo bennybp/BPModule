@@ -11,16 +11,13 @@ sys.path.insert(0, modpath)
 
 import bppython as bp
 
-bp.Init()
+bp.Init(sys.argv)
 
 # Set some outputs
 bp.bpcore.SetOut_Stdout()
 #bpcore.SetOut_File("test.out")
 bp.bpcore.SetColor(True)
 bp.bpcore.SetDebug(True)
-
-bp.bpcore.InitMPI(sys.argv)
-
 
 
 # Test
@@ -92,5 +89,4 @@ except Exception as e:
   bp.Error("\n")
 
 
-bp.bpcore.FinalizeMPI()
 bp.Finalize()

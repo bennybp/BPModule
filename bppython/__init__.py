@@ -18,7 +18,7 @@ cml = None
 pml = None
 modmap = {}
 
-def Init(output = "stdout", color = True, debug = False):
+def Init(argv, output = "stdout", color = True, debug = False):
   global mst
   global cml
   global pml
@@ -30,6 +30,11 @@ def Init(output = "stdout", color = True, debug = False):
 
   bpcore.SetColor(color)
   bpcore.SetDebug(debug) 
+
+
+  # Initialize MPI
+  bpcore.InitMPI(argv)
+
 
   # Print info about the core module
   for key,minfo in bpcore.minfo.items():
@@ -67,6 +72,8 @@ def Finalize():
 
     cml.CloseHandles()
     Output("BPModule finalized\n")
+
+    bpcore.FinalizeMPI()
 
 
 
