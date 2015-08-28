@@ -24,8 +24,8 @@ set(CORE_LIB
 
 ADD_MODULE(bpmodule_base "${CORE_LIB}"
                          ""
-                         "${Boost_LIBRARIES};${PYTHON_LIBRARIES}"
-                         "${Boost_INCLUDE_DIRS};${PYTHON_INCLUDE_DIRS}")
+                         ""
+                         "")
 
 
 # Install library and python stuff

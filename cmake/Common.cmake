@@ -1,3 +1,8 @@
+
+# For now, MPI is required
+set(BPMODULE_MPI True)
+
+
 # Find openmp, boost, and python
 find_package(OpenMP)
 if(NOT OPENMP_FOUND) 

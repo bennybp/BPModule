@@ -30,6 +30,8 @@ macro(ADD_MODULE MODULE_NAME
       # Includes
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_PATH}")          # When building the core, in-source tree
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_PATH}/include")  # Out-of-source module build
+      list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${Boost_INCLUDE_DIRS}")
+      list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${PYTHON_INCLUDE_DIRS}")
 
       if(BPMODULE_MPI)
         list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${MPI_CXX_INCLUDE_PATH}")
@@ -45,6 +47,8 @@ macro(ADD_MODULE MODULE_NAME
       # Linker flags
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${MODULE_CXX_LINK_FLAGS}")
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${OpenMP_CXX_FLAGS}")
+      list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${Boost_LIBRARIES}")
+      list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${PYTHON_LIBRARIES}")
 
       if(BPMODULE_MPI)
         list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${MPI_CXX_LINK_FLAGS}")

@@ -13,7 +13,7 @@ set(MODULEBASE_HEADERS
 
 ADD_CORELIB(bpmodule_modulebase "${MODULEBASE_FILES}"
                                 ""
-                                "${Boost_INCLUDE_DIRS};${PYTHON_INCLUDE_DIRS}")
+                                "")
 
 install(FILES ${MODULEBASE_HEADERS} DESTINATION include/BPModule/modulebase)
 
