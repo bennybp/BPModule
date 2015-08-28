@@ -8,6 +8,8 @@
 #include "BPModule/python_helper/BoostPython_fwd.hpp"
 #include "BPModule/core/Exception.hpp"
 
+namespace bpy = boost::python;
+
 
 namespace bpmodule {
 
@@ -78,7 +80,7 @@ class PropertyMap
 
 
         // construct from a python list of tuples
-        PropertyMap(const boost::python::list & olist);
+        PropertyMap(const bpy::list & olist);
 
 
     private:
@@ -187,17 +189,17 @@ class PropertyMap
         size_t Erase_(const std::string & key);
 
         // Creating a PropPlaceHolder from python object
-        PropPlaceholderPtr PropPlaceholder_(const boost::python::api::object & value);
+        PropPlaceholderPtr PropPlaceholder_(const bpy::object & value);
 
 };
 
 
 // specialize templates for python
 template<>
-boost::python::api::object PropertyMap::GetCopy<>(const std::string & key) const;
+bpy::object PropertyMap::GetCopy<>(const std::string & key) const;
 
 template<>
-void PropertyMap::Set<>(const std::string & key, const boost::python::api::object & value);
+void PropertyMap::Set<>(const std::string & key, const bpy::object & value);
 
 
 } // close namespace bpmodule

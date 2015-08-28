@@ -1,4 +1,5 @@
 #include <boost/python.hpp>
+
 #include "BPModule/core/ModuleStore.hpp"
 
 namespace bpy = boost::python;

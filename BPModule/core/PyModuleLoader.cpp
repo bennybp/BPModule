@@ -3,6 +3,10 @@
 #include "BPModule/core/ModuleStore.hpp"
 #include "BPModule/core/ModuleBase.hpp"
 
+namespace bpy = boost::python;
+
+
+
 namespace bpmodule {
 
 
@@ -21,13 +25,13 @@ PyModuleLoader::~PyModuleLoader()
 
 
 
-ModuleBase * PyModuleLoader::CreateWrapper_(boost::python::object fn, const std::string & key,
+ModuleBase * PyModuleLoader::CreateWrapper_(bpy::object fn, const std::string & key,
                                             unsigned long id,
                                             const ModuleInfo & minfo)
 {
-    boost::python::object newobj = fn(key, id, boost::ref(*mst_), boost::ref(minfo));
+    bpy::object newobj = fn(key, id, boost::ref(*mst_), boost::ref(minfo));
     objects_[id] = newobj;
-    return boost::python::extract<ModuleBase *>(newobj);
+    return bpy::extract<ModuleBase *>(newobj);
 }
 
 
@@ -40,7 +44,7 @@ void PyModuleLoader::DeleteWrapper_(unsigned long id)
 
 
 void PyModuleLoader::AddPyModule(const std::string & key,
-                                 boost::python::object func, const ModuleInfo & minfo)
+                                 bpy::object func, const ModuleInfo & minfo)
 {
 
     ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::CreateWrapper_, this, func,

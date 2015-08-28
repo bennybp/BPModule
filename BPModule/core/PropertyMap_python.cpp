@@ -1,11 +1,10 @@
-#include "BPModule/core/Output.hpp"
 #include "BPModule/core/PropertyMap.hpp"
 #include "BPModule/python_helper/Python_stdconvert.hpp"
 
 #include <boost/python.hpp>
 
-namespace out = bpmodule::output;
 namespace bpy = boost::python;
+
 
 using bpmodule::export_python::ConvertListToVec;
 

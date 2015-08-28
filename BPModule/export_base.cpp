@@ -1,7 +1,6 @@
 // helpers
 #include "BPModule/python_helper/Python_stdconvert.hpp"
 
-
 // MPI
 #include "BPModule/mpi/MPI.hpp"
 

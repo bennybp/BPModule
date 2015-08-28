@@ -1,7 +1,7 @@
 #include <dlfcn.h>
 
-#include "BPModule/core/Output.hpp"
 #include "BPModule/core/CModuleLoader.hpp"
+#include "BPModule/core/Output.hpp"
 #include "BPModule/core/ModuleStore.hpp"
 #include "BPModule/core/ModuleBase.hpp"
 

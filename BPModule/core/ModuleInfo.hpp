@@ -7,6 +7,7 @@
 #include "BPModule/python_helper/BoostPython_fwd.hpp"
 #include "BPModule/core/OptionMap.hpp"
 
+namespace bpy = boost::python;
 
 namespace bpmodule {
 
@@ -30,7 +31,7 @@ struct ModuleInfo
     ~ModuleInfo(void) = default;
 
     // for python
-    ModuleInfo(const boost::python::dict & dictionary);
+    ModuleInfo(const bpy::dict & dictionary);
 };
 
 

@@ -7,6 +7,8 @@
 #include "BPModule/core/ModuleInfo.hpp"
 #include "BPModule/core/CalcData.hpp"
 
+namespace bpy = boost::python;
+
 
 namespace bpmodule {
 
@@ -57,7 +59,7 @@ class ModuleBase
         ModuleStore & MStore(void);
 
         void ThrowException(const std::string & exwhat,
-                            const boost::python::list & exinfo);
+                            const bpy::list & exinfo);
 
 
     private:

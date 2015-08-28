@@ -3,6 +3,8 @@
 
 #include "BPModule/core/PropertyMap.hpp"
 
+namespace bpy = boost::python;
+
 
 namespace bpmodule {
 
@@ -26,7 +28,7 @@ class OptionMap : public PropertyMap
         OptionMap & operator=(OptionMap && rhs) = default;
 
         // Construct from python
-        OptionMap(const boost::python::list & olist) : PropertyMap(olist) {  }
+        OptionMap(const bpy::list & olist) : PropertyMap(olist) {  }
 
         // return a copy
         template<typename T>
