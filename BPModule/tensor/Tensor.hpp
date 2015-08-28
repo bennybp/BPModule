@@ -10,5 +10,11 @@ typedef CTF::Matrix<double, false> Matrix;
 typedef CTF::Tensor<double, false> Tensor;
 
 
+void InitTensor(int argc, char ** argv);
+void FinalizeTensor(void);
+CTF::World & GetWorld(void);
+
+
+
 
 #endif
