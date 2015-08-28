@@ -32,8 +32,8 @@ def Init(argv, output = "stdout", color = True, debug = False):
   bpbase.SetDebug(debug) 
 
 
-  # Initialize MPI
-  bpbase.InitMPI(argv)
+  # Initialize Parallel
+  bpbase.InitParallel(argv)
 
 
   # Print info about the base module
@@ -73,7 +73,7 @@ def Finalize():
     cml.CloseHandles()
     Output("BPModule finalized\n")
 
-    bpbase.FinalizeMPI()
+    bpbase.FinalizeParallel()
 
 
 

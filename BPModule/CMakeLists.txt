@@ -4,7 +4,7 @@
 add_subdirectory(core)
 add_subdirectory(python_helper)
 add_subdirectory(modulebase)
-add_subdirectory(mpi)
+add_subdirectory(parallel)
 
 
 ##############################
@@ -14,7 +14,7 @@ set(CORE_FILES
             export_base.cpp
             $<TARGET_OBJECTS:bpmodule_core>
             $<TARGET_OBJECTS:bpmodule_modulebase>
-            $<TARGET_OBJECTS:bpmodule_mpi>
+            $<TARGET_OBJECTS:bpmodule_parallel>
             $<TARGET_OBJECTS:bpmodule_python_helper>
             ${BPMODULE_CYCLOPS_PATH}/lib/libctf.a
    )

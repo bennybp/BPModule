@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 project(BPModule CXX)
 
+# For now, MPI is required
+set(BPMODULE_MPI True)
+
 
 #################################
 # Load macros

@@ -1,8 +1,8 @@
 // helpers
 #include "BPModule/python_helper/Python_stdconvert.hpp"
 
-// MPI
-#include "BPModule/mpi/MPI.hpp"
+// Parallelization
+#include "BPModule/parallel/Parallel.hpp"
 
 // Various components
 #include "BPModule/core/ModuleStore.hpp"
@@ -75,9 +75,9 @@ BOOST_PYTHON_MODULE(bpmodule_base)
     def("Changed", Output_Wrap_Changed);
     def("Debug", Output_Wrap_Debug);
 
-    // MPI
-    def("InitMPI", &mpi::InitMPI);
-    def("FinalizeMPI", &mpi::FinalizeMPI);
+    // Parallelization
+    def("InitParallel", &parallel::InitParallel);
+    def("FinalizeParallel", &parallel::FinalizeParallel);
 
     // This is only needed because we pass through python
     // No need to do declare all the members, etc 

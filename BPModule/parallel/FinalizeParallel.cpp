@@ -1,21 +1,22 @@
 #include "BPModule/core/Output.hpp"
-#include "BPModule/mpi/MPI.hpp"
+#include "BPModule/parallel/Parallel.hpp"
 
-#include <boost/python.hpp>
 #include <mpi.h>
 
 namespace out = bpmodule::output;
-namespace bpy = boost::python;
 
 namespace bpmodule {
-namespace mpi {
+namespace parallel {
 
-void FinalizeMPI(void)
+void FinalizeParallel(void)
 {
     out::Output("Finalizing Process %1% of %2%\n", GetProcID(), GetNProc());
-    MPI_Finalize();
+
+    #ifdef BPMODULE_MPI
+        MPI_Finalize();
+    #endif
 }
 
 
-} // close namespace mpi
+} // close namespace parallel
 } // close namespace bpmodule
