@@ -19,6 +19,7 @@ bp.bpcore.SetOut_Stdout()
 bp.bpcore.SetColor(True)
 bp.bpcore.SetDebug(True)
 
+bp.bpcore.InitMPI(sys.argv)
 
 
 
@@ -52,4 +53,5 @@ except Exception as e:
   bp.Error("\n")
 
 
+bp.bpcore.FinalizeMPI()
 bp.Finalize()

@@ -1,7 +1,6 @@
 #include "BPModule/core/Output.hpp"
 #include "BPModule/mpi/MPI.hpp"
 
-#include <boost/python.hpp>
 #include <mpi.h>
 
 namespace out = bpmodule::output;
@@ -10,12 +9,19 @@ namespace bpy = boost::python;
 namespace bpmodule {
 namespace mpi {
 
-void FinalizeMPI(void)
+long GetProcID(void)
 {
-    out::Output("Finalizing Process %1% of %2%\n", GetProcID(), GetNProc());
-    MPI_Finalize();
+    int p;
+    MPI_Comm_rank(MPI_COMM_WORLD, &p);
+    return static_cast<long>(p);
 }
 
+long GetNProc(void)
+{
+    int s;
+    MPI_Comm_size(MPI_COMM_WORLD, &s);
+    return static_cast<long>(s);
+}
 
 } // close namespace mpi
 } // close namespace bpmodule

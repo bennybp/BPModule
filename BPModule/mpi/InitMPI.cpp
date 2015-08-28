@@ -1,4 +1,5 @@
 #include "BPModule/core/Output.hpp"
+#include "BPModule/mpi/MPI.hpp"
 
 #include <cstring>
 
@@ -32,6 +33,8 @@ void InitMPI(const bpy::list & argv)
   
     out::Output("Calling MPI Init");
     MPI_Init(&argc, &argvtmp);
+
+    out::Output("Initialized Process %1% of %2%\n", GetProcID(), GetNProc());
 
     for(int i = 0; i < argc; i++)
       delete [] argvtmp[i];

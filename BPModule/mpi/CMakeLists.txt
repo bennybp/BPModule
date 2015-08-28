@@ -3,6 +3,7 @@
 ##################################################
 
 set(BPMODULE_MPI_FILES
+            MPI.cpp
             InitMPI.cpp
             FinalizeMPI.cpp
    )
