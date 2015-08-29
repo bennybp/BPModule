@@ -2,11 +2,11 @@
 # Actual library
 ##################################################
 
-set(PYTHON_FILES
+set(PYTHON_HELPER_FILES
    )
 
 
-ADD_CORELIB(bpmodule_python_helper "${PYTHON_FILES}"
+ADD_CORELIB(bpmodule_python_helper "${PYTHON_HELPER_FILES}"
                                    ""
                                    "")
 

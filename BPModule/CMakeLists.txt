@@ -6,6 +6,8 @@ add_subdirectory(python_helper)
 add_subdirectory(modulebase)
 add_subdirectory(parallel)
 add_subdirectory(tensor)
+add_subdirectory(molecule)
+add_subdirectory(basisset)
 
 
 ##############################
@@ -18,6 +20,8 @@ set(CORE_LIB
             $<TARGET_OBJECTS:bpmodule_parallel>
             $<TARGET_OBJECTS:bpmodule_tensor>
             $<TARGET_OBJECTS:bpmodule_python_helper>
+            $<TARGET_OBJECTS:bpmodule_molecule>
+            $<TARGET_OBJECTS:bpmodule_basisset>
             ${BPMODULE_CYCLOPS_PATH}/lib/libctf.a
    )
 
@@ -57,13 +61,23 @@ set(PARALLEL_HEADERS
    )
 
 
-set(PYTHON_HEADERS
+set(PYTHON_HELPER_HEADERS
             python_helper/BoostPython_fwd.hpp
             python_helper/Python_stdconvert.hpp
    )
 
+set(MOLECULE_HEADERS
+            molecule/Molecule.hpp
+   )
+
+set(BASISSET_HEADERS
+            basisset/BasisSet.hpp
+   )
+
 
 install(FILES ${CORE_HEADERS} DESTINATION include/BPModule/core)
-install(FILES ${PYTHON_HEADERS} DESTINATION include/BPModule/python_helper)
+install(FILES ${PYTHON_HELPER_HEADERS} DESTINATION include/BPModule/python_helper)
 install(FILES ${PARALLEL_HEADERS} DESTINATION include/BPModule/parallel)
 install(FILES ${TENSOR_HEADERS} DESTINATION include/BPModule/tensor)
+install(FILES ${MOLECULE_HEADERS} DESTINATION include/BPModule/molecule)
+install(FILES ${BASISSET_HEADERS} DESTINATION include/BPModule/basisset)
