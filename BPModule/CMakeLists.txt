@@ -68,6 +68,7 @@ set(PYTHON_HELPER_HEADERS
 
 set(MOLECULE_HEADERS
             molecule/Molecule.hpp
+            molecule/Atoms.hpp
    )
 
 set(BASISSET_HEADERS

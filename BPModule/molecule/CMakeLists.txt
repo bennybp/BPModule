@@ -4,6 +4,7 @@
 
 set(MOLECULE_FILES
     Molecule.cpp
+    Atoms.cpp
    )
   
 
