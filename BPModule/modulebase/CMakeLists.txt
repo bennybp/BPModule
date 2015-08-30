@@ -1,19 +1,15 @@
-##################################################
-# Actual library
-##################################################
-
-set(MODULEBASE_FILES
+set(BPMODULE_MODULEBASE_FILES
+            ModuleBase.cpp
             Test_Base.cpp
+            export.cpp
    )
 
 
-set(MODULEBASE_HEADERS
-            Test_Base.hpp
-   )
+ADD_MODULE(bpmodule_modulebase
+           "${BPMODULE_MODULEBASE_FILES}"
+           ""
+           ""
+           "")
 
-ADD_CORELIB(bpmodule_modulebase "${MODULEBASE_FILES}"
-                                ""
-                                "")
-
-install(FILES ${MODULEBASE_HEADERS} DESTINATION include/BPModule/modulebase)
+INSTALL_MODULE(bpmodule_modulebase "")
 

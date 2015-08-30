@@ -1,40 +1,37 @@
-import sys
-import os
-
-from bppython import *
+from bppython import output
 
 def PrintModuleInfo(key, minfo):
 
-  Output("\n")
-  Output("  ++ Module: %1%\n", key)
-  Output("             Key: %1%\n", minfo["key"])
-  Output("            Name: %1%\n", minfo["name"])
-  Output("            Type: %1%\n", minfo["type"])
-  Output("            Path: %1%\n", minfo["path"])
+  output.Output("\n")
+  output.Output("  ++ Module: %1%\n", key)
+  output.Output("             Key: %1%\n", minfo["key"])
+  output.Output("            Name: %1%\n", minfo["name"])
+  output.Output("            Type: %1%\n", minfo["type"])
+  output.Output("            Path: %1%\n", minfo["path"])
 
   if "soname" in minfo:
-      Output("          SOName: %1%\n", minfo["soname"])
+      output.Output("          SOName: %1%\n", minfo["soname"])
 
-  Output("         Version: %1%\n", minfo["version"])
-  Output("     Description: %1%\n", minfo["description"])
+  output.Output("         Version: %1%\n", minfo["version"])
+  output.Output("     Description: %1%\n", minfo["description"])
 
-  Output("         Authors: %1%\n", len(minfo["authors"]))
+  output.Output("         Authors: %1%\n", len(minfo["authors"]))
   for aut in minfo["authors"]:
-      Output("                  %1%\n", aut)
+      output.Output("                  %1%\n", aut)
 
-  Output("      References: %1%\n", len(minfo["refs"]))
+  output.Output("      References: %1%\n", len(minfo["refs"]))
   for ref in minfo["refs"]:
-      Output("                  %1%\n", ref)
+      output.Output("                  %1%\n", ref)
 
   if "passedoptions" in minfo:
       nopt = len(minfo["passedoptions"])
-      Output("         Options: %1%\n", nopt)
+      output.Output("         Options: %1%\n", nopt)
 
       if nopt > 0:
-          Output("\n")
+          output.Output("\n")
           l = "-"*20
-          Output("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", "Option", "Default", "Value", "Description")
-          Output("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", l, l, l, l)
+          output.Output("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", "Option", "Default", "Value", "Description")
+          output.Output("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", l, l, l, l)
 
           defopt = minfo["options"]
           for opt in minfo["passedoptions"]:
@@ -50,9 +47,9 @@ def PrintModuleInfo(key, minfo):
 
               # if not the same, highlight change
               if dv != opt[1]:
-                  OutFunc = Changed
+                  OutFunc = output.Changed
               else:
-                  OutFunc = Output
+                  OutFunc = output.Output
       
               if type(opt[1]) == list:  # note - zero elements not allowed
                 if type(dv) == list:
@@ -77,7 +74,7 @@ def PrintModuleInfo(key, minfo):
                 OutFunc("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", opt[0], dv, opt[1], help)
 
   else:
-      Output("         Options: NOT YET SET\n")
+      output.Output("         Options: NOT YET SET\n")
 
-  Output("\n")
+  output.Output("\n")
 

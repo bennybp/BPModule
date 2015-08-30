@@ -1,9 +1,3 @@
-import sys
-import os
-
-from bppython import *
-
-
 class BPModuleException(Exception):
   def __init__(self, whatstr, info = None):
     self.s = "what() = " + whatstr + "\n"

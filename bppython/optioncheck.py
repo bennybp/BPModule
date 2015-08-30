@@ -1,5 +1,4 @@
-
-from bppython import Error, BPModuleException
+from bppython import BPModuleException, output
 
 def IsValidType(opt, typeallowed):
     valid = [ int, float, str, bool ]
@@ -53,7 +52,7 @@ def IsValidDefaultTypes(defaults):
     res,err = IsValidType(v[0], True)
 
     if not res:
-      Error("Key %1%: %2%", k, err)
+      output.Error("Key %1%: %2%", k, err)
       ret = False
 
   return ret
@@ -66,7 +65,7 @@ def IsValidUserTypes(userset):
     res,err = IsValidType(v, False)
 
     if not res:
-      Error("Key %1%: %2%", k, err)
+      output.Error("Key %1%: %2%", k, err)
       ret = False
 
   return ret
@@ -125,7 +124,7 @@ def MergeAndCheckOptions(defaults, userset):
     # are all required keys specified
     for k,v in defaults.items():
         if v[1] == True and not k in userset:
-            Error("Option \"%1%\" not specified, but is required\n", k)
+            output.Error("Option \"%1%\" not specified, but is required\n", k)
             ok = False
 
 
@@ -133,13 +132,13 @@ def MergeAndCheckOptions(defaults, userset):
     # also, compare the types
     for k,v in userset.items():
         if not k in defaults:
-            Error("Option \"%1%\" not valid for this module\n", k)
+            output.Error("Option \"%1%\" not valid for this module\n", k)
             ok = False
 
         else:
           res, err = CompareTypes(defaults[k][0], v) 
           if not res:
-              Error("Value for option \"%1%\" is not the correct type: %2%\n", k, err)
+              output.Error("Value for option \"%1%\" is not the correct type: %2%\n", k, err)
               ok = False
 
 
@@ -164,7 +163,7 @@ def MergeAndCheckOptions(defaults, userset):
       checkfunc = defaults[k][2]
       if checkfunc != None:
         if checkfunc(k, v[1]) == False:
-          Error("Validation failed for option \"%1%\"", k)
+          output.Error("Validation failed for option \"%1%\"", k)
           ok = False 
         
     if ok == False:

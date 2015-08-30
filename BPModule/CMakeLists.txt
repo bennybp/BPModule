@@ -1,70 +1,65 @@
 ##############################
-# Add core library directories
+# Add modulestore library directories
 ##############################
-add_subdirectory(core)
 add_subdirectory(python_helper)
-add_subdirectory(modulebase)
+add_subdirectory(output)
+add_subdirectory(exception)
 add_subdirectory(parallel)
 add_subdirectory(tensor)
-add_subdirectory(molecule)
-add_subdirectory(basisset)
+add_subdirectory(datastore)
+add_subdirectory(modulebase)
+add_subdirectory(modulestore)
 
-
-##############################
-# Create the core SO file
-##############################
-set(CORE_LIB
-            export_base.cpp
-            $<TARGET_OBJECTS:bpmodule_core>
-            $<TARGET_OBJECTS:bpmodule_modulebase>
-            $<TARGET_OBJECTS:bpmodule_parallel>
-            $<TARGET_OBJECTS:bpmodule_tensor>
-            $<TARGET_OBJECTS:bpmodule_python_helper>
-            $<TARGET_OBJECTS:bpmodule_molecule>
-            $<TARGET_OBJECTS:bpmodule_basisset>
-            ${BPMODULE_CYCLOPS_PATH}/lib/libctf.a
-   )
-
-
-ADD_MODULE(bpmodule_base "${CORE_LIB}"
-                         ""
-                         ""
-                         "")
-
-
-# Install library and python stuff
-INSTALL_MODULE(bpmodule_base "")
+#add_subdirectory(molecule)
+#add_subdirectory(basisset)
 
 
 # Install headers
-set(CORE_HEADERS
-            core/CalcData.hpp
-            core/CModuleLoader.hpp
-            core/Exception.hpp
-            core/ModuleBase.hpp
-            core/ModuleInfo.hpp
-            core/ModuleStore.hpp
-            core/OptionMap.hpp
-            core/Output.hpp
-            core/PropertyMap.hpp
-            core/PyModuleLoader.hpp
-   )
-
-
-set(TENSOR_HEADERS
-            tensor/Tensor.hpp
-   )
-
-
-set(PARALLEL_HEADERS
-            parallel/Parallel.hpp
-   )
-
-
-set(PYTHON_HELPER_HEADERS
+set(BPMODULE_PYTHON_HELPER_HEADERS
             python_helper/BoostPython_fwd.hpp
             python_helper/Python_stdconvert.hpp
    )
+
+set(BPMODULE_EXCEPTION_HEADERS
+            exception/Exception.hpp
+   )
+
+set(BPMODULE_OUTPUT_HEADERS
+            output/Output.hpp
+   )
+
+set(BPMODULE_PARALLEL_HEADERS
+            parallel/Parallel.hpp
+   )
+
+set(BPMODULE_TENSOR_HEADERS
+            tensor/Tensor.hpp
+   )
+
+set(BPMODULE_DATASTORE_HEADERS
+            datastore/CalcData.hpp
+            datastore/PropertyMap.hpp
+            datastore/OptionMap.hpp
+   )
+
+set(BPMODULE_MODULEBASE_HEADERS
+            modulebase/ModuleBase.hpp
+            modulebase/Test_Base.hpp
+   )
+
+
+set(MODULESTORE_HEADERS
+            modulestore/CModuleLoader.hpp
+            modulestore/ModuleInfo.hpp
+            modulestore/ModuleStore.hpp
+            modulestore/PyModuleLoader.hpp
+   )
+
+
+
+
+
+
 
 set(MOLECULE_HEADERS
             molecule/Molecule.hpp
@@ -76,9 +71,13 @@ set(BASISSET_HEADERS
    )
 
 
-install(FILES ${CORE_HEADERS} DESTINATION include/BPModule/core)
-install(FILES ${PYTHON_HELPER_HEADERS} DESTINATION include/BPModule/python_helper)
-install(FILES ${PARALLEL_HEADERS} DESTINATION include/BPModule/parallel)
-install(FILES ${TENSOR_HEADERS} DESTINATION include/BPModule/tensor)
-install(FILES ${MOLECULE_HEADERS} DESTINATION include/BPModule/molecule)
-install(FILES ${BASISSET_HEADERS} DESTINATION include/BPModule/basisset)
+install(FILES ${BPMODULE_PYTHON_HELPER_HEADERS} DESTINATION include/BPModule/python_helper)
+install(FILES ${BPMODULE_EXCEPTION_HEADERS} DESTINATION include/BPModule/exception)
+install(FILES ${BPMODULE_OUTPUT_HEADERS} DESTINATION include/BPModule/output)
+install(FILES ${BPMODULE_PARALLEL_HEADERS} DESTINATION include/BPModule/parallel)
+install(FILES ${BPMODULE_TENSOR_HEADERS} DESTINATION include/BPModule/tensor)
+install(FILES ${BPMODULE_DATASTORE_HEADERS} DESTINATION include/BPModule/datastore)
+install(FILES ${BPMODULE_MODULEBASE_HEADERS} DESTINATION include/BPModule/modulebase)
+install(FILES ${MODULESTORE_HEADERS} DESTINATION include/BPModule/modulestore)
+#install(FILES ${MOLECULE_HEADERS} DESTINATION include/BPModule/molecule)
+#install(FILES ${BASISSET_HEADERS} DESTINATION include/BPModule/basisset)

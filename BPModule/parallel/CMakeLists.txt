@@ -1,16 +1,16 @@
-##################################################
-# Actual library
-##################################################
-
-set(PARALLEL_FILES
+set(BPMODULE_PARALLEL_FILES
             Parallel.cpp
             InitParallel.cpp
             FinalizeParallel.cpp
+            export.cpp
    )
   
 
 
-ADD_CORELIB(bpmodule_parallel "${PARALLEL_FILES}"
-                              ""
-                              "")
+ADD_MODULE(bpmodule_parallel
+           "${BPMODULE_PARALLEL_FILES}"
+           ""
+           ""
+           "")
 
+INSTALL_MODULE(bpmodule_parallel "")

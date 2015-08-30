@@ -1,6 +1,5 @@
-#include "BPModule/core/Output.hpp"
+#include "BPModule/output/Output.hpp"
 #include "BPModule/parallel/Parallel.hpp"
-#include "BPModule/tensor/Tensor.hpp"
 
 #include <cstring>
 
@@ -39,10 +38,6 @@ void InitParallel(const bpy::list & argv)
       
         out::Output("Calling MPI Init");
         MPI_Init(&argc, &argvtmp);
-
-        // Cyclops
-        bpmodule::tensor::InitTensor(argc, argvtmp);
-
 
         for(int i = 0; i < argc; i++)
           delete [] argvtmp[i];

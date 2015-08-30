@@ -14,10 +14,9 @@ import bppython as bp
 
 def Run():
     # Set some outputs
-    bp.bpbase.SetOut_Stdout()
-    #bpbase.SetOut_File("test.out")
-    bp.bpbase.SetColor(True)
-    bp.bpbase.SetDebug(True)
+    bp.output.SetOut_Stdout()
+    bp.output.SetColor(True)
+    bp.output.SetDebug(True)
 
 
     # Test
@@ -31,22 +30,22 @@ def Run():
 
       b1 = bp.mst.GetModule_Test("TESTTENSOR")
 
-      inp = bp.bpbase.CalcData()
+      inp = bp.datastore.CalcData()
       inp.Set("TEST_INPUT_1", 10.00)
       b1_r = b1.CalcTest(inp)
-      bp.Output("B1 results: %1%\n", b1_r.GetCopy("TEST_RESULT_1"))
+      bp.output.Output("B1 results: %1%\n", b1_r.GetCopy("TEST_RESULT_1"))
 
-      bp.Output("Has OUTMAT: %1%\n", b1_r.Has("OUTMAT"))
+      bp.output.Output("Has OUTMAT: %1%\n", b1_r.Has("OUTMAT"))
 
-      bp.Output("\nDone testing\n")
+      bp.output.Output("\nDone testing\n")
 
 
     except Exception as e:
-      bp.Output("Caught exception in main handler\n")
+      bp.output.Output("Caught exception in main handler\n")
       #traceback.print_exc()
-      bp.Error("\n")
-      bp.Error(str(e))
-      bp.Error("\n")
+      bp.output.Error("\n")
+      bp.output.Error(str(e))
+      bp.output.Error("\n")
 
 
 

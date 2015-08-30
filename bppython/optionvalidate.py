@@ -1,4 +1,4 @@
-from bppython import Error, BPModuleException
+from bppython import BPModuleException, output
 
 class RangeCheck:
   def __init__(self, min, max, includemin = True, includemax = True):
@@ -13,8 +13,8 @@ class RangeCheck:
     elif (includemax == True) and (value == self.max):
       return True
     else:
-      Error("Error validating key \"%1%\"\n", key)
-      Error("Value {} not in the range %1%%2%,%3%%4%\n",
+      output.Error("Error validating key \"%1%\"\n", key)
+      output.Error("Value {} not in the range %1%%2%,%3%%4%\n",
                     value,
                     "[" if includemin else "(",
                     self.min, self.max,
@@ -31,9 +31,9 @@ class InList:
     if value in lst:
         return True
     else: 
-      Error("Error validating key \"%1%\"\n", key)
-      Error("Value %1% not a valid option. Valid options\n", value)
+      output.Error("Error validating key \"%1%\"\n", key)
+      output.Error("Value %1% not a valid option. Valid options\n", value)
       for v in self.lst:
-        Error("    %1%", v)
+        output.Error("    %1%", v)
       return False
 

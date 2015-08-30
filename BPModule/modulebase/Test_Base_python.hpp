@@ -1,8 +1,7 @@
 #ifndef MODULESWRAP_PYTHON_H
 #define MODULESWRAP_PYTHON_H
 
-#include "BPModule/core/Output.hpp"
-#include "BPModule/core/Exception.hpp"
+#include "BPModule/exception/Exception.hpp"
 
 // All the module base classes
 #include "BPModule/modulebase/All.hpp"
@@ -10,10 +9,10 @@
 #include <boost/python.hpp>
 
 namespace bpy = boost::python;
-namespace out = bpmodule::output;
 
 
 namespace bpmodule {
+namespace modulebase {
 namespace export_python {
 
 
@@ -84,6 +83,7 @@ class Test_Base_Wrap : public Test_Base, public bpy::wrapper<Test_Base>
 
 
 } // close namespace export_python
+} // close namespace modulebase
 } // close namespace bpmodule
 
 #endif

@@ -14,10 +14,9 @@ import bppython as bp
 
 def Run():
     # Set some outputs
-    bp.bpbase.SetOut_Stdout()
-    #bpbase.SetOut_File("test.out")
-    bp.bpbase.SetColor(True)
-    bp.bpbase.SetDebug(True)
+    bp.output.SetOut_Stdout()
+    bp.output.SetColor(True)
+    bp.output.SetDebug(True)
 
 
     # Test
@@ -34,59 +33,59 @@ def Run():
       b1 = bp.mst.GetModule_Test("TESTMOD1")
       b2 = bp.mst.GetModule_Test("TESTPYMOD1")
 
-      bp.Output("\n!!!Testing exceptions\n")
+      bp.output.Output("\n!!!Testing exceptions\n")
       try:
         b1.Throw()
       except Exception as e2:
-        bp.Error(str(e2))
+        bp.output.Error(str(e2))
 
-      bp.Output("\n")
+      bp.output.Output("\n")
 
       try:
         b2.Throw()
       except Exception as e2:
-        bp.Error(str(e2))
+        bp.output.Error(str(e2))
 
-      bp.Output("\n")
+      bp.output.Output("\n")
 
       try:
         b1.CallThrow("TESTMOD1")
       except Exception as e2:
-        bp.Error(str(e2))
+        bp.output.Error(str(e2))
 
-      bp.Output("\n")
+      bp.output.Output("\n")
 
       try:
         b2.CallThrow("TESTPYMOD1")
       except Exception as e2:
-        bp.Error(str(e2))
+        bp.output.Error(str(e2))
 
       try:
         b2.CallThrow("TESTMOD1")
       except Exception as e2:
-        bp.Error(str(e2))
+        bp.output.Error(str(e2))
 
-      bp.Output("\n")
+      bp.output.Output("\n")
 
       try:
         b1.CallThrow("TESTMOD1")
       except Exception as e2:
-        bp.Error(str(e2))
+        bp.output.Error(str(e2))
 
-      bp.Output("\n")
+      bp.output.Output("\n")
 
       raise bp.BPModuleException("Test exception from input", [ ( "Hi2", "There2" ) ])
 
 
-      bp.Output("\nDone testing\n")
+      bp.output.Output("\nDone testing\n")
 
 
     except Exception as e:
-      bp.Output("Caught exception in main handler\n")
+      bp.output.Output("Caught exception in main handler\n")
       #traceback.print_exc()
-      bp.Error("\n")
-      bp.Error(str(e))
-      bp.Error("\n")
+      bp.output.Error("\n")
+      bp.output.Error(str(e))
+      bp.output.Error("\n")
 
 
 

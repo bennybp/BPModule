@@ -2,11 +2,15 @@
 # Actual library
 ##################################################
 
-set(PYTHON_HELPER_FILES
+set(BPMODULE_PYTHON_HELPER_FILES
+        export.cpp
    )
 
 
-ADD_CORELIB(bpmodule_python_helper "${PYTHON_HELPER_FILES}"
-                                   ""
-                                   "")
+ADD_MODULE(bpmodule_python_helper 
+           "${BPMODULE_PYTHON_HELPER_FILES}"
+           ""
+           ""
+           "")
 
+INSTALL_MODULE(bpmodule_python_helper "")

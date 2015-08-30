@@ -1,12 +1,13 @@
 #ifndef TEST_BASE_H
 #define TEST_BASE_H
 
-#include "BPModule/core/ModuleBase.hpp"
+#include "BPModule/modulebase/ModuleBase.hpp"
 
 using namespace bpmodule;
 
 
 namespace bpmodule {
+namespace modulebase {
 
 class Test_Base : public ModuleBase
 {
@@ -21,6 +22,7 @@ class Test_Base : public ModuleBase
         virtual CalcData CalcTest(CalcData inputs) = 0;
 };
 
-}
+} // close namespace modulebase
+} // close namespace bpmodule
 
 #endif

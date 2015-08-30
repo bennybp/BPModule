@@ -1,4 +1,4 @@
-#include "BPModule/core/Output.hpp"
+#include "BPModule/output/Output.hpp"
 #include "BPModule/parallel/Parallel.hpp"
 #include "BPModule/tensor/Tensor.hpp"
 
@@ -14,11 +14,7 @@ void FinalizeParallel(void)
     out::Output("Finalizing Process %1% of %2%\n", GetProcID(), GetNProc());
 
     #ifdef BPMODULE_MPI
-        // Cyclops
-        bpmodule::tensor::FinalizeTensor();
-
         MPI_Finalize();
-
     #endif
 }
 

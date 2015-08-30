@@ -5,9 +5,19 @@ import importlib
 # Important! Symbols must be loaded now and available
 # globally! WILL NOT WORK WITHOUT
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
-import bpmodule_base as bpbase
 
-from .output import *
+# Note for bpmodule_exception
+# Just need to load exception class and register translator
+# Otherwise, we use the python exception in exception.py
+import bpmodule_python_helper as python_helper
+import bpmodule_output as output
+import bpmodule_exception as exception_
+import bpmodule_parallel as parallel
+import bpmodule_tensor as tensor
+import bpmodule_datastore as datastore
+import bpmodule_modulebase as modulebase
+import bpmodule_modulestore as modulestore
+
 from .utils import *
 from .exception import *
 from .optioncheck import *
@@ -19,28 +29,30 @@ cml = None
 pml = None
 modmap = {}
 
-def Init(argv, output = "stdout", color = True, debug = False):
+def Init(argv, out = "stdout", color = True, debug = False):
   global mst
   global cml
   global pml
 
-  if output == "stdout":
-    bpbase.SetOut_Stdout()
+  if out == "stdout":
+    output.SetOut_Stdout()
   else:
-    bpbase.SetOut_File(output)
+    output.SetOut_File(output)
 
-  bpbase.SetColor(color)
-  bpbase.SetDebug(debug) 
-
+  output.SetColor(color)
+  output.SetDebug(debug) 
 
   # Initialize Parallel
-  bpbase.InitParallel(argv)
+  parallel.InitParallel(argv)
+
+  # Initialize tensor
+  tensor.InitTensor(argv)
 
 
   # Print info about the base module
-  for key,minfo in bpbase.minfo.items():
+  for key,minfo in modulestore.minfo.items():
       minfo["key"] = key
-      minfo["path"] = os.path.dirname(bpbase.__file__) + "/"
+      minfo["path"] = os.path.dirname(modulestore.__file__) + "/"
 
       # merge the options
       defopt = minfo["options"]
@@ -57,29 +69,30 @@ def Init(argv, output = "stdout", color = True, debug = False):
 
 
   # Create the various stores and loaders
-  mst = bpbase.ModuleStore()
-  cml = bpbase.CModuleLoader(mst)
-  pml = bpbase.PyModuleLoader(mst)
+  mst = modulestore.ModuleStore()
+  cml = modulestore.CModuleLoader(mst)
+  pml = modulestore.PyModuleLoader(mst)
 
 
 
 
 def Finalize():
-    Output("Deleting python modules\n")
+    output.Output("Deleting python modules\n")
     pml.UnloadAll()
-    Output("Deleting C modules\n")
+    output.Output("Deleting C modules\n")
     cml.UnloadAll()
-    Output("Closing C handles\n")
+    output.Output("Closing C handles\n")
 
     cml.CloseHandles()
-    Output("BPModule finalized\n")
+    output.Output("BPModule finalized\n")
 
-    bpbase.FinalizeParallel()
+    tensor.FinalizeTensor()
+    parallel.FinalizeParallel()
 
 
 
 def LoadModule(supermodule, key):
-    Output("Importing %1% module from supermodule %2%\n", key, supermodule)
+    output.Output("Importing %1% module from supermodule %2%\n", key, supermodule)
 
     try:
         olddl = sys.getdlopenflags()
@@ -108,8 +121,8 @@ def LoadModule(supermodule, key):
 
     path = os.path.dirname(m.__file__) + "/"
 
-    Output("\n")
-    Output("Loading module %1% v%2%\n", minfo["name"], minfo["version"])
+    output.Output("\n")
+    output.Output("Loading module %1% v%2%\n", minfo["name"], minfo["version"])
 
     # Copy the key to the dict
     minfo["key"] = key
@@ -122,8 +135,8 @@ def LoadModule(supermodule, key):
         cml.LoadSO(key, minfo)
     elif minfo["type"] == "python_module":
         pml.AddPyModule(key, m.CreateModule, minfo)
-    Debug("Done importing module %1% from %2%\n", key, supermodule)
-    Output("\n")
+    output.Debug("Done importing module %1% from %2%\n", key, supermodule)
+    output.Output("\n")
 
     modmap[key] = minfo;
 

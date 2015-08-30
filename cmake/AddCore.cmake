@@ -19,7 +19,7 @@ macro(ADD_CORELIB LIB_NAME
   endif()
 
   list(APPEND ${LIB_NAME}_CXX_FLAGS "-fPIC")
-  list(APPEND ${LIB_NAME}_CXX_FLAGS "-std=c++11;-Wall;-pedantic")
+  list(APPEND ${LIB_NAME}_CXX_FLAGS "-std=c++11;-Wall;-pedantic;-g;-O0")
   string(REPLACE ";" " " ${LIB_NAME}_CXX_FLAGS "${${LIB_NAME}_CXX_FLAGS}")
   set_target_properties(${LIB_NAME} PROPERTIES COMPILE_FLAGS "${${LIB_NAME}_CXX_FLAGS}")
   message(STATUS "${LIB_NAME} cxx compile flags: ${${LIB_NAME}_CXX_FLAGS}")

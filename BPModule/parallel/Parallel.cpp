@@ -1,4 +1,4 @@
-#include "BPModule/core/Output.hpp"
+#include "BPModule/output/Output.hpp"
 #include "BPModule/parallel/Parallel.hpp"
 
 #ifdef BPMODULE_MPI
