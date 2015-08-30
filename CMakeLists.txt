@@ -17,8 +17,8 @@ include("cmake/Cyclops.cmake")
 #################################
 # Add the various subdirectories
 #################################
-add_subdirectory(BPModule)
+add_subdirectory(bpmodule)
 
 
-install(DIRECTORY bppython DESTINATION ${CMAKE_INSTALL_PREFIX}/modules)
+#install(DIRECTORY bppython DESTINATION ${CMAKE_INSTALL_PREFIX}/modules)
 install(DIRECTORY cmake DESTINATION ${CMAKE_INSTALL_PREFIX})

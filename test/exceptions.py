@@ -9,7 +9,7 @@ import traceback
 modpath = os.path.join("/home/ben/programming/BPModule/install/modules")
 sys.path.insert(0, modpath)
 
-import bppython as bp
+import bpmodule as bp
 
 
 def Run():
@@ -67,7 +67,7 @@ def Run():
 
       bp.output.Output("\n")
 
-      raise bp.exception.GeneralException("Test exception from input", [ ( "Hi2", "There2" ) ])
+      raise bp.exception.PyGeneralException("Test exception from input", [ ( "Hi2", "There2" ) ])
 
 
       bp.output.Output("\nDone testing\n")

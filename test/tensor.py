@@ -9,7 +9,7 @@ import traceback
 modpath = os.path.join("/home/ben/programming/BPModule/install/modules")
 sys.path.insert(0, modpath)
 
-import bppython as bp
+import bpmodule as bp
 
 
 def Run():
