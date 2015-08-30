@@ -9,10 +9,6 @@
 #include "BPModule/output/Output.hpp"
 
 
-// This should be safe, right?
-// The destructor to file_ should only be called when this cpp file is
-// unloading. In which case all the other functions will be unavailable anyway
-
 namespace {
 
 std::ostream * out_ = nullptr;

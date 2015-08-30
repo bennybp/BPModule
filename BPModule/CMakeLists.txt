@@ -1,6 +1,3 @@
-##############################
-# Add modulestore library directories
-##############################
 add_subdirectory(python_helper)
 add_subdirectory(output)
 add_subdirectory(exception)

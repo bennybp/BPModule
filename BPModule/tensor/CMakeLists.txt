@@ -1,7 +1,3 @@
-##################################################
-# Actual library
-##################################################
-
 set(BPMODULE_TENSOR_FILES
     Tensor.cpp
     export.cpp

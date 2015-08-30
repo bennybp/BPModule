@@ -7,7 +7,6 @@
 #include <boost/format.hpp>
 
 #include "BPModule/python_helper/BoostPython_fwd.hpp"
-namespace bpy = boost::python;
 
 
 namespace bpmodule {
@@ -214,13 +213,13 @@ std::string DebugStr(std::string fmt, Targs... Fargs)
 ////////////////////////////////
 namespace export_python {
 
-void Output_Wrap(bpmodule::output::OutputType type, const std::string fmt, const bpy::list & args);
-void Output_Wrap_Output(const std::string fmt, const bpy::list & args);
-void Output_Wrap_Success(const std::string fmt, const bpy::list & args);
-void Output_Wrap_Changed(const std::string fmt, const bpy::list & args);
-void Output_Wrap_Warning(const std::string fmt, const bpy::list & args);
-void Output_Wrap_Error(const std::string fmt, const bpy::list & args);
-void Output_Wrap_Debug(const std::string fmt, const bpy::list & args);
+void Output_Wrap(bpmodule::output::OutputType type, const std::string fmt, const boost::python::list & args);
+void Output_Wrap_Output(const std::string fmt, const boost::python::list & args);
+void Output_Wrap_Success(const std::string fmt, const boost::python::list & args);
+void Output_Wrap_Changed(const std::string fmt, const boost::python::list & args);
+void Output_Wrap_Warning(const std::string fmt, const boost::python::list & args);
+void Output_Wrap_Error(const std::string fmt, const boost::python::list & args);
+void Output_Wrap_Debug(const std::string fmt, const boost::python::list & args);
 
 } // close namespace export_python
 
