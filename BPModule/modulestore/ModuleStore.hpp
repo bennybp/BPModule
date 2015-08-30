@@ -64,7 +64,7 @@ class ModuleStore
             // test
             T * dptr = dynamic_cast<T *>(mbptr);
             if(dptr == nullptr)
-                throw BPModuleException(
+                throw exception::GeneralException(
                                  "Bad cast for module",
                                  {
                                      { "Location", "ModuleStore"},

@@ -27,14 +27,14 @@ ModuleBase::~ModuleBase()
 
 
 void ModuleBase::ThrowException(const std::string & exwhat,
-                                const BPModuleException::ExceptionInfo & exinfo) const
+                                const exception::GeneralException::ExceptionInfo & exinfo) const
 {
-    BPModuleException::ExceptionInfo exinfo2{
+    exception::GeneralException::ExceptionInfo exinfo2{
                                               { "Module Key", key_ },
                                               { "Module Name", name_ }
                                             };
     exinfo2.insert(exinfo2.end(), exinfo.begin(), exinfo.end());
-    throw BPModuleException(exwhat, exinfo2);
+    throw exception::GeneralException(exwhat, exinfo2);
 }
 
 

@@ -67,7 +67,7 @@ def Run():
 
       bp.output.Output("\n")
 
-      raise bp.BPModuleException("Test exception from input", [ ( "Hi2", "There2" ) ])
+      raise bp.exception.GeneralException("Test exception from input", [ ( "Hi2", "There2" ) ])
 
 
       bp.output.Output("\nDone testing\n")

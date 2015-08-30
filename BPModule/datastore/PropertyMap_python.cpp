@@ -53,7 +53,7 @@ boost::python::object PropertyMap::GetCopy<>(const std::string & key) const
         return boost::python::object(GetRef<std::vector<std::string>>(key));
 
     else
-        throw BPModuleException("Unable to convert C++ type to python",
+        throw exception::GeneralException("Unable to convert C++ type to python",
                                  {
                                     { "Location", "PropertyMap" },
                                     { "Key", key },
@@ -69,7 +69,7 @@ void PropertyMap::Set(const std::string & key, const boost::python::object & val
     try {
         Set_(key, PropertyMap::PropPlaceholder_(value));
     }
-    catch(BPModuleException & bpe)
+    catch(exception::GeneralException & bpe)
     {
         // append key info
         bpe.AppendInfo({
@@ -97,7 +97,7 @@ PropertyMap::PropPlaceholderPtr PropertyMap::PropertyMap::PropPlaceholder_(const
         boost::python::list lst = boost::python::extract<boost::python::list>(value);
         int length = boost::python::extract<int>(lst.attr("__len__")());
         if(length == 0)
-            throw BPModuleException("Empty list passed from python");
+            throw exception::GeneralException("Empty list passed from python");
 
         std::string cl2 = boost::python::extract<std::string>(lst[0].attr("__class__").attr("__name__"));
 
@@ -106,7 +106,7 @@ PropertyMap::PropPlaceholderPtr PropertyMap::PropertyMap::PropPlaceholder_(const
         {
             std::string cltmp = boost::python::extract<std::string>(lst[i].attr("__class__").attr("__name__"));
             if(cl2 != cltmp)
-                throw BPModuleException("Passed a heterogeneous container",
+                throw exception::GeneralException("Passed a heterogeneous container",
                                         {
                                           { "First type", cl2 },
                                           { "This type", cltmp }
@@ -125,7 +125,7 @@ PropertyMap::PropPlaceholderPtr PropertyMap::PropertyMap::PropPlaceholder_(const
             return PropertyMap::PropPlaceholderPtr(new PropHolder<std::vector<std::string>>(ConvertListToVec<std::string>(lst)));
         else
         {
-            throw BPModuleException("Unable to convert python type to C++ (for list)",
+            throw exception::GeneralException("Unable to convert python type to C++ (for list)",
                                      {
                                         { "Location", "PropertyMap" },
                                         { "Type", cl2 }
@@ -135,7 +135,7 @@ PropertyMap::PropPlaceholderPtr PropertyMap::PropertyMap::PropPlaceholder_(const
     }
     else
     {
-        throw BPModuleException("Unable to convert python type to C++",
+        throw exception::GeneralException("Unable to convert python type to C++",
                                  {
                                     { "Location", "PropertyMap" },
                                     { "Type", cl }

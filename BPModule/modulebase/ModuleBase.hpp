@@ -44,7 +44,7 @@ class ModuleBase
             try {
                 return options_.Get<T>(key);
             }
-            catch(BPModuleException & ex)
+            catch(exception::GeneralException & ex)
             {
                 // rethrow with module info
                 ThrowException(ex.what(), ex.GetInfo());
@@ -58,7 +58,7 @@ class ModuleBase
         
     protected:
         void ThrowException(const std::string & exwhat,
-                            const BPModuleException::ExceptionInfo & exinfo = {}) const;
+                            const exception::GeneralException::ExceptionInfo & exinfo = {}) const;
 
         modulestore::ModuleStore & MStore(void);
 

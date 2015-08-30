@@ -10,14 +10,15 @@
 
 
 namespace bpmodule {
+namespace exception {
 
-class BPModuleException : public std::exception
+class GeneralException : public std::exception
 {
     public:
         typedef std::pair<std::string, std::string> ExceptionInfoPair;
         typedef std::vector<ExceptionInfoPair> ExceptionInfo;
 
-        BPModuleException(std::string whatstr, ExceptionInfo exinfo = {});
+        GeneralException(std::string whatstr, ExceptionInfo exinfo = {});
 
         const ExceptionInfo GetInfo(void) const;
 
@@ -37,12 +38,12 @@ class BPModuleException : public std::exception
 
 namespace export_python {
 
-void TranslateException(const BPModuleException & ex);
+void TranslateException(const GeneralException & ex);
 
 } // close namespace export_python
 
 
 
-
+} // close namespace exception
 } // close namespace bpmodule
 #endif

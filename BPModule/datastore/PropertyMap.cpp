@@ -90,7 +90,7 @@ const PropertyMap::PropMapEntry & PropertyMap::GetOrThrow_(const std::string & k
     if(opmap_.count(key))
         return opmap_.at(key);
     else
-        throw BPModuleException(
+        throw exception::GeneralException(
                                  "Key not found",
                                  {
                                      { "Location", "PropertyMap" },
@@ -105,7 +105,7 @@ PropertyMap::PropMapEntry & PropertyMap::GetOrThrow_(const std::string & key)
     if(opmap_.count(key))
         return opmap_.at(key);
     else
-        throw BPModuleException(
+        throw exception::GeneralException(
                                  "Key not found",
                                  {
                                      { "Location", "PropertyMap" },

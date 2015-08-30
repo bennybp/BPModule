@@ -1,4 +1,5 @@
-from bppython import BPModuleException, output
+from bppython import output
+from bppython.exception import GeneralException
 
 def IsValidType(opt, typeallowed):
     valid = [ int, float, str, bool ]
@@ -107,13 +108,13 @@ def MergeAndCheckOptions(defaults, userset):
     # Are all types valid for 
     # both defaults and userset
     if not IsValidDefaultTypes(defaults):
-      raise BPModuleException("Developer error. Defaults don't all have a valid type! See above errors")
+      raise exception.GeneralException("Developer error. Defaults don't all have a valid type! See above errors")
 
 
     # check for defaults for required options
     for k,v in defaults.items():
       if HasDefault(v[0]) and (v[1] == True):  # Required option, shouldn't have a default
-        raise BPModuleException("Developer error. Required option {} given a default value".format(k))
+        raise exception.GeneralException("Developer error. Required option {} given a default value".format(k))
 
 
     # Check the types passed in
@@ -143,7 +144,7 @@ def MergeAndCheckOptions(defaults, userset):
 
 
     if ok == False:
-        raise BPModuleException("Error parsing options")
+        raise exception.GeneralException("Error parsing options")
 
 
     # merge
@@ -167,7 +168,7 @@ def MergeAndCheckOptions(defaults, userset):
           ok = False 
         
     if ok == False:
-        raise BPModuleException("Error parsing options")
+        raise exception.GeneralException("Error parsing options")
  
     return newopt
     

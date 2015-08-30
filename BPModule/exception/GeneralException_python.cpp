@@ -1,14 +1,15 @@
-#include "BPModule/exception/Exception.hpp"
+#include "BPModule/exception/GeneralException.hpp"
 
 #include <boost/python.hpp>
 
 using namespace boost::python;
 
 namespace bpmodule {
+namespace exception {
 namespace export_python {
 
 // the main exception translator
-void TranslateException(const BPModuleException & ex)
+void TranslateException(const GeneralException & ex)
 {
     PyErr_SetString(PyExc_RuntimeError, ex.ExceptionString().c_str());
 }
@@ -16,5 +17,6 @@ void TranslateException(const BPModuleException & ex)
 
 
 } // close namespace export_python
+} // close namespace exception
 } // close namespace bpmodule
 

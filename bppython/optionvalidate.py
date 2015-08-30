@@ -1,4 +1,5 @@
-from bppython import BPModuleException, output
+from bppython import output
+from bppython.exception import GeneralException
 
 class RangeCheck:
   def __init__(self, min, max, includemin = True, includemax = True):

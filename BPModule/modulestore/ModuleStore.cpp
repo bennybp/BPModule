@@ -1,4 +1,4 @@
-#include "BPModule/exception/Exception.hpp"
+#include "BPModule/exception/GeneralException.hpp"
 #include "BPModule/modulestore/ModuleStore.hpp"
 #include "BPModule/output/Output.hpp"
 #include "BPModule/modulebase/ModuleBase.hpp"
@@ -13,7 +13,7 @@ void ModuleStore::AddModule(const std::string & key, ModuleGeneratorFunc func, M
     // add to store
     // but throw if key already exists
     if(Has(key))
-        throw BPModuleException(
+        throw exception::GeneralException(
                                  "Attempt to add duplicate key",
                                  {
                                      { "Location", "ModuleStore"},
@@ -29,7 +29,7 @@ void ModuleStore::AddModule(const std::string & key, ModuleGeneratorFunc func, M
 void ModuleStore::SetOptions(const std::string & key, const datastore::OptionMap & opt)
 {
     if(!Has(key))
-        throw BPModuleException(
+        throw exception::GeneralException(
                                  "Attempt to set options for nonexistant key",
                                  {
                                      { "Location", "ModuleStore"},
@@ -102,7 +102,7 @@ const ModuleStore::StoreEntry & ModuleStore::GetOrThrow_(const std::string & key
     if(Has(key))
         return store_.at(key);
     else
-        throw BPModuleException(
+        throw exception::GeneralException(
                                  "Missing key",
                                  {
                                      { "Location", "ModuleStore"},

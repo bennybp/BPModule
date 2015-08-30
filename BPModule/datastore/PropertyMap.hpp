@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "BPModule/python_helper/BoostPython_fwd.hpp"
-#include "BPModule/exception/Exception.hpp"
+#include "BPModule/exception/GeneralException.hpp"
 
 
 namespace bpmodule {
@@ -168,7 +168,7 @@ class PropertyMap
             const PropMapEntry & pme = GetOrThrow_(key);
             const PropHolder<T> * ph = dynamic_cast<const PropHolder<T> *>(pme.value.get());
             if(ph == nullptr)
-                throw BPModuleException(
+                throw exception::GeneralException(
                                          "Bad cast",
                                          {
                                             { "Location", "PropertyMap" },

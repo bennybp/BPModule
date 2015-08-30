@@ -60,7 +60,7 @@ void CModuleLoader::LoadSO(const std::string & key,
         handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
         // open the module
         if(!handle)
-            throw BPModuleException(
+            throw exception::GeneralException(
                                      "Cannot load SO file",
                                      {
                                          { "File", sopath },
@@ -75,7 +75,7 @@ void CModuleLoader::LoadSO(const std::string & key,
     if((error = dlerror()) != NULL)
     {
         dlclose(handle);
-        throw BPModuleException(
+        throw exception::GeneralException(
                                  "Cannot find function in SO file",
                                  {
                                      { "File", sopath },

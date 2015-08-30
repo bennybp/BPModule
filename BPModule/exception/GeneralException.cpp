@@ -1,38 +1,39 @@
 #include <sstream>
 
-#include "BPModule/exception/Exception.hpp"
+#include "BPModule/exception/GeneralException.hpp"
 #include "BPModule/output/Output.hpp"
 
 
 namespace bpmodule {
+namespace exception {
 
-BPModuleException::BPModuleException(std::string whatstr, ExceptionInfo exinfo)
+GeneralException::GeneralException(std::string whatstr, ExceptionInfo exinfo)
     : whatstr_(std::move(whatstr)), exinfo_(std::move(exinfo))
 { }
 
 
-const BPModuleException::ExceptionInfo BPModuleException::GetInfo(void) const
+const GeneralException::ExceptionInfo GeneralException::GetInfo(void) const
 {
     return exinfo_;
 }
 
 
 
-void BPModuleException::AppendInfo(const ExceptionInfo & toappend)
+void GeneralException::AppendInfo(const ExceptionInfo & toappend)
 {
     exinfo_.insert(exinfo_.end(), toappend.begin(), toappend.end());
 }
 
 
 
-const char * BPModuleException::what(void) const noexcept
+const char * GeneralException::what(void) const noexcept
 {
     return whatstr_.c_str();
 }
 
 
 
-std::string BPModuleException::ExceptionString(void) const
+std::string GeneralException::ExceptionString(void) const
 {
     ExceptionInfo exinfo = GetInfo();
     std::stringstream ss;
@@ -46,4 +47,5 @@ std::string BPModuleException::ExceptionString(void) const
 }
 
 
+} // close namespace exception
 } // close namespace bpmodule

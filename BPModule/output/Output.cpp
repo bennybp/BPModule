@@ -5,7 +5,7 @@
 
 #include <boost/format.hpp>
 
-#include "BPModule/exception/Exception.hpp"
+#include "BPModule/exception/GeneralException.hpp"
 #include "BPModule/output/Output.hpp"
 
 

@@ -1,6 +1,6 @@
 set(BPMODULE_EXCEPTION_FILES
-            Exception.cpp 
-            Exception_python.cpp
+            GeneralException.cpp 
+            GeneralException_python.cpp
             export.cpp
    )
 

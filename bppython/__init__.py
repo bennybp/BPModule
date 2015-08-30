@@ -25,7 +25,7 @@ import bpmodule_modulestore as modulestore
 # Load other python stuff from this directory
 ##########################################
 from .utils import *
-from .exception import *
+#from .exception import *
 from .optioncheck import *
 from .optionvalidate import *
 
@@ -68,7 +68,7 @@ def Init(argv, out = "stdout", color = True, debug = False):
       defopt = minfo["options"]
       try:
         newopt = MergeAndCheckOptions(defopt, {}) # No options
-      except BPModuleException as e:
+      except exception.GeneralException as e:
         e.Append([ ("ModuleKey", minfo["key"]),
                    ("ModulePath", minfo["path"])
                 ])
@@ -112,7 +112,7 @@ def LoadModule(supermodule, key):
         m = importlib.import_module(supermodule)
         sys.setdlopenflags(olddl)
     except Exception as e:
-        raise BPModuleException(
+        raise exception.GeneralException(
                                 "Unable to load supermodule {}".format(supermodule),
                                 [
                                   ("Exception", str(e))
@@ -120,7 +120,7 @@ def LoadModule(supermodule, key):
                                )
 
     if not key in m.minfo:
-        raise BPModuleException(
+        raise exception.GeneralException(
                                  "Supermodule doesn't have key!",
                                 [
                                   ("Supermodule", supermodule),
@@ -159,7 +159,7 @@ def SetOptions(key, useropt):
     global mst
 
     if not key in modmap:
-        raise BPModuleException(
+        raise exception.GeneralException(
                                  "Key not loaded, so I can't change the options!",
                                 [
                                   ("Key", key)
@@ -171,7 +171,7 @@ def SetOptions(key, useropt):
 
     try:
       newopt = MergeAndCheckOptions(defopt, useropt)
-    except BPModuleException as e:
+    except exception.GeneralException as e:
       e.Append([ 
                  ("ModuleName", minfo["name"]),
                  ("ModuleKey", minfo["key"]),
@@ -203,7 +203,7 @@ def CommitOptions():
                     err = True
 
             if err:
-                raise BPModuleException("Error setting default options", 
+                raise exception.GeneralException("Error setting default options", 
                                       [ 
                                          ("ModuleName", m["name"]),
                                          ("ModuleKey", m["key"]),

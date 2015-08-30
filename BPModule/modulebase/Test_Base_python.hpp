@@ -1,7 +1,7 @@
 #ifndef MODULESWRAP_PYTHON_H
 #define MODULESWRAP_PYTHON_H
 
-#include "BPModule/exception/Exception.hpp"
+#include "BPModule/exception/GeneralException.hpp"
 #include "BPModule/modulebase/Test_Base.hpp"
 
 #include <boost/python.hpp>
@@ -61,11 +61,11 @@ class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base
 
 
     private:
-        static BPModuleException::ExceptionInfo
+        static exception::GeneralException::ExceptionInfo
         PythonListToPairVec(const boost::python::list & exinfo)
         {
             int length = boost::python::extract<int>(exinfo.attr("__len__")());
-            BPModuleException::ExceptionInfo inf;
+            exception::GeneralException::ExceptionInfo inf;
             inf.reserve(length);
 
             for (int i = 0; i < length; i++)

@@ -31,7 +31,7 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
     }
     catch(...)
     {
-        throw BPModuleException("Malformed dictionary for ModuleInfo");
+        throw exception::GeneralException("Malformed dictionary for ModuleInfo");
     }
 }
 
