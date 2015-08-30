@@ -16,9 +16,9 @@ def ShouldFail(key, opt):
   try:
     bp.SetOptions(key, opt)
   except Exception as e:
-    bp.Output("\n")
-    bp.Error(str(e))
-    bp.Output("\n")
+    bp.output.Output("\n")
+    bp.output.Error(str(e))
+    bp.output.Output("\n")
     #traceback.print_exc()
     print("Test that should have failed did fail")
     return True
@@ -31,9 +31,9 @@ def ShouldSucceed(key, opt):
   try:
     bp.SetOptions(key, opt)
   except Exception as e:
-    bp.Output("\n")
-    bp.Error(str(e))
-    bp.Output("\n")
+    bp.output.Output("\n")
+    bp.output.Error(str(e))
+    bp.output.Output("\n")
     #traceback.print_exc()
     print("Test that should have succeeded did NOT succeed")
     return False
@@ -96,6 +96,6 @@ def Run():
 
 
 
-bp.Init(sys.argv, debug = True, output="/tmp/test.out")
+bp.Init(sys.argv, debug = True, out="/tmp/test.out")
 Run()
 bp.Finalize()

@@ -6,9 +6,8 @@ add_subdirectory(tensor)
 add_subdirectory(datastore)
 add_subdirectory(modulebase)
 add_subdirectory(modulestore)
-
-#add_subdirectory(molecule)
-#add_subdirectory(basisset)
+add_subdirectory(molecule)
+add_subdirectory(basisset)
 
 
 # Install headers
@@ -17,12 +16,12 @@ set(BPMODULE_PYTHON_HELPER_HEADERS
             python_helper/Python_stdconvert.hpp
    )
 
-set(BPMODULE_EXCEPTION_HEADERS
-            exception/Exception.hpp
-   )
-
 set(BPMODULE_OUTPUT_HEADERS
             output/Output.hpp
+   )
+
+set(BPMODULE_EXCEPTION_HEADERS
+            exception/Exception.hpp
    )
 
 set(BPMODULE_PARALLEL_HEADERS
@@ -44,26 +43,19 @@ set(BPMODULE_MODULEBASE_HEADERS
             modulebase/Test_Base.hpp
    )
 
-
-set(MODULESTORE_HEADERS
+set(BPMODULE_MODULESTORE_HEADERS
             modulestore/CModuleLoader.hpp
             modulestore/ModuleInfo.hpp
             modulestore/ModuleStore.hpp
             modulestore/PyModuleLoader.hpp
    )
 
-
-
-
-
-
-
-set(MOLECULE_HEADERS
+set(BPMODULE_MOLECULE_HEADERS
             molecule/Molecule.hpp
             molecule/Atoms.hpp
    )
 
-set(BASISSET_HEADERS
+set(BPMODULE_BASISSET_HEADERS
             basisset/BasisSet.hpp
    )
 
@@ -75,6 +67,6 @@ install(FILES ${BPMODULE_PARALLEL_HEADERS} DESTINATION include/BPModule/parallel
 install(FILES ${BPMODULE_TENSOR_HEADERS} DESTINATION include/BPModule/tensor)
 install(FILES ${BPMODULE_DATASTORE_HEADERS} DESTINATION include/BPModule/datastore)
 install(FILES ${BPMODULE_MODULEBASE_HEADERS} DESTINATION include/BPModule/modulebase)
-install(FILES ${MODULESTORE_HEADERS} DESTINATION include/BPModule/modulestore)
-#install(FILES ${MOLECULE_HEADERS} DESTINATION include/BPModule/molecule)
-#install(FILES ${BASISSET_HEADERS} DESTINATION include/BPModule/basisset)
+install(FILES ${BPMODULE_MODULESTORE_HEADERS} DESTINATION include/BPModule/modulestore)
+install(FILES ${BPMODULE_MOLECULE_HEADERS} DESTINATION include/BPModule/molecule)
+install(FILES ${BPMODULE_BASISSET_HEADERS} DESTINATION include/BPModule/basisset)

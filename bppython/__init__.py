@@ -6,6 +6,9 @@ import importlib
 # globally! WILL NOT WORK WITHOUT
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 
+##########################################
+# Load all the core modules
+##########################################
 # Note for bpmodule_exception
 # Just need to load exception class and register translator
 # Otherwise, we use the python exception in exception.py
@@ -18,17 +21,24 @@ import bpmodule_datastore as datastore
 import bpmodule_modulebase as modulebase
 import bpmodule_modulestore as modulestore
 
+##########################################
+# Load other python stuff from this directory
+##########################################
 from .utils import *
 from .exception import *
 from .optioncheck import *
 from .optionvalidate import *
 
 
+# Main module store and module loaders
 mst = None
 cml = None
 pml = None
 modmap = {}
 
+
+
+# Initializes the BPModule core
 def Init(argv, out = "stdout", color = True, debug = False):
   global mst
   global cml
@@ -37,7 +47,7 @@ def Init(argv, out = "stdout", color = True, debug = False):
   if out == "stdout":
     output.SetOut_Stdout()
   else:
-    output.SetOut_File(output)
+    output.SetOut_File(out)
 
   output.SetColor(color)
   output.SetDebug(debug) 
@@ -88,6 +98,8 @@ def Finalize():
 
     tensor.FinalizeTensor()
     parallel.FinalizeParallel()
+
+
 
 
 
@@ -142,7 +154,7 @@ def LoadModule(supermodule, key):
 
 
 
-
+# Set the options for a module under a given key
 def SetOptions(key, useropt):
     global mst
 
@@ -175,7 +187,8 @@ def SetOptions(key, useropt):
 
 
 
-
+# Go through all modules and if options aren't set,
+# use defaults (if possible)
 def CommitOptions():
     err = False
 
@@ -205,6 +218,8 @@ def CommitOptions():
 
             SetOptions(k, passedopt)
            
+
+
 
 def DumpModuleInfo():
     for k,m in modmap.items():

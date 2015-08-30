@@ -1,9 +1,9 @@
 minfo = { "CORE" :
   {
-    "name"        : "BPModule Parallel",
+    "name"        : "BPModule BasisSet",
     "type"        : "core",
     "version"     : "0.1a",
-    "description" : "Parallel functionality for BPModule",
+    "description" : "BasisSet class for BPModule",
     "authors"     : [],
     "refs"        : [],
     "options"     : {}

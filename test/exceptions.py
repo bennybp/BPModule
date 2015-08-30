@@ -13,13 +13,6 @@ import bppython as bp
 
 
 def Run():
-    # Set some outputs
-    bp.output.SetOut_Stdout()
-    bp.output.SetColor(True)
-    bp.output.SetDebug(True)
-
-
-    # Test
     try:
       # Load the python modules
       bp.LoadModule("testmodule1", "TESTMOD1")
@@ -90,6 +83,6 @@ def Run():
 
 
 
-bp.Init(sys.argv)
+bp.Init(sys.argv, out = "stdout", color = True, debug = True)
 Run()
 bp.Finalize()

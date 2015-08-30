@@ -1,10 +1,13 @@
-set(BASISSET_FILES
+set(BPMODULE_BASISSET_FILES
     BasisSet.cpp
    )
   
 
 
-ADD_CORELIB(bpmodule_basisset "${BASISSET_FILES}"
-                              ""
-                              "")
+ADD_MODULE(bpmodule_basisset
+           "${BPMODULE_BASISSET_FILES}"
+           ""
+           ""
+           "")
 
+INSTALL_MODULE(bpmodule_basisset "")

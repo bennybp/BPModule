@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 minfo = { "CORE" :
   {
     "name"        : "BPModule Tensor",

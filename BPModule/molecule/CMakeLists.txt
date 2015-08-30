@@ -1,11 +1,15 @@
-set(MOLECULE_FILES
+set(BPMODULE_MOLECULE_FILES
     Molecule.cpp
     Atoms.cpp
    )
   
 
 
-ADD_CORELIB(bpmodule_molecule "${MOLECULE_FILES}"
-                              ""
-                              "")
+ADD_MODULE(bpmodule_molecule
+           "${BPMODULE_MOLECULE_FILES}"
+           ""
+           ""
+           "")
+
+INSTALL_MODULE(bpmodule_molecule "")
 
