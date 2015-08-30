@@ -5,11 +5,10 @@
 #include <boost/python.hpp>
 
 using namespace boost::python;
-namespace bpy = boost::python;
-
 
 
 namespace bpmodule {
+namespace datastore {
 namespace export_python {
 
 
@@ -21,9 +20,9 @@ BOOST_PYTHON_MODULE(bpmodule_datastore)
     class_<CalcData>("CalcData", init<>())
     .def(init<const CalcData &>())
     .def("Has", &CalcData::Has)
-    .def("GetCopy", &CalcData::GetCopy<bpy::object>)
-//    .def("GetRef", &CalcData::GetRef<bpy::object>, return_value_policy<copy_const_reference>()) 
-    .def("Set", &CalcData::Set<bpy::object>)
+    .def("GetCopy", &CalcData::GetCopy<boost::python::object>)
+//    .def("GetRef", &CalcData::GetRef<boost::python::object>, return_value_policy<copy_const_reference>()) 
+    .def("Set", &CalcData::Set<boost::python::object>)
     .def("Erase", &CalcData::Erase)
     .def("SetRef", static_cast<void(CalcData::*)(const CalcData &, const std::string &, const std::string &)>(&CalcData::SetRef))
     .def("SetRef", static_cast<void(CalcData::*)(const CalcData &, const std::string &)>(&CalcData::SetRef));
@@ -31,5 +30,6 @@ BOOST_PYTHON_MODULE(bpmodule_datastore)
 
 
 } // close namespace export_python
+} // close namespace datastore
 } // close namespace bpmodule
 

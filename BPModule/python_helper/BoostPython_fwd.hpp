@@ -4,8 +4,7 @@
 namespace boost {
 namespace python {
 
-namespace api
-{
+namespace api {
 class object;
 }
 

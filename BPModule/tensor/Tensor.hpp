@@ -5,7 +5,6 @@
 
 #include "BPModule/python_helper/BoostPython_fwd.hpp"
 
-namespace bpy = boost::python;
 
 namespace bpmodule {
 namespace tensor {
@@ -16,7 +15,7 @@ typedef CTF::Matrix<double, false> Matrix;
 typedef CTF::Tensor<double, false> Tensor;
 
 
-void InitTensor(const bpy::list & argv);
+void InitTensor(const boost::python::list & argv);
 void FinalizeTensor(void);
 CTF::World & GetWorld(void);
 

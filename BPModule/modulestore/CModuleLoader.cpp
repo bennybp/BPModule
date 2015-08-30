@@ -8,9 +8,6 @@
 namespace bpmodule {
 namespace modulestore {
 
-namespace out = bpmodule::output;
-using bpmodule::modulebase::ModuleBase;
-
 CModuleLoader::CModuleLoader(ModuleStore * mst)
     : mst_(mst)
 {
@@ -26,12 +23,12 @@ CModuleLoader::~CModuleLoader()
 
 
 
-ModuleBase * CModuleLoader::CreateWrapper_(CreateFunc fn, const std::string & key,
+modulebase::ModuleBase * CModuleLoader::CreateWrapper_(CreateFunc fn, const std::string & key,
                                            unsigned long id,
                                            const ModuleInfo & minfo)
 {
-    ModuleBase * newobj = fn(key, id, *mst_, minfo);
-    objects_[id] = std::unique_ptr<ModuleBase>(newobj);
+    modulebase::ModuleBase * newobj = fn(key, id, *mst_, minfo);
+    objects_[id] = std::unique_ptr<modulebase::ModuleBase>(newobj);
     return newobj;
 }
 
@@ -59,7 +56,7 @@ void CModuleLoader::LoadSO(const std::string & key,
         handle = handles_[sopath];
     else
     {
-        out::Debug("Looking to open so file: %1%\n", sopath);
+        output::Debug("Looking to open so file: %1%\n", sopath);
         handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
         // open the module
         if(!handle)
@@ -91,7 +88,7 @@ void CModuleLoader::LoadSO(const std::string & key,
     if(handles_.count(sopath) == 0)
         handles_.insert(HandleMap::value_type(sopath, handle));
 
-    out::Success("Successfully opened %1%\n", sopath);
+    output::Success("Successfully opened %1%\n", sopath);
 
     ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::CreateWrapper_, this, fn,
                                                        std::placeholders::_1,
@@ -122,7 +119,7 @@ void CModuleLoader::CloseHandles(void)
 {
     for(auto it : handles_)
     {
-        out::Output("Closing %1%\n", it.first);
+        output::Output("Closing %1%\n", it.first);
         dlclose(it.second);
     }
     handles_.clear();

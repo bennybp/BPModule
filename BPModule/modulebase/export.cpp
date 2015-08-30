@@ -5,7 +5,6 @@
 #include <boost/python.hpp>
 
 using namespace boost::python;
-namespace bpy = boost::python;
 
 
 
@@ -28,12 +27,12 @@ BOOST_PYTHON_MODULE(bpmodule_modulebase)
     .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
     .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>())
     .def("HasOption", &ModuleBase::HasOption)
-    .def("GetOption", &ModuleBase::GetOption<bpy::object>);
+    .def("GetOption", &ModuleBase::GetOption<boost::python::object>);
 
 
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
-    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, const ModuleInfo &>())
+    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, modulestore::ModuleStore &, const modulestore::ModuleInfo &>())
     .def("MStore", &Test_Base_Wrap::MStore, return_internal_reference<>())
     .def("ThrowException", &Test_Base_Wrap::ThrowException, ThrowException_overloads())
     .def("RunTest", pure_virtual(&Test_Base::RunTest))

@@ -3,7 +3,6 @@
 #include <boost/python.hpp>
 
 using namespace boost::python;
-namespace bpy = boost::python;
 
 
 

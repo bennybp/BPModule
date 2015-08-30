@@ -4,6 +4,7 @@
 #include "BPModule/datastore/PropertyMap.hpp"
 
 namespace bpmodule {
+namespace datastore {
 
 
 // Class holds inputs and outputs, allowing read-only access
@@ -68,6 +69,7 @@ class CalcData : public PropertyMap
 };
 
 
+} // close namespace datastore
 } // close namespace bpmodule
 
 

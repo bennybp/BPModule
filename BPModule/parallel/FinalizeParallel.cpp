@@ -4,14 +4,12 @@
 
 #include <mpi.h>
 
-namespace out = bpmodule::output;
-
 namespace bpmodule {
 namespace parallel {
 
 void FinalizeParallel(void)
 {
-    out::Output("Finalizing Process %1% of %2%\n", GetProcID(), GetNProc());
+    output::Output("Finalizing Process %1% of %2%\n", GetProcID(), GetNProc());
 
     #ifdef BPMODULE_MPI
         MPI_Finalize();

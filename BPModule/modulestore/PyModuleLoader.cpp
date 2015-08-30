@@ -3,10 +3,6 @@
 #include "BPModule/modulestore/ModuleStore.hpp"
 #include "BPModule/modulebase/ModuleBase.hpp"
 
-namespace bpy = boost::python;
-
-using bpmodule::modulestore::ModuleInfo;
-using bpmodule::modulebase::ModuleBase;
 
 namespace bpmodule {
 namespace modulestore {
@@ -27,13 +23,13 @@ PyModuleLoader::~PyModuleLoader()
 
 
 
-ModuleBase * PyModuleLoader::CreateWrapper_(bpy::object fn, const std::string & key,
+modulebase::ModuleBase * PyModuleLoader::CreateWrapper_(boost::python::object fn, const std::string & key,
                                             unsigned long id,
-                                            const ModuleInfo & minfo)
+                                            const modulestore::ModuleInfo & minfo)
 {
-    bpy::object newobj = fn(key, id, boost::ref(*mst_), boost::ref(minfo));
+    boost::python::object newobj = fn(key, id, boost::ref(*mst_), boost::ref(minfo));
     objects_[id] = newobj;
-    return bpy::extract<ModuleBase *>(newobj);
+    return boost::python::extract<modulebase::ModuleBase *>(newobj);
 }
 
 
@@ -46,7 +42,7 @@ void PyModuleLoader::DeleteWrapper_(unsigned long id)
 
 
 void PyModuleLoader::AddPyModule(const std::string & key,
-                                 bpy::object func, const ModuleInfo & minfo)
+                                 boost::python::object func, const modulestore::ModuleInfo & minfo)
 {
 
     ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::CreateWrapper_, this, func,
@@ -75,12 +71,12 @@ void PyModuleLoader::UnloadAll(void)
 
 namespace export_python {
 
-// wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
+// wraps PyModuleLoader::AddPyModule so that it can take a dict for the modulestore::ModuleInfo
 void Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
-                                     const std::string & key, bpy::object func,
-                                     const bpy::dict & minfo)
+                                     const std::string & key, boost::python::object func,
+                                     const boost::python::dict & minfo)
 {
-    // dictionary is converted to ModuleInfo via constructor
+    // dictionary is converted to modulestore::ModuleInfo via constructor
     return ml->AddPyModule(key, func, minfo);
 }
 

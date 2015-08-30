@@ -6,47 +6,51 @@
 #include <string>
 
 #include <boost/python.hpp>
-namespace bpy = boost::python;
 
 
-
+//forward declarations
 namespace bpmodule {
 
 namespace modulebase {
 class ModuleBase;
 }
 
-using bpmodule::modulebase::ModuleBase;
-
 namespace modulestore {
-
 class ModuleStore;
 class ModuleInfo;
+}
+}
+// end forward declarations
 
+
+
+
+namespace bpmodule {
+namespace modulestore {
 
 class PyModuleLoader
 {
     public:
 
-        PyModuleLoader(ModuleStore * mst);
+        PyModuleLoader(modulestore::ModuleStore * mst);
         ~PyModuleLoader();
 
         PyModuleLoader & operator=(const PyModuleLoader & rhs) = delete;
         PyModuleLoader(const PyModuleLoader & rhs) = delete;
 
-        void AddPyModule(const std::string & key, bpy::object func, const ModuleInfo & minfo);
+        void AddPyModule(const std::string & key, boost::python::object func, const modulestore::ModuleInfo & minfo);
 
         void UnloadAll(void);
 
     private:
-        typedef std::unordered_map<unsigned long, bpy::object> ObjectMap;
+        typedef std::unordered_map<unsigned long, boost::python::object> ObjectMap;
 
-        ModuleStore * mst_;
+        modulestore::ModuleStore * mst_;
         ObjectMap objects_;
 
         void DeleteObject_(unsigned long id);
 
-        ModuleBase * CreateWrapper_(bpy::object fn, const std::string & key, unsigned long id, const ModuleInfo & options);
+        modulebase::ModuleBase * CreateWrapper_(boost::python::object fn, const std::string & key, unsigned long id, const modulestore::ModuleInfo & options);
         void DeleteWrapper_(unsigned long id);
 };
 
@@ -54,8 +58,8 @@ class PyModuleLoader
 namespace export_python {
 
 void Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
-                                     const std::string & key, bpy::object func,
-                                     const bpy::dict & minfo);
+                                     const std::string & key, boost::python::object func,
+                                     const boost::python::dict & minfo);
 
 } // close namespace export_python
 

@@ -2,12 +2,14 @@
 #include "BPModule/modulestore/ModuleStore.hpp"
 #include "BPModule/output/Output.hpp"
 
-using bpmodule::modulestore::ModuleInfo;
 
 namespace bpmodule {
 namespace modulebase {
 
-ModuleBase::ModuleBase(unsigned long id, ModuleStore & mstore, const ModuleInfo & minfo)
+
+ModuleBase::ModuleBase(unsigned long id,
+                       modulestore::ModuleStore & mstore,
+                       const modulestore::ModuleInfo & minfo)
     : id_(id), key_(minfo.key), name_(minfo.name),
       version_(minfo.version), options_(minfo.options),
       mstore_(mstore)
@@ -15,10 +17,13 @@ ModuleBase::ModuleBase(unsigned long id, ModuleStore & mstore, const ModuleInfo 
     output::Debug("Constructed module [%1%] : %2% v%3%\n", id_, name_, version_);
 }
 
+
+
 ModuleBase::~ModuleBase()
 {
     output::Debug("Destructed module [%1%] : %2% v%3%\n", id_, name_, version_);
 }
+
 
 
 void ModuleBase::ThrowException(const std::string & exwhat,
@@ -33,35 +38,48 @@ void ModuleBase::ThrowException(const std::string & exwhat,
 }
 
 
+
 unsigned long ModuleBase::ID(void) const
 {
     return id_;
 }
+
+
 
 const std::string & ModuleBase::Key(void) const
 {
     return key_;
 }
 
+
+
 const std::string & ModuleBase::Name(void) const
 {
     return name_;
 }
+
+
 
 const std::string & ModuleBase::Version(void) const
 {
     return version_;
 }
 
-ModuleStore & ModuleBase::MStore(void)
+
+
+modulestore::ModuleStore & ModuleBase::MStore(void)
 {
     return mstore_;
 }
+
+
 
 bool ModuleBase::HasOption(const std::string & key) const
 {
     return options_.Has(key);
 }
+
+
 
 } // close namespace modulebase
 } // close namespace bpmodule

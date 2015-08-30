@@ -1,30 +1,29 @@
 #ifndef MODULEBASE_H
 #define MODULEBASE_H
 
-#include <string>
-#include <functional>
-
-#include "BPModule/modulestore/ModuleInfo.hpp"
 #include "BPModule/datastore/CalcData.hpp"
+#include "BPModule/datastore/OptionMap.hpp"
 
-namespace bpy = boost::python;
-
-using bpmodule::modulestore::ModuleInfo;
-
+// forward declarations
 namespace bpmodule {
-
 namespace modulestore {
 class ModuleStore;
+class ModuleInfo;
 }
-using bpmodule::modulestore::ModuleStore;
+}
+// end forward declarations
 
+
+namespace bpmodule {
 namespace modulebase {
 
 
 class ModuleBase
 {
     public:
-        ModuleBase(unsigned long id, ModuleStore & mstore, const ModuleInfo & minfo);
+        ModuleBase(unsigned long id,
+                   modulestore::ModuleStore & mstore,
+                   const modulestore::ModuleInfo & minfo);
 
         virtual ~ModuleBase();
 
@@ -61,10 +60,10 @@ class ModuleBase
         void ThrowException(const std::string & exwhat,
                             const BPModuleException::ExceptionInfo & exinfo = {}) const;
 
-        ModuleStore & MStore(void);
+        modulestore::ModuleStore & MStore(void);
 
         void ThrowException(const std::string & exwhat,
-                            const bpy::list & exinfo);
+                            const boost::python::list & exinfo);
 
 
     private:
@@ -72,9 +71,9 @@ class ModuleBase
         std::string key_;
         std::string name_;
         std::string version_;
-        OptionMap options_;
+        datastore::OptionMap options_;
 
-        ModuleStore & mstore_;
+        modulestore::ModuleStore & mstore_;
 };
 
 

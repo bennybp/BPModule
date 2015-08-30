@@ -6,24 +6,21 @@
 
 #include <boost/python.hpp>
 
-namespace bpy = boost::python;
-
-
 
 namespace bpmodule {
-namespace export_python {
+namespace python_helper {
 
 
 template<typename T>
 static
-std::vector<T> ConvertListToVec(const bpy::list & list)
+std::vector<T> ConvertListToVec(const boost::python::list & list)
 {
-    int length = bpy::extract<int>(list.attr("__len__")());
+    int length = boost::python::extract<int>(list.attr("__len__")());
     std::vector<T> ret;
     ret.reserve(length);
 
     for (int i = 0; i < length; i++)
-        ret.push_back(static_cast<T>(bpy::extract<T>(list[i])));
+        ret.push_back(static_cast<T>(boost::python::extract<T>(list[i])));
 
     return ret;
 }
@@ -34,7 +31,7 @@ static
 T ConvertDictToMap(const dict & d)
 {
     T m;
-    int length = bpy::extract<int>(list.attr("__len__")());
+    int length = boost::python::extract<int>(list.attr("__len__")());
     for(int i = 0; i < length; i++)
 
 
@@ -43,20 +40,24 @@ T ConvertDictToMap(const dict & d)
 */
 
 template<typename T>
-bpy::list ConvertVecToList(const std::vector<T> & v)
+boost::python::list ConvertVecToList(const std::vector<T> & v)
 {
-    bpy::list result;
+    boost::python::list result;
+
     for(auto & it : v)
         result.append(it);
+
     return result;
 }
 
 template<typename T>
-bpy::dict ConvertMapToDict(const T & m)
+boost::python::dict ConvertMapToDict(const T & m)
 {
-    bpy::dict d;
+    boost::python::dict d;
+
     for(auto & it : m)
         d[it.first] = it.second;
+
     return d;
 }
 
@@ -71,8 +72,8 @@ struct VectorConverter
 {
     static PyObject* convert(const std::vector<T> & v)
     {
-        bpy::list lst = ConvertVecToList(v);
-        return bpy::incref(lst.ptr());
+        boost::python::list lst = ConvertVecToList(v);
+        return boost::python::incref(lst.ptr());
     }
 };
 
@@ -82,7 +83,7 @@ struct PairConverter
 {
     static PyObject* convert(const std::pair<T1, T2>& pair)
     {
-        return bpy::incref(bpy::make_tuple(pair.first, pair.second).ptr());
+        return boost::python::incref(boost::python::make_tuple(pair.first, pair.second).ptr());
     }
 };
 
@@ -91,14 +92,14 @@ struct MapConverter
 {
     static PyObject* convert(const T & m)
     {
-        bpy::dict d = ConvertMapToDict(m);
-        return bpy::incref(d.ptr());
+        boost::python::dict d = ConvertMapToDict(m);
+        return boost::python::incref(d.ptr());
     }
 };
 
 
 
-} // close namespace export_python
+} // close namespace python_helper
 } // close namespace bpmodule
 
 #endif

@@ -8,30 +8,28 @@
 
 #include "BPModule/modulestore/ModuleInfo.hpp"
 #include "BPModule/python_helper/BoostPython_fwd.hpp"
-namespace bpy = boost::python;
 
-
+// forward declarations
 namespace bpmodule {
-
 namespace modulebase {
 class ModuleBase;
 }
+}
+// end forward declarations
 
-using bpmodule::modulebase::ModuleBase;
-
+namespace bpmodule {
 namespace modulestore {
-class ModuleStore;
 
 
 template<typename T>
-using ScopedModule = std::unique_ptr<T, std::function<void(ModuleBase *)>>;
+using ScopedModule = std::unique_ptr<T, std::function<void(modulebase::ModuleBase *)>>;
 
 
 
 class ModuleStore
 {
     public:
-        typedef std::function<ModuleBase *(const std::string &, unsigned long, const ModuleInfo &)> ModuleGeneratorFunc;
+        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long, const ModuleInfo &)> ModuleGeneratorFunc;
         typedef std::function<void(unsigned long)> ModuleRemoverFunc;
 
         ModuleStore();
@@ -48,9 +46,9 @@ class ModuleStore
 
         void AddModule(const std::string & key, ModuleGeneratorFunc func, ModuleRemoverFunc dfunc, const ModuleInfo & minfo);
         void RemoveModule(unsigned long id);
-        void RemoveModule(ModuleBase * mb);
+        void RemoveModule(modulebase::ModuleBase * mb);
 
-        void SetOptions(const std::string & key, const OptionMap & opt);
+        void SetOptions(const std::string & key, const datastore::OptionMap & opt);
 
 
 
@@ -61,7 +59,7 @@ class ModuleStore
             const StoreEntry & se = GetOrThrow_(key);
 
             // create
-            ModuleBase * mbptr = se.func(key, curid_, se.mi);
+            modulebase::ModuleBase * mbptr = se.func(key, curid_, se.mi);
 
             // test
             T * dptr = dynamic_cast<T *>(mbptr);
@@ -92,7 +90,7 @@ class ModuleStore
         ScopedModule<T> GetScopedModule(const std::string & key)
         {
             T & mod = GetModule<T>(key);
-            std::function<void(ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(ModuleBase *)>(&ModuleStore::RemoveModule),
+            std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::RemoveModule),
                                                                 this,
                                                                 std::placeholders::_1);
 
@@ -126,8 +124,8 @@ class ModuleStore
 
 
 namespace export_python {
-void Wrap_ModuleStore_SetOptions(ModuleStore * mst, const std::string & key, bpy::list & opt);
-}
+void Wrap_ModuleStore_SetOptions(ModuleStore * mst, const std::string & key, boost::python::list & opt);
+} // close namespace export_python
 
 
 } // close namespace modulestore

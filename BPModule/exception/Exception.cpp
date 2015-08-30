@@ -17,16 +17,19 @@ const BPModuleException::ExceptionInfo BPModuleException::GetInfo(void) const
 }
 
 
+
 void BPModuleException::AppendInfo(const ExceptionInfo & toappend)
 {
     exinfo_.insert(exinfo_.end(), toappend.begin(), toappend.end());
 }
 
 
+
 const char * BPModuleException::what(void) const noexcept
 {
     return whatstr_.c_str();
 }
+
 
 
 std::string BPModuleException::ExceptionString(void) const
@@ -41,7 +44,6 @@ std::string BPModuleException::ExceptionString(void) const
             output::Output(ss, "%|24| : %|-|\n", it.first, it.second);
     return ss.str();
 }
-
 
 
 } // close namespace bpmodule

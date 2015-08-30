@@ -5,9 +5,6 @@
 #include <mpi.h>
 #endif
 
-namespace out = bpmodule::output;
-namespace bpy = boost::python;
-
 namespace bpmodule {
 namespace parallel {
 

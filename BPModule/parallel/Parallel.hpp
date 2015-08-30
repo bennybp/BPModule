@@ -3,13 +3,12 @@
 
 #include "BPModule/python_helper/BoostPython_fwd.hpp"
 
-namespace bpy = boost::python;
 
 namespace bpmodule {
 namespace parallel {
 
 
-void InitParallel(const bpy::list & argv);
+void InitParallel(const boost::python::list & argv);
 void FinalizeParallel(void);
 
 long GetProcID(void);

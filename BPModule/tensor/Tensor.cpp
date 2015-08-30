@@ -15,12 +15,12 @@ namespace bpmodule {
 namespace tensor {
 
 
-void InitTensor(const bpy::list & argv)
+void InitTensor(const boost::python::list & argv)
 {
     #ifdef BPMODULE_MPI
         //! \todo Check for buffer overflows
 
-        int argc = bpy::extract<int>(argv.attr("__len__")());
+        int argc = boost::python::extract<int>(argv.attr("__len__")());
 
         // copy argv
         // argv[argc] should always be NULL
@@ -28,7 +28,7 @@ void InitTensor(const bpy::list & argv)
         char ** argvtmp = new char*[argc+1];
         for(int i = 0; i < argc; i++)
         {
-            std::string arg = bpy::extract<std::string>(argv[i]);
+            std::string arg = boost::python::extract<std::string>(argv[i]);
             size_t len = arg.size();
             argvtmp[i] = new char[len+1];
             strncpy(argvtmp[i], arg.c_str(), len+1);

@@ -8,10 +8,10 @@
 
 
 using namespace boost::python;
-namespace bpy = boost::python;
 
 
 namespace bpmodule {
+namespace python_helper {
 namespace export_python {
 
 BOOST_PYTHON_MODULE(bpmodule_python_helper)
@@ -35,5 +35,6 @@ BOOST_PYTHON_MODULE(bpmodule_python_helper)
 
 
 } // close namespace export_python
+} // close namespace python_helper
 } // close namespace bpmodule
 

@@ -3,11 +3,9 @@
 
 #include "BPModule/datastore/PropertyMap.hpp"
 
-namespace bpy = boost::python;
-
 
 namespace bpmodule {
-
+namespace datastore {
 
 
 // This is constructed (probably from python) and then read-only 
@@ -28,7 +26,7 @@ class OptionMap : public PropertyMap
         OptionMap & operator=(OptionMap && rhs) = default;
 
         // Construct from python
-        OptionMap(const bpy::list & olist) : PropertyMap(olist) {  }
+        OptionMap(const boost::python::list & olist) : PropertyMap(olist) {  }
 
         // return a copy
         template<typename T>
@@ -39,6 +37,7 @@ class OptionMap : public PropertyMap
 };
 
 
+} // close namespace datastore
 } // close namespace bpmodule
 
 

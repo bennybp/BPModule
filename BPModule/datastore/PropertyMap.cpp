@@ -2,6 +2,7 @@
 
 
 namespace bpmodule {
+namespace datastore {
 
 
 void PropertyMap::Set_(const std::string & key, PropPlaceholderPtr && value)
@@ -114,5 +115,6 @@ PropertyMap::PropMapEntry & PropertyMap::GetOrThrow_(const std::string & key)
 }
 
 
+} // close namespace datastore
 } // close namespace bpmodule
 

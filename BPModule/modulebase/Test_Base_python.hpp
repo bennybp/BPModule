@@ -2,13 +2,9 @@
 #define MODULESWRAP_PYTHON_H
 
 #include "BPModule/exception/Exception.hpp"
-
-// All the module base classes
-#include "BPModule/modulebase/All.hpp"
+#include "BPModule/modulebase/Test_Base.hpp"
 
 #include <boost/python.hpp>
-
-namespace bpy = boost::python;
 
 
 namespace bpmodule {
@@ -16,20 +12,23 @@ namespace modulebase {
 namespace export_python {
 
 
-class Test_Base_Wrap : public Test_Base, public bpy::wrapper<Test_Base>
+class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base>
 {
     public:
-        Test_Base_Wrap(unsigned long id, ModuleStore & mstore, const ModuleInfo & minfo)
+        Test_Base_Wrap(unsigned long id,
+                       modulestore::ModuleStore & mstore,
+                       const modulestore::ModuleInfo & minfo)
             : Test_Base(id, mstore, minfo)
         {}
 
         // expose protected member functions
-        void ThrowException(const std::string & exwhat, const bpy::list & exinfo = bpy::list())
+        void ThrowException(const std::string & exwhat,
+                            const boost::python::list & exinfo = boost::python::list())
         {
             ModuleBase::ThrowException(exwhat, PythonListToPairVec(exinfo));
         }
 
-        ModuleStore & MStore(void)
+        modulestore::ModuleStore & MStore(void)
         {
             return ModuleBase::MStore();
         }
@@ -55,7 +54,7 @@ class Test_Base_Wrap : public Test_Base, public bpy::wrapper<Test_Base>
             this->get_override("CallThrow")(other);
         }
 
-        virtual CalcData CalcTest(CalcData inputs)
+        virtual datastore::CalcData CalcTest(datastore::CalcData inputs)
         {
             return this->get_override("CalcData")(inputs);
         }
@@ -63,16 +62,16 @@ class Test_Base_Wrap : public Test_Base, public bpy::wrapper<Test_Base>
 
     private:
         static BPModuleException::ExceptionInfo
-        PythonListToPairVec(const bpy::list & exinfo)
+        PythonListToPairVec(const boost::python::list & exinfo)
         {
-            int length = bpy::extract<int>(exinfo.attr("__len__")());
+            int length = boost::python::extract<int>(exinfo.attr("__len__")());
             BPModuleException::ExceptionInfo inf;
             inf.reserve(length);
 
             for (int i = 0; i < length; i++)
                 inf.push_back({
-                                bpy::extract<std::string>(exinfo[i][0]),
-                                bpy::extract<std::string>(exinfo[i][1]),
+                                boost::python::extract<std::string>(exinfo[i][0]),
+                                boost::python::extract<std::string>(exinfo[i][1]),
                               });
 
             return inf;

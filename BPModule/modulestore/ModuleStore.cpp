@@ -26,7 +26,7 @@ void ModuleStore::AddModule(const std::string & key, ModuleGeneratorFunc func, M
 
 
 
-void ModuleStore::SetOptions(const std::string & key, const OptionMap & opt)
+void ModuleStore::SetOptions(const std::string & key, const datastore::OptionMap & opt)
 {
     if(!Has(key))
         throw BPModuleException(
@@ -84,7 +84,7 @@ void ModuleStore::RemoveModule(unsigned long id)
     }
 }
 
-void ModuleStore::RemoveModule(ModuleBase * mb)
+void ModuleStore::RemoveModule(modulebase::ModuleBase * mb)
 {
     RemoveModule(mb->ID());
 }
