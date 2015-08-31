@@ -1,5 +1,5 @@
-#ifndef BOOSTPYTHON_FWD_H
-#define BOOSTPYTHON_FWD_H
+#ifndef _GUARD_BOOSTPYTHON_FWD_HPP_
+#define _GUARD_BOOSTPYTHON_FWD_HPP_
 
 namespace boost {
 namespace python {

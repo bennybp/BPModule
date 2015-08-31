@@ -1,5 +1,5 @@
-#ifndef BPMODULE_TENSOR_HPP
-#define BPMODULE_TENSOR_HPP
+#ifndef _GUARD_TENSOR_HPP_
+#define _GUARD_TENSOR_HPP_
 
 #include <ctf.hpp>
 

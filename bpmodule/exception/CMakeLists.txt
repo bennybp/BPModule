@@ -11,4 +11,4 @@ ADD_MODULE(exception
            ""
            "")
 
-INSTALL_COREMODULE(exception "pyexception.py")
+INSTALL_COREMODULE(exception "PyGeneralException.py")

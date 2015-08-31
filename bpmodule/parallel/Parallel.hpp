@@ -1,5 +1,5 @@
-#ifndef BPMODULE_PARALLEL_HPP
-#define BPMODULE_PARALLEL_HPP
+#ifndef _GUARD_PARALLEL_HPP_
+#define _GUARD_PARALLEL_HPP_
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 

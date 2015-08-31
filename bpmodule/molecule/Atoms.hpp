@@ -1,5 +1,5 @@
-#ifndef ATOMS_HPP
-#define ATOMS_HPP
+#ifndef _GUARD_ATOMS_HPP_
+#define _GUARD_ATOMS_HPP_
 
 #include <string>
 

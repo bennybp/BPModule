@@ -1,5 +1,5 @@
-#ifndef PROPERTY_MAP
-#define PROPERTY_MAP
+#ifndef _GUARD_PROPERTYMAP_HPP_
+#define _GUARD_PROPERTYMAP_HPP_
 
 #include <map>
 #include <string>

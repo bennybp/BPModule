@@ -1,5 +1,5 @@
-#ifndef OPTIONMAP_HPP
-#define OPTIONMAP_HPP
+#ifndef _GUARD_OPTIONMAP_HPP_
+#define _GUARD_OPTIONMAP_HPP_
 
 #include "bpmodule/datastore/PropertyMap.hpp"
 

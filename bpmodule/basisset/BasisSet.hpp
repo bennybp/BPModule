@@ -1,5 +1,5 @@
-#ifndef BPMODULE_BASISSET_HPP
-#define BPMODULE_BASISSET_HPP
+#ifndef _GUARD_BASISSET_HPP_
+#define _GUARD_BASISSET_HPP_
 
 namespace bpmodule {
 namespace basisset {

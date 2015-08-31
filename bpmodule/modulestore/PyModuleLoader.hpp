@@ -1,5 +1,5 @@
-#ifndef PYMODULELOADER_H
-#define PYMODULELOADER_H
+#ifndef _GUARD_PYMODULELOADER_HPP_
+#define _GUARD_PYMODULELOADER_HPP_
 
 #include <memory>
 #include <unordered_map>

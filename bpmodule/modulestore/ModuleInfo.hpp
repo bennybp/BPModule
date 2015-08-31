@@ -1,5 +1,5 @@
-#ifndef MODULEINFO_H
-#define MODULEINFO_H
+#ifndef _GUARD_MODULEINFO_HPP_
+#define _GUARD_MODULEINFO_HPP_
 
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"

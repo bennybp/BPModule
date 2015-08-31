@@ -1,5 +1,5 @@
-#ifndef OUTPUT_H
-#define OUTPUT_H
+#ifndef _GUARD_OUTPUT_HPP_
+#define _GUARD_OUTPUT_HPP_
 
 #include <iostream>
 #include <sstream>

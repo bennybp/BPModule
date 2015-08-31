@@ -1,5 +1,5 @@
-#ifndef TEST_BASE_H
-#define TEST_BASE_H
+#ifndef _GUARD_TEST_BASE_HPP_
+#define _GUARD_TEST_BASE_HPP_
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
 

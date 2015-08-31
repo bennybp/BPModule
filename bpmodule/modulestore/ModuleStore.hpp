@@ -1,5 +1,5 @@
-#ifndef MODULESTORE_H
-#define MODULESTORE_H
+#ifndef _GUARD_MODULESTORE_HPP_
+#define _GUARD_MODULESTORE_HPP_
 
 #include <unordered_map>
 #include <vector>

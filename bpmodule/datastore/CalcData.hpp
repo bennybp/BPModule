@@ -1,5 +1,5 @@
-#ifndef CALCDATA_HPP
-#define CALCDATA_HPP
+#ifndef _GUARD_CALCDATA_HPP_
+#define _GUARD_CALCDATA_HPP_
 
 #include "bpmodule/datastore/PropertyMap.hpp"
 

@@ -1,5 +1,5 @@
-#ifndef PYTHON_CONVERT_H
-#define PYTHON_CONVERT_H
+#ifndef _GUARD_PYTHON_STDCONVERT_HPP_
+#define _GUARD_PYTHON_STDCONVERT_HPP_
 
 #include <vector>
 #include <string>

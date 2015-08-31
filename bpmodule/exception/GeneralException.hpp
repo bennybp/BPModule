@@ -1,5 +1,5 @@
-#ifndef EXCEPTION_H
-#define EXCEPTION_H
+#ifndef _GUARD_GENERALEXCEPTION_HPP_
+#define _GUARD_GENERALEXCEPTION_HPP_
 
 #include <stdexcept>
 

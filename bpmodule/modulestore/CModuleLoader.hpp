@@ -1,5 +1,5 @@
-#ifndef CMODULELOADER_H
-#define CMODULELOADER_H
+#ifndef _GUARD_CMODULELOADER_HPP_
+#define _GUARD_CMODULELOADER_HPP_
 
 #include <memory>
 #include <unordered_map>

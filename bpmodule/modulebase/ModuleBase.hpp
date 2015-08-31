@@ -1,5 +1,5 @@
-#ifndef MODULEBASE_H
-#define MODULEBASE_H
+#ifndef _GUARD_MODULEBASE_HPP_
+#define _GUARD_MODULEBASE_HPP_
 
 #include "bpmodule/datastore/CalcData.hpp"
 #include "bpmodule/datastore/OptionMap.hpp"
