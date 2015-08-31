@@ -2,7 +2,9 @@
 #include "bpmodule/parallel/Parallel.hpp"
 #include "bpmodule/tensor/Tensor.hpp"
 
+#ifdef BPMODULE_MPI
 #include <mpi.h>
+#endif
 
 namespace bpmodule {
 namespace parallel {

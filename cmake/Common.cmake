@@ -1,6 +1,5 @@
 
-# For now, MPI is required
-set(BPMODULE_MPI True)
+set(BPMODULE_MPI FALSE CACHE BOOL "Use MPI")
 
 
 # Don't use anything (ie, lib) as a prefix to SO
@@ -13,9 +12,11 @@ if(NOT OPENMP_FOUND)
   message(FATAL_ERROR "Error - OpenMP is required!")
 endif()
 
-find_package(MPI)
-if(NOT MPI_CXX_FOUND) 
-  message(FATAL_ERROR "Error - MPI is required!")
+if(BPMODULE_MPI)
+  find_package(MPI)
+  if(NOT MPI_CXX_FOUND) 
+    message(FATAL_ERROR "Cannot find MPI!")
+  endif()
 endif()
 
 # For some reason, this has a leading whitespace
@@ -28,6 +29,7 @@ find_package(PythonLibs REQUIRED)
 
 
 # Math libraries  
+# (this is called by find_package(LAPACK)
 #find_package(BLAS)
 #if(NOT BLAS_FOUND) 
 #  message(FATAL_ERROR "Error - BLAS is required!")
