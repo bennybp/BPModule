@@ -17,6 +17,8 @@ from . import tensor
 from . import datastore
 from . import modulebase
 from . import modulestore
+from . import molecule
+from . import basisset
 
 ##########################################
 # Load other python stuff from this directory
@@ -34,8 +36,12 @@ modmap = {}
 
 
 
-# Initializes the BPModule core
 def Init(argv, out = "stdout", color = True, debug = False):
+  """Initializes the BPModule core
+
+  Initializes MPI, tensor libraries, etc, as well as the
+  output streams.
+  """
   global mst
   global cml
   global pml

@@ -1,4 +1,3 @@
-
 #include <map>
 
 #include "bpmodule/molecule/Atoms.hpp"
@@ -55,6 +54,7 @@ namespace {
 
 
 namespace bpmodule {
+namespace molecule {
 
 int AtomSymbolToZ(const std::string & sym)
 {
@@ -66,7 +66,7 @@ std::string AtomZToSymbol(int Z)
     return ztosymbol_.at(Z);
 }
 
+
+} // close namespace molecule
 } // close namespace bpmodule
-
-
 
