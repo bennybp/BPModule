@@ -1,5 +1,6 @@
 set(BPMODULE_BASISSET_FILES
     BasisSet.cpp
+    export.cpp
    )
   
 
