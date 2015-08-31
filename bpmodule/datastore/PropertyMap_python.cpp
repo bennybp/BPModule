@@ -1,5 +1,6 @@
 #include "bpmodule/datastore/PropertyMap.hpp"
 #include "bpmodule/python_helper/Python_stdconvert.hpp"
+#include "bpmodule/tensor/Tensor.hpp"
 
 #include <boost/python.hpp>
 
@@ -51,6 +52,9 @@ boost::python::object PropertyMap::GetCopy<>(const std::string & key) const
 
     else if(type == typeid(std::vector<std::string>).name())
         return boost::python::object(GetRef<std::vector<std::string>>(key));
+
+    else if(type == typeid(tensor::Tensor).name())
+        return boost::python::object(GetRef<tensor::Tensor>(key));
 
     else
         throw exception::GeneralException("Unable to convert C++ type to python",

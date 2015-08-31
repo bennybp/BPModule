@@ -28,6 +28,12 @@ from .optioncheck import *
 from .optionvalidate import *
 
 
+##########################################
+# Load ambit
+##########################################
+import ambit
+
+
 # Main module store and module loaders
 mst = None
 cml = None

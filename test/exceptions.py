@@ -6,8 +6,8 @@ import sys
 import argparse
 import traceback 
 
-modpath = os.path.join("/home/ben/programming/BPModule/install/modules")
-sys.path.insert(0, modpath)
+sys.path.insert(0, "/home/ben/programming/BPModule/install/modules")
+sys.path.insert(0, "/home/ben/programming/ambit/install/lib")
 
 import bpmodule as bp
 

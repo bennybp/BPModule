@@ -6,8 +6,8 @@ import sys
 import argparse
 import traceback 
 
-modpath = os.path.join("/home/ben/programming/BPModule/install/modules")
-sys.path.insert(0, modpath)
+sys.path.insert(0, "/home/ben/programming/BPModule/install/modules")
+sys.path.insert(0, "/home/ben/programming/ambit/install/lib")
 
 import bpmodule as bp
 
@@ -29,6 +29,9 @@ def Run():
       bp.output.Output("B1 results: %1%\n", b1_r.GetCopy("TEST_RESULT_1"))
 
       bp.output.Output("Has OUTMAT: %1%\n", b1_r.Has("OUTMAT"))
+      mat = b1_r.GetCopy("OUTMAT")
+      print("MAT: {}".format(type(mat)))
+      mat.printf()
 
       bp.output.Output("\nDone testing\n")
 
