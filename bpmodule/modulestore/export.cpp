@@ -24,6 +24,31 @@ boost::shared_ptr<T> Wrap_GetScopedModule(ModuleStore * ms, const std::string & 
 }
 
 
+// wraps CModuleLoader::LoadSO so that it can take a dict for the ModuleInfo
+void Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const boost::python::dict & minfo)
+{
+    // dictionary is converted to ModuleInfo via constructor
+    return ml->LoadSO(key, minfo);
+}
+
+// wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
+void Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
+                                     const std::string & key, boost::python::object func,
+                                     const boost::python::dict & minfo)
+{
+    // dictionary is converted to ModuleInfo via constructor
+    return ml->AddPyModule(key, func, minfo);
+}
+
+
+void Wrap_ModuleStore_SetOptions(ModuleStore * mst, const std::string & key, boost::python::list & opt)
+{
+    // OptionMap has a conversion constructor
+    mst->SetOptions(key, opt);
+}
+
+
+
 ////////////////////////////
 // Main boost python part
 ////////////////////////////

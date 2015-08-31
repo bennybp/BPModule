@@ -70,19 +70,6 @@ void PyModuleLoader::UnloadAll(void)
 }
 
 
-namespace export_python {
-
-// wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
-void Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
-                                     const std::string & key, boost::python::object func,
-                                     const boost::python::dict & minfo)
-{
-    // dictionary is converted to ModuleInfo via constructor
-    return ml->AddPyModule(key, func, minfo);
-}
-
-} // close namespace export_python
-
 
 } // close namespace modulestore
 } // close namespace bpmodule

@@ -205,25 +205,6 @@ std::string DebugStr(std::string fmt, Targs... Fargs)
 }
 
 
-
-
-////////////////////////////////
-// Wrappers for use from Python
-// (in Output_python.cpp)
-////////////////////////////////
-namespace export_python {
-
-void Output_Wrap(bpmodule::output::OutputType type, const std::string fmt, const boost::python::list & args);
-void Output_Wrap_Output(const std::string fmt, const boost::python::list & args);
-void Output_Wrap_Success(const std::string fmt, const boost::python::list & args);
-void Output_Wrap_Changed(const std::string fmt, const boost::python::list & args);
-void Output_Wrap_Warning(const std::string fmt, const boost::python::list & args);
-void Output_Wrap_Error(const std::string fmt, const boost::python::list & args);
-void Output_Wrap_Debug(const std::string fmt, const boost::python::list & args);
-
-} // close namespace export_python
-
-
 } // close namespace output
 } // close namespace bpmodule
 

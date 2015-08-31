@@ -55,14 +55,6 @@ class PyModuleLoader
 };
 
 
-namespace export_python {
-
-void Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
-                                     const std::string & key, boost::python::object func,
-                                     const boost::python::dict & minfo);
-
-} // close namespace export_python
-
 } // close namespace modulestore
 } // close namespace bpmodule
 

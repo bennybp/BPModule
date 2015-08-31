@@ -8,7 +8,6 @@
 #include <utility>
 
 
-
 namespace bpmodule {
 namespace exception {
 
@@ -32,16 +31,6 @@ class GeneralException : public std::exception
         std::string whatstr_;
         ExceptionInfo exinfo_;
 };
-
-
-
-
-namespace export_python {
-
-void TranslateException(const GeneralException & ex);
-
-} // close namespace export_python
-
 
 
 } // close namespace exception

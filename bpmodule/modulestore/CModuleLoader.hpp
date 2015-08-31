@@ -5,7 +5,6 @@
 #include <unordered_map>
 #include <string>
 
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 // Forward declarations
 namespace bpmodule {
@@ -55,14 +54,6 @@ class CModuleLoader
         modulebase::ModuleBase * CreateWrapper_(CreateFunc fn, const std::string & key, unsigned long id, const ModuleInfo & minfo);
         void DeleteWrapper_(unsigned long id);
 };
-
-
-namespace export_python {
-
-void Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const boost::python::dict & minfo);
-
-} // close namespace export_python
-
 
 } // close namespace modulestore
 } // close namespace bpmodule

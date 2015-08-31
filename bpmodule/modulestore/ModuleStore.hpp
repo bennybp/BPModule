@@ -7,7 +7,6 @@
 #include <atomic>
 
 #include "bpmodule/modulestore/ModuleInfo.hpp"
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 // forward declarations
 namespace bpmodule {
@@ -118,14 +117,6 @@ class ModuleStore
         const StoreEntry & GetOrThrow_(const std::string & key) const;
 };
 
-
-
-
-
-
-namespace export_python {
-void Wrap_ModuleStore_SetOptions(ModuleStore * mst, const std::string & key, boost::python::list & opt);
-} // close namespace export_python
 
 
 } // close namespace modulestore
