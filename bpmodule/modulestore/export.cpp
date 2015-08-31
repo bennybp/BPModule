@@ -5,6 +5,8 @@
 #include "bpmodule/modulestore/PyModuleLoader.hpp"
 
 
+using bpmodule::modulebase::ModuleBase;
+using bpmodule::modulebase::Test_Base;
 using namespace boost::python;
 
 
@@ -17,7 +19,7 @@ template<typename T>
 boost::shared_ptr<T> Wrap_GetScopedModule(ModuleStore * ms, const std::string & key)
 {
     T & mod = ms->GetModule<T>(key);
-    std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::RemoveModule), ms, std::placeholders::_1);
+    std::function<void(ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(ModuleBase *)>(&ModuleStore::RemoveModule), ms, std::placeholders::_1);
     return boost::shared_ptr<T>(&mod, dfunc);
 }
 
@@ -37,23 +39,23 @@ BOOST_PYTHON_MODULE(modulestore)
     .def("Size", &ModuleStore::Size)
     .def("Has", &ModuleStore::Has)
     .def("RemoveModule", static_cast<void(ModuleStore::*)(unsigned long)>(&ModuleStore::RemoveModule))
-    .def("SetOptions", bpmodule::modulestore::export_python::Wrap_ModuleStore_SetOptions)
+    .def("SetOptions", Wrap_ModuleStore_SetOptions)
     .def("GetKeys", &ModuleStore::GetKeys)
     .def("KeyInfo", &ModuleStore::KeyInfo)
-    .def("GetModule", &ModuleStore::GetModule<modulebase::ModuleBase>, return_internal_reference<>())
-    .def("GetModule_Test", &ModuleStore::GetModule<modulebase::Test_Base>, return_internal_reference<>())
-    .def("GetScopedModule", Wrap_GetScopedModule<modulebase::ModuleBase>)
-    .def("GetScopedModule_Test", Wrap_GetScopedModule<modulebase::Test_Base>);
+    .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_internal_reference<>())
+    .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_internal_reference<>())
+    .def("GetScopedModule", Wrap_GetScopedModule<ModuleBase>)
+    .def("GetScopedModule_Test", Wrap_GetScopedModule<Test_Base>);
 
 
     class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleStore *>())
     .def("CloseHandles", &CModuleLoader::CloseHandles)
     .def("UnloadAll", &CModuleLoader::UnloadAll)
-    .def("LoadSO", bpmodule::modulestore::export_python::Wrap_CModuleLoader_LoadSO);
+    .def("LoadSO", Wrap_CModuleLoader_LoadSO);
 
     class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleStore *>())
     .def("UnloadAll", &PyModuleLoader::UnloadAll)
-    .def("AddPyModule", bpmodule::modulestore::export_python::Wrap_PyModuleLoader_AddPyModule);
+    .def("AddPyModule", Wrap_PyModuleLoader_AddPyModule);
 
 }
 

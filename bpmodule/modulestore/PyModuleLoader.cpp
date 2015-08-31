@@ -3,6 +3,7 @@
 #include "bpmodule/modulestore/ModuleStore.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 
+using bpmodule::modulebase::ModuleBase;
 
 namespace bpmodule {
 namespace modulestore {
@@ -23,13 +24,13 @@ PyModuleLoader::~PyModuleLoader()
 
 
 
-modulebase::ModuleBase * PyModuleLoader::CreateWrapper_(boost::python::object fn, const std::string & key,
+ModuleBase * PyModuleLoader::CreateWrapper_(boost::python::object fn, const std::string & key,
                                             unsigned long id,
-                                            const modulestore::ModuleInfo & minfo)
+                                            const ModuleInfo & minfo)
 {
     boost::python::object newobj = fn(key, id, boost::ref(*mst_), boost::ref(minfo));
     objects_[id] = newobj;
-    return boost::python::extract<modulebase::ModuleBase *>(newobj);
+    return boost::python::extract<ModuleBase *>(newobj);
 }
 
 
@@ -42,7 +43,7 @@ void PyModuleLoader::DeleteWrapper_(unsigned long id)
 
 
 void PyModuleLoader::AddPyModule(const std::string & key,
-                                 boost::python::object func, const modulestore::ModuleInfo & minfo)
+                                 boost::python::object func, const ModuleInfo & minfo)
 {
 
     ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::CreateWrapper_, this, func,
@@ -71,12 +72,12 @@ void PyModuleLoader::UnloadAll(void)
 
 namespace export_python {
 
-// wraps PyModuleLoader::AddPyModule so that it can take a dict for the modulestore::ModuleInfo
+// wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
 void Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
                                      const std::string & key, boost::python::object func,
                                      const boost::python::dict & minfo)
 {
-    // dictionary is converted to modulestore::ModuleInfo via constructor
+    // dictionary is converted to ModuleInfo via constructor
     return ml->AddPyModule(key, func, minfo);
 }
 

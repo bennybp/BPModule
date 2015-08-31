@@ -2,14 +2,18 @@
 #include "bpmodule/modulestore/ModuleStore.hpp"
 #include "bpmodule/output/Output.hpp"
 
+using bpmodule::modulestore::ModuleStore;
+using bpmodule::modulestore::ModuleInfo;
+using bpmodule::exception::GeneralException;
+
 
 namespace bpmodule {
 namespace modulebase {
 
 
 ModuleBase::ModuleBase(unsigned long id,
-                       modulestore::ModuleStore & mstore,
-                       const modulestore::ModuleInfo & minfo)
+                       ModuleStore & mstore,
+                       const ModuleInfo & minfo)
     : id_(id), key_(minfo.key), name_(minfo.name),
       version_(minfo.version), options_(minfo.options),
       mstore_(mstore)
@@ -27,14 +31,14 @@ ModuleBase::~ModuleBase()
 
 
 void ModuleBase::ThrowException(const std::string & exwhat,
-                                const exception::GeneralException::ExceptionInfo & exinfo) const
+                                const GeneralException::ExceptionInfo & exinfo) const
 {
-    exception::GeneralException::ExceptionInfo exinfo2{
+    GeneralException::ExceptionInfo exinfo2{
                                               { "Module Key", key_ },
                                               { "Module Name", name_ }
                                             };
     exinfo2.insert(exinfo2.end(), exinfo.begin(), exinfo.end());
-    throw exception::GeneralException(exwhat, exinfo2);
+    throw GeneralException(exwhat, exinfo2);
 }
 
 
@@ -67,7 +71,7 @@ const std::string & ModuleBase::Version(void) const
 
 
 
-modulestore::ModuleStore & ModuleBase::MStore(void)
+ModuleStore & ModuleBase::MStore(void)
 {
     return mstore_;
 }

@@ -5,6 +5,10 @@
 #include "bpmodule/modulestore/ModuleStore.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 
+using bpmodule::modulebase::ModuleBase;
+using bpmodule::exception::GeneralException;
+
+
 namespace bpmodule {
 namespace modulestore {
 
@@ -23,12 +27,12 @@ CModuleLoader::~CModuleLoader()
 
 
 
-modulebase::ModuleBase * CModuleLoader::CreateWrapper_(CreateFunc fn, const std::string & key,
+ModuleBase * CModuleLoader::CreateWrapper_(CreateFunc fn, const std::string & key,
                                            unsigned long id,
                                            const ModuleInfo & minfo)
 {
-    modulebase::ModuleBase * newobj = fn(key, id, *mst_, minfo);
-    objects_[id] = std::unique_ptr<modulebase::ModuleBase>(newobj);
+    ModuleBase * newobj = fn(key, id, *mst_, minfo);
+    objects_[id] = std::unique_ptr<ModuleBase>(newobj);
     return newobj;
 }
 
@@ -60,7 +64,7 @@ void CModuleLoader::LoadSO(const std::string & key,
         handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
         // open the module
         if(!handle)
-            throw exception::GeneralException(
+            throw GeneralException(
                                      "Cannot load SO file",
                                      {
                                          { "File", sopath },
@@ -75,7 +79,7 @@ void CModuleLoader::LoadSO(const std::string & key,
     if((error = dlerror()) != NULL)
     {
         dlclose(handle);
-        throw exception::GeneralException(
+        throw GeneralException(
                                  "Cannot find function in SO file",
                                  {
                                      { "File", sopath },

@@ -35,42 +35,42 @@ void Output_Wrap(output::OutputType type, const std::string fmt, const boost::py
 
 void Output_Wrap_Output(const std::string fmt, const boost::python::list & args)
 {
-    Output_Wrap(bpmodule::output::OutputType::Output, fmt, args);
+    Output_Wrap(OutputType::Output, fmt, args);
 }
 
 
 
 void Output_Wrap_Success(const std::string fmt, const boost::python::list & args)
 {
-    Output_Wrap(bpmodule::output::OutputType::Success, fmt, args);
+    Output_Wrap(OutputType::Success, fmt, args);
 }
 
 
 
 void Output_Wrap_Changed(const std::string fmt, const boost::python::list & args)
 {
-    Output_Wrap(bpmodule::output::OutputType::Changed, fmt, args);
+    Output_Wrap(OutputType::Changed, fmt, args);
 }
 
 
 
 void Output_Wrap_Warning(const std::string fmt, const boost::python::list & args)
 {
-    Output_Wrap(bpmodule::output::OutputType::Warning, fmt, args);
+    Output_Wrap(OutputType::Warning, fmt, args);
 }
 
 
 
 void Output_Wrap_Error(const std::string fmt, const boost::python::list & args)
 {
-    Output_Wrap(bpmodule::output::OutputType::Error, fmt, args);
+    Output_Wrap(OutputType::Error, fmt, args);
 }
 
 
 
 void Output_Wrap_Debug(const std::string fmt, const boost::python::list & args)
 {
-    Output_Wrap(bpmodule::output::OutputType::Debug, fmt, args);
+    Output_Wrap(OutputType::Debug, fmt, args);
 }
 
 

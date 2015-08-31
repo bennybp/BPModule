@@ -4,6 +4,8 @@
 
 #include <boost/python.hpp>
 
+using bpmodule::modulestore::ModuleStore;
+using bpmodule::modulestore::ModuleInfo;
 using namespace boost::python;
 
 
@@ -32,7 +34,7 @@ BOOST_PYTHON_MODULE(modulebase)
 
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
-    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, modulestore::ModuleStore &, const modulestore::ModuleInfo &>())
+    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, const ModuleInfo &>())
     .def("MStore", &Test_Base_Wrap::MStore, return_internal_reference<>())
     .def("ThrowException", &Test_Base_Wrap::ThrowException, ThrowException_overloads())
     .def("RunTest", pure_virtual(&Test_Base::RunTest))

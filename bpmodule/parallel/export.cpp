@@ -14,8 +14,8 @@ namespace export_python {
 BOOST_PYTHON_MODULE(parallel)
 {
     // Parallelization
-    def("InitParallel", &parallel::InitParallel);
-    def("FinalizeParallel", &parallel::FinalizeParallel);
+    def("InitParallel", InitParallel);
+    def("FinalizeParallel", FinalizeParallel);
 }
 
 
