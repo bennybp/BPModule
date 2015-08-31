@@ -1,6 +1,7 @@
 #include "bpmodule/modulestore/ModuleInfo.hpp"
 #include "bpmodule/python_helper/Python_stdconvert.hpp"
 
+using bpmodule::datastore::OptionMap;
 using bpmodule::python_helper::ConvertListToVec;
 
 namespace bpmodule {
@@ -21,9 +22,9 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
     
         if(dictionary.has_key("passedoptions"))
         {
-            datastore::OptionMap op;
+            OptionMap op;
             boost::python::list olist = boost::python::extract<boost::python::list>(dictionary["passedoptions"]);
-            options = datastore::OptionMap(olist);
+            options = OptionMap(olist);
         }
 
         if(dictionary.has_key("soname"))

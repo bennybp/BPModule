@@ -3,6 +3,7 @@
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 
+using bpmodule::datastore::OptionMap;
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::GeneralException;
 
@@ -29,7 +30,7 @@ void ModuleStore::AddModule(const std::string & key, ModuleGeneratorFunc func, M
 
 
 
-void ModuleStore::SetOptions(const std::string & key, const datastore::OptionMap & opt)
+void ModuleStore::SetOptions(const std::string & key, const OptionMap & opt)
 {
     if(!Has(key))
         throw GeneralException(
