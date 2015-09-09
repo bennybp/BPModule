@@ -1,4 +1,10 @@
-#include "bpmodule/datastore/PropertyMap.hpp"
+/*! \file
+ *
+ * \brief Python export functions for data storage
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/datastore/OptionMap.hpp"
 #include "bpmodule/datastore/CalcData.hpp"
 

@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Storage of generic calculation data (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_CALCDATA_HPP_
 #define _GUARD_CALCDATA_HPP_
 

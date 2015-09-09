@@ -2,7 +2,8 @@
 #include "bpmodule/modulebase/All_python.hpp"
 #include "bpmodule/modulestore/ModuleStore.hpp"
 
-#include <boost/python.hpp>
+// included from above
+//#include <boost/python.hpp>
 
 using bpmodule::modulestore::ModuleStore;
 using bpmodule::modulestore::ModuleInfo;

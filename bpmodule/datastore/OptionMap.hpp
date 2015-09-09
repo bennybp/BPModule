@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Storage of options for a module (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_OPTIONMAP_HPP_
 #define _GUARD_OPTIONMAP_HPP_
 

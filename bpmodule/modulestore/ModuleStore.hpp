@@ -3,7 +3,6 @@
 
 #include <unordered_map>
 #include <vector>
-#include <string>
 #include <atomic>
 
 #include "bpmodule/modulestore/ModuleInfo.hpp"

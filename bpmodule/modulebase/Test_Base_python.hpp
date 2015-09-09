@@ -1,7 +1,6 @@
 #ifndef _GUARD_TEST_BASE_PYTHON_HPP_
 #define _GUARD_TEST_BASE_PYTHON_HPP_
 
-#include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/modulebase/Test_Base.hpp"
 
 #include <boost/python.hpp>

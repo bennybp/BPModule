@@ -1,8 +1,14 @@
+/*! \file
+ *
+ * \brief Storage of generic data via (key, value) pair (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_PROPERTYMAP_HPP_
 #define _GUARD_PROPERTYMAP_HPP_
 
 #include <map>
-#include <string>
 #include <memory>
 #include <cstring> // for strcmp
 
@@ -230,7 +236,7 @@ class PropertyMap
         }
         
 
-        /*! \brief Store the same data as found in another PropertyMap
+        /*! \brief Store the same data as found in another object
          * 
          * This function does not copy or take the actual data. Rather, only a
          * pointer is copied. Erasing or replacing data in this map does not

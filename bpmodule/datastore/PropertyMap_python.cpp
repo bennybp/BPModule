@@ -1,8 +1,16 @@
+/*! \file
+ *
+ * \brief Storage of generic data via (key, value) pair (source for python functions)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/datastore/PropertyMap.hpp"
 #include "bpmodule/python_helper/Python_stdconvert.hpp"
 #include "bpmodule/tensor/Tensor.hpp"
 
-#include <boost/python.hpp>
+// included via Python_stdconvert.hpp
+//#include <boost/python.hpp>
 
 
 using bpmodule::python_helper::ConvertListToVec;

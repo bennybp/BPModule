@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Storage of generic data via (key, value) pair (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/datastore/PropertyMap.hpp"
 
 
