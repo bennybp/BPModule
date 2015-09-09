@@ -75,7 +75,7 @@ PropertyMap::GetKeys(void) const
 
 
 
-size_t PropertyMap::Size(void) const
+size_t PropertyMap::Size(void) const noexcept
 {
     return opmap_.size();
 }

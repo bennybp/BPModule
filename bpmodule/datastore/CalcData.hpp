@@ -33,7 +33,7 @@ class CalcData : public PropertyMap
         CalcData & operator=(CalcData && rhs) = default;
 
 
-        /// \copydoc bpmodule::datastore::PropertyMap::GetCopy
+        //! \copydoc bpmodule::datastore::PropertyMap::GetCopy
         template<typename T>
         T GetCopy(const std::string & key) const
         {
@@ -41,7 +41,7 @@ class CalcData : public PropertyMap
         }
 
 
-        /// \copydoc bpmodule::datastore::PropertyMap::GetRef
+        //! \copydoc bpmodule::datastore::PropertyMap::GetRef
         template<typename T>
         const T & GetRef(const std::string & key) const
         {

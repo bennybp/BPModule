@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <memory>
+#include <cstring> // for strcmp
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 #include "bpmodule/exception/GeneralException.hpp"
@@ -27,8 +28,6 @@ class PropertyMap
 
         /*! \brief Determine if this object contains data for a key
          *
-         * \throw Should never throw, but can't guarantee that.
-         *
          * \exstrong
          *
          * \param key The key to the data
@@ -40,8 +39,6 @@ class PropertyMap
 
         /*! \brief Determine if this object contains data of a specific type for a key
          *
-         * \throw Should never throw, but can't guarantee that.
-         *
          * \exstrong
          *
          * \tparam T Type to compare to
@@ -50,12 +47,12 @@ class PropertyMap
          * \return True if the key exists, false otherwise
          */
         template<typename T>
-        bool Has(const std::string & key) const
+        bool HasType(const std::string & key) const
         {
             if(!Has(key))
                 return false;
 
-            return GetOrThrow_(key).IsType<T>();
+            return GetOrThrow_(key).value->IsType<T>();
         }
 
 
@@ -73,7 +70,14 @@ class PropertyMap
 
         std::vector<std::string> GetKeys(void) const;
 
-        size_t Size(void) const;
+
+        /*! \brief Return the number of elements contained
+         *
+         * \exnothrow
+         *
+         * \return Number of elements in this container
+         */
+        size_t Size(void) const noexcept;
 
 
     protected:  // to be exposed selectively by derived classes
@@ -145,82 +149,112 @@ class PropertyMap
 
 
     private:
-        //! An interface to a templated class that can hold anything
-        /*!
-            This allows for use in containers, etc.
+        /*! \brief An interface to a templated class that can hold anything
+         *
+         *  This allows for use in containers, etc.
          */
         class PropPlaceholder
         {
             public:
-                /*! \brief Returns a pointer to a copy of this object
-                 *
-                 * The memory is not managed, so you must remember to delete it.
-                 */
-                virtual PropPlaceholder * Clone(void) const = 0;
-
-
-                virtual ~PropPlaceholder() { }
-
-
-                //! \brief Returns a string representing the type
-                virtual const char * Type(void) const = 0;
-
                 PropPlaceholder(void) = default;
                 PropPlaceholder & operator=(const PropPlaceholder & rhs) = delete;
                 PropPlaceholder & operator=(const PropPlaceholder && rhs) = delete;
                 PropPlaceholder(const PropPlaceholder & rhs) = delete;
                 PropPlaceholder(const PropPlaceholder && rhs) = delete;
+                virtual ~PropPlaceholder() = default;
+
+
+
+                /*! \brief Returns a string representing the type
+                 *
+                 * \exnothrow
+                 *
+                 * \return A string representing the type (obtained via typeid().name())
+                 */
+                virtual const char * Type(void) const noexcept = 0;
+
+
+
+                /*! \brief Determines if the contained type matches a given type
+                 *
+                 * \exnothrow
+                 *
+                 * \tparam U The type to compare to
+                 *
+                 * \return True if the contained object is of type U, false otherwise
+                 */ 
+                template<typename U>
+                bool IsType(void) const noexcept
+                {
+                    return (strcmp(typeid(U).name(), Type()) == 0);
+                }
         };
 
 
+        //! The
         typedef std::shared_ptr<PropPlaceholder> PropPlaceholderPtr;
 
+        /*! \brief A container that can hold anything
+         *
+         * \tparam T The type of the data this object is holding
+         */ 
         template<typename T>
         class PropHolder : public PropPlaceholder
         {
             public:
+                /*! \brief Construct via copying a data object
+                 * 
+                 * Will invoke copy constructor for type T
+                 */
                 PropHolder(const T & m) : obj(m) { }
+
+
+                /*! \brief Construct via moving a data object
+                 * 
+                 * Will invoke move constructor for type T
+                 */
                 PropHolder(T && m) : obj(std::move(m)) { }
 
-                ~PropHolder() = default;
 
+                // no other constructors, etc
+                PropHolder(void) = delete;
                 PropHolder(const PropHolder & oph) = delete;
                 PropHolder(PropHolder && oph) = delete;
                 PropHolder & operator=(const PropHolder & oph) = delete;
                 PropHolder & operator=(PropHolder && oph) = delete;
+                ~PropHolder() = default;
 
 
-                virtual PropHolder * Clone(void) const
-                {
-                    return new PropHolder<T>(obj);
-                }
-
-                T & GetRef(void)
+                //! Return a reference to the underlying data
+                T & GetRef(void) noexcept
                 {
                     return obj;
                 }
 
-                const T & GetRef(void) const
+
+                //! Return a const reference to the underlying data
+                const T & GetRef(void) const noexcept
                 {
                     return obj;
                 }
 
-                const char * Type(void) const
+
+                const char * Type(void) const noexcept
                 {
                     return typeid(T).name();
                 }
 
-                template<typename U>
-                constexpr bool IsType(void) const
-                {
-                    return std::is_same<T, U>::value;
-                }
 
             private:
+                //! The actual data
                 T obj;
         };
 
 
+        /*! \brief Stores a pointer to a placeholder, plus some other information
+         *
+         * May be expanded in the future. 
+         */
         struct PropMapEntry
         {
             // may be more added here in the future
@@ -228,13 +262,33 @@ class PropertyMap
         };
 
 
+
+        //! The container to use to store the data
         typedef std::map<std::string, PropMapEntry> PropMap;
+
+        //! A key,data pair for the property map
         typedef PropMap::value_type PropMapValue;
 
+
+        //! Map actually containing the data
         PropMap opmap_;
 
 
+
+
+        /*! \brief Obtains a PropMapEntry or throws if key doesn't exist
+         * 
+         * \throw bpmodule::exception::GeneralException if key doesn't exist
+         *
+         * \exstrong
+         *
+         * \param key Key of the data to get
+         *
+         * \return PropMapEntry containing the data for the given key
+         */ 
         const PropMapEntry & GetOrThrow_(const std::string & key) const;
+
+        //! \copydoc GetOrThrow_
         PropMapEntry & GetOrThrow_(const std::string & key);
 
 
