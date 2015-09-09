@@ -1,7 +1,5 @@
 set(BPMODULE_PARALLEL_FILES
             Parallel.cpp
-            InitParallel.cpp
-            FinalizeParallel.cpp
             export.cpp
    )
   

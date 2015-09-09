@@ -1,4 +1,10 @@
-// Parallelization
+/*! \file
+ *
+ * \brief Python exports for basis set
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/basisset/BasisSet.hpp"
 
 

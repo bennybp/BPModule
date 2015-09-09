@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Output and printing functionality (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include <iostream>
 #include <fstream>
 #include <memory>

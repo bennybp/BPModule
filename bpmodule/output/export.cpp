@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Python exports for output and printing functions
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/output/Output.hpp"
 
 #include <boost/python.hpp>

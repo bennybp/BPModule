@@ -1,4 +1,10 @@
-// Parallelization
+/*! \file
+ *
+ * \brief Python exports for python helper functions
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/python_helper/Python_stdconvert.hpp"
 
 #include <map>

@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Python exports for module base classes
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/modulebase/All.hpp"
 #include "bpmodule/modulebase/All_python.hpp"
 #include "bpmodule/modulestore/ModuleStore.hpp"

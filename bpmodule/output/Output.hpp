@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Output and printing functionality (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_OUTPUT_HPP_
 #define _GUARD_OUTPUT_HPP_
 
@@ -12,15 +19,15 @@
 namespace bpmodule {
 namespace output {
 
-
+//! The type of information being output
 enum class OutputType
 {
-    Output,
-    Success,
-    Changed,
-    Warning,
-    Error,
-    Debug
+    Output,  //!< General output
+    Success, //!< Something has succeeded
+    Changed, //!< Something has been changed (ie from defaults)
+    Warning, //!< Something is kinda wrong
+    Error,   //!< Something is very wrong
+    Debug    //!< For developers
 };
 
 

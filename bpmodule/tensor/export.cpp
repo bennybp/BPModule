@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Python exports for the tensor library
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/tensor/Tensor.hpp"
 
 #include <boost/python.hpp>

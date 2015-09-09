@@ -1,4 +1,10 @@
-// Parallelization
+/*! \file
+ *
+ * \brief Python exports for the molecule library
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/molecule/Molecule.hpp"
 
 

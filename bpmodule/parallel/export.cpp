@@ -1,4 +1,10 @@
-// Parallelization
+/*! \file
+ *
+ * \brief Python exports for parallelization
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/parallel/Parallel.hpp"
 
 

@@ -25,8 +25,6 @@ namespace datastore {
  *  the data will cause the data to be replaced only in a particular
  *  object, while other objects will still retain the original data.
  *  This is done through the use of std::shared_ptr.
- *
- *  See \ref developer_calcdata_sec "CalcData development notes"
  */
 class CalcData : public PropertyMap
 {

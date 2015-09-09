@@ -1,0 +1,43 @@
+/*! \namespace bpmodule
+ *  \brief Main namespace for the module library
+ */
+
+/*! \namespace bpmodule::modulestore
+ *  \brief Classes and functions for module loading and storage, and the module database
+ */
+
+/*! \namespace bpmodule::basisset
+ *  \brief Classes and functions for the basis set and basis functions
+ */
+
+/*! \namespace bpmodule::molecule
+ *  \brief Classes and functions for the moleule and atoms
+ */
+
+/*! \namespace bpmodule::output
+ *  \brief Classes and functions for output and printing
+ */
+
+/*! \namespace bpmodule::modulebase
+ *  \brief Base classes for modules
+ */
+
+/*! \namespace bpmodule::datastore
+ *  \brief Classes and functions for dealing with generic data storage, including options.
+ */
+
+/*! \namespace bpmodule::parallel
+ *  \brief Classes and functions for dealing with parallelization
+ */
+
+/*! \namespace bpmodule::python_helper
+ *  \brief Helper classes and functions for exporting and importing from python
+ */
+
+/*! \namespace bpmodule::exception
+ *  \brief Helper classes and functions for exceptions
+ */
+
+/*! \namespace bpmodule::tensor
+ *  \brief Helper classes and functions for tensors and matrices
+ */
