@@ -25,8 +25,50 @@ class PropertyMap
         PropertyMap & operator=(PropertyMap && rhs) = default;
 
 
+        /*! \brief Determine if this object contains data for a key
+         *
+         * \throw Should never throw, but can't guarantee that.
+         *
+         * \exstrong
+         *
+         * \param key The key to the data
+         * \return True if the key exists, false otherwise
+         */
         bool Has(const std::string & key) const;
 
+
+
+        /*! \brief Determine if this object contains data of a specific type for a key
+         *
+         * \throw Should never throw, but can't guarantee that.
+         *
+         * \exstrong
+         *
+         * \tparam T Type to compare to
+         *
+         * \param key The key to the data
+         * \return True if the key exists, false otherwise
+         */
+        template<typename T>
+        bool Has(const std::string & key) const
+        {
+            if(!Has(key))
+                return false;
+
+            return GetOrThrow_(key).IsType<T>();
+        }
+
+
+
+        /*! \brief Get a string representing the type for a given key
+         *
+         * \throw bpmodule::exception::GeneralException
+         *        if data doesn't exist for this key 
+         *
+         * \exstrong
+         *
+         * \return A string representing the type for a key
+         */
         std::string GetType(const std::string & key) const;
 
         std::vector<std::string> GetKeys(void) const;
@@ -35,6 +77,17 @@ class PropertyMap
 
 
     protected:  // to be exposed selectively by derived classes
+        /*! \brief Return a const reference to the underlying data
+         *
+         * \throw bpmodule::exception::GeneralException
+         *        if data doesn't exist for this key or 
+         *        is of the wrong type
+         *
+         * \tparam T The type of the data
+         *
+         * \param key The key to the data
+         * \return A const referance to the data
+         */
         template<typename T>
         const T & GetRef(const std::string & key) const
         {
@@ -43,6 +96,18 @@ class PropertyMap
         }
 
 
+
+        /*! \brief Return a copy of the underlying data
+         *
+         * \throw bpmodule::exception::GeneralException
+         *        if data doesn't exist for this key or 
+         *        is of the wrong type
+         *
+         * \tparam T The type of the data
+         *
+         * \param key The key to the data
+         * \return A copy of the data
+         */
         template<typename T>
         T GetCopy(const std::string & key) const
         {
@@ -83,16 +148,21 @@ class PropertyMap
         //! An interface to a templated class that can hold anything
         /*!
             This allows for use in containers, etc.
-
-            \todo Serialization does not work
          */
         class PropPlaceholder
         {
             public:
-                //! Returns a pointer to a copy of this object
+                /*! \brief Returns a pointer to a copy of this object
+                 *
+                 * The memory is not managed, so you must remember to delete it.
+                 */
                 virtual PropPlaceholder * Clone(void) const = 0;
+
+
                 virtual ~PropPlaceholder() { }
 
+
+                //! \brief Returns a string representing the type
                 virtual const char * Type(void) const = 0;
 
                 PropPlaceholder(void) = default;
@@ -138,6 +208,12 @@ class PropertyMap
                 const char * Type(void) const
                 {
                     return typeid(T).name();
+                }
+
+                template<typename U>
+                constexpr bool IsType(void) const
+                {
+                    return std::is_same<T, U>::value;
                 }
 
             private:

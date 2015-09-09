@@ -7,8 +7,20 @@ namespace bpmodule {
 namespace datastore {
 
 
-// Class holds inputs and outputs, allowing read-only access
-// to stored data. ie, does not return non-const references
+/*! \brief Class to hold arbitrary inputs and outputs
+ *
+ *  A CalcData object can hold arbitrary data types and is
+ *  used primarily to pass information to and from modules.
+ *  Access to the underlying data is NOT allowed, ensuring well-defined
+ *  behavior when two modules are using the same underlying data.
+ *
+ *  This implements a somewhat copy-on-write scheme, where replacing
+ *  the data will cause the data to be replaced only in a particular
+ *  object, while other objects will still retain the original data.
+ *  This is done through the use of std::shared_ptr.
+ *
+ *  See \ref developer_calcdata_sec "CalcData development notes"
+ */
 class CalcData : public PropertyMap
 {
     public:
@@ -21,7 +33,7 @@ class CalcData : public PropertyMap
         CalcData & operator=(CalcData && rhs) = default;
 
 
-        // return a copy
+        /// \copydoc bpmodule::datastore::PropertyMap::GetCopy
         template<typename T>
         T GetCopy(const std::string & key) const
         {
@@ -29,7 +41,7 @@ class CalcData : public PropertyMap
         }
 
 
-        // return const ref
+        /// \copydoc bpmodule::datastore::PropertyMap::GetRef
         template<typename T>
         const T & GetRef(const std::string & key) const
         {
