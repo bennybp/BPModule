@@ -27,10 +27,18 @@ class CalcData : public PropertyMap
         CalcData(void) = default;
         ~CalcData(void) = default;
 
-        CalcData(const CalcData & rhs) = default;
+        //! \copydoc PropertyMap::PropertyMap(const PropertyMap &)
+        CalcData(const CalcData & rhs)             = default;
+
+        //! \copydoc PropertyMap::PropertyMap(PropertyMap &&)
+        CalcData(CalcData && rhs)                  = default;
+
+        //! \copydoc PropertyMap::operator=(const PropertyMap &)
         CalcData & operator=(const CalcData & rhs) = default;
-        CalcData(CalcData && rhs) = default;
-        CalcData & operator=(CalcData && rhs) = default;
+
+        //! \copydoc PropertyMap::operator=(PropertyMap &&)
+        CalcData & operator=(CalcData && rhs)      = default;
+
 
 
         //! \copydoc bpmodule::datastore::PropertyMap::GetCopy
@@ -48,36 +56,43 @@ class CalcData : public PropertyMap
             return PropertyMap::GetRef<T>(key);
         }
 
-        // can add information
+
+        //! \copydoc bpmodule::datastore::PropertyMap::Set
         template<typename T>
         void Set(const std::string & key, const T & value)
         {
             PropertyMap::Set(key, value);
         }
 
+
+        //! \copydoc bpmodule::datastore::PropertyMap::Take
         template<typename T>
         void Take(const std::string & key, T && value)
         {
             PropertyMap::Take(key, std::move(value));
         }
 
-        // and erase
+
+        //! \copydoc bpmodule::datastore::PropertyMap::Erase
         size_t Erase(const std::string & key)
         {
             return PropertyMap::Erase(key);
         }
 
 
-        // add a reference to existing data
-        void SetRef(const CalcData & ci, const std::string & key, const std::string & newkey)
+        //! \copydoc bpmodule::datastore::PropertyMap::SetRef(const PropertyMap &, const std::string &)
+        void SetRef(const CalcData &other, const std::string & key)
         {
-            PropertyMap::SetRef(ci, key, newkey);
+            PropertyMap::SetRef(other, key);
         }
 
-        void SetRef(const CalcData & ci, const std::string & key)
+
+        //! \copydoc bpmodule::datastore::PropertyMap::SetRef(const PropertyMap &, const std::string &, const std::string &)
+        void SetRef(const CalcData & other, const std::string & key, const std::string & newkey)
         {
-            PropertyMap::SetRef(ci, key);
+            PropertyMap::SetRef(other, key, newkey);
         }
+
 };
 
 

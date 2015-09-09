@@ -13,21 +13,75 @@
 namespace bpmodule {
 namespace datastore {
 
+
+/*! \brief A mapping of strings to arbirtrary data with copy-on-write semantics
+ *
+ * A PropertyMap can store an arbitrary data type, as long that data type
+ * has a copy and move constructor. Once stored, the data itself is immutable.
+ *
+ * Multiple PropertyMap can store references to the same data (see SetRef).
+ * Since the  data itself is read-only, modifications in one map cannot
+ * the other. Erasing or replacing the data in one map leaves the references
+ * in any other maps referencing this data untouched.
+ */
 class PropertyMap
 {
     public:
-        PropertyMap(void) = default;
+        PropertyMap(void)  = default;
         ~PropertyMap(void) = default;
 
-        PropertyMap(const PropertyMap & rhs) = default;
+
+        /*! \brief Copies a property map
+         * 
+         * Underlying data is NOT copied, rather just the references.
+         *
+         * \throwprob
+         *
+         * \param rhs The object to copy
+         */
+        PropertyMap(const PropertyMap & rhs)             = default;
+
+
+
+        /*! \brief Moves the contents of another object to this
+         * 
+         * References to data are removed from the other object.
+         *
+         * \throwprob
+         *
+         * \param rhs The object to copy
+         */ 
+        PropertyMap(PropertyMap && rhs)                  = default;
+
+
+
+        /*! \brief Assigns the contents of another object to this
+         *
+         * \copydetails PropertyMap::PropertyMap(const PropertyMap &)
+         */ 
         PropertyMap & operator=(const PropertyMap & rhs) = default;
 
-        PropertyMap(PropertyMap && rhs) = default;
-        PropertyMap & operator=(PropertyMap && rhs) = default;
+
+
+        /*! \brief Moves the contents of another object to this
+         *
+         * \copydetails PropertyMap::PropertyMap(PropertyMap &&)
+         */ 
+        PropertyMap & operator=(PropertyMap && rhs)      = default;
+
+
+
+        /*! \brief Construct via python list
+         * 
+         * \throw bpmodule::exception::GeneralException if there is a problem (type conversion, etc).
+         */  
+        PropertyMap(const boost::python::list & olist);
+
 
 
         /*! \brief Determine if this object contains data for a key
          *
+         * \throwprob
          * \exstrong
          *
          * \param key The key to the data
@@ -39,6 +93,7 @@ class PropertyMap
 
         /*! \brief Determine if this object contains data of a specific type for a key
          *
+         * \throwprob
          * \exstrong
          *
          * \tparam T Type to compare to
@@ -68,7 +123,17 @@ class PropertyMap
          */
         std::string GetType(const std::string & key) const;
 
+
+
+        /*! \brief Obtain all the keys contained in this object
+         * 
+         * \throwprob
+         * \exstrong
+         *
+         * \return A vector of strings containing all the keys
+         */
         std::vector<std::string> GetKeys(void) const;
+
 
 
         /*! \brief Return the number of elements contained
@@ -80,12 +145,19 @@ class PropertyMap
         size_t Size(void) const noexcept;
 
 
-    protected:  // to be exposed selectively by derived classes
+
+    protected:
+        /////////////////////////////////////////////////
+        // to be exposed selectively by derived classes
+        /////////////////////////////////////////////////
+
         /*! \brief Return a const reference to the underlying data
          *
          * \throw bpmodule::exception::GeneralException
          *        if data doesn't exist for this key or 
          *        is of the wrong type
+         *
+         * \exstrong
          *
          * \tparam T The type of the data
          *
@@ -107,6 +179,8 @@ class PropertyMap
          *        if data doesn't exist for this key or 
          *        is of the wrong type
          *
+         * \exstrong
+         *
          * \tparam T The type of the data
          *
          * \param key The key to the data
@@ -119,6 +193,21 @@ class PropertyMap
         }
 
 
+
+        /*! \brief Set the data associated with a given key via copy
+         * 
+         * If the key exists, the data is overwritten.
+         * Then, the data itself may remain if another PropertyMap contains the same data
+         * (set via SetRef).
+         *
+         * \throwprob
+         * \exstrong
+         *
+         * \tparam T The type of the data
+         *
+         * \param value The data to store
+         * \param key The key to the data
+         */
         template<typename T>
         void Set(const std::string & key, const T & value)
         {
@@ -127,6 +216,12 @@ class PropertyMap
         }
 
 
+
+
+        /*! \brief Set the data associated with a given key via move semantics
+         * 
+         * \copydetails Set
+         */
         template<typename T>
         void Take(const std::string & key, T && value)
         {
@@ -135,17 +230,48 @@ class PropertyMap
         }
         
 
-        // since data is read-only once added, it makes sense that
-        // the other map can be const. Changing/replacing it here
-        // will only change this map, not the other
-        void SetRef(const PropertyMap & pm, const std::string & key, const std::string & newkey);
-        void SetRef(const PropertyMap & pm, const std::string & key);
+        /*! \brief Store the same data as found in another PropertyMap
+         * 
+         * This function does not copy or take the actual data. Rather, only a
+         * pointer is copied. Erasing or replacing data in this map does not
+         * affect the other map.
+         *
+         * \throw bpmodule::exception::GeneralException if the key is not found in the other map or
+         *        another error occurs.
+         *
+         * \exstrong
+         *
+         * \param other The other object from which to get the data
+         * \param key The key of the object in the other object
+         */
+        void SetRef(const PropertyMap & other, const std::string & key);
 
+
+
+        /*! \copydoc SetRef
+         * \param newkey The key under which to store the data in this object
+         */
+        void SetRef(const PropertyMap & other, const std::string & key, const std::string & newkey);
+
+
+
+        /*! \brief Remove a key from this data store
+         * 
+         * The data itself may remain if another PropertyMap contains the same data
+         * (set via SetRef).
+         *
+         * The key does not have to exist. If the key doesn't exists, nothing will happen.
+         *
+         * \throwprob
+         * \exstrong
+         *
+         * \param key The key to the data
+         * \return The number of elements removed
+         */
         size_t Erase(const std::string & key);
 
 
-        // construct from a python list of tuples
-        PropertyMap(const boost::python::list & olist);
+
 
 
     private:
@@ -156,12 +282,13 @@ class PropertyMap
         class PropPlaceholder
         {
             public:
-                PropPlaceholder(void) = default;
-                PropPlaceholder & operator=(const PropPlaceholder & rhs) = delete;
+                PropPlaceholder(void) noexcept         = default;
+                virtual ~PropPlaceholder() noexcept    = default;
+
+                PropPlaceholder & operator=(const PropPlaceholder & rhs)  = delete;
                 PropPlaceholder & operator=(const PropPlaceholder && rhs) = delete;
-                PropPlaceholder(const PropPlaceholder & rhs) = delete;
-                PropPlaceholder(const PropPlaceholder && rhs) = delete;
-                virtual ~PropPlaceholder() = default;
+                PropPlaceholder(const PropPlaceholder & rhs)              = delete;
+                PropPlaceholder(const PropPlaceholder && rhs)             = delete;
 
 
 
@@ -191,8 +318,8 @@ class PropertyMap
         };
 
 
-        //! The
-        typedef std::shared_ptr<PropPlaceholder> PropPlaceholderPtr;
+
+
 
         /*! \brief A container that can hold anything
          *
@@ -205,6 +332,9 @@ class PropertyMap
                 /*! \brief Construct via copying a data object
                  * 
                  * Will invoke copy constructor for type T
+                 *
+                 * \throwno Throws an exception only if the move
+                 *          constructor for T throws an exception
                  */
                 PropHolder(const T & m) : obj(m) { }
 
@@ -212,34 +342,47 @@ class PropertyMap
                 /*! \brief Construct via moving a data object
                  * 
                  * Will invoke move constructor for type T
+                 *
+                 * \throwno Throws an exception only if the move
+                 *          constructor for T throws an exception
                  */
                 PropHolder(T && m) : obj(std::move(m)) { }
 
 
                 // no other constructors, etc
-                PropHolder(void) = delete;
-                PropHolder(const PropHolder & oph) = delete;
-                PropHolder(PropHolder && oph) = delete;
-                PropHolder & operator=(const PropHolder & oph) = delete;
-                PropHolder & operator=(PropHolder && oph) = delete;
-                ~PropHolder() = default;
+                PropHolder(void)                                = delete;
+                PropHolder(const PropHolder & oph)              = delete;
+                PropHolder(PropHolder && oph)                   = delete;
+                PropHolder & operator=(const PropHolder & oph)  = delete;
+                PropHolder & operator=(PropHolder && oph)       = delete;
+                virtual ~PropHolder()                           = default;
 
 
-                //! Return a reference to the underlying data
+                /*! Return a reference to the underlying data
+                 *
+                 * \exnothrow
+                 *
+                 * \return A reference to the underlying data
+                 */ 
                 T & GetRef(void) noexcept
                 {
                     return obj;
                 }
 
 
-                //! Return a const reference to the underlying data
+                /*! Return a const reference to the underlying data
+                 *
+                 * \exnothrow
+                 *
+                 * \return A const reference to the underlying data
+                 */ 
                 const T & GetRef(void) const noexcept
                 {
                     return obj;
                 }
 
 
-                const char * Type(void) const noexcept
+                virtual constexpr const char * Type(void) const noexcept
                 {
                     return typeid(T).name();
                 }
@@ -249,6 +392,16 @@ class PropertyMap
                 //! The actual data
                 T obj;
         };
+
+
+
+
+        ////////////////////////////////
+        // Actual storage of the data //
+        ////////////////////////////////
+
+        //! A pointer to a generic object
+        typedef std::shared_ptr<PropPlaceholder> PropPlaceholderPtr;
 
 
         /*! \brief Stores a pointer to a placeholder, plus some other information
@@ -266,6 +419,7 @@ class PropertyMap
         //! The container to use to store the data
         typedef std::map<std::string, PropMapEntry> PropMap;
 
+
         //! A key,data pair for the property map
         typedef PropMap::value_type PropMapValue;
 
@@ -275,6 +429,10 @@ class PropertyMap
 
 
 
+
+        ////////////////////////////////
+        // Private functions          //
+        ////////////////////////////////
 
         /*! \brief Obtains a PropMapEntry or throws if key doesn't exist
          * 
@@ -288,10 +446,25 @@ class PropertyMap
          */ 
         const PropMapEntry & GetOrThrow_(const std::string & key) const;
 
+
+
         //! \copydoc GetOrThrow_
         PropMapEntry & GetOrThrow_(const std::string & key);
 
 
+
+
+        /*! \brief Obtains a pointer to a PropHolder of the given type
+         * 
+         * \throw bpmodule::exception::GeneralException if key 
+         *        doesn't exist or if the cast fails.
+         *
+         * \exstrong
+         *
+         * \param key Key of the data to get
+         *
+         * \return PropHolder containing the data for the given key
+         */ 
         template<typename T>
         const PropHolder<T> * GetOrThrow_Cast_(const std::string & key) const
         {
@@ -311,19 +484,36 @@ class PropertyMap
         }
 
 
+        /*! \brief Sets the data for a given key via a PropPlaceholderPtr
+         * 
+         * \throwprob
+         * \exstrong
+         *
+         * \param key Key of the data to set
+         * \param value Pointer to the data to set
+         *
+         * \return PropHolder containing the data for the given key
+         */ 
         void Set_(const std::string & key, PropPlaceholderPtr && value);
-        size_t Erase_(const std::string & key);
 
-        // Creating a PropPlaceHolder from python object
-        PropPlaceholderPtr PropPlaceholder_(const boost::python::object & value);
+
+
+        /*! \brief Create a PropPlaceHolder from python object
+         * 
+         * \throw bpmodule::exception::GeneralException if there is a problem (type conversion, etc)
+         */ 
+        static PropPlaceholderPtr PropPlaceholder_(const boost::python::object & value);
 
 };
 
 
-// specialize templates for python
+/// \copydoc GetCopy
 template<>
 boost::python::object PropertyMap::GetCopy<>(const std::string & key) const;
 
+
+
+/// \copydoc Set
 template<>
 void PropertyMap::Set<>(const std::string & key, const boost::python::object & value);
 

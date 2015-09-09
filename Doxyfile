@@ -238,7 +238,9 @@ TAB_SIZE               = 4
 # "Side Effects:". You can put \n's in the value part of an alias to insert
 # newlines.
 
-ALIASES                = "exsafe=@par Exception Safety:\n" \
+ALIASES                = "throwprob=@par Exceptions:\n Should not throw exception, but cannot guarantee\n" \
+                         "throwno=@par Exceptions:\n" \
+                         "exsafe=@par Exception Safety:\n" \
                          "exnone=\exsafe None (may leak. should probably be fixed)\n" \
                          "exbasic=\exsafe Basic exception guarantee (will not leak)\n" \
                          "exstrong=\exsafe Strong exception guarantee (if exception is thrown, object will be in original state)\n" \

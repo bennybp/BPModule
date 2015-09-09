@@ -16,9 +16,12 @@ void PropertyMap::Set_(const std::string & key, PropPlaceholderPtr && value)
     else
     {
         PropMapEntry phe{std::move(value)};
+
+        // insert has strong exception guarantee in this form
         opmap_.insert(PropMapValue{key, std::move(phe) });
     }
 }
+
 
 
 size_t PropertyMap::Erase(const std::string & key)
@@ -26,11 +29,6 @@ size_t PropertyMap::Erase(const std::string & key)
     return opmap_.erase(key);
 }
 
-
-size_t PropertyMap::Erase_(const std::string & key)
-{
-    return opmap_.erase(key);
-}
 
 
 void PropertyMap::SetRef(const PropertyMap & pm, const std::string & key, const std::string & newkey)
@@ -40,14 +38,19 @@ void PropertyMap::SetRef(const PropertyMap & pm, const std::string & key, const 
     PropMapEntry pe = pm.GetOrThrow_(key);
 
     // add it here
+    // insert has strong exception guarantee in this form
     opmap_.insert(PropMapValue{newkey, std::move(pe)});    
 }
+
+
 
 void PropertyMap::SetRef(const PropertyMap & pm, const std::string & key)
 {
     //Setref with the same key
     SetRef(pm, key, key);
 }
+
+
 
 bool PropertyMap::Has(const std::string & key) const
 {
@@ -82,9 +85,6 @@ size_t PropertyMap::Size(void) const noexcept
 
 
 
-
-
-
 const PropertyMap::PropMapEntry & PropertyMap::GetOrThrow_(const std::string & key) const
 {
     if(opmap_.count(key))
@@ -100,6 +100,7 @@ const PropertyMap::PropMapEntry & PropertyMap::GetOrThrow_(const std::string & k
 }
 
 
+
 PropertyMap::PropMapEntry & PropertyMap::GetOrThrow_(const std::string & key)
 {
     if(opmap_.count(key))
@@ -113,6 +114,7 @@ PropertyMap::PropMapEntry & PropertyMap::GetOrThrow_(const std::string & key)
                                  }
                                );
 }
+
 
 
 } // close namespace datastore
