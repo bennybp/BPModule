@@ -20,6 +20,13 @@ namespace export_python {
 
 BOOST_PYTHON_MODULE(datastore)
 {
+    /*
+     * GetRef() is not exported to python. This is because python does not enforce
+     * const semantics, which could lead to behavior where the underlying data
+     * is changed. This goes against the "immutability" of the PropertyMap and CalcData.
+     * Python, unfortunately, would have to work with copies.
+     */
+
     /////////////////////////
     // CalcData
     /////////////////////////

@@ -32,6 +32,8 @@ PropertyMap::PropertyMap(const boost::python::list & olist)
 }
 
 
+
+
 template<>
 boost::python::object PropertyMap::GetCopy<>(const std::string & key) const
 {
@@ -78,6 +80,7 @@ boost::python::object PropertyMap::GetCopy<>(const std::string & key) const
 template<>
 void PropertyMap::Set(const std::string & key, const boost::python::object & value)
 {
+    // catch errors from conversions in PropPlaceholder_
     try {
         Set_(key, PropertyMap::PropPlaceholder_(value));
     }
@@ -90,6 +93,7 @@ void PropertyMap::Set(const std::string & key, const boost::python::object & val
         throw bpe;
     }
 }
+
 
 
 PropertyMap::PropPlaceholderPtr PropertyMap::PropertyMap::PropPlaceholder_(const boost::python::object & value)

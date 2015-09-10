@@ -183,7 +183,6 @@ void Output_(std::ostream & out, OutputType type, const std::string & fmt, Targs
  * \see \ref developer_output_sec
  *
  * \throwno Throws boost exceptions for malformed inputs, etc
- * \exstrong
  *
  * \tparam Targs The types of the arguments to print
  *
@@ -207,7 +206,6 @@ void Output(std::ostream & out, const std::string & fmt, Targs... Fargs)
  * \see \ref developer_output_sec
  *
  * \throwno Throws boost exceptions for malformed inputs, etc
- * \exstrong
  *
  * \tparam Targs The types of the arguments to print
  *
@@ -227,7 +225,6 @@ void Output(const std::string & fmt, Targs... Fargs)
  * \see \ref developer_output_sec
  *
  * \throwno Throws boost exceptions for malformed inputs, etc
- * \exstrong
  *
  * \tparam Targs The types of the arguments to print
  *

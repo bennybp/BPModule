@@ -25,6 +25,11 @@ namespace datastore {
  *  the data will cause the data to be replaced only in a particular
  *  object, while other objects will still retain the original data.
  *  This is done through the use of std::shared_ptr.
+ *
+ *  \note GetRef() is not exported to python. This is because python does not enforce
+ *  const semantics, which could lead to behavior where the underlying data
+ *  is changed. This goes against the "immutability" of the PropertyMap and CalcData.
+ *  Python, unfortunately, would have to work with copies.
  */
 class CalcData : public PropertyMap
 {

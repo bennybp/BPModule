@@ -20,28 +20,28 @@ namespace modulestore {
  */
 struct ModuleInfo
 {
-    std::string key;
-    std::string name;
-    std::string type;
-    std::string path;
-    std::string soname;
-    std::string version;
-    std::vector<std::string> authors;
-    std::string description;
-    std::vector<std::string> refs;
-    datastore::OptionMap options;
+    std::string key;                   //!< The key in the module database
+    std::string name;                  //!< Some descriptive name for the module
+    std::string type;                  //!< Type of the module (c_module, python_module, etc)
+    std::string path;                  //!< Path for the module (not including the filename for an so file)
+    std::string soname;                //!< SO filename (for c modules)
+    std::string version;               //!< Arbitrary version string
+    std::vector<std::string> authors;  //!< Authors of the module
+    std::string description;           //!< A description of the module
+    std::vector<std::string> refs;     //!< References for the module (articles, web pages, etc)
+    datastore::OptionMap options;      //!< Options for the module
 
-    ModuleInfo(void) = default;
-    ModuleInfo(const ModuleInfo & rhs) = default;
-    ModuleInfo(ModuleInfo && rhs) = default;
-    ~ModuleInfo(void) = default;
+
+    ModuleInfo(void)                    = default;
+    ModuleInfo(const ModuleInfo & rhs)  = default;
+    ModuleInfo(ModuleInfo && rhs)       = default;
+    ~ModuleInfo(void)                   = default;
+
 
     /*! \brief Construct from a python dictionary
      * 
-     * \todo Document or wrap boost python exceptions
-     *
-     * \throw bpmodule::exception::GeneralException if there is
-     *        a problem (conversion problem, missing keys, etc)
+     * \throw bpmodule::exception::GeneralException if conversion fails or the
+     *        dictionary doesn't contain the right data (missing keys, etc) 
      */
     ModuleInfo(const boost::python::dict & dictionary);
 };

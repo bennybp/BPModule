@@ -18,8 +18,15 @@ namespace output {
 namespace export_python {
 
 
-// Wrap printing
-void Output_Wrap(output::OutputType type, const std::string fmt, const boost::python::list & args)
+/*! \brief Wrap printing functions for use from python
+ *
+ * This function takes a boost::python list rather than the parameter pack
+ *
+ * \param [in] type The type of output
+ * \param [in] fmt Format string to use
+ * \param [in] args Arguments to the format string
+ */
+void Output_Wrap(output::OutputType type, const std::string & fmt, const boost::python::list & args)
 {
     boost::format bfmt(fmt);
 
@@ -35,7 +42,7 @@ void Output_Wrap(output::OutputType type, const std::string fmt, const boost::py
             bfmt % static_cast<double>(boost::python::extract<double>(args[i]));
         else if(cl == "str")
             bfmt % static_cast<std::string>(boost::python::extract<std::string>(args[i]));
-        else // throw?
+        else //! \todo Throw exception when printing unknown python object?
             bfmt % static_cast<std::string>(boost::python::extract<std::string>(args[i].attr("__str__")()));
     }
 
@@ -44,42 +51,72 @@ void Output_Wrap(output::OutputType type, const std::string fmt, const boost::py
 
 
 
-void Output_Wrap_Output(const std::string fmt, const boost::python::list & args)
+/*! \brief Wrap general output for use from python
+ *
+ * \param [in] fmt Format string to use
+ * \param [in] args Arguments to the format string
+ */
+void Output_Wrap_Output(const std::string & fmt, const boost::python::list & args)
 {
     Output_Wrap(OutputType::Output, fmt, args);
 }
 
 
 
-void Output_Wrap_Success(const std::string fmt, const boost::python::list & args)
+/*! \brief Wrap 'success' output for use from python
+ *
+ * \param [in] fmt Format string to use
+ * \param [in] args Arguments to the format string
+ */
+void Output_Wrap_Success(const std::string & fmt, const boost::python::list & args)
 {
     Output_Wrap(OutputType::Success, fmt, args);
 }
 
 
 
-void Output_Wrap_Changed(const std::string fmt, const boost::python::list & args)
+/*! \brief Wrap 'changed' output for use from python
+ *
+ * \param [in] fmt Format string to use
+ * \param [in] args Arguments to the format string
+ */
+void Output_Wrap_Changed(const std::string & fmt, const boost::python::list & args)
 {
     Output_Wrap(OutputType::Changed, fmt, args);
 }
 
 
 
-void Output_Wrap_Warning(const std::string fmt, const boost::python::list & args)
+/*! \brief Wrap 'warning' output for use from python
+ *
+ * \param [in] fmt Format string to use
+ * \param [in] args Arguments to the format string
+ */
+void Output_Wrap_Warning(const std::string & fmt, const boost::python::list & args)
 {
     Output_Wrap(OutputType::Warning, fmt, args);
 }
 
 
 
-void Output_Wrap_Error(const std::string fmt, const boost::python::list & args)
+/*! \brief Wrap 'error' output for use from python
+ *
+ * \param [in] fmt Format string to use
+ * \param [in] args Arguments to the format string
+ */
+void Output_Wrap_Error(const std::string & fmt, const boost::python::list & args)
 {
     Output_Wrap(OutputType::Error, fmt, args);
 }
 
 
 
-void Output_Wrap_Debug(const std::string fmt, const boost::python::list & args)
+/*! \brief Wrap 'debug' output for use from python
+ *
+ * \param [in] fmt Format string to use
+ * \param [in] args Arguments to the format string
+ */
+void Output_Wrap_Debug(const std::string & fmt, const boost::python::list & args)
 {
     Output_Wrap(OutputType::Debug, fmt, args);
 }

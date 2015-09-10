@@ -20,14 +20,14 @@ namespace bpmodule {
 namespace datastore {
 
 
-/*! \brief A mapping of strings to arbirtrary data with copy-on-write semantics
+/*! \brief A mapping of strings to arbirtrary data with some copy-on-write semantics
  *
  * A PropertyMap can store an arbitrary data type, as long that data type
  * has a copy and move constructor. Once stored, the data itself is immutable.
  *
- * Multiple PropertyMap can store references to the same data (see SetRef).
- * Since the  data itself is read-only, modifications in one map cannot
- * the other. Erasing or replacing the data in one map leaves the references
+ * Multiple PropertyMap can store references to the same data.
+ * Since the data itself is read-only, modifications in one map cannot affect
+ * another. Erasing or replacing the data in one map leaves the references
  * in any other maps referencing this data untouched.
  */
 class PropertyMap
@@ -87,8 +87,6 @@ class PropertyMap
 
         /*! \brief Determine if this object contains data for a key
          *
-         * \exstrong
-         *
          * \param [in] key The key to the data
          * \return True if the key exists, false otherwise
          */
@@ -97,8 +95,6 @@ class PropertyMap
 
 
         /*! \brief Determine if this object contains data of a specific type for a key
-         *
-         * \exstrong
          *
          * \tparam T Type to compare to
          *
@@ -121,8 +117,6 @@ class PropertyMap
          * \throw bpmodule::exception::GeneralException
          *        if the key doesn't exist 
          *
-         * \exstrong
-         *
          * \param [in] key The key to the data
          * \return A string representing the type for a key
          */
@@ -132,8 +126,6 @@ class PropertyMap
 
         /*! \brief Obtain all the keys contained in this object
          * 
-         * \exstrong
-         *
          * \return A vector of strings containing all the keys
          */
         std::vector<std::string> GetKeys(void) const;
@@ -161,8 +153,6 @@ class PropertyMap
          *        if the key doesn't exist or 
          *        is of the wrong type
          *
-         * \exstrong
-         *
          * \tparam T The type of the data
          *
          * \param [in] key The key to the data
@@ -182,8 +172,6 @@ class PropertyMap
          * \throw bpmodule::exception::GeneralException
          *        if the key doesn't exist or 
          *        is of the wrong type
-         *
-         * \exstrong
          *
          * \tparam T The type of the data
          *
@@ -236,7 +224,8 @@ class PropertyMap
          * 
          * This function does not copy or take the actual data. Rather, only a
          * pointer is copied. Erasing or replacing data in this map does not
-         * affect the other map.
+         * affect the other map. If the key already exists in this map, it is
+         * replaced.
          *
          * \throw bpmodule::exception::GeneralException if the key is not found in the other map or
          *        another error occurs.
@@ -349,7 +338,7 @@ class PropertyMap
                  * \throwno Throws an exception only if the move
                  *          constructor for T throws an exception
                  *
-                 *  \param [in] m The object to move
+                 * \param [in] m The object to move
                  */
                 PropHolder(T && m) : obj(std::move(m)) { }
 
@@ -425,10 +414,6 @@ class PropertyMap
         typedef std::map<std::string, PropMapEntry> PropMap;
 
 
-        //! A key,data pair for the property map
-        typedef PropMap::value_type PropMapValue;
-
-
         //! Map actually containing the data
         PropMap opmap_;
 
@@ -448,22 +433,20 @@ class PropertyMap
          * \param [in] key Key of the data to get
          * \return PropMapEntry containing the data for the given key
          */ 
-        const PropMapEntry & GetOrThrow_(const std::string & key) const;
-
-
-
-        //! \copydoc GetOrThrow_
         PropMapEntry & GetOrThrow_(const std::string & key);
 
 
 
+        //! \copydoc GetOrThrow_
+        const PropMapEntry & GetOrThrow_(const std::string & key) const;
 
-        /*! \brief Obtains a pointer to a PropHolder of the given type
+
+
+
+        /*! \brief Obtains a pointer to a PropHolder cast to desired type
          * 
          * \throw bpmodule::exception::GeneralException if key 
          *        doesn't exist or if the cast fails.
-         *
-         * \exstrong
          *
          * \param [in] key Key of the data to get
          * \return PropHolder containing the data for the given key
@@ -485,6 +468,7 @@ class PropertyMap
 
             return ph;
         }
+
 
 
         /*! \brief Sets the data for a given key via a PropPlaceholderPtr

@@ -19,11 +19,18 @@ namespace bpmodule {
 namespace modulestore {
 
 
+
+ModuleStore::ModuleStore()
+    : curid_(0)
+{ }
+
+
+
 void ModuleStore::AddModule(const std::string & key, ModuleGeneratorFunc func, ModuleRemoverFunc dfunc, const ModuleInfo & minfo)
 {
     // add to store
     // but throw if key already exists
-    if(Has(key))
+    if(store_.count(key))
         throw GeneralException(
                                  "Attempt to add duplicate key",
                                  {
@@ -32,7 +39,7 @@ void ModuleStore::AddModule(const std::string & key, ModuleGeneratorFunc func, M
                                  }
                                );
 
-    store_.insert(StoreMap::value_type(key, StoreEntry {minfo, func, dfunc}));
+    store_.emplace(key, StoreEntry{minfo, func, dfunc});
 }
 
 
@@ -90,20 +97,22 @@ void ModuleStore::RemoveModule(unsigned long id)
 {
     if(removemap_.count(id))
     {
-        removemap_[id](id);
+        // should always happen
+        ModuleRemoverFunc dfunc = removemap_.at(id);
         removemap_.erase(id);
+
+        // throwing ok from here. Stuff has already been removed from this map
+        // (but this shouldn't really throw)
+        removemap_[id](id);
     }
 }
+
+
 
 void ModuleStore::RemoveModule(ModuleBase * mb)
 {
     RemoveModule(mb->ID());
 }
-
-
-ModuleStore::ModuleStore()
-    : curid_(0)
-{ }
 
 
 

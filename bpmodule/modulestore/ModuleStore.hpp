@@ -50,6 +50,7 @@ class ModuleStore
         ModuleStore & operator=(const ModuleStore & rhs) = delete;
         ModuleStore & operator=(ModuleStore && rhs)      = delete;
 
+
         /*! \brief Returns the number of loaded modules
          *
          * \exnothrow
@@ -58,8 +59,6 @@ class ModuleStore
 
 
         /*! \brief Returns the keys for all loaded modules
-         *
-         * \exstrong
          */ 
         std::vector<std::string> GetKeys(void) const;
 
@@ -69,15 +68,12 @@ class ModuleStore
          * \throw bpmodule::exception::GeneralException if the key doesn't
          *        exist
          *
-         * \exstrong
-         *
+         * \param [in] key A module key
          */
         ModuleInfo KeyInfo(const std::string & key) const;
 
 
         /*! \brief Returns true if the given key exists
-         *
-         * \exstrong
          *
          * \param [in] key A module key
          * \return True if the key exists in the map, false if it doesn't
@@ -85,10 +81,10 @@ class ModuleStore
         bool Has(const std::string & key) const;
 
 
-        //! \todo Add variant of Has that checks type also
-
 
         /*! \brief Adds a module to the map
+         *
+         * \throw bpmodule::exception::GeneralException if the key already exists
          *
          * \exstrong
          * 
@@ -100,28 +96,37 @@ class ModuleStore
         void AddModule(const std::string & key, ModuleGeneratorFunc func, ModuleRemoverFunc dfunc, const ModuleInfo & minfo);
 
 
-        /*! \brief Removes a module from the map
+
+        /*! \brief Removes a created module object from storage
+         * 
+         * This does not actually delete the object, just removes references
+         * to it in various places.
          *
          * If the id doesn't exist, nothing will happen.
          *
-         * \exbasic
-         * \todo Really only a basic guarentee? Depends on the deleterfunc?
+         * \exsafe If an exception is thrown, the module instance is still
+         *         removed from this database.
          *
          * \param [in] id The id of the module
          */ 
         void RemoveModule(unsigned long id);
 
 
-        /*! \brief Removes a module from the map
+
+        /*! \brief Removes a created module object from the map
          *
-         * If the key doesn't exist, nothing will happen.
+         * This does not actually delete the object, just removes references
+         * to it in various places.
          *
-         * \exbasic
-         * \todo Really only a basic guarentee? Depends on the deleterfunc?
+         * If the module doesn't exist, nothing will happen.
+         *
+         * \exsafe If an exception is thrown, the module instance is still
+         *         removed from this database.
          *
          * \param [in] mb Pointer to the module to remove
          */ 
         void RemoveModule(modulebase::ModuleBase * mb);
+
 
 
         /*! \brief Set the options for a module
@@ -173,7 +178,7 @@ class ModuleStore
 
 
             // store the deleter
-            removemap_.insert(RemoverMap::value_type(curid_, se.dfunc));
+            removemap_.emplace(curid_, se.dfunc);
 
 
             // next id
@@ -183,10 +188,23 @@ class ModuleStore
         }
 
 
+        /*! \brief Return a module wrapped in an RAII-style scoping object
+            *
+         * \throw bpmodule::exception::GeneralException if the key doesn't
+         *        exist or the module cannot be cast to the requested type
+         *
+         * \exstrong 
+         *
+         * \param [in] key A module key
+         *
+         * \return A ScopedModule for an object of the requested type
+         */ 
         template<typename T>
         ScopedModule<T> GetScopedModule(const std::string & key)
         {
             T & mod = GetModule<T>(key);
+
+            // make the deleter function the RemoveModule() function of this class
             std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::RemoveModule),
                                                                 this,
                                                                 std::placeholders::_1);
@@ -198,20 +216,49 @@ class ModuleStore
 
     private:
 
+        /*! \brief An entry for a module in the database
+         */ 
         struct StoreEntry
         {
-            ModuleInfo mi;
-            ModuleGeneratorFunc func;
-            ModuleRemoverFunc dfunc;
+            ModuleInfo mi;             //!< Information for this module
+            ModuleGeneratorFunc func;  //!< Function that creates a class from this module
+            ModuleRemoverFunc dfunc;   //!< Function that deletes a class from this module
         };
 
+        /*! \brief The type of the actual storage map
+         */
         typedef std::unordered_map<std::string, StoreEntry> StoreMap;
+
+
+        /*! \brief The type of the map that stores removal functions for a given id
+         */
         typedef std::unordered_map<unsigned long, ModuleRemoverFunc> RemoverMap;
 
+
+        /*! \brief Actual storage object
+         */ 
         StoreMap store_;
+
+
+        /*! \brief Map for storing obejct removal information
+         */ 
         RemoverMap removemap_;
+
+
+        //! The id to assign to the next created module
         std::atomic<unsigned long> curid_;
 
+
+        /*! \brief Obtain module information or throw exception
+         * 
+         * This function can be const since the database itself does not
+         * change at this point.
+         *
+         * \throw bpmodule::exception::GeneralException if the key doesn't
+         *        exist
+         *
+         * \param [in] key A module key
+         */ 
         const StoreEntry & GetOrThrow_(const std::string & key) const;
 };
 

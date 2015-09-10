@@ -15,7 +15,7 @@ namespace datastore {
 void PropertyMap::Set_(const std::string & key, PropPlaceholderPtr && value)
 {
     
-    if(Has(key))
+    if(opmap_.count(key))
     {
         PropMapEntry & phe = GetOrThrow_(key);
         phe.value = std::move(value);
@@ -24,8 +24,8 @@ void PropertyMap::Set_(const std::string & key, PropPlaceholderPtr && value)
     {
         PropMapEntry phe{std::move(value)};
 
-        // insert has strong exception guarantee in this form
-        opmap_.insert(PropMapValue{key, std::move(phe) });
+        // emplace has strong exception guarantee
+        opmap_.emplace(key, std::move(phe));
     }
 }
 
@@ -45,8 +45,8 @@ void PropertyMap::SetRef(const PropertyMap & pm, const std::string & key, const 
     PropMapEntry pe = pm.GetOrThrow_(key);
 
     // add it here
-    // insert has strong exception guarantee in this form
-    opmap_.insert(PropMapValue{newkey, std::move(pe)});    
+    // emplaceinsert has strong exception guarantee
+    opmap_.emplace(newkey, std::move(pe));    
 }
 
 
