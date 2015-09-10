@@ -41,9 +41,7 @@ class PropertyMap
          * 
          * Underlying data is NOT copied, rather just the references.
          *
-         * \throwprob
-         *
-         * \param rhs The object to copy
+         * \param [in] rhs The object to copy
          */
         PropertyMap(const PropertyMap & rhs)             = default;
 
@@ -53,9 +51,7 @@ class PropertyMap
          * 
          * References to data are removed from the other object.
          *
-         * \throwprob
-         *
-         * \param rhs The object to copy
+         * \param [in] rhs The object to copy
          */ 
         PropertyMap(PropertyMap && rhs)                  = default;
 
@@ -79,7 +75,11 @@ class PropertyMap
 
         /*! \brief Construct via python list
          * 
+         * \todo Wrap or document python exceptions
+         *
          * \throw bpmodule::exception::GeneralException if there is a problem (type conversion, etc).
+         *
+         * \param [in] olist A python list containing objects to copy into this map
          */  
         PropertyMap(const boost::python::list & olist);
 
@@ -87,10 +87,9 @@ class PropertyMap
 
         /*! \brief Determine if this object contains data for a key
          *
-         * \throwprob
          * \exstrong
          *
-         * \param key The key to the data
+         * \param [in] key The key to the data
          * \return True if the key exists, false otherwise
          */
         bool Has(const std::string & key) const;
@@ -99,12 +98,11 @@ class PropertyMap
 
         /*! \brief Determine if this object contains data of a specific type for a key
          *
-         * \throwprob
          * \exstrong
          *
          * \tparam T Type to compare to
          *
-         * \param key The key to the data
+         * \param [in] key The key to the data
          * \return True if the key exists, false otherwise
          */
         template<typename T>
@@ -121,10 +119,11 @@ class PropertyMap
         /*! \brief Get a string representing the type for a given key
          *
          * \throw bpmodule::exception::GeneralException
-         *        if data doesn't exist for this key 
+         *        if the key doesn't exist 
          *
          * \exstrong
          *
+         * \param [in] key The key to the data
          * \return A string representing the type for a key
          */
         std::string GetType(const std::string & key) const;
@@ -133,7 +132,6 @@ class PropertyMap
 
         /*! \brief Obtain all the keys contained in this object
          * 
-         * \throwprob
          * \exstrong
          *
          * \return A vector of strings containing all the keys
@@ -160,14 +158,14 @@ class PropertyMap
         /*! \brief Return a const reference to the underlying data
          *
          * \throw bpmodule::exception::GeneralException
-         *        if data doesn't exist for this key or 
+         *        if the key doesn't exist or 
          *        is of the wrong type
          *
          * \exstrong
          *
          * \tparam T The type of the data
          *
-         * \param key The key to the data
+         * \param [in] key The key to the data
          * \return A const referance to the data
          */
         template<typename T>
@@ -182,14 +180,14 @@ class PropertyMap
         /*! \brief Return a copy of the underlying data
          *
          * \throw bpmodule::exception::GeneralException
-         *        if data doesn't exist for this key or 
+         *        if the key doesn't exist or 
          *        is of the wrong type
          *
          * \exstrong
          *
          * \tparam T The type of the data
          *
-         * \param key The key to the data
+         * \param [in] key The key to the data
          * \return A copy of the data
          */
         template<typename T>
@@ -204,15 +202,14 @@ class PropertyMap
          * 
          * If the key exists, the data is overwritten.
          * Then, the data itself may remain if another PropertyMap contains the same data
-         * (set via SetRef).
+         * (set via SetRef, etc).
          *
-         * \throwprob
          * \exstrong
          *
          * \tparam T The type of the data
          *
-         * \param value The data to store
-         * \param key The key to the data
+         * \param [in] key The key to the data
+         * \param [in] value The data to store
          */
         template<typename T>
         void Set(const std::string & key, const T & value)
@@ -220,7 +217,6 @@ class PropertyMap
             auto v = PropPlaceholderPtr(new PropHolder<T>(value));
             Set_(key, std::move(v));
         }
-
 
 
 
@@ -247,15 +243,15 @@ class PropertyMap
          *
          * \exstrong
          *
-         * \param other The other object from which to get the data
-         * \param key The key of the object in the other object
+         * \param [in] other The other object from which to get the data
+         * \param [in] key The key of the object in the other object
          */
         void SetRef(const PropertyMap & other, const std::string & key);
 
 
 
         /*! \copydoc SetRef
-         * \param newkey The key under which to store the data in this object
+         * \param [in] newkey The key under which to store the data in this object
          */
         void SetRef(const PropertyMap & other, const std::string & key, const std::string & newkey);
 
@@ -264,14 +260,13 @@ class PropertyMap
         /*! \brief Remove a key from this data store
          * 
          * The data itself may remain if another PropertyMap contains the same data
-         * (set via SetRef).
+         * (set via SetRef, etc).
          *
          * The key does not have to exist. If the key doesn't exists, nothing will happen.
          *
-         * \throwprob
          * \exstrong
          *
-         * \param key The key to the data
+         * \param [in] key The key to the data
          * \return The number of elements removed
          */
         size_t Erase(const std::string & key);
@@ -341,6 +336,8 @@ class PropertyMap
                  *
                  * \throwno Throws an exception only if the move
                  *          constructor for T throws an exception
+                 *
+                 *  \param [in] m The object to copy
                  */
                 PropHolder(const T & m) : obj(m) { }
 
@@ -351,6 +348,8 @@ class PropertyMap
                  *
                  * \throwno Throws an exception only if the move
                  *          constructor for T throws an exception
+                 *
+                 *  \param [in] m The object to move
                  */
                 PropHolder(T && m) : obj(std::move(m)) { }
 
@@ -446,8 +445,7 @@ class PropertyMap
          *
          * \exstrong
          *
-         * \param key Key of the data to get
-         *
+         * \param [in] key Key of the data to get
          * \return PropMapEntry containing the data for the given key
          */ 
         const PropMapEntry & GetOrThrow_(const std::string & key) const;
@@ -467,8 +465,7 @@ class PropertyMap
          *
          * \exstrong
          *
-         * \param key Key of the data to get
-         *
+         * \param [in] key Key of the data to get
          * \return PropHolder containing the data for the given key
          */ 
         template<typename T>
@@ -492,12 +489,10 @@ class PropertyMap
 
         /*! \brief Sets the data for a given key via a PropPlaceholderPtr
          * 
-         * \throwprob
          * \exstrong
          *
-         * \param key Key of the data to set
-         * \param value Pointer to the data to set
-         *
+         * \param [in] key Key of the data to set
+         * \param [in] value Pointer to the data to set
          * \return PropHolder containing the data for the given key
          */ 
         void Set_(const std::string & key, PropPlaceholderPtr && value);
@@ -507,6 +502,8 @@ class PropertyMap
         /*! \brief Create a PropPlaceHolder from python object
          * 
          * \throw bpmodule::exception::GeneralException if there is a problem (type conversion, etc)
+         *
+         * \param [in] value A python object containing data to copy
          */ 
         static PropPlaceholderPtr PropPlaceholder_(const boost::python::object & value);
 

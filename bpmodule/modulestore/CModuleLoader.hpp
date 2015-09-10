@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Loading and storing of C modules (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_CMODULELOADER_HPP_
 #define _GUARD_CMODULELOADER_HPP_
 

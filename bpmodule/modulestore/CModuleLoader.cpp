@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Loading and storing of C modules (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include <dlfcn.h>
 
 #include "bpmodule/modulestore/CModuleLoader.hpp"

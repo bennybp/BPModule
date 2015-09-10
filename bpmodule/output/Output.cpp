@@ -31,7 +31,7 @@ bool debug_ = false;
 namespace bpmodule {
 namespace output {
 
-void Output_(std::ostream & out, OutputType type, boost::format & bfmt)
+void Output_(std::ostream & out, OutputType type, const boost::format & bfmt)
 {
     if(type == OutputType::Debug && !debug_)
         return;
@@ -118,19 +118,20 @@ bool SetOut_File(const std::string & filepath)
 
 void Flush(void)
 {
-    GetOut().flush();    
+    if(Valid())
+        GetOut().flush();    
 }
 
 
 
-void SetColor(bool usecolor)
+void SetColor(bool usecolor) noexcept
 {
     color_ = usecolor;
 }
 
 
 
-void SetDebug(bool debug)
+void SetDebug(bool debug) noexcept
 {
     debug_ = debug;
     Debug("Debugging now: %1%\n", debug ? "On" : "Off");

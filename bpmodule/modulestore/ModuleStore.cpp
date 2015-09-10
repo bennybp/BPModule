@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Output and printing functionality (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/modulestore/ModuleStore.hpp"
 #include "bpmodule/output/Output.hpp"
@@ -48,7 +55,7 @@ void ModuleStore::SetOptions(const std::string & key, const OptionMap & opt)
 
 
 
-size_t ModuleStore::Size(void) const
+size_t ModuleStore::Size(void) const noexcept
 {
     return store_.size();
 }
@@ -95,9 +102,8 @@ void ModuleStore::RemoveModule(ModuleBase * mb)
 
 
 ModuleStore::ModuleStore()
-{
-    curid_ = 0;
-}
+    : curid_(0)
+{ }
 
 
 

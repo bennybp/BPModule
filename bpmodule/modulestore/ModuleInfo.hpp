@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Structure storing information about a module (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_MODULEINFO_HPP_
 #define _GUARD_MODULEINFO_HPP_
 
@@ -9,7 +16,8 @@
 namespace bpmodule {
 namespace modulestore {
 
-
+/*! \brief Structure that stores information about a loaded module
+ */
 struct ModuleInfo
 {
     std::string key;
@@ -28,7 +36,13 @@ struct ModuleInfo
     ModuleInfo(ModuleInfo && rhs) = default;
     ~ModuleInfo(void) = default;
 
-    // for python
+    /*! \brief Construct from a python dictionary
+     * 
+     * \todo Document or wrap boost python exceptions
+     *
+     * \throw bpmodule::exception::GeneralException if there is
+     *        a problem (conversion problem, missing keys, etc)
+     */
     ModuleInfo(const boost::python::dict & dictionary);
 };
 

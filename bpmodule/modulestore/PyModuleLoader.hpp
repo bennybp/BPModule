@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Loading and storing of Python modules (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_PYMODULELOADER_HPP_
 #define _GUARD_PYMODULELOADER_HPP_
 

@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Structure storing information about a module (source for python functions)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/modulestore/ModuleInfo.hpp"
 #include "bpmodule/python_helper/Python_stdconvert.hpp"
 

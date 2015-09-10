@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Loading and storing of Python modules (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulestore/PyModuleLoader.hpp"
 #include "bpmodule/modulestore/ModuleStore.hpp"
