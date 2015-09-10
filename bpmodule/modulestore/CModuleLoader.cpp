@@ -34,11 +34,13 @@ CModuleLoader::~CModuleLoader()
 
 
 
-ModuleBase * CModuleLoader::CreateWrapper_(CreateFunc fn, const std::string & key,
+ModuleBase * CModuleLoader::CreateWrapper_(CreateFunc fn,
+                                           const std::string & key,
                                            unsigned long id,
+                                           ModuleStore & mstore,
                                            const ModuleInfo & minfo)
 {
-    ModuleBase * newobj = fn(key, id, *mst_, minfo);
+    ModuleBase * newobj = fn(key, id, mstore, minfo);
     objects_[id] = std::unique_ptr<ModuleBase>(newobj);
     return newobj;
 }
@@ -104,7 +106,8 @@ void CModuleLoader::LoadSO(const std::string & key,
     ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::CreateWrapper_, this, fn,
                                                        std::placeholders::_1,
                                                        std::placeholders::_2,
-                                                       std::placeholders::_3);
+                                                       std::placeholders::_3,
+                                                       std::placeholders::_4);
 
     ModuleStore::ModuleRemoverFunc dfunc = std::bind(&CModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
     mst_->AddModule(key, cfunc, dfunc, minfo);

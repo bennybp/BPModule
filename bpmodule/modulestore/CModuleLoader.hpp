@@ -42,7 +42,6 @@ class CModuleLoader
         CModuleLoader(const CModuleLoader & rhs) = delete;
 
         void LoadSO(const std::string & key, const ModuleInfo & minfo);
-
         void UnloadAll(void);
         void CloseHandles(void);
 
@@ -58,8 +57,14 @@ class CModuleLoader
 
         void DeleteObject_(unsigned long id);
 
-        modulebase::ModuleBase * CreateWrapper_(CreateFunc fn, const std::string & key, unsigned long id, const ModuleInfo & minfo);
+        modulebase::ModuleBase * CreateWrapper_(CreateFunc fn,
+                                                const std::string & key,
+                                                unsigned long id,
+                                                ModuleStore & mstore,
+                                                const ModuleInfo & minfo);
+
         void DeleteWrapper_(unsigned long id);
+
 };
 
 } // close namespace modulestore

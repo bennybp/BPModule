@@ -19,6 +19,11 @@ namespace bpmodule {
 namespace modulebase {
 class ModuleBase;
 }
+
+namespace modulestore {
+class CModuleLoader;
+class PyModuleLoader;
+}
 }
 // end forward declarations
 
@@ -36,13 +41,16 @@ class ModuleStore
 {
     public:
         //! A function that generates a module derived from ModuleBase
-        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long, const ModuleInfo &)> ModuleGeneratorFunc;
+        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long, ModuleStore &, const ModuleInfo &)> ModuleGeneratorFunc;
+
 
         //! A function that deletes a module (by id)
         typedef std::function<void(unsigned long)> ModuleRemoverFunc;
 
+
         ModuleStore();
         ~ModuleStore();
+
 
         // no copy construction or assignment
         ModuleStore(const ModuleStore & rhs)             = delete;
@@ -82,19 +90,44 @@ class ModuleStore
 
 
 
-        /*! \brief Adds a module to the map
+        /*! \brief Set the options for a module
          *
-         * \throw bpmodule::exception::GeneralException if the key already exists
+         * \throw bpmodule::exception::GeneralException if the key doesn't
+         *        exist
          *
-         * \exstrong
+         * \exstrong 
          * 
          * \param [in] key A module key
-         * \param [in] func A function that generates the module
-         * \param [in] dfunc A function that deletes the module
-         * \param [in] minfo Information about the module
-         */ 
-        void AddModule(const std::string & key, ModuleGeneratorFunc func, ModuleRemoverFunc dfunc, const ModuleInfo & minfo);
+         * \param [in] opt Options to set
+         */
+        void SetOptions(const std::string & key, const datastore::OptionMap & opt);
 
+
+
+
+        /*! \brief Return a module wrapped in an RAII-style scoping object
+            *
+         * \throw bpmodule::exception::GeneralException if the key doesn't
+         *        exist or the module cannot be cast to the requested type
+         *
+         * \exstrong 
+         *
+         * \param [in] key A module key
+         *
+         * \return A ScopedModule for an object of the requested type
+         */ 
+        template<typename T>
+        ScopedModule<T> GetModule(const std::string & key)
+        {
+            T & mod = GetModuleRef<T>(key);
+
+            // make the deleter function the RemoveModule() of this ModuleStore object
+            std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::RemoveModule),
+                                                                            this,
+                                                                            std::placeholders::_1);
+
+            return ScopedModule<T>(&mod, dfunc);
+        }
 
 
         /*! \brief Removes a created module object from storage
@@ -107,39 +140,24 @@ class ModuleStore
          * \exsafe If an exception is thrown, the module instance is still
          *         removed from this database.
          *
-         * \param [in] id The id of the module
-         */ 
-        void RemoveModule(unsigned long id);
-
-
-
-        /*! \brief Removes a created module object from the map
-         *
-         * This does not actually delete the object, just removes references
-         * to it in various places.
-         *
-         * If the module doesn't exist, nothing will happen.
-         *
-         * \exsafe If an exception is thrown, the module instance is still
-         *         removed from this database.
-         *
          * \param [in] mb Pointer to the module to remove
          */ 
         void RemoveModule(modulebase::ModuleBase * mb);
 
 
-
-        /*! \brief Set the options for a module
-         *
-         * \throw bpmodule::exception::GeneralException if the key doesn't
-         *        exist
-         *
-         * \exstrong 
+        /*! \brief Removes a created module object from storage
          * 
-         * \param [in] key A module key
-         * \param [in] opt Options to set
-         */
-        void SetOptions(const std::string & key, const datastore::OptionMap & opt);
+         * This does not actually delete the object, just removes references
+         * to it in various places.
+         *
+         * If the id doesn't exist, nothing will happen.
+         *
+         * \exsafe If an exception is thrown, the module instance is still
+         *         removed from this database.
+         *
+         * \param [in] id ID of the module to remove
+         */ 
+        void RemoveModule(long id);
 
 
 
@@ -155,13 +173,13 @@ class ModuleStore
          * \return A reference to an module object of the requested type
          */
         template<typename T>
-        T & GetModule(const std::string & key)
+        T & GetModuleRef(const std::string & key)
         {
             // obtain the creator
             const StoreEntry & se = GetOrThrow_(key);
 
             // create
-            modulebase::ModuleBase * mbptr = se.func(key, curid_, se.mi);
+            modulebase::ModuleBase * mbptr = se.func(key, curid_, *this, se.mi);
 
             // test
             T * dptr = dynamic_cast<T *>(mbptr);
@@ -180,7 +198,6 @@ class ModuleStore
             // store the deleter
             removemap_.emplace(curid_, se.dfunc);
 
-
             // next id
             curid_++;
 
@@ -188,30 +205,22 @@ class ModuleStore
         }
 
 
-        /*! \brief Return a module wrapped in an RAII-style scoping object
-            *
-         * \throw bpmodule::exception::GeneralException if the key doesn't
-         *        exist or the module cannot be cast to the requested type
+    protected:
+        friend class CModuleLoader;
+        friend class PyModuleLoader;
+
+        /*! \brief Adds a module to the map
          *
-         * \exstrong 
+         * \throw bpmodule::exception::GeneralException if the key already exists
          *
+         * \exstrong
+         * 
          * \param [in] key A module key
-         *
-         * \return A ScopedModule for an object of the requested type
+         * \param [in] func A function that generates the module
+         * \param [in] dfunc A function that deletes the module
+         * \param [in] minfo Information about the module
          */ 
-        template<typename T>
-        ScopedModule<T> GetScopedModule(const std::string & key)
-        {
-            T & mod = GetModule<T>(key);
-
-            // make the deleter function the RemoveModule() function of this class
-            std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::RemoveModule),
-                                                                this,
-                                                                std::placeholders::_1);
-
-            return ScopedModule<T>(&mod, dfunc);
-        }
-
+        void AddModule(const std::string & key, ModuleGeneratorFunc func, ModuleRemoverFunc dfunc, const ModuleInfo & minfo);
 
 
     private:
@@ -240,7 +249,7 @@ class ModuleStore
         StoreMap store_;
 
 
-        /*! \brief Map for storing obejct removal information
+        /*! \brief Map for storing object removal information
          */ 
         RemoverMap removemap_;
 
@@ -249,7 +258,7 @@ class ModuleStore
         std::atomic<unsigned long> curid_;
 
 
-        /*! \brief Obtain module information or throw exception
+        /*! \brief Obtain a module or throw exception
          * 
          * This function can be const since the database itself does not
          * change at this point.
@@ -260,6 +269,12 @@ class ModuleStore
          * \param [in] key A module key
          */ 
         const StoreEntry & GetOrThrow_(const std::string & key) const;
+
+
+
+
+
+
 };
 
 

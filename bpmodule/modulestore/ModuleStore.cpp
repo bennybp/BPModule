@@ -93,25 +93,22 @@ ModuleInfo ModuleStore::KeyInfo(const std::string & key) const
 }
 
 
-void ModuleStore::RemoveModule(unsigned long id)
-{
-    if(removemap_.count(id))
-    {
-        // should always happen
-        ModuleRemoverFunc dfunc = removemap_.at(id);
-        removemap_.erase(id);
-
-        // throwing ok from here. Stuff has already been removed from this map
-        // (but this shouldn't really throw)
-        removemap_[id](id);
-    }
-}
-
-
-
 void ModuleStore::RemoveModule(ModuleBase * mb)
 {
     RemoveModule(mb->ID());
+}
+
+void ModuleStore::RemoveModule(long id)
+{
+    if(removemap_.count(id))
+    {
+        ModuleRemoverFunc dfunc = removemap_.at(id);
+        removemap_.erase(id);  // should always happen
+
+        // throwing ok from here. Stuff has already been removed from this map
+        // (but this shouldn't really throw)
+        dfunc(id);
+    }
 }
 
 

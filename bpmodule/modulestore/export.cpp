@@ -23,9 +23,9 @@ namespace export_python {
 
 
 template<typename T>
-boost::shared_ptr<T> Wrap_GetScopedModule(ModuleStore * ms, const std::string & key)
+boost::shared_ptr<T> Wrap_GetModule(ModuleStore * ms, const std::string & key)
 {
-    T & mod = ms->GetModule<T>(key);
+    T & mod = ms->GetModuleRef<T>(key);
     std::function<void(ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(ModuleBase *)>(&ModuleStore::RemoveModule), ms, std::placeholders::_1);
     return boost::shared_ptr<T>(&mod, dfunc);
 }
@@ -70,20 +70,18 @@ BOOST_PYTHON_MODULE(modulestore)
     class_<ModuleStore, boost::noncopyable>("ModuleStore")
     .def("Size", &ModuleStore::Size)
     .def("Has", &ModuleStore::Has)
-    .def("RemoveModule", static_cast<void(ModuleStore::*)(unsigned long)>(&ModuleStore::RemoveModule))
     .def("SetOptions", Wrap_ModuleStore_SetOptions)
     .def("GetKeys", &ModuleStore::GetKeys)
     .def("KeyInfo", &ModuleStore::KeyInfo)
-    .def("GetModule", &ModuleStore::GetModule<ModuleBase>, return_internal_reference<>())
-    .def("GetModule_Test", &ModuleStore::GetModule<Test_Base>, return_internal_reference<>())
-    .def("GetScopedModule", Wrap_GetScopedModule<ModuleBase>)
-    .def("GetScopedModule_Test", Wrap_GetScopedModule<Test_Base>);
+    .def("GetModule", Wrap_GetModule<ModuleBase>)
+    .def("GetModule_Test", Wrap_GetModule<Test_Base>);
 
 
     class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleStore *>())
+    .def("LoadSO", Wrap_CModuleLoader_LoadSO)
     .def("CloseHandles", &CModuleLoader::CloseHandles)
-    .def("UnloadAll", &CModuleLoader::UnloadAll)
-    .def("LoadSO", Wrap_CModuleLoader_LoadSO);
+    .def("UnloadAll", &CModuleLoader::UnloadAll);
+
 
     class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleStore *>())
     .def("UnloadAll", &PyModuleLoader::UnloadAll)

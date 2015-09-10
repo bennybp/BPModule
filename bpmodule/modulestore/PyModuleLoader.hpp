@@ -57,8 +57,14 @@ class PyModuleLoader
 
         void DeleteObject_(unsigned long id);
 
-        modulebase::ModuleBase * CreateWrapper_(boost::python::object fn, const std::string & key, unsigned long id, const modulestore::ModuleInfo & options);
+        modulebase::ModuleBase * CreateWrapper_(boost::python::object fn,
+                                                const std::string & key,
+                                                unsigned long id,
+                                                ModuleStore & mstore,
+                                                const ModuleInfo & minfo);
+
         void DeleteWrapper_(unsigned long id);
+
 };
 
 

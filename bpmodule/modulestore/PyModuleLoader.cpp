@@ -31,11 +31,13 @@ PyModuleLoader::~PyModuleLoader()
 
 
 
-ModuleBase * PyModuleLoader::CreateWrapper_(boost::python::object fn, const std::string & key,
+ModuleBase * PyModuleLoader::CreateWrapper_(boost::python::object fn,
+                                            const std::string & key,
                                             unsigned long id,
+                                            ModuleStore & mstore,
                                             const ModuleInfo & minfo)
 {
-    boost::python::object newobj = fn(key, id, boost::ref(*mst_), boost::ref(minfo));
+    boost::python::object newobj = fn(key, id, boost::ref(mstore), boost::ref(minfo));
     objects_[id] = newobj;
     return boost::python::extract<ModuleBase *>(newobj);
 }
@@ -53,10 +55,12 @@ void PyModuleLoader::AddPyModule(const std::string & key,
                                  boost::python::object func, const ModuleInfo & minfo)
 {
 
-    ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::CreateWrapper_, this, func,
+    ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::CreateWrapper_, this,
+                                                       func,
                                                        std::placeholders::_1,
                                                        std::placeholders::_2,
-                                                       std::placeholders::_3);
+                                                       std::placeholders::_3,
+                                                       std::placeholders::_4);
 
     ModuleStore::ModuleRemoverFunc dfunc = std::bind(&PyModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
     mst_->AddModule(key, cfunc, dfunc, minfo);
