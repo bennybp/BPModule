@@ -27,16 +27,16 @@ class OptionMap : public PropertyMap
         OptionMap(void) = default;
         ~OptionMap(void) = default;
 
-        //! \copydoc PropertyMap::PropertyMap(const PropertyMap &)
+        //! \copydoc bpmodule::datastore::PropertyMap::PropertyMap(const PropertyMap &)
         OptionMap(const OptionMap & rhs)             = default;
 
-        //! \copydoc PropertyMap::PropertyMap(PropertyMap &&)
+        //! \copydoc bpmodule::datastore::PropertyMap::PropertyMap(PropertyMap &&)
         OptionMap(OptionMap && rhs)                  = default;
 
-        //! \copydoc PropertyMap::operator=(const PropertyMap &)
+        //! \copydoc bpmodule::datastore::PropertyMap::operator=(const PropertyMap &)
         OptionMap & operator=(const OptionMap & rhs) = default;
 
-        //! \copydoc PropertyMap::operator=(PropertyMap &&)
+        //! \copydoc bpmodule::datastore::PropertyMap::operator=(PropertyMap &&)
         OptionMap & operator=(OptionMap && rhs)      = default;
 
 
@@ -47,7 +47,7 @@ class OptionMap : public PropertyMap
         OptionMap(const boost::python::list & olist) : PropertyMap(olist) {  }
 
 
-        //! \copydoc PropertyMap::GetCopy 
+        //! \copydoc bpmodule::datastore::PropertyMap::GetCopy 
         template<typename T>
         T Get(const std::string & key) const
         {

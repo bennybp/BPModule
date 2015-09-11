@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief The base class for all modules (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/modulestore/ModuleStore.hpp"
 #include "bpmodule/output/Output.hpp"
@@ -43,35 +50,35 @@ void ModuleBase::ThrowException(const std::string & exwhat,
 
 
 
-unsigned long ModuleBase::ID(void) const
+unsigned long ModuleBase::ID(void) const noexcept
 {
     return id_;
 }
 
 
 
-const std::string & ModuleBase::Key(void) const
+const std::string & ModuleBase::Key(void) const noexcept
 {
     return key_;
 }
 
 
 
-const std::string & ModuleBase::Name(void) const
+const std::string & ModuleBase::Name(void) const noexcept
 {
     return name_;
 }
 
 
 
-const std::string & ModuleBase::Version(void) const
+const std::string & ModuleBase::Version(void) const noexcept
 {
     return version_;
 }
 
 
 
-ModuleStore & ModuleBase::MStore(void)
+ModuleStore & ModuleBase::MStore(void) noexcept
 {
     return mstore_;
 }
