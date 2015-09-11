@@ -28,6 +28,10 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
          */ 
         CModuleLoader(ModuleStore * mst);
 
+        /*! Destructor
+         * 
+         * Deletes all objects and closes all SO file handles
+         */
         ~CModuleLoader();
 
         CModuleLoader(const CModuleLoader & rhs)             = delete;
@@ -41,8 +45,12 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
          *
          * The module path and name must be stored in the module info
          *
+         * This functions opens the SO file (via dlopen) and obtains a pointer
+         * to the creation function contained in the module, and store it
+         * for later use.
+         *
          * \throw bpmodule::exception::GeneralException if there is a problem loading
-         *        the module (does not exist, etc)
+         *        the module (does not exist, function doesn't exist, etc)
          *
          * \exstrong
          *

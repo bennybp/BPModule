@@ -29,6 +29,11 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
         /*! \copydoc ModuleLoaderBase::ModuleLoaderBase
          */ 
         PyModuleLoader(modulestore::ModuleStore * mst);
+
+        /*! Destructor
+         * 
+         * Deletes all objects
+         */
         ~PyModuleLoader();
 
         PyModuleLoader(const PyModuleLoader & rhs)             = delete;
@@ -38,6 +43,9 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
 
 
         /*! \brief Loads a python module
+         *
+         * This function will store a copy of the python object for use in creating
+         * objects.
          *
          * \throw bpmodule::exception::GeneralException if there is a problem loading
          *        the module (does not exist, etc)
