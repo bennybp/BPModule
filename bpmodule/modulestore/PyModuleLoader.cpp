@@ -4,7 +4,6 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulestore/PyModuleLoader.hpp"
 #include "bpmodule/modulestore/ModuleStore.hpp"
@@ -66,6 +65,13 @@ void PyModuleLoader::AddPyModule(const std::string & key,
     mst_->AddModule(key, cfunc, dfunc, minfo);
 }
 
+
+void PyModuleLoader::AddPyModule(const std::string & key,
+                                 boost::python::object func,
+                                 const boost::python::dict & minfo)
+{
+    AddPyModule(key, func, ModuleInfo(minfo)); // conversion constructor for ModuleInfo
+}
 
 
 void PyModuleLoader::DeleteObject_(unsigned long id)

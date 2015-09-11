@@ -7,6 +7,8 @@
 
 #include <dlfcn.h>
 
+#include <boost/python.hpp>
+
 #include "bpmodule/modulestore/CModuleLoader.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulestore/ModuleStore.hpp"
@@ -113,6 +115,12 @@ void CModuleLoader::LoadSO(const std::string & key,
     mst_->AddModule(key, cfunc, dfunc, minfo);
 }
 
+
+void CModuleLoader::LoadSO(const std::string & key,
+                           const boost::python::dict & minfo)
+{
+    LoadSO(key, ModuleInfo(minfo)); // conversion constructor for ModuleInfo
+}
 
 
 void CModuleLoader::DeleteObject_(unsigned long id)

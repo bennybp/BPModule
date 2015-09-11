@@ -25,35 +25,11 @@ namespace export_python {
 template<typename T>
 boost::shared_ptr<T> Wrap_GetModule(ModuleStore * ms, const std::string & key)
 {
-    T & mod = ms->GetModuleRef<T>(key);
-    std::function<void(ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(ModuleBase *)>(&ModuleStore::RemoveModule), ms, std::placeholders::_1);
-    return boost::shared_ptr<T>(&mod, dfunc);
+    ScopedModule<T> mod = ms->GetModule<T>(key);
+    std::function<void(ModuleBase *)> dfunc = mod.get_deleter();
+    T * ptr = mod.release();
+    return boost::shared_ptr<T>(ptr, dfunc);
 }
-
-
-// wraps CModuleLoader::LoadSO so that it can take a dict for the ModuleInfo
-void Wrap_CModuleLoader_LoadSO(CModuleLoader * ml, const std::string & key, const boost::python::dict & minfo)
-{
-    // dictionary is converted to ModuleInfo via constructor
-    return ml->LoadSO(key, minfo);
-}
-
-// wraps PyModuleLoader::AddPyModule so that it can take a dict for the ModuleInfo
-void Wrap_PyModuleLoader_AddPyModule(PyModuleLoader * ml,
-                                     const std::string & key, boost::python::object func,
-                                     const boost::python::dict & minfo)
-{
-    // dictionary is converted to ModuleInfo via constructor
-    return ml->AddPyModule(key, func, minfo);
-}
-
-
-void Wrap_ModuleStore_SetOptions(ModuleStore * mst, const std::string & key, boost::python::list & opt)
-{
-    // OptionMap has a conversion constructor
-    mst->SetOptions(key, opt);
-}
-
 
 
 ////////////////////////////
@@ -70,7 +46,7 @@ BOOST_PYTHON_MODULE(modulestore)
     class_<ModuleStore, boost::noncopyable>("ModuleStore")
     .def("Size", &ModuleStore::Size)
     .def("Has", &ModuleStore::Has)
-    .def("SetOptions", Wrap_ModuleStore_SetOptions)
+    .def("SetOptions", static_cast<void(ModuleStore::*)(const std::string &, const boost::python::list &)>(&ModuleStore::SetOptions))
     .def("GetKeys", &ModuleStore::GetKeys)
     .def("KeyInfo", &ModuleStore::KeyInfo)
     .def("GetModule", Wrap_GetModule<ModuleBase>)
@@ -78,14 +54,14 @@ BOOST_PYTHON_MODULE(modulestore)
 
 
     class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleStore *>())
-    .def("LoadSO", Wrap_CModuleLoader_LoadSO)
+    .def("LoadSO", static_cast<void(CModuleLoader::*)(const std::string &, const boost::python::dict &)>(&CModuleLoader::LoadSO))
     .def("CloseHandles", &CModuleLoader::CloseHandles)
     .def("UnloadAll", &CModuleLoader::UnloadAll);
 
 
     class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleStore *>())
     .def("UnloadAll", &PyModuleLoader::UnloadAll)
-    .def("AddPyModule", Wrap_PyModuleLoader_AddPyModule);
+    .def("AddPyModule", static_cast<void(PyModuleLoader::*)(const std::string &, boost::python::object, const boost::python::dict &)>(&PyModuleLoader::AddPyModule));
 
 }
 

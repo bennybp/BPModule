@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Structure storing information about a module (source for python functions)
+ * \brief Structure storing information about a module (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 

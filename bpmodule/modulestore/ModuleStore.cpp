@@ -1,9 +1,10 @@
 /*! \file
  *
- * \brief Output and printing functionality (header)
+ * \brief Main module database class (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
+#include <boost/python.hpp>
 
 #include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/modulestore/ModuleStore.hpp"
@@ -61,6 +62,11 @@ void ModuleStore::SetOptions(const std::string & key, const OptionMap & opt)
 }
 
 
+void ModuleStore::SetOptions(const std::string & key, const boost::python::list & opt)
+{
+    SetOptions(key, OptionMap(opt)); // calls conversion constructor for OptionMap
+}
+
 
 size_t ModuleStore::Size(void) const noexcept
 {
@@ -93,12 +99,12 @@ ModuleInfo ModuleStore::KeyInfo(const std::string & key) const
 }
 
 
-void ModuleStore::RemoveModule(ModuleBase * mb)
+void ModuleStore::RemoveModule_(ModuleBase * mb)
 {
-    RemoveModule(mb->ID());
+    RemoveModule_(mb->ID());
 }
 
-void ModuleStore::RemoveModule(long id)
+void ModuleStore::RemoveModule_(long id)
 {
     if(removemap_.count(id))
     {

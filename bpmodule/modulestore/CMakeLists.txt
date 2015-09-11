@@ -1,7 +1,7 @@
 set(BPMODULE_MODULESTORE_FILES
             CModuleLoader.cpp
             export.cpp
-            ModuleInfo_python.cpp
+            ModuleInfo.cpp
             ModuleStore.cpp
             PyModuleLoader.cpp
             export.cpp

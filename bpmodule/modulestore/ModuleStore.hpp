@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Output and printing functionality (header)
+ * \brief Main module database class (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -13,6 +13,7 @@
 #include <atomic>
 
 #include "bpmodule/modulestore/ModuleInfo.hpp"
+#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 // forward declarations
 namespace bpmodule {
@@ -103,6 +104,18 @@ class ModuleStore
         void SetOptions(const std::string & key, const datastore::OptionMap & opt);
 
 
+        /*! \brief Set the options for a module (python version)
+         *
+         * \throw bpmodule::exception::GeneralException if the key doesn't
+         *        exist
+         *
+         * \exstrong 
+         * 
+         * \param [in] key A module key
+         * \param [in] opt Options to set
+         */
+        void SetOptions(const std::string & key, const boost::python::list & opt);
+
 
 
         /*! \brief Return a module wrapped in an RAII-style scoping object
@@ -119,10 +132,10 @@ class ModuleStore
         template<typename T>
         ScopedModule<T> GetModule(const std::string & key)
         {
-            T & mod = GetModuleRef<T>(key);
+            T & mod = GetModuleRef_<T>(key);
 
-            // make the deleter function the RemoveModule() of this ModuleStore object
-            std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::RemoveModule),
+            // make the deleter function the RemoveModule_() of this ModuleStore object
+            std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::RemoveModule_),
                                                                             this,
                                                                             std::placeholders::_1);
 
@@ -130,79 +143,7 @@ class ModuleStore
         }
 
 
-        /*! \brief Removes a created module object from storage
-         * 
-         * This does not actually delete the object, just removes references
-         * to it in various places.
-         *
-         * If the id doesn't exist, nothing will happen.
-         *
-         * \exsafe If an exception is thrown, the module instance is still
-         *         removed from this database.
-         *
-         * \param [in] mb Pointer to the module to remove
-         */ 
-        void RemoveModule(modulebase::ModuleBase * mb);
 
-
-        /*! \brief Removes a created module object from storage
-         * 
-         * This does not actually delete the object, just removes references
-         * to it in various places.
-         *
-         * If the id doesn't exist, nothing will happen.
-         *
-         * \exsafe If an exception is thrown, the module instance is still
-         *         removed from this database.
-         *
-         * \param [in] id ID of the module to remove
-         */ 
-        void RemoveModule(long id);
-
-
-
-        /*! \brief Obtain a module
-         *
-         * \throw bpmodule::exception::GeneralException if the key doesn't
-         *        exist or the module cannot be cast to the requested type
-         *
-         * \exstrong 
-         * 
-         * \param [in] key A module key
-         *
-         * \return A reference to an module object of the requested type
-         */
-        template<typename T>
-        T & GetModuleRef(const std::string & key)
-        {
-            // obtain the creator
-            const StoreEntry & se = GetOrThrow_(key);
-
-            // create
-            modulebase::ModuleBase * mbptr = se.func(key, curid_, *this, se.mi);
-
-            // test
-            T * dptr = dynamic_cast<T *>(mbptr);
-            if(dptr == nullptr)
-                throw exception::GeneralException(
-                                 "Bad cast for module",
-                                 {
-                                     { "Location", "ModuleStore"},
-                                     { "Key", key },
-                                     { "From", typeid(mbptr).name() },
-                                     { "To", typeid(T *).name() }
-                                 }
-                               );
-
-
-            // store the deleter
-            removemap_.emplace(curid_, se.dfunc);
-
-            // next id
-            curid_++;
-
-            return *dptr;
-        }
 
 
     protected:
@@ -220,7 +161,8 @@ class ModuleStore
          * \param [in] dfunc A function that deletes the module
          * \param [in] minfo Information about the module
          */ 
-        void AddModule(const std::string & key, ModuleGeneratorFunc func, ModuleRemoverFunc dfunc, const ModuleInfo & minfo);
+        void AddModule(const std::string & key, ModuleGeneratorFunc func,
+                       ModuleRemoverFunc dfunc, const ModuleInfo & minfo);
 
 
     private:
@@ -271,9 +213,79 @@ class ModuleStore
         const StoreEntry & GetOrThrow_(const std::string & key) const;
 
 
+        /*! \brief Obtain a module
+         *
+         * \throw bpmodule::exception::GeneralException if the key doesn't
+         *        exist or the module cannot be cast to the requested type
+         *
+         * \exstrong 
+         * 
+         * \param [in] key A module key
+         *
+         * \return A reference to an module object of the requested type
+         */
+        template<typename T>
+        T & GetModuleRef_(const std::string & key)
+        {
+            // obtain the creator
+            const StoreEntry & se = GetOrThrow_(key);
+
+            // create
+            modulebase::ModuleBase * mbptr = se.func(key, curid_, *this, se.mi);
+
+            // test
+            T * dptr = dynamic_cast<T *>(mbptr);
+            if(dptr == nullptr)
+                throw exception::GeneralException(
+                                 "Bad cast for module",
+                                 {
+                                     { "Location", "ModuleStore"},
+                                     { "Key", key },
+                                     { "From", typeid(mbptr).name() },
+                                     { "To", typeid(T *).name() }
+                                 }
+                               );
+
+
+            // store the deleter
+            removemap_.emplace(curid_, se.dfunc);
+
+            // next id
+            curid_++;
+
+            return *dptr;
+        }
 
 
 
+        /*! \brief Removes a created module object from storage
+         * 
+         * This actually deletes the object, and removes references
+         * to it in various places.
+         *
+         * If the id doesn't exist, nothing will happen.
+         *
+         * \exsafe If an exception is thrown, the module instance is still
+         *         removed from this database.
+         *
+         * \param [in] mb Pointer to the module to remove
+         */ 
+        void RemoveModule_(modulebase::ModuleBase * mb);
+
+
+        /*! \brief Removes a created module object from storage
+         * 
+         * This actually deletes the object, and removes references
+         * to it in various places.
+         *
+         * If the id doesn't exist, nothing will happen.
+         *
+         * \exsafe If an exception is thrown, the module instance is still
+         *         removed from this database.
+         *
+         * \param [in] id ID of the module to remove
+         */ 
+        void RemoveModule_(long id);
 
 };
 

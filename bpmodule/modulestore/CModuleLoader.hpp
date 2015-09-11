@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <string>
 
+#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 // Forward declarations
 namespace bpmodule {
@@ -41,6 +42,7 @@ class CModuleLoader
         CModuleLoader & operator=(const CModuleLoader & rhs) = delete;
         CModuleLoader(const CModuleLoader & rhs) = delete;
 
+        void LoadSO(const std::string & key, const boost::python::dict & minfo);
         void LoadSO(const std::string & key, const ModuleInfo & minfo);
         void UnloadAll(void);
         void CloseHandles(void);

@@ -47,6 +47,10 @@ class PyModuleLoader
 
         void AddPyModule(const std::string & key, boost::python::object func, const modulestore::ModuleInfo & minfo);
 
+        void AddPyModule(const std::string & key,
+                         boost::python::object func,
+                         const boost::python::dict & minfo);
+
         void UnloadAll(void);
 
     private:
