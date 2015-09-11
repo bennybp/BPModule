@@ -4,6 +4,7 @@ import importlib
 
 # Important! Symbols must be loaded now and available
 # globally! WILL NOT WORK WITHOUT
+olddl = sys.getdlopenflags()
 sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 
 ##########################################
@@ -32,6 +33,9 @@ from .optionvalidate import *
 # Load ambit
 ##########################################
 import ambit
+
+sys.setdlopenflags(olddl)
+
 
 
 # Main module store and module loaders
@@ -123,8 +127,9 @@ def LoadModule(supermodule, key):
     output.Output("Importing %1% module from supermodule %2%\n", key, supermodule)
 
     try:
+        # Don't use global from now on
         olddl = sys.getdlopenflags()
-        sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
+        sys.setdlopenflags(os.RTLD_NOW)
         m = importlib.import_module(supermodule)
         sys.setdlopenflags(olddl)
     except Exception as e:
