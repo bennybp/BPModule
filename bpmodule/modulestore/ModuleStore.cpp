@@ -103,7 +103,7 @@ void ModuleStore::DeleteModule_(ModuleBase * mb)
     DeleteModule_(mb->ID());
 }
 
-void ModuleStore::DeleteModule_(long id)
+void ModuleStore::DeleteModule_(unsigned long id)
 {
     if(removemap_.count(id))
     {

@@ -35,8 +35,9 @@ ModuleBase * PyModuleLoader::CreateWrapper_(boost::python::object fn,
                                             const ModuleInfo & minfo)
 {
     boost::python::object newobj = fn(key, id, boost::ref(mstore), boost::ref(minfo));
-    BASE::CopyObject(id, newobj);
-    return boost::python::extract<ModuleBase *>(newobj);
+    ModuleBase * ptr = boost::python::extract<ModuleBase *>(newobj); // may throw
+    BASE::CopyObject(id, newobj); // strong exception guarantee
+    return ptr;
 }
 
 

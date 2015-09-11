@@ -9,15 +9,25 @@
 #define _GUARD_MODULELOADERBASE_HPP_
 
 #include "bpmodule/modulestore/ModuleStore.hpp"
+#include "bpmodule/output/Output.hpp"
 
 
 namespace bpmodule {
 namespace modulestore {
 
+
+/*! \brief A base class for module loaders
+ *
+ * \tparam T The type of object to store
+ */
 template<typename T>
 class ModuleLoaderBase
 {
     public:
+        /*! \brief Constructor
+         *
+         * \param [in] mst ModuleStore to associate with this object
+         */
         ModuleLoaderBase(ModuleStore * mst)
             : mst_(mst)
         { }
@@ -25,7 +35,8 @@ class ModuleLoaderBase
 
         ~ModuleLoaderBase()
         {
-            //! \todo objects_ should definitely be empty now
+            if(objects_.size())
+                output::Error("ModuleLoaderBase: I still %1% have objects!!!", objects_.size());
         }
 
 
@@ -51,7 +62,14 @@ class ModuleLoaderBase
 
 
 
-        /*! \brief
+        /*! \brief Copies an instantiated object into internal storage
+         *
+         * Really meant for Python objects 
+         *
+         * \exstrong
+         * 
+         * \param [in] id Id of the new object
+         * \param [in] obj Object to copy
          */
         void CopyObject(unsigned long id, T obj) // calls copy constructor
         {
@@ -60,7 +78,14 @@ class ModuleLoaderBase
 
 
 
-        /*! \brief
+        /*! \brief Moves an instantiated object into internal storage
+         *
+         * Really meant for std::unique_ptr
+         * 
+         * \exstrong
+         * 
+         * \param [in] id Id of the new object
+         * \param [in] obj Object to move
          */
         void TakeObject(unsigned long id, T && obj)
         {
@@ -69,7 +94,14 @@ class ModuleLoaderBase
 
 
 
-        /*! \brief
+        /*! \brief Deletes an object from internal storage
+         * 
+         * This destructs the object. It shouldn't be used after this
+         *
+         * \throwno Should only throw an exception if a destructor
+         *          throws an exception, which shouldn't happen.
+         *
+         * \param [in] id The ID to delete
          */
         void DeleteObject(unsigned long id)
         {
@@ -78,20 +110,37 @@ class ModuleLoaderBase
 
 
 
-        /*! \brief
+        /*! \brief Deletes all objects in the internal storage
+         *
+         * All objects will be destructed and unusable 
+         * 
+         * \throwno Should only throw an exception if a destructor
+         *          throws an exception, which shouldn't happen.
          */
         void DeleteAll(void)
         {
-            //! \todo check if empty
             objects_.clear();
         }
 
 
-    private:
-        typedef std::unordered_map<unsigned long, T> ObjectMap;
+        /*! \brief Returns the number of stored objects
+         *
+         * \exnothrow
+         *
+         * \return Number of objects in the internal storage
+         */
+        size_t Size(void) const noexcept
+        {
+            return objects_.size();
+        } 
 
+
+    private:
+        //! Internal storage - maps ID to objects
+        std::unordered_map<unsigned long, T> objects_;
+
+        //! Pointer to the associated ModuleStore object
         ModuleStore * mst_;
-        ObjectMap objects_;
 };
 
 } // close namespace modulestore

@@ -176,28 +176,20 @@ class ModuleStore
             ModuleRemoverFunc dfunc;   //!< Function that deletes a class from this module
         };
 
-        /*! \brief The type of the actual storage map
-         */
-        typedef std::unordered_map<std::string, StoreEntry> StoreMap;
 
-
-        /*! \brief The type of the map that stores removal functions for a given id
-         */
-        typedef std::unordered_map<unsigned long, ModuleRemoverFunc> RemoverMap;
-
-
-        /*! \brief Actual storage object
+        /*! \brief Actual storage object - maps keys to creation functions
          */ 
-        StoreMap store_;
+        std::unordered_map<std::string, StoreEntry> store_;
 
 
         /*! \brief Map for storing object removal information
          */ 
-        RemoverMap removemap_;
+        std::unordered_map<unsigned long, ModuleRemoverFunc> removemap_;
 
 
         //! The id to assign to the next created module
         std::atomic<unsigned long> curid_;
+
 
 
         /*! \brief Obtain a module or throw exception
@@ -285,7 +277,7 @@ class ModuleStore
          *
          * \param [in] id ID of the module to remove
          */ 
-        void DeleteModule_(long id);
+        void DeleteModule_(unsigned long id);
 
 };
 

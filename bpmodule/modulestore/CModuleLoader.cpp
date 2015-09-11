@@ -53,7 +53,7 @@ ModuleBase * CModuleLoader::CreateWrapper_(CreateFunc fn,
 
     ModuleBase * newobj = fn(key, id, mstore, minfo);
     std::unique_ptr<ModuleBase> uptr(newobj);
-    BASE::TakeObject(id, std::move(uptr));
+    BASE::TakeObject(id, std::move(uptr));  // strong exception guarantee
     return newobj;
 }
 
@@ -102,8 +102,6 @@ void CModuleLoader::LoadSO_(const std::string & key, const ModuleInfo & minfo)
                                );
     }
 
-    if(handles_.count(sopath) == 0)
-        handles_.insert(HandleMap::value_type(sopath, handle));
 
     output::Success("Successfully opened %1%\n", sopath);
 
@@ -114,7 +112,10 @@ void CModuleLoader::LoadSO_(const std::string & key, const ModuleInfo & minfo)
                                                        std::placeholders::_4);
 
     ModuleStore::ModuleRemoverFunc dfunc = std::bind(&CModuleLoader::DeleteObject, this, std::placeholders::_1);
-    BASE::AddModule(key, cfunc, dfunc, minfo);
+
+    BASE::AddModule(key, cfunc, dfunc, minfo); // strong exception guarantee
+    if(handles_.count(sopath) == 0)
+        handles_.emplace(sopath, handle);      // strong exception guarantee, but shouldn't ever throw
 }
 
 
