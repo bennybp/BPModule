@@ -11,7 +11,6 @@
 
 #include "bpmodule/modulestore/CModuleLoader.hpp"
 #include "bpmodule/output/Output.hpp"
-#include "bpmodule/modulestore/ModuleStore.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 
 using bpmodule::modulebase::ModuleBase;
@@ -22,16 +21,23 @@ namespace bpmodule {
 namespace modulestore {
 
 CModuleLoader::CModuleLoader(ModuleStore * mst)
-    : mst_(mst)
-{
-}
+    : BASE(mst)
+{ }
 
 
 
 CModuleLoader::~CModuleLoader()
 {
-    UnloadAll();
-    CloseHandles();
+    // order is important. Delete before closing handles
+    BASE::DeleteAll();
+
+    // close all the handles
+    for(auto it : handles_)
+    {
+        output::Output("Closing %1%\n", it.first);
+        dlclose(it.second);
+    }
+    handles_.clear();
 }
 
 
@@ -42,22 +48,18 @@ ModuleBase * CModuleLoader::CreateWrapper_(CreateFunc fn,
                                            ModuleStore & mstore,
                                            const ModuleInfo & minfo)
 {
+    // Have the base ModuleLoaderBase class take ownership,
+    // but return the ptr
+
     ModuleBase * newobj = fn(key, id, mstore, minfo);
-    objects_[id] = std::unique_ptr<ModuleBase>(newobj);
+    std::unique_ptr<ModuleBase> uptr(newobj);
+    BASE::TakeObject(id, std::move(uptr));
     return newobj;
 }
 
 
 
-void CModuleLoader::DeleteWrapper_(unsigned long id)
-{
-    DeleteObject_(id);
-}
-
-
-
-void CModuleLoader::LoadSO(const std::string & key,
-                           const ModuleInfo & minfo)
+void CModuleLoader::LoadSO_(const std::string & key, const ModuleInfo & minfo)
 {
     // trailing slash on path should have been added by python scripts
     std::string sopath = minfo.path + minfo.soname;
@@ -111,41 +113,19 @@ void CModuleLoader::LoadSO(const std::string & key,
                                                        std::placeholders::_3,
                                                        std::placeholders::_4);
 
-    ModuleStore::ModuleRemoverFunc dfunc = std::bind(&CModuleLoader::DeleteWrapper_, this, std::placeholders::_1);
-    mst_->AddModule(key, cfunc, dfunc, minfo);
+    ModuleStore::ModuleRemoverFunc dfunc = std::bind(&CModuleLoader::DeleteObject, this, std::placeholders::_1);
+    BASE::AddModule(key, cfunc, dfunc, minfo);
 }
+
 
 
 void CModuleLoader::LoadSO(const std::string & key,
                            const boost::python::dict & minfo)
 {
-    LoadSO(key, ModuleInfo(minfo)); // conversion constructor for ModuleInfo
+    LoadSO_(key, ModuleInfo(minfo)); // conversion constructor for ModuleInfo
 }
 
 
-void CModuleLoader::DeleteObject_(unsigned long id)
-{
-    objects_.erase(id);
-}
-
-
-
-void CModuleLoader::UnloadAll(void)
-{
-    objects_.clear();
-}
-
-
-
-void CModuleLoader::CloseHandles(void)
-{
-    for(auto it : handles_)
-    {
-        output::Output("Closing %1%\n", it.first);
-        dlclose(it.second);
-    }
-    handles_.clear();
-}
 
 
 } // close namespace modulestore

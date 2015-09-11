@@ -9,11 +9,9 @@
 #define _GUARD_MODULESTORE_HPP_
 
 #include <unordered_map>
-#include <vector>
 #include <atomic>
 
 #include "bpmodule/modulestore/ModuleInfo.hpp"
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 // forward declarations
 namespace bpmodule {
@@ -22,8 +20,10 @@ class ModuleBase;
 }
 
 namespace modulestore {
-class CModuleLoader;
-class PyModuleLoader;
+
+template<typename T>
+class ModuleLoaderBase;
+
 }
 }
 // end forward declarations
@@ -134,8 +134,8 @@ class ModuleStore
         {
             T & mod = GetModuleRef_<T>(key);
 
-            // make the deleter function the RemoveModule_() of this ModuleStore object
-            std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::RemoveModule_),
+            // make the deleter function the DeleteModule_() of this ModuleStore object
+            std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::DeleteModule_),
                                                                             this,
                                                                             std::placeholders::_1);
 
@@ -147,8 +147,8 @@ class ModuleStore
 
 
     protected:
-        friend class CModuleLoader;
-        friend class PyModuleLoader;
+        template<typename T>
+        friend class ModuleLoaderBase;
 
         /*! \brief Adds a module to the map
          *
@@ -270,7 +270,7 @@ class ModuleStore
          *
          * \param [in] mb Pointer to the module to remove
          */ 
-        void RemoveModule_(modulebase::ModuleBase * mb);
+        void DeleteModule_(modulebase::ModuleBase * mb);
 
 
         /*! \brief Removes a created module object from storage
@@ -285,7 +285,7 @@ class ModuleStore
          *
          * \param [in] id ID of the module to remove
          */ 
-        void RemoveModule_(long id);
+        void DeleteModule_(long id);
 
 };
 

@@ -7,7 +7,6 @@
 
 // Various components
 #include "bpmodule/modulebase/All_python.hpp"
-#include "bpmodule/modulestore/ModuleStore.hpp"
 #include "bpmodule/modulestore/CModuleLoader.hpp"
 #include "bpmodule/modulestore/PyModuleLoader.hpp"
 
@@ -54,13 +53,9 @@ BOOST_PYTHON_MODULE(modulestore)
 
 
     class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleStore *>())
-    .def("LoadSO", static_cast<void(CModuleLoader::*)(const std::string &, const boost::python::dict &)>(&CModuleLoader::LoadSO))
-    .def("CloseHandles", &CModuleLoader::CloseHandles)
-    .def("UnloadAll", &CModuleLoader::UnloadAll);
-
+    .def("LoadSO", static_cast<void(CModuleLoader::*)(const std::string &, const boost::python::dict &)>(&CModuleLoader::LoadSO));
 
     class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleStore *>())
-    .def("UnloadAll", &PyModuleLoader::UnloadAll)
     .def("AddPyModule", static_cast<void(PyModuleLoader::*)(const std::string &, boost::python::object, const boost::python::dict &)>(&PyModuleLoader::AddPyModule));
 
 }

@@ -95,17 +95,25 @@ def Init(argv, out = "stdout", color = True, debug = False):
 
 
 def Finalize():
-    output.Output("Deleting python modules\n")
-    pml.UnloadAll()
-    output.Output("Deleting C modules\n")
-    cml.UnloadAll()
-    output.Output("Closing C handles\n")
+  global mst
+  global cml
+  global pml
 
-    cml.CloseHandles()
-    output.Output("BPModule finalized\n")
+  output.Output("Deleting python modules\n")
+  del pml
 
-    tensor.FinalizeTensor()
-    parallel.FinalizeParallel()
+  output.Output("Deleting C modules\n")
+  output.Output("Closing C handles\n")
+  del cml
+
+  output.Output("Clearing module store\n")
+  del mst
+
+  output.Output("Finalizing tensors\n")
+  tensor.FinalizeTensor()
+
+  output.Output("Finalizing parallelization\n")
+  parallel.FinalizeParallel()
 
 
 

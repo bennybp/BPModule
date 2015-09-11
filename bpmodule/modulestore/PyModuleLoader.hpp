@@ -8,58 +8,35 @@
 #ifndef _GUARD_PYMODULELOADER_HPP_
 #define _GUARD_PYMODULELOADER_HPP_
 
-#include <memory>
-#include <unordered_map>
-#include <string>
-
 #include <boost/python.hpp>
 
-
-//forward declarations
-namespace bpmodule {
-
-namespace modulebase {
-class ModuleBase;
-}
-
-namespace modulestore {
-class ModuleStore;
-class ModuleInfo;
-}
-}
-// end forward declarations
-
-
+#include "bpmodule/modulestore/ModuleLoaderBase.hpp"
 
 
 namespace bpmodule {
 namespace modulestore {
 
-class PyModuleLoader
+class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
 {
     public:
 
         PyModuleLoader(modulestore::ModuleStore * mst);
         ~PyModuleLoader();
 
+        PyModuleLoader(const PyModuleLoader & rhs)             = delete;
+        PyModuleLoader(PyModuleLoader && rhs)                  = delete;
         PyModuleLoader & operator=(const PyModuleLoader & rhs) = delete;
-        PyModuleLoader(const PyModuleLoader & rhs) = delete;
+        PyModuleLoader & operator=(PyModuleLoader && rhs)      = delete;
 
-        void AddPyModule(const std::string & key, boost::python::object func, const modulestore::ModuleInfo & minfo);
 
         void AddPyModule(const std::string & key,
                          boost::python::object func,
                          const boost::python::dict & minfo);
 
-        void UnloadAll(void);
-
     private:
-        typedef std::unordered_map<unsigned long, boost::python::object> ObjectMap;
+        typedef ModuleLoaderBase<boost::python::object> BASE;
 
-        modulestore::ModuleStore * mst_;
-        ObjectMap objects_;
 
-        void DeleteObject_(unsigned long id);
 
         modulebase::ModuleBase * CreateWrapper_(boost::python::object fn,
                                                 const std::string & key,
@@ -67,8 +44,9 @@ class PyModuleLoader
                                                 ModuleStore & mstore,
                                                 const ModuleInfo & minfo);
 
-        void DeleteWrapper_(unsigned long id);
-
+        void AddPyModule_(const std::string & key,
+                          boost::python::object func,
+                          const ModuleInfo & minfo);
 };
 
 

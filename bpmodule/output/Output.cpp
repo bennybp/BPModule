@@ -5,12 +5,9 @@
  */ 
 
 
-#include <iostream>
 #include <fstream>
 #include <memory>
 #include <cassert>
-
-#include <boost/format.hpp>
 
 #include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/output/Output.hpp"

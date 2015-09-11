@@ -8,56 +8,35 @@
 #ifndef _GUARD_CMODULELOADER_HPP_
 #define _GUARD_CMODULELOADER_HPP_
 
-#include <memory>
-#include <unordered_map>
-#include <string>
-
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
-
-// Forward declarations
-namespace bpmodule {
-namespace modulebase {
-class ModuleBase;
-}
-
-namespace modulestore {
-class ModuleStore;
-class ModuleInfo;
-}
-}
-// end forward declarations
-
+#include "bpmodule/modulestore/ModuleLoaderBase.hpp"
 
 
 namespace bpmodule {
 namespace modulestore {
 
 
-class CModuleLoader
+class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::ModuleBase> >
 {
     public:
         CModuleLoader(ModuleStore * mst);
         ~CModuleLoader();
 
+        CModuleLoader(const CModuleLoader & rhs)             = delete;
+        CModuleLoader(CModuleLoader && rhs)                  = delete;
         CModuleLoader & operator=(const CModuleLoader & rhs) = delete;
-        CModuleLoader(const CModuleLoader & rhs) = delete;
+        CModuleLoader & operator=(CModuleLoader && rhs)      = delete;
 
         void LoadSO(const std::string & key, const boost::python::dict & minfo);
-        void LoadSO(const std::string & key, const ModuleInfo & minfo);
-        void UnloadAll(void);
-        void CloseHandles(void);
 
     private:
+        typedef ModuleLoaderBase< std::unique_ptr<modulebase::ModuleBase> > BASE;
         typedef modulebase::ModuleBase *(*CreateFunc)(const std::string &, unsigned long, ModuleStore &, const ModuleInfo &);
 
+
+
         typedef std::unordered_map<std::string, void *> HandleMap;
-        typedef std::unordered_map<unsigned long, std::unique_ptr<modulebase::ModuleBase>> ObjectMap;
-
-        ModuleStore * mst_;
         HandleMap handles_;
-        ObjectMap objects_;
 
-        void DeleteObject_(unsigned long id);
 
         modulebase::ModuleBase * CreateWrapper_(CreateFunc fn,
                                                 const std::string & key,
@@ -65,7 +44,7 @@ class CModuleLoader
                                                 ModuleStore & mstore,
                                                 const ModuleInfo & minfo);
 
-        void DeleteWrapper_(unsigned long id);
+        void LoadSO_(const std::string & key, const ModuleInfo & minfo);
 
 };
 

@@ -9,7 +9,6 @@
 #define _GUARD_MODULEINFO_HPP_
 
 
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 #include "bpmodule/datastore/OptionMap.hpp"
 
 

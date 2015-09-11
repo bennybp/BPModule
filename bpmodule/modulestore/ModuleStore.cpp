@@ -6,7 +6,6 @@
 
 #include <boost/python.hpp>
 
-#include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/modulestore/ModuleStore.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
@@ -99,12 +98,12 @@ ModuleInfo ModuleStore::KeyInfo(const std::string & key) const
 }
 
 
-void ModuleStore::RemoveModule_(ModuleBase * mb)
+void ModuleStore::DeleteModule_(ModuleBase * mb)
 {
-    RemoveModule_(mb->ID());
+    DeleteModule_(mb->ID());
 }
 
-void ModuleStore::RemoveModule_(long id)
+void ModuleStore::DeleteModule_(long id)
 {
     if(removemap_.count(id))
     {
