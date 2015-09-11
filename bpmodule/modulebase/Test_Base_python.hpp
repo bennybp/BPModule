@@ -55,7 +55,7 @@ class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base
 
         virtual datastore::CalcData CalcTest(datastore::CalcData inputs)
         {
-            return this->get_override("CalcData")(inputs);
+            return this->get_override("CalcTest")(inputs);
         }
 
 
