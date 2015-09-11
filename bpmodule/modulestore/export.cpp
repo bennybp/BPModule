@@ -21,7 +21,23 @@ namespace modulestore {
 namespace export_python {
 
 
+
+/*! \brief Wraps GetModule so that it returns a type compatible with python
+ *
+ * This uses boost::shared_ptr, which boost::python automatically handles
+ *
+ * Putting this in the ModuleStore source and headers would have required including boost for
+ * basically every file in the project.
+ *
+ * \tparam T Type of module to get
+ *
+ * \param [in] ms ModuleStore object to get the module from
+ * \param [in] key Key to get
+ *
+ * \return boost::shared_ptr containing a pointer to the new object
+ */
 template<typename T>
+static
 boost::shared_ptr<T> Wrap_GetModule(ModuleStore * ms, const std::string & key)
 {
     ScopedModule<T> mod = ms->GetModule<T>(key);
@@ -29,6 +45,8 @@ boost::shared_ptr<T> Wrap_GetModule(ModuleStore * ms, const std::string & key)
     T * ptr = mod.release();
     return boost::shared_ptr<T>(ptr, dfunc);
 }
+
+
 
 
 ////////////////////////////

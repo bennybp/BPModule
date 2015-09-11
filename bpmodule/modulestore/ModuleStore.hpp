@@ -132,14 +132,46 @@ class ModuleStore
         template<typename T>
         ScopedModule<T> GetModule(const std::string & key)
         {
-            T & mod = GetModuleRef_<T>(key);
+            // obtain the creator
+            const StoreEntry & se = GetOrThrow_(key);
+
+            // create
+            modulebase::ModuleBase * mbptr = se.func(key, curid_, *this, se.mi);
+
+            // test
+            T * dptr = dynamic_cast<T *>(mbptr);
+            if(dptr == nullptr)
+                throw exception::GeneralException(
+                                 "Bad cast for module",
+                                 {
+                                     { "Location", "ModuleStore"},
+                                     { "Key", key },
+                                     { "From", typeid(mbptr).name() },
+                                     { "To", typeid(T *).name() }
+                                 }
+                               );
+
+
+
 
             // make the deleter function the DeleteModule_() of this ModuleStore object
             std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::DeleteModule_),
                                                                             this,
                                                                             std::placeholders::_1);
 
-            return ScopedModule<T>(&mod, dfunc);
+
+            ScopedModule<T> ret(dptr, dfunc); // construction shouldn't throw?
+
+            // store the deleter
+            // This is the only part that modifies this ModuleStore object and so do here
+            // for strong exception guarantee
+            removemap_.emplace(curid_, se.dfunc);
+
+            // next id
+            curid_++;
+
+
+            return ret;
         }
 
 
@@ -204,49 +236,6 @@ class ModuleStore
          */ 
         const StoreEntry & GetOrThrow_(const std::string & key) const;
 
-
-        /*! \brief Obtain a module
-         *
-         * \throw bpmodule::exception::GeneralException if the key doesn't
-         *        exist or the module cannot be cast to the requested type
-         *
-         * \exstrong 
-         * 
-         * \param [in] key A module key
-         *
-         * \return A reference to an module object of the requested type
-         */
-        template<typename T>
-        T & GetModuleRef_(const std::string & key)
-        {
-            // obtain the creator
-            const StoreEntry & se = GetOrThrow_(key);
-
-            // create
-            modulebase::ModuleBase * mbptr = se.func(key, curid_, *this, se.mi);
-
-            // test
-            T * dptr = dynamic_cast<T *>(mbptr);
-            if(dptr == nullptr)
-                throw exception::GeneralException(
-                                 "Bad cast for module",
-                                 {
-                                     { "Location", "ModuleStore"},
-                                     { "Key", key },
-                                     { "From", typeid(mbptr).name() },
-                                     { "To", typeid(T *).name() }
-                                 }
-                               );
-
-
-            // store the deleter
-            removemap_.emplace(curid_, se.dfunc);
-
-            // next id
-            curid_++;
-
-            return *dptr;
-        }
 
 
 
