@@ -15,7 +15,10 @@ namespace bpmodule {
 namespace modulestore {
 
 
-/*! \brief Loads C/C++ Modules
+/*! \brief Loads C/C++ modules
+ *
+ * This class is the ultimate owner of all created
+ * C/C++ module objects, which it stores via ModuleLoaderBase (as smart pointers)
  */
 class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::ModuleBase> >
 {

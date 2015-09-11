@@ -16,6 +16,12 @@
 namespace bpmodule {
 namespace modulestore {
 
+
+/*! \brief Loads python modules
+ *
+ * This class is the ultimate owner of all created
+ * python module objects, which it stores via ModuleLoaderBase.
+ */
 class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
 {
     public:
