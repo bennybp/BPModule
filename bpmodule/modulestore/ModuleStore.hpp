@@ -108,6 +108,16 @@ class ModuleStore
 
 
 
+
+        /*! \brief Test the creation of all modules
+         * 
+         * This goes through and tests the module creation for all keys. It does
+         * not attempt to cast them, though. This is a simple sanity check
+         */
+        void TestAll(void);
+
+
+
         /*! \brief Return a new module object wrapped in an RAII-style scoping object
             *
          * \throw bpmodule::exception::GeneralException if the key doesn't

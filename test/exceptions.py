@@ -22,6 +22,7 @@ def Run():
       bp.SetOptions("TESTMOD1", { "double_opt_def": 1.111 })
       bp.CommitOptions()
       bp.DumpModuleInfo()
+      bp.SanityCheck()
 
 
       b1 = bp.mst.GetModule_Test("TESTMOD1")

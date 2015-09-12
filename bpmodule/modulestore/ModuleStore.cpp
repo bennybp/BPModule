@@ -98,6 +98,27 @@ ModuleInfo ModuleStore::KeyInfo(const std::string & key) const
     return GetOrThrow_(key).mi;
 }
 
+void ModuleStore::TestAll(void)
+{
+    output::Debug("Testing all modules\n");
+    for(const auto & it : store_)
+    {
+        output::Debug("Testing %1% (%2%)...\n", it.first, it.second.mi.name);
+
+        try {
+            GetModule<ModuleBase>(it.first);
+        }
+        catch(std::exception & ex)
+        {
+            throw bpmodule::exception::GeneralException("Failed module test",
+                                                        {
+                                                           {"What", ex.what()}
+                                                        });
+        }
+        output::Debug("Test of %1% OK\n", it.first);
+    }   
+}
+
 
 void ModuleStore::DeleteObject_(ModuleBase * mb)
 {

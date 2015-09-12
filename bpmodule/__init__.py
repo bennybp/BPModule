@@ -252,4 +252,8 @@ def DumpModuleInfo():
         # Dump some info
         PrintModuleInfo(m)
 
- 
+
+
+def SanityCheck():
+    global mst
+    mst.TestAll() 

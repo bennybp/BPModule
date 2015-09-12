@@ -20,6 +20,7 @@ def Run():
 
       bp.CommitOptions()
       bp.DumpModuleInfo()
+      bp.SanityCheck()
 
 
       b1 = bp.mst.GetModule_Test("TESTTENSOR")

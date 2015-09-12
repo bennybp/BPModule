@@ -51,6 +51,7 @@ def Run():
       #             supermodule      module name      key
       bp.LoadModule("test_options", "test_int",   "TEST_INT")
       bp.LoadModule("test_options", "test_float", "TEST_FLOAT")
+      bp.SanityCheck()
 
 
       ###################################
