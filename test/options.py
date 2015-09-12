@@ -48,8 +48,10 @@ def ShouldSucceed(key, opt):
 def Run():
     try:
 
-      bp.LoadModule("test_options", "TEST_INT")
-      bp.LoadModule("test_options", "TEST_FLOAT")
+      #             supermodule      module name      key
+      bp.LoadModule("test_options", "test_int",   "TEST_INT")
+      bp.LoadModule("test_options", "test_float", "TEST_FLOAT")
+
 
       ###################################
       # Test loading with various options

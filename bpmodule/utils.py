@@ -1,11 +1,10 @@
 from bpmodule import output
 
-def PrintModuleInfo(key, minfo):
+def PrintModuleInfo(minfo):
 
   output.Output("\n")
-  output.Output("  ++ Module: %1%\n", key)
+  output.Output("  ++ Module: %1%\n", minfo["name"])
   output.Output("             Key: %1%\n", minfo["key"])
-  output.Output("            Name: %1%\n", minfo["name"])
   output.Output("            Type: %1%\n", minfo["type"])
   output.Output("            Path: %1%\n", minfo["path"])
 

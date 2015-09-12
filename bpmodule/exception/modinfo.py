@@ -1,6 +1,5 @@
-minfo = { "CORE" :
+minfo = { "BPModule_Exception" :
   {
-    "name"        : "BPModule Exception",
     "type"        : "core",
     "version"     : "0.1a",
     "description" : "Exception class for BPModule",

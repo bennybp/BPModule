@@ -1,6 +1,5 @@
-minfo = { "CORE" :
+minfo = { "BPModule_Parallel" :
   {
-    "name"        : "BPModule Parallel",
     "type"        : "core",
     "version"     : "0.1a",
     "description" : "Parallel functionality for BPModule",

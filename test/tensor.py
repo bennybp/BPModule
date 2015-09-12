@@ -15,7 +15,8 @@ import bpmodule as bp
 def Run():
     try:
       # Load the python modules
-      bp.LoadModule("testtensor", "TESTTENSOR")
+      #             supermodule   module name   key
+      bp.LoadModule("testtensor", "testtensor", "TESTTENSOR")
 
       bp.CommitOptions()
       bp.DumpModuleInfo()

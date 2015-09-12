@@ -15,8 +15,9 @@ import bpmodule as bp
 def Run():
     try:
       # Load the python modules
-      bp.LoadModule("testmodule1", "TESTMOD1")
-      bp.LoadModule("testpymodule1", "TESTPYMOD1")
+      #             supermodule      module name      key
+      bp.LoadModule("testmodule1",   "testmodule1",   "TESTMOD1")
+      bp.LoadModule("testpymodule1", "testpymodule1", "TESTPYMOD1")
 
       bp.SetOptions("TESTMOD1", { "double_opt_def": 1.111 })
       bp.CommitOptions()

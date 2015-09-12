@@ -1,6 +1,5 @@
-minfo = { "CORE" :
+minfo = { "BPModule_ModuleStore" :
   {
-    "name"        : "BPModule ModuleStore",
     "type"        : "core",
     "version"     : "0.1a",
     "description" : "Basic modulestore for BPModule",

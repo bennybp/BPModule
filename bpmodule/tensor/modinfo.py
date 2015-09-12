@@ -1,6 +1,5 @@
-minfo = { "CORE" :
+minfo = { "BPModule_Tensor" :
   {
-    "name"        : "BPModule Tensor",
     "type"        : "core",
     "version"     : "0.1a",
     "description" : "Tensor library functionality for BPModule",

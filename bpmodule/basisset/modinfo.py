@@ -1,6 +1,5 @@
-minfo = { "CORE" :
+minfo = { "BPModule_BasisSet" :
   {
-    "name"        : "BPModule BasisSet",
     "type"        : "core",
     "version"     : "0.1a",
     "description" : "BasisSet class for BPModule",

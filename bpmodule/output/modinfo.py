@@ -1,6 +1,5 @@
-minfo = { "CORE" :
+minfo = { "BPModule_Output" :
   {
-    "name"        : "BPModule Output",
     "type"        : "core",
     "version"     : "0.1a",
     "description" : "Output functionality for BPModule",

@@ -136,7 +136,10 @@ class ModuleStore
             const StoreEntry & se = GetOrThrow_(key);
 
             // create
-            modulebase::ModuleBase * mbptr = se.func(key, curid_, *this, se.mi);
+            // NOTE: name is passed in through two places. This is because the
+            // ModuleInfo struct is not converted to python, so python must still
+            // get the name
+            modulebase::ModuleBase * mbptr = se.func(se.mi.name, curid_, *this, se.mi);
 
             // test
             T * dptr = dynamic_cast<T *>(mbptr);

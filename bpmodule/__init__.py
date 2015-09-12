@@ -71,9 +71,12 @@ def Init(argv, out = "stdout", color = True, debug = False):
   tensor.InitTensor(argv)
 
 
-  # Print info about the base module
-  for key,minfo in modulestore.minfo.items():
-      minfo["key"] = key
+  # Set some info about the base module and
+  # print it
+  # Also, set some options (currently unused)
+  for name,minfo in modulestore.minfo.items():
+      minfo["name"] = name
+      minfo["key"] = "CORE"
       minfo["path"] = os.path.dirname(modulestore.__file__) + "/"
 
       # merge the options
@@ -82,12 +85,13 @@ def Init(argv, out = "stdout", color = True, debug = False):
         newopt = MergeAndCheckOptions(defopt, {}) # No options
       except exception.PyGeneralException as e:
         e.Append([ ("ModuleKey", minfo["key"]),
+                   ("ModuleName", minfo["name"]),
                    ("ModulePath", minfo["path"])
                 ])
         raise e
 
       minfo["passedoptions"] = newopt
-      PrintModuleInfo(key, minfo)
+      PrintModuleInfo(minfo)
 
 
   # Create the various stores and loaders
@@ -123,8 +127,8 @@ def Finalize():
 
 
 
-def LoadModule(supermodule, key):
-    output.Output("Importing %1% module from supermodule %2%\n", key, supermodule)
+def LoadModule(supermodule, name, key):
+    output.Output("Importing %1% module from supermodule %2% for key %3%\n", name, supermodule, key)
 
     try:
         # Don't use global from now on
@@ -140,25 +144,26 @@ def LoadModule(supermodule, key):
                                 ]
                                )
 
-    if not key in m.minfo:
+    if not name in m.minfo:
         raise exception.PyGeneralException(
-                                 "Supermodule doesn't have key!",
+                                 "Supermodule doesn't have module!",
                                 [
                                   ("Supermodule", supermodule),
-                                  ("Key", key)
+                                  ("Name", name)
                                 ]
                                )
 
 
-    minfo = m.minfo[key]
+    minfo = m.minfo[name]
 
     path = os.path.dirname(m.__file__) + "/"
 
     output.Output("\n")
-    output.Output("Loading module %1% v%2%\n", minfo["name"], minfo["version"])
+    output.Output("Loading module %1% v%2%\n", name, minfo["version"])
 
-    # Copy the key to the dict
+    # Copy the key and name to the dict
     minfo["key"] = key
+    minfo["name"] = name
 
     # set the path
     minfo["path"] = path
@@ -245,6 +250,6 @@ def CommitOptions():
 def DumpModuleInfo():
     for k,m in modmap.items():
         # Dump some info
-        PrintModuleInfo(k, m)
+        PrintModuleInfo(m)
 
  

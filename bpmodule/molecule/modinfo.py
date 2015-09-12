@@ -1,6 +1,5 @@
-minfo = { "CORE" :
+minfo = { "BPModule_Molecule" :
   {
-    "name"        : "BPModule Molecule",
     "type"        : "core",
     "version"     : "0.1a",
     "description" : "Molecule class for BPModule",

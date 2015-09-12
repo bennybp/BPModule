@@ -1,6 +1,5 @@
-minfo = { "CORE" :
+minfo = { "BPModule_Datastore" :
   {
-    "name"        : "BPModule Datastore",
     "type"        : "core",
     "version"     : "0.1a",
     "description" : "Various data storage stuff",

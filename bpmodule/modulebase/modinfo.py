@@ -1,6 +1,5 @@
-minfo = { "CORE" :
+minfo = { "BPModule_ModuleBase" :
   {
-    "name"        : "BPModule ModuleBase",
     "type"        : "core",
     "version"     : "0.1a",
     "description" : "Module Base Classes for BPModule",
