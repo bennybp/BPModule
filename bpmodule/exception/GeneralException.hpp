@@ -17,9 +17,20 @@ class GeneralException : public std::exception
         typedef std::pair<std::string, std::string> ExceptionInfoPair;
         typedef std::vector<ExceptionInfoPair> ExceptionInfo;
 
+
         GeneralException(std::string whatstr, ExceptionInfo exinfo = {});
 
-        const ExceptionInfo GetInfo(void) const;
+        GeneralException()                                         = delete;
+        GeneralException(const GeneralException & rhs)             = default;
+        GeneralException(GeneralException && rhs)                  = default;
+        GeneralException & operator=(GeneralException && rhs)      = default;
+        GeneralException & operator=(const GeneralException & rhs) = default;
+        virtual ~GeneralException()                                = default;
+
+
+        const ExceptionInfo & GetInfo(void) const noexcept;
+
+        const char * GetField(const std::string & field) const noexcept;
 
         void AppendInfo(const ExceptionInfo & toappend);
 

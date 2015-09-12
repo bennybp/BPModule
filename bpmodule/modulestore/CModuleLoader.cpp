@@ -12,9 +12,10 @@
 #include "bpmodule/modulestore/CModuleLoader.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
+#include "bpmodule/exception/ModuleLoadException.hpp"
 
 using bpmodule::modulebase::ModuleBase;
-using bpmodule::exception::GeneralException;
+using bpmodule::exception::ModuleLoadException;
 
 
 namespace bpmodule {
@@ -79,13 +80,8 @@ void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & 
         handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
         // open the module
         if(!handle)
-            throw GeneralException(
-                                     "Cannot load SO file",
-                                     {
-                                         { "File", sopath },
-                                         { "Error", dlerror() }
-                                     }
-                                   );
+            throw ModuleLoadException("Cannot open SO file",
+                                        sopath, key, mi.name, dlerror());
     }
 
 
@@ -94,14 +90,8 @@ void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & 
     if((error = dlerror()) != NULL)
     {
         dlclose(handle);
-        throw GeneralException(
-                                 "Cannot find function in SO file",
-                                 {
-                                     { "File", sopath },
-                                     { "Function", "CreateModule" },
-                                     { "Error", error }
-                                 }
-                               );
+        throw ModuleLoadException("Cannot find function in SO file",
+                                    sopath, key, mi.name, dlerror());
     }
 
 

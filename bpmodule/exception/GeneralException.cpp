@@ -12,11 +12,21 @@ GeneralException::GeneralException(std::string whatstr, ExceptionInfo exinfo)
 { }
 
 
-const GeneralException::ExceptionInfo GeneralException::GetInfo(void) const
+const GeneralException::ExceptionInfo & GeneralException::GetInfo(void) const noexcept
 {
     return exinfo_;
 }
 
+const char * GeneralException::GetField(const std::string & field) const noexcept
+{
+    for(const auto & it : exinfo_)
+    {
+        if(it.first == field)
+            return it.second.c_str();
+    }
+
+    return "(field not found)";
+}
 
 
 void GeneralException::AppendInfo(const ExceptionInfo & toappend)

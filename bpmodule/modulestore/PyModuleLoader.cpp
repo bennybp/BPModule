@@ -6,8 +6,10 @@
 
 #include "bpmodule/modulestore/PyModuleLoader.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
+#include "bpmodule/exception/ModuleLoadException.hpp"
 
 using bpmodule::modulebase::ModuleBase;
+using bpmodule::exception::ModuleLoadException;
 
 namespace bpmodule {
 namespace modulestore {
@@ -46,6 +48,14 @@ void PyModuleLoader::LoadPyModule(const std::string & key,
                                   boost::python::object func,
                                   const boost::python::dict & minfo)
 {
+    // convert moduleinfo
+    ModuleInfo mi(minfo);
+
+    // check if callable
+    if(PyCallable_Check(func.ptr()) == 0)
+        throw ModuleLoadException("Cannot load module: Object not callable",
+                                    mi.path, key, mi.name);
+        
     ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::GeneratorWrapper_, this,
                                                        func,
                                                        std::placeholders::_1,
@@ -56,7 +66,7 @@ void PyModuleLoader::LoadPyModule(const std::string & key,
     ModuleStore::ModuleRemoverFunc dfunc = std::bind(&PyModuleLoader::DeleteObject, this, std::placeholders::_1);
 
     // strong exception guarantee
-    BASE::InsertModule(key, cfunc, dfunc, ModuleInfo(minfo));  // conversion constructor
+    BASE::InsertModule(key, cfunc, dfunc, mi);  // conversion constructor
 }
 
 

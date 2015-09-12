@@ -199,8 +199,8 @@ class ModuleStore
 
         /*! \brief Adds/inserts a module creator to the database
          *
-         * \throw bpmodule::exception::GeneralException if the key already exists
-         *        in the database
+         * \throw bpmodule::exception::ModuleLoaderException if the key
+         *        already exists in the database
          *
          * \exstrong
          * 

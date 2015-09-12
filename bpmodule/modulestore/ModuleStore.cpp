@@ -9,10 +9,12 @@
 #include "bpmodule/modulestore/ModuleStore.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
+#include "bpmodule/exception/ModuleLoadException.hpp"
 
 using bpmodule::datastore::OptionMap;
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::GeneralException;
+using bpmodule::exception::ModuleLoadException;
 
 
 namespace bpmodule {
@@ -32,13 +34,8 @@ void ModuleStore::InsertModule(const std::string & key, ModuleGeneratorFunc func
     // add to store
     // but throw if key already exists
     if(store_.count(key))
-        throw GeneralException(
-                                 "Attempt to add duplicate key",
-                                 {
-                                     { "Location", "ModuleStore"},
-                                     { "Key", key }
-                                 }
-                               );
+        throw ModuleLoadException("Cannot insert module: duplicate key",
+                                  minfo.path, key, minfo.name);
 
     store_.emplace(key, StoreEntry{minfo, func, dfunc});
 }

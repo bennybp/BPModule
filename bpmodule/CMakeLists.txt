@@ -22,6 +22,7 @@ set(BPMODULE_OUTPUT_HEADERS
 
 set(BPMODULE_EXCEPTION_HEADERS
             exception/GeneralException.hpp
+            exception/ModuleLoadException.hpp
    )
 
 set(BPMODULE_PARALLEL_HEADERS
