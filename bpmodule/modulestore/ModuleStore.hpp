@@ -12,6 +12,7 @@
 #include <atomic>
 
 #include "bpmodule/modulestore/ModuleInfo.hpp"
+#include "bpmodule/modulestore/ScopedModule.hpp"
 
 // forward declarations
 namespace bpmodule {
@@ -33,9 +34,6 @@ class PyModuleLoader;
 namespace bpmodule {
 namespace modulestore {
 
-//! Contains a module that automatically deletes the object when leaving scope
-template<typename T>
-using ScopedModule = std::unique_ptr<T, std::function<void(modulebase::ModuleBase *)>>;
 
 
 /*! \brief Module database

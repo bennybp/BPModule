@@ -45,6 +45,7 @@ set(BPMODULE_MODULEBASE_HEADERS
    )
 
 set(BPMODULE_MODULESTORE_HEADERS
+            modulestore/ScopedModule.hpp
             modulestore/CModuleLoader.hpp
             modulestore/ModuleInfo.hpp
             modulestore/ModuleStore.hpp
