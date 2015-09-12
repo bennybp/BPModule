@@ -47,7 +47,8 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
          *
          * This functions opens the SO file (via dlopen) and obtains a pointer
          * to the creation function contained in the module, and store it
-         * for later use.
+         * for later use. If the SO file has already been opened, it will reuse the
+         * existing handle.
          *
          * \throw bpmodule::exception::GeneralException if there is a problem loading
          *        the module (does not exist, function doesn't exist, etc)
