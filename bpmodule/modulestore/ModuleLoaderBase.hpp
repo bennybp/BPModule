@@ -47,17 +47,17 @@ class ModuleLoaderBase
        
     protected: 
 
-        /*! \brief Adds a module to the ModuleStore
+        /*! \brief Inserts a module to the ModuleStore
          * 
-         * \copydetails ModuleStore::AddModule
+         * \copydetails ModuleStore::InsertModule
          *
          */
-        void AddModule(const std::string & key,
+        void InsertModule(const std::string & key,
                        ModuleStore::ModuleGeneratorFunc func,
                        ModuleStore::ModuleRemoverFunc dfunc,
                        const ModuleInfo & minfo)
         {
-            mst_->AddModule(key, func, dfunc, minfo);
+            mst_->InsertModule(key, func, dfunc, minfo);
         }
 
 
@@ -80,7 +80,7 @@ class ModuleLoaderBase
 
         /*! \brief Moves an instantiated object into internal storage
          *
-         * Really meant for std::unique_ptr
+         * Really meant for std::unique_ptr objects
          * 
          * \exstrong
          * 
@@ -112,7 +112,7 @@ class ModuleLoaderBase
 
         /*! \brief Deletes all objects in the internal storage
          *
-         * All objects will be destructed and unusable 
+         * All objects will be destructed and unusable afterwards 
          * 
          * \throwno Should only throw an exception if a destructor
          *          throws an exception, which shouldn't happen.

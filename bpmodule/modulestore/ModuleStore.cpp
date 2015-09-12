@@ -26,7 +26,8 @@ ModuleStore::ModuleStore()
 
 
 
-void ModuleStore::AddModule(const std::string & key, ModuleGeneratorFunc func, ModuleRemoverFunc dfunc, const ModuleInfo & minfo)
+void ModuleStore::InsertModule(const std::string & key, ModuleGeneratorFunc func,
+                               ModuleRemoverFunc dfunc, const ModuleInfo & minfo)
 {
     // add to store
     // but throw if key already exists
@@ -98,12 +99,12 @@ ModuleInfo ModuleStore::KeyInfo(const std::string & key) const
 }
 
 
-void ModuleStore::DeleteModule_(ModuleBase * mb)
+void ModuleStore::DeleteObject_(ModuleBase * mb)
 {
-    DeleteModule_(mb->ID());
+    DeleteObject_(mb->ID());
 }
 
-void ModuleStore::DeleteModule_(unsigned long id)
+void ModuleStore::DeleteObject_(unsigned long id)
 {
     if(removemap_.count(id))
     {

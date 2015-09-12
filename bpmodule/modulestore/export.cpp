@@ -74,7 +74,7 @@ BOOST_PYTHON_MODULE(modulestore)
     .def("LoadSO", static_cast<void(CModuleLoader::*)(const std::string &, const boost::python::dict &)>(&CModuleLoader::LoadSO));
 
     class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleStore *>())
-    .def("AddPyModule", static_cast<void(PyModuleLoader::*)(const std::string &, boost::python::object, const boost::python::dict &)>(&PyModuleLoader::AddPyModule));
+    .def("LoadPyModule", static_cast<void(PyModuleLoader::*)(const std::string &, boost::python::object, const boost::python::dict &)>(&PyModuleLoader::LoadPyModule));
 
 }
 

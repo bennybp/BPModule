@@ -24,6 +24,8 @@ namespace modulestore {
 template<typename T>
 class ModuleLoaderBase;
 
+class CModuleLoader;
+class PyModuleLoader;
 }
 }
 // end forward declarations
@@ -36,19 +38,13 @@ template<typename T>
 using ScopedModule = std::unique_ptr<T, std::function<void(modulebase::ModuleBase *)>>;
 
 
-/*! \brief Holds loaded modules
+/*! \brief Module database
+ *
+ * Holds loaded modules for later use
  */
 class ModuleStore
 {
     public:
-        //! A function that generates a module derived from ModuleBase
-        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long, ModuleStore &, const ModuleInfo &)> ModuleGeneratorFunc;
-
-
-        //! A function that deletes a module (by id)
-        typedef std::function<void(unsigned long)> ModuleRemoverFunc;
-
-
         ModuleStore();
         ~ModuleStore();
 
@@ -60,29 +56,29 @@ class ModuleStore
         ModuleStore & operator=(ModuleStore && rhs)      = delete;
 
 
-        /*! \brief Returns the number of loaded modules
+        /*! \brief Returns the number of modules in the database
          *
          * \exnothrow
          */ 
         size_t Size(void) const noexcept;
 
 
-        /*! \brief Returns the keys for all loaded modules
+        /*! \brief Returns the keys for all modules in the database
          */ 
         std::vector<std::string> GetKeys(void) const;
 
 
-        /*! \brief Returns the information for a given module key
+        /*! \brief Returns the information about a module with a given key
          * 
          * \throw bpmodule::exception::GeneralException if the key doesn't
-         *        exist
+         *        exist in the database
          *
          * \param [in] key A module key
          */
         ModuleInfo KeyInfo(const std::string & key) const;
 
 
-        /*! \brief Returns true if the given key exists
+        /*! \brief Returns true if a module with the given key exists in the database
          *
          * \param [in] key A module key
          * \return True if the key exists in the map, false if it doesn't
@@ -94,7 +90,7 @@ class ModuleStore
         /*! \brief Set the options for a module
          *
          * \throw bpmodule::exception::GeneralException if the key doesn't
-         *        exist
+         *        exist in the database
          *
          * \exstrong 
          * 
@@ -106,22 +102,16 @@ class ModuleStore
 
         /*! \brief Set the options for a module (python version)
          *
-         * \throw bpmodule::exception::GeneralException if the key doesn't
-         *        exist
-         *
-         * \exstrong 
-         * 
-         * \param [in] key A module key
-         * \param [in] opt Options to set
+         * \copydetails SetOptions(const std::string &, const bpmodule::datastore::OptionMap &)
          */
         void SetOptions(const std::string & key, const boost::python::list & opt);
 
 
 
-        /*! \brief Return a module wrapped in an RAII-style scoping object
+        /*! \brief Return a new module object wrapped in an RAII-style scoping object
             *
          * \throw bpmodule::exception::GeneralException if the key doesn't
-         *        exist or the module cannot be cast to the requested type
+         *        exist in the database or the module cannot be cast to the requested type
          *
          * \exstrong 
          *
@@ -157,8 +147,8 @@ class ModuleStore
 
 
 
-            // make the deleter function the DeleteModule_() of this ModuleStore object
-            std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::DeleteModule_),
+            // make the deleter function the DeleteObject_() of this ModuleStore object
+            std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::DeleteObject_),
                                                                             this,
                                                                             std::placeholders::_1);
 
@@ -185,9 +175,22 @@ class ModuleStore
         template<typename T>
         friend class ModuleLoaderBase;
 
-        /*! \brief Adds a module to the map
+        friend class CModuleLoader;
+        friend class PyModuleLoader;
+
+        //! A function that generates a module derived from ModuleBase
+        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long, ModuleStore &, const ModuleInfo &)> ModuleGeneratorFunc;
+
+
+        //! A function that deletes a module (by id)
+        typedef std::function<void(unsigned long)> ModuleRemoverFunc;
+
+
+
+        /*! \brief Adds/inserts a module creator to the database
          *
          * \throw bpmodule::exception::GeneralException if the key already exists
+         *        in the database
          *
          * \exstrong
          * 
@@ -196,8 +199,8 @@ class ModuleStore
          * \param [in] dfunc A function that deletes the module
          * \param [in] minfo Information about the module
          */ 
-        void AddModule(const std::string & key, ModuleGeneratorFunc func,
-                       ModuleRemoverFunc dfunc, const ModuleInfo & minfo);
+        void InsertModule(const std::string & key, ModuleGeneratorFunc func,
+                          ModuleRemoverFunc dfunc, const ModuleInfo & minfo);
 
 
     private:
@@ -254,7 +257,7 @@ class ModuleStore
          *
          * \param [in] mb Pointer to the module to remove
          */ 
-        void DeleteModule_(modulebase::ModuleBase * mb);
+        void DeleteObject_(modulebase::ModuleBase * mb);
 
 
         /*! \brief Removes a created module object from storage
@@ -269,7 +272,7 @@ class ModuleStore
          *
          * \param [in] id ID of the module to remove
          */ 
-        void DeleteModule_(unsigned long id);
+        void DeleteObject_(unsigned long id);
 
 };
 

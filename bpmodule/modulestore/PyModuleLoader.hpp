@@ -44,11 +44,13 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
 
         /*! \brief Loads a python module
          *
-         * This function will store a copy of the python object for use in creating
-         * objects.
+         * This function will wrap the python object for use in creating
+         * objects, and store it in the database.
+         *
+         * The key must be unique. An exception is thrown if the key already exists.
          *
          * \throw bpmodule::exception::GeneralException if there is a problem loading
-         *        the module (does not exist, etc)
+         *        the module (duplicate key, etc)
          *
          * \exstrong
          *
@@ -57,9 +59,9 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
          *                  returns a pointer to an object derived from ModuleBase
          * \param [in] minfo The module information, including the path and name
          */ 
-        void AddPyModule(const std::string & key,
-                         boost::python::object func,
-                         const boost::python::dict & minfo);
+        void LoadPyModule(const std::string & key,
+                          boost::python::object func,
+                          const boost::python::dict & minfo);
 
     private:
         //! This object's base class
@@ -67,28 +69,23 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
 
 
 
-        /*! \brief Wraps the function pointer in an SO file
+        /*! \brief Wraps a python function object that creates module objects
          *
          * \exstrong
          *
-         * \param [in] fn Creation function object
-         * \param [in] key Key of the module to create
+         * \param [in] fn Generator function object
+         * \param [in] name Name of the module to create
          * \param [in] id ID of the new module
          * \param [in] mstore ModuleStore that is in charge of this object
          * \param [in] minfo The information for this module (including options)
          * \return Pointer to a new object derived from ModuleBase
          */
-        modulebase::ModuleBase * CreateWrapper_(boost::python::object fn,
-                                                const std::string & key,
-                                                unsigned long id,
-                                                ModuleStore & mstore,
-                                                const ModuleInfo & minfo);
+        modulebase::ModuleBase * GeneratorWrapper_(boost::python::object fn,
+                                                   const std::string & name,
+                                                   unsigned long id,
+                                                   ModuleStore & mstore,
+                                                   const ModuleInfo & minfo);
 
-
-        //! \copydoc AddPyModule
-        void AddPyModule_(const std::string & key,
-                          boost::python::object func,
-                          const ModuleInfo & minfo);
 };
 
 

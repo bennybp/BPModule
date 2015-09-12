@@ -41,17 +41,19 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
 
 
 
-        /*! \brief Loads an SO file for a C/C++ module
+        /*! \brief Loads an SO file for a C/C++ module and inserts it into the database
          *
          * The module path and name must be stored in the module info
          *
          * This functions opens the SO file (via dlopen) and obtains a pointer
-         * to the creation function contained in the module, and store it
-         * for later use. If the SO file has already been opened, it will reuse the
+         * to the creation function contained in the module, and inserts it
+         * into the database. If the SO file has already been opened, it will reuse the
          * existing handle.
          *
+         * The key must be unique. An exception is thrown if the key already exists.
+         *
          * \throw bpmodule::exception::GeneralException if there is a problem loading
-         *        the module (does not exist, function doesn't exist, etc)
+         *        the module (duplicate key, function doesn't exist, etc)
          *
          * \exstrong
          *
@@ -66,8 +68,8 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
         //! This object's base class
         typedef ModuleLoaderBase< std::unique_ptr<modulebase::ModuleBase> > BASE;
 
-        //! Pointer to a creation function in an SO file
-        typedef modulebase::ModuleBase *(*CreateFunc)(const std::string &, unsigned long, ModuleStore &, const ModuleInfo &);
+        //! Pointer to a generator function in an SO file
+        typedef modulebase::ModuleBase *(*GeneratorFunc)(const std::string &, unsigned long, ModuleStore &, const ModuleInfo &);
 
 
         //! Stores handles to to open SO files
@@ -79,21 +81,17 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
          * \exstrong
          *
          * \param [in] fn Creation function pointer in SO file
-         * \param [in] key Key of the module to create
+         * \param [in] name Name of the module to create
          * \param [in] id ID of the new module
          * \param [in] mstore ModuleStore that is in charge of this object
          * \param [in] minfo The information for this module (including options)
          * \return Pointer to a new object derived from ModuleBase
          */
-        modulebase::ModuleBase * CreateWrapper_(CreateFunc fn,
-                                                const std::string & key,
-                                                unsigned long id,
-                                                ModuleStore & mstore,
-                                                const ModuleInfo & minfo);
-
-        //! \copydoc LoadSO
-        void LoadSO_(const std::string & key, const ModuleInfo & minfo);
-
+        modulebase::ModuleBase * GeneratorWrapper_(GeneratorFunc fn,
+                                                   const std::string & name,
+                                                   unsigned long id,
+                                                   ModuleStore & mstore,
+                                                   const ModuleInfo & minfo);
 };
 
 } // close namespace modulestore

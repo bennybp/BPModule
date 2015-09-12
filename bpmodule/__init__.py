@@ -172,7 +172,7 @@ def LoadModule(supermodule, name, key):
     if minfo["type"] == "c_module":
         cml.LoadSO(key, minfo)
     elif minfo["type"] == "python_module":
-        pml.AddPyModule(key, m.CreateModule, minfo)
+        pml.LoadPyModule(key, m.CreateModule, minfo)
     output.Debug("Done importing module %1% from %2%\n", key, supermodule)
     output.Output("\n")
 

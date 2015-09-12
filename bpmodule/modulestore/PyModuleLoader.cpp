@@ -28,13 +28,13 @@ PyModuleLoader::~PyModuleLoader()
 
 
 
-ModuleBase * PyModuleLoader::CreateWrapper_(boost::python::object fn,
-                                            const std::string & key,
-                                            unsigned long id,
-                                            ModuleStore & mstore,
-                                            const ModuleInfo & minfo)
+ModuleBase * PyModuleLoader::GeneratorWrapper_(boost::python::object fn,
+                                               const std::string & name,
+                                               unsigned long id,
+                                               ModuleStore & mstore,
+                                               const ModuleInfo & minfo)
 {
-    boost::python::object newobj = fn(key, id, boost::ref(mstore), boost::ref(minfo));
+    boost::python::object newobj = fn(name, id, boost::ref(mstore), boost::ref(minfo));
     ModuleBase * ptr = boost::python::extract<ModuleBase *>(newobj); // may throw
     BASE::CopyObject(id, newobj); // strong exception guarantee
     return ptr;
@@ -42,11 +42,11 @@ ModuleBase * PyModuleLoader::CreateWrapper_(boost::python::object fn,
 
 
 
-void PyModuleLoader::AddPyModule_(const std::string & key,
-                                  boost::python::object func, const ModuleInfo & minfo)
+void PyModuleLoader::LoadPyModule(const std::string & key,
+                                  boost::python::object func,
+                                  const boost::python::dict & minfo)
 {
-
-    ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::CreateWrapper_, this,
+    ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::GeneratorWrapper_, this,
                                                        func,
                                                        std::placeholders::_1,
                                                        std::placeholders::_2,
@@ -54,15 +54,9 @@ void PyModuleLoader::AddPyModule_(const std::string & key,
                                                        std::placeholders::_4);
 
     ModuleStore::ModuleRemoverFunc dfunc = std::bind(&PyModuleLoader::DeleteObject, this, std::placeholders::_1);
-    BASE::AddModule(key, cfunc, dfunc, minfo);
-}
 
-
-void PyModuleLoader::AddPyModule(const std::string & key,
-                                 boost::python::object func,
-                                 const boost::python::dict & minfo)
-{
-    AddPyModule_(key, func, ModuleInfo(minfo)); // conversion constructor for ModuleInfo
+    // strong exception guarantee
+    BASE::InsertModule(key, cfunc, dfunc, ModuleInfo(minfo));  // conversion constructor
 }
 
 

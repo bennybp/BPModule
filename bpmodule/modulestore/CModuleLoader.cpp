@@ -42,16 +42,16 @@ CModuleLoader::~CModuleLoader()
 
 
 
-ModuleBase * CModuleLoader::CreateWrapper_(CreateFunc fn,
-                                           const std::string & key,
-                                           unsigned long id,
-                                           ModuleStore & mstore,
-                                           const ModuleInfo & minfo)
+ModuleBase * CModuleLoader::GeneratorWrapper_(GeneratorFunc fn,
+                                              const std::string & name,
+                                              unsigned long id,
+                                              ModuleStore & mstore,
+                                              const ModuleInfo & minfo)
 {
     // Have the base ModuleLoaderBase class take ownership,
     // but return the ptr
 
-    ModuleBase * newobj = fn(key, id, mstore, minfo);
+    ModuleBase * newobj = fn(name, id, mstore, minfo);
     std::unique_ptr<ModuleBase> uptr(newobj);
     BASE::TakeObject(id, std::move(uptr));  // strong exception guarantee
     return newobj;
@@ -59,10 +59,12 @@ ModuleBase * CModuleLoader::CreateWrapper_(CreateFunc fn,
 
 
 
-void CModuleLoader::LoadSO_(const std::string & key, const ModuleInfo & minfo)
+void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & minfo)
 {
+    ModuleInfo mi(minfo); // conversion constructor
+
     // trailing slash on path should have been added by python scripts
-    std::string sopath = minfo.path + minfo.soname;
+    std::string sopath = mi.path + mi.soname;
 
     char * error; // for dlerror
     void * handle;
@@ -87,8 +89,8 @@ void CModuleLoader::LoadSO_(const std::string & key, const ModuleInfo & minfo)
     }
 
 
-    // get the pointer to the CreateModule function
-    CreateFunc fn = reinterpret_cast<CreateFunc>(dlsym(handle, "CreateModule"));
+    // get the pointer to the GeneratorModule function
+    GeneratorFunc fn = reinterpret_cast<GeneratorFunc>(dlsym(handle, "CreateModule"));
     if((error = dlerror()) != NULL)
     {
         dlclose(handle);
@@ -105,7 +107,7 @@ void CModuleLoader::LoadSO_(const std::string & key, const ModuleInfo & minfo)
 
     output::Success("Successfully opened %1%\n", sopath);
 
-    ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::CreateWrapper_, this, fn,
+    ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::GeneratorWrapper_, this, fn,
                                                        std::placeholders::_1,
                                                        std::placeholders::_2,
                                                        std::placeholders::_3,
@@ -113,19 +115,10 @@ void CModuleLoader::LoadSO_(const std::string & key, const ModuleInfo & minfo)
 
     ModuleStore::ModuleRemoverFunc dfunc = std::bind(&CModuleLoader::DeleteObject, this, std::placeholders::_1);
 
-    BASE::AddModule(key, cfunc, dfunc, minfo); // strong exception guarantee
+    BASE::InsertModule(key, cfunc, dfunc, mi); // strong exception guarantee
     if(handles_.count(sopath) == 0)
         handles_.emplace(sopath, handle);      // strong exception guarantee, but shouldn't ever throw
 }
-
-
-
-void CModuleLoader::LoadSO(const std::string & key,
-                           const boost::python::dict & minfo)
-{
-    LoadSO_(key, ModuleInfo(minfo)); // conversion constructor for ModuleInfo
-}
-
 
 
 
