@@ -16,7 +16,7 @@
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 
-//! \todo Handle exceptions better?
+//! \todo Handle exceptions better? Yes, catch Boost exceptions, print error, and then continue? Update doc and don't forget about FormatStr
 
 namespace bpmodule {
 namespace output {
@@ -222,6 +222,20 @@ void Output(const std::string & fmt, Targs... Fargs)
 
 /*! \brief Print general output to a string
  * 
+ * \copydetails bpmodule::output::FormatStr 
+ */
+template<typename... Targs>
+std::string OutputStr(const std::string & fmt, Targs... Fargs)
+{
+    std::stringstream ss;
+    Output(ss, fmt, Fargs...);
+    return ss.str();
+}
+
+
+
+/*! \brief Create a formatted string
+ *
  * \see \ref developer_output_sec
  *
  * \throwno Throws boost exceptions for malformed inputs, etc
@@ -232,13 +246,12 @@ void Output(const std::string & fmt, Targs... Fargs)
  * \param [in] Fargs The arguments to the format string
  */
 template<typename... Targs>
-std::string OutputStr(const std::string & fmt, Targs... Fargs)
+std::string FormatStr(const std::string & fmt, Targs... Fargs)
 {
     std::stringstream ss;
     Output(ss, fmt, Fargs...);
     return ss.str();
 }
-
 
 
 /////////////////////

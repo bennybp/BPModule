@@ -10,11 +10,13 @@
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"
+#include "bpmodule/exception/MapException.hpp"
 
 using bpmodule::datastore::OptionMap;
 using bpmodule::modulebase::ModuleBase;
-using bpmodule::exception::GeneralException;
 using bpmodule::exception::ModuleLoadException;
+using bpmodule::exception::ModuleCreateException;
+using bpmodule::exception::MapException;
 
 
 namespace bpmodule {
@@ -45,13 +47,7 @@ void ModuleStore::InsertModule(const std::string & key, ModuleGeneratorFunc func
 void ModuleStore::SetOptions(const std::string & key, const OptionMap & opt)
 {
     if(!Has(key))
-        throw GeneralException(
-                                 "Attempt to set options for nonexistant key",
-                                 {
-                                     { "Location", "ModuleStore"},
-                                     { "Key", key }
-                                 }
-                               );
+        throw MapException("Attempt to set options for nonexistant key", "ModuleStore", key);
    
 
     ModuleStore::StoreEntry & se = store_.at(key); 
@@ -105,13 +101,12 @@ void ModuleStore::TestAll(void)
         try {
             GetModule<ModuleBase>(it.first);
         }
-        catch(std::exception & ex)
+        catch(...)
         {
-            throw bpmodule::exception::GeneralException("Failed module test",
-                                                        {
-                                                           {"What", ex.what()}
-                                                        });
+            output::Error("Error - module %1% [key %2%]\" failed test loading!\n", it.second.mi.name, it.first);
+            throw;
         }
+
         output::Debug("Test of %1% OK\n", it.first);
     }   
 }
@@ -142,13 +137,7 @@ const ModuleStore::StoreEntry & ModuleStore::GetOrThrow_(const std::string & key
     if(Has(key))
         return store_.at(key);
     else
-        throw GeneralException(
-                                 "Missing key",
-                                 {
-                                     { "Location", "ModuleStore"},
-                                     { "Key", key }
-                                 }
-                               );
+        throw MapException("Missing key", "ModuleStore", key);
 }
 
 

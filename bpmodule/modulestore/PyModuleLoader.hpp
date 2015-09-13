@@ -49,7 +49,7 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
          *
          * The key must be unique. An exception is thrown if the key already exists.
          *
-         * \throw bpmodule::exception::GeneralException if there is a problem loading
+         * \throw bpmodule::exception::ModuleLoadException if there is a problem loading
          *        the module (duplicate key, etc)
          *
          * \exstrong

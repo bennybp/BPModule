@@ -18,11 +18,14 @@ set(BPMODULE_PYTHON_HELPER_HEADERS
 
 set(BPMODULE_OUTPUT_HEADERS
             output/Output.hpp
+            output/FormatStr.hpp
    )
 
 set(BPMODULE_EXCEPTION_HEADERS
             exception/GeneralException.hpp
             exception/ModuleLoadException.hpp
+            exception/ModuleCreateException.hpp
+            exception/MapException.hpp
    )
 
 set(BPMODULE_PARALLEL_HEADERS

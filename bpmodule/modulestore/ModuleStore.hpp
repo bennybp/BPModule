@@ -13,6 +13,9 @@
 
 #include "bpmodule/modulestore/ModuleInfo.hpp"
 #include "bpmodule/modulestore/ScopedModule.hpp"
+#include "bpmodule/exception/ModuleCreateException.hpp"
+#include "bpmodule/output/FormatStr.hpp"
+
 
 // forward declarations
 namespace bpmodule {
@@ -68,7 +71,7 @@ class ModuleStore
 
         /*! \brief Returns the information about a module with a given key
          * 
-         * \throw bpmodule::exception::GeneralException if the key doesn't
+         * \throw bpmodule::exception::MapException if the key doesn't
          *        exist in the database
          *
          * \param [in] key A module key
@@ -87,7 +90,7 @@ class ModuleStore
 
         /*! \brief Set the options for a module
          *
-         * \throw bpmodule::exception::GeneralException if the key doesn't
+         * \throw bpmodule::exception::MapException if the key doesn't
          *        exist in the database
          *
          * \exstrong 
@@ -118,8 +121,11 @@ class ModuleStore
 
         /*! \brief Return a new module object wrapped in an RAII-style scoping object
             *
-         * \throw bpmodule::exception::GeneralException if the key doesn't
-         *        exist in the database or the module cannot be cast to the requested type
+         * \throw bpmodule::exception::MapException 
+         *        if the key doesn't exist in the database
+         *
+         * \throw bpmodule::exception::ModuleCreateException if there are other
+         *        problems creating the module 
          *
          * \exstrong 
          *
@@ -142,15 +148,11 @@ class ModuleStore
             // test
             T * dptr = dynamic_cast<T *>(mbptr);
             if(dptr == nullptr)
-                throw exception::GeneralException(
-                                 "Bad cast for module",
-                                 {
-                                     { "Location", "ModuleStore"},
-                                     { "Key", key },
-                                     { "From", typeid(mbptr).name() },
-                                     { "To", typeid(T *).name() }
-                                 }
-                               );
+            {
+                std::string descstr = output::FormatStr("Cast from %1% to %2%", typeid(mbptr).name(), typeid(T *).name());
+                throw exception::ModuleCreateException("Bad cast for module", se.mi.path,
+                                                       key, se.mi.name, descstr); 
+            }
 
 
 
@@ -243,7 +245,7 @@ class ModuleStore
          * This function can be const since the database itself does not
          * change at this point.
          *
-         * \throw bpmodule::exception::GeneralException if the key doesn't
+         * \throw bpmodule::exception::MapException if the key doesn't
          *        exist
          *
          * \param [in] key A module key
