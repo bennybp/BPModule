@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief An exception for python conversion errors
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_PYTHONCONVERTEXCEPTION_HPP_
 #define _GUARD_PYTHONCONVERTEXCEPTION_HPP_
 
@@ -7,9 +14,7 @@ namespace bpmodule {
 namespace exception {
 
 
-/*! \brief An exception thrown when a module object can not be created
- *
- * Particularly when creating modules or looking up information keys
+/*! \brief An exception thrown when converting to and from python objects
  */
 class PythonConvertException : public GeneralException
 {

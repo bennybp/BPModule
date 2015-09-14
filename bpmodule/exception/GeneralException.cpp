@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief The base, general exception for BPModule (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include <sstream>
 
 #include "bpmodule/exception/GeneralException.hpp"

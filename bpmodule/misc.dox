@@ -41,3 +41,7 @@
 /*! \namespace bpmodule::tensor
  *  \brief Helper classes and functions for tensors and matrices
  */
+
+/*! \namespace bpmodule::testing
+ *  \brief Functions for testing the core library
+ */

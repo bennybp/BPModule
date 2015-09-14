@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief An exception for map/dictionary errors
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_MAPEXCEPTION_HPP_
 #define _GUARD_MAPEXCEPTION_HPP_
 
@@ -9,7 +16,7 @@ namespace exception {
 
 /*! \brief An exception thrown when ModuleStore has a problem 
  *
- * Particularly when creating modules or looking up information keys
+ * Particularly when looking up keys in map or casting in a PropertyMap, etc
  */
 class MapException : public GeneralException
 {

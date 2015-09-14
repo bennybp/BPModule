@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief An exception for module loading errors
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_MODULELOADEXCEPTION_HPP_
 #define _GUARD_MODULELOADEXCEPTION_HPP_
 

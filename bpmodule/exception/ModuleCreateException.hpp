@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief An exception for module creation errors
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_MODULECREATEEXCEPTION_HPP_
 #define _GUARD_MODULECREATEEXCEPTION_HPP_
 
@@ -8,8 +15,6 @@ namespace exception {
 
 
 /*! \brief An exception thrown when a module object can not be created
- *
- * Particularly when creating modules or looking up information keys
  */
 class ModuleCreateException : public GeneralException
 {
