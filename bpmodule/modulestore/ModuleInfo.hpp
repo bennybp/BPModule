@@ -39,7 +39,7 @@ struct ModuleInfo
 
     /*! \brief Construct from a python dictionary
      * 
-     * \throw bpmodule::exception::GeneralException if conversion fails or the
+     * \throw bpmodule::exception::PythonConvertException if conversion fails or the
      *        dictionary doesn't contain the right data (missing keys, etc) 
      */
     ModuleInfo(const boost::python::dict & dictionary);

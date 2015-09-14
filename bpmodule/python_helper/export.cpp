@@ -20,6 +20,7 @@ namespace export_python {
 
 BOOST_PYTHON_MODULE(python_helper)
 {
+    /*
     // converting pairs
     to_python_converter<std::pair<int, int>, PairConverter<int, int>>();
     to_python_converter<std::pair<long, long>, PairConverter<long, long>>();
@@ -35,6 +36,7 @@ BOOST_PYTHON_MODULE(python_helper)
     // convert map to dict
     to_python_converter<std::map<std::string, std::string>, MapConverter<std::map<std::string, std::string>>>();
     to_python_converter<std::unordered_map<std::string, std::string>, MapConverter<std::unordered_map<std::string, std::string>>>();
+    */
 }
 
 

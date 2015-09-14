@@ -1,18 +1,13 @@
 #ifndef _GUARD_PYTHON_STDCONVERT_HPP_
 #define _GUARD_PYTHON_STDCONVERT_HPP_
 
-#include <vector>
-#include <string>
-
-#include <boost/python.hpp>
-
+#include "bpmodule/python_helper/Convert.hpp"
 
 namespace bpmodule {
 namespace python_helper {
 
 
 template<typename T>
-static
 std::vector<T> ConvertListToVec(const boost::python::list & list)
 {
     int length = boost::python::extract<int>(list.attr("__len__")());
@@ -20,58 +15,70 @@ std::vector<T> ConvertListToVec(const boost::python::list & list)
     ret.reserve(length);
 
     for (int i = 0; i < length; i++)
-        ret.push_back(static_cast<T>(boost::python::extract<T>(list[i])));
+    {
+        try {
+            ret.push_back(ConvertToCpp<T>(list[i]));
+        }
+        catch(bpmodule::exception::PythonConvertException & ex)
+        {
+            ex.AppendInfo({{ "element", std::to_string(i) }});
+            throw ex;
+        }
+    }
 
     return ret;
 }
 
-/*
-template<typename T>
-static
-T ConvertDictToMap(const dict & d)
-{
-    T m;
-    int length = boost::python::extract<int>(list.attr("__len__")());
-    for(int i = 0; i < length; i++)
-
-
-    return m;
-}
-*/
 
 template<typename T>
 boost::python::list ConvertVecToList(const std::vector<T> & v)
 {
     boost::python::list result;
 
-    for(auto & it : v)
-        result.append(it);
+    for(size_t i = 0; i < v.size(); ++i)
+    {
+        try {
+            result.append(ConvertToPy(v[i]));
+        }
+        catch(bpmodule::exception::PythonConvertException & ex)
+        {
+            ex.AppendInfo({ { "element", std::to_string(i)} });
+            throw ex;
+        }
+    }
 
     return result;
 }
 
-template<typename T>
-boost::python::dict ConvertMapToDict(const T & m)
+
+
+template<typename T1, typename T2>
+boost::python::tuple ConvertPairToTuple(const std::pair<T1, T2> & m)
 {
-    boost::python::dict d;
-
-    for(auto & it : m)
-        d[it.first] = it.second;
-
-    return d;
+    try {
+        boost::python::object first = ConvertToPy(m.first);
+        boost::python::object second = ConvertToPy(m.second);
+        return boost::python::make_tuple(first, second);
+    }
+    catch(bpmodule::exception::PythonConvertException & ex)
+    {
+        ex.AppendInfo({{ "location", "ConvertPairToTuple"}});
+        throw ex;
+    }
 }
-
 
 
 
 /////////////////////////////////////////
 // Structures for python converters
 /////////////////////////////////////////
+/*
 template<typename T>
 struct VectorConverter
-{
+p
     static PyObject* convert(const std::vector<T> & v)
     {
+        // may throw
         boost::python::list lst = ConvertVecToList(v);
         return boost::python::incref(lst.ptr());
     }
@@ -83,21 +90,12 @@ struct PairConverter
 {
     static PyObject* convert(const std::pair<T1, T2>& pair)
     {
-        return boost::python::incref(boost::python::make_tuple(pair.first, pair.second).ptr());
+        // may throw
+        boost::python::tuple t = ConvertPairToTuple(pair);
+        return boost::python::incref(t.ptr());
     }
 };
-
-template<typename T>
-struct MapConverter
-{
-    static PyObject* convert(const T & m)
-    {
-        boost::python::dict d = ConvertMapToDict(m);
-        return boost::python::incref(d.ptr());
-    }
-};
-
-
+*/
 
 } // close namespace python_helper
 } // close namespace bpmodule

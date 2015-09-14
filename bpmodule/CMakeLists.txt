@@ -14,6 +14,7 @@ add_subdirectory(basisset)
 set(BPMODULE_PYTHON_HELPER_HEADERS
             python_helper/BoostPython_fwd.hpp
             python_helper/Python_stdconvert.hpp
+            python_helper/Convert.hpp
    )
 
 set(BPMODULE_OUTPUT_HEADERS
