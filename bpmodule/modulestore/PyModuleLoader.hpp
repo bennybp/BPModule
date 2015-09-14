@@ -52,6 +52,12 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
          * \throw bpmodule::exception::ModuleLoadException if there is a problem loading
          *        the module (duplicate key, etc)
          *
+         * \throw bpmodule::exception::MapException if the module info doesn't contain
+         *        required fields
+         *
+         * \throw bpmodule::exception::PythonConvertException if there is a problem converting
+         *        the module info.
+         *
          * \exstrong
          *
          * \param [in] key The key for this module

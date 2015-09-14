@@ -62,7 +62,8 @@ ModuleBase * CModuleLoader::GeneratorWrapper_(GeneratorFunc fn,
 
 void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & minfo)
 {
-    ModuleInfo mi(minfo); // conversion constructor
+    // may throw
+    ModuleInfo mi(minfo);
 
     // trailing slash on path should have been added by python scripts
     std::string sopath = mi.path + mi.soname;

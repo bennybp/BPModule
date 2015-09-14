@@ -19,11 +19,11 @@ namespace modulestore {
 
 /*! \brief Converts types for ModuleInfo
  *
- * Catches exceptions in conversion and appends some information
+ * Catches exceptions in the conversion and appends some information
  *
  * \tparam T Destination type
  *
- * \param [in] dict The dictionary containing the data
+ * \param [in] dictionary The dictionary containing the data
  * \param [in] key The key in the dictionary
  */
 template<typename T>
@@ -44,13 +44,14 @@ static T DictConvertHelper(const boost::python::dict & dictionary, const char * 
 }
 
 
+
 /*! \brief Converts python lists to C++ vectors for ModuleInfo
  *
- * Catches exceptions in conversion and appends some information
+ * Catches exceptions in the conversion and appends some information
  *
  * \tparam T Destination type
  *
- * \param [in] dict The dictionary containing the data
+ * \param [in] dictionary The dictionary containing the data
  * \param [in] key The key in the dictionary
  */
 template<typename T>
@@ -90,7 +91,8 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
         if(dictionary.has_key("passedoptions"))
         {
             try {
-                // DictConvertHelper will make sure it is a list and that the key exists
+                // DictConvertHelper will make sure the key exists and
+                // that it is a list
                 options = OptionMap(DictConvertHelper<boost::python::list>(dictionary, "passedoptions"));
             }
             catch(bpmodule::exception::GeneralException & ex)

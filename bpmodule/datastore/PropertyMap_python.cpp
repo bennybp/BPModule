@@ -8,12 +8,15 @@
 #include "bpmodule/datastore/PropertyMap.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/tensor/Tensor.hpp"
-
-// included via Python_stdconvert.hpp
-//#include <boost/python.hpp>
+#include "bpmodule/exception/PythonConvertException.hpp"
 
 
 using bpmodule::python_helper::ConvertListToVec;
+using bpmodule::python_helper::ConvertVecToList;
+using bpmodule::python_helper::ConvertToPy;
+using bpmodule::python_helper::ConvertToCpp;
+using bpmodule::exception::PythonConvertException;
+using bpmodule::exception::GeneralException;
 
 
 namespace bpmodule {
@@ -24,10 +27,19 @@ PropertyMap::PropertyMap(const boost::python::list & olist)
 {
     int optlen = boost::python::extract<int>(olist.attr("__len__")());
 
+
     for(int i = 0; i < optlen; i++)
     {
-        std::string key = boost::python::extract<std::string>(olist[i][0]);
-        Set_(key, PropertyMap::PropPlaceholder_(olist[i][1]));
+        std::string key("(unknown)");
+
+        try {
+            key = ConvertToCpp<std::string>(olist[i][0]);
+            Set_(key, PropPlaceholder_(olist[i][1]));
+        }
+        catch(GeneralException & ex)
+        {
+            ex.AppendInfo({ {"location", "PropertyMap"}, {"key", key} });
+        }
     }
 }
 
@@ -37,43 +49,35 @@ PropertyMap::PropertyMap(const boost::python::list & olist)
 template<>
 boost::python::object PropertyMap::GetCopy<>(const std::string & key) const
 {
-    // some of the dirty details handled by to_python converters
-    // see Python_stdconvert.hpp
-
     std::string type = GetType(key);
 
     if(type == typeid(bool).name())
-        return boost::python::object(GetRef<bool>(key));
+        return ConvertToPy(GetRef<bool>(key));
 
     else if(type == typeid(long).name())
-        return boost::python::object(GetRef<long>(key));
+        return ConvertToPy(GetRef<long>(key));
 
     else if(type == typeid(double).name())
-        return boost::python::object(GetRef<double>(key));
+        return ConvertToPy(GetRef<double>(key));
 
     else if(type == typeid(std::string).name())
-        return boost::python::object(GetRef<std::string>(key));
+        return ConvertToPy(GetRef<std::string>(key));
 
     else if(type == typeid(std::vector<long>).name())
-        return boost::python::object(GetRef<std::vector<long>>(key));
+        return ConvertVecToList(GetRef<std::vector<long>>(key));
 
     else if(type == typeid(std::vector<double>).name())
-        return boost::python::object(GetRef<std::vector<double>>(key));
+        return ConvertVecToList(GetRef<std::vector<double>>(key));
 
     else if(type == typeid(std::vector<std::string>).name())
-        return boost::python::object(GetRef<std::vector<std::string>>(key));
+        return ConvertVecToList(GetRef<std::vector<std::string>>(key));
 
     else if(type == typeid(tensor::Tensor).name())
-        return boost::python::object(GetRef<tensor::Tensor>(key));
+        return ConvertToPy(GetRef<tensor::Tensor>(key));
 
     else
-        throw exception::GeneralException("Unable to convert C++ type to python",
-                                 {
-                                    { "Location", "PropertyMap" },
-                                    { "Key", key },
-                                    { "Type", type }
-                                 }
-                               );
+        throw exception::PythonConvertException("Invalid type to convert to python",
+                                                "PropertyMap", key, type, "boost::python::object"); 
 }
 
 
@@ -82,15 +86,13 @@ void PropertyMap::Set(const std::string & key, const boost::python::object & val
 {
     // catch errors from conversions in PropPlaceholder_
     try {
-        Set_(key, PropertyMap::PropPlaceholder_(value));
+        Set_(key, PropPlaceholder_(value));
     }
-    catch(exception::GeneralException & bpe)
+    catch(exception::GeneralException & ex)
     {
         // append key info
-        bpe.AppendInfo({
-                         {"Key", key}
-                       });
-        throw bpe;
+        ex.AppendInfo({ {"key", key} });
+        throw ex;
     }
 }
 
@@ -100,13 +102,13 @@ PropertyMap::PropPlaceholderPtr PropertyMap::PropertyMap::PropPlaceholder_(const
 {
     std::string cl = boost::python::extract<std::string>(value.attr("__class__").attr("__name__"));
     if(cl == "bool")
-        return PropertyMap::PropPlaceholderPtr(new PropHolder<bool>(boost::python::extract<bool>(value)));
+        return PropertyMap::PropPlaceholderPtr(new PropHolder<bool>(ConvertToCpp<bool>(value)));
     else if(cl == "int")
-        return PropertyMap::PropPlaceholderPtr(new PropHolder<long>(boost::python::extract<long>(value)));
+        return PropertyMap::PropPlaceholderPtr(new PropHolder<long>(ConvertToCpp<long>(value)));
     else if(cl == "float")
-        return PropertyMap::PropPlaceholderPtr(new PropHolder<double>(boost::python::extract<double>(value)));
+        return PropertyMap::PropPlaceholderPtr(new PropHolder<double>(ConvertToCpp<double>(value)));
     else if(cl == "str")
-        return PropertyMap::PropPlaceholderPtr(new PropHolder<std::string>(boost::python::extract<std::string>(value)));
+        return PropertyMap::PropPlaceholderPtr(new PropHolder<std::string>(ConvertToCpp<std::string>(value)));
     else if(cl == "list")
     {
         // get type of first element
@@ -122,12 +124,7 @@ PropertyMap::PropPlaceholderPtr PropertyMap::PropertyMap::PropPlaceholder_(const
         {
             std::string cltmp = boost::python::extract<std::string>(lst[i].attr("__class__").attr("__name__"));
             if(cl2 != cltmp)
-                throw exception::GeneralException("Passed a heterogeneous container",
-                                        {
-                                          { "First type", cl2 },
-                                          { "This type", cltmp }
-                                        }
-                                       );
+                throw exception::PythonConvertException("Cannot convert heterogeneous container", cltmp, cl2);
         }
 
         // now parse list
@@ -141,22 +138,14 @@ PropertyMap::PropPlaceholderPtr PropertyMap::PropertyMap::PropPlaceholder_(const
             return PropertyMap::PropPlaceholderPtr(new PropHolder<std::vector<std::string>>(ConvertListToVec<std::string>(lst)));
         else
         {
-            throw exception::GeneralException("Unable to convert python type to C++ (for list)",
-                                     {
-                                        { "Location", "PropertyMap" },
-                                        { "Type", cl2 }
-                                     }
-                                   );
+        throw exception::PythonConvertException("Invalid type to convert from python",
+                                                "PropertyMap", "(see below)", cl2, "boost::python::object", "In converting a list"); 
         }
     }
     else
     {
-        throw exception::GeneralException("Unable to convert python type to C++",
-                                 {
-                                    { "Location", "PropertyMap" },
-                                    { "Type", cl }
-                                 }
-                               );
+        throw exception::PythonConvertException("Invalid type to convert from python",
+                                                "PropertyMap", "(see below)", cl, "boost::python::object"); 
     }
 }
 
