@@ -54,6 +54,7 @@ std::string GeneralException::ExceptionString(void) const
 {
     ExceptionInfo exinfo = GetInfo();
     std::stringstream ss;
+    output::Output(ss, "\n");
     output::Output(ss, output::Line('*'));
     output::Output(ss, "Exception thrown!\n");
     output::Output(ss, "what() = %1%\n", what());
