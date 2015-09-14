@@ -35,7 +35,7 @@ def Run():
         bp.testing.PrintHeader("Testing construction of ModuleInfo")
 
         # This one should work
-        # Note that we are giving passed options rather than options
+        # Note that we are not passing options
         minfo = {
             "key"         : "TESTKEY",
             "name"        : "TESTNAME",
@@ -45,7 +45,6 @@ def Run():
             "description" : "Testing of core functionality",
             "authors"     : [],
             "refs"        : [],
-            "passedoptions"   : [ ]
         }
 
         nfailed = 0

@@ -38,7 +38,7 @@ def Run():
 
     except Exception as e:
       bp.output.Output("Caught exception in main handler\n")
-      traceback.print_exc()
+      #traceback.print_exc()
       bp.output.Error("\n")
       bp.output.Error(str(e))
       bp.output.Error("\n")
