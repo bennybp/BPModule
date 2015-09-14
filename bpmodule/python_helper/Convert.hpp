@@ -21,14 +21,17 @@ namespace bpmodule {
 namespace python_helper {
 
 
-/*! \brief Small helper to extract data and throw exceptions if needed
+/*! \brief Convert a boost::python::object to a C++ type
+ *
+ * This function will check first, and throw if the check fails.
  *
  * \throw bpmodule::exception::PythonConvertException if the
  *        data could not be converted
  *
- * \tparam T The type to extract
+ * \tparam T The type to convert to
  *
  * \param [in] obj The object to convert
+ * \return Converted data as type T
  */
 template<typename T>
 T ConvertToCpp(const boost::python::object & obj)
@@ -51,6 +54,17 @@ T ConvertToCpp(const boost::python::object & obj)
 }
 
 
+
+/*! \brief Convert a C++ object to a boost::python::object
+ *
+ * \throw bpmodule::exception::PythonConvertException if the
+ *        data could not be converted
+ *
+ * \tparam T The type to convert from
+ *
+ * \param [in] obj The object to convert
+ * \return Converted data as a boost::python::object
+ */
 template<typename T>
 boost::python::object ConvertToPy(const T & obj)
 {
@@ -64,6 +78,19 @@ boost::python::object ConvertToPy(const T & obj)
 }
 
 
+
+
+
+/*! \brief Convert a boost::python::list to a C++ std::vector
+ *
+ * \throw bpmodule::exception::PythonConvertException if the
+ *        data could not be converted
+ *
+ * \tparam T The type to convert to
+ *
+ * \param [in] list The python list to convert
+ * \return Converted data as a C++ std::vector
+ */
 template<typename T>
 std::vector<T> ConvertListToVec(const boost::python::list & list)
 {
@@ -87,6 +114,17 @@ std::vector<T> ConvertListToVec(const boost::python::list & list)
 }
 
 
+
+/*! \brief Convert a C++ vector to a boost::python::object
+ *
+ * \throw bpmodule::exception::PythonConvertException if the
+ *        data could not be converted
+ *
+ * \tparam T The type to convert from
+ *
+ * \param [in] v The vector to convert
+ * \return Converted data as a boost::python::list
+ */
 template<typename T>
 boost::python::list ConvertVecToList(const std::vector<T> & v)
 {
@@ -109,6 +147,7 @@ boost::python::list ConvertVecToList(const std::vector<T> & v)
 
 
 
+/*
 template<typename T1, typename T2>
 boost::python::tuple ConvertPairToTuple(const std::pair<T1, T2> & m)
 {
@@ -123,7 +162,7 @@ boost::python::tuple ConvertPairToTuple(const std::pair<T1, T2> & m)
         throw ex;
     }
 }
-
+*/
 
 
 /////////////////////////////////////////
