@@ -27,6 +27,7 @@ set(BPMODULE_EXCEPTION_HEADERS
             exception/ModuleLoadException.hpp
             exception/ModuleCreateException.hpp
             exception/MapException.hpp
+            exception/PythonConvertException.hpp
    )
 
 set(BPMODULE_PARALLEL_HEADERS
@@ -68,6 +69,7 @@ set(BPMODULE_BASISSET_HEADERS
 
 set(BPMODULE_TESTING_HEADERS
             testing/AllTests.hpp
+            testing/TestingBase.hpp
    )
 
 
