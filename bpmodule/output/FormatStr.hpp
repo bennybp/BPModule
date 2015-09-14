@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Formatting a string with boost::format
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_FORMATSTR_HPP_
 #define _GUARD_FORMATSTR_HPP_
 

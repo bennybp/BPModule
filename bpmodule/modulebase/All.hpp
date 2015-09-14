@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Includes all module header files (for convenience)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_ALL_HPP_
 #define _GUARD_ALL_HPP_
 

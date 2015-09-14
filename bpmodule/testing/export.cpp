@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Python exports for parallelization
+ * \brief Python exports for testing the core library
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 

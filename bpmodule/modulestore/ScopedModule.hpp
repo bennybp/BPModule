@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief An RAII wrapper around a module pointer
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_SCOPEDMODULE_HPP_
 #define _GUARD_SCOPEDMODULE_HPP_
 

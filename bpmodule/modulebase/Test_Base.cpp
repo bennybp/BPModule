@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Base class for a test module (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #include "bpmodule/modulebase/Test_Base.hpp"
 
 using bpmodule::modulestore::ModuleStore;

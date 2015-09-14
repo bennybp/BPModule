@@ -8,7 +8,6 @@
 #ifndef _GUARD_PROPERTYMAP_HPP_
 #define _GUARD_PROPERTYMAP_HPP_
 
-#include <vector>
 #include <map>
 #include <memory>
 #include <cstring> // for strcmp

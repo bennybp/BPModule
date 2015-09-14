@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Base class for a test module (python wrapper)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+
 #ifndef _GUARD_TEST_BASE_PYTHON_HPP_
 #define _GUARD_TEST_BASE_PYTHON_HPP_
 
@@ -11,6 +18,8 @@ namespace modulebase {
 namespace export_python {
 
 
+/*! \brief Python wrapper for bpmodule::modulebase::Test_Base
+ */
 class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base>
 {
     public:
@@ -21,6 +30,7 @@ class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base
         {}
 
         // expose protected member functions
+        //! \copydoc bpmodule::modulebase::ModuleBase::ThrowException
         void ThrowException(const std::string & exwhat,
                             const boost::python::list & exinfo = boost::python::list())
         {
@@ -32,7 +42,7 @@ class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base
             return ModuleBase::MStore();
         }
 
-        // Provide overrides for protected member functions
+
         virtual void RunTest(void)
         {
             this->get_override("RunTest")();
@@ -40,7 +50,7 @@ class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base
 
         virtual void CallRunTest(const std::string & other)
         {
-            this->get_override("RunCallTest")(other);
+            this->get_override("CallRunTest")(other);
         }
 
         virtual void Throw(void)
