@@ -7,8 +7,6 @@
 
 #include "bpmodule/testing/AllTests.hpp"
 
-#include <boost/python.hpp>
-
 using namespace boost::python;
 
 
@@ -18,7 +16,22 @@ namespace export_python {
 
 BOOST_PYTHON_MODULE(testing)
 {
-    // Parallelization
+    // From-python conversions
+    def("TestConvertToCpp_int", TestConvertToCpp<int>);
+    def("TestConvertToCpp_long", TestConvertToCpp<long>);
+    def("TestConvertToCpp_float", TestConvertToCpp<float>);
+    def("TestConvertToCpp_double", TestConvertToCpp<double>);
+    def("TestConvertToCpp_string", TestConvertToCpp<std::string>);
+
+    def("TestConvertToCppVector_int", TestConvertToCppVector<int>);
+    def("TestConvertToCppVector_long", TestConvertToCppVector<long>);
+    def("TestConvertToCppVector_float", TestConvertToCppVector<float>);
+    def("TestConvertToCppVector_double", TestConvertToCppVector<double>);
+    def("TestConvertToCppVector_string", TestConvertToCppVector<std::string>);
+
+
+
+    // ModuleInfo construction
     def("TestModuleInfo", TestModuleInfo);
 }
 
