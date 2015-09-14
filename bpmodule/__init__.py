@@ -21,6 +21,8 @@ from . import modulestore
 from . import molecule
 from . import basisset
 
+from . import testing
+
 ##########################################
 # Load other python stuff from this directory
 ##########################################

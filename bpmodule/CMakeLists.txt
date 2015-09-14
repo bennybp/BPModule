@@ -8,6 +8,7 @@ add_subdirectory(modulebase)
 add_subdirectory(modulestore)
 add_subdirectory(molecule)
 add_subdirectory(basisset)
+add_subdirectory(testing)
 
 
 # Install headers
@@ -65,6 +66,11 @@ set(BPMODULE_BASISSET_HEADERS
    )
 
 
+set(BPMODULE_TESTING_HEADERS
+            testing/AllTests.hpp
+   )
+
+
 install(FILES ${BPMODULE_PYTHON_HELPER_HEADERS} DESTINATION include/bpmodule/python_helper)
 install(FILES ${BPMODULE_EXCEPTION_HEADERS} DESTINATION include/bpmodule/exception)
 install(FILES ${BPMODULE_OUTPUT_HEADERS} DESTINATION include/bpmodule/output)
@@ -75,6 +81,7 @@ install(FILES ${BPMODULE_MODULEBASE_HEADERS} DESTINATION include/bpmodule/module
 install(FILES ${BPMODULE_MODULESTORE_HEADERS} DESTINATION include/bpmodule/modulestore)
 install(FILES ${BPMODULE_MOLECULE_HEADERS} DESTINATION include/bpmodule/molecule)
 install(FILES ${BPMODULE_BASISSET_HEADERS} DESTINATION include/bpmodule/basisset)
+install(FILES ${BPMODULE_TESTING_HEADERS} DESTINATION include/testing/basisset)
 
 set(BPMODULE_FILES
             __init__.py

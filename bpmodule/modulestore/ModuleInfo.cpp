@@ -95,18 +95,15 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
         authors     = DictConvertHelperVec<std::string>(dictionary, "authors");
         refs        = DictConvertHelperVec<std::string>(dictionary, "refs");
 
-        if(dictionary.has_key("passedoptions"))
+        try {
+            // DictConvertHelper will make sure the key exists and
+            // that it is a list
+            options = OptionMap(DictConvertHelper<boost::python::list>(dictionary, "passedoptions"));
+        }
+        catch(bpmodule::exception::PythonConvertException & ex)
         {
-            try {
-                // DictConvertHelper will make sure the key exists and
-                // that it is a list
-                options = OptionMap(DictConvertHelper<boost::python::list>(dictionary, "passedoptions"));
-            }
-            catch(bpmodule::exception::PythonConvertException & ex)
-            {
-                ex.AppendInfo({ {"key", "passedoptions"} });
-                throw;
-            }
+            ex.AppendInfo({ {"key", "passedoptions"} });
+            throw;
         }
 
         // soname is optional
