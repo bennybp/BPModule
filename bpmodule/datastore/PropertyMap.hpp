@@ -8,12 +8,13 @@
 #ifndef _GUARD_PROPERTYMAP_HPP_
 #define _GUARD_PROPERTYMAP_HPP_
 
+#include <vector>
 #include <map>
 #include <memory>
 #include <cstring> // for strcmp
 
+#include "bpmodule/exception/MapException.hpp"
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
-#include "bpmodule/exception/GeneralException.hpp"
 
 
 namespace bpmodule {
@@ -73,11 +74,9 @@ class PropertyMap
 
 
 
-        /*! \brief Construct via python list
+        /*! \brief Construct via python list of tuples
          * 
-         * \todo Wrap or document python exceptions
-         *
-         * \throw bpmodule::exception::GeneralException if there is a problem (type conversion, etc).
+         * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
          *
          * \param [in] olist A python list containing objects to copy into this map
          */  
@@ -114,7 +113,7 @@ class PropertyMap
 
         /*! \brief Get a string representing the type for a given key
          *
-         * \throw bpmodule::exception::GeneralException
+         * \throw bpmodule::exception::MapException
          *        if the key doesn't exist 
          *
          * \param [in] key The key to the data
@@ -149,7 +148,7 @@ class PropertyMap
 
         /*! \brief Return a const reference to the underlying data
          *
-         * \throw bpmodule::exception::GeneralException
+         * \throw bpmodule::exception::MapException
          *        if the key doesn't exist or 
          *        is of the wrong type
          *
@@ -169,7 +168,7 @@ class PropertyMap
 
         /*! \brief Return a copy of the underlying data
          *
-         * \throw bpmodule::exception::GeneralException
+         * \throw bpmodule::exception::MapException
          *        if the key doesn't exist or 
          *        is of the wrong type
          *
@@ -227,8 +226,7 @@ class PropertyMap
          * affect the other map. If the key already exists in this map, it is
          * replaced.
          *
-         * \throw bpmodule::exception::GeneralException if the key is not found in the other map or
-         *        another error occurs.
+         * \throw bpmodule::exception:MapException if the key is not found in the other map
          *
          * \exstrong
          *
@@ -426,7 +424,7 @@ class PropertyMap
 
         /*! \brief Obtains a PropMapEntry or throws if key doesn't exist
          * 
-         * \throw bpmodule::exception::GeneralException if key doesn't exist
+         * \throw bpmodule::exception::MapException if key doesn't exist
          *
          * \exstrong
          *
@@ -445,7 +443,7 @@ class PropertyMap
 
         /*! \brief Obtains a pointer to a PropHolder cast to desired type
          * 
-         * \throw bpmodule::exception::GeneralException if key 
+         * \throw bpmodule::exception::MapException if key 
          *        doesn't exist or if the cast fails.
          *
          * \param [in] key Key of the data to get
@@ -457,14 +455,7 @@ class PropertyMap
             const PropMapEntry & pme = GetOrThrow_(key);
             const PropHolder<T> * ph = dynamic_cast<const PropHolder<T> *>(pme.value.get());
             if(ph == nullptr)
-                throw exception::GeneralException(
-                                         "Bad cast",
-                                         {
-                                            { "Location", "PropertyMap" },
-                                            { "From", pme.value->Type() },
-                                            { "  To", typeid(T).name() }
-                                         }
-                                       );
+                throw exception::MapException("Bad cast", "PropertyMap", pme.value->Type(), typeid(T).name());
 
             return ph;
         }
@@ -485,7 +476,7 @@ class PropertyMap
 
         /*! \brief Create a PropPlaceHolder from python object
          * 
-         * \throw bpmodule::exception::GeneralException if there is a problem (type conversion, etc)
+         * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
          *
          * \param [in] value A python object containing data to copy
          */ 
@@ -494,13 +485,19 @@ class PropertyMap
 };
 
 
-/// \copydoc GetCopy
+/*! \copydoc GetCopy
+ *
+ * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
+ */
 template<>
 boost::python::object PropertyMap::GetCopy<>(const std::string & key) const;
 
 
 
-/// \copydoc Set
+/*! \copydoc Set
+ *
+ * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
+ */
 template<>
 void PropertyMap::Set<>(const std::string & key, const boost::python::object & value);
 

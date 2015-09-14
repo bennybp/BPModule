@@ -101,7 +101,10 @@ class ModuleStore
         void SetOptions(const std::string & key, const datastore::OptionMap & opt);
 
 
+
         /*! \brief Set the options for a module (python version)
+         *
+         * \throw bpmodule::exception::PythonConvertException if there is a problem with the conversion
          *
          * \copydetails SetOptions(const std::string &, const bpmodule::datastore::OptionMap &)
          */
@@ -242,15 +245,23 @@ class ModuleStore
 
         /*! \brief Obtain a module or throw exception
          * 
-         * This function can be const since the database itself does not
-         * change at this point.
-         *
          * \throw bpmodule::exception::MapException if the key doesn't
          *        exist
          *
          * \param [in] key A module key
          */ 
         const StoreEntry & GetOrThrow_(const std::string & key) const;
+
+
+
+        /*! \brief Obtain a module or throw exception
+         * 
+         * \throw bpmodule::exception::MapException if the key doesn't
+         *        exist
+         *
+         * \param [in] key A module key
+         */ 
+        StoreEntry & GetOrThrow_(const std::string & key);
 
 
 

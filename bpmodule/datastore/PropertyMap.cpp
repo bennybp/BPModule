@@ -14,7 +14,6 @@ namespace datastore {
 
 void PropertyMap::Set_(const std::string & key, PropPlaceholderPtr && value)
 {
-    
     if(opmap_.count(key))
     {
         PropMapEntry & phe = GetOrThrow_(key);
@@ -97,13 +96,7 @@ const PropertyMap::PropMapEntry & PropertyMap::GetOrThrow_(const std::string & k
     if(opmap_.count(key))
         return opmap_.at(key);
     else
-        throw exception::GeneralException(
-                                 "Key not found",
-                                 {
-                                     { "Location", "PropertyMap" },
-                                     { "Key", key }
-                                 }
-                               );
+        throw exception::MapException("Key not found", "PropertyMap", key); 
 }
 
 
@@ -113,13 +106,7 @@ PropertyMap::PropMapEntry & PropertyMap::GetOrThrow_(const std::string & key)
     if(opmap_.count(key))
         return opmap_.at(key);
     else
-        throw exception::GeneralException(
-                                 "Key not found",
-                                 {
-                                     { "Location", "PropertyMap" },
-                                     { "Key", key }
-                                 }
-                               );
+        throw exception::MapException("Key not found", "PropertyMap", key); 
 }
 
 

@@ -46,12 +46,7 @@ void ModuleStore::InsertModule(const std::string & key, ModuleGeneratorFunc func
 
 void ModuleStore::SetOptions(const std::string & key, const OptionMap & opt)
 {
-    if(!Has(key))
-        throw MapException("Attempt to set options for nonexistant key", "ModuleStore", key);
-   
-
-    ModuleStore::StoreEntry & se = store_.at(key); 
-    se.mi.options = opt;    
+    GetOrThrow_(key).mi.options = opt;
 }
 
 
@@ -140,6 +135,14 @@ const ModuleStore::StoreEntry & ModuleStore::GetOrThrow_(const std::string & key
         throw MapException("Missing key", "ModuleStore", key);
 }
 
+
+ModuleStore::StoreEntry & ModuleStore::GetOrThrow_(const std::string & key)
+{
+    if(Has(key))
+        return store_.at(key);
+    else
+        throw MapException("Missing key", "ModuleStore", key);
+}
 
 
 ModuleStore::~ModuleStore()

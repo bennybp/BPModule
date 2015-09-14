@@ -6,7 +6,6 @@
 
 
 #include "bpmodule/modulestore/ModuleInfo.hpp"
-#include "bpmodule/exception/MapException.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 
 using bpmodule::datastore::OptionMap;
@@ -21,6 +20,9 @@ namespace modulestore {
  *
  * Catches exceptions in the conversion and appends some information
  *
+ * \throw bpmodule::exception::PythonConvertException if there is a conversion problem or a
+ *        required key doesn't exist
+ *
  * \tparam T Destination type
  *
  * \param [in] dictionary The dictionary containing the data
@@ -30,16 +32,16 @@ template<typename T>
 static T DictConvertHelper(const boost::python::dict & dictionary, const char * key)
 {
     if(!dictionary.has_key(key))
-        throw bpmodule::exception::MapException("Python dictionary missing key", "ModuleInfo", key, typeid(T).name());
+        throw bpmodule::exception::PythonConvertException("Python dictionary missing key", "ModuleInfo", key, "(missing)", typeid(T).name());
 
 
     try {
         return ConvertToCpp<T>(dictionary[key]);
     }
-    catch(bpmodule::exception::GeneralException & ex)
+    catch(bpmodule::exception::PythonConvertException & ex)
     {
         ex.AppendInfo({ {"key", key}, {"location", "ModuleInfo"} });
-        throw ex;
+        throw;
     }
 }
 
@@ -48,6 +50,9 @@ static T DictConvertHelper(const boost::python::dict & dictionary, const char * 
 /*! \brief Converts python lists to C++ vectors for ModuleInfo
  *
  * Catches exceptions in the conversion and appends some information
+ *
+ * \throw bpmodule::exception::PythonConvertException if there is a conversion problem or a
+ *        required key doesn't exist
  *
  * \tparam T Destination type
  *
@@ -66,12 +71,14 @@ static std::vector<T> DictConvertHelperVec(const boost::python::dict & dictionar
     try {
         return ConvertListToVec<T>(lst);
     }
-    catch(bpmodule::exception::GeneralException & ex)
+    catch(bpmodule::exception::PythonConvertException & ex)
     {
         ex.AppendInfo({ {"key", key}, {"location", "ModuleInfo"} });
-        throw ex;
+        throw;
     }
 }
+
+
 
 
 
@@ -95,10 +102,10 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
                 // that it is a list
                 options = OptionMap(DictConvertHelper<boost::python::list>(dictionary, "passedoptions"));
             }
-            catch(bpmodule::exception::GeneralException & ex)
+            catch(bpmodule::exception::PythonConvertException & ex)
             {
                 ex.AppendInfo({ {"key", "passedoptions"} });
-                throw ex;
+                throw;
             }
         }
 
@@ -106,10 +113,10 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
         if(dictionary.has_key("soname"))
             soname = DictConvertHelper<std::string>(dictionary, "soname");
     }
-    catch(bpmodule::exception::GeneralException & ex)
+    catch(bpmodule::exception::PythonConvertException & ex)
     {
         ex.AppendInfo({ {"module", name} }); // name may or may not be set
-        throw ex;
+        throw;
     }
 }
 
