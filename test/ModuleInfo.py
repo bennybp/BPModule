@@ -50,7 +50,7 @@ def Run():
         nfailed = 0
         ntest = 1
 
-        nfailed = nfailed + bp.testing.TestModuleInfo(ntest, "Acceptible ModuleInfo",        True,  minfo)
+        nfailed = nfailed + bp.testing.TestModuleInfo(ntest, "Acceptable ModuleInfo",        True,  minfo)
         ntest += 1
 
         nfailed = nfailed + bp.testing.TestModuleInfo(ntest, "Empty ModuleInfo",             False, {})
