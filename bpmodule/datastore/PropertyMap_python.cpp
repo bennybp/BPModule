@@ -6,7 +6,7 @@
 
 
 #include "bpmodule/datastore/PropertyMap.hpp"
-#include "bpmodule/python_helper/Python_stdconvert.hpp"
+#include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/tensor/Tensor.hpp"
 
 // included via Python_stdconvert.hpp

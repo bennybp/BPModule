@@ -13,7 +13,6 @@ add_subdirectory(basisset)
 # Install headers
 set(BPMODULE_PYTHON_HELPER_HEADERS
             python_helper/BoostPython_fwd.hpp
-            python_helper/Python_stdconvert.hpp
             python_helper/Convert.hpp
    )
 

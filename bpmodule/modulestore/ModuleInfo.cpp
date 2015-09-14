@@ -7,7 +7,7 @@
 
 #include "bpmodule/modulestore/ModuleInfo.hpp"
 #include "bpmodule/exception/MapException.hpp"
-#include "bpmodule/python_helper/Python_stdconvert.hpp"
+#include "bpmodule/python_helper/Convert.hpp"
 
 using bpmodule::datastore::OptionMap;
 using bpmodule::python_helper::ConvertListToVec;
