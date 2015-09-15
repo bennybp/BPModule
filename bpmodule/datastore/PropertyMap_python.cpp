@@ -160,8 +160,8 @@ PropertyMap::PropPlaceholderPtr PropertyMap::PropertyMap::PropPlaceholder_(const
             return PropPlaceholderPtr(new PropHolder<std::vector<std::string>>(ConvertToCpp<std::vector<std::string>>(lst)));
         else
         {
-        throw PythonConvertException("Invalid type to convert from python",
-                                     "PropertyMap", "(see below)", cl2, "boost::python::object", "In converting a list"); 
+            throw PythonConvertException("Invalid type to convert from python",
+                                         "PropertyMap", "(see below)", cl2, "boost::python::object", "In converting a list"); 
         }
     }
     else
