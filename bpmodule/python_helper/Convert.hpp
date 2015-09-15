@@ -206,7 +206,7 @@ boost::python::object ConvertToPy(const T & obj)
 
 
 
-/*! \brief Convert a C++ vector to a boost::python::object
+/*! \brief Convert a C++ vector to a boost::python::list
  *
  * \throw bpmodule::exception::PythonConvertException if the
  *        data could not be converted
