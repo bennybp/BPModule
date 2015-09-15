@@ -38,17 +38,23 @@ def Run():
 
 
 
-        testdat =    [ ( "int",            int(0)                              ),
-                       ( "int",            int(5)                              ),
-                       ( "float",          float(0.0)                          ),
-                       ( "float",          float(5)                            ),
-                       ( "string",         "HelloString1"                      ),
-                       ( "string",         "HelloString2"                      ),
-                       ( "list<int>",      [ int(5) ]                          ),
-                       ( "list<int>",      [ int(5), int(0) ]                  ),
-                       ( "list<float>",    [ float(5.0), float(0.0) ]          ),
-                       ( "list<string>",   [ "HelloString1", "HelloString2" ]  ),
-                       ( "list<empty>",    []                                  )
+        testdat =    [ ( "int",                 int(0)                              ),
+                       ( "int",                 int(5)                              ),
+                       ( "float",               float(0.0)                          ),
+                       ( "float",               float(5)                            ),
+                       ( "string",              "HelloString1"                      ),
+                       ( "string",              "HelloString2"                      ),
+                       ( "list<int>",           [ int(5) ]                          ),
+                       ( "list<int>",           [ int(5), int(0) ]                  ),
+                       ( "list<float>",         [ float(5.0), float(0.0) ]          ),
+                       ( "list<string>",        [ "HelloString1", "HelloString2" ]  ),
+                       ( "list<empty>",         []                                  ),
+                       ( "list<list<empty>>",   [[]]                                ),
+                       ( "list<list<int>>",     [[int(5)]]                          ),
+                       ( "list<list<float>>",   [[float(5.0)]]                      ),
+                       ( "list<list<string>>",  [["Hello"]]                         ),
+                       ( "list<heterogeneous>", [ int(5), "Hello" ]                 ),
+                       ( "list<heterogeneous>", [ float(5.0), "Hello" ]             ),
                      ]
 
 
