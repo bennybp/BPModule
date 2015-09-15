@@ -23,11 +23,11 @@ BOOST_PYTHON_MODULE(testing)
     def("TestConvertToCpp_double", TestConvertToCpp<double>);
     def("TestConvertToCpp_string", TestConvertToCpp<std::string>);
 
-    def("TestConvertToCppVector_int", TestConvertToCppVector<int>);
-    def("TestConvertToCppVector_long", TestConvertToCppVector<long>);
-    def("TestConvertToCppVector_float", TestConvertToCppVector<float>);
-    def("TestConvertToCppVector_double", TestConvertToCppVector<double>);
-    def("TestConvertToCppVector_string", TestConvertToCppVector<std::string>);
+    def("TestConvertToCpp_vector_int", TestConvertToCpp<std::vector<int>>);
+    def("TestConvertToCpp_vector_long", TestConvertToCpp<std::vector<long>>);
+    def("TestConvertToCpp_vector_float", TestConvertToCpp<std::vector<float>>);
+    def("TestConvertToCpp_vector_double", TestConvertToCpp<std::vector<double>>);
+    def("TestConvertToCpp_vector_string", TestConvertToCpp<std::vector<std::string>>);
 
 
 

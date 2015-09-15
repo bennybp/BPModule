@@ -9,7 +9,6 @@
 #include "bpmodule/python_helper/Convert.hpp"
 
 using bpmodule::datastore::OptionMap;
-using bpmodule::python_helper::ConvertListToVec;
 using bpmodule::python_helper::ConvertToCpp;
 
 namespace bpmodule {
@@ -69,7 +68,7 @@ static std::vector<T> DictConvertHelperVec(const boost::python::dict & dictionar
 
     // Actually convert the vector
     try {
-        return ConvertListToVec<T>(lst);
+        return ConvertToCpp<std::vector<T>>(lst);
     }
     catch(bpmodule::exception::PythonConvertException & ex)
     {

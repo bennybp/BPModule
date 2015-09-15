@@ -21,7 +21,128 @@ namespace bpmodule {
 namespace python_helper {
 
 
+
+/*! \brief Family of structs to convert python types to C++ types
+ *
+ * \tparam T Type to convert to
+ */
+template<typename T>
+struct ToCppConverter
+{
+    /*! \brief Checks if a python object is convertable to type T
+     *
+     * \param [in] obj Object to check
+     */ 
+    static bool Check(const boost::python::object & obj)
+    {
+        boost::python::extract<T> conv(obj);
+        return conv.check();
+    }
+
+
+
+    /*! \brief Converts a python object to type T
+     *
+     * \throwno May throw a boot::python exception
+     *
+     * \param [in] obj Object to check
+     */ 
+    static T Convert(const boost::python::object & obj)
+    {
+        boost::python::extract<T> conv(obj);
+        return conv();
+    }
+};
+
+
+
+
+
+/*! \brief Converts a python list to a std::vector
+ *
+ * \tparam T Type of the vector element to convert to
+ */
+template<typename T>
+struct ToCppConverter<std::vector<T>>
+{
+
+    /*! \brief Checks if a python object is convertable to type std::vector<T>
+     * 
+     * Checks that the object is a boost::python::list and that
+     * all elements are convertible to type T
+     *
+     * \param [in] obj Object to check
+     */ 
+    static bool Check(const boost::python::object & obj)
+    {
+        // Check if all elements are convertible
+        boost::python::extract<boost::python::list> lconv(obj);
+        if(!lconv.check())
+            return false;
+
+        boost::python::list lst = lconv();
+
+        // ok if there are no elements
+        int length = boost::python::extract<int>(lst.attr("__len__")());
+        if(length == 0)
+            return true;
+
+
+        for (int i = 0; i < length; i++)
+        {
+            if(!ToCppConverter<T>::Check(lst[i]))
+                return false;
+        }
+
+        // if you are here, everything is ok
+        return true;
+    }
+
+
+
+    /*! \brief Converts a python object to type std::vector<T>
+     *
+     * \throwno May throw a boot::python exception
+     *
+     * \param [in] obj Object to check
+     */ 
+    static std::vector<T> Convert(const boost::python::object & obj)
+    {
+        std::vector<T> r;
+ 
+        boost::python::list lst = boost::python::extract<boost::python::list>(obj);
+        int length = boost::python::extract<int>(lst.attr("__len__")());
+        if(length == 0)
+            return r;
+
+        r.reserve(length);
+
+        for (int i = 0; i < length; i++)
+        {
+            try {
+                r.push_back(ToCppConverter<T>::Convert(lst[i]));
+            }
+            catch(bpmodule::exception::PythonConvertException & ex)
+            {
+                ex.AppendInfo({{ "element", std::to_string(i) }});
+                throw;
+            }
+        }
+
+        return r;
+
+    }
+};
+
+
+
+
+
+
+
 /*! \brief Convert a boost::python::object to a C++ type
+ *
+ * This wraps the ToCppConverter structures.
  *
  * This function will check first, and throw if the check fails.
  *
@@ -36,22 +157,24 @@ namespace python_helper {
 template<typename T>
 T ConvertToCpp(const boost::python::object & obj)
 {
-    boost::python::extract<T> conv(obj);
-    if(!conv.check())
+    if(!ToCppConverter<T>::Check(obj))
     {
         std::string fromtype = boost::python::extract<std::string>(obj.attr("__class__").attr("__name__"));
         throw PythonConvertException("Cannot convert from python to C++", fromtype, typeid(T).name(), "Check failed"); 
     }
 
     try {
-        return conv();
+        return ToCppConverter<T>::Convert(obj);
     }
-    catch(...)
+    catch(...) //! \todo Doesn't seem to catch python exceptions?
     {
         std::string fromtype = boost::python::extract<std::string>(obj.attr("__class__").attr("__name__"));
         throw PythonConvertException("Cannot convert from python to C++", fromtype, typeid(T).name(), "Conversion failed"); 
     }
 }
+
+
+
 
 
 
@@ -81,38 +204,6 @@ boost::python::object ConvertToPy(const T & obj)
 
 
 
-/*! \brief Convert a boost::python::list to a C++ std::vector
- *
- * \throw bpmodule::exception::PythonConvertException if the
- *        data could not be converted
- *
- * \tparam T The type to convert to
- *
- * \param [in] list The python list to convert
- * \return Converted data as a C++ std::vector
- */
-template<typename T>
-std::vector<T> ConvertListToVec(const boost::python::list & list)
-{
-    int length = boost::python::extract<int>(list.attr("__len__")());
-    std::vector<T> ret;
-    ret.reserve(length);
-
-    for (int i = 0; i < length; i++)
-    {
-        try {
-            ret.push_back(ConvertToCpp<T>(list[i]));
-        }
-        catch(bpmodule::exception::PythonConvertException & ex)
-        {
-            ex.AppendInfo({{ "element", std::to_string(i) }});
-            throw;
-        }
-    }
-
-    return ret;
-}
-
 
 
 /*! \brief Convert a C++ vector to a boost::python::object
@@ -126,7 +217,7 @@ std::vector<T> ConvertListToVec(const boost::python::list & list)
  * \return Converted data as a boost::python::list
  */
 template<typename T>
-boost::python::list ConvertVecToList(const std::vector<T> & v)
+boost::python::list ConvertToPy(const std::vector<T> & v)
 {
     boost::python::list result;
 

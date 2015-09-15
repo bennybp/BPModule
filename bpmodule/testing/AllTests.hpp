@@ -48,24 +48,6 @@ int TestConvertToCpp(int itest, const std::string & desc, bool expected, const b
 
 
 
-/*! \brief Testing of python-to-C++ list->vector conversions
- *
- * \tparam T Type to convert to
- *
- * \param [in] itest A test number
- * \param [in] desc Some description
- * \param [in] expected True if this is supoosed to succeed, false if it should
- *                      throw an exception
- * \param [in] obj Python list to convert
- */
-template<typename T>
-int TestConvertToCppVector(int itest, const std::string & desc, bool expected, const boost::python::list & obj)
-{
-    return TestFunc(itest, desc, expected, bpmodule::python_helper::ConvertListToVec<T>, obj);
-}
-
-
-
 } // close namespace testing
 } // close namespace bpmodule
 

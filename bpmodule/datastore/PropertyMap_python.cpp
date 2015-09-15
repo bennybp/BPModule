@@ -11,8 +11,7 @@
 #include "bpmodule/exception/PythonConvertException.hpp"
 
 
-using bpmodule::python_helper::ConvertListToVec;
-using bpmodule::python_helper::ConvertVecToList;
+using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::python_helper::ConvertToPy;
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::exception::PythonConvertException;
@@ -86,13 +85,13 @@ boost::python::object PropertyMap::GetCopy<>(const std::string & key) const
         return ConvertToPy(GetRef<std::string>(key));
 
     else if(type == typeid(std::vector<long>).name())
-        return ConvertVecToList(GetRef<std::vector<long>>(key));
+        return ConvertToPy(GetRef<std::vector<long>>(key));
 
     else if(type == typeid(std::vector<double>).name())
-        return ConvertVecToList(GetRef<std::vector<double>>(key));
+        return ConvertToPy(GetRef<std::vector<double>>(key));
 
     else if(type == typeid(std::vector<std::string>).name())
-        return ConvertVecToList(GetRef<std::vector<std::string>>(key));
+        return ConvertToPy(GetRef<std::vector<std::string>>(key));
 
     else if(type == typeid(tensor::Tensor).name())
         return ConvertToPy(GetRef<tensor::Tensor>(key));
@@ -152,13 +151,13 @@ PropertyMap::PropPlaceholderPtr PropertyMap::PropertyMap::PropPlaceholder_(const
 
         // now parse list
         if(cl2 == "bool")
-            return PropPlaceholderPtr(new PropHolder<std::vector<bool>>(ConvertListToVec<bool>(lst)));
+            return PropPlaceholderPtr(new PropHolder<std::vector<bool>>(ConvertToCpp<std::vector<bool>>(lst)));
         if(cl2 == "int")
-            return PropPlaceholderPtr(new PropHolder<std::vector<long>>(ConvertListToVec<long>(lst)));
+            return PropPlaceholderPtr(new PropHolder<std::vector<long>>(ConvertToCpp<std::vector<long>>(lst)));
         else if(cl2 == "float")
-            return PropPlaceholderPtr(new PropHolder<std::vector<double>>(ConvertListToVec<double>(lst)));
+            return PropPlaceholderPtr(new PropHolder<std::vector<double>>(ConvertToCpp<std::vector<double>>(lst)));
         else if(cl2 == "str")
-            return PropPlaceholderPtr(new PropHolder<std::vector<std::string>>(ConvertListToVec<std::string>(lst)));
+            return PropPlaceholderPtr(new PropHolder<std::vector<std::string>>(ConvertToCpp<std::vector<std::string>>(lst)));
         else
         {
         throw PythonConvertException("Invalid type to convert from python",
