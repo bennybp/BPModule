@@ -53,10 +53,17 @@ PropertyMap::PropertyMap(const boost::python::list & olist)
         // actually convert now
         try {
             key = ConvertToCpp<std::string>(olist[i][0]);
+
+            if(opmap_.count(key))
+                throw exception::MapException("Duplicate key found on construction", "PropertyMap", key); 
+
+
             Set_(key, PropPlaceholder_(olist[i][1]));
         }
-        catch(PythonConvertException & ex) // should always be a PythonConvertException?
+        catch(PythonConvertException & ex) 
         {
+            // should always be a PythonConvertException?
+            // Don't catch the MapException, let that go through
             ex.AppendInfo({ {"location", "PropertyMap"}, {"key", key} });
             throw;
         }
