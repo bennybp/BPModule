@@ -429,14 +429,12 @@ boost::python::object PropertyMap::GetCopy<>(const std::string & key) const;
  *
  * Copies the internal python data to a C++ type. Specializes the templated function.
  *
- * \note I tried implementing this as an override, but python doesn't seem to pass
- *       a simple boost::python::object, but something else that is converted. This
- *       ended up calling the templated function with that rather than the override.
- *
  * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
  */
 template<>
 void PropertyMap::Set<>(const std::string & key, const boost::python::object & value);
+
+
 
 } // close namespace datastore
 } // close namespace bpmodule
