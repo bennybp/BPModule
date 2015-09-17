@@ -88,7 +88,10 @@ class PropertyMap
          * \param [in] key The key to the data
          * \return True if the key exists, false otherwise
          */
-        bool Has(const std::string & key) const;
+        bool Has(const std::string & key) const
+        {
+            return opmap_.count(key);
+        }
 
 
 
@@ -118,7 +121,10 @@ class PropertyMap
          * \param [in] key The key to the data
          * \return A string representing the type for a key
          */
-        std::string GetType(const std::string & key) const;
+        std::string GetType(const std::string & key) const
+        {
+            return GetOrThrow_(key).value->Type();
+        }
 
 
 
@@ -126,7 +132,14 @@ class PropertyMap
          * 
          * \return A vector of strings containing all the keys
          */
-        std::vector<std::string> GetKeys(void) const;
+        std::vector<std::string> GetKeys(void) const
+        {
+            std::vector<std::string> v;
+            v.reserve(opmap_.size());
+            for(auto & it : opmap_)
+                v.push_back(it.first);
+            return v;
+        }
 
 
 
@@ -136,7 +149,10 @@ class PropertyMap
          *
          * \return Number of elements in this container
          */
-        size_t Size(void) const noexcept;
+        size_t Size(void) const noexcept
+        {
+            return opmap_.size();
+        }
 
 
 
@@ -232,14 +248,30 @@ class PropertyMap
          * \param [in] other The other object from which to get the data
          * \param [in] key The key of the object in the other object
          */
-        void SetRef(const PropertyMap & other, const std::string & key);
+        void SetRef(const PropertyMap & other, const std::string & key)
+        {
+            //Setref with the same key
+            SetRef(other, key, key);
+        }
 
 
 
         /*! \copydoc SetRef
          * \param [in] newkey The key under which to store the data in this object
          */
-        void SetRef(const PropertyMap & other, const std::string & key, const std::string & newkey);
+        void SetRef(const PropertyMap & other, const std::string & key, const std::string & newkey)
+        {
+            // get the shared ptr, etc, from the other property map
+            // This should copy the shared_ptr
+            PropMapEntry pe = other.GetOrThrow_(key);
+        
+            // add it here
+            // should have strong exception guarantee
+            if(opmap_.count(newkey))
+                opmap_.at(newkey) = pe;
+            else
+                opmap_.emplace(newkey, std::move(pe));
+        }
 
 
 
@@ -255,7 +287,10 @@ class PropertyMap
          * \param [in] key The key to the data
          * \return The number of elements removed
          */
-        size_t Erase(const std::string & key);
+        size_t Erase(const std::string & key)
+        {
+            return opmap_.erase(key);
+        }
 
 
 
@@ -430,12 +465,24 @@ class PropertyMap
          * \param [in] key Key of the data to get
          * \return PropMapEntry containing the data for the given key
          */ 
-        PropMapEntry & GetOrThrow_(const std::string & key);
+        PropMapEntry & GetOrThrow_(const std::string & key)
+        {
+            if(opmap_.count(key))
+                return opmap_.at(key);
+            else
+                throw exception::MapException("Key not found", "PropertyMap", key); 
+        }
 
 
 
         //! \copydoc GetOrThrow_
-        const PropMapEntry & GetOrThrow_(const std::string & key) const;
+        const PropMapEntry & GetOrThrow_(const std::string & key) const
+        {
+            if(opmap_.count(key))
+                return opmap_.at(key);
+            else
+                throw exception::MapException("Key not found", "PropertyMap", key); 
+        }
 
 
 
@@ -469,7 +516,21 @@ class PropertyMap
          * \param [in] value Pointer to the data to set
          * \return PropHolder containing the data for the given key
          */ 
-        void Set_(const std::string & key, PropPlaceholderPtr && value);
+        void Set_(const std::string & key, PropPlaceholderPtr && value)
+        {
+            if(opmap_.count(key))
+            {
+                PropMapEntry & phe = GetOrThrow_(key);
+                phe.value = std::move(value);
+            }
+            else
+            {
+                PropMapEntry phe{std::move(value)};
+
+                // emplace has strong exception guarantee
+                opmap_.emplace(key, std::move(phe));
+            }
+        }
 
 
 

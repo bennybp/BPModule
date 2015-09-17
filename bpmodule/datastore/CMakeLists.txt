@@ -1,5 +1,4 @@
 set(BPMODULE_DATASTORE_FILES
-            PropertyMap.cpp
             PropertyMap_python.cpp
             export.cpp
    )
