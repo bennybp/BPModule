@@ -41,6 +41,8 @@ set(BPMODULE_TENSOR_HEADERS
 set(BPMODULE_DATASTORE_HEADERS
             datastore/CalcData.hpp
             datastore/PropertyMap.hpp
+            datastore/PropHolder.hpp
+            datastore/PropPlaceholder.hpp
             datastore/OptionMap.hpp
    )
 

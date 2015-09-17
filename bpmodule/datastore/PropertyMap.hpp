@@ -10,10 +10,10 @@
 
 #include <map>
 #include <memory>
-#include <cstring> // for strcmp
 
 #include "bpmodule/exception/MapException.hpp"
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
+#include "bpmodule/datastore/PropHolder.hpp"
 
 
 namespace bpmodule {
@@ -29,6 +29,9 @@ namespace datastore {
  * Since the data itself is read-only, modifications in one map cannot affect
  * another. Erasing or replacing the data in one map leaves the references
  * in any other maps referencing this data untouched.
+ *
+ * Additional information can be stored by instantiating the class with a structure
+ * INFO that contains additional information
  */
 class PropertyMap
 {
@@ -175,7 +178,7 @@ class PropertyMap
         template<typename T>
         const T & GetRef(const std::string & key) const
         {
-            const PropHolder<T> * ph = GetOrThrow_Cast_<T>(key);
+            const detail::PropHolder<T> * ph = GetOrThrow_Cast_<T>(key);
             return ph->GetRef();
         }
 
@@ -216,9 +219,11 @@ class PropertyMap
         template<typename T>
         void Set(const std::string & key, const T & value)
         {
-            auto v = PropPlaceholderPtr(new PropHolder<T>(value));
+            detail::PropPlaceholderPtr v(new detail::PropHolder<T>(value));
             Set_(key, std::move(v));
         }
+
+
 
 
 
@@ -229,10 +234,11 @@ class PropertyMap
         template<typename T>
         void Take(const std::string & key, T && value)
         {
-            auto v = PropPlaceholderPtr(new PropHolder<T>(std::move(value)));
+            detail::PropPlaceholderPtr v(new detail::PropHolder<T>(std::move(value)));
             Set_(key, std::move(v));
         }
-        
+
+
 
         /*! \brief Store the same data as found in another object
          * 
@@ -297,137 +303,12 @@ class PropertyMap
 
 
     private:
-        /*! \brief An interface to a templated class that can hold anything
-         *
-         *  This allows for use in containers, etc.
-         */
-        class PropPlaceholder
-        {
-            public:
-                PropPlaceholder(void) noexcept         = default;
-                virtual ~PropPlaceholder() noexcept    = default;
-
-                PropPlaceholder & operator=(const PropPlaceholder & rhs)  = delete;
-                PropPlaceholder & operator=(const PropPlaceholder && rhs) = delete;
-                PropPlaceholder(const PropPlaceholder & rhs)              = delete;
-                PropPlaceholder(const PropPlaceholder && rhs)             = delete;
-
-
-
-                /*! \brief Returns a string representing the type
-                 *
-                 * \exnothrow
-                 *
-                 * \return A string representing the type (obtained via typeid().name())
-                 */
-                virtual const char * Type(void) const noexcept = 0;
-
-
-
-                /*! \brief Determines if the contained type matches a given type
-                 *
-                 * \exnothrow
-                 *
-                 * \tparam U The type to compare to
-                 *
-                 * \return True if the contained object is of type U, false otherwise
-                 */ 
-                template<typename U>
-                bool IsType(void) const noexcept
-                {
-                    return (strcmp(typeid(U).name(), Type()) == 0);
-                }
-        };
-
-
-
-
-
-        /*! \brief A container that can hold anything
-         *
-         * \tparam T The type of the data this object is holding
-         */ 
-        template<typename T>
-        class PropHolder : public PropPlaceholder
-        {
-            public:
-                /*! \brief Construct via copying a data object
-                 * 
-                 * Will invoke copy constructor for type T
-                 *
-                 * \throwno Throws an exception only if the move
-                 *          constructor for T throws an exception
-                 *
-                 *  \param [in] m The object to copy
-                 */
-                PropHolder(const T & m) : obj(m) { }
-
-
-                /*! \brief Construct via moving a data object
-                 * 
-                 * Will invoke move constructor for type T
-                 *
-                 * \throwno Throws an exception only if the move
-                 *          constructor for T throws an exception
-                 *
-                 * \param [in] m The object to move
-                 */
-                PropHolder(T && m) : obj(std::move(m)) { }
-
-
-                // no other constructors, etc
-                PropHolder(void)                                = delete;
-                PropHolder(const PropHolder & oph)              = delete;
-                PropHolder(PropHolder && oph)                   = delete;
-                PropHolder & operator=(const PropHolder & oph)  = delete;
-                PropHolder & operator=(PropHolder && oph)       = delete;
-                virtual ~PropHolder()                           = default;
-
-
-                /*! Return a reference to the underlying data
-                 *
-                 * \exnothrow
-                 *
-                 * \return A reference to the underlying data
-                 */ 
-                T & GetRef(void) noexcept
-                {
-                    return obj;
-                }
-
-
-                /*! Return a const reference to the underlying data
-                 *
-                 * \exnothrow
-                 *
-                 * \return A const reference to the underlying data
-                 */ 
-                const T & GetRef(void) const noexcept
-                {
-                    return obj;
-                }
-
-
-                virtual constexpr const char * Type(void) const noexcept
-                {
-                    return typeid(T).name();
-                }
-
-
-            private:
-                //! The actual data
-                T obj;
-        };
-
-
 
 
         ////////////////////////////////
         // Actual storage of the data //
         ////////////////////////////////
 
-        //! A pointer to a generic object
-        typedef std::shared_ptr<PropPlaceholder> PropPlaceholderPtr;
 
 
         /*! \brief Stores a pointer to a placeholder, plus some other information
@@ -436,8 +317,7 @@ class PropertyMap
          */
         struct PropMapEntry
         {
-            // may be more added here in the future
-            PropPlaceholderPtr value;
+            detail::PropPlaceholderPtr value;
         };
 
 
@@ -493,13 +373,13 @@ class PropertyMap
          *        doesn't exist or if the cast fails.
          *
          * \param [in] key Key of the data to get
-         * \return PropHolder containing the data for the given key
+         * \return detail::PropHolder containing the data for the given key
          */ 
         template<typename T>
-        const PropHolder<T> * GetOrThrow_Cast_(const std::string & key) const
+        const detail::PropHolder<T> * GetOrThrow_Cast_(const std::string & key) const
         {
             const PropMapEntry & pme = GetOrThrow_(key);
-            const PropHolder<T> * ph = dynamic_cast<const PropHolder<T> *>(pme.value.get());
+            const detail::PropHolder<T> * ph = dynamic_cast<const detail::PropHolder<T> *>(pme.value.get());
             if(ph == nullptr)
                 throw exception::MapException("Bad cast", "PropertyMap", pme.value->Type(), typeid(T).name());
 
@@ -514,9 +394,8 @@ class PropertyMap
          *
          * \param [in] key Key of the data to set
          * \param [in] value Pointer to the data to set
-         * \return PropHolder containing the data for the given key
          */ 
-        void Set_(const std::string & key, PropPlaceholderPtr && value)
+        void Set_(const std::string & key, detail::PropPlaceholderPtr && value)
         {
             if(opmap_.count(key))
             {
@@ -534,13 +413,6 @@ class PropertyMap
 
 
 
-        /*! \brief Create a PropPlaceHolder from python object
-         * 
-         * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
-         *
-         * \param [in] value A python object containing data to copy
-         */ 
-        static PropPlaceholderPtr PropPlaceholder_(const boost::python::object & value);
 
 };
 
@@ -553,14 +425,18 @@ template<>
 boost::python::object PropertyMap::GetCopy<>(const std::string & key) const;
 
 
-
 /*! \copydoc Set
+ *
+ * Copies the internal python data to a C++ type. Specializes the templated function.
+ *
+ * \note I tried implementing this as an override, but python doesn't seem to pass
+ *       a simple boost::python::object, but something else that is converted. This
+ *       ended up calling the templated function with that rather than the override.
  *
  * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
  */
 template<>
 void PropertyMap::Set<>(const std::string & key, const boost::python::object & value);
-
 
 } // close namespace datastore
 } // close namespace bpmodule
