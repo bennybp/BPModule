@@ -103,7 +103,7 @@ class PropertyMap
          * \tparam T Type to compare to
          *
          * \param [in] key The key to the data
-         * \return True if the key exists, false otherwise
+         * \return True if the key exists and is of type T, false otherwise
          */
         template<typename T>
         bool HasType(const std::string & key) const

@@ -14,9 +14,9 @@ namespace bpmodule {
 namespace exception {
 
 
-/*! \brief An exception thrown when ModuleStore has a problem 
+/*! \brief An exception thrown when a map has a problem 
  *
- * Particularly when looking up keys in map or casting in a PropertyMap, etc
+ * Missing key, etc
  */
 class MapException : public GeneralException
 {
