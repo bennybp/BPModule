@@ -14,6 +14,7 @@
 #include "bpmodule/datastore/OptionBase.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 
+//! \todo Split python stuff from header?
 
 namespace bpmodule {
 namespace datastore {
@@ -123,7 +124,7 @@ class OptionHolder : public OptionBase
         //! \todo should a required value have a default?
         virtual bool IsRequired(void) const
         {
-            return required_ && !HasDefault();
+            return required_;
         }
 
 
@@ -166,10 +167,9 @@ class OptionHolder : public OptionBase
 
         void Validate_(const T & value) const
         {
-            // validate first
             if(!validator_(value))
             {
-                //! \todo print warning
+                //! \todo print warning if expert_ == true
                 if(!expert_)
                     throw exception::OptionException("Value is not valid for this option", Type());
             }
@@ -178,10 +178,8 @@ class OptionHolder : public OptionBase
 
 
 
-//OptionBasePtr OptionHolderFactory(const boost::python::tuple & tup);
-//{
-//    
-//}
+
+OptionBasePtr OptionHolderFactory(const boost::python::object & obj);
 
 
 

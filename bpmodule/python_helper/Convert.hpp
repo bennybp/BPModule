@@ -27,22 +27,16 @@ enum class PythonType
     Int,
     Float,
     String,
-
     ListBool,
     ListInt,
     ListFloat,
     ListString,
-
     ListEmpty,
     ListHetero,
     ListUnknown,
-
     Tuple,
-
     Dict,
-
     None,
-
     Unknown
 };
 

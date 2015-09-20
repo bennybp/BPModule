@@ -57,18 +57,16 @@ OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
     PythonType ptype = DetectType(obj);
 
     if(ptype != PythonType::Tuple)
-        throw exception::OptionException("Cannot convert python type to option", PythonTypeToStr(ptype)); 
+        throw exception::OptionException("Cannot convert python type to option tuple", PythonTypeToStr(ptype)); 
 
     boost::python::tuple tup = boost::python::extract<boost::python::tuple>(obj);
 
     int length = boost::python::extract<int>(tup.attr("__len__")());
     if(length != 5)
-            throw exception::OptionException("Tuple does not have 4 elements", PythonTypeToStr(ptype)); 
+            throw exception::OptionException("Tuple does not have 5 elements", PythonTypeToStr(ptype)); 
 
     // type, value, default, required, validator
     PythonType ptype_type     = DetectType(tup[0]);
-    //PythonType ptype_value    = DetectType(tup[1]);
-    //PythonType ptype_default  = DetectType(tup[2]);
     PythonType ptype_required = DetectType(tup[3]);
 
     if(ptype_type != PythonType::String)

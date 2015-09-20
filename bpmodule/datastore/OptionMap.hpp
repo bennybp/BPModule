@@ -54,11 +54,9 @@ class OptionMap
         OptionMap & operator=(OptionMap && rhs)      = default;
 
 
-        /*! \brief Construct options from a python object
-         *
-         * \copydetails PropertyMap::PropertyMap(const boost::python::list &)
+        /*! \brief Construct options from a python dictionary
          */ 
-        //OptionMap(const boost::python::list & olist) : PropertyMap(olist) {  }
+        OptionMap(const boost::python::dict & opt);
 
 
         // throw mapexception or optionexception
