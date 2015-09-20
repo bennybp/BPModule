@@ -27,11 +27,12 @@ class OptionHolder : public OptionBase
     public:
         typedef std::function<bool(T)> ValidatorFunc;
 
-        OptionHolder(const T & value, const T & def, ValidatorFunc validator, bool required)
+        OptionHolder(const T & value, const T & def, ValidatorFunc validator, bool required, bool expert)
             : value_(new T(value)),
               default_(new T(def)),
               validator_(validator),
-              required_(required)
+              required_(required),
+              expert_(expert)
         {
             // check the default and value with the validator
             if(!validator_(value))
@@ -45,6 +46,7 @@ class OptionHolder : public OptionBase
         {
             validator_ = oph.validator_;
             required_ = oph.required_;
+            expert_ = oph.expert_;
 
             if(oph.value_)
                 value_(new T(*oph.value_));
@@ -104,18 +106,22 @@ class OptionHolder : public OptionBase
         }
 
 
-        bool ChangeValue(T & value)
+        virtual bool IsDefault(void) const
+        {
+            return value_ && default_ && (*value_ == *default_);
+        }
+
+        void ChangeValue(const T & value)
         {
             // validate first
-            if(!validator_(value))
-                return false;
+            Validate_(value);
             value_ = std::unique_ptr<T>(new T(value));
         }
 
 
         // may throw
         // default should already have been validated
-        void ResetToDefault(void)
+        virtual void ResetToDefault(void)
         {
             ChangeValue(GetDefault());
         }
@@ -134,6 +140,19 @@ class OptionHolder : public OptionBase
         std::unique_ptr<T> default_;
         ValidatorFunc validator_;
         bool required_;
+        bool expert_;
+
+
+        void Validate_(const T & value) const
+        {
+            // validate first
+            if(!validator_(value))
+            {
+                //! \todo print warning
+                if(!expert_)
+                    throw exception::OptionException("Value is not valid for this option", Type());
+            }
+        }
 };
 
 

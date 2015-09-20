@@ -26,6 +26,7 @@ class OptionMap
 {
     public:
         OptionMap(void) = default;
+
         ~OptionMap(void) = default;
 
 
@@ -129,8 +130,30 @@ class OptionMap
             return GetOrThrow_(key)->Type();
         }
 
+
+        bool IsDefault(const std::string & key) const
+        {
+            return GetOrThrow_(key)->IsDefault();
+        }
+
+
+        //! \todo check if strong exception
+        template<typename T>
+        void Change(const std::string & key, const T & value)
+        {
+            GetOrThrow_Cast_<T>(key)->ChangeValue(value);
+        }
+
+
+        void ResetToDefault(const std::string & key)
+        {
+            GetOrThrow_(key)->ResetToDefault();
+        }
+
+
     private:
         std::map<std::string, detail::OptionBasePtr> opmap_;
+
 
         detail::OptionBasePtr & GetOrThrow_(const std::string & key)
         {

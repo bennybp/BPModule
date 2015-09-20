@@ -45,6 +45,8 @@ class OptionBase
         virtual bool HasValue(void) const = 0;
         virtual bool HasDefault(void) const = 0;
         virtual bool IsRequired(void) const = 0;
+        virtual bool IsDefault(void) const = 0;
+        virtual void ResetToDefault(void) = 0;
 
         bool Has(void) const
         {
