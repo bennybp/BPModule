@@ -27,7 +27,8 @@ class OptionHolder : public OptionBase
     public:
         typedef std::function<bool(T)> ValidatorFunc;
 
-        OptionHolder(const T & value, const T & def, ValidatorFunc validator, bool required, bool expert)
+        OptionHolder(const T & value, const T & def,
+                     ValidatorFunc validator, bool required, bool expert)
             : value_(new T(value)),
               default_(new T(def)),
               validator_(validator),
@@ -35,11 +36,31 @@ class OptionHolder : public OptionBase
               expert_(expert)
         {
             // check the default and value with the validator
-            if(!validator_(value))
+            if(!validator_(*value))
                 throw exception::OptionException("Initial value is not valid", Type()); 
-            if(!validator_(def))
+            if(!validator_(*def))
                 throw exception::OptionException("Initial default is not valid", Type()); 
         }
+
+
+        // takes ownership of pointers
+        OptionHolder(T * value, T * def,
+                     ValidatorFunc validator, bool required, bool expert)
+            : value_(value),
+              default_(def),
+              validator_(validator),
+              required_(required),
+              expert_(expert)
+        {
+            // check the default and value with the validator
+            if(value != nullptr && !validator_(*value))
+                throw exception::OptionException("Initial value is not valid", Type()); 
+            if(def != nullptr && !validator_(*def))
+                throw exception::OptionException("Initial default is not valid", Type()); 
+            if(def != nullptr && required)
+                throw exception::OptionException("Default value supplied for required value", Type());
+        }
+
 
 
         OptionHolder(const OptionHolder & oph)
@@ -49,9 +70,9 @@ class OptionHolder : public OptionBase
             expert_ = oph.expert_;
 
             if(oph.value_)
-                value_(new T(*oph.value_));
+                value_ = std::unique_ptr<T>(new T(*oph.value_));
             if(oph.default_)
-                default_(new T(*oph.default_));
+                default_ = std::unique_ptr<T>(new T(*oph.default_));
         }
 
 
@@ -91,15 +112,15 @@ class OptionHolder : public OptionBase
 
         virtual bool HasValue(void) const
         {
-            return value_;
+            return bool(value_);
         }
 
         virtual bool HasDefault(void) const
         {
-            return default_;
+            return bool(default_);
         }
 
-        // should a required value have a default?
+        //! \todo should a required value have a default?
         virtual bool IsRequired(void) const
         {
             return required_ && !HasDefault();

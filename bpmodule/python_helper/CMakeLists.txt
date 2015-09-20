@@ -1,4 +1,5 @@
 set(BPMODULE_PYTHON_HELPER_FILES
+        Convert.cpp
         export.cpp
    )
 

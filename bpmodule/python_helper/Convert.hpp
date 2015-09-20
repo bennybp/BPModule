@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Conversion between python and C++
+ * \brief Conversion between python and C++ (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -19,6 +19,45 @@ using bpmodule::exception::PythonConvertException;
 
 namespace bpmodule {
 namespace python_helper {
+
+
+enum class PythonType
+{
+    Bool,
+    Int,
+    Float,
+    String,
+
+    ListBool,
+    ListInt,
+    ListFloat,
+    ListString,
+
+    ListEmpty,
+    ListHetero,
+    ListUnknown,
+
+    Tuple,
+
+    Dict,
+
+    None,
+
+    Unknown
+};
+
+
+
+
+// In cpp file
+PythonType StrToPythonType(const std::string & str);
+
+
+const char * PythonTypeToStr(PythonType pytype);
+
+
+PythonType DetectType(const boost::python::object & obj);
+
 
 
 
