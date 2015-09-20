@@ -30,21 +30,23 @@ bool ValidateWrapper(const boost::python::object & val, T arg)
 template<typename T>
 OptionBasePtr CreateOptionHolder(const boost::python::tuple & tup)
 {
-    PythonType ptype_value    = DetectType(tup[1]);
-    PythonType ptype_default  = DetectType(tup[2]);
+    PythonType ptype_default = DetectType(tup[1]);
 
     T * val = nullptr;
     T * def = nullptr;
 
-    if(ptype_value != PythonType::None)
-        val = new T(ConvertToCpp<T>(tup[1]));
     if(ptype_default != PythonType::None)
-        def = new T(ConvertToCpp<T>(tup[2]));
+    {
+        def = new T(ConvertToCpp<T>(tup[1]));
 
-    bool req = boost::python::extract<bool>(tup[3]);
+        // copy default to current value
+        val = new T(ConvertToCpp<T>(tup[1]));
+    }
+
+    bool req = boost::python::extract<bool>(tup[2]);
 
     //! \todo Check to make sure object is callable
-    typename OptionHolder<T>::ValidatorFunc validator = std::bind(ValidateWrapper<T>, tup[4], std::placeholders::_1);
+    typename OptionHolder<T>::ValidatorFunc validator = std::bind(ValidateWrapper<T>, tup[3], std::placeholders::_1);
 
     //! \todo expert option
     return OptionBasePtr(new OptionHolder<T>(val, def, validator, req, false)); 
@@ -62,12 +64,12 @@ OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
     boost::python::tuple tup = boost::python::extract<boost::python::tuple>(obj);
 
     int length = boost::python::extract<int>(tup.attr("__len__")());
-    if(length != 5)
-            throw exception::OptionException("Tuple does not have 5 elements", PythonTypeToStr(ptype)); 
+    if(length != 4)
+        throw exception::OptionException("Tuple does not have 4 elements", PythonTypeToStr(ptype)); 
 
-    // type, value, default, required, validator
+    // type, default, required, validator
     PythonType ptype_type     = DetectType(tup[0]);
-    PythonType ptype_required = DetectType(tup[3]);
+    PythonType ptype_required = DetectType(tup[2]);
 
     if(ptype_type != PythonType::String)
         throw exception::OptionException("\"Type\" element of tuple is not a string", PythonTypeToStr(ptype_type)); 

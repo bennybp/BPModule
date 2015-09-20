@@ -50,7 +50,7 @@ void ModuleStore::SetOptions(const std::string & key, const OptionMap & opt)
 }
 
 
-void ModuleStore::SetOptions(const std::string & key, const boost::python::list & opt)
+void ModuleStore::SetOptions(const std::string & key, const boost::python::dict & opt)
 {
     SetOptions(key, OptionMap(opt)); // calls conversion constructor for OptionMap
 }

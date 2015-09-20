@@ -17,9 +17,9 @@ namespace bpmodule {
 namespace testing {
 
 
-int TestOptionMap(int itest, const std::string & desc, bool expected, const boost::python::list & lst)
+int TestOptionMap(int itest, const std::string & desc, bool expected, const boost::python::dict & opt)
 {
-    return TestConstruct<OptionMap>(itest, desc, expected, lst);
+    return TestConstruct<OptionMap>(itest, desc, expected, opt);
 }
 
 

@@ -108,7 +108,7 @@ class ModuleStore
          *
          * \copydetails SetOptions(const std::string &, const bpmodule::datastore::OptionMap &)
          */
-        void SetOptions(const std::string & key, const boost::python::list & opt);
+        void SetOptions(const std::string & key, const boost::python::dict & opt);
 
 
 
