@@ -18,7 +18,6 @@ def Run():
       #             supermodule   module name   key
       bp.LoadModule("testtensor", "testtensor", "TESTTENSOR")
 
-      bp.CommitOptions()
       bp.DumpModuleInfo()
       bp.SanityCheck()
 
