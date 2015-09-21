@@ -1,6 +1,12 @@
 from bpmodule import output
 from bpmodule.exception import PyGeneralException
 
+
+def CheckOptions(useropt, defopt):
+    return True; # TODO
+
+
+
 def IsValidType(opt, typeallowed):
     valid = [ int, float, str, bool ]
 

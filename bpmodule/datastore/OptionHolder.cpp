@@ -13,7 +13,7 @@ using bpmodule::python_helper::PythonType;
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::python_helper::ConvertToPy;
 using bpmodule::python_helper::DetermineType;
-
+using bpmodule::python_helper::StrToPythonType;
 
 
 namespace bpmodule {
@@ -89,7 +89,7 @@ OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
     std::string type = boost::python::extract<std::string>(tup[0]);
 
 
-    switch(python_helper::StrToPythonType(type))
+    switch(StrToPythonType(type))
     {
         case PythonType::Bool:
             return CreateOptionHolder<bool>(tup); 
@@ -108,7 +108,7 @@ OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
         case PythonType::ListString:
             return CreateOptionHolder<std::vector<std::string>>(tup); 
         default:
-            throw exception::OptionException("Cannot convert python type to option", PythonTypeToStr(ptype_type)); 
+            throw exception::OptionException("Cannot convert python type to option", type); 
     }
 }
 

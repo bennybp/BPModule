@@ -9,6 +9,7 @@
 
 #include "bpmodule/datastore/OptionMap.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/output/Output.hpp"
 
 
 //! \todo Add tensor stuff?
@@ -16,6 +17,7 @@
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::python_helper::ConvertToPy;
 using bpmodule::exception::PythonConvertException;
+using bpmodule::exception::GeneralException;
 
 
 namespace bpmodule {
@@ -36,13 +38,18 @@ OptionMap::OptionMap(const boost::python::dict & opt)
                 throw exception::MapException("Duplicate key on construction", "OptionMap", key); 
 
             // this will throw needed exceptions
-            opmap_.emplace(key, detail::OptionHolderFactory(opt[key]));
+            try {
+                opmap_.emplace(key, detail::OptionHolderFactory(opt[key]));
+            }
+            catch(GeneralException & ex)
+            {
+                ex.AppendInfo( { { "key", key } } ); 
+                throw;
+            }
         }
     }
-    catch(PythonConvertException & ex) 
+    catch(GeneralException & ex) 
     {
-        // should always be a PythonConvertException?
-        // Don't catch the MapException, let that go through
         ex.AppendInfo({ {"location", "OptionMap"} });
         throw;
     }

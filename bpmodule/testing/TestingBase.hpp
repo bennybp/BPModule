@@ -11,9 +11,12 @@
 #include <functional>
 
 #include "bpmodule/output/Output.hpp"
+#include "bpmodule/exception/GeneralException.hpp"
+
 
 using bpmodule::output::Output;
 using bpmodule::output::Error;
+using bpmodule::output::Debug;
 
 namespace bpmodule {
 namespace testing {
@@ -36,36 +39,68 @@ namespace testing {
 template<typename T, typename... Targs>
 int TestFunc(int itest, const std::string & desc, bool expected, T func, Targs... Fargs)
 {
-    std::string fmt("%|1$5| : %|2$-9|  : %3%\n");
+    std::string fmt("%|1$5| : %|2$-5|  %|3$-5|  %|4$-9|  : %5%\n");
 
     try {
        func(Fargs...); 
     }
-    catch(...)
+    catch(const exception::GeneralException & ex)
     {
         if(expected == false)
         {
-            Output(fmt, itest, "Success", desc);
+            Output(fmt, itest, "False", "False", "Success", desc);
             return 0;
         }
         else
         {
-            Error(fmt, itest, "FAILED", desc);
+            Debug(ex.ExceptionString());
+            Error(fmt, itest, "True", "False", "FAILED", desc);
             return 1;
         }
         
     }
+    catch(std::exception & ex)
+    {
+        if(expected == false)
+        {
+            Output(fmt, itest, "False", "False", "Success", desc);
+            return 0;
+        }
+        else
+        {
+            Debug(ex.what());
+            Error(fmt, itest, "True", "False", "FAILED", desc);
+            return 1;
+        }
+    }   
+    catch(...)
+    {
+        if(expected == false)
+        {
+            Output(fmt, itest, "False", "False", "Success", desc);
+            return 0;
+        }
+        else
+        {
+            Error(fmt, itest, "True", "False", "FAILED", desc);
+            return 1;
+        }
+    }   
 
+
+
+    // here if no exceptions are thrown
     if(expected == true)
     {
-        Output(fmt, itest, "Success", desc);
+        Output(fmt, itest, "True", "True", "Success", desc);
         return 0;
     }
     else
     {
-        Error(fmt, itest, "FAILED", desc);
+        Error(fmt, itest, "False", "True", "FAILED", desc);
         return 1;
     }
+
 }
 
 
@@ -86,34 +121,65 @@ int TestFunc(int itest, const std::string & desc, bool expected, T func, Targs..
 template<typename T, typename... Targs>
 int TestConstruct(int itest, const std::string & desc, bool expected, Targs... Fargs)
 {
-    std::string fmt("%|1$5| : %|2$-9|  : %3%\n");
+    std::string fmt("%|1$5| : %|2$-5|  %|3$-5|  %|4$-9|  : %5%\n");
 
     try {
        T obj(Fargs...); 
     }
-    catch(...)
+    catch(const exception::GeneralException & ex)
     {
         if(expected == false)
         {
-            Output(fmt, itest, "Success", desc);
+            Output(fmt, itest, "False", "False", "Success", desc);
             return 0;
         }
         else
         {
-            Error(fmt, itest, "FAILED", desc);
+            Debug(ex.ExceptionString());
+            Error(fmt, itest, "True", "False", "FAILED", desc);
             return 1;
         }
         
     }
+    catch(std::exception & ex)
+    {
+        if(expected == false)
+        {
+            Output(fmt, itest, "False", "False", "Success", desc);
+            return 0;
+        }
+        else
+        {
+            Debug(ex.what());
+            Error(fmt, itest, "True", "False", "FAILED", desc);
+            return 1;
+        }
+    }   
+    catch(...)
+    {
+        if(expected == false)
+        {
+            Output(fmt, itest, "False", "False", "Success", desc);
+            return 0;
+        }
+        else
+        {
+            Error(fmt, itest, "True", "False", "FAILED", desc);
+            return 1;
+        }
+    }   
 
+
+
+    // here if no exceptions are thrown
     if(expected == true)
     {
-        Output(fmt, itest, "Success", desc);
+        Output(fmt, itest, "True", "True", "Success", desc);
         return 0;
     }
     else
     {
-        Error(fmt, itest, "FAILED", desc);
+        Error(fmt, itest, "False", "True", "FAILED", desc);
         return 1;
     }
 }
