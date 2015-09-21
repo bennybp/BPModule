@@ -20,7 +20,6 @@ def Run():
       bp.LoadModule("testpymodule1", "testpymodule1", "TESTPYMOD1")
 
       bp.SetOptions("TESTMOD1", { "double_opt_def": 1.111, "int_opt_def" : 55 })
-      bp.CommitOptions()
       bp.DumpModuleInfo()
       bp.SanityCheck()
 

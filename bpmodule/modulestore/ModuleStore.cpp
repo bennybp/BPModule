@@ -43,16 +43,9 @@ void ModuleStore::InsertModule(const std::string & key, ModuleGeneratorFunc func
 }
 
 
-
-void ModuleStore::SetOptions(const std::string & key, const OptionMap & opt)
-{
-    GetOrThrow_(key).mi.options = opt;
-}
-
-
 void ModuleStore::SetOptions(const std::string & key, const boost::python::dict & opt)
 {
-    SetOptions(key, OptionMap(opt)); // calls conversion constructor for OptionMap
+    GetOrThrow_(key).mi.options.ChangePy(key, opt);
 }
 
 

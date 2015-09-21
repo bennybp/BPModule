@@ -94,24 +94,14 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
         authors     = DictConvertHelperVec<std::string>(dictionary, "authors");
         refs        = DictConvertHelperVec<std::string>(dictionary, "refs");
 
-        // at this point, there shouldn't be passed options
-        // but check anyway?
-        // Options are set after loading in ModuleStore
-        /*
-        if(dictionary.has_key("passedoptions"))
-        {
-            try {
-                // DictConvertHelper will make sure the key exists and
-                // that it is a list
-                options = OptionMap(DictConvertHelper<boost::python::list>(dictionary, "passedoptions"));
-            }
-            catch(bpmodule::exception::PythonConvertException & ex)
-            {
-                ex.AppendInfo({ {"key", "passedoptions"} });
-                throw;
-            }
+        try {
+            options = OptionMap(DictConvertHelper<boost::python::dict>(dictionary, "options"));
         }
-        */
+        catch(bpmodule::exception::PythonConvertException & ex)
+        {
+            ex.AppendInfo({ {"key", "options"} });
+            throw;
+        }
 
         // soname is optional
         if(dictionary.has_key("soname"))

@@ -27,9 +27,15 @@ bool ValidateWrapper(const boost::python::object & val, T arg)
 }
 
 
+
 template<typename T>
-OptionBasePtr CreateOptionHolder(const boost::python::tuple & tup)
+OptionBasePtr CreateOptionHolder(const boost::python::object & obj)
 {
+    PythonType ptype = DetectType(obj);
+    if(ptype != PythonType::Tuple)
+        throw exception::OptionException("Object for options is not a tuple", PythonTypeToStr(ptype)); 
+
+    boost::python::tuple tup = boost::python::extract<boost::python::tuple>(obj);
     PythonType ptype_default = DetectType(tup[1]);
 
     T * val = nullptr;
@@ -53,21 +59,14 @@ OptionBasePtr CreateOptionHolder(const boost::python::tuple & tup)
 }
 
 
-OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
+OptionBasePtr OptionHolderFactory(const boost::python::tuple & tup)
 {
-    // make sure its a tuple, etc
-    PythonType ptype = DetectType(obj);
-
-    if(ptype != PythonType::Tuple)
-        throw exception::OptionException("Cannot convert python type to option tuple", PythonTypeToStr(ptype)); 
-
-    boost::python::tuple tup = boost::python::extract<boost::python::tuple>(obj);
-
     int length = boost::python::extract<int>(tup.attr("__len__")());
-    if(length != 4)
-        throw exception::OptionException("Tuple does not have 4 elements", PythonTypeToStr(ptype)); 
+    if(length != 5)
+        throw exception::OptionException("Tuple does not have 5 elements", "tuple"); 
 
-    // type, default, required, validator
+    // type, default, required, validator, help
+    // (help is not parsed at the moment)
     PythonType ptype_type     = DetectType(tup[0]);
     PythonType ptype_required = DetectType(tup[2]);
 
@@ -81,7 +80,7 @@ OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
     std::string type = boost::python::extract<std::string>(tup[0]);
 
 
-    switch(ptype)
+    switch(ptype_type)
     {
         case PythonType::Bool:
             return CreateOptionHolder<bool>(tup); 
@@ -100,7 +99,7 @@ OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
         case PythonType::ListString:
             return CreateOptionHolder<std::vector<std::string>>(tup); 
         default:
-            throw exception::OptionException("Cannot convert python type to option", PythonTypeToStr(ptype)); 
+            throw exception::OptionException("Cannot convert python type to option", PythonTypeToStr(ptype_type)); 
     }
 }
 

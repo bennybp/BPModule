@@ -13,6 +13,7 @@
 
 #include "bpmodule/datastore/OptionBase.hpp"
 #include "bpmodule/exception/OptionException.hpp"
+#include "bpmodule/python_helper/Convert.hpp"
 
 //! \todo Split python stuff from header?
 
@@ -140,6 +141,18 @@ class OptionHolder : public OptionBase
             value_ = std::unique_ptr<T>(new T(value));
         }
 
+        void ChangeValue(T * value)
+        {
+            if(value != nullptr)
+                Validate(*value);
+            value_ = value;
+        }
+
+        virtual void ChangeValue(const boost::python::object & obj)
+        {
+            ChangeValue(python_helper::ConvertToCpp<T>(obj));
+        }
+
 
         // may throw
         // default should already have been validated
@@ -155,7 +168,10 @@ class OptionHolder : public OptionBase
         }
 
 
-        virtual boost::python::object GetPy(void) const;
+        virtual boost::python::object GetPyValue(void) const
+        {
+            return python_helper::ConvertToPy(GetValue());
+        }
 
     private:
         std::unique_ptr<T> value_;
@@ -163,7 +179,6 @@ class OptionHolder : public OptionBase
         ValidatorFunc validator_;
         bool required_;
         bool expert_;
-
 
         void Validate_(const T & value) const
         {

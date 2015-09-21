@@ -99,6 +99,11 @@ class ModuleBase
         }
 
 
+
+        boost::python::object GetPyOption(const std::string & key) const;
+
+
+
         /*! \brief Return true if the module has an option with the specified key
          *
          * \copydetails bpmodule::datastore::OptionMap::Has

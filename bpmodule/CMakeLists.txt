@@ -28,6 +28,7 @@ set(BPMODULE_EXCEPTION_HEADERS
             exception/ModuleCreateException.hpp
             exception/MapException.hpp
             exception/PythonConvertException.hpp
+            exception/OptionException.hpp
    )
 
 set(BPMODULE_PARALLEL_HEADERS
@@ -44,6 +45,8 @@ set(BPMODULE_DATASTORE_HEADERS
             datastore/PropHolder.hpp
             datastore/PropPlaceholder.hpp
             datastore/OptionMap.hpp
+            datastore/OptionBase.hpp
+            datastore/OptionHolder.hpp
    )
 
 set(BPMODULE_MODULEBASE_HEADERS

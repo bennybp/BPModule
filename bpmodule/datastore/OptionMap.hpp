@@ -59,6 +59,26 @@ class OptionMap
         OptionMap(const boost::python::dict & opt);
 
 
+        /*! \brief Set values for options
+         *
+         * Dictionary is simple string key -> value mapping.
+         *
+         * \todo stuff
+         * \throw Stuff  
+         */
+        void Merge(const boost::python::dict & opt);
+
+
+        bool Valid(void) const
+        {
+            for(const auto & it : opmap_)
+                if(!it.second->Valid())
+                    return false;
+            return true;
+        }
+
+
+
         // throw mapexception or optionexception
         template<typename T>
         T Get(const std::string & key) const
@@ -66,6 +86,11 @@ class OptionMap
             return GetOrThrow_Cast_<T>(key)->GetValue();
         }
 
+
+        boost::python::object GetPy(const std::string & key) const
+        {
+            return GetOrThrow_(key)->GetPyValue();
+        }
 
         /*! \brief Determine if this object contains a value for a key
          *
@@ -141,6 +166,9 @@ class OptionMap
         {
             GetOrThrow_Cast_<T>(key)->ChangeValue(value);
         }
+
+
+        void ChangePy(const std::string & key, const boost::python::object & obj);
 
 
         void ResetToDefault(const std::string & key)

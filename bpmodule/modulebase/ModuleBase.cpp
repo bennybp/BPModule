@@ -50,6 +50,22 @@ void ModuleBase::ThrowException(const std::string & exwhat,
 
 
 
+boost::python::object ModuleBase::GetPyOption(const std::string & key) const
+{
+    try {
+        return options_.GetPy(key);
+    }
+    catch(exception::GeneralException & ex)
+    {
+        // rethrow with module info
+        ThrowException(ex.what(), ex.GetInfo());
+    }
+    return boost::python::object(); // to make compilers happy
+    
+}
+
+
+
 unsigned long ModuleBase::ID(void) const noexcept
 {
     return id_;

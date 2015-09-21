@@ -197,18 +197,22 @@ def SetOptions(key, useropt):
     minfo = modmap[key]
     defopt = minfo["options"]
 
-    try:
-      newopt = MergeAndCheckOptions(defopt, useropt)
-    except exception.PyGeneralException as e:
-      e.Append([ 
-                 ("ModuleName", minfo["name"]),
-                 ("ModuleKey", minfo["key"]),
-                 ("ModulePath", minfo["path"])
-              ])
-      raise e
+##############################
+# FIXME
+# Also, merge passed options on multiple setoptions calls
+#
+#    try:
+#      newopt = MergeAndCheckOptions(defopt, useropt)
+#    except exception.PyGeneralException as e:
+#      e.Append([ 
+#                 ("ModuleName", minfo["name"]),
+#                 ("ModuleKey", minfo["key"]),
+#                 ("ModulePath", minfo["path"])
+#              ])
+#      raise e
     
     # Add to the moduleinfo
-    minfo["passedoptions"] = newopt
+    minfo["passedoptions"] = useropt
 
     mst.SetOptions(key, minfo["passedoptions"]);
 
@@ -217,35 +221,35 @@ def SetOptions(key, useropt):
 
 # Go through all modules and if options aren't set,
 # use defaults (if possible)
-def CommitOptions():
-    err = False
-
-    for k,m in modmap.items():
-        # if passedoptions are there already, then they have been set
-        if not "passedoptions" in m:
-            # the passed options are the defaults.
-            # Check if any are required. If so, bail out
-            for ok,ov in m["options"].items():
-                if ov[1] == True:
-                    Error("Option \"%1%\" for key \"%2\" is not specified, but is required", ok, k)
-                    err = True
-
-            if err:
-                raise exception.PyGeneralException("Error setting default options", 
-                                      [ 
-                                         ("ModuleName", m["name"]),
-                                         ("ModuleKey", m["key"]),
-                                         ("ModulePath", m["path"])
-                                      ])
-
-            # create the passed options
-            passedopt = {}
-            for ok,ov in m["options"].items():
-                if HasDefault(ov[0]):
-                  passedopt[ok] = ov[0]
-
-            SetOptions(k, passedopt)
-           
+#def CommitOptions():
+#    err = False
+#
+#    for k,m in modmap.items():
+#        # if passedoptions are there already, then they have been set
+#        if not "passedoptions" in m:
+#            # the passed options are the defaults.
+#            # Check if any are required. If so, bail out
+#            for ok,ov in m["options"].items():
+#                if ov[1] == True:
+#                    Error("Option \"%1%\" for key \"%2\" is not specified, but is required", ok, k)
+#                    err = True
+#
+#            if err:
+#                raise exception.PyGeneralException("Error setting default options", 
+#                                      [ 
+#                                         ("ModuleName", m["name"]),
+#                                         ("ModuleKey", m["key"]),
+#                                         ("ModulePath", m["path"])
+#                                      ])
+#
+#            # create the passed options
+#            passedopt = {}
+#            for ok,ov in m["options"].items():
+#                if HasDefault(ov[0]):
+#                  passedopt[ok] = ov[0]
+#
+#            SetOptions(k, passedopt)
+#           
 
 
 

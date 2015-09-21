@@ -130,6 +130,10 @@ PythonType DetectType(const boost::python::object & obj)
             return PythonType::String;
 
 
+        if(cl == "NoneType")
+            return PythonType::None;
+
+
         if(cl == "list")
         {
             boost::python::list lst = boost::python::extract<boost::python::list>(obj);
@@ -160,6 +164,9 @@ PythonType DetectType(const boost::python::object & obj)
 
             if(cl2 == "str")
                 return PythonType::ListString;
+
+            if(cl2 == "NoneType")
+                return PythonType::ListEmpty;
 
             return PythonType::ListUnknown;
         }

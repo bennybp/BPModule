@@ -54,6 +54,11 @@ class OptionBase
         }
 
 
+        bool Valid(void) const
+        {
+            return (Has() || !IsRequired());
+        }
+
 
         /*! \brief Determines if the contained type matches a given type
          *
@@ -78,8 +83,9 @@ class OptionBase
          * \throw bpmodule::exception::OptionException if the
          *        value does not exist
          */ 
-        //virtual boost::python::object GetValuePy(void) const = 0;
+        virtual boost::python::object GetPyValue(void) const = 0;
 
+        virtual void ChangeValue(const boost::python::object & obj) = 0;
 
     
 

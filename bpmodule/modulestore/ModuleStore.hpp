@@ -98,15 +98,23 @@ class ModuleStore
          * \param [in] key A module key
          * \param [in] opt Options to set
          */
-        void SetOptions(const std::string & key, const datastore::OptionMap & opt);
+        //void SetOptions(const std::string & key, const datastore::OptionMap & opt);
 
 
 
         /*! \brief Set the options for a module (python version)
          *
-         * \throw bpmodule::exception::PythonConvertException if there is a problem with the conversion
+         * The dictionary has strings for keys and arbitrary data types for
+         * the values
          *
-         * \copydetails SetOptions(const std::string &, const bpmodule::datastore::OptionMap &)
+         * \throw bpmodule::exception::MapException if the key doesn't
+         *        exist in the database
+         *
+         * \exstrong 
+         * 
+         *
+         * \param [in] key A module key
+         * \param [in] opt Options to set
          */
         void SetOptions(const std::string & key, const boost::python::dict & opt);
 
