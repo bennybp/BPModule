@@ -17,7 +17,7 @@ namespace python_helper {
 
 
 
-PythonType StrToPythonType(const std::string & str)
+PythonType StrToPythonType(const std::string & str) noexcept
 {
     if(str == "bool")
         return PythonType::Bool;
@@ -58,7 +58,7 @@ PythonType StrToPythonType(const std::string & str)
 
 
 
-const char * PythonTypeToStr(PythonType pytype)
+const char * PythonTypeToStr(PythonType pytype) noexcept
 {
     switch(pytype)
     {
@@ -112,7 +112,7 @@ const char * PythonTypeToStr(PythonType pytype)
 
 
 
-PythonType DetectType(const boost::python::object & obj)
+PythonType DetermineType(const boost::python::object & obj)
 {
     try {
         std::string cl = boost::python::extract<std::string>(obj.attr("__class__").attr("__name__"));

@@ -49,31 +49,71 @@ OptionMap::OptionMap(const boost::python::dict & opt)
 }
 
 
-void OptionMap::ChangePy(const std::string & key, const boost::python::object & obj)
+bool OptionMap::ValidatePy(const std::string & key, const boost::python::object & obj) const
 {
-    GetOrThrow_(key)->ChangeValue(obj);
+    return GetOrThrow_(key)->ValidatePy(obj);
 }
 
 
-void OptionMap::Merge(const boost::python::dict & opt)
+bool OptionMap::ValidatePy(const boost::python::dict & opt) const
+{
+    boost::python::list keys = opt.keys();
+    int keylen = boost::python::extract<int>(keys.attr("__len__")());
+
+    try {
+        for(int i = 0; i < keylen; i++)
+        {
+            std::string key = ConvertToCpp<std::string>(keys[i]);
+
+            if(!GetOrThrow_(key)->ValidatePy(opt[key]))
+                return false;
+        }
+    }
+    catch(bpmodule::exception::GeneralException & ex)
+    {
+        ex.AppendInfo({ { "location", "OptionMap::ValidatePy" } });
+    }
+
+    return true;
+}
+
+
+
+void OptionMap::ChangePy(const std::string & key, const boost::python::object & obj)
+{
+    detail::OptionBasePtr & ptr = GetOrThrow_(key);
+
+    try{
+        ptr->ChangeValuePy(obj);
+    }
+    catch(bpmodule::exception::GeneralException & ex)
+    {
+        ex.AppendInfo({ { "key", key} });
+    }
+}
+
+
+void OptionMap::ChangePy(const boost::python::dict & opt)
 {
     boost::python::list keys = opt.keys();
     int keylen = boost::python::extract<int>(keys.attr("__len__")());
 
     // Check values first
     // (strong exception)
-    std::map<std::string, detail::OptionBasePtr> tmpmap;
- 
     try {
         for(int i = 0; i < keylen; i++)
         {
             std::string key = ConvertToCpp<std::string>(keys[i]);
 
             if(!opmap_.count(key))
-                throw exception::MapException("Key not found form merging", "OptionMap", key); 
+                throw exception::MapException("Key not found for merging", "OptionMap", key); 
 
-            if(!GetOrThrow_(key)->Validate(opt[key]))
-                throw exception::OptionException("Option is invalid", "(?)");
+            if(!GetOrThrow_(key)->ValidatePy(opt[key]))
+            {
+                exception::OptionException ex("Option is invalid", "");
+                ex.AppendInfo( { { "key", key } } );
+                throw ex;
+            }
         }
     }
     catch(PythonConvertException & ex) // catch these, let others pass 

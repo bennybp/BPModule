@@ -27,8 +27,8 @@ class OptionException : public GeneralException
          * \param [in] desc Additional information
          */
         OptionException(std::string what,
-                     std::string type,
-                     std::string desc = "(no details)")
+                        std::string type,
+                        std::string desc = "(no details)")
             : GeneralException(what,
                                {
                                   {"type", type},
@@ -37,7 +37,7 @@ class OptionException : public GeneralException
                 { }
         
         
-        OptionException()                                     = delete;     
+        OptionException()                                        = delete;     
         OptionException(const OptionException & rhs)             = default;     
         OptionException(OptionException && rhs)                  = default;     
         OptionException & operator=(const OptionException & rhs) = default;     

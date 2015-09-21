@@ -45,7 +45,7 @@ void ModuleStore::InsertModule(const std::string & key, ModuleGeneratorFunc func
 
 void ModuleStore::SetOptions(const std::string & key, const boost::python::dict & opt)
 {
-    GetOrThrow_(key).mi.options.Merge(opt);
+    GetOrThrow_(key).mi.options.ChangePy(opt);
 }
 
 
@@ -53,7 +53,6 @@ size_t ModuleStore::Size(void) const noexcept
 {
     return store_.size();
 }
-
 
 
 std::vector<std::string> ModuleStore::GetKeys(void) const

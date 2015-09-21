@@ -79,6 +79,7 @@ class ModuleStore
         ModuleInfo KeyInfo(const std::string & key) const;
 
 
+
         /*! \brief Returns true if a module with the given key exists in the database
          *
          * \param [in] key A module key
@@ -88,27 +89,20 @@ class ModuleStore
 
 
 
-        /*! \brief Set the options for a module
-         *
-         * \throw bpmodule::exception::MapException if the key doesn't
-         *        exist in the database
-         *
-         * \exstrong 
-         * 
-         * \param [in] key A module key
-         * \param [in] opt Options to set
-         */
-        //void SetOptions(const std::string & key, const datastore::OptionMap & opt);
-
-
-
         /*! \brief Set the options for a module (python version)
          *
          * The dictionary has strings for keys and arbitrary data types for
          * the values
          *
          * \throw bpmodule::exception::MapException if the key doesn't
-         *        exist in the database
+         *        exist in the database or an option key in the dictionary
+         *        doesn't exist for that module.
+         *
+         * \throw bpmodule::exception::PythonConvertException if there
+         *        is a problem converting the python objects
+         * 
+         * \throw bpmodule::exception::OptionException if there is
+         *        a problem with the option (invalid, etc)
          *
          * \exstrong 
          * 

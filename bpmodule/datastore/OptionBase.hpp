@@ -56,6 +56,8 @@ class OptionBase
 
         /*! \brief Check if this option has a value
          * 
+         * \exnothrow
+         *
          * \return True if this option has a value or a default
          */
         virtual bool HasValue(void) const noexcept = 0;
@@ -63,6 +65,8 @@ class OptionBase
 
         /*! \brief Check if this option has a default
          * 
+         * \exnothrow
+         *
          * \return True if this option has a default
          */
         virtual bool HasDefault(void) const noexcept = 0;
@@ -71,15 +75,18 @@ class OptionBase
 
         /*! \brief Check if this option is set to the default
          */ 
-        virtual bool IsDefault(void) const noexcept = 0;
+        virtual bool IsDefault(void) const = 0;
 
 
 
         /*! \brief Set the option to its default
+         * 
          *  \throw bpmodule::exception::OptionException
          *         if the option doesn't have a default
          */ 
         virtual void ResetToDefault(void) = 0;
+
+
 
 
         /////////////////////////////////////////
@@ -93,13 +100,23 @@ class OptionBase
          * \throw bpmodule::exception::OptionException if the
          *        value does not exist
          */ 
-        virtual boost::python::object GetPyValue(void) const = 0;
+        virtual boost::python::object GetValuePy(void) const = 0;
 
 
 
         /*! \brief Change the value with a boost python object
+         *
+         * \throw bpmodule::exception::PythonConvertException if the
+         *        data can not be converted 
+         *
+         * \throw bpmodule::exception::OptionException                 
+         *        if the new value is invalid (and expert mode is off).
+         *
+         *  \exstrong
          */  
-        virtual void ChangeValue(const boost::python::object & obj) = 0;
+        virtual void ChangeValuePy(const boost::python::object & obj) = 0;
+
+
 
 
         /*! \brief Validate a value, but don't set it
@@ -107,13 +124,16 @@ class OptionBase
          * \throw exception::PythonConvertException if the
          *        python object could not be converted
          */
-        virtual bool Validate(const boost::python::object & obj) const = 0;
+        virtual bool ValidatePy(const boost::python::object & obj) const = 0;
+
 
 
         ///////////////////////////////////
         // Base functions
         ///////////////////////////////////
         /*! \brief Check if this options is required
+         *
+         * \exnothrow 
          */ 
         bool IsRequired(void) const noexcept
         {
@@ -124,6 +144,7 @@ class OptionBase
 
         /*! \brief See if expert mode is enabled for this object
          *
+         * \exnothrow 
          */
         bool IsExpert(void) const noexcept
         {
@@ -133,11 +154,13 @@ class OptionBase
 
 
         /*! \brief Check to see if this object is valid
+         *
+         * \exnothrow 
          * 
          * \return True if there is a value or a default, or if this
          *         option is not required
          */
-        bool Valid(void) const
+        bool Valid(void) const noexcept
         {
             return HasValue() || HasDefault() || !IsRequired();
         }

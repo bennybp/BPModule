@@ -21,6 +21,7 @@ namespace bpmodule {
 namespace python_helper {
 
 
+//! Types defined in python that are available in BPModule
 enum class PythonType
 {
     Bool,
@@ -44,13 +45,21 @@ enum class PythonType
 
 
 // In cpp file
-PythonType StrToPythonType(const std::string & str);
 
 
-const char * PythonTypeToStr(PythonType pytype);
+/*! \brief Convert a string to a PythonType
+ */ 
+PythonType StrToPythonType(const std::string & str) noexcept;
 
 
-PythonType DetectType(const boost::python::object & obj);
+/*! \brief Convert a PythonType to a string
+ */ 
+const char * PythonTypeToStr(PythonType pytype) noexcept;
+
+
+/*! \brief Determine the type of a boost python object
+ */ 
+PythonType DetermineType(const boost::python::object & obj);
 
 
 

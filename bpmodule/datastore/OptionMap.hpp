@@ -65,17 +65,14 @@ class OptionMap
 
 
 
-        bool Valid(void) const
-        {
-            for(const auto & it : opmap_)
-                if(!it.second->Valid())
-                    return false;
-            return true;
-        }
-
-
-
-        // throw mapexception or optionexception
+        /*! \brief Obtain the value for an option
+         * 
+         * \throw bpmodule::exception::OptionException if the
+         *        option does not have a value
+         *
+         * \throw bpmodule::exception::MapException if the
+         *        key does not exist
+         */
         template<typename T>
         T Get(const std::string & key) const
         {
@@ -146,54 +143,149 @@ class OptionMap
         }
 
 
+
+        /*! \brief Check if the option is currently set to the default
+         */ 
         bool IsDefault(const std::string & key) const
         {
             return GetOrThrow_(key)->IsDefault();
         }
 
 
-        //! \todo check if strong exception
+        /*! \brief Change the stored value for a key
+         *
+         * The data is copied.
+         *
+         * \throw bpmodule::exception::MapException
+         *        if the key doesn't exist 
+         *
+         * \throw bpmodule::exception::OptionException if
+         *        the value is invalid (and not expert)
+         *
+         * \exstrong 
+         */
         template<typename T>
         void Change(const std::string & key, const T & value)
         {
             GetOrThrow_Cast_<T>(key)->ChangeValue(value);
         }
 
+
+        /*! \brief Sets an option to its default
+         *
+         * \throw bpmodule::exception::OptionException if
+         *        the option does not have a default
+         *
+         * \exstrong 
+         */ 
         void ResetToDefault(const std::string & key)
         {
             GetOrThrow_(key)->ResetToDefault();
         }
 
 
+        /*! \brief Check all options to see if they are valid
+         * 
+         * \exnothrow
+         */
+        bool Valid(void) const noexcept
+        {
+            for(const auto & it : opmap_)
+                if(!it.second->Valid())
+                    return false;
+            return true;
+        }
+
+
+
+
         /////////////////////////////
         // Python-related functions
         /////////////////////////////
         /*! \brief Construct options from a python dictionary
+         * 
+         * \throw bpmodule::exception::MapException if there is a duplicate key
+         *
+         * \throw bpmodule::exception::OptionException if there is
+         *        a problem with the option (validation, etc)
+         *
+         * \throw bpmodule::exception::PythonConvertException if there
+         *        is a problem converting python types.
          */ 
         OptionMap(const boost::python::dict & opt);
 
 
-        /*! \brief Set values for options
+        /*! \brief Change options via python dictionary
          *
          * Dictionary is simple string key -> value mapping.
          *
-         * \todo stuff
-         * \throw Stuff  
+         * \throw bpmodule::exception::MapException if a key doesn't exist
+         *
+         * \throw bpmodule::exception::OptionException if there is
+         *        a problem with the option (validation, etc)
+         *
+         * \throw bpmodule::exception::PythonConvertException if there
+         *        is a problem converting python types.
+         *
+         * \exbasic
+         *
+         * \note Only offers basic guarantee, but in practice should be strong.
          */
-        void Merge(const boost::python::dict & opt);
+        void ChangePy(const boost::python::dict & opt);
 
-
-        /*! \brief Return the option's value as a python object
-         */  
-        boost::python::object GetPy(const std::string & key) const
-        {
-            return GetOrThrow_(key)->GetPyValue();
-        }
 
 
         /*! \brief Change an option by passing a boost::python object
+         *
+         * \throw bpmodule::exception::MapException if a key doesn't exist
+         *
+         * \throw bpmodule::exception::OptionException if there is
+         *        a problem with the option (validation, etc)
+         *
+         * \throw bpmodule::exception::PythonConvertException if there
+         *        is a problem converting python types.
+         * 
+         * \exstrong
          */ 
         void ChangePy(const std::string & key, const boost::python::object & obj);
+
+
+
+        /*! \brief Return the option's value as a python object
+         *
+         * \throw bpmodule::exception::MapException if a key doesn't exist
+         *
+         * \throw bpmodule::exception::PythonConvertException if there
+         *        is a problem converting python types.
+         *
+         * \throw bpmodule::exception::OptionException if the value
+         *        does not exist for that option
+         */  
+        boost::python::object GetPy(const std::string & key) const
+        {
+            return GetOrThrow_(key)->GetValuePy();
+        }
+
+
+
+        /*! \brief Validate a python object for an option
+         * 
+         * \throw bpmodule::exception::MapException if a key doesn't exist
+         *
+         * \throw bpmodule::exception::PythonConvertException if there
+         *        is a problem converting python types.
+         */  
+        bool ValidatePy(const std::string & key, const boost::python::object & obj) const;
+
+
+        /*! \brief Validate a python dictionary for an options
+         * 
+         * \throw bpmodule::exception::MapException if a key doesn't exist
+         *
+         * \throw bpmodule::exception::PythonConvertException if there
+         *        is a problem converting python types.
+         */  
+        bool ValidatePy(const boost::python::dict & opt) const;
 
 
 
@@ -201,6 +293,10 @@ class OptionMap
         std::map<std::string, detail::OptionBasePtr> opmap_;
 
 
+        /*! \brief Get an OptionBasePtr or throw if the key doesn't exist
+         * 
+         * \throw bpmodule::exception::MapException if a key doesn't exist
+         */
         detail::OptionBasePtr & GetOrThrow_(const std::string & key)
         {
             if(opmap_.count(key))
@@ -223,6 +319,11 @@ class OptionMap
 
 
 
+        /*! \brief Get an OptionBasePtr and cast to an appropriate OptionHolder
+         * 
+         * \throw bpmodule::exception::MapException if a key doesn't exist or cannot
+         *        be cast to the desired type
+         */
         template<typename T>
         const detail::OptionHolder<T> * GetOrThrow_Cast_(const std::string & key) const
         {

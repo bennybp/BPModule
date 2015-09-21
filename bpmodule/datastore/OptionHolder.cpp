@@ -12,7 +12,7 @@
 using bpmodule::python_helper::PythonType;
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::python_helper::ConvertToPy;
-using bpmodule::python_helper::DetectType;
+using bpmodule::python_helper::DetermineType;
 
 
 
@@ -37,7 +37,7 @@ bool EmptyValidator(T arg)
 template<typename T>
 OptionBasePtr CreateOptionHolder(const boost::python::tuple & tup)
 {
-    PythonType ptype_default = DetectType(tup[1]);
+    PythonType ptype_default = DetermineType(tup[1]);
 
     // value is empty at this point
     T * val = nullptr;
@@ -53,7 +53,7 @@ OptionBasePtr CreateOptionHolder(const boost::python::tuple & tup)
     // Check if validator is given. If not, use EmptyValidator
     typename OptionHolder<T>::ValidatorFunc validator = EmptyValidator<T>;
 
-    if(DetectType(tup[3]) != PythonType::None)
+    if(DetermineType(tup[3]) != PythonType::None)
         validator = std::bind(ValidateWrapper<T>, tup[3], std::placeholders::_1);
 
     //! \todo expert option
@@ -64,7 +64,7 @@ OptionBasePtr CreateOptionHolder(const boost::python::tuple & tup)
 
 OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
 {
-    PythonType ptype = DetectType(obj);
+    PythonType ptype = DetermineType(obj);
     if(ptype != PythonType::Tuple)
         throw exception::OptionException("Object for options is not a tuple", PythonTypeToStr(ptype)); 
 
@@ -76,8 +76,8 @@ OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
 
     // type, default, required, validator, help
     // (help is not parsed at the moment)
-    PythonType ptype_type     = DetectType(tup[0]);
-    PythonType ptype_required = DetectType(tup[2]);
+    PythonType ptype_type     = DetermineType(tup[0]);
+    PythonType ptype_required = DetermineType(tup[2]);
 
     if(ptype_type != PythonType::String)
         throw exception::OptionException("\"Type\" element of tuple is not a string", PythonTypeToStr(ptype_type)); 

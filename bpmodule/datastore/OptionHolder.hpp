@@ -90,6 +90,11 @@ class OptionHolder : public OptionBase
         }
 
 
+
+        /*! \brief Copy constructor
+         * 
+         * Data will be deep copied
+         */
         OptionHolder(const OptionHolder & oph)
             : OptionBase(oph),
               validator_(oph.validator_)
@@ -118,6 +123,8 @@ class OptionHolder : public OptionBase
          *
          * \throw bpmodule::exception::OptionException
          *        if the new value is invalid (and expert mode is off).
+         *
+         * \exstrong
          */
         void ChangeValue(T * value)
         {
@@ -136,6 +143,9 @@ class OptionHolder : public OptionBase
          *
          * \throw bpmodule::exception::OptionException
          *        if the new value is invalid (and expert mode is off).
+         *
+         * \exstrong
+         *
          */
         void ChangeValue(const T & value)
         {
@@ -152,6 +162,7 @@ class OptionHolder : public OptionBase
          *
          * \throw bpmodule::exception::OptionException
          *        if the option does not have a value or a default
+         *
          */
         const T & GetValue(void) const
         {
@@ -178,6 +189,8 @@ class OptionHolder : public OptionBase
             else
                 throw exception::OptionException("Option does not have a default", Type());
         }
+
+
 
 
         /*! \brief Validate a value, but don't set it
@@ -219,7 +232,7 @@ class OptionHolder : public OptionBase
 
 
 
-        virtual bool IsDefault(void) const noexcept
+        virtual bool IsDefault(void) const
         {
             if(!value_ && default_)
                 return true;
@@ -240,19 +253,17 @@ class OptionHolder : public OptionBase
         /////////////////////////////////////////
         // Python-related functions
         /////////////////////////////////////////
-        virtual void ChangeValue(const boost::python::object & obj)
-        {
-            ChangeValue(python_helper::ConvertToCpp<T>(obj));
-        }
-
-
-        virtual boost::python::object GetPyValue(void) const
+        virtual boost::python::object GetValuePy(void) const
         {
             return python_helper::ConvertToPy(GetValue());
         }
 
+        virtual void ChangeValuePy(const boost::python::object & obj)
+        {
+            ChangeValue(python_helper::ConvertToCpp<T>(obj));
+        }
 
-        virtual bool Validate(const boost::python::object & obj) const
+        virtual bool ValidatePy(const boost::python::object & obj) const
         {
             // throwing is ok
             const T tmp(python_helper::ConvertToCpp<T>(obj));
@@ -265,11 +276,20 @@ class OptionHolder : public OptionBase
         std::unique_ptr<T> default_;
         ValidatorFunc validator_;
 
+
+        /*! \brief Validate a potential value
+         *
+         * If IsExpert(), a warning is printed. Else, an exception is thrown.
+         *
+         * \throw bpmodule::exception::OptionException if the value is invalid
+         *        and IsExpert() == false
+         *
+         * \todo print warning if expert_ == true
+         */
         void ValidateOrThrow_(const T & value) const
         {
             if(!validator_(value))
             {
-                //! \todo print warning if expert_ == true
                 if(!OptionBase::IsExpert())
                     throw exception::OptionException("Value is not valid for this option", Type());
             }
@@ -278,7 +298,17 @@ class OptionHolder : public OptionBase
 
 
 
-
+/*! \brief Create an OptionHolder from a boost python object
+ *
+ * Returns as a pointer to the OptionBase class
+ *
+ * \throw bpmodule::exception::OptionException if there is a problem with
+ *        the option (validation or invalid python types)
+ *
+ * \throw bpmodule::exception::PythonConvertException if there is a problem
+ *        converting the data
+ *
+ */
 OptionBasePtr OptionHolderFactory(const boost::python::object & obj);
 
 
