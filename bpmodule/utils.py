@@ -22,58 +22,28 @@ def PrintModuleInfo(minfo):
   for ref in minfo["refs"]:
       output.Output("                  %1%\n", ref)
 
-  if "passedoptions" in minfo:
-      nopt = len(minfo["passedoptions"])
-      output.Output("         Options: %1%\n", nopt)
+  nopt = len(minfo["options"])
+  output.Output("         Options: %1%\n", nopt)
 
-      if nopt > 0:
-          output.Output("\n")
-          l = "-"*20
-          output.Output("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", "Option", "Default", "Value", "Description")
-          output.Output("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", l, l, l, l)
+  if nopt > 0:
+      output.Output("\n")
+      l = "-"*20
+      l2 = "-"*10
+      output.Output("      %|1$-20|      %|2$-20|      %|3$-20|     %|4$-10|       %5%\n", "Option", "Type", "Default", "Required", "Description")
+      output.Output("      %|1$-20|      %|2$-20|      %|3$-20|     %|4$-10|       %5%\n", l, l, l, l2, l)
 
-          defopt = minfo["options"]
-          for opt in minfo["passedoptions"]:
-              d = defopt[opt[0]]
-              help = d[3]
-
-              if type(d[0]) == type:
-                dv = "({})".format(d[0].__name__)
-              elif type(d[0]) == list and type(d[0][0]) == type:
-                dv = "[ ({}) ]".format(d[0][0].__name__)
-              else:
-                dv = d[0]
-
-              # if not the same, highlight change
-              if dv != opt[1]:
-                  OutFunc = output.Changed
-              else:
-                  OutFunc = output.Output
-      
-              if type(opt[1]) == list:  # note - zero elements not allowed
-                if type(dv) == list:
-                  nel = max(len(opt[1]), len(dv))
-                else:
-                  nel = len(opt[1])
-
-
+      for key,value in minfo["options"].items():
+            val = value[1] 
+            if type(val) == list:
                 # first row
-                if type(dv) == list:
-                  OutFunc("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", opt[0], dv[0], opt[1][0], help)
-                else: 
-                  OutFunc("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", opt[0], dv, opt[1][0], help)
+                output.Output("      %|1$-20|      %|2$-20|      %|3$-20|     %|4$-10|       %5%\n", key, value[0], value[1][0], value[2], value[4])
 
-                for i in range(1, nel):
-                  dstr = dv[i] if (type(dv) == list and i < len(dv)) else ""
-                  vstr = opt[1][i] if (i < len(opt[1])) else ""
+                # other rows
+                for i in range(1, len(value[1])):
+                    output.Output("      %|1$-20|      %|2$-20|      %|3$-20|     %|4$-10|       %5%\n", "", "", value[1][i], "", "")
 
-                  OutFunc("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", "", dstr, vstr, "")
-        
-              else:        
-                OutFunc("      %|1$-20|      %|2$-20|      %|3$-20|     %4%\n", opt[0], dv, opt[1], help)
-
-  else:
-      output.Output("         Options: NOT YET SET\n")
+            else: 
+              output.Output("      %|1$-20|      %|2$-20|      %|3$-20|     %|4$-10|       %5%\n", key, value[0], value[1], value[2], value[4])
 
   output.Output("\n")
 

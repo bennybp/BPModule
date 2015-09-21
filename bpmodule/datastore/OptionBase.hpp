@@ -21,16 +21,28 @@ namespace detail {
 class OptionBase
 {
     public:
-        OptionBase(void) noexcept         = default;
+        OptionBase(bool required, bool expert) noexcept
+            : required_(required), expert_(expert)
+        { }
+
         virtual ~OptionBase() noexcept    = default;
 
         OptionBase & operator=(const OptionBase & rhs)  = delete;
-        OptionBase & operator=(const OptionBase && rhs) = delete;
-        OptionBase(const OptionBase & rhs)              = delete;
+        OptionBase & operator=(OptionBase && rhs)       = delete;
+        OptionBase(const OptionBase & rhs)              = default;
         OptionBase(const OptionBase && rhs)             = delete;
 
 
+
+        ///////////////////////////////////
+        // Virtual functions
+        ///////////////////////////////////
+        
+        /*! \brief Create a clone of this object
+         */
         virtual OptionBase * Clone(void) const = 0;
+
+
 
         /*! \brief Returns a string representing the type of the option stored
          *
@@ -42,22 +54,94 @@ class OptionBase
 
 
 
-        virtual bool HasValue(void) const = 0;
-        virtual bool HasDefault(void) const = 0;
-        virtual bool IsRequired(void) const = 0;
-        virtual bool IsDefault(void) const = 0;
+        /*! \brief Check if this option has a value
+         * 
+         * \return True if this option has a value or a default
+         */
+        virtual bool HasValue(void) const noexcept = 0;
+
+
+        /*! \brief Check if this option has a default
+         * 
+         * \return True if this option has a default
+         */
+        virtual bool HasDefault(void) const noexcept = 0;
+
+
+
+        /*! \brief Check if this option is set to the default
+         */ 
+        virtual bool IsDefault(void) const noexcept = 0;
+
+
+
+        /*! \brief Set the option to its default
+         *  \throw bpmodule::exception::OptionException
+         *         if the option doesn't have a default
+         */ 
         virtual void ResetToDefault(void) = 0;
 
-        bool Has(void) const
+
+        /////////////////////////////////////////
+        // Python-related functions
+        /////////////////////////////////////////
+        /*! \brief Return a copy of the value as a boost::python object
+         *
+         * \throw bpmodule::exception::PythonConvertException if the
+         *        data could not be converted
+         *
+         * \throw bpmodule::exception::OptionException if the
+         *        value does not exist
+         */ 
+        virtual boost::python::object GetPyValue(void) const = 0;
+
+
+
+        /*! \brief Change the value with a boost python object
+         */  
+        virtual void ChangeValue(const boost::python::object & obj) = 0;
+
+
+        /*! \brief Validate a value, but don't set it
+         * 
+         * \throw exception::PythonConvertException if the
+         *        python object could not be converted
+         */
+        virtual bool Validate(const boost::python::object & obj) const = 0;
+
+
+        ///////////////////////////////////
+        // Base functions
+        ///////////////////////////////////
+        /*! \brief Check if this options is required
+         */ 
+        bool IsRequired(void) const noexcept
         {
-            return (HasValue() || HasDefault());
+            return required_;
         }
 
 
+
+        /*! \brief See if expert mode is enabled for this object
+         *
+         */
+        bool IsExpert(void) const noexcept
+        {
+            return expert_;
+        }
+
+
+
+        /*! \brief Check to see if this object is valid
+         * 
+         * \return True if there is a value or a default, or if this
+         *         option is not required
+         */
         bool Valid(void) const
         {
-            return (Has() || !IsRequired());
+            return HasValue() || HasDefault() || !IsRequired();
         }
+
 
 
         /*! \brief Determines if the contained type matches a given type
@@ -75,17 +159,10 @@ class OptionBase
         }
 
 
-        /*! \brief Return a copy of the value as a boost::python object
-         *
-         * \throw bpmodule::exception::PythonConvertException if the
-         *        data could not be converted
-         *
-         * \throw bpmodule::exception::OptionException if the
-         *        value does not exist
-         */ 
-        virtual boost::python::object GetPyValue(void) const = 0;
+    private:
+        bool required_;
+        bool expert_;
 
-        virtual void ChangeValue(const boost::python::object & obj) = 0;
 
     
 

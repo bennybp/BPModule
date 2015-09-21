@@ -27,40 +27,49 @@ bool ValidateWrapper(const boost::python::object & val, T arg)
 }
 
 
+template<typename T>
+bool EmptyValidator(T arg)
+{
+    return true;
+}
+
 
 template<typename T>
-OptionBasePtr CreateOptionHolder(const boost::python::object & obj)
+OptionBasePtr CreateOptionHolder(const boost::python::tuple & tup)
 {
-    PythonType ptype = DetectType(obj);
-    if(ptype != PythonType::Tuple)
-        throw exception::OptionException("Object for options is not a tuple", PythonTypeToStr(ptype)); 
-
-    boost::python::tuple tup = boost::python::extract<boost::python::tuple>(obj);
     PythonType ptype_default = DetectType(tup[1]);
 
+    // value is empty at this point
     T * val = nullptr;
     T * def = nullptr;
 
     if(ptype_default != PythonType::None)
-    {
         def = new T(ConvertToCpp<T>(tup[1]));
-
-        // copy default to current value
-        val = new T(ConvertToCpp<T>(tup[1]));
-    }
 
     bool req = boost::python::extract<bool>(tup[2]);
 
     //! \todo Check to make sure object is callable
-    typename OptionHolder<T>::ValidatorFunc validator = std::bind(ValidateWrapper<T>, tup[3], std::placeholders::_1);
+    //
+    // Check if validator is given. If not, use EmptyValidator
+    typename OptionHolder<T>::ValidatorFunc validator = EmptyValidator<T>;
+
+    if(DetectType(tup[3]) != PythonType::None)
+        validator = std::bind(ValidateWrapper<T>, tup[3], std::placeholders::_1);
 
     //! \todo expert option
     return OptionBasePtr(new OptionHolder<T>(val, def, validator, req, false)); 
 }
 
 
-OptionBasePtr OptionHolderFactory(const boost::python::tuple & tup)
+
+OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
 {
+    PythonType ptype = DetectType(obj);
+    if(ptype != PythonType::Tuple)
+        throw exception::OptionException("Object for options is not a tuple", PythonTypeToStr(ptype)); 
+
+    boost::python::tuple tup = boost::python::extract<boost::python::tuple>(obj);
+
     int length = boost::python::extract<int>(tup.attr("__len__")());
     if(length != 5)
         throw exception::OptionException("Tuple does not have 5 elements", "tuple"); 
@@ -80,7 +89,7 @@ OptionBasePtr OptionHolderFactory(const boost::python::tuple & tup)
     std::string type = boost::python::extract<std::string>(tup[0]);
 
 
-    switch(ptype_type)
+    switch(python_helper::StrToPythonType(type))
     {
         case PythonType::Bool:
             return CreateOptionHolder<bool>(tup); 

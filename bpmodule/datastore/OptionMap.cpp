@@ -5,6 +5,8 @@
  */ 
 
 
+#include <boost/python.hpp>
+
 #include "bpmodule/datastore/OptionMap.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 
@@ -46,17 +48,20 @@ OptionMap::OptionMap(const boost::python::dict & opt)
     }
 }
 
+
 void OptionMap::ChangePy(const std::string & key, const boost::python::object & obj)
 {
     GetOrThrow_(key)->ChangeValue(obj);
 }
+
 
 void OptionMap::Merge(const boost::python::dict & opt)
 {
     boost::python::list keys = opt.keys();
     int keylen = boost::python::extract<int>(keys.attr("__len__")());
 
-    // store in temporary map
+    // Check values first
+    // (strong exception)
     std::map<std::string, detail::OptionBasePtr> tmpmap;
  
     try {
@@ -67,11 +72,11 @@ void OptionMap::Merge(const boost::python::dict & opt)
             if(!opmap_.count(key))
                 throw exception::MapException("Key not found form merging", "OptionMap", key); 
 
-            // this will throw needed exceptions
-            tmpmap.emplace(key, detail::OptionHolderFactory(opt[key]));
+            if(!GetOrThrow_(key)->Validate(opt[key]))
+                throw exception::OptionException("Option is invalid", "(?)");
         }
     }
-    catch(PythonConvertException & ex) 
+    catch(PythonConvertException & ex) // catch these, let others pass 
     {
         // should always be a PythonConvertException?
         // Don't catch the MapException, let that go through
@@ -80,8 +85,11 @@ void OptionMap::Merge(const boost::python::dict & opt)
     }
 
     // now merge
-    for(const auto & it : tmpmap)
-        opmap_.at(it.first) = it.second;
+    for(int i = 0; i < keylen; i++)
+    {
+        std::string key = ConvertToCpp<std::string>(keys[i]);
+        ChangePy(key, opt[key]);
+    }
 }
 
 

@@ -45,7 +45,7 @@ void ModuleStore::InsertModule(const std::string & key, ModuleGeneratorFunc func
 
 void ModuleStore::SetOptions(const std::string & key, const boost::python::dict & opt)
 {
-    GetOrThrow_(key).mi.options.ChangePy(key, opt);
+    GetOrThrow_(key).mi.options.Merge(opt);
 }
 
 

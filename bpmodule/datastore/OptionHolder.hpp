@@ -23,36 +23,62 @@ namespace detail {
 
 
 
+/*! \brief Holds the value ad default for an option
+ *
+ * \todo Funnel ChangeValue through boost::python::object?....
+ */
 template<typename T>
 class OptionHolder : public OptionBase
 {
     public:
+        //! A function that can validate an object of type T
         typedef std::function<bool(T)> ValidatorFunc;
 
+
+
+
+        /*! \brief Constructs via copy
+         *
+         * \throw bpmodule::exception::OptionException
+         *        If the initial value or default is invalid, or
+         *        there is a default argument supplied for a 'required' option.
+         *
+         * \todo Should required even be passef? Default must be supplied here. Is
+         *       this constructor even really needed?
+         */
         OptionHolder(const T & value, const T & def,
                      ValidatorFunc validator, bool required, bool expert)
-            : value_(new T(value)),
+            : OptionBase(required, expert),
+              value_(new T(value)),
               default_(new T(def)),
-              validator_(validator),
-              required_(required),
-              expert_(expert)
+              validator_(validator)
         {
             // check the default and value with the validator
             if(!validator_(*value))
                 throw exception::OptionException("Initial value is not valid", Type()); 
             if(!validator_(*def))
                 throw exception::OptionException("Initial default is not valid", Type()); 
+            if(required)
+                throw exception::OptionException("Default value supplied for required value", Type());
         }
 
 
-        // takes ownership of pointers
+
+
+        /*! \brief Constructs via pointers
+         *
+         * This object will take ownership of the value and def pointers. 
+         *
+         * \throw bpmodule::exception::OptionException
+         *        If the initial value or default is invalid, or
+         *        there is a default argument supplied for a 'required' option.
+         */
         OptionHolder(T * value, T * def,
                      ValidatorFunc validator, bool required, bool expert)
-            : value_(value),
+            : OptionBase(required, expert),
+              value_(value),
               default_(def),
-              validator_(validator),
-              required_(required),
-              expert_(expert)
+              validator_(validator)
         {
             // check the default and value with the validator
             if(value != nullptr && !validator_(*value))
@@ -64,13 +90,10 @@ class OptionHolder : public OptionBase
         }
 
 
-
         OptionHolder(const OptionHolder & oph)
+            : OptionBase(oph),
+              validator_(oph.validator_)
         {
-            validator_ = oph.validator_;
-            required_ = oph.required_;
-            expert_ = oph.expert_;
-
             if(oph.value_)
                 value_ = std::unique_ptr<T>(new T(*oph.value_));
             if(oph.default_)
@@ -78,20 +101,58 @@ class OptionHolder : public OptionBase
         }
 
 
-        OptionHolder(OptionHolder && oph)                   = default;
 
         OptionHolder(void)                                  = delete;
+        OptionHolder(OptionHolder && oph)                   = delete;
         OptionHolder & operator=(const OptionHolder & oph)  = delete;
         OptionHolder & operator=(OptionHolder && oph)       = delete;
         virtual ~OptionHolder()                             = default;
 
 
-        virtual OptionBase * Clone(void) const
+
+        /*! \brief Change the stored value
+         *
+         * This object will take ownership of the pointer. 
+         *
+         * The new value will be validated.
+         *
+         * \throw bpmodule::exception::OptionException
+         *        if the new value is invalid (and expert mode is off).
+         */
+        void ChangeValue(T * value)
         {
-            return new OptionHolder<T>(*this);
+            if(value != nullptr)
+                Validate(*value);
+            value_ = value;
         }
 
 
+
+        /*! \brief Change the stored value
+         *
+         * This object will copy construct a new value
+         *
+         * The new value will be validated.
+         *
+         * \throw bpmodule::exception::OptionException
+         *        if the new value is invalid (and expert mode is off).
+         */
+        void ChangeValue(const T & value)
+        {
+            // validate first
+            ValidateOrThrow_(value);
+            value_ = std::unique_ptr<T>(new T(value));
+        }
+
+
+
+        /*! \brief Get the current value
+         *
+         * If the value is not set, but a default exists, the default is returned.
+         *
+         * \throw bpmodule::exception::OptionException
+         *        if the option does not have a value or a default
+         */
         const T & GetValue(void) const
         {
             if(value_)
@@ -103,6 +164,13 @@ class OptionHolder : public OptionBase
         }
 
 
+
+
+        /*! \brief Get the default value
+         *
+         * \throw bpmodule::exception::OptionException
+         *        if the option does not have a default
+         */
         const T & GetDefault(void) const
         {
             if(default_)
@@ -110,55 +178,24 @@ class OptionHolder : public OptionBase
             else
                 throw exception::OptionException("Option does not have a default", Type());
         }
-        
 
-        virtual bool HasValue(void) const
-        {
-            return bool(value_);
-        }
 
-        virtual bool HasDefault(void) const
+        /*! \brief Validate a value, but don't set it
+         * 
+         */
+        bool Validate(const T & value) const
         {
-            return bool(default_);
-        }
-
-        //! \todo should a required value have a default?
-        virtual bool IsRequired(void) const
-        {
-            return required_;
+            return validator_(value);
         }
 
 
-        virtual bool IsDefault(void) const
-        {
-            return value_ && default_ && (*value_ == *default_);
-        }
+        ////////////////////////////////////////
+        // Virtual functions from OptionBase
+        ////////////////////////////////////////
 
-        void ChangeValue(const T & value)
+        virtual OptionBase * Clone(void) const
         {
-            // validate first
-            Validate_(value);
-            value_ = std::unique_ptr<T>(new T(value));
-        }
-
-        void ChangeValue(T * value)
-        {
-            if(value != nullptr)
-                Validate(*value);
-            value_ = value;
-        }
-
-        virtual void ChangeValue(const boost::python::object & obj)
-        {
-            ChangeValue(python_helper::ConvertToCpp<T>(obj));
-        }
-
-
-        // may throw
-        // default should already have been validated
-        virtual void ResetToDefault(void)
-        {
-            ChangeValue(GetDefault());
+            return new OptionHolder<T>(*this);
         }
 
 
@@ -167,25 +204,73 @@ class OptionHolder : public OptionBase
             return typeid(T).name();
         }
 
+        
+        virtual bool HasValue(void) const noexcept
+        {
+            return bool(value_) || HasDefault();
+        }
+
+
+
+        virtual bool HasDefault(void) const noexcept
+        {
+            return bool(default_);
+        }
+
+
+
+        virtual bool IsDefault(void) const noexcept
+        {
+            if(!value_ && default_)
+                return true;
+            else
+                return value_ && default_ && (*value_ == *default_);
+        }
+
+
+        virtual void ResetToDefault(void)
+        {
+            if(!default_)
+                throw exception::OptionException("Option does not have a default", Type());
+            value_.reset();
+        }
+
+
+
+        /////////////////////////////////////////
+        // Python-related functions
+        /////////////////////////////////////////
+        virtual void ChangeValue(const boost::python::object & obj)
+        {
+            ChangeValue(python_helper::ConvertToCpp<T>(obj));
+        }
+
 
         virtual boost::python::object GetPyValue(void) const
         {
             return python_helper::ConvertToPy(GetValue());
         }
 
+
+        virtual bool Validate(const boost::python::object & obj) const
+        {
+            // throwing is ok
+            const T tmp(python_helper::ConvertToCpp<T>(obj));
+            return Validate(tmp);
+        }
+
+
     private:
         std::unique_ptr<T> value_;
         std::unique_ptr<T> default_;
         ValidatorFunc validator_;
-        bool required_;
-        bool expert_;
 
-        void Validate_(const T & value) const
+        void ValidateOrThrow_(const T & value) const
         {
             if(!validator_(value))
             {
                 //! \todo print warning if expert_ == true
-                if(!expert_)
+                if(!OptionBase::IsExpert())
                     throw exception::OptionException("Value is not valid for this option", Type());
             }
         }

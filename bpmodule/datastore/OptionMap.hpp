@@ -10,6 +10,7 @@
 
 #include <map>
 
+#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 #include "bpmodule/datastore/OptionHolder.hpp"
 #include "bpmodule/exception/MapException.hpp"
 
@@ -30,6 +31,10 @@ class OptionMap
         ~OptionMap(void) = default;
 
 
+        /*! \brief Copy construct
+        * 
+        * Deep copies (clones) all the stored options
+        */
         OptionMap(const OptionMap & rhs)
         {
             for(const auto & it : rhs.opmap_)
@@ -37,6 +42,10 @@ class OptionMap
         }
 
 
+        /*! \brief Assignment
+        * 
+        * Deep copies (clones) all the stored options
+        */
         OptionMap & operator=(const OptionMap & rhs)
         {
             if(this != &rhs)
@@ -54,19 +63,6 @@ class OptionMap
         OptionMap & operator=(OptionMap && rhs)      = default;
 
 
-        /*! \brief Construct options from a python dictionary
-         */ 
-        OptionMap(const boost::python::dict & opt);
-
-
-        /*! \brief Set values for options
-         *
-         * Dictionary is simple string key -> value mapping.
-         *
-         * \todo stuff
-         * \throw Stuff  
-         */
-        void Merge(const boost::python::dict & opt);
 
 
         bool Valid(void) const
@@ -87,10 +83,6 @@ class OptionMap
         }
 
 
-        boost::python::object GetPy(const std::string & key) const
-        {
-            return GetOrThrow_(key)->GetPyValue();
-        }
 
         /*! \brief Determine if this object contains a value for a key
          *
@@ -104,7 +96,7 @@ class OptionMap
         {
             if(opmap_.count(key) == 0)
                 return false;
-            return opmap_.at(key)->Has();
+            return opmap_.at(key)->HasValue();
         }
 
 
@@ -167,14 +159,42 @@ class OptionMap
             GetOrThrow_Cast_<T>(key)->ChangeValue(value);
         }
 
-
-        void ChangePy(const std::string & key, const boost::python::object & obj);
-
-
         void ResetToDefault(const std::string & key)
         {
             GetOrThrow_(key)->ResetToDefault();
         }
+
+
+        /////////////////////////////
+        // Python-related functions
+        /////////////////////////////
+        /*! \brief Construct options from a python dictionary
+         */ 
+        OptionMap(const boost::python::dict & opt);
+
+
+        /*! \brief Set values for options
+         *
+         * Dictionary is simple string key -> value mapping.
+         *
+         * \todo stuff
+         * \throw Stuff  
+         */
+        void Merge(const boost::python::dict & opt);
+
+
+        /*! \brief Return the option's value as a python object
+         */  
+        boost::python::object GetPy(const std::string & key) const
+        {
+            return GetOrThrow_(key)->GetPyValue();
+        }
+
+
+        /*! \brief Change an option by passing a boost::python object
+         */ 
+        void ChangePy(const std::string & key, const boost::python::object & obj);
+
 
 
     private:
