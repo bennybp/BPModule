@@ -45,6 +45,7 @@ def Run():
             "description" : "Testing of core functionality",
             "authors"     : ["Hi", "There"],
             "refs"        : ["Some", "ref"],
+            "options"     : { }
         }
 
         nfailed = 0
@@ -88,6 +89,7 @@ def Run():
             ntest += 1
             nfailed = nfailed + bp.testing.TestModuleInfo(ntest, "Replace {} with list list".format(k),     False, ReplaceKey(minfo, k, [[5, 4], [1, 0]] )  )
             ntest += 1
+
 
         # test replacing with a list of strings
         # (except those that are lists of strings)

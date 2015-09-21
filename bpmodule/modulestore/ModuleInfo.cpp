@@ -99,7 +99,7 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
         }
         catch(bpmodule::exception::PythonConvertException & ex)
         {
-            ex.AppendInfo({ {"key", "options"} });
+            ex.AppendInfo({ {"key", key} });
             throw;
         }
 
