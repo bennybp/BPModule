@@ -78,7 +78,7 @@ struct ToCppConverter
     static bool Check(const boost::python::object & obj)
     {
         boost::python::extract<T> conv(obj);
-        return conv.check();
+        return conv.check() && CustomCheck(obj);
     }
 
 
@@ -93,6 +93,42 @@ struct ToCppConverter
     {
         boost::python::extract<T> conv(obj);
         return conv();
+    }
+
+
+    /*! \brief Prevents some implicit conversions
+     */
+    static bool CustomCheck(const boost::python::object & obj)
+    {
+        PythonType objtype = DetermineType(obj);
+
+        // don't promote bool to int or float
+        if(objtype == PythonType::Bool)
+        {
+            if(std::is_same<T, int>::value)
+                return false;
+            if(std::is_same<T, float>::value)
+                return false;
+            if(std::is_same<T, double>::value)
+                return false;
+        }
+
+        // don't promote int or float to bool
+        if(objtype == PythonType::Int || objtype == PythonType::Float)
+        {
+            if(std::is_same<T, bool>::value)
+                return false;
+        }
+
+        // don't promote float to int
+        // (shouldn't be possible from boost::python::extract, but make sure)
+        if(objtype == PythonType::Float)
+        {
+            if(std::is_same<T, int>::value)
+                return false;
+        }
+
+        return true;
     }
 };
 
