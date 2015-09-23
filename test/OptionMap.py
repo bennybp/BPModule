@@ -18,16 +18,16 @@ import bpmodule as bp
 
 
 def IsValid(t, d):
-    if t == d[0]:
+    if t == d:
         return True
 
-    if t == "float" and d[0] == "int":  # cast int to float
+    if t == "float" and d == "int":  # cast int to float
         return True
 
-    if t == "listfloat" and d[0] == "listint":  # cast int to float
+    if t == "listfloat" and d == "listint":  # cast int to float
         return True
 
-    if d[0] == "listempty":  # Empty list passed to a list type
+    if d == "listempty":  # Empty list passed to a list type
       return t in [ "listint", "listfloat", "listbool", "liststr" ]
 
     return False
@@ -159,7 +159,7 @@ def Run():
         for t1 in alltypes:
             for d1 in testelements:
                 s = "Test construction with {} -> {}".format(t1, d1[0])
-                expected = (t1 in validtypes) and (IsValid(t1, d1))
+                expected = (t1 in validtypes) and (IsValid(t1, d1[0]))
                 opt = { d1[0] : ( t1, d1[1], False, None, "(no help)" ) }  
                 nfailed += bp.testing.TestOptionMap(ntest, s, expected, opt)
                 ntest += 1
