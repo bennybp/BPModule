@@ -19,7 +19,7 @@ import bpmodule as bp
 
 def Run():
     try:
-        bp.testing.PrintHeader("Testing conversions from Python to C++")
+        bp.testing.PrintHeader("Testing construction of OptionMap objects")
 
         #                  key               type                default,               required, Validator,          valid?
         testelements = [ ( "int_1",          "int",              int(5)                ,  False,  None,               True ),
