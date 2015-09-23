@@ -79,6 +79,7 @@ bool OptionMap::ValidatePy(const boost::python::dict & opt) const
     catch(bpmodule::exception::GeneralException & ex)
     {
         ex.AppendInfo({ { "location", "OptionMap::ValidatePy" } });
+        throw;
     }
 
     return true;
@@ -96,6 +97,7 @@ void OptionMap::ChangePy(const std::string & key, const boost::python::object & 
     catch(bpmodule::exception::GeneralException & ex)
     {
         ex.AppendInfo({ { "key", key} });
+        throw;
     }
 }
 

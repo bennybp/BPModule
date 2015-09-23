@@ -123,7 +123,7 @@ boost::python::object ModuleBase::GetOptionPy(const std::string & key) const
 void ModuleBase::ChangeOptionPy(const std::string & key, const boost::python::object & obj)
 {
     try {
-        return minfo_.options.ChangePy(key, obj);
+        minfo_.options.ChangePy(key, obj);
     }
     catch(exception::GeneralException & ex)
     {
