@@ -16,10 +16,34 @@ def Run():
     try:
       # Load the python modules
       #             supermodule       module name       key
-      bp.LoadModule("test_options",   "testoptions1",   "TESTOPT1")
+      bp.LoadModule("test_options",   "test_int",     "TEST_INT")
+      bp.LoadModule("test_options",   "test_float",   "TEST_FLOAT")
+      bp.LoadModule("test_options",   "test_bool",    "TEST_BOOL")
+      bp.LoadModule("test_options",   "test_str",     "TEST_STR")
 
-      b1 = bp.mst.GetModule_Test("TESTOPT1")
-      bpmoutput.Output("Got module: %1% v%2%\n", b1.Version(), b1.Name())
+      bp.LoadModule("test_options",   "test_list_int",     "TEST_LIST_INT")
+      bp.LoadModule("test_options",   "test_list_float",   "TEST_LIST_FLOAT")
+      bp.LoadModule("test_options",   "test_list_bool",    "TEST_LIST_BOOL")
+      bp.LoadModule("test_options",   "test_list_str",     "TEST_LIST_STR")
+
+      mod_int   = bp.mst.GetModule_Test("TEST_INT")
+      mod_float = bp.mst.GetModule_Test("TEST_FLOAT")
+      mod_bool  = bp.mst.GetModule_Test("TEST_BOOL")
+      mod_str   = bp.mst.GetModule_Test("TEST_STR")
+
+      mod_list_int   = bp.mst.GetModule_Test("TEST_LIST_INT")
+      mod_list_float = bp.mst.GetModule_Test("TEST_LIST_FLOAT")
+      mod_list_bool  = bp.mst.GetModule_Test("TEST_LIST_BOOL")
+      mod_list_str   = bp.mst.GetModule_Test("TEST_LIST_STR")
+
+      allmod = [ mod_int, mod_float, mod_bool, mod_str,
+                 mod_list_int, mod_list_float, mod_list_bool, mod_list_str ]
+
+      for m in allmod:
+          bp.output.Output("Got module key %|1$-20| %|2$-20| v%3%\n", m.Key(), m.Name(), m.Version())
+
+
+      mod_int.ChangeOption("int_opt_def", "Hi")
 
       bp.output.Output("\nDone testing\n")
 

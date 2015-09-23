@@ -48,6 +48,8 @@ def Run():
                          ( "list_3",         "listhetero",       [ "Hi", 5 ]             ),
                        ]
 
+        alltypes = set( x[1] for x in testelements )
+
         nfailed = 0
         ntest = 1
 
