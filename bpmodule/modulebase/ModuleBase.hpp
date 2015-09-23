@@ -9,13 +9,12 @@
 #define _GUARD_MODULEBASE_HPP_
 
 #include "bpmodule/datastore/CalcData.hpp"
-#include "bpmodule/datastore/OptionMap.hpp"
+#include "bpmodule/modulestore/ModuleInfo.hpp"
 
 // forward declarations
 namespace bpmodule {
 namespace modulestore {
 class ModuleStore;
-class ModuleInfo;
 }
 }
 // end forward declarations
@@ -52,6 +51,9 @@ class ModuleBase
         ModuleBase & operator= (ModuleBase && rhs)      = delete;
 
 
+        //! \name Basic Info
+        ///@ {
+
         /*! \brief Get the unique ID of this module
          *
          * \exnothrow
@@ -80,15 +82,21 @@ class ModuleBase
         const std::string & Version(void) const noexcept;
 
 
+        ///@}
+
+
+        //! \name Options Handling
+        ///@ {
+
         /*! \brief Get an option from this module
          *
-         * \copydetails bpmodule::datastore::OptionMap::Get        
+         * \todo Exceptions 
          */
         template<typename T>
         T GetOption(const std::string & key) const
         {
             try {
-                return options_.Get<T>(key);
+                return minfo_.options.Get<T>(key);
             }
             catch(exception::GeneralException & ex)
             {
@@ -99,28 +107,32 @@ class ModuleBase
         }
 
 
-
-        boost::python::object GetPyOption(const std::string & key) const;
 
 
 
         /*! \brief Return true if the module has an option with the specified key
          *
-         * \copydetails bpmodule::datastore::OptionMap::Has
+         * \todo Exceptions 
          */
         bool HasOption(const std::string & key) const;
 
 
+        /*! \brief Set an option to its defaults
+         *
+         * \todo Exceptions 
+         */
+        void ResetOption(const std::string & key);
+
 
         /*! \brief Determine if this module's options has data of a specific type for a key
          *
-         * \copydetails bpmodule::datastore::OptionMap::HasType
+         * \todo Exceptions 
          */ 
         template<typename T>
         bool HasOptionType(const std::string & key) const
         {
             try {
-                return options_.HasType<T>(key);
+                return minfo_.options.HasType<T>(key);
             }
             catch(exception::GeneralException & ex)
             {
@@ -131,6 +143,23 @@ class ModuleBase
         }
 
 
+        //////////////////////
+        // Python and Options
+        //////////////////////
+        /*! \brief Get an option as a python object
+         *
+         * \todo Exceptions 
+         */
+        boost::python::object GetOptionPy(const std::string & key) const;
+
+
+        /*! \brief Set an option using a python object
+         *
+         * \todo Exceptions 
+         */
+        void ChangeOptionPy(const std::string & key, const boost::python::object & obj);
+
+        ///@}
         
     protected:
         /*! \brief Throw an exception
@@ -164,17 +193,8 @@ class ModuleBase
         //! The unique ID of this module
         unsigned long id_;
 
-        //! The key is was created under
-        std::string key_;
-
-        //! A descriptive name of the module
-        std::string name_;
-
-        //! The version of the module
-        std::string version_;
-
-        //! Options passed to this module
-        datastore::OptionMap options_;
+        //! All the information for this module
+        modulestore::ModuleInfo minfo_;
 
         //! The ModuleStore in charge of this module
         modulestore::ModuleStore & mstore_;
