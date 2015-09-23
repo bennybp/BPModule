@@ -241,7 +241,7 @@ class OptionHolder : public OptionBase
         }
 
 
-        virtual void ResetToDefault(void)
+        virtual void ResetToDefault(void) noexcept
         {
             value_.reset();
         }

@@ -84,7 +84,7 @@ class OptionBase
          *  \throw bpmodule::exception::OptionException
          *         if the option doesn't have a default
          */ 
-        virtual void ResetToDefault(void) = 0;
+        virtual void ResetToDefault(void) noexcept = 0;
 
 
 
