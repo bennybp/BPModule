@@ -243,8 +243,6 @@ class OptionHolder : public OptionBase
 
         virtual void ResetToDefault(void)
         {
-            if(!default_)
-                throw exception::OptionException("Option does not have a default", Type());
             value_.reset();
         }
 
