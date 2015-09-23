@@ -156,6 +156,25 @@ class ModuleBase
         }
 
 
+        /*! \brief Changes an option for this module
+         *
+         * \todo Exceptions
+         */ 
+        template<typename T>
+        void ChangeOption(const std::string & key, const T & opt)
+        {
+            try {
+                return minfo_.options.Change<T>(key);
+            }
+            catch(exception::GeneralException & ex)
+            {
+                // rethrow with module info
+                ThrowException(ex.what(), ex.GetInfo());
+                return T(); // to make compilers happy
+            }
+        }
+
+
 
         //////////////////////
         // Python and Options
