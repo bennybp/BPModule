@@ -41,6 +41,45 @@ def PyTestFunc(itest, desc, expected, func, *args):
 
 
 
+def PyTestBoolFunc(itest, desc, expected, func, *args):
+    fmt = "%|1$5| : %|2$-5|  %|3$-5|  %|4$-9|  : %5%\n"
+
+    try:
+        res = func(*args)
+        if res == True:
+            if expected == True:
+                Output(fmt, itest, "True", "True", "Success", desc)
+                return 0
+            else:
+                Error(fmt, itest, "False", "True", "FAILED", desc)
+                return 1
+        else:
+            if expected == False:
+                Output(fmt, itest, "False", "False", "Success", desc)
+                return 0
+            else:
+                Error(fmt, itest, "True", "False", "FAILED", desc)
+                return 1
+
+    except Exception as e:
+        if expected == False:
+            Output(fmt, itest, "False", "False", "Success", desc)
+            return 0
+        else:
+            Debug(str(e) + "\n")
+            Error(fmt, itest, "True", "False", "FAILED", desc)
+            return 1
+    except:
+        if expected == False:
+            Output(fmt, itest, "False", "False", "Success", desc)
+            return 0
+        else:
+            Error(fmt, itest, "True", "False", "FAILED", desc)
+            return 1
+
+
+
+
 def PrintHeader(s):
     Output(Line("="))
     Output("%1%\n", s)

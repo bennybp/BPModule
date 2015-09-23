@@ -38,6 +38,7 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>())
     .def("HasOption", &ModuleBase::HasOption)
     .def("ResetOption", &ModuleBase::ResetOption)
+    .def("OptionsValid", &ModuleBase::OptionsValid)
     .def("GetOption", &ModuleBase::GetOptionPy)
     .def("ChangeOption", &ModuleBase::ChangeOptionPy);
 

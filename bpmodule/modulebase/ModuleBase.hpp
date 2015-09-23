@@ -143,6 +143,20 @@ class ModuleBase
         }
 
 
+
+        /*! \brief Are all options valid?
+         * 
+         * Ie has all required options, etc
+         */
+        bool OptionsValid(void) const
+        {
+            if(!minfo_.options.Valid())
+                return false;
+            return true;
+        }
+
+
+
         //////////////////////
         // Python and Options
         //////////////////////
