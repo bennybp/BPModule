@@ -39,6 +39,7 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("HasOption", &ModuleBase::HasOption)
     .def("ResetOption", &ModuleBase::ResetOption)
     .def("OptionsValid", &ModuleBase::OptionsValid)
+    .def("ValidateOption", &ModuleBase::ValidateOptionPy)
     .def("GetOption", &ModuleBase::GetOptionPy)
     .def("ChangeOption", &ModuleBase::ChangeOptionPy);
 

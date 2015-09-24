@@ -198,6 +198,20 @@ class OptionMap
 
 
 
+        /*! \brief Test if a given option is valid
+         * 
+         * \throw bpmodule::exception::MapException if a key doesn't exist
+         *
+         * \throw bpmodule::exception::PythonConvertException if there
+         *        is a problem converting python types.
+         */  
+        template<typename T>
+        bool Validate(const std::string & key, const T & obj) const
+        {
+            return GetOrThrow_Cast_<T>(key)->Validate(obj);
+        }
+
+
 
         /////////////////////////////
         // Python-related functions

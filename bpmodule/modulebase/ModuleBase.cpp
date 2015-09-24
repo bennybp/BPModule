@@ -133,6 +133,20 @@ void ModuleBase::ChangeOptionPy(const std::string & key, const boost::python::ob
 }
 
 
+bool ModuleBase::ValidateOptionPy(const std::string & key, const boost::python::object & obj) const
+{
+    try {
+        return minfo_.options.ValidatePy(key, obj);
+    }
+    catch(exception::GeneralException & ex)
+    {
+        // rethrow with module info
+        ThrowException(ex.what(), ex.GetInfo());
+    }
+
+    return false; // to make compilers happy
+}
+
 
 } // close namespace modulebase
 } // close namespace bpmodule

@@ -143,6 +143,16 @@ class ModuleBase
         }
 
 
+        /*! \brief Test if a given option is valid
+         *
+         * \todo Exceptions 
+         */
+        template<typename T>
+        bool ValidateOption(const T & opt) const
+        {
+            return minfo_.options.Validate<T>(opt);
+        }
+
 
         /*! \brief Are all options valid?
          * 
@@ -191,6 +201,14 @@ class ModuleBase
          * \todo Exceptions 
          */
         void ChangeOptionPy(const std::string & key, const boost::python::object & obj);
+
+
+        /*! \brief Test validate a python object
+         *
+         * \todo Exceptions
+         */
+        bool ValidateOptionPy(const std::string & key, const boost::python::object & obj) const; 
+
 
         ///@}
         

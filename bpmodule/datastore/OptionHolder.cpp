@@ -23,7 +23,7 @@ namespace detail {
 template<typename T>
 bool ValidateWrapper(const boost::python::object & val, T arg)
 {
-    return val(arg);
+    return boost::python::extract<bool>(val.attr("Validate")(arg));
 }
 
 
