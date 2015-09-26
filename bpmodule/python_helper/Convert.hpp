@@ -254,6 +254,21 @@ T ConvertToCpp(const boost::python::object & obj)
 
 
 
+/*! \brief Check if a conversion of a boost::python::object to a C++ type is valid
+ *
+ * This wraps the ToCppConverter structures.
+ *
+ * \tparam T The type to convert to
+ *
+ * \param [in] obj The object to convert
+ * \return Converted data as type T
+ */
+template<typename T>
+bool TestConvertToCpp(const boost::python::object & obj)
+{
+    return ToCppConverter<T>::Check(obj);
+}
+
 
 
 /*! \brief Convert a C++ object to a boost::python::object
@@ -279,6 +294,29 @@ boost::python::object ConvertToPy(const T & obj)
 }
 
 
+
+/*! \brief Test conversion of a C++ object to a boost::python::object
+ *
+ * \tparam T The type to convert from
+ *
+ * \todo better way to do this?
+ *
+ * \param [in] obj The object to convert
+ * \return Converted data as a boost::python::object
+ */
+template<typename T>
+bool TestConvertToPy(const T & obj)
+{
+    try {
+        boost::python::object & ret = boost::python::object(obj); 
+    }
+    catch(...) //! \todo limit this
+    {
+        return false;
+    }
+
+    return true;
+}
 
 
 

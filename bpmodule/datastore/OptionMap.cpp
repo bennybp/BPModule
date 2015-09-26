@@ -86,6 +86,35 @@ bool OptionMap::TestPy(const boost::python::dict & opt) const
 }
 
 
+bool OptionMap::TestConvertPy(const std::string & key, const boost::python::object & obj) const
+{
+    return GetOrThrow_(key)->TestConvertPy(obj);
+}
+
+
+bool OptionMap::TestConvertPy(const boost::python::dict & opt) const
+{
+    boost::python::list keys = opt.keys();
+    int keylen = boost::python::extract<int>(keys.attr("__len__")());
+
+    try {
+        for(int i = 0; i < keylen; i++)
+        {
+            std::string key = ConvertToCpp<std::string>(keys[i]);
+
+            if(!GetOrThrow_(key)->TestConvertPy(opt[key]))
+                return false;
+        }
+    }
+    catch(bpmodule::exception::GeneralException & ex)
+    {
+        ex.AppendInfo({ { "location", "OptionMap::TestPy" } });
+        throw;
+    }
+
+    return true;
+}
+
 
 void OptionMap::ChangePy(const std::string & key, const boost::python::object & obj)
 {

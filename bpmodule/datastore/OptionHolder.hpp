@@ -262,11 +262,18 @@ class OptionHolder : public OptionBase
 
         virtual bool TestPy(const boost::python::object & obj) const
         {
-            // throwing is ok
+            if(!python_helper::TestConvertToCpp<T>(obj))
+                return false;
+
             const T tmp(python_helper::ConvertToCpp<T>(obj));
             return Test(tmp);
         }
 
+
+        virtual bool TestConvertPy(const boost::python::object & obj) const
+        {
+            return python_helper::TestConvertToCpp<T>(obj);
+        }
 
     private:
         std::unique_ptr<T> value_;

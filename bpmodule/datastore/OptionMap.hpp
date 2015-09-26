@@ -201,14 +201,15 @@ class OptionMap
         /*! \brief Test if a given option is valid
          * 
          * \throw bpmodule::exception::MapException if a key doesn't exist
-         *
-         * \throw bpmodule::exception::PythonConvertException if there
-         *        is a problem converting python types.
          */  
         template<typename T>
         bool Test(const std::string & key, const T & obj) const
         {
-            return GetOrThrow_Cast_<T>(key)->Test(obj);
+            // should only throw if key not found
+            if(GetOrThrow_(key)->IsType<T>())
+                return GetOrThrow_Cast_<T>(key)->Test(obj);
+            else
+                return false;
         }
 
 
@@ -300,6 +301,24 @@ class OptionMap
          *        is a problem converting python types.
          */  
         bool TestPy(const boost::python::dict & opt) const;
+
+
+        /*! \brief Tests conversion of a python object for an option
+         * 
+         * \throw bpmodule::exception::MapException if a key doesn't exist
+         */  
+        bool TestConvertPy(const std::string & key, const boost::python::object & obj) const;
+
+
+        /*! \brief Tests conversion of a python dictionary for an options
+         * 
+         * \throw bpmodule::exception::MapException if a key doesn't exist
+         *
+         * \throw bpmodule::exception::PythonConvertException if there
+         *        is a problem converting python type for the dict key.
+         *
+         */  
+        bool TestConvertPy(const boost::python::dict & opt) const;
 
 
 

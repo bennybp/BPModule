@@ -120,12 +120,15 @@ class OptionBase
 
 
         /*! \brief Validate a value, but don't set it
-         * 
-         * \throw exception::PythonConvertException if the
-         *        python object could not be converted
          */
         virtual bool TestPy(const boost::python::object & obj) const = 0;
 
+
+        /*! \brief Test if a conversion of a python object is valid
+         * 
+         * Does not validate
+         */ 
+        virtual bool TestConvertPy(const boost::python::object & obj) const = 0;
 
 
         ///////////////////////////////////
