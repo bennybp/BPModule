@@ -5,7 +5,7 @@ class RangeCheck:
     self.min = min
     self.max = max
 
-  def Check(key, value):
+  def Validate(key, value):
     if (value > self.min) and (value < self.max):
       return True
     elif (includemin == True) and (value == self.min):
@@ -27,7 +27,7 @@ class InList:
   def __init__(self, lst):
     self.lst = lst
 
-  def Check(key, value):
+  def Validate(key, value):
     if value in lst:
         return True
     else: 

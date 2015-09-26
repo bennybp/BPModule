@@ -6,6 +6,7 @@
 
 
 #include "bpmodule/testing/AllTests.hpp"
+#include "bpmodule/datastore/OptionMap.hpp"
 
 using namespace boost::python;
 
@@ -32,10 +33,12 @@ BOOST_PYTHON_MODULE(testing)
 
 
     // ModuleInfo construction
-    def("TestModuleInfo", TestModuleInfo);
+    def("TestModuleInfo_Construct", TestModuleInfo_Construct);
 
-    // OptionMap construction
-    def("TestOptionMap", TestOptionMap);
+    // OptionMap
+    def("TestOptionMap_Construct", TestOptionMap_Construct);
+    def("TestOptionMap_TestPy", TestOptionMap_TestPy);
+
 }
 
 

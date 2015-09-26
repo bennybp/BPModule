@@ -126,7 +126,7 @@ class OptionHolder : public OptionBase
          *
          * \exstrong
          */
-        void ChangeValue(T * value)
+        void Change(T * value)
         {
             if(value != nullptr)
                 Validate(*value);
@@ -147,7 +147,7 @@ class OptionHolder : public OptionBase
          * \exstrong
          *
          */
-        void ChangeValue(const T & value)
+        void Change(const T & value)
         {
             // validate first
             ValidateOrThrow_(value);
@@ -164,7 +164,7 @@ class OptionHolder : public OptionBase
          *        if the option does not have a value or a default
          *
          */
-        const T & GetValue(void) const
+        const T & Get(void) const
         {
             if(value_)
                 return *value_;
@@ -192,11 +192,10 @@ class OptionHolder : public OptionBase
 
 
 
-
-        /*! \brief Validate a value, but don't set it
+        /*! \brief Test validation of a value, but don't set it
          * 
          */
-        bool Validate(const T & value) const
+        bool Test(const T & value) const
         {
             return validator_(value);
         }
@@ -251,21 +250,21 @@ class OptionHolder : public OptionBase
         /////////////////////////////////////////
         // Python-related functions
         /////////////////////////////////////////
-        virtual boost::python::object GetValuePy(void) const
+        virtual boost::python::object GetPy(void) const
         {
-            return python_helper::ConvertToPy(GetValue());
+            return python_helper::ConvertToPy(Get());
         }
 
-        virtual void ChangeValuePy(const boost::python::object & obj)
+        virtual void ChangePy(const boost::python::object & obj)
         {
-            ChangeValue(python_helper::ConvertToCpp<T>(obj));
+            Change(python_helper::ConvertToCpp<T>(obj));
         }
 
-        virtual bool ValidatePy(const boost::python::object & obj) const
+        virtual bool TestPy(const boost::python::object & obj) const
         {
             // throwing is ok
             const T tmp(python_helper::ConvertToCpp<T>(obj));
-            return Validate(tmp);
+            return Test(tmp);
         }
 
 

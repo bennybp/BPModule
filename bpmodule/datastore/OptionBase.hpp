@@ -100,7 +100,7 @@ class OptionBase
          * \throw bpmodule::exception::OptionException if the
          *        value does not exist
          */ 
-        virtual boost::python::object GetValuePy(void) const = 0;
+        virtual boost::python::object GetPy(void) const = 0;
 
 
 
@@ -114,7 +114,7 @@ class OptionBase
          *
          *  \exstrong
          */  
-        virtual void ChangeValuePy(const boost::python::object & obj) = 0;
+        virtual void ChangePy(const boost::python::object & obj) = 0;
 
 
 
@@ -124,7 +124,7 @@ class OptionBase
          * \throw exception::PythonConvertException if the
          *        python object could not be converted
          */
-        virtual bool ValidatePy(const boost::python::object & obj) const = 0;
+        virtual bool TestPy(const boost::python::object & obj) const = 0;
 
 
 
@@ -160,7 +160,7 @@ class OptionBase
          * \return True if there is a value or a default, or if this
          *         option is not required
          */
-        bool Valid(void) const noexcept
+        bool IsValid(void) const noexcept
         {
             return HasValue() || HasDefault() || !IsRequired();
         }

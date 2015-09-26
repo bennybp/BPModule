@@ -13,6 +13,21 @@
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/testing/TestingBase.hpp"
 
+
+////////////////////////
+// Forward declarations
+////////////////////////
+namespace bpmodule {
+namespace datastore {
+class OptionMap;
+}
+}
+////////////////////////
+// End Forward declarations
+////////////////////////
+
+
+
 namespace bpmodule {
 namespace testing {
 
@@ -28,7 +43,7 @@ namespace testing {
  *
  * \return 0 if the test succeeds, 1 if it fails
  */
-int TestModuleInfo(int itest, const std::string & desc, bool expected, const boost::python::dict & mi);
+int TestModuleInfo_Construct(int itest, const std::string & desc, bool expected, const boost::python::dict & mi);
 
 
 
@@ -42,7 +57,16 @@ int TestModuleInfo(int itest, const std::string & desc, bool expected, const boo
  *
  * \return 0 if the test succeeds, 1 if it fails
  */
-int TestOptionMap(int itest, const std::string & desc, bool expected, const boost::python::dict & opt);
+int TestOptionMap_Construct(int itest, const std::string & desc, bool expected, const boost::python::dict & opt);
+
+
+
+/*! \brief Test validating a python object
+ *
+ * \todo Exceptions and args
+ */
+int TestOptionMap_TestPy(int itest, const std::string & desc, bool expected,
+                           const datastore::OptionMap & opmap, const std::string & key, const boost::python::object & obj);
 
 
 

@@ -133,10 +133,10 @@ void ModuleBase::ChangeOptionPy(const std::string & key, const boost::python::ob
 }
 
 
-bool ModuleBase::ValidateOptionPy(const std::string & key, const boost::python::object & obj) const
+bool ModuleBase::TestOptionPy(const std::string & key, const boost::python::object & obj) const
 {
     try {
-        return minfo_.options.ValidatePy(key, obj);
+        return minfo_.options.TestPy(key, obj);
     }
     catch(exception::GeneralException & ex)
     {

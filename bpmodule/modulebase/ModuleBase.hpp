@@ -148,9 +148,9 @@ class ModuleBase
          * \todo Exceptions 
          */
         template<typename T>
-        bool ValidateOption(const T & opt) const
+        bool TestOption(const T & opt) const
         {
-            return minfo_.options.Validate<T>(opt);
+            return minfo_.options.Test<T>(opt);
         }
 
 
@@ -158,9 +158,9 @@ class ModuleBase
          * 
          * Ie has all required options, etc
          */
-        bool OptionsValid(void) const
+        bool OptionsAreValid(void) const
         {
-            if(!minfo_.options.Valid())
+            if(!minfo_.options.IsValid())
                 return false;
             return true;
         }
@@ -207,7 +207,7 @@ class ModuleBase
          *
          * \todo Exceptions
          */
-        bool ValidateOptionPy(const std::string & key, const boost::python::object & obj) const; 
+        bool TestOptionPy(const std::string & key, const boost::python::object & obj) const; 
 
 
         ///@}

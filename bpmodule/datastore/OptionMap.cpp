@@ -56,13 +56,13 @@ OptionMap::OptionMap(const boost::python::dict & opt)
 }
 
 
-bool OptionMap::ValidatePy(const std::string & key, const boost::python::object & obj) const
+bool OptionMap::TestPy(const std::string & key, const boost::python::object & obj) const
 {
-    return GetOrThrow_(key)->ValidatePy(obj);
+    return GetOrThrow_(key)->TestPy(obj);
 }
 
 
-bool OptionMap::ValidatePy(const boost::python::dict & opt) const
+bool OptionMap::TestPy(const boost::python::dict & opt) const
 {
     boost::python::list keys = opt.keys();
     int keylen = boost::python::extract<int>(keys.attr("__len__")());
@@ -72,13 +72,13 @@ bool OptionMap::ValidatePy(const boost::python::dict & opt) const
         {
             std::string key = ConvertToCpp<std::string>(keys[i]);
 
-            if(!GetOrThrow_(key)->ValidatePy(opt[key]))
+            if(!GetOrThrow_(key)->TestPy(opt[key]))
                 return false;
         }
     }
     catch(bpmodule::exception::GeneralException & ex)
     {
-        ex.AppendInfo({ { "location", "OptionMap::ValidatePy" } });
+        ex.AppendInfo({ { "location", "OptionMap::TestPy" } });
         throw;
     }
 
@@ -92,7 +92,7 @@ void OptionMap::ChangePy(const std::string & key, const boost::python::object & 
     detail::OptionBasePtr & ptr = GetOrThrow_(key);
 
     try{
-        ptr->ChangeValuePy(obj);
+        ptr->ChangePy(obj);
     }
     catch(bpmodule::exception::GeneralException & ex)
     {
@@ -117,7 +117,7 @@ void OptionMap::ChangePy(const boost::python::dict & opt)
             if(!opmap_.count(key))
                 throw exception::MapException("Key not found for merging", "OptionMap", key); 
 
-            if(!GetOrThrow_(key)->ValidatePy(opt[key]))
+            if(!GetOrThrow_(key)->TestPy(opt[key]))
             {
                 exception::OptionException ex("Option is invalid", "");
                 ex.AppendInfo( { { "key", key } } );

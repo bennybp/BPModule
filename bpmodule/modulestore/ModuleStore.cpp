@@ -85,7 +85,7 @@ void ModuleStore::TestAll(void)
     {
         output::Debug("Testing %1% (%2%)...\n", it.first, it.second.mi.name);
 
-        if(!it.second.mi.options.Valid())
+        if(!it.second.mi.options.IsValid())
             output::Error("Error - module %1% [key %2%]\" faild options test - options are missing or otherwise invalid", it.second.mi.name, it.first);
 
         try {

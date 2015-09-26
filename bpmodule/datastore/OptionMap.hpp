@@ -76,7 +76,7 @@ class OptionMap
         template<typename T>
         T Get(const std::string & key) const
         {
-            return GetOrThrow_Cast_<T>(key)->GetValue();
+            return GetOrThrow_Cast_<T>(key)->Get();
         }
 
 
@@ -188,10 +188,10 @@ class OptionMap
          * 
          * \exnothrow
          */
-        bool Valid(void) const noexcept
+        bool IsValid(void) const noexcept
         {
             for(const auto & it : opmap_)
-                if(!it.second->Valid())
+                if(!it.second->IsValid())
                     return false;
             return true;
         }
@@ -206,9 +206,9 @@ class OptionMap
          *        is a problem converting python types.
          */  
         template<typename T>
-        bool Validate(const std::string & key, const T & obj) const
+        bool Test(const std::string & key, const T & obj) const
         {
-            return GetOrThrow_Cast_<T>(key)->Validate(obj);
+            return GetOrThrow_Cast_<T>(key)->Test(obj);
         }
 
 
@@ -277,7 +277,7 @@ class OptionMap
          */  
         boost::python::object GetPy(const std::string & key) const
         {
-            return GetOrThrow_(key)->GetValuePy();
+            return GetOrThrow_(key)->GetPy();
         }
 
 
@@ -289,7 +289,7 @@ class OptionMap
          * \throw bpmodule::exception::PythonConvertException if there
          *        is a problem converting python types.
          */  
-        bool ValidatePy(const std::string & key, const boost::python::object & obj) const;
+        bool TestPy(const std::string & key, const boost::python::object & obj) const;
 
 
         /*! \brief Validate a python dictionary for an options
@@ -299,7 +299,7 @@ class OptionMap
          * \throw bpmodule::exception::PythonConvertException if there
          *        is a problem converting python types.
          */  
-        bool ValidatePy(const boost::python::dict & opt) const;
+        bool TestPy(const boost::python::dict & opt) const;
 
 
 

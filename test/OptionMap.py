@@ -77,7 +77,7 @@ def Run():
             s = "Test construction with {}".format(d1[0])
             expected = (d1[0] in validtypes)
             opt = { d1[0] : ( d1[0], d1[1], False, None, "(no help)" ) }
-            nfailed += bp.testing.TestOptionMap(ntest, s, expected, opt)
+            nfailed += bp.testing.TestOptionMap_Construct(ntest, s, expected, opt)
             ntest += 1
 
 
@@ -88,7 +88,7 @@ def Run():
                 expected = (d1[0] in validtypes) and (d2[0] in validtypes)
                 opt = { d1[0] : ( d1[0], d1[1], False, None, "(no help)" ),  
                         d2[0] : ( d2[0], d2[1], False, None, "(no help)" ) }
-                nfailed += bp.testing.TestOptionMap(ntest, s, expected, opt)
+                nfailed += bp.testing.TestOptionMap_Construct(ntest, s, expected, opt)
                 ntest += 1
 
 
@@ -97,7 +97,7 @@ def Run():
             s = "Test construction with {}".format(d1[0])
             expected = (d1[0] in validtypes)
             opt = { d1[0] : ( d1[0], None, False, None, "(no help)" ) }
-            nfailed += bp.testing.TestOptionMap(ntest, s, expected, opt)
+            nfailed += bp.testing.TestOptionMap_Construct(ntest, s, expected, opt)
             ntest += 1
 
 
@@ -108,7 +108,7 @@ def Run():
                 expected = (d1[0] in validtypes) and (d2[0] in validtypes)
                 opt = { d1[0] : ( d1[0], None, False, None, "(no help)" ),  
                         d2[0] : ( d2[0], None, False, None, "(no help)" ) }
-                nfailed += bp.testing.TestOptionMap(ntest, s, expected, opt)
+                nfailed += bp.testing.TestOptionMap_Construct(ntest, s, expected, opt)
                 ntest += 1
 
 
@@ -119,7 +119,7 @@ def Run():
             s = "Test construction with {}".format(d1[0])
             expected = False
             opt = { d1[0] : ( d1[0], d1[1], True, None, "(no help)" ) }
-            nfailed += bp.testing.TestOptionMap(ntest, s, expected, opt)
+            nfailed += bp.testing.TestOptionMap_Construct(ntest, s, expected, opt)
             ntest += 1
 
 
@@ -131,7 +131,7 @@ def Run():
                 expected = False
                 opt = { d1[0] : ( d1[0], d1[1], True, None, "(no help)" ),  
                         d2[0] : ( d2[0], d2[1], True, None, "(no help)" ) }
-                nfailed += bp.testing.TestOptionMap(ntest, s, expected, opt)
+                nfailed += bp.testing.TestOptionMap_Construct(ntest, s, expected, opt)
                 ntest += 1
 
 
@@ -140,7 +140,7 @@ def Run():
             s = "Test construction with {}".format(d1[0])
             expected = (d1[0] in validtypes)
             opt = { d1[0] : ( d1[0], None, True, None, "(no help)" ) }
-            nfailed += bp.testing.TestOptionMap(ntest, s, expected, opt)
+            nfailed += bp.testing.TestOptionMap_Construct(ntest, s, expected, opt)
             ntest += 1
 
 
@@ -151,7 +151,7 @@ def Run():
                 expected = (d1[0] in validtypes) and (d2[0] in validtypes)
                 opt = { d1[0] : ( d1[0], None, True, None, "(no help)" ),  
                         d2[0] : ( d2[0], None, True, None, "(no help)" ) }
-                nfailed += bp.testing.TestOptionMap(ntest, s, expected, opt)
+                nfailed += bp.testing.TestOptionMap_Construct(ntest, s, expected, opt)
                 ntest += 1
 
 
@@ -161,7 +161,7 @@ def Run():
                 s = "Test construction with {} -> {}".format(t1, d1[0])
                 expected = (t1 in validtypes) and (IsValid(t1, d1[0]))
                 opt = { d1[0] : ( t1, d1[1], False, None, "(no help)" ) }  
-                nfailed += bp.testing.TestOptionMap(ntest, s, expected, opt)
+                nfailed += bp.testing.TestOptionMap_Construct(ntest, s, expected, opt)
                 ntest += 1
 
 
