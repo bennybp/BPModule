@@ -246,7 +246,7 @@ class OptionMap
          *
          * \note Only offers basic guarantee, but in practice should be strong.
          */
-        void ChangePy(const boost::python::dict & opt);
+        void ChangePyDict(const boost::python::dict & opt);
 
 
 
@@ -300,7 +300,7 @@ class OptionMap
          * \throw bpmodule::exception::PythonConvertException if there
          *        is a problem converting python types.
          */  
-        bool TestPy(const boost::python::dict & opt) const;
+        bool TestPyDict(const boost::python::dict & opt) const;
 
 
         /*! \brief Tests conversion of a python object for an option
@@ -318,7 +318,7 @@ class OptionMap
          *        is a problem converting python type for the dict key.
          *
          */  
-        bool TestConvertPy(const boost::python::dict & opt) const;
+        bool TestConvertPyDict(const boost::python::dict & opt) const;
 
 
 

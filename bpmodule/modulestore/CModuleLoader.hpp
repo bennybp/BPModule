@@ -72,7 +72,7 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
         typedef ModuleLoaderBase< std::unique_ptr<modulebase::ModuleBase> > BASE;
 
         //! Pointer to a generator function in an SO file
-        typedef modulebase::ModuleBase *(*GeneratorFunc)(const std::string &, unsigned long, ModuleStore &, const ModuleInfo &);
+        typedef modulebase::ModuleBase *(*GeneratorFunc)(const std::string &, unsigned long, ModuleStore &, ModuleInfo &);
 
 
         //! Stores handles to to open SO files
@@ -94,7 +94,7 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
                                                    const std::string & name,
                                                    unsigned long id,
                                                    ModuleStore & mstore,
-                                                   const ModuleInfo & minfo);
+                                                   ModuleInfo & minfo);
 };
 
 } // close namespace modulestore

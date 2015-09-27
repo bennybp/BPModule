@@ -47,7 +47,7 @@ ModuleBase * CModuleLoader::GeneratorWrapper_(GeneratorFunc fn,
                                               const std::string & name,
                                               unsigned long id,
                                               ModuleStore & mstore,
-                                              const ModuleInfo & minfo)
+                                              ModuleInfo & minfo)
 {
     // Have the base ModuleLoaderBase class take ownership,
     // but return the ptr

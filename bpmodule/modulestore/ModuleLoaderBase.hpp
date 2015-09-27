@@ -55,7 +55,7 @@ class ModuleLoaderBase
         void InsertModule(const std::string & key,
                        ModuleStore::ModuleGeneratorFunc func,
                        ModuleStore::ModuleRemoverFunc dfunc,
-                       const ModuleInfo & minfo)
+                       ModuleInfo & minfo)
         {
             mst_->InsertModule(key, func, dfunc, minfo);
         }

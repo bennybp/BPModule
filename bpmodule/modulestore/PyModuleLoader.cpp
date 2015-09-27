@@ -34,7 +34,7 @@ ModuleBase * PyModuleLoader::GeneratorWrapper_(boost::python::object fn,
                                                const std::string & name,
                                                unsigned long id,
                                                ModuleStore & mstore,
-                                               const ModuleInfo & minfo)
+                                               ModuleInfo & minfo)
 {
     boost::python::object newobj = fn(name, id, boost::ref(mstore), boost::ref(minfo));
     ModuleBase * ptr = boost::python::extract<ModuleBase *>(newobj); // may throw

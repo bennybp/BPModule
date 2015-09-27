@@ -25,7 +25,7 @@ class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base
     public:
         Test_Base_Wrap(unsigned long id,
                        modulestore::ModuleStore & mstore,
-                       const modulestore::ModuleInfo & minfo)
+                       modulestore::ModuleInfo & minfo)
             : Test_Base(id, mstore, minfo)
         {}
 

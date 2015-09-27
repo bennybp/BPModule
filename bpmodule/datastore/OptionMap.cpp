@@ -62,7 +62,7 @@ bool OptionMap::TestPy(const std::string & key, const boost::python::object & ob
 }
 
 
-bool OptionMap::TestPy(const boost::python::dict & opt) const
+bool OptionMap::TestPyDict(const boost::python::dict & opt) const
 {
     boost::python::list keys = opt.keys();
     int keylen = boost::python::extract<int>(keys.attr("__len__")());
@@ -92,7 +92,7 @@ bool OptionMap::TestConvertPy(const std::string & key, const boost::python::obje
 }
 
 
-bool OptionMap::TestConvertPy(const boost::python::dict & opt) const
+bool OptionMap::TestConvertPyDict(const boost::python::dict & opt) const
 {
     boost::python::list keys = opt.keys();
     int keylen = boost::python::extract<int>(keys.attr("__len__")());
@@ -131,7 +131,7 @@ void OptionMap::ChangePy(const std::string & key, const boost::python::object & 
 }
 
 
-void OptionMap::ChangePy(const boost::python::dict & opt)
+void OptionMap::ChangePyDict(const boost::python::dict & opt)
 {
     boost::python::list keys = opt.keys();
     int keylen = boost::python::extract<int>(keys.attr("__len__")());

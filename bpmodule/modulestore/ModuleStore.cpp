@@ -45,7 +45,7 @@ void ModuleStore::InsertModule(const std::string & key, ModuleGeneratorFunc func
 
 void ModuleStore::SetOptions(const std::string & key, const boost::python::dict & opt)
 {
-    GetOrThrow_(key).mi.options.ChangePy(opt);
+    GetOrThrow_(key).mi.options.ChangePyDict(opt);
 }
 
 
@@ -113,6 +113,7 @@ void ModuleStore::DeleteObject_(unsigned long id)
     {
         ModuleRemoverFunc dfunc = removemap_.at(id);
         removemap_.erase(id);  // should always happen
+        minfomap_.erase(id); //! \todo remove after moving to tree
 
         // throwing ok from here. Stuff has already been removed from this map
         // (but this shouldn't really throw)

@@ -20,7 +20,7 @@ namespace modulebase {
 
 ModuleBase::ModuleBase(unsigned long id,
                        ModuleStore & mstore,
-                       const ModuleInfo & minfo)
+                       ModuleInfo & minfo)
     : id_(id), minfo_(minfo),
       mstore_(mstore)
 {
@@ -85,66 +85,14 @@ ModuleStore & ModuleBase::MStore(void) noexcept
 }
 
 
-
-
-
-
-/////////////////////////////////
-// Options Handling
-/////////////////////////////////
-
-bool ModuleBase::HasOption(const std::string & key) const
+datastore::OptionMap & ModuleBase::Options(void) noexcept
 {
-    return minfo_.options.Has(key);
+    return minfo_.options;
 }
 
-void ModuleBase::ResetOption(const std::string & key)
+const datastore::OptionMap & ModuleBase::Options(void) const noexcept
 {
-    minfo_.options.ResetToDefault(key);
-}
-
-
-boost::python::object ModuleBase::GetOptionPy(const std::string & key) const
-{
-    try {
-        return minfo_.options.GetPy(key);
-    }
-    catch(exception::GeneralException & ex)
-    {
-        // rethrow with module info
-        ThrowException(ex.what(), ex.GetInfo());
-    }
-
-    return boost::python::object(); // to make compilers happy
-    
-}
-
-
-void ModuleBase::ChangeOptionPy(const std::string & key, const boost::python::object & obj)
-{
-    try {
-        minfo_.options.ChangePy(key, obj);
-    }
-    catch(exception::GeneralException & ex)
-    {
-        // rethrow with module info
-        ThrowException(ex.what(), ex.GetInfo());
-    }
-}
-
-
-bool ModuleBase::TestOptionPy(const std::string & key, const boost::python::object & obj) const
-{
-    try {
-        return minfo_.options.TestPy(key, obj);
-    }
-    catch(exception::GeneralException & ex)
-    {
-        // rethrow with module info
-        ThrowException(ex.what(), ex.GetInfo());
-    }
-
-    return false; // to make compilers happy
+    return minfo_.options;
 }
 
 

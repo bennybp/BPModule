@@ -9,13 +9,18 @@
 #define _GUARD_MODULEBASE_HPP_
 
 #include "bpmodule/datastore/CalcData.hpp"
-#include "bpmodule/modulestore/ModuleInfo.hpp"
 
 // forward declarations
 namespace bpmodule {
 namespace modulestore {
 class ModuleStore;
+struct ModuleInfo;
 }
+
+namespace datastore {
+class OptionMap;
+}
+
 }
 // end forward declarations
 
@@ -41,7 +46,7 @@ class ModuleBase
          */
         ModuleBase(unsigned long id,
                    modulestore::ModuleStore & mstore,
-                   const modulestore::ModuleInfo & minfo);
+                   modulestore::ModuleInfo & minfo);
 
         virtual ~ModuleBase();
 
@@ -82,136 +87,19 @@ class ModuleBase
         const std::string & Version(void) const noexcept;
 
 
+        /*! \brief Get the OptionMap object for this module
+         */ 
+        datastore::OptionMap & Options(void) noexcept;
+
+
+        /*! \brief Get the OptionMap object for this module
+         */ 
+        const datastore::OptionMap & Options(void) const noexcept;
+
+
         ///@}
 
 
-        //! \name Options Handling
-        ///@ {
-
-        /*! \brief Get an option from this module
-         *
-         * \todo Exceptions 
-         */
-        template<typename T>
-        T GetOption(const std::string & key) const
-        {
-            try {
-                return minfo_.options.Get<T>(key);
-            }
-            catch(exception::GeneralException & ex)
-            {
-                // rethrow with module info
-                ThrowException(ex.what(), ex.GetInfo());
-                return T(); // to make compilers happy
-            }
-        }
-
-
-
-
-
-        /*! \brief Return true if the module has an option with the specified key
-         *
-         * \todo Exceptions 
-         */
-        bool HasOption(const std::string & key) const;
-
-
-        /*! \brief Set an option to its defaults
-         *
-         * \todo Exceptions 
-         */
-        void ResetOption(const std::string & key);
-
-
-        /*! \brief Determine if this module's options has data of a specific type for a key
-         *
-         * \todo Exceptions 
-         */ 
-        template<typename T>
-        bool HasOptionType(const std::string & key) const
-        {
-            try {
-                return minfo_.options.HasType<T>(key);
-            }
-            catch(exception::GeneralException & ex)
-            {
-                // rethrow with module info
-                ThrowException(ex.what(), ex.GetInfo());
-                return T(); // to make compilers happy
-            }
-        }
-
-
-        /*! \brief Test if a given option is valid
-         *
-         * \todo Exceptions 
-         */
-        template<typename T>
-        bool TestOption(const T & opt) const
-        {
-            return minfo_.options.Test<T>(opt);
-        }
-
-
-        /*! \brief Are all options valid?
-         * 
-         * Ie has all required options, etc
-         */
-        bool OptionsAreValid(void) const
-        {
-            if(!minfo_.options.IsValid())
-                return false;
-            return true;
-        }
-
-
-        /*! \brief Changes an option for this module
-         *
-         * \todo Exceptions
-         */ 
-        template<typename T>
-        void ChangeOption(const std::string & key, const T & opt)
-        {
-            try {
-                return minfo_.options.Change<T>(key);
-            }
-            catch(exception::GeneralException & ex)
-            {
-                // rethrow with module info
-                ThrowException(ex.what(), ex.GetInfo());
-                return T(); // to make compilers happy
-            }
-        }
-
-
-
-        //////////////////////
-        // Python and Options
-        //////////////////////
-        /*! \brief Get an option as a python object
-         *
-         * \todo Exceptions 
-         */
-        boost::python::object GetOptionPy(const std::string & key) const;
-
-
-        /*! \brief Set an option using a python object
-         *
-         * \todo Exceptions 
-         */
-        void ChangeOptionPy(const std::string & key, const boost::python::object & obj);
-
-
-        /*! \brief Test validate a python object
-         *
-         * \todo Exceptions
-         */
-        bool TestOptionPy(const std::string & key, const boost::python::object & obj) const; 
-
-
-        ///@}
-        
     protected:
         /*! \brief Throw an exception
          * 
@@ -245,7 +133,7 @@ class ModuleBase
         unsigned long id_;
 
         //! All the information for this module
-        modulestore::ModuleInfo minfo_;
+        modulestore::ModuleInfo & minfo_;
 
         //! The ModuleStore in charge of this module
         modulestore::ModuleStore & mstore_;

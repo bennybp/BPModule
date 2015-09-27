@@ -144,11 +144,14 @@ class ModuleStore
             // obtain the creator
             const StoreEntry & se = GetOrThrow_(key);
 
+            // add the moduleinfo to the map
+            minfomap_.emplace(curid_, se.mi);
+
             // create
             // NOTE: name is passed in through two places. This is because the
             // ModuleInfo struct is not converted to python, so python must still
             // get the name
-            modulebase::ModuleBase * mbptr = se.func(se.mi.name, curid_, *this, se.mi);
+            modulebase::ModuleBase * mbptr = se.func(se.mi.name, curid_, *this, minfomap_.at(curid_));
 
             // test
             T * dptr = dynamic_cast<T *>(mbptr);
@@ -194,7 +197,7 @@ class ModuleStore
         friend class PyModuleLoader;
 
         //! A function that generates a module derived from ModuleBase
-        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long, ModuleStore &, const ModuleInfo &)> ModuleGeneratorFunc;
+        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long, ModuleStore &, ModuleInfo &)> ModuleGeneratorFunc;
 
 
         //! A function that deletes a module (by id)
@@ -238,6 +241,13 @@ class ModuleStore
         /*! \brief Map for storing object removal information
          */ 
         std::unordered_map<unsigned long, ModuleRemoverFunc> removemap_;
+
+
+        /*! \brief Map for storing object removal information
+         * 
+         * \todo will be replaced by a graph or tree
+         */ 
+        std::unordered_map<unsigned long, ModuleInfo> minfomap_;
 
 
         //! The id to assign to the next created module

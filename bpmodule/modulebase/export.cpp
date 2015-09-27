@@ -14,6 +14,8 @@
 
 using bpmodule::modulestore::ModuleStore;
 using bpmodule::modulestore::ModuleInfo;
+using bpmodule::datastore::OptionMap;
+
 using namespace boost::python;
 
 
@@ -36,18 +38,13 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("Key", &ModuleBase::Key, return_value_policy<copy_const_reference>())
     .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
     .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>())
-    .def("HasOption", &ModuleBase::HasOption)
-    .def("ResetOption", &ModuleBase::ResetOption)
-    .def("OptionsAreValid", &ModuleBase::OptionsAreValid)
-    .def("TestOption", &ModuleBase::TestOptionPy)
-    .def("GetOption", &ModuleBase::GetOptionPy)
-    .def("ChangeOption", &ModuleBase::ChangeOptionPy);
+    .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_value_policy<reference_existing_object>());  // should be safe?
 
 
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
-    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, const ModuleInfo &>())
-    .def("MStore", &Test_Base_Wrap::MStore, return_internal_reference<>())
+    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, ModuleInfo &>())
+    .def("MStore", &Test_Base_Wrap::MStore, return_value_policy<reference_existing_object>()) 
     .def("ThrowException", &Test_Base_Wrap::ThrowException, ThrowException_overloads())
     .def("RunTest", pure_virtual(&Test_Base::RunTest))
     .def("CallRunTest", pure_virtual(&Test_Base::CallRunTest))

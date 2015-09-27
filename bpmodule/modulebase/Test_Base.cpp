@@ -15,7 +15,7 @@ namespace modulebase {
 
 Test_Base::Test_Base(unsigned long id,
                      ModuleStore & mstore, 
-                     const ModuleInfo & minfo)
+                     ModuleInfo & minfo)
     : ModuleBase(id, mstore, minfo)
 {
 }

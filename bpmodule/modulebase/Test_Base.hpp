@@ -23,7 +23,7 @@ class Test_Base : public ModuleBase
     public:
         Test_Base(unsigned long id, 
                   modulestore::ModuleStore & mstore,
-                  const modulestore::ModuleInfo & minfo);
+                  modulestore::ModuleInfo & minfo);
 
         //! \brief Just test some functionality
         virtual void RunTest(void) = 0;

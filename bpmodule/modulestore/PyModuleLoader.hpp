@@ -87,7 +87,7 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
                                                    const std::string & name,
                                                    unsigned long id,
                                                    ModuleStore & mstore,
-                                                   const ModuleInfo & minfo);
+                                                   ModuleInfo & minfo);
 
 };
 
