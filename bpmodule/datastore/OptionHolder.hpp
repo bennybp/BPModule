@@ -45,9 +45,9 @@ class OptionHolder : public OptionBase
          * \todo Should required even be passef? Default must be supplied here. Is
          *       this constructor even really needed?
          */
-        OptionHolder(const T & value, const T & def,
+        OptionHolder(const std::string & key, const T & value, const T & def,
                      ValidatorFunc validator, bool required, bool expert)
-            : OptionBase(required, expert),
+            : OptionBase(key, required, expert),
               value_(new T(value)),
               default_(new T(def)),
               validator_(validator)
@@ -55,12 +55,15 @@ class OptionHolder : public OptionBase
             // check the default and value with the validator
             if(!validator_(*value))
                 throw exception::GeneralException("Initial value is not valid",
+                                                  "optionkey", Key(),
                                                   "type", Type()); 
             if(!validator_(*def))
                 throw exception::GeneralException("Initial default is not valid",
+                                                  "optionkey", Key(),
                                                   "type", Type()); 
             if(required)
                 throw exception::GeneralException("Default value supplied for required option",
+                                                  "optionkey", Key(),
                                                   "type", Type()); 
         }
 
@@ -75,9 +78,9 @@ class OptionHolder : public OptionBase
          *        If the initial value or default is invalid, or
          *        there is a default argument supplied for a 'required' option.
          */
-        OptionHolder(T * value, T * def,
+        OptionHolder(const std::string & key, T * value, T * def,
                      ValidatorFunc validator, bool required, bool expert)
-            : OptionBase(required, expert),
+            : OptionBase(key, required, expert),
               value_(value),
               default_(def),
               validator_(validator)
@@ -85,12 +88,15 @@ class OptionHolder : public OptionBase
             // check the default and value with the validator
             if(value != nullptr && !validator_(*value))
                 throw exception::GeneralException("Initial value is not valid",
+                                                  "optionkey", Key(),
                                                   "type", Type()); 
             if(def != nullptr && !validator_(*def))
                 throw exception::GeneralException("Initial default is not valid",
+                                                  "optionkey", Key(),
                                                   "type", Type()); 
             if(def != nullptr && required)
                 throw exception::GeneralException("Default value supplied for required option",
+                                                  "optionkey", Key(),
                                                   "type", Type()); 
         }
 
@@ -177,6 +183,7 @@ class OptionHolder : public OptionBase
                 return *default_;
             else
                 throw exception::GeneralException("Option does not have a value",
+                                                  "optionkey", Key(),
                                                   "type", Type()); 
         }
 
@@ -194,6 +201,7 @@ class OptionHolder : public OptionBase
                 return *default_;
             else
                 throw exception::GeneralException("Option does not have a default",
+                                                  "optionkey", Key(),
                                                   "type", Type()); 
         }
 
@@ -303,6 +311,7 @@ class OptionHolder : public OptionBase
             {
                 if(!OptionBase::IsExpert())
                     throw exception::GeneralException("Value is not valid for this option",
+                                                      "optionkey", Key(),
                                                       "type", Type());
             }
         }
@@ -321,7 +330,7 @@ class OptionHolder : public OptionBase
  *        converting the data
  *
  */
-OptionBasePtr OptionHolderFactory(const boost::python::object & obj);
+OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::object & obj);
 
 
 

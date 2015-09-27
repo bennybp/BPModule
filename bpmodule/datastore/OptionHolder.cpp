@@ -36,7 +36,7 @@ bool EmptyValidator(T arg)
 
 
 template<typename T>
-OptionBasePtr CreateOptionHolder(const boost::python::tuple & tup)
+OptionBasePtr CreateOptionHolder(const std::string & key, const boost::python::tuple & tup)
 {
     PythonType ptype_default = DetermineType(tup[1]);
 
@@ -58,22 +58,26 @@ OptionBasePtr CreateOptionHolder(const boost::python::tuple & tup)
         validator = std::bind(ValidateWrapper<T>, tup[3], std::placeholders::_1);
 
     //! \todo expert option
-    return OptionBasePtr(new OptionHolder<T>(val, def, validator, req, false)); 
+    return OptionBasePtr(new OptionHolder<T>(key, val, def, validator, req, false)); 
 }
 
 
 
-OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
+OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::object & obj)
 {
     PythonType ptype = DetermineType(obj);
     if(ptype != PythonType::Tuple)
-        throw GeneralException("Object for options is not a tuple", "pythontype", PythonTypeToStr(ptype)); 
+        throw GeneralException("Object for options is not a tuple",
+                               "optionkey", key,
+                               "pythontype", PythonTypeToStr(ptype)); 
 
     boost::python::tuple tup = boost::python::extract<boost::python::tuple>(obj);
 
     int length = boost::python::extract<int>(tup.attr("__len__")());
     if(length != 5)
-        throw GeneralException("Python Tuple does not have 5 elements", "length", std::to_string(length)); 
+        throw GeneralException("Python options tuple does not have 5 elements",
+                               "optionkey", key,
+                               "length", std::to_string(length)); 
 
     // type, default, required, validator, help
     // (help is not parsed at the moment)
@@ -81,10 +85,14 @@ OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
     PythonType ptype_required = DetermineType(tup[2]);
 
     if(ptype_type != PythonType::String)
-        throw GeneralException("\"Type\" element of tuple is not a string", "type", PythonTypeToStr(ptype_type)); 
+        throw GeneralException("\"Type\" element of tuple is not a string",
+                               "optionkey", key,
+                               "type", PythonTypeToStr(ptype_type)); 
 
     if(ptype_required != PythonType::Bool)
-        throw GeneralException("\"Required\" element of tuple is not a bool", "type", PythonTypeToStr(ptype_required)); 
+        throw GeneralException("\"Required\" element of tuple is not a bool",
+                               "optionkey", key,
+                               "type", PythonTypeToStr(ptype_required)); 
 
 
     std::string type = boost::python::extract<std::string>(tup[0]);
@@ -93,23 +101,25 @@ OptionBasePtr OptionHolderFactory(const boost::python::object & obj)
     switch(StrToPythonType(type))
     {
         case PythonType::Bool:
-            return CreateOptionHolder<bool>(tup); 
+            return CreateOptionHolder<bool>(key, tup); 
         case PythonType::Int:
-            return CreateOptionHolder<int>(tup); 
+            return CreateOptionHolder<int>(key, tup); 
         case PythonType::Float:
-            return CreateOptionHolder<double>(tup); 
+            return CreateOptionHolder<double>(key, tup); 
         case PythonType::String:
-            return CreateOptionHolder<std::string>(tup); 
+            return CreateOptionHolder<std::string>(key, tup); 
         case PythonType::ListBool:
-            return CreateOptionHolder<std::vector<bool>>(tup); 
+            return CreateOptionHolder<std::vector<bool>>(key, tup); 
         case PythonType::ListInt:
-            return CreateOptionHolder<std::vector<int>>(tup); 
+            return CreateOptionHolder<std::vector<int>>(key, tup); 
         case PythonType::ListFloat:
-            return CreateOptionHolder<std::vector<double>>(tup); 
+            return CreateOptionHolder<std::vector<double>>(key, tup); 
         case PythonType::ListString:
-            return CreateOptionHolder<std::vector<std::string>>(tup); 
+            return CreateOptionHolder<std::vector<std::string>>(key, tup); 
         default:
-            throw GeneralException("Cannot convert python type to option", "type", type); 
+            throw GeneralException("Cannot convert python type to option",
+                                   "optionkey", key,
+                                   "type", type); 
     }
 }
 

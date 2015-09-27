@@ -40,7 +40,7 @@ OptionMap::OptionMap(const boost::python::dict & opt)
 
             // this will throw needed exceptions
             try {
-                opmap_.emplace(key, detail::OptionHolderFactory(opt[key]));
+                opmap_.emplace(key, detail::OptionHolderFactory(key, opt[key]));
             }
             catch(GeneralException & ex)
             {

@@ -21,8 +21,8 @@ namespace detail {
 class OptionBase
 {
     public:
-        OptionBase(bool required, bool expert) noexcept
-            : required_(required), expert_(expert)
+        OptionBase(const std::string & key, bool required, bool expert) noexcept
+            : key_(key), required_(required), expert_(expert)
         { }
 
         virtual ~OptionBase() noexcept    = default;
@@ -134,6 +134,17 @@ class OptionBase
         ///////////////////////////////////
         // Base functions
         ///////////////////////////////////
+        
+        /*! \brief Return the key of this option
+         *
+         * \exnothrow
+         */
+        const std::string & Key(void) const noexcept
+        {
+            return key_;
+        }
+
+
         /*! \brief Check if this options is required
          *
          * \exnothrow 
@@ -186,6 +197,7 @@ class OptionBase
 
 
     private:
+        std::string key_;
         bool required_;
         bool expert_;
 
