@@ -101,7 +101,7 @@ def Run():
         for m in allmod:
             # None should be valid - I haven't specified required options
             desc = "Testing validity of {}".format(m[0].Key())
-            nfailed += bp.testing.PyTestBoolFunc(ntest, desc, False, m[0].OptionsAreValid)
+            nfailed += bp.testing.PyTestBoolFunc(ntest, desc, False, m[0].Options().IsValid)
             ntest += 1
 
         for m in allmod:
@@ -109,13 +109,13 @@ def Run():
                 if d[0] == m[1]:
                     desc = "Setting required option for {}".format(m[0].Key())
                     opt = d[0] + "_req"
-                    nfailed += bp.testing.PyTestFunc(ntest, desc, True, m[0].ChangeOption, opt, d[1]) 
+                    nfailed += bp.testing.PyTestFunc(ntest, desc, True, m[0].Options().Change, opt, d[1]) 
                     ntest += 1
 
         for m in allmod:
             # Should be valid now
             desc = "Retesting validity of {}".format(m[0].Key())
-            nfailed += bp.testing.PyTestBoolFunc(ntest, desc, True, m[0].OptionsAreValid)
+            nfailed += bp.testing.PyTestBoolFunc(ntest, desc, True, m[0].Options().IsValid)
             ntest += 1
 
 
@@ -123,9 +123,14 @@ def Run():
             for d in testelements:
                 for o in "_opt", "_req", "_opt_def":
                     opt = m[1] + o
-                    desc = "Setting {} option for {} -> {}".format(opt, m[0].Key(), d[0])
                     expected = IsValid(m[1], d[0])
-                    nfailed += bp.testing.PyTestFunc(ntest, desc, expected, m[0].ChangeOption, opt, d[1]) 
+
+                    desc = "Testing {} option for {} -> {}".format(opt, m[0].Key(), d[0])
+                    nfailed += bp.testing.PyTestBoolFunc(ntest, desc, expected, m[0].Options().Test, opt, d[1]) 
+                    ntest += 1
+
+                    desc = "Setting {} option for {} -> {}".format(opt, m[0].Key(), d[0])
+                    nfailed += bp.testing.PyTestFunc(ntest, desc, expected, m[0].Options().Change, opt, d[1]) 
                     ntest += 1
 
         bp.testing.PrintResults(nfailed)
