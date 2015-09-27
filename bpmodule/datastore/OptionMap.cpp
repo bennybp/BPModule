@@ -16,7 +16,6 @@
 
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::python_helper::ConvertToPy;
-using bpmodule::exception::PythonConvertException;
 using bpmodule::exception::GeneralException;
 
 
@@ -35,7 +34,9 @@ OptionMap::OptionMap(const boost::python::dict & opt)
             std::string key = ConvertToCpp<std::string>(keys[i]);
 
             if(opmap_.count(key))
-                throw exception::MapException("Duplicate key on construction", "OptionMap", key); 
+                throw GeneralException("Duplicate key on construction",
+                                       "location", "OptionMap",
+                                       "mapkey", key); 
 
             // this will throw needed exceptions
             try {
@@ -72,13 +73,13 @@ bool OptionMap::TestPyDict(const boost::python::dict & opt) const
         {
             std::string key = ConvertToCpp<std::string>(keys[i]);
 
-            if(!GetOrThrow_(key)->TestPy(opt[key]))
+            if(!TestPy(key, opt[key]))
                 return false;
         }
     }
     catch(bpmodule::exception::GeneralException & ex)
     {
-        ex.AppendInfo({ { "location", "OptionMap::TestPy" } });
+        ex.AppendInfo("location", "OptionMap::TestPyDict");
         throw;
     }
 
@@ -106,9 +107,9 @@ bool OptionMap::TestConvertPyDict(const boost::python::dict & opt) const
                 return false;
         }
     }
-    catch(bpmodule::exception::GeneralException & ex)
+    catch(exception::GeneralException & ex)
     {
-        ex.AppendInfo({ { "location", "OptionMap::TestPy" } });
+        ex.AppendInfo("location", "OptionMap::TestConvertPyDict");
         throw;
     }
 
@@ -123,9 +124,9 @@ void OptionMap::ChangePy(const std::string & key, const boost::python::object & 
     try{
         ptr->ChangePy(obj);
     }
-    catch(bpmodule::exception::GeneralException & ex)
+    catch(exception::GeneralException & ex)
     {
-        ex.AppendInfo({ { "key", key} });
+        ex.AppendInfo("mapkey", key);
         throw;
     }
 }
@@ -144,21 +145,19 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
             std::string key = ConvertToCpp<std::string>(keys[i]);
 
             if(!opmap_.count(key))
-                throw exception::MapException("Key not found for merging", "OptionMap", key); 
+                throw GeneralException("Key not found for merging",
+                                       "mapkey", key); 
 
             if(!GetOrThrow_(key)->TestPy(opt[key]))
             {
-                exception::OptionException ex("Option is invalid", "");
-                ex.AppendInfo( { { "key", key } } );
-                throw ex;
+                throw GeneralException("Option is invalid",
+                                       "mapkey", key);
             }
         }
     }
-    catch(PythonConvertException & ex) // catch these, let others pass 
+    catch(GeneralException & ex)
     {
-        // should always be a PythonConvertException?
-        // Don't catch the MapException, let that go through
-        ex.AppendInfo({ {"location", "OptionMap"} });
+        ex.AppendInfo("location", "OptionMap");
         throw;
     }
 

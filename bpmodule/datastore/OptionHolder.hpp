@@ -12,7 +12,6 @@
 #include <boost/python.hpp>
 
 #include "bpmodule/datastore/OptionBase.hpp"
-#include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 
 //! \todo Split python stuff from header?
@@ -55,11 +54,14 @@ class OptionHolder : public OptionBase
         {
             // check the default and value with the validator
             if(!validator_(*value))
-                throw exception::OptionException("Initial value is not valid", Type()); 
+                throw exception::GeneralException("Initial value is not valid",
+                                                  "type", Type()); 
             if(!validator_(*def))
-                throw exception::OptionException("Initial default is not valid", Type()); 
+                throw exception::GeneralException("Initial default is not valid",
+                                                  "type", Type()); 
             if(required)
-                throw exception::OptionException("Default value supplied for required value", Type());
+                throw exception::GeneralException("Default value supplied for required option",
+                                                  "type", Type()); 
         }
 
 
@@ -82,11 +84,14 @@ class OptionHolder : public OptionBase
         {
             // check the default and value with the validator
             if(value != nullptr && !validator_(*value))
-                throw exception::OptionException("Initial value is not valid", Type()); 
+                throw exception::GeneralException("Initial value is not valid",
+                                                  "type", Type()); 
             if(def != nullptr && !validator_(*def))
-                throw exception::OptionException("Initial default is not valid", Type()); 
+                throw exception::GeneralException("Initial default is not valid",
+                                                  "type", Type()); 
             if(def != nullptr && required)
-                throw exception::OptionException("Default value supplied for required value", Type());
+                throw exception::GeneralException("Default value supplied for required option",
+                                                  "type", Type()); 
         }
 
 
@@ -171,7 +176,8 @@ class OptionHolder : public OptionBase
             else if(default_)
                 return *default_;
             else
-                throw exception::OptionException("Option does not have a value", Type());
+                throw exception::GeneralException("Option does not have a value",
+                                                  "type", Type()); 
         }
 
 
@@ -187,7 +193,8 @@ class OptionHolder : public OptionBase
             if(default_)
                 return *default_;
             else
-                throw exception::OptionException("Option does not have a default", Type());
+                throw exception::GeneralException("Option does not have a default",
+                                                  "type", Type()); 
         }
 
 
@@ -295,7 +302,8 @@ class OptionHolder : public OptionBase
             if(!validator_(value))
             {
                 if(!OptionBase::IsExpert())
-                    throw exception::OptionException("Value is not valid for this option", Type());
+                    throw exception::GeneralException("Value is not valid for this option",
+                                                      "type", Type());
             }
         }
 };

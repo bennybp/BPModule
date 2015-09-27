@@ -10,13 +10,12 @@
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"
-#include "bpmodule/exception/MapException.hpp"
 
 using bpmodule::datastore::OptionMap;
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
 using bpmodule::exception::ModuleCreateException;
-using bpmodule::exception::MapException;
+using bpmodule::exception::GeneralException;
 
 
 namespace bpmodule {
@@ -128,7 +127,9 @@ const ModuleStore::StoreEntry & ModuleStore::GetOrThrow_(const std::string & key
     if(Has(key))
         return store_.at(key);
     else
-        throw MapException("Missing key", "ModuleStore", key);
+        throw GeneralException("Missing module key",
+                               "location", "ModuleStore",
+                               "modulekey", key);
 }
 
 
@@ -137,7 +138,9 @@ ModuleStore::StoreEntry & ModuleStore::GetOrThrow_(const std::string & key)
     if(Has(key))
         return store_.at(key);
     else
-        throw MapException("Missing key", "ModuleStore", key);
+        throw GeneralException("Missing module key",
+                               "location", "ModuleStore",
+                               "modulekey", key);
 }
 
 

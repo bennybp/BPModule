@@ -8,14 +8,13 @@
 #include "bpmodule/datastore/PropertyMap.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/tensor/Tensor.hpp"
-#include "bpmodule/exception/PythonConvertException.hpp"
 
 
 //! \todo Add tensor stuff?
 
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::python_helper::ConvertToPy;
-using bpmodule::exception::PythonConvertException;
+using bpmodule::exception::GeneralException;
 
 
 namespace bpmodule {
@@ -35,9 +34,12 @@ PropertyMap::PropertyMap(const boost::python::list & olist)
 
         if(cl != "tuple")
         {
-            PythonConvertException ex("PropertyMap element is not a tuple", "PropertyMap", key, cl, "tuple");
-            ex.AppendInfo({ {"element", std::to_string(i) } });
-            throw ex;
+            throw GeneralException("PropertyMap element is not a tuple",
+                                   "location", "PropertyMap",
+                                   "mapkey", key,
+                                   "element", std::to_string(i),
+                                   "fromtype", cl,
+                                   "totype", "tuple");
         }
 
 
@@ -45,30 +47,26 @@ PropertyMap::PropertyMap(const boost::python::list & olist)
         int tuplelen = boost::python::extract<int>(olist[i].attr("__len__")());
         if(tuplelen != 2)
         {
-            PythonConvertException ex("PropertyMap element is not a tuple of 2 elements", "PropertyMap", key, cl, "tuple");
-            ex.AppendInfo({ {"element", std::to_string(i) }, {"length", std::to_string(tuplelen)} });
-            throw ex;
+            throw GeneralException("PropertyMap element is not a tuple of 2 elements",
+                                   "location", "PropertyMap",
+                                   "mapkey", key,
+                                   "element", std::to_string(i),
+                                   "length", std::to_string(tuplelen));
         }
 
 
         // actually convert now
-        try {
-            key = ConvertToCpp<std::string>(olist[i][0]);
+        // may throw
+        key = ConvertToCpp<std::string>(olist[i][0]);
 
-            if(opmap_.count(key))
-                throw exception::MapException("Duplicate key found on construction", "PropertyMap", key); 
+        if(opmap_.count(key))
+            throw GeneralException("Duplicate key found on construction",
+                                   "location", "PropertyMap",
+                                   "mapkey", key);
 
 
-            boost::python::object dat = olist[i][1];
-            Set_(key, std::move(detail::PropHolderFactory(dat)));
-        }
-        catch(PythonConvertException & ex) 
-        {
-            // should always be a PythonConvertException?
-            // Don't catch the MapException, let that go through
-            ex.AppendInfo({ {"location", "PropertyMap"}, {"key", key} });
-            throw;
-        }
+        boost::python::object dat = olist[i][1];
+        Set_(key, std::move(detail::PropHolderFactory(dat)));
     }
 }
 
@@ -90,10 +88,10 @@ void PropertyMap::Set<>(const std::string & key, const boost::python::object & v
     try {
         Set_(key, detail::PropHolderFactory(value));
     }
-    catch(PythonConvertException & ex)
+    catch(GeneralException & ex)
     {
-        // append key info
-        ex.AppendInfo({ {"key", key} });
+        // append key info if PropHolderFactory throws
+        ex.AppendInfo("mapkey", key);
         throw;
     }
 }

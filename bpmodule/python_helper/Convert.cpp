@@ -8,10 +8,6 @@
 #include "bpmodule/python_helper/Convert.hpp"
 
 
-using bpmodule::exception::PythonConvertException;
-
-
-
 namespace bpmodule {
 namespace python_helper {
 

@@ -12,7 +12,6 @@
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 #include "bpmodule/datastore/OptionHolder.hpp"
-#include "bpmodule/exception/MapException.hpp"
 
 
 namespace bpmodule {
@@ -335,7 +334,9 @@ class OptionMap
             if(opmap_.count(key))
                 return opmap_.at(key);
             else
-                throw exception::MapException("Key not found", "OptionMap", key); 
+                throw exception::GeneralException("Key not found",
+                                                  "location", "OptionMap"
+                                                  "mapkey", key); 
         }
 
 
@@ -346,7 +347,9 @@ class OptionMap
             if(opmap_.count(key))
                 return opmap_.at(key);
             else
-                throw exception::MapException("Key not found", "OptionMap", key); 
+                throw exception::GeneralException("Key not found",
+                                                  "location", "OptionMap"
+                                                  "mapkey", key); 
         }
 
 
@@ -363,7 +366,11 @@ class OptionMap
             const detail::OptionBasePtr & ptr = GetOrThrow_(key);
             const detail::OptionHolder<T> * oh = dynamic_cast<const detail::OptionHolder<T> *>(ptr.get());
             if(oh == nullptr)
-                throw exception::MapException("Bad cast", "OptionMap", ptr->Type(), typeid(T).name());
+                throw exception::GeneralException("Bad cast",
+                                                  "location", "OptionMap",
+                                                  "mapkey", key,
+                                                  "fromtype", ptr->Type(),
+                                                  "totype", typeid(T).name()); 
 
             return oh;
         }

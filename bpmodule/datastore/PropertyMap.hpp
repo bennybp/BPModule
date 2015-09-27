@@ -11,7 +11,7 @@
 #include <map>
 #include <memory>
 
-#include "bpmodule/exception/MapException.hpp"
+#include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 #include "bpmodule/datastore/PropHolder.hpp"
 
@@ -350,7 +350,9 @@ class PropertyMap
             if(opmap_.count(key))
                 return opmap_.at(key);
             else
-                throw exception::MapException("Key not found", "PropertyMap", key); 
+                throw exception::GeneralException("Key not found",
+                                                  "location", "PropertyMap",
+                                                  "mapkey", key); 
         }
 
 
@@ -361,7 +363,9 @@ class PropertyMap
             if(opmap_.count(key))
                 return opmap_.at(key);
             else
-                throw exception::MapException("Key not found", "PropertyMap", key); 
+                throw exception::GeneralException("Key not found",
+                                                  "location", "PropertyMap",
+                                                  "mapkey", key); 
         }
 
 
@@ -381,7 +385,11 @@ class PropertyMap
             const PropMapEntry & pme = GetOrThrow_(key);
             const detail::PropHolder<T> * ph = dynamic_cast<const detail::PropHolder<T> *>(pme.value.get());
             if(ph == nullptr)
-                throw exception::MapException("Bad cast", "PropertyMap", pme.value->Type(), typeid(T).name());
+                throw exception::GeneralException("Bad cast",
+                                                  "location", "PropertyMap",
+                                                  "mapkey", key,
+                                                  "fromtype", pme.value->Type(),
+                                                  "totype", typeid(T).name()); 
 
             return ph;
         }

@@ -10,6 +10,7 @@
 
 using bpmodule::datastore::OptionMap;
 using bpmodule::python_helper::ConvertToCpp;
+using bpmodule::exception::GeneralException;
 
 namespace bpmodule {
 namespace modulestore {
@@ -31,15 +32,18 @@ template<typename T>
 static T DictConvertHelper(const boost::python::dict & dictionary, const char * key)
 {
     if(!dictionary.has_key(key))
-        throw bpmodule::exception::PythonConvertException("Python dictionary missing key", "ModuleInfo", key, "(missing)", typeid(T).name());
+        throw GeneralException("Python dictionary is missing key",
+                               "location", "ModuleInfo",
+                               "dictkey", key,
+                               "totype", typeid(T).name());
 
 
     try {
         return ConvertToCpp<T>(dictionary[key]);
     }
-    catch(bpmodule::exception::PythonConvertException & ex)
+    catch(GeneralException & ex)
     {
-        ex.AppendInfo({ {"key", key}, {"location", "ModuleInfo"} });
+        ex.AppendInfo("dictkey", key, "location", "ModuleInfo");
         throw;
     }
 }
@@ -70,9 +74,9 @@ static std::vector<T> DictConvertHelperVec(const boost::python::dict & dictionar
     try {
         return ConvertToCpp<std::vector<T>>(lst);
     }
-    catch(bpmodule::exception::PythonConvertException & ex)
+    catch(GeneralException & ex)
     {
-        ex.AppendInfo({ {"key", key}, {"location", "ModuleInfo"} });
+        ex.AppendInfo("dictkey", key, "location", "ModuleInfo");
         throw;
     }
 }
@@ -97,9 +101,9 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
         try {
             options = OptionMap(DictConvertHelper<boost::python::dict>(dictionary, "options"));
         }
-        catch(bpmodule::exception::PythonConvertException & ex)
+        catch(GeneralException & ex)
         {
-            ex.AppendInfo({ {"key", key} });
+            ex.AppendInfo("key", key);
             throw;
         }
 
@@ -107,9 +111,9 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
         if(dictionary.has_key("soname"))
             soname = DictConvertHelper<std::string>(dictionary, "soname");
     }
-    catch(bpmodule::exception::PythonConvertException & ex)
+    catch(GeneralException & ex)
     {
-        ex.AppendInfo({ {"module", name} }); // name may or may not be set
+        ex.AppendInfo("modulename", name); // name may or may not be set
         throw;
     }
 }

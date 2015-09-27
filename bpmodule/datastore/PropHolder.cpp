@@ -12,6 +12,7 @@
 
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::python_helper::ConvertToPy;
+using bpmodule::exception::GeneralException;
 
 
 namespace bpmodule {
@@ -73,7 +74,8 @@ PropPlaceholderPtr PropHolderFactory(const boost::python::object & obj)
         boost::python::list lst = boost::python::extract<boost::python::list>(obj);
         int length = boost::python::extract<int>(lst.attr("__len__")());
         if(length == 0)
-            throw PythonConvertException("Empty list passed from python", "PropertyMap", "(none)", "(none)");
+            throw GeneralException("Empty list passed from python",
+                                   "location", "PropertyMap");
 
         std::string cl2 = boost::python::extract<std::string>(lst[0].attr("__class__").attr("__name__"));
 
@@ -82,7 +84,8 @@ PropPlaceholderPtr PropHolderFactory(const boost::python::object & obj)
         {
             std::string cltmp = boost::python::extract<std::string>(lst[i].attr("__class__").attr("__name__"));
             if(cl2 != cltmp)
-                throw PythonConvertException("Cannot convert heterogeneous container", cltmp, cl2);
+                throw GeneralException("Cannot convert heterogeneous python list",
+                                       "type1", cl2, "type2", cltmp, "element", std::to_string(i));
         }
 
         // now parse list
@@ -96,14 +99,15 @@ PropPlaceholderPtr PropHolderFactory(const boost::python::object & obj)
             return PropPlaceholderPtr(new PropHolder<std::vector<std::string>>(ConvertToCpp<std::vector<std::string>>(lst)));
         else
         {
-            throw PythonConvertException("Invalid type to convert from python",
-                                         "PropertyMap", "(see below)", cl2, "boost::python::object", "In converting a list"); 
+            throw GeneralException("Invalid type to convert from python",
+                                   "location", "PropertyMap", "type", cl2,
+                                   "detail", "In converting a list"); 
         }
     }
     else
     {
-        throw PythonConvertException("Invalid type to convert from python",
-                                     "PropertyMap", "(see below)", cl, "boost::python::object"); 
+        throw GeneralException("Invalid type to convert from python",
+                               "location", "PropertyMap", "type", cl);
     }
 }
 

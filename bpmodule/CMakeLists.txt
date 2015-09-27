@@ -26,9 +26,6 @@ set(BPMODULE_EXCEPTION_HEADERS
             exception/GeneralException.hpp
             exception/ModuleLoadException.hpp
             exception/ModuleCreateException.hpp
-            exception/MapException.hpp
-            exception/PythonConvertException.hpp
-            exception/OptionException.hpp
    )
 
 set(BPMODULE_PARALLEL_HEADERS

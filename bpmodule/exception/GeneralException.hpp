@@ -37,6 +37,17 @@ class GeneralException : public std::exception
         /*! \brief Constructor
          * 
          * \param [in] whatstr Some descriptive string
+         * \param [in] exinfo Pairs of strings with other information.
+         */
+        template<typename... Targs>
+        GeneralException(std::string whatstr, Targs... exinfo)
+        {
+        
+        }
+
+        /*! \brief Constructor
+         * 
+         * \param [in] whatstr Some descriptive string
          * \param [in] exinfo All other information as a vector of string pairs.
          */
         GeneralException(std::string whatstr, ExceptionInfo exinfo = {});
@@ -64,6 +75,21 @@ class GeneralException : public std::exception
         /*! \brief Add information to this exception object
          */ 
         void AppendInfo(const ExceptionInfo & toappend);
+
+
+        /*! \brief Add information to this exception object
+         */ 
+        void AppendInfo(const std::string & key, const std::string & value);
+
+
+        /*! \brief Add information to this exception object
+         */ 
+        template<typename... Targs>
+        void AppendInfo(const std::string & key, const std::string & value, Targs... exinfo)
+        {
+            AppendInfo(key, value);
+            AppendInfo(exinfo...);
+        }
 
 
         /*! \brief Print out the "what" string

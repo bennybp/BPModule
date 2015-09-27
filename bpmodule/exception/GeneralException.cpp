@@ -42,6 +42,11 @@ void GeneralException::AppendInfo(const ExceptionInfo & toappend)
 }
 
 
+void GeneralException::AppendInfo(const std::string & key, const std::string & value)
+{
+    AppendInfo({ {key, value} });
+}
+
 
 const char * GeneralException::what(void) const noexcept
 {

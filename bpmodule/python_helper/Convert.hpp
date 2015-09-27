@@ -10,11 +10,7 @@
 
 #include <boost/python.hpp>
 
-#include "bpmodule/exception/PythonConvertException.hpp"
-
-
-using bpmodule::exception::PythonConvertException;
-
+#include "bpmodule/exception/GeneralException.hpp"
 
 
 namespace bpmodule {
@@ -200,9 +196,9 @@ struct ToCppConverter<std::vector<T>>
             try {
                 r.push_back(ToCppConverter<T>::Convert(lst[i]));
             }
-            catch(bpmodule::exception::PythonConvertException & ex)
+            catch(exception::GeneralException & ex)
             {
-                ex.AppendInfo({{ "element", std::to_string(i) }});
+                ex.AppendInfo("element", std::to_string(i));
                 throw;
             }
         }
@@ -224,7 +220,7 @@ struct ToCppConverter<std::vector<T>>
  *
  * This function will check first, and throw if the check fails.
  *
- * \throw bpmodule::exception::PythonConvertException if the
+ * \throw exception::PythonConvertException if the
  *        data could not be converted
  *
  * \tparam T The type to convert to
@@ -238,7 +234,9 @@ T ConvertToCpp(const boost::python::object & obj)
     if(!ToCppConverter<T>::Check(obj))
     {
         std::string fromtype = boost::python::extract<std::string>(obj.attr("__class__").attr("__name__"));
-        throw PythonConvertException("Cannot convert from python to C++", fromtype, typeid(T).name(), "Check failed"); 
+        throw exception::GeneralException("Cannot convert from python to C++: Check failed",
+                               "fromtype", fromtype,
+                               "totype", typeid(T).name());
     }
 
     try {
@@ -247,7 +245,9 @@ T ConvertToCpp(const boost::python::object & obj)
     catch(...) //! \todo Doesn't seem to catch python exceptions?
     {
         std::string fromtype = boost::python::extract<std::string>(obj.attr("__class__").attr("__name__"));
-        throw PythonConvertException("Cannot convert from python to C++", fromtype, typeid(T).name(), "Conversion failed"); 
+        throw exception::GeneralException("Cannot convert from python to C++: Conversion failed",
+                               "fromtype", fromtype,
+                               "totype", typeid(T).name());
     }
 }
 
@@ -273,7 +273,7 @@ bool TestConvertToCpp(const boost::python::object & obj)
 
 /*! \brief Convert a C++ object to a boost::python::object
  *
- * \throw bpmodule::exception::PythonConvertException if the
+ * \throw exception::PythonConvertException if the
  *        data could not be converted
  *
  * \tparam T The type to convert from
@@ -289,7 +289,9 @@ boost::python::object ConvertToPy(const T & obj)
     }
     catch(...)
     {
-        throw PythonConvertException("Cannot convert from C++ to python", typeid(T).name(), "boost::python::object", "Conversion failed"); 
+        throw exception::GeneralException("Cannot convert from C++ to python: Conversion failed",
+                               "fromtype", typeid(obj).name(),
+                               "totype", "boost::python::object");
     }
 }
 
@@ -324,7 +326,7 @@ bool TestConvertToPy(const T & obj)
 
 /*! \brief Convert a C++ vector to a boost::python::list
  *
- * \throw bpmodule::exception::PythonConvertException if the
+ * \throw exception::PythonConvertException if the
  *        data could not be converted
  *
  * \tparam T The type to convert from
@@ -342,9 +344,9 @@ boost::python::list ConvertToPy(const std::vector<T> & v)
         try {
             result.append(ConvertToPy(v[i]));
         }
-        catch(bpmodule::exception::PythonConvertException & ex)
+        catch(exception::GeneralException & ex)
         {
-            ex.AppendInfo({ { "element", std::to_string(i)} });
+            ex.AppendInfo("element", std::to_string(i));
             throw;
         }
     }
