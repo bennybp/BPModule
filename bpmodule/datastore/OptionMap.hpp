@@ -20,7 +20,7 @@ namespace datastore {
 
 /*! \brief A class for holding options to a module
  *
- * \todo Copy and swap? Swap function?
+ * \todo Split out functions into cpp file
  */
 class OptionMap
 {
