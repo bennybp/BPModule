@@ -67,9 +67,7 @@ class OptionMap
         /*! \brief Obtain the value for an option
          * 
          * \throw bpmodule::exception::OptionException if the
-         *        option does not have a value
-         *
-         * \throw bpmodule::exception::MapException if the
+         *        option does not have a value or if the 
          *        key does not exist
          */
         template<typename T>
@@ -197,21 +195,6 @@ class OptionMap
 
 
 
-        /*! \brief Test if a given option is valid
-         * 
-         * \throw bpmodule::exception::MapException if a key doesn't exist
-         */  
-        template<typename T>
-        bool Test(const std::string & key, const T & obj) const
-        {
-            // should only throw if key not found
-            if(GetOrThrow_(key)->IsType<T>())
-                return GetOrThrow_Cast_<T>(key)->Test(obj);
-            else
-                return false;
-        }
-
-
 
         /////////////////////////////
         // Python-related functions
@@ -242,8 +225,6 @@ class OptionMap
          *        is a problem converting python types.
          *
          * \exbasic
-         *
-         * \note Only offers basic guarantee, but in practice should be strong.
          */
         void ChangePyDict(const boost::python::dict & opt);
 
@@ -282,52 +263,14 @@ class OptionMap
 
 
 
-        /*! \brief Validate a python object for an option
-         * 
-         * \throw bpmodule::exception::MapException if a key doesn't exist
-         *
-         * \throw bpmodule::exception::PythonConvertException if there
-         *        is a problem converting python types.
-         */  
-        bool TestPy(const std::string & key, const boost::python::object & obj) const;
-
-
-        /*! \brief Validate a python dictionary for an options
-         * 
-         * \throw bpmodule::exception::MapException if a key doesn't exist
-         *
-         * \throw bpmodule::exception::PythonConvertException if there
-         *        is a problem converting python types.
-         */  
-        bool TestPyDict(const boost::python::dict & opt) const;
-
-
-        /*! \brief Tests conversion of a python object for an option
-         * 
-         * \throw bpmodule::exception::MapException if a key doesn't exist
-         */  
-        bool TestConvertPy(const std::string & key, const boost::python::object & obj) const;
-
-
-        /*! \brief Tests conversion of a python dictionary for an options
-         * 
-         * \throw bpmodule::exception::MapException if a key doesn't exist
-         *
-         * \throw bpmodule::exception::PythonConvertException if there
-         *        is a problem converting python type for the dict key.
-         *
-         */  
-        bool TestConvertPyDict(const boost::python::dict & opt) const;
-
-
-
     private:
         std::map<std::string, detail::OptionBasePtr> opmap_;
 
 
         /*! \brief Get an OptionBasePtr or throw if the key doesn't exist
          * 
-         * \throw bpmodule::exception::MapException if a key doesn't exist
+         * \throw bpmodule::exception::OptionException
+         *        if a key doesn't exist
          */
         detail::OptionBasePtr & GetOrThrow_(const std::string & key)
         {
@@ -335,8 +278,7 @@ class OptionMap
                 return opmap_.at(key);
             else
                 throw exception::GeneralException("Key not found",
-                                                  "location", "OptionMap"
-                                                  "mapkey", key); 
+                                                  "optionkey", key); 
         }
 
 
@@ -348,8 +290,7 @@ class OptionMap
                 return opmap_.at(key);
             else
                 throw exception::GeneralException("Key not found",
-                                                  "location", "OptionMap"
-                                                  "mapkey", key); 
+                                                  "optionkey", key); 
         }
 
 
@@ -357,7 +298,8 @@ class OptionMap
 
         /*! \brief Get an OptionBasePtr and cast to an appropriate OptionHolder
          * 
-         * \throw bpmodule::exception::MapException if a key doesn't exist or cannot
+         * \throw bpmodule::exception::OptionException
+         *        if a key doesn't exist or cannot
          *        be cast to the desired type
          */
         template<typename T>
@@ -366,11 +308,10 @@ class OptionMap
             const detail::OptionBasePtr & ptr = GetOrThrow_(key);
             const detail::OptionHolder<T> * oh = dynamic_cast<const detail::OptionHolder<T> *>(ptr.get());
             if(oh == nullptr)
-                throw exception::GeneralException("Bad cast",
-                                                  "location", "OptionMap",
-                                                  "mapkey", key,
-                                                  "fromtype", ptr->Type(),
-                                                  "totype", typeid(T).name()); 
+                throw exception::OptionException("Bad cast",
+                                                 "optionkey", key,
+                                                 "fromtype", ptr->Type(),
+                                                 "totype", typeid(T).name()); 
 
             return oh;
         }

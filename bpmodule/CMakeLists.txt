@@ -24,6 +24,8 @@ set(BPMODULE_OUTPUT_HEADERS
 
 set(BPMODULE_EXCEPTION_HEADERS
             exception/GeneralException.hpp
+            exception/PythonConvertException.hpp
+            exception/OptionException.hpp
             exception/ModuleLoadException.hpp
             exception/ModuleCreateException.hpp
    )

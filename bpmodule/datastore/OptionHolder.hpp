@@ -11,8 +11,11 @@
 #include <functional>
 #include <boost/python.hpp>
 
+#include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/datastore/OptionBase.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/output/Output.hpp"
+
 
 //! \todo Split python stuff from header?
 
@@ -22,9 +25,7 @@ namespace detail {
 
 
 
-/*! \brief Holds the value ad default for an option
- *
- * \todo Funnel ChangeValue through boost::python::object?....
+/*! \brief Holds the value and default for an option
  */
 template<typename T>
 class OptionHolder : public OptionBase
@@ -38,33 +39,21 @@ class OptionHolder : public OptionBase
 
         /*! \brief Constructs via copy
          *
-         * \throw bpmodule::exception::OptionException
-         *        If the initial value or default is invalid, or
-         *        there is a default argument supplied for a 'required' option.
+         * Since the default argument must be given, required is set to false
+         * The initial value and default will be validated. 
          *
-         * \todo Should required even be passef? Default must be supplied here. Is
-         *       this constructor even really needed?
+         * The value is not set on construction, only the default.
+         *
+         * \throw bpmodule::exception::OptionException If the initial value or default is invalid
          */
-        OptionHolder(const std::string & key, const T & value, const T & def,
-                     ValidatorFunc validator, bool required, bool expert)
-            : OptionBase(key, required, expert),
-              value_(new T(value)),
+        OptionHolder(const std::string & key, const T & def,
+                     ValidatorFunc validator, bool expert)
+            : OptionBase(key, false, expert),
               default_(new T(def)),
               validator_(validator)
         {
             // check the default and value with the validator
-            if(!validator_(*value))
-                throw exception::GeneralException("Initial value is not valid",
-                                                  "optionkey", Key(),
-                                                  "type", Type()); 
-            if(!validator_(*def))
-                throw exception::GeneralException("Initial default is not valid",
-                                                  "optionkey", Key(),
-                                                  "type", Type()); 
-            if(required)
-                throw exception::GeneralException("Default value supplied for required option",
-                                                  "optionkey", Key(),
-                                                  "type", Type()); 
+            ValidateOrThrow_(*default_, "initial default");
         }
 
 
@@ -72,32 +61,26 @@ class OptionHolder : public OptionBase
 
         /*! \brief Constructs via pointers
          *
-         * This object will take ownership of the value and def pointers. 
+         * This object will take ownership of the value and def pointers.
+         * The initial value and default will be validated (if given). 
+         *
+         * The value is not set on construction, only the default.
          *
          * \throw bpmodule::exception::OptionException
          *        If the initial value or default is invalid, or
          *        there is a default argument supplied for a 'required' option.
          */
-        OptionHolder(const std::string & key, T * value, T * def,
+        OptionHolder(const std::string & key, T * def,
                      ValidatorFunc validator, bool required, bool expert)
             : OptionBase(key, required, expert),
-              value_(value),
               default_(def),
               validator_(validator)
         {
-            // check the default and value with the validator
-            if(value != nullptr && !validator_(*value))
-                throw exception::GeneralException("Initial value is not valid",
-                                                  "optionkey", Key(),
-                                                  "type", Type()); 
-            if(def != nullptr && !validator_(*def))
-                throw exception::GeneralException("Initial default is not valid",
-                                                  "optionkey", Key(),
-                                                  "type", Type()); 
+            // check the default using the validator
+            if(def != nullptr)
+                ValidateOrThrow_(*default_, "initial default");
             if(def != nullptr && required)
-                throw exception::GeneralException("Default value supplied for required option",
-                                                  "optionkey", Key(),
-                                                  "type", Type()); 
+                throw exception::OptionException("Default value supplied for required option", Key()); 
         }
 
 
@@ -129,19 +112,22 @@ class OptionHolder : public OptionBase
         /*! \brief Change the stored value
          *
          * This object will take ownership of the pointer. 
-         *
          * The new value will be validated.
          *
          * \throw bpmodule::exception::OptionException
-         *        if the new value is invalid (and expert mode is off).
+         *        If the new value is invalid (and expert mode is off).
          *
          * \exstrong
          */
         void Change(T * value)
         {
             if(value != nullptr)
-                Validate(*value);
-            value_ = value;
+            {
+                ValidateOrThrow_(*value);
+                value_ = value;
+            }
+            else
+                value_.reset();
         }
 
 
@@ -153,15 +139,13 @@ class OptionHolder : public OptionBase
          * The new value will be validated.
          *
          * \throw bpmodule::exception::OptionException
-         *        if the new value is invalid (and expert mode is off).
+         *        If the new value is invalid (and expert mode is off).
          *
          * \exstrong
-         *
          */
         void Change(const T & value)
         {
-            // validate first
-            ValidateOrThrow_(value);
+            ValidateOrThrow_(value, "new value");
             value_ = std::unique_ptr<T>(new T(value));
         }
 
@@ -172,8 +156,7 @@ class OptionHolder : public OptionBase
          * If the value is not set, but a default exists, the default is returned.
          *
          * \throw bpmodule::exception::OptionException
-         *        if the option does not have a value or a default
-         *
+         *        If the option does not have a value or a default
          */
         const T & Get(void) const
         {
@@ -182,9 +165,7 @@ class OptionHolder : public OptionBase
             else if(default_)
                 return *default_;
             else
-                throw exception::GeneralException("Option does not have a value",
-                                                  "optionkey", Key(),
-                                                  "type", Type()); 
+                throw exception::OptionException("Option does not have a value", Key());
         }
 
 
@@ -193,27 +174,16 @@ class OptionHolder : public OptionBase
         /*! \brief Get the default value
          *
          * \throw bpmodule::exception::OptionException
-         *        if the option does not have a default
+         *        If the option does not have a default
          */
         const T & GetDefault(void) const
         {
             if(default_)
                 return *default_;
             else
-                throw exception::GeneralException("Option does not have a default",
-                                                  "optionkey", Key(),
-                                                  "type", Type()); 
+                throw exception::OptionException("Option does not have a default", Key());
         }
 
-
-
-        /*! \brief Test validation of a value, but don't set it
-         * 
-         */
-        bool Test(const T & value) const
-        {
-            return validator_(value);
-        }
 
 
         ////////////////////////////////////////
@@ -234,7 +204,7 @@ class OptionHolder : public OptionBase
         
         virtual bool HasValue(void) const noexcept
         {
-            return bool(value_) || HasDefault();
+            return bool(value_) || bool(default_);
         }
 
 
@@ -267,28 +237,25 @@ class OptionHolder : public OptionBase
         /////////////////////////////////////////
         virtual boost::python::object GetPy(void) const
         {
+            if(!python_helper::TestConvertToPy(Get()))
+                throw exception::OptionException("Cannot convert option value to python object", Key(), "valuetype", Type());
+
             return python_helper::ConvertToPy(Get());
         }
 
+
         virtual void ChangePy(const boost::python::object & obj)
         {
+            if(!python_helper::TestConvertToCpp<T>(obj))
+                throw exception::OptionException("Cannot convert python object to option value", Key(),
+                                                 "valuetype", Type(),
+                                                 "pythontype", python_helper::GetPyClass(obj));
+
+            // will validate inside Change()
             Change(python_helper::ConvertToCpp<T>(obj));
         }
 
-        virtual bool TestPy(const boost::python::object & obj) const
-        {
-            if(!python_helper::TestConvertToCpp<T>(obj))
-                return false;
 
-            const T tmp(python_helper::ConvertToCpp<T>(obj));
-            return Test(tmp);
-        }
-
-
-        virtual bool TestConvertPy(const boost::python::object & obj) const
-        {
-            return python_helper::TestConvertToCpp<T>(obj);
-        }
 
     private:
         std::unique_ptr<T> value_;
@@ -300,19 +267,21 @@ class OptionHolder : public OptionBase
          *
          * If IsExpert(), a warning is printed. Else, an exception is thrown.
          *
-         * \throw bpmodule::exception::OptionException if the value is invalid
-         *        and IsExpert() == false
+         * \throw bpmodule::exception::OptionException
+         *        If the value is invalid and IsExpert() == false
          *
-         * \todo print warning if expert_ == true
+         * \param [in] value The value to validate
+         * \param [in] desc Short description of what is being validated
          */
-        void ValidateOrThrow_(const T & value) const
+        void ValidateOrThrow_(const T & value, const std::string & desc) const
         {
             if(!validator_(value))
             {
+                //! \todo add exception info from validator?
                 if(!OptionBase::IsExpert())
-                    throw exception::GeneralException("Value is not valid for this option",
-                                                      "optionkey", Key(),
-                                                      "type", Type());
+                    throw exception::OptionException("Value is not valid for this option", Key());
+                else
+                    output::Warning("Value for option %1% \"%2\" is invalid. Ignoring\n", desc, Key());
             }
         }
 };
@@ -323,12 +292,8 @@ class OptionHolder : public OptionBase
  *
  * Returns as a pointer to the OptionBase class
  *
- * \throw bpmodule::exception::OptionException if there is a problem with
- *        the option (validation or invalid python types)
- *
- * \throw bpmodule::exception::PythonConvertException if there is a problem
- *        converting the data
- *
+ * \throw bpmodule::exception::OptionException
+ *        If there is a problem with the option (validation or python conversion problems)
  */
 OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::object & obj);
 

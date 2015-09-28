@@ -106,12 +106,16 @@ const char * PythonTypeToStr(PythonType pytype) noexcept
 }
 
 
+std::string GetPyClass(const boost::python::object & obj)
+{
+    return boost::python::extract<std::string>(obj.attr("__class__").attr("__name__"));
+}
 
 
 PythonType DetermineType(const boost::python::object & obj)
 {
     try {
-        std::string cl = boost::python::extract<std::string>(obj.attr("__class__").attr("__name__"));
+        std::string cl = GetPyClass(obj);
 
         if(cl == "bool")
             return PythonType::Bool;
@@ -139,12 +143,12 @@ PythonType DetermineType(const boost::python::object & obj)
                 return PythonType::ListEmpty;
 
             // get type of first element
-            std::string cl2 = boost::python::extract<std::string>(lst[0].attr("__class__").attr("__name__"));
+            std::string cl2 = GetPyClass(lst[0]);
 
             // check if this is a homogeneous container
             for(int i = 1; i < length; i++)
             {
-                std::string cltmp = boost::python::extract<std::string>(lst[i].attr("__class__").attr("__name__"));
+                std::string cltmp = GetPyClass(lst[i]);
                 if(cl2 != cltmp)
                     return PythonType::ListHetero;
             }

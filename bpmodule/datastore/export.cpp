@@ -17,10 +17,6 @@ namespace bpmodule {
 namespace datastore {
 namespace export_python {
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ChangePy_overloads, ChangePy, 1, 2)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(TestPy_overloads, TestPy, 1, 2)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(TestConvertPy_overloads, TestConvertPy, 1, 2)
-
 BOOST_PYTHON_MODULE(datastore)
 {
     /////////////////////////
@@ -36,11 +32,7 @@ BOOST_PYTHON_MODULE(datastore)
     .def("ResetToDefault", &OptionMap::ResetToDefault)
     .def("IsValid", &OptionMap::IsValid)
     .def("Change", &OptionMap::ChangePy)
-    .def("ChangeDict", &OptionMap::ChangePyDict)
-    .def("Test", &OptionMap::TestPy)
-    .def("TestDict", &OptionMap::TestPyDict)
-    .def("TestConvertDict", &OptionMap::TestConvertPyDict)
-    .def("TestConvert", &OptionMap::TestConvertPy);
+    .def("ChangeDict", &OptionMap::ChangePyDict);
 
 
 

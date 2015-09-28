@@ -124,11 +124,6 @@ def Run():
                 for o in "_opt", "_req", "_opt_def":
                     opt = m[1] + o
                     expected = IsValid(m[1], d[0])
-
-                    desc = "Testing {} option for {} -> {}".format(opt, m[0].Key(), d[0])
-                    nfailed += bp.testing.PyTestBoolFunc(ntest, desc, expected, m[0].Options().Test, opt, d[1]) 
-                    ntest += 1
-
                     desc = "Setting {} option for {} -> {}".format(opt, m[0].Key(), d[0])
                     nfailed += bp.testing.PyTestFunc(ntest, desc, expected, m[0].Options().Change, opt, d[1]) 
                     ntest += 1

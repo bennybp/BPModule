@@ -80,9 +80,6 @@ class OptionBase
 
 
         /*! \brief Set the option to its default
-         * 
-         *  \throw bpmodule::exception::OptionException
-         *         if the option doesn't have a default
          */ 
         virtual void ResetToDefault(void) noexcept = 0;
 
@@ -94,11 +91,9 @@ class OptionBase
         /////////////////////////////////////////
         /*! \brief Return a copy of the value as a boost::python object
          *
-         * \throw bpmodule::exception::PythonConvertException if the
-         *        data could not be converted
-         *
-         * \throw bpmodule::exception::OptionException if the
-         *        value does not exist
+         * \throw bpmodule::exception::OptionException 
+         *        If the value does not exist or cannot
+         *        be converted to a python object
          */ 
         virtual boost::python::object GetPy(void) const = 0;
 
@@ -106,10 +101,8 @@ class OptionBase
 
         /*! \brief Change the value with a boost python object
          *
-         * \throw bpmodule::exception::PythonConvertException if the
-         *        data can not be converted 
-         *
          * \throw bpmodule::exception::OptionException                 
+         *        if there is a problem with the python conversion or
          *        if the new value is invalid (and expert mode is off).
          *
          *  \exstrong
@@ -117,18 +110,6 @@ class OptionBase
         virtual void ChangePy(const boost::python::object & obj) = 0;
 
 
-
-
-        /*! \brief Validate a value, but don't set it
-         */
-        virtual bool TestPy(const boost::python::object & obj) const = 0;
-
-
-        /*! \brief Test if a conversion of a python object is valid
-         * 
-         * Does not validate
-         */ 
-        virtual bool TestConvertPy(const boost::python::object & obj) const = 0;
 
 
         ///////////////////////////////////

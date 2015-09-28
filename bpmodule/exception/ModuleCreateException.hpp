@@ -65,8 +65,8 @@ class ModuleCreateException : public GeneralException
 
 
 
-}// close namespace bpmodule
 }// close namespace exception
+}// close namespace bpmodule
 
 
 
