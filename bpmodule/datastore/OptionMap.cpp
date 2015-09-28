@@ -38,7 +38,7 @@ OptionMap::OptionMap(const boost::python::dict & opt)
             throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
                                   "element", std::to_string(i)); 
         
-        std::string key = ConvertToCpp<std::string>(keys[i]);
+        std::string key = LowerString_(ConvertToCpp<std::string>(keys[i]));
 
         if(opmap_.count(key))
             throw OptionException("Duplicate key on construction",
@@ -52,7 +52,8 @@ OptionMap::OptionMap(const boost::python::dict & opt)
 
 void OptionMap::ChangePy(const std::string & key, const boost::python::object & obj)
 {
-    detail::OptionBasePtr & ptr = GetOrThrow_(key);
+    std::string lkey = LowerString_(key);
+    detail::OptionBasePtr & ptr = GetOrThrow_(lkey);
 
     ptr->ChangePy(obj);
 }
@@ -75,7 +76,7 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
         if(!TestConvertToCpp<std::string>(keys[i]))
             throw OptionException("Cannot convert python dictionary index to string", "(unknown)", "element", std::to_string(i));
 
-        std::string key = ConvertToCpp<std::string>(keys[i]);
+        std::string key = LowerString_(ConvertToCpp<std::string>(keys[i]));
 
         if(!Has(key))
             throw OptionException("Python dictionary has a key that I do not", key, "element", std::to_string(i));

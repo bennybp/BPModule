@@ -73,7 +73,8 @@ class OptionMap
         template<typename T>
         T Get(const std::string & key) const
         {
-            return GetOrThrow_Cast_<T>(key)->Get();
+            std::string lkey = LowerString_(key);
+            return GetOrThrow_Cast_<T>(lkey)->Get();
         }
 
 
@@ -88,9 +89,10 @@ class OptionMap
          */
         bool Has(const std::string & key) const
         {
-            if(opmap_.count(key) == 0)
+            std::string lkey = LowerString_(key);
+            if(opmap_.count(lkey) == 0)
                 return false;
-            return opmap_.at(key)->HasValue();
+            return opmap_.at(lkey)->HasValue();
         }
 
 
@@ -118,10 +120,11 @@ class OptionMap
         template<typename T>
         bool HasType(const std::string & key) const
         {
-            if(!Has(key))
+            std::string lkey = LowerString_(key);
+            if(!Has(lkey))
                 return false;
 
-            return GetOrThrow_(key)->IsType<T>();
+            return GetOrThrow_(lkey)->IsType<T>();
         }
 
 
@@ -136,7 +139,8 @@ class OptionMap
          */
         std::string GetType(const std::string & key) const
         {
-            return GetOrThrow_(key)->Type();
+            std::string lkey = LowerString_(key);
+            return GetOrThrow_(lkey)->Type();
         }
 
 
@@ -145,7 +149,8 @@ class OptionMap
          */ 
         bool IsDefault(const std::string & key) const
         {
-            return GetOrThrow_(key)->IsDefault();
+            std::string lkey = LowerString_(key);
+            return GetOrThrow_(lkey)->IsDefault();
         }
 
 
@@ -164,7 +169,8 @@ class OptionMap
         template<typename T>
         void Change(const std::string & key, const T & value)
         {
-            GetOrThrow_Cast_<T>(key)->Change(value);
+            std::string lkey = LowerString_(key);
+            GetOrThrow_Cast_<T>(lkey)->Change(value);
         }
 
 
@@ -180,7 +186,8 @@ class OptionMap
          */ 
         void ResetToDefault(const std::string & key)
         {
-            GetOrThrow_(key)->ResetToDefault();
+            std::string lkey = LowerString_(key);
+            GetOrThrow_(lkey)->ResetToDefault();
         }
 
 
@@ -248,7 +255,8 @@ class OptionMap
          */  
         boost::python::object GetPy(const std::string & key) const
         {
-            return GetOrThrow_(key)->GetPy();
+            std::string lkey = LowerString_(key);
+            return GetOrThrow_(lkey)->GetPy();
         }
 
 
@@ -259,6 +267,8 @@ class OptionMap
 
         /*! \brief Get an OptionBasePtr or throw if the key doesn't exist
          * 
+         * \note Key should already have been transformed to lowercase
+         *
          * \throw bpmodule::exception::OptionException
          *        if a key doesn't exist
          */
@@ -288,6 +298,8 @@ class OptionMap
 
         /*! \brief Get an OptionBasePtr and cast to an appropriate OptionHolder
          * 
+         * \note Key should already have been transformed to lowercase
+         *
          * \throw bpmodule::exception::OptionException
          *        if a key doesn't exist or cannot
          *        be cast to the desired type
@@ -304,6 +316,17 @@ class OptionMap
                                                  "totype", typeid(T).name()); 
 
             return oh;
+        }
+
+
+        /*! \brief Converts a string to lower case
+         */ 
+        static std::string LowerString_(const std::string & str)
+        {
+            //! \todo assume ASCII
+            std::string ret(str);
+            std::transform(ret.begin(), ret.end(), ret.begin(), ::tolower);
+            return ret;
         }
 };
 
