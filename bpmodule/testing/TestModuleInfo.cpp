@@ -1,10 +1,11 @@
 /*! \file
  *
- * \brief Tests construction of ModuleInfo via python (source)
+ * \brief Various test for the ModuleInfo class (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
 #include "bpmodule/testing/TestingBase.hpp"
+#include "bpmodule/testing/TestModuleInfo.hpp"
 #include "bpmodule/modulestore/ModuleInfo.hpp"
 
 #include <boost/python.hpp>

@@ -5,7 +5,11 @@
  */ 
 
 
-#include "bpmodule/testing/AllTests.hpp"
+#include "TestConvert.hpp"
+#include "TestDatastore.hpp"
+#include "TestingBase.hpp"
+#include "TestModuleInfo.hpp"
+
 #include "bpmodule/datastore/OptionMap.hpp"
 
 using namespace boost::python;

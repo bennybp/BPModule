@@ -72,8 +72,10 @@ set(BPMODULE_BASISSET_HEADERS
 
 
 set(BPMODULE_TESTING_HEADERS
-            testing/AllTests.hpp
             testing/TestingBase.hpp
+            testing/TestConvert.hpp
+            testing/TestDatastore.hpp
+            testing/TestModuleInfo.hpp
    )
 
 

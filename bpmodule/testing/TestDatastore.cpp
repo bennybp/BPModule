@@ -1,10 +1,11 @@
 /*! \file
  *
- * \brief Tests construction of ModuleInfo via python (source)
+ * \brief Various test for datastore (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
 #include "bpmodule/testing/TestingBase.hpp"
+#include "bpmodule/testing/TestDatastore.hpp"
 #include "bpmodule/datastore/OptionMap.hpp"
 #include "bpmodule/datastore/CalcData.hpp"
 
