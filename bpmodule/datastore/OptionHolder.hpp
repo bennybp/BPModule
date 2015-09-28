@@ -35,44 +35,25 @@ class OptionHolder : public OptionBase
         typedef std::function<bool(T)> ValidatorFunc;
 
 
-
-
-        /*! \brief Constructs via copy
-         *
-         * Since the default argument must be given, required is set to false
-         * The initial value and default will be validated. 
-         *
-         * The value is not set on construction, only the default.
-         *
-         * \throw bpmodule::exception::OptionException If the initial value or default is invalid
-         */
-        OptionHolder(const std::string & key, const T & def,
-                     ValidatorFunc validator, bool expert)
-            : OptionBase(key, false, expert),
-              default_(new T(def)),
-              validator_(validator)
-        {
-            // check the default and value with the validator
-            ValidateOrThrow_(*default_, "initial default");
-        }
-
-
-
-
         /*! \brief Constructs via pointers
          *
          * This object will take ownership of the value and def pointers.
          * The initial value and default will be validated (if given). 
          *
-         * The value is not set on construction, only the default.
+         * The value is not set on construction, only the default. Expert is set to false.
          *
          * \throw bpmodule::exception::OptionException
          *        If the initial value or default is invalid, or
          *        there is a default argument supplied for a 'required' option.
+         *
+         * \param [in] key The key of this option
+         * \param [in] def The default value
+         * \param [in] validator A validator function for this object
+         *
          */
         OptionHolder(const std::string & key, T * def,
-                     ValidatorFunc validator, bool required, bool expert)
-            : OptionBase(key, required, expert),
+                     ValidatorFunc validator, bool required)
+            : OptionBase(key, required),
               default_(def),
               validator_(validator)
         {
@@ -101,34 +82,13 @@ class OptionHolder : public OptionBase
 
 
 
+
+
         OptionHolder(void)                                  = delete;
         OptionHolder(OptionHolder && oph)                   = delete;
         OptionHolder & operator=(const OptionHolder & oph)  = delete;
         OptionHolder & operator=(OptionHolder && oph)       = delete;
         virtual ~OptionHolder()                             = default;
-
-
-
-        /*! \brief Change the stored value
-         *
-         * This object will take ownership of the pointer. 
-         * The new value will be validated.
-         *
-         * \throw bpmodule::exception::OptionException
-         *        If the new value is invalid (and expert mode is off).
-         *
-         * \exstrong
-         */
-        void Change(T * value)
-        {
-            if(value != nullptr)
-            {
-                ValidateOrThrow_(*value);
-                value_ = value;
-            }
-            else
-                value_.reset();
-        }
 
 
 
@@ -238,7 +198,8 @@ class OptionHolder : public OptionBase
         virtual boost::python::object GetPy(void) const
         {
             if(!python_helper::TestConvertToPy(Get()))
-                throw exception::OptionException("Cannot convert option value to python object", Key(), "valuetype", Type());
+                throw exception::OptionException("Cannot convert option value to python object", Key(),
+                                                 "valuetype", Type());
 
             return python_helper::ConvertToPy(Get());
         }
@@ -265,7 +226,7 @@ class OptionHolder : public OptionBase
 
         /*! \brief Validate a potential value
          *
-         * If IsExpert(), a warning is printed. Else, an exception is thrown.
+         * If IsExpert(), a warning is printed. Otherwise, an exception is thrown.
          *
          * \throw bpmodule::exception::OptionException
          *        If the value is invalid and IsExpert() == false

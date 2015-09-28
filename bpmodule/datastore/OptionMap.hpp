@@ -63,12 +63,12 @@ class OptionMap
 
 
 
-
         /*! \brief Obtain the value for an option
          * 
          * \throw bpmodule::exception::OptionException if the
          *        option does not have a value or if the 
-         *        key does not exist
+         *        key does not exist or if the value cannot be 
+         *        cast to the appropriate type
          */
         template<typename T>
         T Get(const std::string & key) const
@@ -128,7 +128,7 @@ class OptionMap
 
         /*! \brief Get a string representing the type for a given key
          *
-         * \throw bpmodule::exception::MapException
+         * \throw bpmodule::exception::OptionException
          *        if the key doesn't exist 
          *
          * \param [in] key The key to the data
@@ -149,29 +149,32 @@ class OptionMap
         }
 
 
+
         /*! \brief Change the stored value for a key
          *
          * The data is copied.
          *
-         * \throw bpmodule::exception::MapException
-         *        if the key doesn't exist 
-         *
          * \throw bpmodule::exception::OptionException if
-         *        the value is invalid (and not expert)
+         *        the value is invalid (and not expert),
+         *        if the key does not exist, or the
+         *        data cannot be cast to the appropriate type
          *
          * \exstrong 
          */
         template<typename T>
         void Change(const std::string & key, const T & value)
         {
-            GetOrThrow_Cast_<T>(key)->ChangeValue(value);
+            GetOrThrow_Cast_<T>(key)->Change(value);
         }
+
+
 
 
         /*! \brief Sets an option to its default
          *
          * \throw bpmodule::exception::OptionException if
-         *        the option does not have a default
+         *        the option does not have a default or the
+         *        key doesn't exist
          *
          * \exstrong 
          */ 
@@ -179,6 +182,7 @@ class OptionMap
         {
             GetOrThrow_(key)->ResetToDefault();
         }
+
 
 
         /*! \brief Check all options to see if they are valid
@@ -201,13 +205,8 @@ class OptionMap
         /////////////////////////////
         /*! \brief Construct options from a python dictionary
          * 
-         * \throw bpmodule::exception::MapException if there is a duplicate key
-         *
          * \throw bpmodule::exception::OptionException if there is
-         *        a problem with the option (validation, etc)
-         *
-         * \throw bpmodule::exception::PythonConvertException if there
-         *        is a problem converting python types.
+         *        a problem with the option (validation, conversion, duplicate key, etc)
          */ 
         OptionMap(const boost::python::dict & opt);
 
@@ -216,15 +215,10 @@ class OptionMap
          *
          * Dictionary is simple string key -> value mapping.
          *
-         * \throw bpmodule::exception::MapException if a key doesn't exist
-         *
          * \throw bpmodule::exception::OptionException if there is
-         *        a problem with the option (validation, etc)
+         *        a problem with the option (nonexistant key, validation, conversion, duplicate key, etc)
          *
-         * \throw bpmodule::exception::PythonConvertException if there
-         *        is a problem converting python types.
-         *
-         * \exbasic
+         * \exstrong
          */
         void ChangePyDict(const boost::python::dict & opt);
 
@@ -232,14 +226,9 @@ class OptionMap
 
         /*! \brief Change an option by passing a boost::python object
          *
-         * \throw bpmodule::exception::MapException if a key doesn't exist
-         *
          * \throw bpmodule::exception::OptionException if there is
-         *        a problem with the option (validation, etc)
+         *        a problem with the option (nonexistant key, validation, conversion, etc)
          *
-         * \throw bpmodule::exception::PythonConvertException if there
-         *        is a problem converting python types.
-         * 
          * \exstrong
          */ 
         void ChangePy(const std::string & key, const boost::python::object & obj);
@@ -248,13 +237,8 @@ class OptionMap
 
         /*! \brief Return the option's value as a python object
          *
-         * \throw bpmodule::exception::MapException if a key doesn't exist
-         *
-         * \throw bpmodule::exception::PythonConvertException if there
-         *        is a problem converting python types.
-         *
-         * \throw bpmodule::exception::OptionException if the value
-         *        does not exist for that option
+         * \throw bpmodule::exception::OptionException if there is
+         *        a problem with the option (nonexistant key, validation, conversion, etc)
          */  
         boost::python::object GetPy(const std::string & key) const
         {

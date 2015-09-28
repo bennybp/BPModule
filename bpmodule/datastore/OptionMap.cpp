@@ -60,9 +60,15 @@ void OptionMap::ChangePy(const std::string & key, const boost::python::object & 
 
 void OptionMap::ChangePyDict(const boost::python::dict & opt)
 {
+    using std::swap;
+
     boost::python::list keys = opt.keys();
     int keylen = boost::python::extract<int>(keys.attr("__len__")());
 
+    // for strong exception guarantee:
+    // copy the current object, modify that, then swap
+
+    OptionMap tmp(*this);
 
     for(int i = 0; i < keylen; i++)
     {
@@ -74,8 +80,10 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
         if(!Has(key))
             throw OptionException("Python dictionary has a key that I do not", key, "element", std::to_string(i));
 
-        ChangePy(key, opt[key]); 
+        tmp.ChangePy(key, opt[key]); 
     }
+
+    swap(*this, tmp);
 }
 
 

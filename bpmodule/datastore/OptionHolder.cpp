@@ -46,7 +46,10 @@ OptionBasePtr CreateOptionHolder(const std::string & key, const boost::python::t
     if(ptype_default != PythonType::None)
     {
         if(!TestConvertToCpp<T>(tup[1]))
-            throw OptionException("Default for option cannot be converted from python", key, "totype", typeid(T).name());
+            throw OptionException("Default for option cannot be converted from python",
+                                  key,
+                                  "fromtype", GetPyClass(tup[1]),
+                                  "totype", typeid(T).name());
 
         // shouldn't throw given the above
         def = new T(ConvertToCpp<T>(tup[1]));
@@ -59,15 +62,15 @@ OptionBasePtr CreateOptionHolder(const std::string & key, const boost::python::t
 
     bool req = boost::python::extract<bool>(tup[2]);
 
-    //! \todo Check to make sure object is callable
+    //! \todo Check to make sure validator object is callable
+    
     // Check if validator is given. If not, use EmptyValidator
     typename OptionHolder<T>::ValidatorFunc validator = EmptyValidator<T>;
 
     if(DetermineType(tup[3]) != PythonType::None)
         validator = std::bind(ValidateWrapper<T>, tup[3], std::placeholders::_1);
 
-    //! \todo expert option
-    return OptionBasePtr(new OptionHolder<T>(key, def, validator, req, false)); 
+    return OptionBasePtr(new OptionHolder<T>(key, def, validator, req)); 
 }
 
 

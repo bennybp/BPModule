@@ -21,8 +21,16 @@ namespace detail {
 class OptionBase
 {
     public:
-        OptionBase(const std::string & key, bool required, bool expert) noexcept
-            : key_(key), required_(required), expert_(expert)
+        /*! \brief Constructor
+         *
+         * Expert is set to false.
+         *
+         * \param [in] key The key of this option
+         * \param [in] def The default value
+         * \param [in] validator A validator function for this object
+         */
+        OptionBase(const std::string & key, bool required) noexcept
+            : key_(key), required_(required), expert_(false)
         { }
 
         virtual ~OptionBase() noexcept    = default;
@@ -148,6 +156,14 @@ class OptionBase
 
 
 
+        /*! \brief Set the expert variable
+         */
+        void SetExpert(bool expert) noexcept
+        {
+            expert_ = expert;
+        } 
+
+
         /*! \brief Check to see if this object is valid
          *
          * \exnothrow 
@@ -178,8 +194,13 @@ class OptionBase
 
 
     private:
+        //! The key of this option
         std::string key_;
+
+        //! Is this option required
         bool required_;
+
+        //! If set to true, validation errors print warnings rather than throw exceptions.
         bool expert_;
 
 
@@ -188,9 +209,8 @@ class OptionBase
 };
 
 
+//! A pointer to an option
 typedef std::shared_ptr<OptionBase> OptionBasePtr;
-
-
 
 
 
