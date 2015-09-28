@@ -99,8 +99,6 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
 void OptionMap::Print(void) const
 {
     size_t nopt = Size();
-    output::Output("         Options: %1%\n", nopt);
-
     if(nopt > 0)
     {
         output::Output("\n");

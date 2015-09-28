@@ -142,6 +142,7 @@ void ModuleInfo::Print(void) const
     for(size_t i = 0; i < refs.size(); i++)
         output::Output("                  %1%\n", refs[i]);
    
+    output::Output("         Options: %1%\n", options.Size());
     options.Print(); 
 }
 
