@@ -38,6 +38,7 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("Key", &ModuleBase::Key, return_value_policy<copy_const_reference>())
     .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
     .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>())
+    .def("Print", &ModuleBase::Print)
     .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_value_policy<reference_existing_object>());  // should be safe?
 
 

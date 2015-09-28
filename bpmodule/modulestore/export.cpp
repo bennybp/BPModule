@@ -66,6 +66,7 @@ BOOST_PYTHON_MODULE(modulestore)
     .def("SetOptions", static_cast<void(ModuleStore::*)(const std::string &, const boost::python::dict &)>(&ModuleStore::SetOptions))
     .def("GetKeys", &ModuleStore::GetKeys)
     .def("KeyInfo", &ModuleStore::KeyInfo)
+    .def("PrintInfo", &ModuleStore::PrintInfo)
     .def("TestAll", &ModuleStore::TestAll)
     .def("GetModule", Wrap_GetModule<ModuleBase>)
     .def("GetModule_Test", Wrap_GetModule<Test_Base>);

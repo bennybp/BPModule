@@ -80,6 +80,11 @@ class ModuleStore
 
 
 
+        /*! \brief Prints all the information about the loaded modules
+         */
+        void PrintInfo(void) const;
+
+
         /*! \brief Returns true if a module with the given key exists in the database
          *
          * \param [in] key A module key

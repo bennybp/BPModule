@@ -99,15 +99,15 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
 void OptionMap::Print(void) const
 {
     size_t nopt = Size();
-    output::Output("Options: %1%\n", nopt);
+    output::Output("         Options: %1%\n", nopt);
 
     if(nopt > 0)
     {
         output::Output("\n");
         std::string s20(20, '-');
         std::string s10(10, '-');
-        output::Output("    %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", "Option", "Type", "Value", "Default", "Required", "Description");
-        output::Output("    %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", s20, s20, s20, s20, s10, s20);
+        output::Output("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", "Option", "Type", "Value", "Default", "Required", "Description");
+        output::Output("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", s20, s20, s20, s20, s10, s20);
 
         for(const auto & it : opmap_)
             it.second->Print();

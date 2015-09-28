@@ -316,7 +316,7 @@ inline std::string OptToString_(const bool & opt)
 template<typename T>
 inline void PrintOption_(const OptionHolder<T> & oph)
 {
-    std::string optline = FormatStr("    %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+    std::string optline = FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
                                     oph.Key(),                                                         // name/key
                                     python_helper::PythonTypeToStr(oph.PyType()),                      // type
                                     (oph.HasValue() ? OptToString_(oph.Get()) : "(none)"),             // value
@@ -374,7 +374,7 @@ inline void PrintOption_(const OptionHolder<std::vector<T>> & oph)
 
 
     std::vector<std::string> optlines;
-    optlines.push_back(FormatStr("    %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+    optlines.push_back(FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
                                  oph.Key(),                                                         // name/key
                                  python_helper::PythonTypeToStr(oph.PyType()),                      // type
                                  valstr,                                                            // value
@@ -403,7 +403,7 @@ inline void PrintOption_(const OptionHolder<std::vector<T>> & oph)
                 defstr = OptToString_(defvec[i]);
         }
 
-        optlines.push_back(FormatStr("    %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+        optlines.push_back(FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
                                      "",              // name/key
                                      "",              // type
                                      valstr,          // value

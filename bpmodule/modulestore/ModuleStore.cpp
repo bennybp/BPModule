@@ -77,6 +77,14 @@ ModuleInfo ModuleStore::KeyInfo(const std::string & key) const
     return GetOrThrow_(key).mi;
 }
 
+
+void ModuleStore::PrintInfo(void) const
+{
+    for(const auto & it : store_)
+        it.second.mi.Print();
+}
+
+
 void ModuleStore::TestAll(void)
 {
     output::Debug("Testing all modules\n");

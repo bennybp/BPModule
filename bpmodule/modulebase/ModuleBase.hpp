@@ -97,6 +97,10 @@ class ModuleBase
         const datastore::OptionMap & Options(void) const noexcept;
 
 
+        /*! \brief Print the information for this module
+         */
+        void Print(void) const; 
+
         ///@}
 
 

@@ -85,6 +85,12 @@ ModuleStore & ModuleBase::MStore(void) noexcept
 }
 
 
+void ModuleBase::Print(void) const
+{
+    minfo_.Print();
+}
+
+
 datastore::OptionMap & ModuleBase::Options(void) noexcept
 {
     return minfo_.options;

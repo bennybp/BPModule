@@ -2,10 +2,10 @@ import sys
 import os
 import importlib
 
-# Important! Symbols must be loaded now and available
+# Important! Symbols must be available
 # globally! WILL NOT WORK WITHOUT
 olddl = sys.getdlopenflags()
-sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
+sys.setdlopenflags(os.RTLD_LAZY | os.RTLD_GLOBAL)
 
 ##########################################
 # Load all the core modules
@@ -80,7 +80,6 @@ def Init(argv, out = "stdout", color = True, debug = False):
       minfo["name"] = name
       minfo["key"] = "CORE"
       minfo["path"] = os.path.dirname(modulestore.__file__) + "/"
-      PrintModuleInfo(minfo)
 
 
   # Create the various stores and loaders
@@ -200,9 +199,7 @@ def SetOptions(key, useropt):
 
 
 def DumpModuleInfo():
-    for k,m in modmap.items():
-        # Dump some info
-        PrintModuleInfo(m)
+    mst.PrintInfo()
 
 
 

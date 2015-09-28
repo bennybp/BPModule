@@ -43,6 +43,11 @@ struct ModuleInfo
      *        or the python dictionary is missing a required field
      */
     ModuleInfo(const boost::python::dict & dictionary);
+
+
+    /*! \brief Print out this info
+    */
+    void Print(void) const;
 };
 
 

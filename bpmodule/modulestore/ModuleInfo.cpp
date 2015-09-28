@@ -119,6 +119,35 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
 }
 
 
+
+void ModuleInfo::Print(void) const
+{
+    output::Output("\n");
+    output::Output("  ++ Module: %1%\n", name);
+    output::Output("         Version: %1%\n", version);
+    output::Output("             Key: %1%\n", key);
+    output::Output("            Type: %1%\n", type);
+    output::Output("            Path: %1%\n", path);
+
+    if(soname.size())
+        output::Output("          SOName: %1%\n", soname);
+
+    output::Output("     Description: %1%\n", description);
+
+    output::Output("         Authors: %1%\n", (authors.size() ? authors[0] : ""));      
+    for(size_t i = 0; i < authors.size(); i++)
+        output::Output("                  %1%\n", authors[i]);
+
+    output::Output("      References: %1%\n", (refs.size() ? refs[0] : ""));      
+    for(size_t i = 0; i < refs.size(); i++)
+        output::Output("                  %1%\n", refs[i]);
+   
+    options.Print(); 
+}
+
+
+
+
 } // close namespace modulestore
 } // close namespace bpmodule
 
