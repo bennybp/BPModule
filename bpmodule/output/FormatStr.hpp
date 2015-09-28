@@ -25,7 +25,7 @@ template<typename... Targs>
 std::string FormatStr(const std::string & fmt, Targs... Fargs)
 {
     std::stringstream ss;
-    Output(ss, fmt, Fargs...);
+    bpmodule::output::Output(ss, fmt, Fargs...);
     return ss.str();
 }
 

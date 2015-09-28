@@ -12,6 +12,7 @@
 #include <cstring>
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
+#include "bpmodule/python_helper/Types.hpp"
 
 namespace bpmodule {
 namespace datastore {
@@ -29,8 +30,11 @@ class OptionBase
          * \param [in] def The default value
          * \param [in] validator A validator function for this object
          */
-        OptionBase(const std::string & key, bool required) noexcept
-            : key_(key), required_(required), expert_(false)
+        OptionBase(const std::string & key,
+                   bool required,
+                   python_helper::PythonType pytype,
+                   const std::string & help)
+            : key_(key), required_(required), expert_(false), pytype_(pytype), help_(help)
         { }
 
         virtual ~OptionBase() noexcept    = default;
@@ -92,6 +96,10 @@ class OptionBase
         virtual void ResetToDefault(void) noexcept = 0;
 
 
+
+        /*! \brief Print the option information
+         */ 
+        virtual void Print(void) const = 0;
 
 
         /////////////////////////////////////////
@@ -193,16 +201,37 @@ class OptionBase
         }
 
 
+        /*! \brief Get the python type of this option
+         */
+        python_helper::PythonType PyType(void) const noexcept
+        {
+            return pytype_;
+        }
+        
+ 
+        /*! \brief Get the help string for this option
+         */
+        const std::string & Help(void) const noexcept
+        {
+            return help_;
+        }
+
+
     private:
         //! The key of this option
-        std::string key_;
+        const std::string key_;
 
         //! Is this option required
-        bool required_;
+        const bool required_;
 
         //! If set to true, validation errors print warnings rather than throw exceptions.
         bool expert_;
 
+        //! The python type of this option
+        const python_helper::PythonType pytype_;
+
+        //! The help string for this option
+        const std::string help_;
 
     
 

@@ -10,58 +10,12 @@
 
 #include <boost/python.hpp>
 
+#include "bpmodule/python_helper/Types.hpp"
 #include "bpmodule/exception/PythonConvertException.hpp"
 
 
 namespace bpmodule {
 namespace python_helper {
-
-
-//! Types defined in python that are available in BPModule
-enum class PythonType
-{
-    Bool,
-    Int,
-    Float,
-    String,
-    ListBool,
-    ListInt,
-    ListFloat,
-    ListString,
-    ListEmpty,
-    ListHetero,
-    ListUnknown,
-    Tuple,
-    Dict,
-    None,
-    Unknown
-};
-
-
-
-
-// In cpp file
-
-
-/*! \brief Convert a string to a PythonType
- */ 
-PythonType StrToPythonType(const std::string & str) noexcept;
-
-
-/*! \brief Convert a PythonType to a string
- */ 
-const char * PythonTypeToStr(PythonType pytype) noexcept;
-
-
-/*! \brief Determine the type of a boost python object
- */ 
-PythonType DetermineType(const boost::python::object & obj);
-
-
-/*! \brief Get the class of a python object
- */
-std::string GetPyClass(const boost::python::object & obj);
-
 
 
 /*! \brief Family of structs to convert python types to C++ types

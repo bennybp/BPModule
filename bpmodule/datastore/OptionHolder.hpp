@@ -8,6 +8,7 @@
 #ifndef _GUARD_OPTIONHOLDER_HPP_
 #define _GUARD_OPTIONHOLDER_HPP_
 
+#include <vector>
 #include <functional>
 #include <boost/python.hpp>
 
@@ -15,6 +16,7 @@
 #include "bpmodule/datastore/OptionBase.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/output/Output.hpp"
+#include "bpmodule/output/FormatStr.hpp"
 
 
 //! \todo Split python stuff from header?
@@ -22,6 +24,23 @@
 namespace bpmodule {
 namespace datastore {
 namespace detail {
+
+
+////////////////////////////
+// forward declarations
+////////////////////////////
+template<typename T>
+class OptionHolder;
+
+
+template<typename T>
+void PrintOption_(const OptionHolder<T> & oph);
+
+template<typename T>
+void PrintOption_(const OptionHolder<std::vector<T>> & oph);
+////////////////////////////
+// end forward declarations
+////////////////////////////
 
 
 
@@ -52,8 +71,10 @@ class OptionHolder : public OptionBase
          *
          */
         OptionHolder(const std::string & key, T * def,
-                     ValidatorFunc validator, bool required)
-            : OptionBase(key, required),
+                     ValidatorFunc validator, bool required,
+                     python_helper::PythonType pytype,
+                     const std::string & help)
+            : OptionBase(key, required, pytype, help),
               default_(def),
               validator_(validator)
         {
@@ -191,6 +212,11 @@ class OptionHolder : public OptionBase
         }
 
 
+        virtual void Print(void) const
+        {
+            PrintOption_(*this);
+        }
+
 
         /////////////////////////////////////////
         // Python-related functions
@@ -257,6 +283,149 @@ class OptionHolder : public OptionBase
  *        If there is a problem with the option (validation or python conversion problems)
  */
 OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::object & obj);
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////
+// Printing of options
+////////////////////////////////////////////////////////
+//! \todo Printing of a double?
+
+template<typename T>
+inline std::string OptToString_(const T & opt)
+{
+    return std::to_string(opt);
+}
+
+inline std::string OptToString_(const std::string & opt)
+{
+    return opt;
+}
+
+
+inline std::string OptToString_(const bool & opt)
+{
+    return (opt ? "True" : "False");
+}
+
+
+template<typename T>
+inline void PrintOption_(const OptionHolder<T> & oph)
+{
+    std::string optline = FormatStr("    %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+                                    oph.Key(),                                                         // name/key
+                                    python_helper::PythonTypeToStr(oph.PyType()),                      // type
+                                    (oph.HasValue() ? OptToString_(oph.Get()) : "(none)"),             // value
+                                    (oph.HasDefault() ? OptToString_(oph.GetDefault()) : "(none)"),    // default
+                                    (oph.IsRequired() ? "True" : "False"),                             // required
+                                    oph.Help());                                                       // help/description
+
+
+    if(!oph.IsValid())
+        output::Error(optline);
+    
+    if(!oph.IsDefault())
+        output::Changed(optline);
+    else
+        output::Output(optline);
+}
+
+
+
+template<typename T>
+inline void PrintOption_(const OptionHolder<std::vector<T>> & oph)
+{
+    size_t nrows = 0;
+
+    std::string valstr, defstr;
+
+    if(oph.HasValue())
+    {
+        auto valuevec = oph.Get();
+        nrows = valuevec.size();
+
+        if(valuevec.size() == 0)
+            valstr = "(empty)";
+        else
+            valstr = OptToString_(valuevec[0]);
+    }
+    else
+        valstr = "(none)";
+
+
+    if(oph.HasDefault())
+    {
+        auto defvec = oph.GetDefault();
+        nrows = std::max(nrows, defvec.size());
+
+        if(defvec.size() == 0)
+            defstr = "(empty)";
+        else
+            defstr = OptToString_(defvec[0]);
+    }
+    else
+        defstr = "(none)";
+
+
+
+
+    std::vector<std::string> optlines;
+    optlines.push_back(FormatStr("    %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+                                 oph.Key(),                                                         // name/key
+                                 python_helper::PythonTypeToStr(oph.PyType()),                      // type
+                                 valstr,                                                            // value
+                                 defstr,                                                            // default
+                                 (oph.IsRequired() ? "True" : "False"),                             // required
+                                 oph.Help()));                                                      // help/description
+
+
+    // start at 1 since we did the first separately
+    for(size_t i = 1; i < nrows; i++)
+    {
+        std::string valstr, defstr;
+
+        if(oph.HasValue())
+        {
+            auto valuevec = oph.Get();
+            if(valuevec.size() > i)
+                valstr = OptToString_(valuevec[i]);
+        }
+
+
+        if(oph.HasDefault())
+        {
+            auto defvec = oph.GetDefault();
+            if(defvec.size() > i)
+                defstr = OptToString_(defvec[i]);
+        }
+
+        optlines.push_back(FormatStr("    %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+                                     "",              // name/key
+                                     "",              // type
+                                     valstr,          // value
+                                     defstr,          // default
+                                     "",              // required
+                                     ""));            // help/description
+        
+    }
+
+    for(const auto & it : optlines) 
+    {
+        if(!oph.IsValid())
+            output::Error(it);
+        else if(!oph.IsDefault())
+            output::Changed(it);
+        else
+            output::Output(it);
+    }
+
+
+}
+
 
 
 

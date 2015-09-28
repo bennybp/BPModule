@@ -131,6 +131,10 @@ def Run():
         bp.testing.PrintResults(nfailed)
 
 
+        for m in allmod:
+            m[0].Options().Print()
+        
+
 
     except Exception as e:
           bp.output.Output("Caught exception in main handler\n")

@@ -31,6 +31,7 @@ BOOST_PYTHON_MODULE(datastore)
     .def("GetType", &OptionMap::GetType)
     .def("ResetToDefault", &OptionMap::ResetToDefault)
     .def("IsValid", &OptionMap::IsValid)
+    .def("Print", &OptionMap::Print)
     .def("Change", &OptionMap::ChangePy)
     .def("ChangeDict", &OptionMap::ChangePyDict);
 

@@ -200,6 +200,12 @@ class OptionMap
 
 
 
+        /*! \brief Dumps the options to the output
+        */
+        void Print(void) const;
+
+
+
         /////////////////////////////
         // Python-related functions
         /////////////////////////////

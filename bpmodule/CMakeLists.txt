@@ -14,6 +14,7 @@ add_subdirectory(testing)
 # Install headers
 set(BPMODULE_PYTHON_HELPER_HEADERS
             python_helper/BoostPython_fwd.hpp
+            python_helper/Types.hpp
             python_helper/Convert.hpp
    )
 

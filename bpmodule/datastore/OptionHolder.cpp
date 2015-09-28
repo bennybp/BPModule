@@ -15,6 +15,7 @@ using bpmodule::python_helper::TestConvertToCpp;
 using bpmodule::python_helper::DetermineType;
 using bpmodule::python_helper::GetPyClass;
 using bpmodule::python_helper::StrToPythonType;
+using bpmodule::python_helper::PythonTypeToStr;
 using bpmodule::exception::OptionException;
 
 
@@ -55,12 +56,26 @@ OptionBasePtr CreateOptionHolder(const std::string & key, const boost::python::t
         def = new T(ConvertToCpp<T>(tup[1]));
     }
 
+    // Already checked
+    /*
+    PythonType ptype_type = DetermineType(tup[0]);
+    if(ptype_type != PythonType::String)
+        throw OptionException("\"Type\" element of tuple is not a bool", key, "type", GetPyClass(tup[0])); 
+    */
 
     PythonType ptype_required = DetermineType(tup[2]);
     if(ptype_required != PythonType::Bool)
-        throw OptionException("\"Required\" element of tuple is not a bool", key, "type", PythonTypeToStr(ptype_required)); 
+        throw OptionException("\"Required\" element of tuple is not a bool", key, "type", GetPyClass(tup[2])); 
+
+    PythonType ptype_help = DetermineType(tup[4]);
+    if(ptype_help != PythonType::String)
+        throw OptionException("\"Help\" element of tuple is not a string", key, "type", GetPyClass(tup[4])); 
+
 
     bool req = boost::python::extract<bool>(tup[2]);
+    std::string help = boost::python::extract<std::string>(tup[4]);
+    python_helper::PythonType pytype = StrToPythonType(boost::python::extract<std::string>(tup[0]));
+
 
     //! \todo Check to make sure validator object is callable
     
@@ -70,7 +85,9 @@ OptionBasePtr CreateOptionHolder(const std::string & key, const boost::python::t
     if(DetermineType(tup[3]) != PythonType::None)
         validator = std::bind(ValidateWrapper<T>, tup[3], std::placeholders::_1);
 
-    return OptionBasePtr(new OptionHolder<T>(key, def, validator, req)); 
+    
+
+    return OptionBasePtr(new OptionHolder<T>(key, def, validator, req, pytype, help)); 
 }
 
 
@@ -79,7 +96,7 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
 {
     PythonType ptype = DetermineType(obj);
     if(ptype != PythonType::Tuple)
-        throw OptionException("Object for option is not a tuple", key, "pythontype", PythonTypeToStr(ptype)); 
+        throw OptionException("Object for option is not a tuple", key, "pythontype", GetPyClass(obj)); 
 
 
     boost::python::tuple tup = boost::python::extract<boost::python::tuple>(obj);
