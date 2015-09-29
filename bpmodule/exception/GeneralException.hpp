@@ -43,6 +43,9 @@ class GeneralException : public std::exception
         GeneralException(std::string whatstr, Targs... exinfo)
             : whatstr_(whatstr)
         {
+            // check that there is an even number of exinfo
+            static_assert( (sizeof...(exinfo) % 2) == 0, 
+                           "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
             AppendInfo(exinfo...);
         }
 
@@ -82,12 +85,21 @@ class GeneralException : public std::exception
          */ 
         void AppendInfo(const std::string & key, const std::string & value);
 
+        /*! \brief Add information to this exception object
+         * 
+         * This gets called if there is an odd number of exinfo arguments
+         */ 
+        void AppendInfo(const std::string & value)
+        {
+        }
 
         /*! \brief Add information to this exception object
          */ 
         template<typename... Targs>
         void AppendInfo(const std::string & key, const std::string & value, Targs... exinfo)
         {
+            static_assert( (sizeof...(exinfo) % 2) == 0, 
+                           "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
             AppendInfo(key, value);
             AppendInfo(exinfo...);
         }
