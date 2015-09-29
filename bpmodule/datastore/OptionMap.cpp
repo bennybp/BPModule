@@ -78,7 +78,7 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
 
         std::string key = LowerString_(ConvertToCpp<std::string>(keys[i]));
 
-        if(!Has(key))
+        if(!tmp.Has(key))
             throw OptionException("Python dictionary has a key that I do not", key, "element", std::to_string(i));
 
         tmp.ChangePy(key, opt[key]); 
