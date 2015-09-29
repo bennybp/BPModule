@@ -41,7 +41,7 @@ OptionMap::OptionMap(const boost::python::dict & opt)
         std::string key = LowerString_(ConvertToCpp<std::string>(keys[i]));
 
         if(opmap_.count(key))
-            throw OptionException("Duplicate key on construction",
+            throw OptionException("Duplicate key on construction", key,
                                    "element", std::to_string(i)); 
 
         // this will throw needed exceptions

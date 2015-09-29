@@ -41,8 +41,9 @@ class GeneralException : public std::exception
          */
         template<typename... Targs>
         GeneralException(std::string whatstr, Targs... exinfo)
+            : whatstr_(whatstr)
         {
-        
+            AppendInfo(exinfo...);
         }
 
         /*! \brief Constructor
