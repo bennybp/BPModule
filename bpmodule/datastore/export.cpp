@@ -24,7 +24,7 @@ BOOST_PYTHON_MODULE(datastore)
     /////////////////////////
     // OptionMap always returns copies, so this should be safe
     //! \todo HasType
-    class_<OptionMap>("OptionMap", init<>())
+    class_<OptionMap>("OptionMap", init<const boost::python::dict &>())
     .def("Get", &OptionMap::GetPy)
     .def("Has", &OptionMap::Has)
     .def("Size", &OptionMap::Size)

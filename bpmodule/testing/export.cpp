@@ -39,9 +39,6 @@ BOOST_PYTHON_MODULE(testing)
     // ModuleInfo construction
     def("TestModuleInfo_Construct", TestModuleInfo_Construct);
 
-    // OptionMap
-    def("TestOptionMap_Construct", TestOptionMap_Construct);
-    def("TestOptionMap_TestPy", TestOptionMap_TestPy);
 
 }
 
