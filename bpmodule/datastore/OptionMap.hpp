@@ -85,7 +85,7 @@ class OptionMap
          * the option for that key has a value or a default
          *
          * \param [in] key The key to the data
-         * \return True if the key exists, false otherwise
+         * \return True if the key exists and has a value, false otherwise
          */
         bool Has(const std::string & key) const
         {
@@ -93,6 +93,20 @@ class OptionMap
             if(opmap_.count(lkey) == 0)
                 return false;
             return opmap_.at(lkey)->HasValue();
+        }
+
+
+        /*! \brief Determine if this object contains a key
+         *
+         * Checks to see if the map has the key
+         *
+         * \param [in] key The key to the data
+         * \return True if the key exists, false otherwise
+         */
+        bool HasKey(const std::string & key) const
+        {
+            std::string lkey = LowerString_(key);
+            return opmap_.count(lkey);
         }
 
 
@@ -121,7 +135,7 @@ class OptionMap
         bool HasType(const std::string & key) const
         {
             std::string lkey = LowerString_(key);
-            if(!Has(lkey))
+            if(!HasKey(lkey))
                 return false;
 
             return GetOrThrow_(lkey)->IsType<T>();
