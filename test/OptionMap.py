@@ -17,6 +17,7 @@ sys.path.insert(0, "/home/ben/programming/ambit/install/lib")
 import bpmodule as bp
 
 
+# can d be converted to t
 def IsValid(t, d):
     if t == d:
         return True
@@ -169,6 +170,73 @@ def Run():
                 expected = (t1 in validtypes) and (IsValid(t1, d1[0]))
                 opt = { d1[0] : ( t1, d1[1], False, None, "(no help)" ) }  
                 nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.datastore.OptionMap, opt)
+                ntest += 1
+
+
+
+        # Now construct with a valid type, no default, but required
+        for t1 in validtypes:
+            opt = { "test_opt" : ( t1, None, True, None, "(no help)" ) }
+            opm = bp.datastore.OptionMap(opt)
+
+            # should be invalid
+            s = "OptionMap {} : Testing validity".format(t1)
+            nfailed += bp.testing.PyTestBoolFunc(ntest, s, False, opm.IsValid)
+            ntest += 1
+
+            s = "OptionMap {} : Has option?".format(t1)
+            nfailed += bp.testing.PyTestBoolFunc(ntest, s, True, opm.HasKey, "test_opt")
+            ntest += 1
+
+            s = "OptionMap {} : Has option value?".format(t1)
+            nfailed += bp.testing.PyTestBoolFunc(ntest, s, False, opm.Has, "test_opt")
+            ntest += 1
+
+            # set the value
+            for d1 in testelements:
+                s = "OptionMap {} : Resetting option".format(t1)
+                nfailed += bp.testing.PyTestFunc(ntest, s, True, opm.ResetToDefault, "test_opt")
+
+                s = "OptionMap {} : Testing validity after resetting".format(t1)
+                nfailed += bp.testing.PyTestBoolFunc(ntest, s, False, opm.IsValid)
+                ntest += 1
+
+                s = "OptionMap {} : Setting option with {}".format(t1, d1[0])
+                expected = IsValid(t1, d1[0])
+                nfailed += bp.testing.PyTestFunc(ntest, s, expected, opm.Change, "test_opt", d1[1])
+                ntest += 1
+
+                # should be valid if expected == True, since that means the value is now set
+                s = "OptionMap {} : Is valid now?".format(t1)
+                nfailed += bp.testing.PyTestBoolFunc(ntest, s, expected, opm.IsValid)
+                ntest += 1
+
+                # Reset again
+                s = "OptionMap {} : Resetting option".format(t1)
+                nfailed += bp.testing.PyTestFunc(ntest, s, True, opm.ResetToDefault, "test_opt")
+
+                s = "OptionMap {} : Testing validity after resetting".format(t1)
+                nfailed += bp.testing.PyTestBoolFunc(ntest, s, False, opm.IsValid)
+                ntest += 1
+
+                s = "OptionMap {} : Setting option as dict with {}".format(t1, d1[0])
+                expected = IsValid(t1, d1[0])
+                nfailed += bp.testing.PyTestFunc(ntest, s, expected, opm.ChangeDict, { "test_opt" :  d1[1] })
+                ntest += 1
+
+                # should be valid if expected == True, since that means the value is now set
+                s = "OptionMap {} : Is valid now?".format(t1)
+                nfailed += bp.testing.PyTestBoolFunc(ntest, s, expected, opm.IsValid)
+                ntest += 1
+
+                # should still have the option
+                s = "OptionMap {} : Has option?".format(t1)
+                nfailed += bp.testing.PyTestBoolFunc(ntest, s, True, opm.HasKey, "test_opt")
+                ntest += 1
+
+                # value is set if expected == True
+                s = "OptionMap {} : Has option value?".format(t1)
+                nfailed += bp.testing.PyTestBoolFunc(ntest, s, expected, opm.Has, "test_opt")
                 ntest += 1
 
 
