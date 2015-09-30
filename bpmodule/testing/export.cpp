@@ -5,10 +5,11 @@
  */ 
 
 
-#include "TestConvert.hpp"
-#include "TestDatastore.hpp"
-#include "TestingBase.hpp"
-#include "TestModuleInfo.hpp"
+#include "bpmodule/testing/TestConvert.hpp"
+#include "bpmodule/testing/TestDatastore.hpp"
+#include "bpmodule/testing/TestOptions.hpp"
+#include "bpmodule/testing/TestingBase.hpp"
+#include "bpmodule/testing/TestModuleInfo.hpp"
 
 using namespace boost::python;
 
@@ -40,6 +41,16 @@ BOOST_PYTHON_MODULE(testing)
 
 
     
+
+    // Options
+    def("Limits_sshort", Limits<signed short>);
+    def("Limits_ushort", Limits<unsigned short>);
+    def("Limits_sint", Limits<signed int>);
+    def("Limits_uint", Limits<unsigned int>);
+    def("Limits_slong", Limits<signed long>);
+    def("Limits_ulong", Limits<unsigned long>);
+    def("Limits_slonglong", Limits<signed long long>);
+    def("Limits_ulonglong", Limits<unsigned long long>);
 
 }
 

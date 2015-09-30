@@ -1,6 +1,7 @@
 set(BPMODULE_TESTING_FILES
             TestModuleInfo.cpp
             TestDatastore.cpp
+            TestOptions.cpp
             export.cpp
    )
   

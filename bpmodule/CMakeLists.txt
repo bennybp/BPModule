@@ -81,6 +81,7 @@ set(BPMODULE_TESTING_HEADERS
             testing/TestingBase.hpp
             testing/TestConvert.hpp
             testing/TestDatastore.hpp
+            testing/TestOptions.hpp
             testing/TestModuleInfo.hpp
    )
 
