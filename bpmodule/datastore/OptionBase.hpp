@@ -9,6 +9,7 @@
 #define _GUARD_OPTIONBASE_HPP_
 
 #include <memory>
+#include <cstring>
 #include <string>
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
@@ -177,7 +178,10 @@ class OptionBase
          * \return True if the contained object is of type U, false otherwise
          */ 
         template<typename U>
-        bool IsType(void) const noexcept;
+        bool IsType(void) const noexcept
+        {
+           return (strcmp(typeid(U).name(), Type()) == 0);
+        }
 
 
         /*! \brief Get the python type of this option
