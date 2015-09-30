@@ -12,6 +12,7 @@
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 #include "bpmodule/datastore/OptionHolder.hpp"
+#include "bpmodule/exception/OptionException.hpp"
 
 
 namespace bpmodule {
@@ -34,27 +35,14 @@ class OptionMap
         * 
         * Deep copies (clones) all the stored options
         */
-        OptionMap(const OptionMap & rhs)
-        {
-            for(const auto & it : rhs.opmap_)
-                opmap_.emplace(it.first, detail::OptionBasePtr(it.second->Clone()));
-        }
+        OptionMap(const OptionMap & rhs);
 
 
         /*! \brief Assignment
         * 
         * Deep copies (clones) all the stored options
         */
-        OptionMap & operator=(const OptionMap & rhs)
-        {
-            if(this != &rhs)
-            {
-                opmap_.clear();
-                for(const auto & it : rhs.opmap_)
-                    opmap_.emplace(it.first, detail::OptionBasePtr(it.second->Clone()));
-            }
-            return *this;
-        }
+        OptionMap & operator=(const OptionMap & rhs);
 
 
 
@@ -87,13 +75,8 @@ class OptionMap
          * \param [in] key The key to the data
          * \return True if the key exists and has a value, false otherwise
          */
-        bool Has(const std::string & key) const
-        {
-            std::string lkey = LowerString_(key);
-            if(opmap_.count(lkey) == 0)
-                return false;
-            return opmap_.at(lkey)->HasValue();
-        }
+        bool Has(const std::string & key) const;
+
 
 
         /*! \brief Determine if this object contains a key
@@ -103,11 +86,7 @@ class OptionMap
          * \param [in] key The key to the data
          * \return True if the key exists, false otherwise
          */
-        bool HasKey(const std::string & key) const
-        {
-            std::string lkey = LowerString_(key);
-            return opmap_.count(lkey);
-        }
+        bool HasKey(const std::string & key) const;
 
 
 
@@ -117,10 +96,7 @@ class OptionMap
          *
          * \return Number of elements in this container
          */
-        size_t Size(void) const noexcept
-        {
-            return opmap_.size();
-        }
+        size_t Size(void) const noexcept;
 
 
 
@@ -151,21 +127,13 @@ class OptionMap
          * \param [in] key The key to the data
          * \return A string representing the type for a key
          */
-        std::string GetType(const std::string & key) const
-        {
-            std::string lkey = LowerString_(key);
-            return GetOrThrow_(lkey)->Type();
-        }
+        std::string GetType(const std::string & key) const;
 
 
 
         /*! \brief Check if the option is currently set to the default
          */ 
-        bool IsDefault(const std::string & key) const
-        {
-            std::string lkey = LowerString_(key);
-            return GetOrThrow_(lkey)->IsDefault();
-        }
+        bool IsDefault(const std::string & key) const;
 
 
 
@@ -198,11 +166,7 @@ class OptionMap
          *
          * \exstrong 
          */ 
-        void ResetToDefault(const std::string & key)
-        {
-            std::string lkey = LowerString_(key);
-            GetOrThrow_(lkey)->ResetToDefault();
-        }
+        void ResetToDefault(const std::string & key);
 
 
 
@@ -210,13 +174,7 @@ class OptionMap
          * 
          * \exnothrow
          */
-        bool IsValid(void) const noexcept
-        {
-            for(const auto & it : opmap_)
-                if(!it.second->IsValid())
-                    return false;
-            return true;
-        }
+        bool IsValid(void) const noexcept;
 
 
 
@@ -267,11 +225,7 @@ class OptionMap
          * \throw bpmodule::exception::OptionException if there is
          *        a problem with the option (nonexistant key, validation, conversion, etc)
          */  
-        boost::python::object GetPy(const std::string & key) const
-        {
-            std::string lkey = LowerString_(key);
-            return GetOrThrow_(lkey)->GetPy();
-        }
+        boost::python::object GetPy(const std::string & key) const;
 
 
 
@@ -286,26 +240,12 @@ class OptionMap
          * \throw bpmodule::exception::OptionException
          *        if a key doesn't exist
          */
-        detail::OptionBasePtr & GetOrThrow_(const std::string & key)
-        {
-            if(opmap_.count(key))
-                return opmap_.at(key);
-            else
-                throw exception::GeneralException("Key not found",
-                                                  "optionkey", key); 
-        }
+        detail::OptionBasePtr & GetOrThrow_(const std::string & key);
 
 
 
         //! \copydoc GetOrThrow_
-        const detail::OptionBasePtr & GetOrThrow_(const std::string & key) const
-        {
-            if(opmap_.count(key))
-                return opmap_.at(key);
-            else
-                throw exception::GeneralException("Key not found",
-                                                  "optionkey", key); 
-        }
+        const detail::OptionBasePtr & GetOrThrow_(const std::string & key) const;
 
 
 
@@ -335,13 +275,7 @@ class OptionMap
 
         /*! \brief Converts a string to lower case
          */ 
-        static std::string LowerString_(const std::string & str)
-        {
-            //! \todo assume ASCII
-            std::string ret(str);
-            std::transform(ret.begin(), ret.end(), ret.begin(), ::tolower);
-            return ret;
-        }
+        static std::string LowerString_(const std::string & str);
 };
 
 

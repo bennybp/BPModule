@@ -7,6 +7,8 @@
 
 #include "bpmodule/modulestore/ModuleInfo.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/output/Output.hpp"
+
 
 using bpmodule::datastore::OptionMap;
 using bpmodule::python_helper::ConvertToCpp;

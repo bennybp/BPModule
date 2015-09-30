@@ -10,16 +10,10 @@
 
 #include <vector>
 #include <functional>
-#include <boost/python.hpp>
 
-#include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/datastore/OptionBase.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
-#include "bpmodule/output/Output.hpp"
-#include "bpmodule/output/FormatStr.hpp"
+#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
-
-//! \todo Split python stuff from header?
 
 namespace bpmodule {
 namespace datastore {
@@ -45,6 +39,10 @@ void PrintOption_(const OptionHolder<std::vector<T>> & oph);
 
 
 /*! \brief Holds the value and default for an option
+ *
+ * \note This is a template class, but definitions are in the
+ *       cpp file. This class is then defined for the
+ *       allowed option types.
  */
 template<typename T>
 class OptionHolder : public OptionBase
@@ -73,17 +71,7 @@ class OptionHolder : public OptionBase
         OptionHolder(const std::string & key, T * def,
                      ValidatorFunc validator, bool required,
                      python_helper::PythonType pytype,
-                     const std::string & help)
-            : OptionBase(key, required, pytype, help),
-              default_(def),
-              validator_(validator)
-        {
-            // check the default using the validator
-            if(def != nullptr)
-                ValidateOrThrow_(*default_, "initial default");
-            if(def != nullptr && required)
-                throw exception::OptionException("Default value supplied for required option", Key()); 
-        }
+                     const std::string & help);
 
 
 
@@ -91,16 +79,7 @@ class OptionHolder : public OptionBase
          * 
          * Data will be deep copied
          */
-        OptionHolder(const OptionHolder & oph)
-            : OptionBase(oph),
-              validator_(oph.validator_)
-        {
-            if(oph.value_)
-                value_ = std::unique_ptr<T>(new T(*oph.value_));
-            if(oph.default_)
-                default_ = std::unique_ptr<T>(new T(*oph.default_));
-        }
-
+        OptionHolder(const OptionHolder & oph);
 
 
 
@@ -124,11 +103,7 @@ class OptionHolder : public OptionBase
          *
          * \exstrong
          */
-        void Change(const T & value)
-        {
-            ValidateOrThrow_(value, "new value");
-            value_ = std::unique_ptr<T>(new T(value));
-        }
+        void Change(const T & value);
 
 
 
@@ -139,15 +114,7 @@ class OptionHolder : public OptionBase
          * \throw bpmodule::exception::OptionException
          *        If the option does not have a value or a default
          */
-        const T & Get(void) const
-        {
-            if(value_)
-                return *value_;
-            else if(default_)
-                return *default_;
-            else
-                throw exception::OptionException("Option does not have a value", Key());
-        }
+        const T & Get(void) const;
 
 
 
@@ -157,13 +124,7 @@ class OptionHolder : public OptionBase
          * \throw bpmodule::exception::OptionException
          *        If the option does not have a default
          */
-        const T & GetDefault(void) const
-        {
-            if(default_)
-                return *default_;
-            else
-                throw exception::OptionException("Option does not have a default", Key());
-        }
+        const T & GetDefault(void) const;
 
 
 
@@ -171,77 +132,27 @@ class OptionHolder : public OptionBase
         // Virtual functions from OptionBase
         ////////////////////////////////////////
 
-        virtual OptionBase * Clone(void) const
-        {
-            return new OptionHolder<T>(*this);
-        }
+        virtual OptionBase * Clone(void) const;
 
+        virtual constexpr const char * Type(void) const noexcept;
 
-        virtual constexpr const char * Type(void) const noexcept
-        {
-            return typeid(T).name();
-        }
+        virtual bool HasValue(void) const noexcept;
 
-        
-        virtual bool HasValue(void) const noexcept
-        {
-            return bool(value_) || bool(default_);
-        }
+        virtual bool HasDefault(void) const noexcept;
 
+        virtual bool IsDefault(void) const;
 
+        virtual void ResetToDefault(void) noexcept;
 
-        virtual bool HasDefault(void) const noexcept
-        {
-            return bool(default_);
-        }
-
-
-
-        virtual bool IsDefault(void) const
-        {
-            if(!value_ && default_)
-                return true;
-            else
-                return value_ && default_ && (*value_ == *default_);
-        }
-
-
-        virtual void ResetToDefault(void) noexcept
-        {
-            value_.reset();
-        }
-
-
-        virtual void Print(void) const
-        {
-            PrintOption_(*this);
-        }
+        virtual void Print(void) const;
 
 
         /////////////////////////////////////////
         // Python-related functions
         /////////////////////////////////////////
-        virtual boost::python::object GetPy(void) const
-        {
-            if(!python_helper::TestConvertToPy(Get()))
-                throw exception::OptionException("Cannot convert option value to python object", Key(),
-                                                 "valuetype", Type());
+        virtual boost::python::object GetPy(void) const;
 
-            return python_helper::ConvertToPy(Get());
-        }
-
-
-        virtual void ChangePy(const boost::python::object & obj)
-        {
-            if(!python_helper::TestConvertToCpp<T>(obj))
-                throw exception::OptionException("Cannot convert python object to option value", Key(),
-                                                 "valuetype", Type(),
-                                                 "pythontype", python_helper::GetPyClass(obj));
-
-            // will validate inside Change()
-            Change(python_helper::ConvertToCpp<T>(obj));
-        }
-
+        virtual void ChangePy(const boost::python::object & obj);
 
 
     private:
@@ -260,18 +171,10 @@ class OptionHolder : public OptionBase
          * \param [in] value The value to validate
          * \param [in] desc Short description of what is being validated
          */
-        void ValidateOrThrow_(const T & value, const std::string & desc) const
-        {
-            if(!validator_(value))
-            {
-                //! \todo add exception info from validator?
-                if(!OptionBase::IsExpert())
-                    throw exception::OptionException("Value is not valid for this option", Key());
-                else
-                    output::Warning("Value for option %1% \"%2\" is invalid. Ignoring\n", desc, Key());
-            }
-        }
+        void ValidateOrThrow_(const T & value, const std::string & desc) const;
 };
+
+
 
 
 
@@ -296,136 +199,20 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
 //! \todo Printing of a double?
 
 template<typename T>
-inline std::string OptToString_(const T & opt)
-{
-    return std::to_string(opt);
-}
+std::string OptToString_(const T & opt);
 
-inline std::string OptToString_(const std::string & opt)
-{
-    return opt;
-}
+std::string OptToString_(const std::string & opt);
 
 
-inline std::string OptToString_(const bool & opt)
-{
-    return (opt ? "True" : "False");
-}
+std::string OptToString_(const bool & opt);
 
 
 template<typename T>
-inline void PrintOption_(const OptionHolder<T> & oph)
-{
-    std::string optline = FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
-                                    oph.Key(),                                                         // name/key
-                                    python_helper::PythonTypeToStr(oph.PyType()),                      // type
-                                    (oph.HasValue() ? OptToString_(oph.Get()) : "(none)"),             // value
-                                    (oph.HasDefault() ? OptToString_(oph.GetDefault()) : "(none)"),    // default
-                                    (oph.IsRequired() ? "True" : "False"),                             // required
-                                    oph.Help());                                                       // help/description
-
-
-    if(!oph.IsValid())
-        output::Error(optline);
-    
-    if(!oph.IsDefault())
-        output::Changed(optline);
-    else
-        output::Output(optline);
-}
-
+void PrintOption_(const OptionHolder<T> & oph);
 
 
 template<typename T>
-inline void PrintOption_(const OptionHolder<std::vector<T>> & oph)
-{
-    size_t nrows = 0;
-
-    std::string valstr, defstr;
-
-    if(oph.HasValue())
-    {
-        auto valuevec = oph.Get();
-        nrows = valuevec.size();
-
-        if(valuevec.size() == 0)
-            valstr = "(empty)";
-        else
-            valstr = OptToString_(valuevec[0]);
-    }
-    else
-        valstr = "(none)";
-
-
-    if(oph.HasDefault())
-    {
-        auto defvec = oph.GetDefault();
-        nrows = std::max(nrows, defvec.size());
-
-        if(defvec.size() == 0)
-            defstr = "(empty)";
-        else
-            defstr = OptToString_(defvec[0]);
-    }
-    else
-        defstr = "(none)";
-
-
-
-
-    std::vector<std::string> optlines;
-    optlines.push_back(FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
-                                 oph.Key(),                                                         // name/key
-                                 python_helper::PythonTypeToStr(oph.PyType()),                      // type
-                                 valstr,                                                            // value
-                                 defstr,                                                            // default
-                                 (oph.IsRequired() ? "True" : "False"),                             // required
-                                 oph.Help()));                                                      // help/description
-
-
-    // start at 1 since we did the first separately
-    for(size_t i = 1; i < nrows; i++)
-    {
-        std::string valstr, defstr;
-
-        if(oph.HasValue())
-        {
-            auto valuevec = oph.Get();
-            if(valuevec.size() > i)
-                valstr = OptToString_(valuevec[i]);
-        }
-
-
-        if(oph.HasDefault())
-        {
-            auto defvec = oph.GetDefault();
-            if(defvec.size() > i)
-                defstr = OptToString_(defvec[i]);
-        }
-
-        optlines.push_back(FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
-                                     "",              // name/key
-                                     "",              // type
-                                     valstr,          // value
-                                     defstr,          // default
-                                     "",              // required
-                                     ""));            // help/description
-        
-    }
-
-    for(const auto & it : optlines) 
-    {
-        if(!oph.IsValid())
-            output::Error(it);
-        else if(!oph.IsDefault())
-            output::Changed(it);
-        else
-            output::Output(it);
-    }
-
-
-}
-
+void PrintOption_(const OptionHolder<std::vector<T>> & oph);
 
 
 

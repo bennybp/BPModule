@@ -24,7 +24,113 @@ using bpmodule::exception::OptionException;
 namespace bpmodule {
 namespace datastore {
 
-// construct from python dict
+
+
+OptionMap::OptionMap(const OptionMap & rhs)
+{
+    for(const auto & it : rhs.opmap_)
+        opmap_.emplace(it.first, detail::OptionBasePtr(it.second->Clone()));
+}
+
+
+OptionMap & OptionMap::operator=(const OptionMap & rhs)
+{
+    if(this != &rhs)
+    {
+        opmap_.clear();
+        for(const auto & it : rhs.opmap_)
+            opmap_.emplace(it.first, detail::OptionBasePtr(it.second->Clone()));
+    }
+    return *this;
+}
+
+
+bool OptionMap::Has(const std::string & key) const
+{
+    std::string lkey = LowerString_(key);
+    if(opmap_.count(lkey) == 0)
+        return false;
+    return opmap_.at(lkey)->HasValue();
+}
+
+
+bool OptionMap::HasKey(const std::string & key) const
+{
+    std::string lkey = LowerString_(key);
+    return opmap_.count(lkey);
+}
+
+size_t OptionMap::Size(void) const noexcept
+{
+    return opmap_.size();
+}
+
+
+
+std::string OptionMap::GetType(const std::string & key) const
+{
+    std::string lkey = LowerString_(key);
+    return GetOrThrow_(lkey)->Type();
+}
+
+
+bool OptionMap::IsDefault(const std::string & key) const
+{
+    std::string lkey = LowerString_(key);
+    return GetOrThrow_(lkey)->IsDefault();
+}
+
+void OptionMap::ResetToDefault(const std::string & key)
+{
+    std::string lkey = LowerString_(key);
+    GetOrThrow_(lkey)->ResetToDefault();
+}
+
+
+bool OptionMap::IsValid(void) const noexcept
+{
+    for(const auto & it : opmap_)
+        if(!it.second->IsValid())
+            return false;
+    return true;
+}
+
+
+detail::OptionBasePtr & OptionMap::GetOrThrow_(const std::string & key)
+{
+    if(opmap_.count(key))
+        return opmap_.at(key);
+    else
+        throw exception::GeneralException("Key not found",
+                                          "optionkey", key); 
+}
+
+
+const detail::OptionBasePtr & OptionMap::GetOrThrow_(const std::string & key) const
+{
+    if(opmap_.count(key))
+        return opmap_.at(key);
+    else
+        throw exception::GeneralException("Key not found",
+                                          "optionkey", key); 
+}
+
+
+
+std::string OptionMap::LowerString_(const std::string & str)
+{
+    //! \todo assume ASCII
+    std::string ret(str);
+    std::transform(ret.begin(), ret.end(), ret.begin(), ::tolower);
+    return ret;
+}
+
+
+
+
+//////////////////////////////
+// Python functions
+////////////////////////////// 
 OptionMap::OptionMap(const boost::python::dict & opt)
 {
     boost::python::list keys = opt.keys();
@@ -50,6 +156,7 @@ OptionMap::OptionMap(const boost::python::dict & opt)
 }
 
 
+
 void OptionMap::ChangePy(const std::string & key, const boost::python::object & obj)
 {
     std::string lkey = LowerString_(key);
@@ -57,6 +164,7 @@ void OptionMap::ChangePy(const std::string & key, const boost::python::object & 
 
     ptr->ChangePy(obj);
 }
+
 
 
 void OptionMap::ChangePyDict(const boost::python::dict & opt)
@@ -88,6 +196,12 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
 }
 
 
+
+boost::python::object OptionMap::GetPy(const std::string & key) const
+{
+    std::string lkey = LowerString_(key);
+    return GetOrThrow_(lkey)->GetPy();
+}
 
 
 
