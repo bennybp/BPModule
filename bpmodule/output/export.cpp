@@ -4,8 +4,8 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-
 #include "bpmodule/output/Output.hpp"
+#include "bpmodule/python_helper/Convert.hpp"
 
 #include <boost/python.hpp>
 
@@ -34,16 +34,40 @@ void Output_Wrap(output::OutputType type, const std::string & fmt, const boost::
 
     for(int i = 0; i < len; i++)
     {
-        std::string cl = boost::python::extract<std::string>(args[i].attr("__class__").attr("__name__"));
+        python_helper::PythonType type = python_helper::DetermineType(args[i]);
 
-        if(cl == "int")
-            bfmt % static_cast<int>(boost::python::extract<long>(args[i]));
-        else if(cl == "float")
-            bfmt % static_cast<double>(boost::python::extract<double>(args[i]));
-        else if(cl == "str")
-            bfmt % static_cast<std::string>(boost::python::extract<std::string>(args[i]));
-        else //! \todo Throw exception when printing unknown python object?
-            bfmt % static_cast<std::string>(boost::python::extract<std::string>(args[i].attr("__str__")()));
+        switch(type)
+        {
+            case python_helper::PythonType::Int:
+            {
+                // make this safe for large signed and unsigned numbers
+                boost::python::long_ l = boost::python::extract<boost::python::long_>(args[i]);
+                if(l > std::numeric_limits<intmax_t>::max())
+                    bfmt % python_helper::ConvertToCpp<uintmax_t>(args[i]);
+                else
+                    bfmt % python_helper::ConvertToCpp<intmax_t>(args[i]);
+                break;
+            }
+            case python_helper::PythonType::Bool:
+            {
+                bfmt % python_helper::ConvertToCpp<bool>(args[i]);
+                break;
+            }
+            case python_helper::PythonType::Float:
+            {
+                bfmt % python_helper::ConvertToCpp<long double>(args[i]);
+                break;
+            }
+            case python_helper::PythonType::String:
+            {
+                bfmt % python_helper::ConvertToCpp<std::string>(args[i]);
+                break;
+            }
+            default: //! \todo Throw exception when printing unknown python object?
+            {
+                bfmt % static_cast<std::string>(boost::python::extract<std::string>(args[i].attr("__str__")()));
+            }
+        }
     }
 
     output::Output_(output::GetOut(), type, boost::str(bfmt));

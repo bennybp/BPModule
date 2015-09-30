@@ -9,7 +9,6 @@
 #include <memory>
 #include <cassert>
 
-#include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/output/Output.hpp"
 
 

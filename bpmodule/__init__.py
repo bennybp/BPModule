@@ -11,8 +11,8 @@ sys.setdlopenflags(os.RTLD_LAZY | os.RTLD_GLOBAL)
 # Load all the core modules
 ##########################################
 from . import python_helper
-from . import output
 from . import exception
+from . import output
 from . import parallel
 from . import tensor
 from . import datastore
