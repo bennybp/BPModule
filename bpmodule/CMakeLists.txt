@@ -44,7 +44,7 @@ set(BPMODULE_DATASTORE_HEADERS
             datastore/PropertyMap.hpp
             datastore/PropHolder.hpp
             datastore/PropPlaceholder.hpp
-            datastore/OptionConvert.hpp
+            datastore/OptionTypes.hpp
             datastore/OptionMap.hpp
             datastore/OptionBase.hpp
             datastore/OptionHolder.hpp

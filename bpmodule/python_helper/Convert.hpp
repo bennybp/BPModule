@@ -56,33 +56,23 @@ struct ToCppConverter
     {
         PythonType objtype = DetermineType(obj);
 
-        // don't promote bool to int or float
+        // don't promote bool to anything else
         if(objtype == PythonType::Bool)
         {
-            if(std::is_same<T, int>::value)
-                return false;
-            if(std::is_same<T, long>::value)
-                return false;
-            if(std::is_same<T, float>::value)
-                return false;
-            if(std::is_same<T, double>::value)
+            if(!std::is_same<T, bool>::value)
                 return false;
         }
 
-        // don't promote int or float to bool
-        if(objtype == PythonType::Int || objtype == PythonType::Float)
-        {
-            if(std::is_same<T, bool>::value)
-                return false;
-        }
+        // don't promote anything to bool
+        if(std::is_same<T, bool>::value && objtype != PythonType::Bool)
+            return false;
 
-        // don't promote float to int
+
+        // don't promote floating point to integral types
         // (shouldn't be possible from boost::python::extract, but make sure)
         if(objtype == PythonType::Float)
         {
-            if(std::is_same<T, int>::value)
-                return false;
-            if(std::is_same<T, long>::value)
+            if(!std::is_floating_point<T>::value)
                 return false;
         }
 

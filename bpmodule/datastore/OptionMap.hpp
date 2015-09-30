@@ -10,7 +10,7 @@
 
 #include <map>
 
-#include "bpmodule/datastore/OptionConvert.hpp"
+#include "bpmodule/datastore/OptionTypes.hpp"
 #include "bpmodule/datastore/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 
@@ -303,18 +303,10 @@ class OptionMap
         template<typename T>
         static void CheckType_(void) noexcept
         {
-            static_assert( std::is_same<T, int>::value                      ||
-                           std::is_same<T, long>::value                     ||
-                           std::is_same<T, double>::value                   ||
-                           std::is_same<T, bool>::value                     ||
-                           std::is_same<T, std::string>::value              ||
-                           std::is_same<T, std::vector<int>>::value         ||
-                           std::is_same<T, std::vector<long>>::value        ||
-                           std::is_same<T, std::vector<double>>::value      ||
-                           std::is_same<T, std::vector<bool>>::value        ||
-                           std::is_same<T, std::vector<std::string>>::value,
-                          "Invalid type for an option given to OptionMap"); 
+            static_assert( detail::IsValidType<T>::value,
+                           "Invalid type for an option given to OptionMap"); 
         }
+
 };
 
 
