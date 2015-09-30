@@ -61,6 +61,7 @@ class OptionMap
         template<typename T>
         T Get(const std::string & key) const
         {
+            CheckType_<T>();
             std::string lkey = LowerString_(key);
             return GetOrThrow_Cast_<T>(lkey)->Get();
         }
@@ -110,10 +111,11 @@ class OptionMap
         template<typename T>
         bool HasType(const std::string & key) const
         {
+            CheckType_<T>();
             std::string lkey = LowerString_(key);
             if(!HasKey(lkey))
                 return false;
-
+        
             return GetOrThrow_(lkey)->IsType<T>();
         }
 
@@ -151,6 +153,7 @@ class OptionMap
         template<typename T>
         void Change(const std::string & key, const T & value)
         {
+            CheckType_<T>();
             std::string lkey = LowerString_(key);
             GetOrThrow_Cast_<T>(lkey)->Change(value);
         }
@@ -194,6 +197,7 @@ class OptionMap
          *        a problem with the option (validation, conversion, duplicate key, etc)
          */ 
         OptionMap(const boost::python::dict & opt);
+
 
 
         /*! \brief Change options via python dictionary
@@ -261,11 +265,11 @@ class OptionMap
         template<typename T>
         const detail::OptionHolder<T> * GetOrThrow_Cast_(const std::string & key) const
         {
+            CheckType_<T>();
             const detail::OptionBasePtr & ptr = GetOrThrow_(key);
             const detail::OptionHolder<T> * oh = dynamic_cast<const detail::OptionHolder<T> *>(ptr.get());
             if(oh == nullptr)
-                throw exception::OptionException("Bad cast",
-                                                 "optionkey", key,
+                throw exception::OptionException("Bad cast", key,
                                                  "fromtype", ptr->Type(),
                                                  "totype", typeid(T).name()); 
 
@@ -276,6 +280,25 @@ class OptionMap
         /*! \brief Converts a string to lower case
          */ 
         static std::string LowerString_(const std::string & str);
+
+
+        /*! \brief Checks if a given type is valid for an option
+         * 
+         * If the type is not valid, the program will not compile
+         */
+        template<typename T>
+        static void CheckType_(void) noexcept
+        {
+            static_assert( std::is_same<T, int>::value                      ||
+                           std::is_same<T, double>::value                   ||
+                           std::is_same<T, bool>::value                     ||
+                           std::is_same<T, std::string>::value              ||
+                           std::is_same<T, std::vector<int>>::value         ||
+                           std::is_same<T, std::vector<double>>::value      ||
+                           std::is_same<T, std::vector<bool>>::value        ||
+                           std::is_same<T, std::vector<std::string>>::value,
+                          "Invalid type for an option given to OptionMap"); 
+        }
 };
 
 

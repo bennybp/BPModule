@@ -26,6 +26,10 @@ namespace datastore {
 
 
 
+////////////////////////////////////////////////
+// Member functions
+////////////////////////////////////////////////
+
 OptionMap::OptionMap(const OptionMap & rhs)
 {
     for(const auto & it : rhs.opmap_)
@@ -101,8 +105,7 @@ detail::OptionBasePtr & OptionMap::GetOrThrow_(const std::string & key)
     if(opmap_.count(key))
         return opmap_.at(key);
     else
-        throw exception::GeneralException("Key not found",
-                                          "optionkey", key); 
+        throw exception::OptionException("Key not found", key);
 }
 
 
@@ -111,10 +114,8 @@ const detail::OptionBasePtr & OptionMap::GetOrThrow_(const std::string & key) co
     if(opmap_.count(key))
         return opmap_.at(key);
     else
-        throw exception::GeneralException("Key not found",
-                                          "optionkey", key); 
+        throw exception::OptionException("Key not found", key);
 }
-
 
 
 std::string OptionMap::LowerString_(const std::string & str)

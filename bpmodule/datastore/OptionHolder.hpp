@@ -190,32 +190,6 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
 
 
 
-
-
-
-////////////////////////////////////////////////////////
-// Printing of options
-////////////////////////////////////////////////////////
-//! \todo Printing of a double?
-
-template<typename T>
-std::string OptToString_(const T & opt);
-
-std::string OptToString_(const std::string & opt);
-
-
-std::string OptToString_(const bool & opt);
-
-
-template<typename T>
-void PrintOption_(const OptionHolder<T> & oph);
-
-
-template<typename T>
-void PrintOption_(const OptionHolder<std::vector<T>> & oph);
-
-
-
 } //closing namespace detail
 } //closing namespace datastore
 } //closing namespace bpmodule

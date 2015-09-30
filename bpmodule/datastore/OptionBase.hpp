@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Storage of generic data (inner class) 
+ * \brief Storage of generic data (base class) 
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -9,7 +9,7 @@
 #define _GUARD_OPTIONBASE_HPP_
 
 #include <memory>
-#include <cstring>
+#include <string>
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 #include "bpmodule/python_helper/Types.hpp"
@@ -33,9 +33,7 @@ class OptionBase
         OptionBase(const std::string & key,
                    bool required,
                    python_helper::PythonType pytype,
-                   const std::string & help)
-            : key_(key), required_(required), expert_(false), pytype_(pytype), help_(help)
-        { }
+                   const std::string & help);
 
         virtual ~OptionBase() noexcept    = default;
 
@@ -136,20 +134,14 @@ class OptionBase
          *
          * \exnothrow
          */
-        const std::string & Key(void) const noexcept
-        {
-            return key_;
-        }
+        const std::string & Key(void) const noexcept;
 
 
         /*! \brief Check if this options is required
          *
          * \exnothrow 
          */ 
-        bool IsRequired(void) const noexcept
-        {
-            return required_;
-        }
+        bool IsRequired(void) const noexcept;
 
 
 
@@ -157,19 +149,13 @@ class OptionBase
          *
          * \exnothrow 
          */
-        bool IsExpert(void) const noexcept
-        {
-            return expert_;
-        }
+        bool IsExpert(void) const noexcept;
 
 
 
         /*! \brief Set the expert variable
          */
-        void SetExpert(bool expert) noexcept
-        {
-            expert_ = expert;
-        } 
+        void SetExpert(bool expert) noexcept;
 
 
         /*! \brief Check to see if this object is valid
@@ -179,10 +165,7 @@ class OptionBase
          * \return True if there is a value or a default, or if this
          *         option is not required
          */
-        bool IsValid(void) const noexcept
-        {
-            return HasValue() || HasDefault() || !IsRequired();
-        }
+        bool IsValid(void) const noexcept;
 
 
 
@@ -195,26 +178,17 @@ class OptionBase
          * \return True if the contained object is of type U, false otherwise
          */ 
         template<typename U>
-        bool IsType(void) const noexcept
-        {
-            return (strcmp(typeid(U).name(), Type()) == 0);
-        }
+        bool IsType(void) const noexcept;
 
 
         /*! \brief Get the python type of this option
          */
-        python_helper::PythonType PyType(void) const noexcept
-        {
-            return pytype_;
-        }
+        python_helper::PythonType PyType(void) const noexcept;
         
  
         /*! \brief Get the help string for this option
          */
-        const std::string & Help(void) const noexcept
-        {
-            return help_;
-        }
+        const std::string & Help(void) const noexcept;
 
 
     private:

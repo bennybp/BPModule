@@ -42,16 +42,19 @@ template class OptionHolder<std::vector<bool>>;
 template class OptionHolder<std::vector<std::string>>;
 
 
-//////////////////////////////////////////////////
-// And the free printing functions
-//////////////////////////////////////////////////
-template std::string OptToString_<int>(const int & opt);
-template std::string OptToString_<double>(const double & opt);
-template std::string OptToString_<bool>(const bool & opt);
 
-// Vector types of OptToString_ don't exist
-// This is handled by an overload
-//template std::string OptToString_<std::string>(const std::string & opt);
+
+
+
+///////////////////////////////////////////
+// Forward declarations of free functions
+///////////////////////////////////////////
+template<typename T>
+static void PrintOption_(const OptionHolder<T> & oph);
+template<typename T>
+static void PrintOption_(const OptionHolder<std::vector<T>> & oph);
+
+
 
 
 
@@ -235,26 +238,31 @@ void OptionHolder<T>::ChangePy(const boost::python::object & obj)
 /////////////////////////////////////////
 // Printing functions (free functions)
 /////////////////////////////////////////
+
+//////////////////
+// Helpers
+//////////////////
 template<typename T>
-std::string OptToString_(const T & opt)
+static std::string OptToString_(const T & opt)
 {
     return std::to_string(opt);
 }
 
-std::string OptToString_(const std::string & opt)
+static std::string OptToString_(const std::string & opt)
 {
     return opt;
 }
 
 
-std::string OptToString_(const bool & opt)
+static std::string OptToString_(const bool & opt)
 {
     return (opt ? "True" : "False");
 }
 
 
+
 template<typename T>
-void PrintOption_(const OptionHolder<T> & oph)
+static void PrintOption_(const OptionHolder<T> & oph)
 {
     std::string optline = FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
                                     oph.Key(),                                                         // name/key
@@ -277,7 +285,7 @@ void PrintOption_(const OptionHolder<T> & oph)
 
 
 template<typename T>
-void PrintOption_(const OptionHolder<std::vector<T>> & oph)
+static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
 {
     size_t nrows = 0;
 
