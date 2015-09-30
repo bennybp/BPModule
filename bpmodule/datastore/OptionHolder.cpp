@@ -35,11 +35,11 @@ namespace detail {
 ///////////////////////////////////////////////////
 // These are the allowed types of OptionHolder
 ///////////////////////////////////////////////////
-template class OptionHolder<int>;
+template class OptionHolder<long>;
 template class OptionHolder<double>;
 template class OptionHolder<bool>;
 template class OptionHolder<std::string>;
-template class OptionHolder<std::vector<int>>;
+template class OptionHolder<std::vector<long>>;
 template class OptionHolder<std::vector<double>>;
 template class OptionHolder<std::vector<bool>>;
 template class OptionHolder<std::vector<std::string>>;
@@ -481,7 +481,7 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
         case PythonType::Bool:
             return CreateOptionHolder<bool>(key, tup); 
         case PythonType::Int:
-            return CreateOptionHolder<int>(key, tup); 
+            return CreateOptionHolder<long>(key, tup); 
         case PythonType::Float:
             return CreateOptionHolder<double>(key, tup); 
         case PythonType::String:
@@ -489,7 +489,7 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
         case PythonType::ListBool:
             return CreateOptionHolder<std::vector<bool>>(key, tup); 
         case PythonType::ListInt:
-            return CreateOptionHolder<std::vector<int>>(key, tup); 
+            return CreateOptionHolder<std::vector<long>>(key, tup); 
         case PythonType::ListFloat:
             return CreateOptionHolder<std::vector<double>>(key, tup); 
         case PythonType::ListString:

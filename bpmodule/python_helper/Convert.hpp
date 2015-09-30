@@ -61,6 +61,8 @@ struct ToCppConverter
         {
             if(std::is_same<T, int>::value)
                 return false;
+            if(std::is_same<T, long>::value)
+                return false;
             if(std::is_same<T, float>::value)
                 return false;
             if(std::is_same<T, double>::value)
@@ -79,6 +81,8 @@ struct ToCppConverter
         if(objtype == PythonType::Float)
         {
             if(std::is_same<T, int>::value)
+                return false;
+            if(std::is_same<T, long>::value)
                 return false;
         }
 

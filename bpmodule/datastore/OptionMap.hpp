@@ -10,12 +10,14 @@
 
 #include <map>
 
+#include "bpmodule/datastore/OptionConvert.hpp"
 #include "bpmodule/datastore/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 
 
 namespace bpmodule {
 namespace datastore {
+
 
 
 /*! \brief A class for holding options to a module
@@ -52,6 +54,8 @@ class OptionMap
 
         /*! \brief Obtain the value for an option
          * 
+         * Will attempt some safe conversions
+         *
          * \throw bpmodule::exception::OptionException if the
          *        option does not have a value or if the 
          *        key does not exist or if the value cannot be 
@@ -60,9 +64,20 @@ class OptionMap
         template<typename T>
         T Get(const std::string & key) const
         {
+            typedef typename detail::OptionConvert<T>::stored_type stored_type;
+
             CheckType_<T>();
             std::string lkey = LowerString_(key);
-            return GetOrThrow_Cast_<T>(lkey)->Get();
+
+            stored_type val = GetOrThrow_Cast_<stored_type>(lkey)->Get();
+
+            try {
+                return detail::OptionConvert<T>::Convert(val);  // this will throw a simple runtime error if there is a problem
+            }
+            catch(const std::runtime_error & ex)
+            {
+                throw exception::OptionException(ex.what(), key);
+            }
         }
 
 
@@ -289,16 +304,19 @@ class OptionMap
         static void CheckType_(void) noexcept
         {
             static_assert( std::is_same<T, int>::value                      ||
+                           std::is_same<T, long>::value                     ||
                            std::is_same<T, double>::value                   ||
                            std::is_same<T, bool>::value                     ||
                            std::is_same<T, std::string>::value              ||
                            std::is_same<T, std::vector<int>>::value         ||
+                           std::is_same<T, std::vector<long>>::value        ||
                            std::is_same<T, std::vector<double>>::value      ||
                            std::is_same<T, std::vector<bool>>::value        ||
                            std::is_same<T, std::vector<std::string>>::value,
                           "Invalid type for an option given to OptionMap"); 
         }
 };
+
 
 
 } // close namespace datastore
