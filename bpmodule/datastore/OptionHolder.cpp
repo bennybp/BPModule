@@ -8,19 +8,22 @@
 #include <boost/python.hpp>
 
 #include "bpmodule/datastore/OptionHolder.hpp"
+#include "bpmodule/output/Output.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/exception/OptionException.hpp"
-#include "bpmodule/output/Output.hpp"
 #include "bpmodule/output/FormatStr.hpp"
 
 using bpmodule::python_helper::PythonType;
-using bpmodule::python_helper::ConvertToCpp;
-using bpmodule::python_helper::TestConvertToCpp;
-using bpmodule::python_helper::DetermineType;
-using bpmodule::python_helper::GetPyClass;
 using bpmodule::python_helper::StrToPythonType;
-using bpmodule::python_helper::PythonTypeToStr;
+using bpmodule::python_helper::GetPyClass;
+using bpmodule::python_helper::DetermineType;
+using bpmodule::python_helper::TestConvertToPy;
+using bpmodule::python_helper::ConvertToPy;
+using bpmodule::python_helper::TestConvertToCpp;
+using bpmodule::python_helper::ConvertToCpp;
+
 using bpmodule::exception::OptionException;
+
 
 
 namespace bpmodule {
@@ -71,7 +74,7 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph);
 template<typename T>
 OptionHolder<T>::OptionHolder(const std::string & key, T * def,
                               ValidatorFunc validator, bool required,
-                              python_helper::PythonType pytype,
+                              PythonType pytype,
                               const std::string & help)
     : OptionBase(key, required, pytype, help),
       default_(def),
@@ -81,7 +84,7 @@ OptionHolder<T>::OptionHolder(const std::string & key, T * def,
     if(def != nullptr)
         ValidateOrThrow_(*default_, "initial default");
     if(def != nullptr && required)
-        throw exception::OptionException("Default value supplied for required option", Key()); 
+        throw OptionException("Default value supplied for required option", Key()); 
 }
 
 
@@ -118,7 +121,7 @@ const T & OptionHolder<T>::Get(void) const
     else if(default_)
         return *default_;
     else
-        throw exception::OptionException("Option does not have a value", Key());
+        throw OptionException("Option does not have a value", Key());
 }
 
 
@@ -129,7 +132,7 @@ const T & OptionHolder<T>::GetDefault(void) const
     if(default_)
         return *default_;
     else
-        throw exception::OptionException("Option does not have a default", Key());
+        throw OptionException("Option does not have a default", Key());
 }
 
 
@@ -196,7 +199,7 @@ void OptionHolder<T>::ValidateOrThrow_(const T & value, const std::string & desc
     {
         //! \todo add exception info from validator?
         if(!OptionBase::IsExpert())
-            throw exception::OptionException("Value is not valid for this option", Key());
+            throw OptionException("Value is not valid for this option", Key());
         else
             output::Warning("Value for option %1% \"%2\" is invalid. Ignoring\n", desc, Key());
     }
@@ -212,24 +215,24 @@ void OptionHolder<T>::ValidateOrThrow_(const T & value, const std::string & desc
 template<typename T>
 boost::python::object OptionHolder<T>::GetPy(void) const
 {
-    if(!python_helper::TestConvertToPy(Get()))
-        throw exception::OptionException("Cannot convert option value to python object", Key(),
+    if(!TestConvertToPy(Get()))
+        throw OptionException("Cannot convert option value to python object", Key(),
                                          "valuetype", Type());
 
-    return python_helper::ConvertToPy(Get());
+    return ConvertToPy(Get());
 }
 
 
 template<typename T>
 void OptionHolder<T>::ChangePy(const boost::python::object & obj)
 {
-    if(!python_helper::TestConvertToCpp<T>(obj))
-        throw exception::OptionException("Cannot convert python object to option value", Key(),
+    if(!TestConvertToCpp<T>(obj))
+        throw OptionException("Cannot convert python object to option value", Key(),
                                          "valuetype", Type(),
-                                         "pythontype", python_helper::GetPyClass(obj));
+                                         "pythontype", GetPyClass(obj));
 
     // will validate inside Change()
-    Change(python_helper::ConvertToCpp<T>(obj));
+    Change(ConvertToCpp<T>(obj));
 }
 
 
@@ -266,7 +269,7 @@ static void PrintOption_(const OptionHolder<T> & oph)
 {
     std::string optline = FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
                                     oph.Key(),                                                         // name/key
-                                    python_helper::PythonTypeToStr(oph.PyType()),                      // type
+                                    PythonTypeToStr(oph.PyType()),                      // type
                                     (oph.HasValue() ? OptToString_(oph.Get()) : "(none)"),             // value
                                     (oph.HasDefault() ? OptToString_(oph.GetDefault()) : "(none)"),    // default
                                     (oph.IsRequired() ? "True" : "False"),                             // required
@@ -324,7 +327,7 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
     std::vector<std::string> optlines;
     optlines.push_back(FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
                                  oph.Key(),                                                         // name/key
-                                 python_helper::PythonTypeToStr(oph.PyType()),                      // type
+                                 PythonTypeToStr(oph.PyType()),                      // type
                                  valstr,                                                            // value
                                  defstr,                                                            // default
                                  (oph.IsRequired() ? "True" : "False"),                             // required
@@ -433,7 +436,7 @@ OptionBasePtr CreateOptionHolder(const std::string & key, const boost::python::t
 
     bool req = boost::python::extract<bool>(tup[2]);
     std::string help = boost::python::extract<std::string>(tup[4]);
-    python_helper::PythonType pytype = StrToPythonType(boost::python::extract<std::string>(tup[0]));
+    PythonType pytype = StrToPythonType(boost::python::extract<std::string>(tup[0]));
 
 
     //! \todo Check to make sure validator object is callable

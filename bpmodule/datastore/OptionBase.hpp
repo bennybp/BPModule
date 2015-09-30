@@ -12,7 +12,6 @@
 #include <string>
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
-#include "bpmodule/python_helper/Types.hpp"
 
 namespace bpmodule {
 namespace datastore {

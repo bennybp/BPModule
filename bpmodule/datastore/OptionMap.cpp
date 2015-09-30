@@ -12,13 +12,12 @@
 #include "bpmodule/output/Output.hpp"
 
 
-//! \todo Add tensor stuff?
-
 using bpmodule::python_helper::ConvertToCpp;
-using bpmodule::python_helper::ConvertToPy;
 using bpmodule::python_helper::TestConvertToCpp;
-using bpmodule::python_helper::TestConvertToPy;
+
 using bpmodule::exception::OptionException;
+
+using bpmodule::output::Output;
 
 
 namespace bpmodule {
@@ -105,7 +104,7 @@ detail::OptionBasePtr & OptionMap::GetOrThrow_(const std::string & key)
     if(opmap_.count(key))
         return opmap_.at(key);
     else
-        throw exception::OptionException("Key not found", key);
+        throw OptionException("Key not found", key);
 }
 
 
@@ -114,7 +113,7 @@ const detail::OptionBasePtr & OptionMap::GetOrThrow_(const std::string & key) co
     if(opmap_.count(key))
         return opmap_.at(key);
     else
-        throw exception::OptionException("Key not found", key);
+        throw OptionException("Key not found", key);
 }
 
 
@@ -217,16 +216,16 @@ void OptionMap::Print(void) const
     size_t nopt = Size();
     if(nopt > 0)
     {
-        output::Output("\n");
+        Output("\n");
         std::string s20(20, '-');
         std::string s10(10, '-');
-        output::Output("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", "Option", "Type", "Value", "Default", "Required", "Description");
-        output::Output("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", s20, s20, s20, s20, s10, s20);
+        Output("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", "Option", "Type", "Value", "Default", "Required", "Description");
+        Output("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", s20, s20, s20, s20, s10, s20);
 
         for(const auto & it : opmap_)
             it.second->Print();
     }
-    output::Output("\n");
+    Output("\n");
 }
 
 

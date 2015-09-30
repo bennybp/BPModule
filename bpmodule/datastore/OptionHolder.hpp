@@ -8,33 +8,14 @@
 #ifndef _GUARD_OPTIONHOLDER_HPP_
 #define _GUARD_OPTIONHOLDER_HPP_
 
-#include <vector>
 #include <functional>
 
 #include "bpmodule/datastore/OptionBase.hpp"
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 
 namespace bpmodule {
 namespace datastore {
 namespace detail {
-
-
-////////////////////////////
-// forward declarations
-////////////////////////////
-template<typename T>
-class OptionHolder;
-
-
-template<typename T>
-void PrintOption_(const OptionHolder<T> & oph);
-
-template<typename T>
-void PrintOption_(const OptionHolder<std::vector<T>> & oph);
-////////////////////////////
-// end forward declarations
-////////////////////////////
 
 
 

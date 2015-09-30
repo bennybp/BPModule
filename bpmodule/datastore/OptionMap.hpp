@@ -10,7 +10,6 @@
 
 #include <map>
 
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 #include "bpmodule/datastore/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 
