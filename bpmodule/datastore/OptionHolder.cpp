@@ -386,21 +386,21 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
 // CreateOptionHolder & helper functions
 ////////////////////////////////////////////////////////
 template<typename T>
-bool ValidateWrapper(const boost::python::object & val, T arg)
+static bool ValidateWrapper(const boost::python::object & val, T arg)
 {
     return boost::python::extract<bool>(val.attr("Validate")(arg));
 }
 
 
 template<typename T>
-bool EmptyValidator(T arg)
+static bool EmptyValidator(T arg)
 {
     return true;
 }
 
 
 template<typename T>
-OptionBasePtr CreateOptionHolder(const std::string & key, const boost::python::tuple & tup)
+static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::python::tuple & tup)
 {
     PythonType ptype_default = DetermineType(tup[1]);
 
