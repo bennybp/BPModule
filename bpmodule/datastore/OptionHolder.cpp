@@ -8,6 +8,7 @@
 #include <boost/python.hpp>
 
 #include "bpmodule/datastore/OptionHolder.hpp"
+#include "bpmodule/datastore/OptionTypes.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/exception/OptionException.hpp"
@@ -35,12 +36,12 @@ namespace detail {
 ///////////////////////////////////////////////////
 // These are the allowed types of OptionHolder
 ///////////////////////////////////////////////////
-template class OptionHolder<long>;
-template class OptionHolder<double>;
+template class OptionHolder<OptionInt>;
+template class OptionHolder<OptionFloat>;
 template class OptionHolder<bool>;
 template class OptionHolder<std::string>;
-template class OptionHolder<std::vector<long>>;
-template class OptionHolder<std::vector<double>>;
+template class OptionHolder<std::vector<OptionInt>>;
+template class OptionHolder<std::vector<OptionFloat>>;
 template class OptionHolder<std::vector<bool>>;
 template class OptionHolder<std::vector<std::string>>;
 
@@ -481,17 +482,17 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
         case PythonType::Bool:
             return CreateOptionHolder<bool>(key, tup); 
         case PythonType::Int:
-            return CreateOptionHolder<long>(key, tup); 
+            return CreateOptionHolder<OptionInt>(key, tup); 
         case PythonType::Float:
-            return CreateOptionHolder<double>(key, tup); 
+            return CreateOptionHolder<OptionFloat>(key, tup); 
         case PythonType::String:
             return CreateOptionHolder<std::string>(key, tup); 
         case PythonType::ListBool:
             return CreateOptionHolder<std::vector<bool>>(key, tup); 
         case PythonType::ListInt:
-            return CreateOptionHolder<std::vector<long>>(key, tup); 
+            return CreateOptionHolder<std::vector<OptionInt>>(key, tup); 
         case PythonType::ListFloat:
-            return CreateOptionHolder<std::vector<double>>(key, tup); 
+            return CreateOptionHolder<std::vector<OptionFloat>>(key, tup); 
         case PythonType::ListString:
             return CreateOptionHolder<std::vector<std::string>>(key, tup); 
         default:

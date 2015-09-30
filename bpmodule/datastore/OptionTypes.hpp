@@ -13,10 +13,26 @@
 #include <limits>
 #include <vector>
 #include <typeinfo>
+#include <cstdint>
+
 
 namespace bpmodule {
 namespace datastore {
 namespace detail {
+
+
+
+
+////////////////////////////////////////////////
+// Storage types for integral and floating point
+////////////////////////////////////////////////
+//! \todo Arbitrary math lib?
+typedef intmax_t OptionInt;
+typedef long double OptionFloat;
+
+
+
+
 
 
 /////////////////////////////////
@@ -59,7 +75,7 @@ struct OptionStoreType
 template<typename T>
 struct OptionStoreType<T, true, false>
 {
-    typedef long stored_type;
+    typedef OptionInt stored_type;
 };
 
 
@@ -67,7 +83,7 @@ struct OptionStoreType<T, true, false>
 template<typename T>
 struct OptionStoreType<T, false, true>
 {
-    typedef double stored_type;
+    typedef OptionFloat stored_type;
 };
 
 
@@ -104,8 +120,10 @@ struct OptionConvert<T, true>
 
     static ret_type Convert(stored_type val)
     {
-        if(val < std::numeric_limits<T>::min() ||
-           val > std::numeric_limits<T>::max())
+        stored_type castmax = static_cast<stored_type>(std::numeric_limits<T>::min());
+        stored_type castmin = static_cast<stored_type>(std::numeric_limits<T>::min());
+
+        if(val < castmin || val > castmax)
             throw std::runtime_error(std::string("Value is out of range for requested type: ") + typeid(T).name());
         else
             return static_cast<ret_type>(val); 
