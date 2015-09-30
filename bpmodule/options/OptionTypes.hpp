@@ -17,7 +17,7 @@
 
 
 namespace bpmodule {
-namespace datastore {
+namespace options {
 namespace detail {
 
 
@@ -179,7 +179,7 @@ struct OptionConvert<std::vector<T>, false>
 
 
 } // close namespace detail
-} // close namespace datastore
+} // close namespace options
 } // close namespace bpmodule
 
 #endif

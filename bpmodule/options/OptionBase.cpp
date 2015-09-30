@@ -5,10 +5,10 @@
  */ 
 
 
-#include "bpmodule/datastore/OptionBase.hpp"
+#include "bpmodule/options/OptionBase.hpp"
 
 namespace bpmodule {
-namespace datastore {
+namespace options {
 namespace detail {
 
 
@@ -64,5 +64,5 @@ const std::string & OptionBase::Help(void) const noexcept
 
 
 } //closing namespace detail
-} //closing namespace datastore
+} //closing namespace options
 } //closing namespace bpmodule

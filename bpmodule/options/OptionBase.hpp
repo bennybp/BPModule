@@ -15,7 +15,7 @@
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 namespace bpmodule {
-namespace datastore {
+namespace options {
 namespace detail {
 
 
@@ -223,7 +223,7 @@ typedef std::shared_ptr<OptionBase> OptionBasePtr;
 
 
 } //closing namespace detail
-} //closing namespace datastore
+} //closing namespace options
 } //closing namespace bpmodule
 
 #endif

@@ -7,8 +7,8 @@
 
 #include <boost/python.hpp>
 
-#include "bpmodule/datastore/OptionHolder.hpp"
-#include "bpmodule/datastore/OptionTypes.hpp"
+#include "bpmodule/options/OptionHolder.hpp"
+#include "bpmodule/options/OptionTypes.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/exception/OptionException.hpp"
@@ -28,7 +28,7 @@ using bpmodule::exception::OptionException;
 
 
 namespace bpmodule {
-namespace datastore {
+namespace options {
 namespace detail {
 
 
@@ -504,6 +504,6 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
 
 
 } // close namespace detail
-} // close namespace datastore
+} // close namespace options
 } // close namespace bpmodule
 

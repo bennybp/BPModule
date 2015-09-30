@@ -7,7 +7,7 @@
 
 #include <boost/python.hpp>
 
-#include "bpmodule/datastore/OptionMap.hpp"
+#include "bpmodule/options/OptionMap.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/output/Output.hpp"
 
@@ -21,7 +21,7 @@ using bpmodule::output::Output;
 
 
 namespace bpmodule {
-namespace datastore {
+namespace options {
 
 
 
@@ -234,6 +234,6 @@ void OptionMap::Print(void) const
 
 
 
-} // close namespace datastore
+} // close namespace options
 } // close namespace bpmodule
 

@@ -5,7 +5,6 @@
  */ 
 
 
-#include "bpmodule/datastore/OptionMap.hpp"
 #include "bpmodule/datastore/CalcData.hpp"
 
 #include <boost/python.hpp>
@@ -19,29 +18,6 @@ namespace export_python {
 
 BOOST_PYTHON_MODULE(datastore)
 {
-    /////////////////////////
-    // OptionMap
-    /////////////////////////
-    // OptionMap always returns copies, so this should be safe
-    //! \todo HasType
-    class_<OptionMap>("OptionMap", init<const boost::python::dict &>())
-    .def("MaxInt", &OptionMap::MaxInt)
-    .def("MinInt", &OptionMap::MinInt)
-    .def("MaxFloat", &OptionMap::MaxFloat)
-    .def("MinFloat", &OptionMap::MinFloat)
-    .def("Get", &OptionMap::GetPy)
-    .def("Has", &OptionMap::Has)
-    .def("HasKey", &OptionMap::HasKey)
-    .def("Size", &OptionMap::Size)
-    .def("GetType", &OptionMap::GetType)
-    .def("ResetToDefault", &OptionMap::ResetToDefault)
-    .def("IsValid", &OptionMap::IsValid)
-    .def("Print", &OptionMap::Print)
-    .def("Change", &OptionMap::ChangePy)
-    .def("ChangeDict", &OptionMap::ChangePyDict);
-
-
-
     /*
      * GetRef() is not exported to python. This is because python does not enforce
      * const semantics, which could lead to behavior where the underlying data

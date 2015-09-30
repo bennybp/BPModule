@@ -11,7 +11,7 @@
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"
 
-using bpmodule::datastore::OptionMap;
+using bpmodule::options::OptionMap;
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
 using bpmodule::exception::ModuleCreateException;

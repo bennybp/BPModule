@@ -4,6 +4,7 @@ add_subdirectory(exception)
 add_subdirectory(parallel)
 add_subdirectory(tensor)
 add_subdirectory(datastore)
+add_subdirectory(options)
 add_subdirectory(modulebase)
 add_subdirectory(modulestore)
 add_subdirectory(molecule)
@@ -44,10 +45,13 @@ set(BPMODULE_DATASTORE_HEADERS
             datastore/PropertyMap.hpp
             datastore/PropHolder.hpp
             datastore/PropPlaceholder.hpp
-            datastore/OptionTypes.hpp
-            datastore/OptionMap.hpp
-            datastore/OptionBase.hpp
-            datastore/OptionHolder.hpp
+   )
+
+set(BPMODULE_OPTIONS_HEADERS
+            options/OptionTypes.hpp
+            options/OptionMap.hpp
+            options/OptionBase.hpp
+            options/OptionHolder.hpp
    )
 
 set(BPMODULE_MODULEBASE_HEADERS
@@ -87,6 +91,7 @@ install(FILES ${BPMODULE_OUTPUT_HEADERS} DESTINATION include/bpmodule/output)
 install(FILES ${BPMODULE_PARALLEL_HEADERS} DESTINATION include/bpmodule/parallel)
 install(FILES ${BPMODULE_TENSOR_HEADERS} DESTINATION include/bpmodule/tensor)
 install(FILES ${BPMODULE_DATASTORE_HEADERS} DESTINATION include/bpmodule/datastore)
+install(FILES ${BPMODULE_OPTIONS_HEADERS} DESTINATION include/bpmodule/options)
 install(FILES ${BPMODULE_MODULEBASE_HEADERS} DESTINATION include/bpmodule/modulebase)
 install(FILES ${BPMODULE_MODULESTORE_HEADERS} DESTINATION include/bpmodule/modulestore)
 install(FILES ${BPMODULE_MOLECULE_HEADERS} DESTINATION include/bpmodule/molecule)

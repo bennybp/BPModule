@@ -91,12 +91,12 @@ void ModuleBase::Print(void) const
 }
 
 
-datastore::OptionMap & ModuleBase::Options(void) noexcept
+options::OptionMap & ModuleBase::Options(void) noexcept
 {
     return minfo_.options;
 }
 
-const datastore::OptionMap & ModuleBase::Options(void) const noexcept
+const options::OptionMap & ModuleBase::Options(void) const noexcept
 {
     return minfo_.options;
 }

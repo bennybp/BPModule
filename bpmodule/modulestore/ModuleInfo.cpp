@@ -10,7 +10,7 @@
 #include "bpmodule/output/Output.hpp"
 
 
-using bpmodule::datastore::OptionMap;
+using bpmodule::options::OptionMap;
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::exception::GeneralException;
 

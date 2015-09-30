@@ -17,7 +17,7 @@ class ModuleStore;
 struct ModuleInfo;
 }
 
-namespace datastore {
+namespace options {
 class OptionMap;
 }
 
@@ -89,12 +89,12 @@ class ModuleBase
 
         /*! \brief Get the OptionMap object for this module
          */ 
-        datastore::OptionMap & Options(void) noexcept;
+        options::OptionMap & Options(void) noexcept;
 
 
         /*! \brief Get the OptionMap object for this module
          */ 
-        const datastore::OptionMap & Options(void) const noexcept;
+        const options::OptionMap & Options(void) const noexcept;
 
 
         /*! \brief Print the information for this module

@@ -10,13 +10,13 @@
 
 #include <map>
 
-#include "bpmodule/datastore/OptionTypes.hpp"
-#include "bpmodule/datastore/OptionHolder.hpp"
+#include "bpmodule/options/OptionTypes.hpp"
+#include "bpmodule/options/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 
 
 namespace bpmodule {
-namespace datastore {
+namespace options {
 
 
 
@@ -349,7 +349,7 @@ class OptionMap
 
 
 
-} // close namespace datastore
+} // close namespace options
 } // close namespace bpmodule
 
 

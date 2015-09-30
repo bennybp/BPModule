@@ -78,7 +78,7 @@ def Run():
             s = "Test construction with {}".format(d1[0])
             expected = (d1[0] in validtypes)
             opt = { d1[0] : ( d1[0], d1[1], False, None, "(no help)" ) }
-            nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.datastore.OptionMap, opt)
+            nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
             ntest += 1
 
 
@@ -90,7 +90,7 @@ def Run():
                 expected = (d1[0] in validtypes) and (d2[0] in validtypes)
                 opt = { d1[0] : ( d1[0], d1[1], False, None, "(no help)" ),  
                         d2[0] : ( d2[0], d2[1], False, None, "(no help)" ) }
-                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.datastore.OptionMap, opt)
+                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
                 ntest += 1
 
 
@@ -100,7 +100,7 @@ def Run():
             s = "Test construction with {}".format(d1[0])
             expected = (d1[0] in validtypes)
             opt = { d1[0] : ( d1[0], None, False, None, "(no help)" ) }
-            nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.datastore.OptionMap, opt)
+            nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
             ntest += 1
 
 
@@ -112,7 +112,7 @@ def Run():
                 expected = (d1[0] in validtypes) and (d2[0] in validtypes)
                 opt = { d1[0] : ( d1[0], None, False, None, "(no help)" ),  
                         d2[0] : ( d2[0], None, False, None, "(no help)" ) }
-                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.datastore.OptionMap, opt)
+                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
                 ntest += 1
 
 
@@ -123,7 +123,7 @@ def Run():
             s = "Test construction with {}".format(d1[0])
             expected = False
             opt = { d1[0] : ( d1[0], d1[1], True, None, "(no help)" ) }
-            nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.datastore.OptionMap, opt)
+            nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
             ntest += 1
 
 
@@ -136,7 +136,7 @@ def Run():
                 expected = False
                 opt = { d1[0] : ( d1[0], d1[1], True, None, "(no help)" ),  
                         d2[0] : ( d2[0], d2[1], True, None, "(no help)" ) }
-                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.datastore.OptionMap, opt)
+                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
                 ntest += 1
 
 
@@ -146,7 +146,7 @@ def Run():
             s = "Test construction with {}".format(d1[0])
             expected = (d1[0] in validtypes)
             opt = { d1[0] : ( d1[0], None, True, None, "(no help)" ) }
-            nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.datastore.OptionMap, opt)
+            nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
             ntest += 1
 
 
@@ -158,7 +158,7 @@ def Run():
                 expected = (d1[0] in validtypes) and (d2[0] in validtypes)
                 opt = { d1[0] : ( d1[0], None, True, None, "(no help)" ),  
                         d2[0] : ( d2[0], None, True, None, "(no help)" ) }
-                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.datastore.OptionMap, opt)
+                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
                 ntest += 1
 
 
@@ -169,7 +169,7 @@ def Run():
                 s = "Test construction with {} -> {}".format(t1, d1[0])
                 expected = (t1 in validtypes) and (IsValid(t1, d1[0]))
                 opt = { d1[0] : ( t1, d1[1], False, None, "(no help)" ) }  
-                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.datastore.OptionMap, opt)
+                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
                 ntest += 1
 
 
@@ -177,7 +177,7 @@ def Run():
         # Now construct with a valid type, no default, but required
         for t1 in validtypes:
             opt = { "test_opt" : ( t1, None, True, None, "(no help)" ) }
-            opm = bp.datastore.OptionMap(opt)
+            opm = bp.options.OptionMap(opt)
 
             # should be invalid
             s = "OptionMap {} : Testing validity".format(t1)

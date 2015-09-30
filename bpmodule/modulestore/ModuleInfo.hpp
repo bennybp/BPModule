@@ -9,7 +9,7 @@
 #define _GUARD_MODULEINFO_HPP_
 
 
-#include "bpmodule/datastore/OptionMap.hpp"
+#include "bpmodule/options/OptionMap.hpp"
 
 
 namespace bpmodule {
@@ -28,7 +28,7 @@ struct ModuleInfo
     std::vector<std::string> authors;  //!< Authors of the module
     std::string description;           //!< A description of the module
     std::vector<std::string> refs;     //!< References for the module (articles, web pages, etc)
-    datastore::OptionMap options;      //!< Options for the module
+    options::OptionMap options;      //!< Options for the module
 
 
     ModuleInfo(void)                    = default;

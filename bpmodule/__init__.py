@@ -16,6 +16,7 @@ from . import exception
 from . import parallel
 from . import tensor
 from . import datastore
+from . import options
 from . import modulebase
 from . import modulestore
 from . import molecule

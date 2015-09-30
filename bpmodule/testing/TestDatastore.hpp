@@ -11,23 +11,8 @@
 #include <string>
 
 
-////////////////////////
-// Forward declarations
-////////////////////////
-namespace bpmodule {
-namespace datastore {
-class OptionMap;
-}
-}
-////////////////////////
-// End Forward declarations
-////////////////////////
-
-
-
 namespace bpmodule {
 namespace testing {
-
 
 
 
