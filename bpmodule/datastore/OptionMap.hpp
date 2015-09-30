@@ -247,6 +247,44 @@ class OptionMap
 
 
 
+
+
+        //////////////////////////////////////////
+        // these aren't static constexpr
+        // since the are to be called from python
+        //////////////////////////////////////////
+        /*! \brief Return the maximum value for an integer that can be stored in this OptionMap
+         */ 
+        detail::OptionInt MaxInt(void) const
+        {
+            return std::numeric_limits<detail::OptionInt>::max();
+        }
+
+
+        /*! \brief Return the minimum value for an integer that can be stored in this OptionMap
+         */ 
+        detail::OptionInt MinInt(void) const
+        {
+            return std::numeric_limits<detail::OptionInt>::lowest();
+        }
+
+
+        /*! \brief Return the maximum value for an floating point that can be stored in this OptionMap
+         */ 
+        detail::OptionFloat MaxFloat(void) const
+        {
+            return std::numeric_limits<detail::OptionFloat>::max();
+        }
+
+
+        /*! \brief Return the minimum value for a floating point that can be stored in this OptionMap
+         */ 
+        detail::OptionFloat MinFloat(void) const
+        {
+            return std::numeric_limits<detail::OptionFloat>::lowest();
+        }
+
+
     private:
         std::map<std::string, detail::OptionBasePtr> opmap_;
 
