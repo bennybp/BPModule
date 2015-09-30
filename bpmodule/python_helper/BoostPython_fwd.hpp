@@ -22,4 +22,14 @@ class dict;
 }
 }
 
+
+namespace bpmodule {
+namespace python_helper {
+
+enum class PythonType;
+
+}
+}
+
+
 #endif
