@@ -21,29 +21,37 @@ namespace export_python {
 BOOST_PYTHON_MODULE(testing)
 {
     // From-python conversions
-    def("TestConvertToCpp_sshort", TestConvertToCpp<signed short>);
-    def("TestConvertToCpp_ushort", TestConvertToCpp<unsigned short>);
-    def("TestConvertToCpp_sint", TestConvertToCpp<signed int>);
-    def("TestConvertToCpp_uint", TestConvertToCpp<unsigned int>);
-    def("TestConvertToCpp_slong", TestConvertToCpp<signed long>);
-    def("TestConvertToCpp_ulong", TestConvertToCpp<unsigned long>);
-    def("TestConvertToCpp_slonglong", TestConvertToCpp<signed long long>);
-    def("TestConvertToCpp_ulonglong", TestConvertToCpp<unsigned long long>);
-    def("TestConvertToCpp_float", TestConvertToCpp<float>);
-    def("TestConvertToCpp_double", TestConvertToCpp<double>);
-    def("TestConvertToCpp_string", TestConvertToCpp<std::string>);
+    // Arithmetic types
+    def("TestConvertToCpp_sshort",     TestConvertToCpp<signed short>);
+    def("TestConvertToCpp_ushort",     TestConvertToCpp<unsigned short>);
+    def("TestConvertToCpp_sint",       TestConvertToCpp<signed int>);
+    def("TestConvertToCpp_uint",       TestConvertToCpp<unsigned int>);
+    def("TestConvertToCpp_slong",      TestConvertToCpp<signed long>);
+    def("TestConvertToCpp_ulong",      TestConvertToCpp<unsigned long>);
+    def("TestConvertToCpp_slonglong",  TestConvertToCpp<signed long long>);
+    def("TestConvertToCpp_ulonglong",  TestConvertToCpp<unsigned long long>);
 
-    def("TestConvertToCpp_vector_sshort", TestConvertToCpp<std::vector<signed short>>);
-    def("TestConvertToCpp_vector_ushort", TestConvertToCpp<std::vector<unsigned short>>);
-    def("TestConvertToCpp_vector_sint", TestConvertToCpp<std::vector<signed int>>);
-    def("TestConvertToCpp_vector_uint", TestConvertToCpp<std::vector<unsigned int>>);
-    def("TestConvertToCpp_vector_slong", TestConvertToCpp<std::vector<signed long>>);
-    def("TestConvertToCpp_vector_ulong", TestConvertToCpp<std::vector<unsigned long>>);
-    def("TestConvertToCpp_vector_slonglong", TestConvertToCpp<std::vector<signed long long>>);
-    def("TestConvertToCpp_vector_ulonglong", TestConvertToCpp<std::vector<unsigned long long>>);
-    def("TestConvertToCpp_vector_float", TestConvertToCpp<std::vector<float>>);
-    def("TestConvertToCpp_vector_double", TestConvertToCpp<std::vector<double>>);
-    def("TestConvertToCpp_vector_string", TestConvertToCpp<std::vector<std::string>>);
+    def("TestConvertToCpp_float",      TestConvertToCpp<float>);
+    def("TestConvertToCpp_double",     TestConvertToCpp<double>);
+    def("TestConvertToCpp_longdouble", TestConvertToCpp<long double>);
+
+    def("TestConvertToCpp_string",     TestConvertToCpp<std::string>);
+
+    // Vector types
+    def("TestConvertToCpp_vector_sshort",     TestConvertToCpp<std::vector<signed short>>);
+    def("TestConvertToCpp_vector_ushort",     TestConvertToCpp<std::vector<unsigned short>>);
+    def("TestConvertToCpp_vector_sint",       TestConvertToCpp<std::vector<signed int>>);
+    def("TestConvertToCpp_vector_uint",       TestConvertToCpp<std::vector<unsigned int>>);
+    def("TestConvertToCpp_vector_slong",      TestConvertToCpp<std::vector<signed long>>);
+    def("TestConvertToCpp_vector_ulong",      TestConvertToCpp<std::vector<unsigned long>>);
+    def("TestConvertToCpp_vector_slonglong",  TestConvertToCpp<std::vector<signed long long>>);
+    def("TestConvertToCpp_vector_ulonglong",  TestConvertToCpp<std::vector<unsigned long long>>);
+
+    def("TestConvertToCpp_vector_float",      TestConvertToCpp<std::vector<float>>);
+    def("TestConvertToCpp_vector_double",     TestConvertToCpp<std::vector<double>>);
+    def("TestConvertToCpp_vector_longdouble", TestConvertToCpp<std::vector<long double>>);
+
+    def("TestConvertToCpp_vector_string",     TestConvertToCpp<std::vector<std::string>>);
 
 
 
