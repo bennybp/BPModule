@@ -112,6 +112,7 @@ struct OptionConvert
 ////////////////////
 // Arithmetic types
 ////////////////////
+//! \todo This doesn't particularly work for floating point...
 template<typename T>
 struct OptionConvert<T, true>
 {
@@ -120,7 +121,7 @@ struct OptionConvert<T, true>
 
     static ret_type Convert(stored_type val)
     {
-        stored_type castmax = static_cast<stored_type>(std::numeric_limits<T>::min());
+        stored_type castmax = static_cast<stored_type>(std::numeric_limits<T>::max());
         stored_type castmin = static_cast<stored_type>(std::numeric_limits<T>::min());
 
         if(val < castmin || val > castmax)
