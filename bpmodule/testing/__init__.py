@@ -17,11 +17,11 @@ def PyTestFunc(itest, desc, expected, func, *args):
     try:
        func(*args)
     except Exception as e:
+        Debug(str(e) + "\n")
         if expected == False:
             Output(fmt, itest, "False", "False", "Success", desc)
             return 0
         else:
-            Debug(str(e) + "\n")
             Error(fmt, itest, "True", "False", "FAILED", desc)
             return 1
     except:
@@ -62,11 +62,11 @@ def PyTestBoolFunc(itest, desc, expected, func, *args):
                 return 1
 
     except Exception as e:
+        Debug(str(e) + "\n")
         if expected == False:
             Output(fmt, itest, "False", "False", "Success", desc)
             return 0
         else:
-            Debug(str(e) + "\n")
             Error(fmt, itest, "True", "False", "FAILED", desc)
             return 1
     except:
