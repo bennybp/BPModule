@@ -34,6 +34,18 @@ class GeneralException : public std::exception
         typedef std::vector<ExceptionInfoPair> ExceptionInfo;
 
 
+
+        /*! \brief Constructor
+         * 
+         * \param [in] whatstr Some descriptive string
+         * \param [in] exinfo Pairs of strings with other information.
+         */
+        GeneralException(std::string whatstr)
+            : whatstr_(whatstr)
+        { }
+
+
+
         /*! \brief Constructor
          * 
          * \param [in] whatstr Some descriptive string
@@ -49,12 +61,20 @@ class GeneralException : public std::exception
             AppendInfo(exinfo...);
         }
 
-        /*! \brief Constructor
-         * 
-         * \param [in] whatstr Some descriptive string
-         * \param [in] exinfo All other information as a vector of string pairs.
-         */
-        GeneralException(std::string whatstr, ExceptionInfo exinfo = {});
+
+        /*! \brief Construct from another object, plus additional info
+         */ 
+        template<typename... Targs>
+        GeneralException(const GeneralException & gex, Targs... exinfo)
+            : GeneralException(gex)
+        {
+            // check that there is an even number of exinfo
+            static_assert( (sizeof...(exinfo) % 2) == 0, 
+                           "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
+            AppendInfo(exinfo...);
+        }
+
+
 
         GeneralException()                                         = delete;
         GeneralException(const GeneralException & rhs)             = default;

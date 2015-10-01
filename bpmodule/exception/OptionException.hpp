@@ -33,8 +33,15 @@ class OptionException : public GeneralException
                         Targs... Fargs)
                               
             : GeneralException(what, "optionkey", key, Fargs...)
-                { }
+        { }
                 
+
+
+        template<typename... Targs>
+        OptionException(const GeneralException & gex, std::string key, Targs... Fargs)
+            : GeneralException(gex, "optionkey", key, Fargs...)
+        { }
+
         
         OptionException()                                        = delete;     
         OptionException(const OptionException & rhs)             = default;     

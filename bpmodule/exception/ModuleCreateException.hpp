@@ -15,6 +15,8 @@ namespace exception {
 
 
 /*! \brief An exception thrown when a module object can not be created
+ *
+ * \todo Update with new scheme
  */
 class ModuleCreateException : public GeneralException
 {
@@ -32,14 +34,8 @@ class ModuleCreateException : public GeneralException
                               std::string key,
                               std::string name,
                               std::string desc = "(no details)")
-            : GeneralException(what,
-                               {
-                                  {"path", path},
-                                  {"key", key},
-                                  {"name", name},
-                                  {"desc", desc}
-                               })
-                { }
+            : GeneralException(what, "path", path, "key", key, "name", name, "desc", desc)
+        { }
                 
         
         ModuleCreateException()                                              = delete;     

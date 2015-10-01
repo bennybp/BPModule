@@ -15,6 +15,8 @@ namespace exception {
 
 
 /*! \brief An exception thrown when a module couldn't be loaded
+ *
+ * \todo Update with new scheme
  */
 class ModuleLoadException : public GeneralException
 {
@@ -32,14 +34,8 @@ class ModuleLoadException : public GeneralException
                             std::string key,
                             std::string name,
                             std::string desc = "(no details)")
-            : GeneralException(what,
-                               {
-                                  {"path", path},
-                                  {"key", key},
-                                  {"name", name},
-                                  {"desc", desc}
-                               })
-                { }
+            : GeneralException(what, "path", path, "key", key, "name", name, "desc", desc) 
+        { }
                 
         
         ModuleLoadException()                                            = delete;     

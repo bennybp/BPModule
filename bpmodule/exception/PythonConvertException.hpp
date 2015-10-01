@@ -35,8 +35,15 @@ class PythonConvertException : public GeneralException
                                Targs... Fargs)
                               
             : GeneralException(what, "fromtype", fromtype, "totype", totype, Fargs...)
-                { }
-                
+        { }
+        
+        
+        template<typename... Targs>
+        PythonConvertException(const GeneralException & gex,
+                               std::string fromtype, std::string totype,
+                               Targs... Fargs)
+            : GeneralException(gex, "fromtype", fromtype, "totype", totype, Fargs...)
+        { }
         
         PythonConvertException()                                               = delete;     
         PythonConvertException(const PythonConvertException & rhs)             = default;     

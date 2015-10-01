@@ -38,12 +38,16 @@ ModuleBase::~ModuleBase()
 void ModuleBase::ThrowException(const std::string & exwhat,
                                 const GeneralException::ExceptionInfo & exinfo) const
 {
-    GeneralException::ExceptionInfo exinfo2{
-                                              { "Module Key", Key() },
-                                              { "Module Name", Name() }
-                                            };
-    exinfo2.insert(exinfo2.end(), exinfo.begin(), exinfo.end());
-    throw GeneralException(exwhat, exinfo2);
+    //! \todo Redo this (or remove?)
+    GeneralException gex(exwhat);
+
+    for(const auto & it : exinfo)
+        gex.AppendInfo(it.first, it.second);
+
+    gex.AppendInfo("modulekey", Key());
+    gex.AppendInfo("modulename", Name());
+
+    throw gex;
 }
 
 

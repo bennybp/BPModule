@@ -14,10 +14,6 @@
 namespace bpmodule {
 namespace exception {
 
-GeneralException::GeneralException(std::string whatstr, ExceptionInfo exinfo)
-    : whatstr_(std::move(whatstr)), exinfo_(std::move(exinfo))
-{ }
-
 
 const GeneralException::ExceptionInfo & GeneralException::GetInfo(void) const noexcept
 {
