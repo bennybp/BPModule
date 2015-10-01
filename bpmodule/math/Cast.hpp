@@ -16,7 +16,7 @@ namespace math {
  *
  * \throw bpmodule::exception::MathException if there is a problem (overflow, underflow, etc)
  */
-template<typename Source, typename Target>
+template<typename Target, typename Source>
 Target numeric_cast(Source s)
 {
     static_assert(  ( std::is_integral<Source>::value && std::is_integral<Target>::value) ||
@@ -37,7 +37,7 @@ Target numeric_cast(Source s)
         throw exception::MathException("Error in numeric_cast", "info", ex.what());
     }
 
-    throw std::logic_error();
+    throw std::logic_error("numeric_cast unhandled types");
 }
 
 
@@ -46,7 +46,7 @@ Target numeric_cast(Source s)
  *
  * \todo NYI
  */
-template<typename Source, typename Target>
+template<typename Target, typename Source>
 Target round_cast(Source s)
 {
     static_assert(std::is_same<Source, Target>::value, "TODO: round_cast between different types");
