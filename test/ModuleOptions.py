@@ -17,10 +17,10 @@ def IsValid(t, d):
         return True
 
     if t == "float" and d == "int":  # cast int to float
-        return True
+        return False
 
     if t == "listfloat" and d == "listint":  # cast int to float
-        return True
+        return False
 
     if d == "listempty":  # Empty list passed to a list type
       return t in [ "listint", "listfloat", "listbool", "liststr" ]
