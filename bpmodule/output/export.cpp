@@ -41,11 +41,12 @@ void Output_Wrap(output::OutputType type, const std::string & fmt, const boost::
             case python_helper::PythonType::Int:
             {
                 // make this safe for large signed and unsigned numbers
+                // Not much we can do if l < min() though...
                 boost::python::long_ l = boost::python::extract<boost::python::long_>(args[i]);
                 if(l > std::numeric_limits<intmax_t>::max())
-                    bfmt % python_helper::ConvertToCpp<uintmax_t>(args[i]);
+                    bfmt % python_helper::ConvertToCpp<uintmax_t>(l);
                 else
-                    bfmt % python_helper::ConvertToCpp<intmax_t>(args[i]);
+                    bfmt % python_helper::ConvertToCpp<intmax_t>(l);
                 break;
             }
             case python_helper::PythonType::Bool:
