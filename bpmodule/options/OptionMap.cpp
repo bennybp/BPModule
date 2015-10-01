@@ -69,14 +69,6 @@ size_t OptionMap::Size(void) const noexcept
 }
 
 
-
-std::string OptionMap::GetType(const std::string & key) const
-{
-    std::string lkey = LowerString_(key);
-    return GetOrThrow_(lkey)->Type();
-}
-
-
 bool OptionMap::IsDefault(const std::string & key) const
 {
     std::string lkey = LowerString_(key);

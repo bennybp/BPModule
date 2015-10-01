@@ -115,38 +115,6 @@ class OptionMap
 
 
 
-        /*! \brief Determine if this object contains an option of a specific type for a key
-         *
-         * \tparam T Type to compare to
-         *
-         * \param [in] key The key to the data
-         * \return True if the key exists and is of type T, false otherwise
-         */
-        template<typename T>
-        bool HasType(const std::string & key) const
-        {
-            CheckType_<T>();
-            std::string lkey = LowerString_(key);
-            if(!HasKey(lkey))
-                return false;
-        
-            return GetOrThrow_(lkey)->IsType<T>();
-        }
-
-
-
-        /*! \brief Get a string representing the type for a given key
-         *
-         * \throw bpmodule::exception::OptionException
-         *        if the key doesn't exist 
-         *
-         * \param [in] key The key to the data
-         * \return A string representing the type for a key
-         */
-        std::string GetType(const std::string & key) const;
-
-
-
         /*! \brief Check if the option is currently set to the default
          */ 
         bool IsDefault(const std::string & key) const;

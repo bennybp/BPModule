@@ -21,10 +21,31 @@ def Run():
     try:
         bp.testing.PrintHeader("Testing conversions from Python to C++")
 
+        bp.testing.TestConvertToCpp_sshort(0, "Hi", False, -123456789);
+        bp.testing.TestConvertToCpp_sshort(0, "Hi", True, 1234);
+        return
+
+        intlimitdict = { "sshort"     : bp.testing.Limits_sshort(),
+                         "ushort"     : bp.testing.Limits_ushort(),
+                         "sint"       : bp.testing.Limits_sint(),
+                         "uint"       : bp.testing.Limits_uint(),
+                         "slong"      : bp.testing.Limits_slong(),
+                         "ulong"      : bp.testing.Limits_ulong(),
+                         "slonglong"  : bp.testing.Limits_slonglong(),
+                         "ulonglong"  : bp.testing.Limits_ulonglong(),
+                       }
 
 
                       # function                                     name               acceptable python types
-        testfuncs =    [ (bp.testing.TestConvertToCpp_int,           "int",             ["int"]),
+        testfuncs =    [ (bp.testing.TestConvertToCpp_sshort,        "sshort",          ["int"]),
+                         (bp.testing.TestConvertToCpp_ushort,        "ushort",          ["int"]),
+                         (bp.testing.TestConvertToCpp_sint,          "sint",            ["int"]),
+                         (bp.testing.TestConvertToCpp_uint,          "uint",            ["int"]),
+                         (bp.testing.TestConvertToCpp_slong,         "slong",           ["int"]),
+                         (bp.testing.TestConvertToCpp_ulong,         "ulong",           ["int"]),
+                         (bp.testing.TestConvertToCpp_slonglong,     "slonglong",       ["int"]),
+                         (bp.testing.TestConvertToCpp_ulonglong,     "ulonglong",       ["int"]),
+
                          (bp.testing.TestConvertToCpp_long,          "long",            ["int"]),
                          (bp.testing.TestConvertToCpp_float,         "float",           ["int", "float"]),
                          (bp.testing.TestConvertToCpp_double,        "double",          ["int", "float"]),
