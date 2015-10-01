@@ -18,6 +18,37 @@ namespace bpmodule {
 namespace python_helper {
 
 
+inline std::string GetPyExceptionString(void)
+{
+    //! \todo leaking memory?
+    if(PyErr_Occurred() != NULL)
+    {
+        PyObject *e, *v, *t;
+        PyErr_Fetch(&e, &v, &t);
+
+        boost::python::object e_obj(boost::python::handle<>(boost::python::allow_null(e)));
+        boost::python::object v_obj(boost::python::handle<>(boost::python::allow_null(v)));
+        boost::python::object t_obj(boost::python::handle<>(boost::python::allow_null(t)));
+       
+        std::string errstr = boost::python::extract<std::string>(e_obj);
+        errstr += " : ";
+        errstr += boost::python::extract<std::string>(v_obj);
+        return errstr;
+    }
+    else
+        return "(no error?)";
+}
+
+
+
+
+
+
+
+
+
+
+
 /*! \brief Family of structs to convert python types to C++ types
  *
  * \tparam T Type to convert to
@@ -189,13 +220,26 @@ T ConvertToCpp(const boost::python::object & obj)
                                                 GetPyClass(obj), typeid(T).name());
     }
 
+    /* The below may throw a few different errors. In particular,
+     * it may throw objects derived from std::bad_cast
+     * which are thrown from boost::numeric. These
+     * indicate overflows
+     */ 
     try {
         return ToCppConverter<T>::Convert(obj);
     }
-    catch(...) //! \todo Doesn't seem to catch python exceptions?
+    catch(const std::exception & ex)
     {
         throw exception::PythonConvertException("Cannot convert from python to C++: Conversion failed",
-                                                GetPyClass(obj), typeid(T).name());
+                                                GetPyClass(obj), typeid(T).name(),
+                                                "stdex", ex.what());
+    }
+    catch(...)
+    {
+        std::string exstr = GetPyExceptionString();
+        throw exception::PythonConvertException("Cannot convert from python to C++: Conversion failed",
+                                                GetPyClass(obj), typeid(T).name(),
+                                                "pyex", exstr);
     }
 }
 
@@ -237,7 +281,10 @@ boost::python::object ConvertToPy(const T & obj)
     }
     catch(...)
     {
-        throw exception::PythonConvertException("Cannot convert from C++ to python: Conversion failed", typeid(obj).name(), "boost::python::object");
+        std::string exstr = GetPyExceptionString();
+        throw exception::PythonConvertException("Cannot convert from C++ to python: Conversion failed",
+                                                typeid(obj).name(), "boost::python::object",
+                                                "pythonex", exstr);
     }
 }
 
