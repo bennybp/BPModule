@@ -46,6 +46,7 @@ int TestFunc(int itest, const std::string & desc, bool expected, T func, Targs..
     }
     catch(const exception::GeneralException & ex)
     {
+        Debug(ex.ExceptionString());
         if(expected == false)
         {
             Output(fmt, itest, "False", "False", "Success", desc);
@@ -53,7 +54,6 @@ int TestFunc(int itest, const std::string & desc, bool expected, T func, Targs..
         }
         else
         {
-            Debug(ex.ExceptionString());
             Error(fmt, itest, "True", "False", "FAILED", desc);
             return 1;
         }
@@ -61,6 +61,7 @@ int TestFunc(int itest, const std::string & desc, bool expected, T func, Targs..
     }
     catch(std::exception & ex)
     {
+        Debug(ex.what());
         if(expected == false)
         {
             Output(fmt, itest, "False", "False", "Success", desc);
@@ -68,7 +69,6 @@ int TestFunc(int itest, const std::string & desc, bool expected, T func, Targs..
         }
         else
         {
-            Debug(ex.what());
             Error(fmt, itest, "True", "False", "FAILED", desc);
             return 1;
         }
@@ -156,6 +156,7 @@ int TestBoolFunc(int itest, const std::string & desc, bool expected, T func, Tar
     }
     catch(const exception::GeneralException & ex)
     {
+        Debug(ex.ExceptionString());
         if(expected == false)
         {
             Output(fmt, itest, "False", "False", "Success", desc);
@@ -163,7 +164,6 @@ int TestBoolFunc(int itest, const std::string & desc, bool expected, T func, Tar
         }
         else
         {
-            Debug(ex.ExceptionString());
             Error(fmt, itest, "True", "False", "FAILED", desc);
             return 1;
         }
@@ -171,6 +171,7 @@ int TestBoolFunc(int itest, const std::string & desc, bool expected, T func, Tar
     }
     catch(std::exception & ex)
     {
+        Debug(ex.what());
         if(expected == false)
         {
             Output(fmt, itest, "False", "False", "Success", desc);
@@ -178,7 +179,6 @@ int TestBoolFunc(int itest, const std::string & desc, bool expected, T func, Tar
         }
         else
         {
-            Debug(ex.what());
             Error(fmt, itest, "True", "False", "FAILED", desc);
             return 1;
         }
@@ -224,6 +224,7 @@ int TestConstruct(int itest, const std::string & desc, bool expected, Targs... F
     }
     catch(const exception::GeneralException & ex)
     {
+        Debug(ex.ExceptionString());
         if(expected == false)
         {
             Output(fmt, itest, "False", "False", "Success", desc);
@@ -231,7 +232,6 @@ int TestConstruct(int itest, const std::string & desc, bool expected, Targs... F
         }
         else
         {
-            Debug(ex.ExceptionString());
             Error(fmt, itest, "True", "False", "FAILED", desc);
             return 1;
         }
@@ -239,6 +239,7 @@ int TestConstruct(int itest, const std::string & desc, bool expected, Targs... F
     }
     catch(std::exception & ex)
     {
+        Debug(ex.what());
         if(expected == false)
         {
             Output(fmt, itest, "False", "False", "Success", desc);
@@ -246,7 +247,6 @@ int TestConstruct(int itest, const std::string & desc, bool expected, Targs... F
         }
         else
         {
-            Debug(ex.what());
             Error(fmt, itest, "True", "False", "FAILED", desc);
             return 1;
         }
