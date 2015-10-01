@@ -15,6 +15,7 @@
 #include <typeinfo>
 #include <cstdint>
 
+#include "bpmodule/math/Cast.hpp"
 
 namespace bpmodule {
 namespace options {
@@ -26,7 +27,7 @@ namespace detail {
 ////////////////////////////////////////////////
 // Storage types for integral and floating point
 ////////////////////////////////////////////////
-//! \todo Arbitrary math lib?
+//! \todo Arbitrary precision math lib?
 typedef intmax_t OptionInt;
 typedef long double OptionFloat;
 
@@ -35,12 +36,13 @@ typedef long double OptionFloat;
 
 
 
-/////////////////////////////////
-// Valid types
-////////////////////////////////
+///////////////////////////////////////////
+// Valid types for getting/setting options
+///////////////////////////////////////////
 template<typename T>
 struct IsValidType
 {
+    // is_arithmetic includes bool
     static constexpr bool value = (std::is_arithmetic<T>::value || std::is_same<T, std::string>::value);
 };
 
@@ -87,7 +89,7 @@ struct OptionStoreType<T, false, true>
 };
 
 
-// for bool (since bool is in integral type, but we
+// for bool (since bool is an integral type, but we
 // don't want implicit conversions)
 template<>
 struct OptionStoreType<bool>
@@ -112,7 +114,7 @@ struct OptionConvert
 ////////////////////
 // Arithmetic types
 ////////////////////
-//! \todo This doesn't particularly work for floating point...
+//! \todo Floating point underflow? between 0 and value (ie numeric_limits::min)
 template<typename T>
 struct OptionConvert<T, true>
 {
@@ -121,13 +123,7 @@ struct OptionConvert<T, true>
 
     static ret_type Convert(stored_type val)
     {
-        stored_type castmax = static_cast<stored_type>(std::numeric_limits<T>::max());
-        stored_type castmin = static_cast<stored_type>(std::numeric_limits<T>::min());
-
-        if(val < castmin || val > castmax)
-            throw std::runtime_error(std::string("Value is out of range for requested type: ") + typeid(T).name());
-        else
-            return static_cast<ret_type>(val); 
+        return math::numeric_cast<ret_type>(val);
     }
 };
 
@@ -170,7 +166,16 @@ struct OptionConvert<std::vector<T>, false>
         ret.reserve(val.size());
 
         for(const auto & it : val)
-            ret.push_back(OptionConvert<T>::Convert(it));
+        {
+            try {
+                ret.push_back(OptionConvert<T>::Convert(it));
+            }
+            catch(exception::MathException & ex)  // catch overflow, etc
+            {
+                ex.AppendInfo("vectorelement", std::to_string(std::distance(val.begin(), it)));
+                throw;
+            }
+        }
 
         return ret;
     }

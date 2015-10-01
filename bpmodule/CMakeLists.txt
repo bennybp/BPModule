@@ -2,6 +2,7 @@ add_subdirectory(python_helper)
 add_subdirectory(output)
 add_subdirectory(exception)
 add_subdirectory(parallel)
+add_subdirectory(math)
 add_subdirectory(tensor)
 add_subdirectory(datastore)
 add_subdirectory(options)
@@ -26,6 +27,7 @@ set(BPMODULE_OUTPUT_HEADERS
 
 set(BPMODULE_EXCEPTION_HEADERS
             exception/GeneralException.hpp
+            exception/MathException.hpp
             exception/PythonConvertException.hpp
             exception/OptionException.hpp
             exception/ModuleLoadException.hpp
@@ -34,6 +36,10 @@ set(BPMODULE_EXCEPTION_HEADERS
 
 set(BPMODULE_PARALLEL_HEADERS
             parallel/Parallel.hpp
+   )
+
+set(BPMODULE_MATH_HEADERS
+            math/Cast.hpp
    )
 
 set(BPMODULE_TENSOR_HEADERS
@@ -90,6 +96,7 @@ install(FILES ${BPMODULE_PYTHON_HELPER_HEADERS} DESTINATION include/bpmodule/pyt
 install(FILES ${BPMODULE_EXCEPTION_HEADERS} DESTINATION include/bpmodule/exception)
 install(FILES ${BPMODULE_OUTPUT_HEADERS} DESTINATION include/bpmodule/output)
 install(FILES ${BPMODULE_PARALLEL_HEADERS} DESTINATION include/bpmodule/parallel)
+install(FILES ${BPMODULE_MATH_HEADERS} DESTINATION include/bpmodule/math)
 install(FILES ${BPMODULE_TENSOR_HEADERS} DESTINATION include/bpmodule/tensor)
 install(FILES ${BPMODULE_DATASTORE_HEADERS} DESTINATION include/bpmodule/datastore)
 install(FILES ${BPMODULE_OPTIONS_HEADERS} DESTINATION include/bpmodule/options)

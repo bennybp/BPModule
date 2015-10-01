@@ -14,6 +14,7 @@ from . import python_helper
 from . import exception
 from . import output
 from . import parallel
+from . import math
 from . import tensor
 from . import datastore
 from . import options

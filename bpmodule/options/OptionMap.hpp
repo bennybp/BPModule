@@ -72,11 +72,11 @@ class OptionMap
             stored_type val = GetOrThrow_Cast_<stored_type>(lkey)->Get();
 
             try {
-                return detail::OptionConvert<T>::Convert(val);  // this will throw a simple runtime error if there is a problem
+                return detail::OptionConvert<T>::Convert(val); 
             }
-            catch(const std::runtime_error & ex)
+            catch(const exception::GeneralException & ex)
             {
-                throw exception::OptionException(ex.what(), key);
+                throw exception::OptionException(ex, key);
             }
         }
 
