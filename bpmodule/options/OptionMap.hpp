@@ -135,9 +135,21 @@ class OptionMap
         template<typename T>
         void Change(const std::string & key, const T & value)
         {
+            typedef typename detail::OptionConvert<T>::stored_type stored_type;
+
             CheckType_<T>();
             std::string lkey = LowerString_(key);
-            GetOrThrow_Cast_<T>(lkey)->Change(value);
+            stored_type convval;
+
+            try {
+                 detail::OptionConvert<stored_type>(value);
+            }
+            catch(const exception::GeneralException & ex)
+            {
+                throw exception::OptionException(ex, key);
+            }
+
+            GetOrThrow_Cast_<T>(lkey)->Change(convval);
         }
 
 
@@ -161,6 +173,26 @@ class OptionMap
          */
         bool IsValid(void) const noexcept;
 
+
+
+        /*! \brief Check if the map has a key with a given type
+         *  
+         *  Does not check for validity or if the stored value
+         *  can be successfully converted (ie, overflow)
+         */
+        template<typename T>
+        bool HasType(const std::string & key) const
+        {
+            typedef typename detail::OptionConvert<T>::stored_type stored_type;
+
+            CheckType_<T>();
+
+            if(!HasKey(key))
+                return false;
+
+            std::string lkey = LowerString_(key);
+            return GetOrThrow_(lkey)->IsType<stored_type>();
+        } 
 
 
 
