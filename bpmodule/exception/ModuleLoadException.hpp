@@ -2,7 +2,7 @@
  *
  * \brief An exception for module loading errors
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_MODULELOADEXCEPTION_HPP_
@@ -25,24 +25,44 @@ class ModuleLoadException : public GeneralException
          *
          * \param [in] what Brief description of the error
          * \param [in] path Path to the module that could't be loaded
-         * \param [in] key  Key of the module that couldn't be loaded 
-         * \param [in] name Name of the module that couldn't be loaded 
-         * \param [in] desc Additional information (ie, dlerror() or something)
+         * \param [in] key  Key of the module that couldn't be loaded
+         * \param [in] name Name of the module that couldn't be loaded
+         * \param [in] exinfo Additional information. Must be an even number of strings
          */
         ModuleLoadException(std::string what,
                             std::string path,
                             std::string key,
                             std::string name,
-                            std::string desc = "(no details)")
-            : GeneralException(what, "path", path, "key", key, "name", name, "desc", desc) 
+                            Targs... exinfo)
+            : GeneralException(what, "path", path, "key", key, "name", name, exinfo)
         { }
-                
-        
-        ModuleLoadException()                                            = delete;     
-        ModuleLoadException(const ModuleLoadException & rhs)             = default;     
-        ModuleLoadException(ModuleLoadException && rhs)                  = default;     
-        ModuleLoadException & operator=(const ModuleLoadException & rhs) = default;     
-        ModuleLoadException & operator=(ModuleLoadException && rhs)      = default;     
+
+
+        /*! \brief Constructor, using another exception as a base
+         *
+         * Can be used to append additional information
+         *
+         * \param [in] gex Exception to copy
+         * \param [in] path Path to the module that could't be loaded
+         * \param [in] key  Key of the module that couldn't be loaded
+         * \param [in] name Name of the module that couldn't be loaded
+         * \param [in] exinfo Additional information. Must be an even number of strings
+         */
+        template<typename... Targs>
+        ModuleLoadException(const GeneralException & gex,
+                            std::string path,
+                            std::string key,
+                            std::string name,
+                            Targs... exinfo)
+            : GeneralException(gex, "path", path, "key", key, "name", name, exinfo...)
+        { }
+
+
+        ModuleLoadException()                                            = delete;
+        ModuleLoadException(const ModuleLoadException & rhs)             = default;
+        ModuleLoadException(ModuleLoadException && rhs)                  = default;
+        ModuleLoadException & operator=(const ModuleLoadException & rhs) = default;
+        ModuleLoadException & operator=(ModuleLoadException && rhs)      = default;
         virtual ~ModuleLoadException() = default;
 
 

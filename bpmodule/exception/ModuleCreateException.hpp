@@ -2,7 +2,7 @@
  *
  * \brief An exception for module creation errors
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_MODULECREATEEXCEPTION_HPP_
@@ -15,8 +15,6 @@ namespace exception {
 
 
 /*! \brief An exception thrown when a module object can not be created
- *
- * \todo Update with new scheme
  */
 class ModuleCreateException : public GeneralException
 {
@@ -25,24 +23,44 @@ class ModuleCreateException : public GeneralException
          *
          * \param [in] what Brief description of the error
          * \param [in] path Path to the module that could't be created
-         * \param [in] key  Key of the module that couldn't be created 
-         * \param [in] name Name of the module that couldn't be created 
-         * \param [in] desc Additional information
+         * \param [in] key  Key of the module that couldn't be created
+         * \param [in] name Name of the module that couldn't be created
+         * \param [in] exinfo Additional information. Must be an even number of strings
          */
         ModuleCreateException(std::string what,
                               std::string path,
                               std::string key,
                               std::string name,
-                              std::string desc = "(no details)")
-            : GeneralException(what, "path", path, "key", key, "name", name, "desc", desc)
+                              Targs... exinfo)
+            : GeneralException(what, "path", path, "key", key, "name", name, exinfo...)
         { }
-                
-        
-        ModuleCreateException()                                              = delete;     
-        ModuleCreateException(const ModuleCreateException & rhs)             = default;     
-        ModuleCreateException(ModuleCreateException && rhs)                  = default;     
-        ModuleCreateException & operator=(const ModuleCreateException & rhs) = default;     
-        ModuleCreateException & operator=(ModuleCreateException && rhs)      = default;     
+
+
+        /*! \brief Constructor, using another exception as a base
+         *
+         * Can be used to append additional information
+         *
+         * \param [in] gex Exception to copy
+         * \param [in] path Path to the module that could't be created
+         * \param [in] key  Key of the module that couldn't be created
+         * \param [in] name Name of the module that couldn't be created
+         * \param [in] exinfo Additional information. Must be an even number of strings
+         */
+        template<typename... Targs>
+        ModuleCreateException(const GeneralException & gex,
+                              std::string path,
+                              std::string key,
+                              std::string name,
+                              Targs... exinfo)
+            : GeneralException(gex, "path", path, "key", key, "name", name, exinfo...)
+        { }
+
+
+        ModuleCreateException()                                              = delete;
+        ModuleCreateException(const ModuleCreateException & rhs)             = default;
+        ModuleCreateException(ModuleCreateException && rhs)                  = default;
+        ModuleCreateException & operator=(const ModuleCreateException & rhs) = default;
+        ModuleCreateException & operator=(ModuleCreateException && rhs)      = default;
         virtual ~ModuleCreateException() = default;
 
 
@@ -54,9 +72,6 @@ class ModuleCreateException : public GeneralException
 
         //! Return the name of the module that couldn't be created
         const char * Name(void) const noexcept    { return GeneralException::GetField("name"); }
-
-        //! Return any additional details
-        const char * Desc(void) const noexcept    { return GeneralException::GetField("desc"); }
 };
 
 

@@ -2,7 +2,7 @@
  *
  * \brief The base, general exception for BPModule (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_GENERALEXCEPTION_HPP_
@@ -34,11 +34,9 @@ class GeneralException : public std::exception
         typedef std::vector<ExceptionInfoPair> ExceptionInfo;
 
 
-
         /*! \brief Constructor
-         * 
+         *
          * \param [in] whatstr Some descriptive string
-         * \param [in] exinfo Pairs of strings with other information.
          */
         GeneralException(std::string whatstr)
             : whatstr_(whatstr)
@@ -47,7 +45,7 @@ class GeneralException : public std::exception
 
 
         /*! \brief Constructor
-         * 
+         *
          * \param [in] whatstr Some descriptive string
          * \param [in] exinfo Pairs of strings with other information.
          */
@@ -56,20 +54,25 @@ class GeneralException : public std::exception
             : whatstr_(whatstr)
         {
             // check that there is an even number of exinfo
-            static_assert( (sizeof...(exinfo) % 2) == 0, 
+            static_assert( (sizeof...(exinfo) % 2) == 0,
                            "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
             AppendInfo(exinfo...);
         }
 
 
-        /*! \brief Construct from another object, plus additional info
-         */ 
+        /*! \brief Constructor, using another exception as a base
+         *
+         * Can be used to append additional information
+         *
+         * \param [in] gex Exception to copy
+         * \param [in] exinfo Additional information. Must be an even number of strings
+         */
         template<typename... Targs>
         GeneralException(const GeneralException & gex, Targs... exinfo)
             : GeneralException(gex)
         {
             // check that there is an even number of exinfo
-            static_assert( (sizeof...(exinfo) % 2) == 0, 
+            static_assert( (sizeof...(exinfo) % 2) == 0,
                            "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
             AppendInfo(exinfo...);
         }
@@ -85,40 +88,30 @@ class GeneralException : public std::exception
 
 
         /*! \brief Get all the additional information
-         */  
+         */
         const ExceptionInfo & GetInfo(void) const noexcept;
 
 
         /*! \brief Get some specific additional information
-         * 
+         *
          * If the field doesn't exist, a string "(field not found)" is returned instead.
-         */  
+         */
         const char * GetField(const std::string & field) const noexcept;
 
 
         /*! \brief Add information to this exception object
-         */ 
-        void AppendInfo(const ExceptionInfo & toappend);
-
-
-        /*! \brief Add information to this exception object
-         */ 
+         */
         void AppendInfo(const std::string & key, const std::string & value);
 
-        /*! \brief Add information to this exception object
-         * 
-         * This gets called if there is an odd number of exinfo arguments
-         */ 
-        void AppendInfo(const std::string & value)
-        {
-        }
 
         /*! \brief Add information to this exception object
-         */ 
+         *
+         * There must be an even number of arguments.
+         */
         template<typename... Targs>
         void AppendInfo(const std::string & key, const std::string & value, Targs... exinfo)
         {
-            static_assert( (sizeof...(exinfo) % 2) == 0, 
+            static_assert( (sizeof...(exinfo) % 2) == 0,
                            "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
             AppendInfo(key, value);
             AppendInfo(exinfo...);
@@ -126,15 +119,16 @@ class GeneralException : public std::exception
 
 
         /*! \brief Print out the "what" string
-         */ 
+         */
         const char * what(void) const noexcept;
 
 
         /*! \brief Print out all details in a nice format
-         */ 
+         */
         std::string ExceptionString(void) const;
 
     private:
+
         //! The "what" string
         std::string whatstr_;
 

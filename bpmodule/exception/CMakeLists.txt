@@ -1,10 +1,10 @@
 set(BPMODULE_EXCEPTION_FILES
-            GeneralException.cpp 
+            GeneralException.cpp
             export.cpp
    )
 
 
-ADD_MODULE(exception 
+ADD_MODULE(exception
            "${BPMODULE_EXCEPTION_FILES}"
            ""
            ""

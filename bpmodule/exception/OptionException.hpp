@@ -2,7 +2,7 @@
  *
  * \brief An exception for options handling
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_OPTIONEXCEPTION_HPP_
@@ -25,29 +25,37 @@ class OptionException : public GeneralException
          *
          * \param [in] what Brief description of the error
          * \param [in] key  Key of the option
-         * \param [in] desc Additional information
+         * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
         OptionException(std::string what,
                         std::string key,
-                        Targs... Fargs)
-                              
-            : GeneralException(what, "optionkey", key, Fargs...)
+                        Targs... exinfo)
+
+            : GeneralException(what, "optionkey", key, exinfo...)
         { }
-                
 
 
+
+        /*! \brief Constructor, using another exception as a base
+         *
+         * Can be used to append additional information
+         *
+         * \param [in] gex Exception to copy
+         * \param [in] key  Key of the option
+         * \param [in] exinfo Additional information. Must be an even number of strings
+         */
         template<typename... Targs>
-        OptionException(const GeneralException & gex, std::string key, Targs... Fargs)
-            : GeneralException(gex, "optionkey", key, Fargs...)
+        OptionException(const GeneralException & gex, std::string key, Targs... exinfo)
+            : GeneralException(gex, "optionkey", key, exinfo...)
         { }
 
-        
-        OptionException()                                        = delete;     
-        OptionException(const OptionException & rhs)             = default;     
-        OptionException(OptionException && rhs)                  = default;     
-        OptionException & operator=(const OptionException & rhs) = default;     
-        OptionException & operator=(OptionException && rhs)      = default;     
+
+        OptionException()                                        = delete;
+        OptionException(const OptionException & rhs)             = default;
+        OptionException(OptionException && rhs)                  = default;
+        OptionException & operator=(const OptionException & rhs) = default;
+        OptionException & operator=(OptionException && rhs)      = default;
         virtual ~OptionException() = default;
 
 

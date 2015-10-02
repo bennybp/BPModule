@@ -2,7 +2,7 @@
  *
  * \brief The base, general exception for BPModule (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #include <sstream>
@@ -32,15 +32,9 @@ const char * GeneralException::GetField(const std::string & field) const noexcep
 }
 
 
-void GeneralException::AppendInfo(const ExceptionInfo & toappend)
-{
-    exinfo_.insert(exinfo_.end(), toappend.begin(), toappend.end());
-}
-
-
 void GeneralException::AppendInfo(const std::string & key, const std::string & value)
 {
-    AppendInfo({ {key, value} });
+    exinfo_.push_back({key, value});
 }
 
 

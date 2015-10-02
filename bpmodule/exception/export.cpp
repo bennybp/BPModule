@@ -2,7 +2,7 @@
  *
  * \brief Python exports for exceptions
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #include "bpmodule/exception/GeneralException.hpp"
