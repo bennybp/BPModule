@@ -39,6 +39,12 @@ typedef long double OptionFloat;
 ///////////////////////////////////////////
 // Valid types for getting/setting options
 ///////////////////////////////////////////
+
+/*! \brief Determines if a type is valid for an option
+ *
+ * The value static member will be true if type T is a valid type
+ * for an option
+ */
 template<typename T>
 struct IsValidType
 {
@@ -47,8 +53,11 @@ struct IsValidType
 };
 
 
-// specialization for vector
-// (check the inner type)
+/*! \brief Determines if a vector type is valid for an option
+ *
+ * The value static member will be true if type T is a valid 
+ * vector type for an option
+ */
 template<>
 template<typename T>
 struct IsValidType<std::vector<T>>
@@ -65,7 +74,11 @@ struct IsValidType<std::vector<T>>
 // corresponding stored types
 ////////////////////////////////
 
-// by default, it's the same
+/*! \brief Determines the stored type for an option
+ *
+ * The stored_type typedef will represent the type actually
+ * stored for a option given as type T
+ */
 template<typename T, bool = std::is_integral<T>::value, bool = std::is_floating_point<T>::value>
 struct OptionStoreType
 {
@@ -73,7 +86,12 @@ struct OptionStoreType
 };
 
 
-// for integral types
+/*! \brief Determines the stored type for an integral option
+ *
+ * Integral type specialization. The store_type
+ * typedef represents the type stored for all integral
+ * options
+ */
 template<typename T>
 struct OptionStoreType<T, true, false>
 {
@@ -81,7 +99,12 @@ struct OptionStoreType<T, true, false>
 };
 
 
-// for floating point types
+/*! \brief Determines the stored type for a floating point option
+ *
+ * Floating point type specialization. The store_type
+ * typedef represents the type stored for all floating point
+ * options
+ */
 template<typename T>
 struct OptionStoreType<T, false, true>
 {
@@ -89,8 +112,12 @@ struct OptionStoreType<T, false, true>
 };
 
 
-// for bool (since bool is an integral type, but we
-// don't want implicit conversions)
+/*! \brief Determines the stored type for a floating point option
+ *
+ * Bool type specialization. Bool is stored as bool. This
+ * is required so that it isn't stored as an integral type
+ * (since std::is_integral<bool>::value is true).
+ */
 template<>
 struct OptionStoreType<bool>
 {
@@ -103,6 +130,11 @@ struct OptionStoreType<bool>
 /////////////////////////////
 // Structure for conversion
 /////////////////////////////
+
+/*! \brief Converts an option value from its stored type
+ *
+ * Default struct is empty, therefore invalid for use
+ */
 template<typename T, bool = std::is_arithmetic<T>::value>
 struct OptionConvert
 {
@@ -114,16 +146,37 @@ struct OptionConvert
 ////////////////////
 // Arithmetic types
 ////////////////////
-//! \todo Floating point underflow? between 0 and value (ie numeric_limits::min)
+/*! \brief Structure used for converting to/from stored option types
+ *
+ * For arithmetic types
+ */
 template<typename T>
 struct OptionConvert<T, true>
 {
     typedef T ret_type;
     typedef typename OptionStoreType<T>::stored_type stored_type;
 
-    static ret_type Convert(stored_type val)
+    /*! \brief Convert from a stored type to a given type
+     *
+     * \throw bpmodule::exception::MathException if there
+     *        is a problem with the conversion/casting
+     *        (including overflows and underflows)
+     */
+    static ret_type ConvertFromStored(stored_type val)
     {
         return math::numeric_cast<ret_type>(val);
+    }
+
+
+    /*! \brief Convert from the given type to its stored type
+     *
+     * \throw bpmodule::exception::MathException if there
+     *        is a problem with the conversion/casting
+     *        (including overflows and underflows)
+     */
+    static stored_type ConvertToStored(ret_type val)
+    {
+        return math::numeric_cast<stored_type>(val);
     }
 };
 
@@ -132,13 +185,26 @@ struct OptionConvert<T, true>
 // Non-arithmetic types
 // (no conversion)
 ///////////////////////////
+/*! \brief Structure used for converting to/from stored option types
+ *
+ * For non-arithmetic types (no conversion is performed)
+ */
 template<typename T>
 struct OptionConvert<T, false>
 {
     typedef T ret_type;
     typedef T stored_type;
 
-    static ret_type Convert(stored_type val)
+    /*! \brief Convert from a stored type to a given type
+     */
+    static ret_type ConvertFromStored(stored_type val)
+    {
+        return val; 
+    }
+
+    /*! \brief Convert from the given type to its stored type
+     */
+    static stored_type ConvertToStored(ret_type val)
     {
         return val; 
     }
@@ -150,6 +216,10 @@ struct OptionConvert<T, false>
 /////////////////////////////
 // Vector types
 /////////////////////////////
+/*! \brief Structure used for converting to/from stored option types
+ *
+ * For vector types
+ */
 template<>
 template<typename T>
 struct OptionConvert<std::vector<T>, false>
@@ -160,7 +230,13 @@ struct OptionConvert<std::vector<T>, false>
     typedef std::vector<T> ret_type;
 
 
-    static ret_type Convert(stored_type val)
+    /*! \brief Convert from a stored type to a given type
+     *
+     * \throw bpmodule::exception::MathException if there
+     *        is a problem with the conversion/casting
+     *        (including overflows and underflows)
+     */
+    static ret_type ConvertFromStored(stored_type val)
     {
         ret_type ret;
         ret.reserve(val.size());
@@ -168,7 +244,7 @@ struct OptionConvert<std::vector<T>, false>
         for(const auto & it : val)
         {
             try {
-                ret.push_back(OptionConvert<T>::Convert(it));
+                ret.push_back(OptionConvert<ret_type>::ConvertFromStored(it));
             }
             catch(exception::MathException & ex)  // catch overflow, etc
             {
@@ -178,6 +254,33 @@ struct OptionConvert<std::vector<T>, false>
         }
 
         return ret;
+    }
+
+
+    /*! \brief Convert from the given type to its stored type
+     *
+     * \throw bpmodule::exception::MathException if there
+     *        is a problem with the conversion/casting
+     *        (including overflows and underflows)
+     */
+    static stored_type ConvertToStored(ret_type val)
+    {
+        stored_type st;
+        st.reserve(val.size());
+
+        for(const auto & it : val)
+        {
+            try {
+                st.push_back(OptionConvert<ret_type>::ConvertToStored(it));
+            }
+            catch(exception::MathException & ex)  // catch overflow, etc
+            {
+                ex.AppendInfo("vectorelement", std::to_string(std::distance(val.begin(), it)));
+                throw;
+            }
+        }
+
+        return st;
     }
 };
 

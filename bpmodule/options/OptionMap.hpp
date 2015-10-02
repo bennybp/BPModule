@@ -72,7 +72,7 @@ class OptionMap
             stored_type val = GetOrThrow_Cast_<stored_type>(lkey)->Get();
 
             try {
-                return detail::OptionConvert<T>::Convert(val); 
+                return detail::OptionConvert<T>::ConvertFromStored(val); 
             }
             catch(const exception::GeneralException & ex)
             {
@@ -142,7 +142,7 @@ class OptionMap
             stored_type convval;
 
             try {
-                 detail::OptionConvert<stored_type>(value);
+                 convval = detail::OptionConvert<T>::ConvertToStored(value); 
             }
             catch(const exception::GeneralException & ex)
             {
