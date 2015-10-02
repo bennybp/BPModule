@@ -220,7 +220,13 @@ boost::python::object OptionHolder<T>::GetPy(void) const
         throw OptionException("Cannot convert option value to python object", Key(),
                                          "valuetype", Type());
 
-    return ConvertToPy(Get());
+    try {
+        return ConvertToPy(Get()); // may throw in extreme cases, even if test succeeds
+    }
+    catch(exception::GeneralException & ex)
+    {
+        throw OptionException(ex, Key(), "valuetype", Type());
+    }
 }
 
 
@@ -232,8 +238,18 @@ void OptionHolder<T>::ChangePy(const boost::python::object & obj)
                                          "valuetype", Type(),
                                          "pythontype", GetPyClass(obj));
 
+    T val; 
+
+    try {
+        val = ConvertToCpp<T>(obj);  // may throw in extreme cases, even if test succeeds
+    }
+    catch(exception::GeneralException & ex)
+    {
+        throw OptionException(ex, Key(), "valuetype", Type());
+    }
+
     // will validate inside Change()
-    Change(ConvertToCpp<T>(obj));
+    Change(val);
 }
 
 
