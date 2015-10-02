@@ -58,6 +58,8 @@ struct ToCppConverter
 {
     /*! \brief Checks if a python object is convertable to type T
      *
+     * \note Does not check for arithmetic underflows, overflows, etc
+     *
      * \param [in] obj Object to check
      */ 
     static bool Check(const boost::python::object & obj)
@@ -70,18 +72,41 @@ struct ToCppConverter
 
     /*! \brief Converts a python object to type T
      *
-     * \throwno May throw a boot::python exception
+     * \throw bpmodule::exception::PythonConvertException
+     *        if there is a problem with the conversion
      *
      * \param [in] obj Object to check
      */ 
     static T Convert(const boost::python::object & obj)
     {
-        boost::python::extract<T> conv(obj);
-        return conv();
+        /* The below may throw a few different errors. In particular,
+         * it may throw objects derived from std::bad_cast
+         * which are thrown from boost::numeric. These
+         * indicate overflows
+         */ 
+        try {
+            boost::python::extract<T> conv(obj);
+            return conv();
+        }
+        catch(const std::exception & ex)
+        {
+            throw exception::PythonConvertException("Cannot convert from python to C++: Conversion failed",
+                                                    GetPyClass(obj), typeid(T).name(),
+                                                    "stdex", ex.what());
+        }
+        catch(...)
+        {
+            std::string exstr = GetPyExceptionString();
+            throw exception::PythonConvertException("Cannot convert from python to C++: Conversion failed",
+                                                    GetPyClass(obj), typeid(T).name(),
+                                                    "pyex", exstr);
+        }
     }
 
 
     /*! \brief Prevents some implicit conversions
+     *
+     * Used to deny implicit conversions from int to floating point, etc. 
      */
     static bool CustomCheck(const boost::python::object & obj)
     {
@@ -159,9 +184,10 @@ struct ToCppConverter<std::vector<T>>
 
     /*! \brief Converts a python object to type std::vector<T>
      *
-     * \throwno May throw a boot::python exception
+     * \throw bpmodule::exception::PythonConvertException
+     *        if there is a problem with the conversion
      *
-     * \param [in] obj Object to check
+     * \param [in] obj Object to convert
      */ 
     static std::vector<T> Convert(const boost::python::object & obj)
     {
@@ -220,27 +246,8 @@ T ConvertToCpp(const boost::python::object & obj)
                                                 GetPyClass(obj), typeid(T).name());
     }
 
-    /* The below may throw a few different errors. In particular,
-     * it may throw objects derived from std::bad_cast
-     * which are thrown from boost::numeric. These
-     * indicate overflows
-     */ 
-    try {
-        return ToCppConverter<T>::Convert(obj);
-    }
-    catch(const std::exception & ex)
-    {
-        throw exception::PythonConvertException("Cannot convert from python to C++: Conversion failed",
-                                                GetPyClass(obj), typeid(T).name(),
-                                                "stdex", ex.what());
-    }
-    catch(...)
-    {
-        std::string exstr = GetPyExceptionString();
-        throw exception::PythonConvertException("Cannot convert from python to C++: Conversion failed",
-                                                GetPyClass(obj), typeid(T).name(),
-                                                "pyex", exstr);
-    }
+    // will throw if there is an issue
+    return ToCppConverter<T>::Convert(obj);
 }
 
 
