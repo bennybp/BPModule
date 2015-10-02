@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Conversion between python and C++ (source)
+ * \brief Handling and detection of python types (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -13,128 +13,74 @@ namespace python_helper {
 
 
 
-PythonType StrToPythonType(const std::string & str) noexcept
+PythonType StrToPythonType(const std::string & str)
 {
-    if(str == "bool")
-        return PythonType::Bool;
-    if(str == "int")
-        return PythonType::Int;
-    if(str == "float")
-        return PythonType::Float;
-    if(str == "str")
-        return PythonType::String;
-
-    if(str == "listbool")
-        return PythonType::ListBool;
-    if(str == "listint")
-        return PythonType::ListInt;
-    if(str == "listfloat")
-        return PythonType::ListFloat;
-    if(str == "liststr")
-        return PythonType::ListString;
-
-    if(str == "listempty")
-        return PythonType::ListEmpty;
-    if(str == "listhetero")
-        return PythonType::ListHetero;
-    if(str == "listunknown")
-        return PythonType::ListUnknown;
-
-    if(str == "tuple")
-        return PythonType::Tuple;
-
-    if(str == "dict")
-        return PythonType::Dict;
-
-    if(str == "none")
-        return PythonType::None;
+    if(str == "bool")          return PythonType::Bool;
+    if(str == "int")           return PythonType::Int;
+    if(str == "float")         return PythonType::Float;
+    if(str == "str")           return PythonType::String;
+    if(str == "listbool")      return PythonType::ListBool;
+    if(str == "listint")       return PythonType::ListInt;
+    if(str == "listfloat")     return PythonType::ListFloat;
+    if(str == "liststr")       return PythonType::ListString;
+    if(str == "listempty")     return PythonType::ListEmpty;
+    if(str == "listhetero")    return PythonType::ListHetero;
+    if(str == "listunknown")   return PythonType::ListUnknown;
+    if(str == "tuple")         return PythonType::Tuple;
+    if(str == "dict")          return PythonType::Dict;
+    if(str == "none")          return PythonType::None;
 
     return PythonType::Unknown;
 }
 
 
 
-const char * PythonTypeToStr(PythonType pytype) noexcept
+const char * PythonTypeToStr(PythonType pytype)
 {
     switch(pytype)
     {
-        case PythonType::Bool:
-            return "bool";
+        case PythonType::Bool:        return "bool";
+        case PythonType::Int:         return "int";
+        case PythonType::Float:       return "float";
+        case PythonType::String:      return "str";
+        case PythonType::ListBool:    return "listbool";
+        case PythonType::ListInt:     return "listint";
+        case PythonType::ListFloat:   return "listfloat";
+        case PythonType::ListString:  return "liststr";
+        case PythonType::ListEmpty:   return "listempty";
+        case PythonType::ListHetero:  return "listhetero";
+        case PythonType::ListUnknown: return "listunknown";
+        case PythonType::Tuple:       return "tuple";
+        case PythonType::Dict:        return "dict";
+        case PythonType::None:        return "none";
 
-        case PythonType::Int:
-            return "int";
-
-        case PythonType::Float:
-            return "float";
-
-        case PythonType::String:
-            return "str";
-
-        case PythonType::ListBool:
-            return "listbool";
-
-        case PythonType::ListInt:
-            return "listint";
-
-        case PythonType::ListFloat:
-            return "listfloat";
-
-        case PythonType::ListString:
-            return "liststr";
-
-        case PythonType::ListEmpty:
-            return "listempty";
-
-        case PythonType::ListHetero:
-            return "listhetero";
-
-        case PythonType::ListUnknown:
-            return "listunknown";
-
-        case PythonType::Tuple:
-            return "tuple";
-
-        case PythonType::Dict:
-            return "dict";
-
-        case PythonType::None:
-            return "none";
-
-        default:
-            return "unknown";
+        // Should only be thrown if we forget a PythonType above
+        default:                      throw std::logic_error("Unknown PythonType to convert to string");
     }
 }
 
 
 std::string GetPyClass(const boost::python::object & obj)
 {
+    //! \todo should ever throw?
     return boost::python::extract<std::string>(obj.attr("__class__").attr("__name__"));
 }
 
 
-PythonType DetermineType(const boost::python::object & obj)
+PythonType DeterminePyType(const boost::python::object & obj)
 {
     try {
         std::string cl = GetPyClass(obj);
 
-        if(cl == "bool")
-            return PythonType::Bool;
+        if(cl == "bool")      return PythonType::Bool;
+        if(cl == "int")       return PythonType::Int;
+        if(cl == "float")     return PythonType::Float;
+        if(cl == "str")       return PythonType::String;
+        if(cl == "tuple")     return PythonType::Tuple;
+        if(cl == "dict")      return PythonType::Dict;
+        if(cl == "NoneType")  return PythonType::None;
 
-        if(cl == "int")
-            return PythonType::Int;
-
-        if(cl == "float")
-            return PythonType::Float;
-
-        if(cl == "str")
-            return PythonType::String;
-
-
-        if(cl == "NoneType")
-            return PythonType::None;
-
-
-        if(cl == "list")
+        if(cl == "list") 
         {
             boost::python::list lst = boost::python::extract<boost::python::list>(obj);
 
@@ -153,30 +99,14 @@ PythonType DetermineType(const boost::python::object & obj)
                     return PythonType::ListHetero;
             }
 
-            if(cl2 == "bool")
-                return PythonType::ListBool;
-
-            if(cl2 == "int")
-                return PythonType::ListInt;
-
-            if(cl2 == "float")
-                return PythonType::ListFloat;
-
-            if(cl2 == "str")
-                return PythonType::ListString;
-
-            if(cl2 == "NoneType")
-                return PythonType::ListEmpty;
+            if(cl2 == "bool")      return PythonType::ListBool;
+            if(cl2 == "int")       return PythonType::ListInt;
+            if(cl2 == "float")     return PythonType::ListFloat;
+            if(cl2 == "str")       return PythonType::ListString;
+            if(cl2 == "NoneType")  return PythonType::ListEmpty;
 
             return PythonType::ListUnknown;
         }
-
-        if(cl == "tuple")
-            return PythonType::Tuple;
-
-        if(cl == "dict")
-            return PythonType::Dict;
-
     }
     catch(...)
     {

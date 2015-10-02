@@ -44,11 +44,6 @@ inline std::string GetPyExceptionString(void)
 
 
 
-
-
-
-
-
 /*! \brief Family of structs to convert python types to C++ types
  *
  * \tparam T Type to convert to
@@ -110,7 +105,7 @@ struct ToCppConverter
      */
     static bool CustomCheck(const boost::python::object & obj)
     {
-        PythonType objtype = DetermineType(obj);
+        PythonType objtype = DeterminePyType(obj);
 
         // don't promote bool to anything else
         if(objtype == PythonType::Bool)

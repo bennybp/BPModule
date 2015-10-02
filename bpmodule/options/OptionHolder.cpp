@@ -17,7 +17,7 @@
 using bpmodule::python_helper::PythonType;
 using bpmodule::python_helper::StrToPythonType;
 using bpmodule::python_helper::GetPyClass;
-using bpmodule::python_helper::DetermineType;
+using bpmodule::python_helper::DeterminePyType;
 using bpmodule::python_helper::TestConvertToPy;
 using bpmodule::python_helper::ConvertToPy;
 using bpmodule::python_helper::TestConvertToCpp;
@@ -419,7 +419,7 @@ static bool EmptyValidator(T arg)
 template<typename T>
 static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::python::tuple & tup)
 {
-    PythonType ptype_default = DetermineType(tup[1]);
+    PythonType ptype_default = DeterminePyType(tup[1]);
 
     T * def = nullptr;
 
@@ -437,16 +437,16 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
 
     // Already checked
     /*
-    PythonType ptype_type = DetermineType(tup[0]);
+    PythonType ptype_type = DeterminePyType(tup[0]);
     if(ptype_type != PythonType::String)
         throw OptionException("\"Type\" element of tuple is not a bool", key, "type", GetPyClass(tup[0])); 
     */
 
-    PythonType ptype_required = DetermineType(tup[2]);
+    PythonType ptype_required = DeterminePyType(tup[2]);
     if(ptype_required != PythonType::Bool)
         throw OptionException("\"Required\" element of tuple is not a bool", key, "type", GetPyClass(tup[2])); 
 
-    PythonType ptype_help = DetermineType(tup[4]);
+    PythonType ptype_help = DeterminePyType(tup[4]);
     if(ptype_help != PythonType::String)
         throw OptionException("\"Help\" element of tuple is not a string", key, "type", GetPyClass(tup[4])); 
 
@@ -461,7 +461,7 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
     // Check if validator is given. If not, use EmptyValidator
     typename OptionHolder<T>::ValidatorFunc validator = EmptyValidator<T>;
 
-    if(DetermineType(tup[3]) != PythonType::None)
+    if(DeterminePyType(tup[3]) != PythonType::None)
         validator = std::bind(ValidateWrapper<T>, tup[3], std::placeholders::_1);
 
     
@@ -473,7 +473,7 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
 
 OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::object & obj)
 {
-    PythonType ptype = DetermineType(obj);
+    PythonType ptype = DeterminePyType(obj);
     if(ptype != PythonType::Tuple)
         throw OptionException("Object for option is not a tuple", key, "pythontype", GetPyClass(obj)); 
 

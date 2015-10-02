@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Conversion between python and C++ (header)
+ * \brief Handling and detection of python types (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -39,22 +39,19 @@ enum class PythonType
 
 
 
-// In cpp file
-
-
 /*! \brief Convert a string to a PythonType
  */ 
-PythonType StrToPythonType(const std::string & str) noexcept;
+PythonType StrToPythonType(const std::string & str);
 
 
 /*! \brief Convert a PythonType to a string
  */ 
-const char * PythonTypeToStr(PythonType pytype) noexcept;
+const char * PythonTypeToStr(PythonType pytype);
 
 
 /*! \brief Determine the type of a boost python object
  */ 
-PythonType DetermineType(const boost::python::object & obj);
+PythonType DeterminePyType(const boost::python::object & obj);
 
 
 /*! \brief Get the class of a python object

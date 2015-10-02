@@ -34,7 +34,7 @@ void Output_Wrap(output::OutputType type, const std::string & fmt, const boost::
 
     for(int i = 0; i < len; i++)
     {
-        python_helper::PythonType type = python_helper::DetermineType(args[i]);
+        python_helper::PythonType type = python_helper::DeterminePyType(args[i]);
 
         switch(type)
         {
