@@ -1,8 +1,8 @@
 /*! \file
  *
- * \brief Storage of generic data (source) 
+ * \brief Storage of generic data (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #include "bpmodule/options/OptionBase.hpp"
@@ -42,7 +42,7 @@ bool OptionBase::IsExpert(void) const noexcept
 void OptionBase::SetExpert(bool expert) noexcept
 {
     expert_ = expert;
-} 
+}
 
 
 bool OptionBase::IsValid(void) const noexcept

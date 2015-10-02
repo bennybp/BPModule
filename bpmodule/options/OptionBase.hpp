@@ -1,8 +1,8 @@
 /*! \file
  *
- * \brief Storage of generic data (base class) 
+ * \brief Storage of generic data (base class)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_OPTIONBASE_HPP_
@@ -48,7 +48,7 @@ class OptionBase
         ///////////////////////////////////
         // Virtual functions
         ///////////////////////////////////
-        
+
         /*! \brief Create a clone of this object
          */
         virtual OptionBase * Clone(void) const = 0;
@@ -66,7 +66,7 @@ class OptionBase
 
 
         /*! \brief Check if this option has a value
-         * 
+         *
          * \exnothrow
          *
          * \return True if this option has a value or a default
@@ -75,7 +75,7 @@ class OptionBase
 
 
         /*! \brief Check if this option has a default
-         * 
+         *
          * \exnothrow
          *
          * \return True if this option has a default
@@ -85,19 +85,19 @@ class OptionBase
 
 
         /*! \brief Check if this option is set to the default
-         */ 
+         */
         virtual bool IsDefault(void) const = 0;
 
 
 
         /*! \brief Set the option to its default
-         */ 
+         */
         virtual void ResetToDefault(void) noexcept = 0;
 
 
 
         /*! \brief Print the option information
-         */ 
+         */
         virtual void Print(void) const = 0;
 
 
@@ -106,22 +106,22 @@ class OptionBase
         /////////////////////////////////////////
         /*! \brief Return a copy of the value as a boost::python object
          *
-         * \throw bpmodule::exception::OptionException 
+         * \throw bpmodule::exception::OptionException
          *        If the value does not exist or cannot
          *        be converted to a python object
-         */ 
+         */
         virtual boost::python::object GetPy(void) const = 0;
 
 
 
         /*! \brief Change the value with a boost python object
          *
-         * \throw bpmodule::exception::OptionException                 
+         * \throw bpmodule::exception::OptionException
          *        if there is a problem with the python conversion or
          *        if the new value is invalid (and expert mode is off).
          *
          *  \exstrong
-         */  
+         */
         virtual void ChangePy(const boost::python::object & obj) = 0;
 
 
@@ -130,7 +130,7 @@ class OptionBase
         ///////////////////////////////////
         // Base functions
         ///////////////////////////////////
-        
+
         /*! \brief Return the key of this option
          *
          * \exnothrow
@@ -140,15 +140,15 @@ class OptionBase
 
         /*! \brief Check if this options is required
          *
-         * \exnothrow 
-         */ 
+         * \exnothrow
+         */
         bool IsRequired(void) const noexcept;
 
 
 
         /*! \brief See if expert mode is enabled for this object
          *
-         * \exnothrow 
+         * \exnothrow
          */
         bool IsExpert(void) const noexcept;
 
@@ -161,8 +161,8 @@ class OptionBase
 
         /*! \brief Check to see if this object is valid
          *
-         * \exnothrow 
-         * 
+         * \exnothrow
+         *
          * \return True if there is a value or a default, or if this
          *         option is not required
          */
@@ -177,7 +177,7 @@ class OptionBase
          * \tparam U The type to compare to
          *
          * \return True if the contained object is of type U, false otherwise
-         */ 
+         */
         template<typename U>
         bool IsType(void) const noexcept
         {
@@ -188,8 +188,8 @@ class OptionBase
         /*! \brief Get the python type of this option
          */
         python_helper::PythonType PyType(void) const noexcept;
-        
- 
+
+
         /*! \brief Get the help string for this option
          */
         const std::string & Help(void) const noexcept;
@@ -211,7 +211,7 @@ class OptionBase
         //! The help string for this option
         const std::string help_;
 
-    
+
 
 };
 

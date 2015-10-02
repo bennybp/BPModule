@@ -2,7 +2,7 @@
  *
  * \brief Storage of generic data via (key, value) pair (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #include <boost/python.hpp>
@@ -85,7 +85,7 @@ OptionHolder<T>::OptionHolder(const std::string & key, T * def,
     if(def != nullptr)
         ValidateOrThrow_(*default_, "initial default");
     if(def != nullptr && required)
-        throw OptionException("Default value supplied for required option", Key()); 
+        throw OptionException("Default value supplied for required option", Key());
 }
 
 
@@ -238,7 +238,7 @@ void OptionHolder<T>::ChangePy(const boost::python::object & obj)
                                          "valuetype", Type(),
                                          "pythontype", GetPyClass(obj));
 
-    T val; 
+    T val;
 
     try {
         val = ConvertToCpp<T>(obj);  // may throw in extreme cases, even if test succeeds
@@ -295,7 +295,7 @@ static void PrintOption_(const OptionHolder<T> & oph)
 
     if(!oph.IsValid())
         output::Error(optline);
-    
+
     if(!oph.IsDefault())
         output::Changed(optline);
     else
@@ -378,10 +378,10 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
                                      defstr,          // default
                                      "",              // required
                                      ""));            // help/description
-        
+
     }
 
-    for(const auto & it : optlines) 
+    for(const auto & it : optlines)
     {
         if(!oph.IsValid())
             output::Error(it);
@@ -439,16 +439,16 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
     /*
     PythonType ptype_type = DeterminePyType(tup[0]);
     if(ptype_type != PythonType::String)
-        throw OptionException("\"Type\" element of tuple is not a bool", key, "type", GetPyClass(tup[0])); 
+        throw OptionException("\"Type\" element of tuple is not a bool", key, "type", GetPyClass(tup[0]));
     */
 
     PythonType ptype_required = DeterminePyType(tup[2]);
     if(ptype_required != PythonType::Bool)
-        throw OptionException("\"Required\" element of tuple is not a bool", key, "type", GetPyClass(tup[2])); 
+        throw OptionException("\"Required\" element of tuple is not a bool", key, "type", GetPyClass(tup[2]));
 
     PythonType ptype_help = DeterminePyType(tup[4]);
     if(ptype_help != PythonType::String)
-        throw OptionException("\"Help\" element of tuple is not a string", key, "type", GetPyClass(tup[4])); 
+        throw OptionException("\"Help\" element of tuple is not a string", key, "type", GetPyClass(tup[4]));
 
 
     bool req = boost::python::extract<bool>(tup[2]);
@@ -457,16 +457,16 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
 
 
     //! \todo Check to make sure validator object is callable
-    
+
     // Check if validator is given. If not, use EmptyValidator
     typename OptionHolder<T>::ValidatorFunc validator = EmptyValidator<T>;
 
     if(DeterminePyType(tup[3]) != PythonType::None)
         validator = std::bind(ValidateWrapper<T>, tup[3], std::placeholders::_1);
 
-    
 
-    return OptionBasePtr(new OptionHolder<T>(key, def, validator, req, pytype, help)); 
+
+    return OptionBasePtr(new OptionHolder<T>(key, def, validator, req, pytype, help));
 }
 
 
@@ -475,7 +475,7 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
 {
     PythonType ptype = DeterminePyType(obj);
     if(ptype != PythonType::Tuple)
-        throw OptionException("Object for option is not a tuple", key, "pythontype", GetPyClass(obj)); 
+        throw OptionException("Object for option is not a tuple", key, "pythontype", GetPyClass(obj));
 
 
     boost::python::tuple tup = boost::python::extract<boost::python::tuple>(obj);
@@ -483,7 +483,7 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
 
     int length = boost::python::extract<int>(tup.attr("__len__")());
     if(length != 5)
-        throw OptionException("Python options tuple does not have 5 elements", key, "length", std::to_string(length)); 
+        throw OptionException("Python options tuple does not have 5 elements", key, "length", std::to_string(length));
 
 
     if(!TestConvertToCpp<std::string>(tup[0]))
@@ -496,23 +496,23 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
     switch(StrToPythonType(type))
     {
         case PythonType::Bool:
-            return CreateOptionHolder<bool>(key, tup); 
+            return CreateOptionHolder<bool>(key, tup);
         case PythonType::Int:
-            return CreateOptionHolder<OptionInt>(key, tup); 
+            return CreateOptionHolder<OptionInt>(key, tup);
         case PythonType::Float:
-            return CreateOptionHolder<OptionFloat>(key, tup); 
+            return CreateOptionHolder<OptionFloat>(key, tup);
         case PythonType::String:
-            return CreateOptionHolder<std::string>(key, tup); 
+            return CreateOptionHolder<std::string>(key, tup);
         case PythonType::ListBool:
-            return CreateOptionHolder<std::vector<bool>>(key, tup); 
+            return CreateOptionHolder<std::vector<bool>>(key, tup);
         case PythonType::ListInt:
-            return CreateOptionHolder<std::vector<OptionInt>>(key, tup); 
+            return CreateOptionHolder<std::vector<OptionInt>>(key, tup);
         case PythonType::ListFloat:
-            return CreateOptionHolder<std::vector<OptionFloat>>(key, tup); 
+            return CreateOptionHolder<std::vector<OptionFloat>>(key, tup);
         case PythonType::ListString:
-            return CreateOptionHolder<std::vector<std::string>>(key, tup); 
+            return CreateOptionHolder<std::vector<std::string>>(key, tup);
         default:
-            throw OptionException("Cannot convert python type to option", key, "type", type); 
+            throw OptionException("Cannot convert python type to option", key, "type", type);
     }
 }
 

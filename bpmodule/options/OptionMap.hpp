@@ -2,7 +2,7 @@
  *
  * \brief Storage of options for a module (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_OPTIONMAP_HPP_
@@ -22,7 +22,8 @@ namespace options {
 
 /*! \brief A class for holding options to a module
  *
- * \todo Split out functions into cpp file
+ * The options are stored as a key -> value map, with the
+ * key being a string. The key is case insensitive.
  */
 class OptionMap
 {
@@ -33,14 +34,14 @@ class OptionMap
 
 
         /*! \brief Copy construct
-        * 
+        *
         * Deep copies (clones) all the stored options
         */
         OptionMap(const OptionMap & rhs);
 
 
         /*! \brief Assignment
-        * 
+        *
         * Deep copies (clones) all the stored options
         */
         OptionMap & operator=(const OptionMap & rhs);
@@ -53,12 +54,13 @@ class OptionMap
 
 
         /*! \brief Obtain the value for an option
-         * 
-         * Will attempt some safe conversions
+         *
+         * Will attempt some safe conversions between integer types
+         * or between floating point types.
          *
          * \throw bpmodule::exception::OptionException if the
-         *        option does not have a value or if the 
-         *        key does not exist or if the value cannot be 
+         *        option does not have a value or if the
+         *        key does not exist or if the value cannot be
          *        cast to the appropriate type
          */
         template<typename T>
@@ -72,7 +74,7 @@ class OptionMap
             stored_type val = GetOrThrow_Cast_<stored_type>(lkey)->Get();
 
             try {
-                return detail::OptionConvert<T>::ConvertFromStored(val); 
+                return detail::OptionConvert<T>::ConvertFromStored(val);
             }
             catch(const exception::GeneralException & ex)
             {
@@ -116,7 +118,7 @@ class OptionMap
 
 
         /*! \brief Check if the option is currently set to the default
-         */ 
+         */
         bool IsDefault(const std::string & key) const;
 
 
@@ -130,7 +132,7 @@ class OptionMap
          *        if the key does not exist, or the
          *        data cannot be cast to the appropriate type
          *
-         * \exstrong 
+         * \exstrong
          */
         template<typename T>
         void Change(const std::string & key, const T & value)
@@ -142,7 +144,7 @@ class OptionMap
             stored_type convval;
 
             try {
-                 convval = detail::OptionConvert<T>::ConvertToStored(value); 
+                 convval = detail::OptionConvert<T>::ConvertToStored(value);
             }
             catch(const exception::GeneralException & ex)
             {
@@ -161,14 +163,14 @@ class OptionMap
          *        the option does not have a default or the
          *        key doesn't exist
          *
-         * \exstrong 
-         */ 
+         * \exstrong
+         */
         void ResetToDefault(const std::string & key);
 
 
 
         /*! \brief Check all options to see if they are valid
-         * 
+         *
          * \exnothrow
          */
         bool IsValid(void) const noexcept;
@@ -176,7 +178,7 @@ class OptionMap
 
 
         /*! \brief Check if the map has a key with a given type
-         *  
+         *
          *  Does not check for validity or if the stored value
          *  can be successfully converted (ie, overflow)
          */
@@ -192,7 +194,7 @@ class OptionMap
 
             std::string lkey = LowerString_(key);
             return GetOrThrow_(lkey)->IsType<stored_type>();
-        } 
+        }
 
 
 
@@ -206,10 +208,10 @@ class OptionMap
         // Python-related functions
         /////////////////////////////
         /*! \brief Construct options from a python dictionary
-         * 
+         *
          * \throw bpmodule::exception::OptionException if there is
          *        a problem with the option (validation, conversion, duplicate key, etc)
-         */ 
+         */
         OptionMap(const boost::python::dict & opt);
 
 
@@ -233,7 +235,7 @@ class OptionMap
          *        a problem with the option (nonexistant key, validation, conversion, etc)
          *
          * \exstrong
-         */ 
+         */
         void ChangePy(const std::string & key, const boost::python::object & obj);
 
 
@@ -242,7 +244,7 @@ class OptionMap
          *
          * \throw bpmodule::exception::OptionException if there is
          *        a problem with the option (nonexistant key, validation, conversion, etc)
-         */  
+         */
         boost::python::object GetPy(const std::string & key) const;
 
 
@@ -254,7 +256,7 @@ class OptionMap
         // since the are to be called from python
         //////////////////////////////////////////
         /*! \brief Return the maximum value for an integer that can be stored in this OptionMap
-         */ 
+         */
         detail::OptionInt MaxInt(void) const
         {
             return std::numeric_limits<detail::OptionInt>::max();
@@ -262,7 +264,7 @@ class OptionMap
 
 
         /*! \brief Return the minimum value for an integer that can be stored in this OptionMap
-         */ 
+         */
         detail::OptionInt MinInt(void) const
         {
             return std::numeric_limits<detail::OptionInt>::lowest();
@@ -270,7 +272,7 @@ class OptionMap
 
 
         /*! \brief Return the maximum value for an floating point that can be stored in this OptionMap
-         */ 
+         */
         detail::OptionFloat MaxFloat(void) const
         {
             return std::numeric_limits<detail::OptionFloat>::max();
@@ -278,7 +280,7 @@ class OptionMap
 
 
         /*! \brief Return the minimum value for a floating point that can be stored in this OptionMap
-         */ 
+         */
         detail::OptionFloat MinFloat(void) const
         {
             return std::numeric_limits<detail::OptionFloat>::lowest();
@@ -290,7 +292,7 @@ class OptionMap
 
 
         /*! \brief Get an OptionBasePtr or throw if the key doesn't exist
-         * 
+         *
          * \note Key should already have been transformed to lowercase
          *
          * \throw bpmodule::exception::OptionException
@@ -307,7 +309,7 @@ class OptionMap
 
 
         /*! \brief Get an OptionBasePtr and cast to an appropriate OptionHolder
-         * 
+         *
          * \note Key should already have been transformed to lowercase
          *
          * \throw bpmodule::exception::OptionException
@@ -323,26 +325,26 @@ class OptionMap
             if(oh == nullptr)
                 throw exception::OptionException("Bad cast", key,
                                                  "fromtype", ptr->Type(),
-                                                 "totype", typeid(T).name()); 
+                                                 "totype", typeid(T).name());
 
             return oh;
         }
 
 
         /*! \brief Converts a string to lower case
-         */ 
+         */
         static std::string LowerString_(const std::string & str);
 
 
         /*! \brief Checks if a given type is valid for an option
-         * 
+         *
          * If the type is not valid, the program will not compile
          */
         template<typename T>
         static void CheckType_(void) noexcept
         {
             static_assert( detail::IsValidType<T>::value,
-                           "Invalid type for an option given to OptionMap"); 
+                           "Invalid type for an option given to OptionMap");
         }
 
 };

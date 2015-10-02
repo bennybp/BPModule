@@ -1,8 +1,8 @@
 /*! \file
  *
- * \brief Storage of generic data (inner class) 
+ * \brief Storage of generic data (inner class)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_OPTIONHOLDER_HPP_
@@ -36,7 +36,7 @@ class OptionHolder : public OptionBase
         /*! \brief Constructs via pointers
          *
          * This object will take ownership of the value and def pointers.
-         * The initial value and default will be validated (if given). 
+         * The initial value and default will be validated (if given).
          *
          * The value is not set on construction, only the default. Expert is set to false.
          *
@@ -60,7 +60,7 @@ class OptionHolder : public OptionBase
 
 
         /*! \brief Copy constructor
-         * 
+         *
          * Data will be deep copied
          */
         OptionHolder(const OptionHolder & oph);

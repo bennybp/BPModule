@@ -2,7 +2,7 @@
  *
  * \brief Safe conversions of some options
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_OPTIONTYPES_HPP_
@@ -55,7 +55,7 @@ struct IsValidType
 
 /*! \brief Determines if a vector type is valid for an option
  *
- * The value static member will be true if type T is a valid 
+ * The value static member will be true if type T is a valid
  * vector type for an option
  */
 template<>
@@ -78,6 +78,8 @@ struct IsValidType<std::vector<T>>
  *
  * The stored_type typedef will represent the type actually
  * stored for a option given as type T
+ *
+ * The default is that the stored_type is the same as the given type
  */
 template<typename T, bool = std::is_integral<T>::value, bool = std::is_floating_point<T>::value>
 struct OptionStoreType
@@ -199,14 +201,14 @@ struct OptionConvert<T, false>
      */
     static ret_type ConvertFromStored(stored_type val)
     {
-        return val; 
+        return val;
     }
 
     /*! \brief Convert from the given type to its stored type
      */
     static stored_type ConvertToStored(ret_type val)
     {
-        return val; 
+        return val;
     }
 };
 

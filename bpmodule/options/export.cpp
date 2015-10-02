@@ -2,7 +2,7 @@
  *
  * \brief Python exports for data storage
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #include "bpmodule/options/OptionMap.hpp"

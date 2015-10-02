@@ -2,7 +2,7 @@
  *
  * \brief Storage of options (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #include <boost/python.hpp>
@@ -122,7 +122,7 @@ std::string OptionMap::LowerString_(const std::string & str)
 
 //////////////////////////////
 // Python functions
-////////////////////////////// 
+//////////////////////////////
 OptionMap::OptionMap(const boost::python::dict & opt)
 {
     boost::python::list keys = opt.keys();
@@ -134,13 +134,13 @@ OptionMap::OptionMap(const boost::python::dict & opt)
     {
         if(!TestConvertToCpp<std::string>(keys[i]))
             throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
-                                  "element", std::to_string(i)); 
-        
+                                  "element", std::to_string(i));
+
         std::string key = LowerString_(ConvertToCpp<std::string>(keys[i]));
 
         if(opmap_.count(key))
             throw OptionException("Duplicate key on construction", key,
-                                   "element", std::to_string(i)); 
+                                   "element", std::to_string(i));
 
         // this will throw needed exceptions
         opmap_.emplace(key, detail::OptionHolderFactory(key, opt[key]));
@@ -181,7 +181,7 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
         if(!tmp.HasKey(key))
             throw OptionException("Python dictionary has a key that I do not", key, "element", std::to_string(i));
 
-        tmp.ChangePy(key, opt[key]); 
+        tmp.ChangePy(key, opt[key]);
     }
 
     swap(*this, tmp);
