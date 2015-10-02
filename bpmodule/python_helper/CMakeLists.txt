@@ -1,5 +1,6 @@
 set(BPMODULE_PYTHON_HELPER_FILES
         Types.cpp
+        Errors.cpp
         export.cpp
    )
 

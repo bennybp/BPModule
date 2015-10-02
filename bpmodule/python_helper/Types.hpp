@@ -54,7 +54,7 @@ const char * PythonTypeToStr(PythonType pytype);
 PythonType DeterminePyType(const boost::python::object & obj);
 
 
-/*! \brief Get the class of a python object
+/*! \brief Get the class of a python object as a string
  */
 std::string GetPyClass(const boost::python::object & obj);
 

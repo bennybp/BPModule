@@ -5,11 +5,7 @@
  */ 
 
 
-#include "bpmodule/python_helper/Convert.hpp"
-
-#include <map>
-#include <unordered_map>
-
+#include <boost/python.hpp>
 
 using namespace boost::python;
 

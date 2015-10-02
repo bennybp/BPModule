@@ -18,6 +18,7 @@ set(BPMODULE_PYTHON_HELPER_HEADERS
             python_helper/BoostPython_fwd.hpp
             python_helper/Types.hpp
             python_helper/Convert.hpp
+            python_helper/Errors.hpp
    )
 
 set(BPMODULE_OUTPUT_HEADERS

@@ -5,7 +5,9 @@
  */ 
 
 
-#include "bpmodule/python_helper/Convert.hpp"
+#include <boost/python.hpp>
+
+#include "bpmodule/python_helper/Types.hpp"
 
 
 namespace bpmodule {
