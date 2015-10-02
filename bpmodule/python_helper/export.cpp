@@ -2,7 +2,7 @@
  *
  * \brief Python exports for python helper functions
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #include <boost/python.hpp>

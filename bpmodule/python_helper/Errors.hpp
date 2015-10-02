@@ -2,7 +2,7 @@
  *
  * \brief Handling of python errors (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_ERRORS_HPP_
@@ -16,7 +16,7 @@ namespace detail {
 
 
 /*! \brief Get the current python exception description as a string
- */ 
+ */
 std::string GetPyExceptionString(void);
 
 

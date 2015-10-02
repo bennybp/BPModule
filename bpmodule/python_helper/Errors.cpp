@@ -2,7 +2,7 @@
  *
  * \brief Handling of python errors (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #include "bpmodule/python_helper/Errors.hpp"
@@ -24,7 +24,7 @@ std::string GetPyExceptionString(void)
             boost::python::object e_obj(boost::python::handle<>(boost::python::allow_null(e)));
             boost::python::object v_obj(boost::python::handle<>(boost::python::allow_null(v)));
             boost::python::object t_obj(boost::python::handle<>(boost::python::allow_null(t)));
-           
+
             std::string errstr = boost::python::extract<std::string>(e_obj);
             errstr += " : ";
             errstr += boost::python::extract<std::string>(v_obj);

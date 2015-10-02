@@ -2,7 +2,7 @@
  *
  * \brief Conversion between python and C++ (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_CONVERT_HPP_
@@ -33,7 +33,7 @@ struct ToCppConverter
      * \note Does not check for arithmetic underflows, overflows, etc
      *
      * \param [in] obj Object to check
-     */ 
+     */
     static bool Check(const boost::python::object & obj)
     {
         boost::python::extract<T> conv(obj);
@@ -48,7 +48,7 @@ struct ToCppConverter
      *        if there is a problem with the conversion
      *
      * \param [in] obj Object to convert
-     */ 
+     */
     static T Convert(const boost::python::object & obj)
     {
         /*
@@ -56,7 +56,7 @@ struct ToCppConverter
          * it may throw objects derived from std::bad_cast
          * which are thrown from boost::numeric. These
          * indicate overflows and underflows.
-         */ 
+         */
         try {
             boost::python::extract<T> conv(obj);
             return conv();
@@ -79,7 +79,7 @@ struct ToCppConverter
 
     /*! \brief Prevents some implicit conversions
      *
-     * Used to deny implicit conversions from int to floating point, etc. 
+     * Used to deny implicit conversions from int to floating point, etc.
      */
     static bool TypeCheck(const boost::python::object & obj)
     {
@@ -120,14 +120,14 @@ struct ToCppConverter<std::vector<T>>
 {
 
     /*! \brief Checks if a python object is convertible to type std::vector<T>
-     * 
+     *
      * Checks that the object is a boost::python::list and that
      * all elements are convertible to type T
      *
      * \note Does not check for arithmetic underflows, overflows, etc
      *
      * \param [in] obj Object to check
-     */ 
+     */
     static bool Check(const boost::python::object & obj)
     {
         // Check if all elements are convertible
@@ -161,11 +161,11 @@ struct ToCppConverter<std::vector<T>>
      *        if there is a problem with the conversion
      *
      * \param [in] obj Object to convert
-     */ 
+     */
     static std::vector<T> Convert(const boost::python::object & obj)
     {
         std::vector<T> r;
- 
+
         boost::python::list lst = boost::python::extract<boost::python::list>(obj);
         int length = boost::python::extract<int>(lst.attr("__len__")());
         if(length == 0)
@@ -260,7 +260,7 @@ template<typename T>
 boost::python::object ConvertToPy(const T & obj)
 {
     try {
-       return boost::python::object(obj); 
+       return boost::python::object(obj);
     }
     catch(...)
     {
@@ -289,7 +289,7 @@ template<typename T>
 bool TestConvertToPy(const T & obj)
 {
     try {
-        boost::python::object ret = boost::python::object(obj); 
+        boost::python::object ret = boost::python::object(obj);
     }
     catch(...) //! \todo limit this?
     {

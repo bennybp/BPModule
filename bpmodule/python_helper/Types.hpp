@@ -2,7 +2,7 @@
  *
  * \brief Handling and detection of python types (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_TYPES_HPP_
@@ -40,17 +40,17 @@ enum class PythonType
 
 
 /*! \brief Convert a string to a PythonType
- */ 
+ */
 PythonType StrToPythonType(const std::string & str);
 
 
 /*! \brief Convert a PythonType to a string
- */ 
+ */
 const char * PythonTypeToStr(PythonType pytype);
 
 
 /*! \brief Determine the type of a boost python object
- */ 
+ */
 PythonType DeterminePyType(const boost::python::object & obj);
 
 

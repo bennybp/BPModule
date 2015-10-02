@@ -2,7 +2,7 @@
  *
  * \brief Handling and detection of python types (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #include <boost/python.hpp>
@@ -82,7 +82,7 @@ PythonType DeterminePyType(const boost::python::object & obj)
         if(cl == "dict")      return PythonType::Dict;
         if(cl == "NoneType")  return PythonType::None;
 
-        if(cl == "list") 
+        if(cl == "list")
         {
             boost::python::list lst = boost::python::extract<boost::python::list>(obj);
 

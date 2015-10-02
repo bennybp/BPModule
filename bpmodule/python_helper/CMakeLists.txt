@@ -5,7 +5,7 @@ set(BPMODULE_PYTHON_HELPER_FILES
    )
 
 
-ADD_MODULE(python_helper 
+ADD_MODULE(python_helper
            "${BPMODULE_PYTHON_HELPER_FILES}"
            ""
            ""
