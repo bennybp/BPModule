@@ -2,17 +2,19 @@
  *
  * \brief Structure storing information about a module (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #include "bpmodule/modulestore/ModuleInfo.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/output/Output.hpp"
+#include "bpmodule/exception/ModuleStoreException.hpp"
 
 
 using bpmodule::options::OptionMap;
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::exception::GeneralException;
+using bpmodule::exception::ModuleStoreException;
 
 namespace bpmodule {
 namespace modulestore {
@@ -22,7 +24,8 @@ namespace modulestore {
  *
  * Catches exceptions in the conversion and appends some information
  *
- * \throw bpmodule::exception::PythonConvertException if there is a conversion problem or a
+ * \throw bpmodule::exception::ModuleStoreException
+ *        if there is a conversion problem or a
  *        required key doesn't exist
  *
  * \tparam T Destination type
@@ -34,19 +37,19 @@ template<typename T>
 static T DictConvertHelper(const boost::python::dict & dictionary, const char * key)
 {
     if(!dictionary.has_key(key))
-        throw GeneralException("Python dictionary is missing key",
-                               "location", "ModuleInfo",
-                               "dictkey", key,
-                               "totype", typeid(T).name());
+        throw ModuleStoreException("Python dictionary is missing key",
+                                   "location", "ModuleInfo",
+                                   "dictkey", key,
+                                   "totype", typeid(T).name());
 
 
     try {
+        // may throw PythonConvertException
         return ConvertToCpp<T>(dictionary[key]);
     }
-    catch(GeneralException & ex)
+    catch(const GeneralException & ex)
     {
-        ex.AppendInfo("dictkey", key, "location", "ModuleInfo");
-        throw;
+        throw ModuleStoreException(ex, "dictkey", key, "location", "ModuleInfo");
     }
 }
 
@@ -56,13 +59,14 @@ static T DictConvertHelper(const boost::python::dict & dictionary, const char * 
  *
  * Catches exceptions in the conversion and appends some information
  *
- * \throw bpmodule::exception::PythonConvertException if there is a conversion problem or a
+ * \throw bpmodule::exception::ModuleStoreException
+ *        if there is a conversion problem or a
  *        required key doesn't exist
  *
  * \tparam T Destination type
  *
  * \param [in] dictionary The dictionary containing the data
- * \param [in] key The key in the dictionary
+ * \param [in] key The key in the dictionary that contains a python list
  */
 template<typename T>
 static std::vector<T> DictConvertHelperVec(const boost::python::dict & dictionary, const char * key)
@@ -76,10 +80,9 @@ static std::vector<T> DictConvertHelperVec(const boost::python::dict & dictionar
     try {
         return ConvertToCpp<std::vector<T>>(lst);
     }
-    catch(GeneralException & ex)
+    catch(const GeneralException & ex)
     {
-        ex.AppendInfo("dictkey", key, "location", "ModuleInfo");
-        throw;
+        throw ModuleStoreException(ex, "dictkey", key, "location", "ModuleInfo");
     }
 }
 
@@ -100,23 +103,15 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
         authors     = DictConvertHelperVec<std::string>(dictionary, "authors");
         refs        = DictConvertHelperVec<std::string>(dictionary, "refs");
 
-        try {
-            options = OptionMap(DictConvertHelper<boost::python::dict>(dictionary, "options"));
-        }
-        catch(GeneralException & ex)
-        {
-            ex.AppendInfo("key", key);
-            throw;
-        }
+        options     = OptionMap(DictConvertHelper<boost::python::dict>(dictionary, "options"));
 
         // soname is optional
         if(dictionary.has_key("soname"))
             soname = DictConvertHelper<std::string>(dictionary, "soname");
     }
-    catch(GeneralException & ex)
+    catch(const GeneralException & ex)
     {
-        ex.AppendInfo("modulename", name); // name may or may not be set
-        throw;
+        throw ModuleStoreException(ex, "modulename", name, "modulekey", key); // name and key may or may not be set
     }
 }
 
@@ -136,16 +131,16 @@ void ModuleInfo::Print(void) const
 
     output::Output("     Description: %1%\n", description);
 
-    output::Output("         Authors: %1%\n", (authors.size() ? authors[0] : ""));      
+    output::Output("         Authors: %1%\n", (authors.size() ? authors[0] : ""));
     for(size_t i = 0; i < authors.size(); i++)
         output::Output("                  %1%\n", authors[i]);
 
-    output::Output("      References: %1%\n", (refs.size() ? refs[0] : ""));      
+    output::Output("      References: %1%\n", (refs.size() ? refs[0] : ""));
     for(size_t i = 0; i < refs.size(); i++)
         output::Output("                  %1%\n", refs[i]);
-   
+
     output::Output("         Options: %1%\n", options.Size());
-    options.Print(); 
+    options.Print();
 }
 
 

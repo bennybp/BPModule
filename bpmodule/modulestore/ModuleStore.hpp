@@ -2,7 +2,7 @@
  *
  * \brief Main module database class (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_MODULESTORE_HPP_
@@ -14,7 +14,7 @@
 #include "bpmodule/modulestore/ModuleInfo.hpp"
 #include "bpmodule/modulestore/ScopedModule.hpp"
 #include "bpmodule/exception/ModuleCreateException.hpp"
-#include "bpmodule/output/FormatStr.hpp"
+#include "bpmodule/exception/ModuleStoreException.hpp"
 
 
 // forward declarations
@@ -60,19 +60,19 @@ class ModuleStore
         /*! \brief Returns the number of modules in the database
          *
          * \exnothrow
-         */ 
+         */
         size_t Size(void) const noexcept;
 
 
         /*! \brief Returns the keys for all modules in the database
-         */ 
+         */
         std::vector<std::string> GetKeys(void) const;
 
 
         /*! \brief Returns the information about a module with a given key
-         * 
-         * \throw bpmodule::exception::MapException if the key doesn't
-         *        exist in the database
+         *
+         * \throw bpmodule::exception::ModuleStoreException
+         *        if the key doesn't exist in the database
          *
          * \param [in] key A module key
          */
@@ -89,7 +89,7 @@ class ModuleStore
          *
          * \param [in] key A module key
          * \return True if the key exists in the map, false if it doesn't
-         */ 
+         */
         bool Has(const std::string & key) const;
 
 
@@ -99,18 +99,15 @@ class ModuleStore
          * The dictionary has strings for keys and arbitrary data types for
          * the values
          *
-         * \throw bpmodule::exception::MapException if the key doesn't
-         *        exist in the database or an option key in the dictionary
-         *        doesn't exist for that module.
+         * \throw bpmodule::exception::ModuleStoreException
+         *        if the key doesn't exist in the database
          *
-         * \throw bpmodule::exception::PythonConvertException if there
-         *        is a problem converting the python objects
-         * 
-         * \throw bpmodule::exception::OptionException if there is
-         *        a problem with the option (invalid, etc)
+         * \throw bpmodule::exception::OptionException
+         *        if there is a problem converting the options
+         *        or if it is invalid
          *
-         * \exstrong 
-         * 
+         * \exstrong
+         *
          *
          * \param [in] key A module key
          * \param [in] opt Options to set
@@ -121,28 +118,30 @@ class ModuleStore
 
 
         /*! \brief Test the creation of all modules
-         * 
+         *
          * This goes through and tests the module creation for all keys. It does
          * not attempt to cast them, though. This is a simple sanity check
+         *
+         * \throw bpmodule::exception::ModuleCreateException if there is a problem
          */
         void TestAll(void);
 
 
 
         /*! \brief Return a new module object wrapped in an RAII-style scoping object
-            *
-         * \throw bpmodule::exception::MapException 
+         *
+         * \throw bpmodule::exception::ModuleStoreException
          *        if the key doesn't exist in the database
          *
          * \throw bpmodule::exception::ModuleCreateException if there are other
-         *        problems creating the module 
+         *        problems creating the module
          *
-         * \exstrong 
+         * \exstrong
          *
          * \param [in] key A module key
          *
          * \return A ScopedModule for an object of the requested type
-         */ 
+         */
         template<typename T>
         ScopedModule<T> GetModule(const std::string & key)
         {
@@ -162,9 +161,10 @@ class ModuleStore
             T * dptr = dynamic_cast<T *>(mbptr);
             if(dptr == nullptr)
             {
-                std::string descstr = output::FormatStr("Cast from %1% to %2%", typeid(mbptr).name(), typeid(T *).name());
                 throw exception::ModuleCreateException("Bad cast for module", se.mi.path,
-                                                       key, se.mi.name, descstr); 
+                                                       key, se.mi.name, 
+                                                       "fromtype", typeid(mbptr).name(),
+                                                       "totype", typeid(T *).name());
             }
 
 
@@ -216,12 +216,12 @@ class ModuleStore
          *        already exists in the database
          *
          * \exstrong
-         * 
+         *
          * \param [in] key A module key
          * \param [in] func A function that generates the module
          * \param [in] dfunc A function that deletes the module
          * \param [in] minfo Information about the module
-         */ 
+         */
         void InsertModule(const std::string & key, ModuleGeneratorFunc func,
                           ModuleRemoverFunc dfunc, const ModuleInfo & minfo);
 
@@ -229,7 +229,7 @@ class ModuleStore
     private:
 
         /*! \brief An entry for a module in the database
-         */ 
+         */
         struct StoreEntry
         {
             ModuleInfo mi;             //!< Information for this module
@@ -239,19 +239,19 @@ class ModuleStore
 
 
         /*! \brief Actual storage object - maps keys to creation functions
-         */ 
+         */
         std::unordered_map<std::string, StoreEntry> store_;
 
 
         /*! \brief Map for storing object removal information
-         */ 
+         */
         std::unordered_map<unsigned long, ModuleRemoverFunc> removemap_;
 
 
         /*! \brief Map for storing object removal information
-         * 
+         *
          * \todo will be replaced by a graph or tree
-         */ 
+         */
         std::unordered_map<unsigned long, ModuleInfo> minfomap_;
 
 
@@ -261,30 +261,30 @@ class ModuleStore
 
 
         /*! \brief Obtain a module or throw exception
-         * 
-         * \throw bpmodule::exception::MapException if the key doesn't
-         *        exist
+         *
+         * \throw bpmodule::exception::ModuleStoreException
+         *        if the key doesn't exist
          *
          * \param [in] key A module key
-         */ 
+         */
         const StoreEntry & GetOrThrow_(const std::string & key) const;
 
 
 
         /*! \brief Obtain a module or throw exception
-         * 
-         * \throw bpmodule::exception::MapException if the key doesn't
-         *        exist
+         *
+         * \throw bpmodule::exception::ModuleStoreException
+         *        if the key doesn't exist
          *
          * \param [in] key A module key
-         */ 
+         */
         StoreEntry & GetOrThrow_(const std::string & key);
 
 
 
 
         /*! \brief Removes a created module object from storage
-         * 
+         *
          * This actually deletes the object, and removes references
          * to it in various places.
          *
@@ -294,12 +294,12 @@ class ModuleStore
          *         removed from this database.
          *
          * \param [in] mb Pointer to the module to remove
-         */ 
+         */
         void DeleteObject_(modulebase::ModuleBase * mb);
 
 
         /*! \brief Removes a created module object from storage
-         * 
+         *
          * This actually deletes the object, and removes references
          * to it in various places.
          *
@@ -309,7 +309,7 @@ class ModuleStore
          *         removed from this database.
          *
          * \param [in] id ID of the module to remove
-         */ 
+         */
         void DeleteObject_(unsigned long id);
 
 };

@@ -2,7 +2,7 @@
  *
  * \brief Python exports for module storage and database
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 // Various components
@@ -56,7 +56,7 @@ boost::shared_ptr<T> Wrap_GetModule(ModuleStore * ms, const std::string & key)
 BOOST_PYTHON_MODULE(modulestore)
 {
     // This is only needed because we pass through python
-    // No need to do declare all the members, etc 
+    // No need to do declare all the members, etc
     class_<ModuleInfo, boost::noncopyable>("ModuleInfo");
 
 

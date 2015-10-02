@@ -2,7 +2,7 @@
  *
  * \brief Base class for loading and storing of modules (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_MODULELOADERBASE_HPP_
@@ -44,11 +44,11 @@ class ModuleLoaderBase
         ModuleLoaderBase(ModuleLoaderBase && rhs)                  = delete;
         ModuleLoaderBase & operator=(const ModuleLoaderBase & rhs) = delete;
         ModuleLoaderBase & operator=(ModuleLoaderBase && rhs)      = delete;
-       
-    protected: 
+
+    protected:
 
         /*! \brief Inserts a module to the ModuleStore
-         * 
+         *
          * \copydetails ModuleStore::InsertModule
          *
          */
@@ -64,10 +64,10 @@ class ModuleLoaderBase
 
         /*! \brief Copies an instantiated object into internal storage
          *
-         * Really meant for Python objects 
+         * Really meant for Python objects
          *
          * \exstrong
-         * 
+         *
          * \param [in] id Id of the new object
          * \param [in] obj Object to copy
          */
@@ -81,9 +81,9 @@ class ModuleLoaderBase
         /*! \brief Moves an instantiated object into internal storage
          *
          * Really meant for std::unique_ptr objects
-         * 
+         *
          * \exstrong
-         * 
+         *
          * \param [in] id Id of the new object
          * \param [in] obj Object to move
          */
@@ -95,7 +95,7 @@ class ModuleLoaderBase
 
 
         /*! \brief Deletes an object from internal storage
-         * 
+         *
          * This destructs the object. It shouldn't be used after this
          *
          * \throwno Should only throw an exception if a destructor
@@ -112,8 +112,8 @@ class ModuleLoaderBase
 
         /*! \brief Deletes all objects in the internal storage
          *
-         * All objects will be destructed and unusable afterwards 
-         * 
+         * All objects will be destructed and unusable afterwards
+         *
          * \throwno Should only throw an exception if a destructor
          *          throws an exception, which shouldn't happen.
          */
@@ -132,7 +132,7 @@ class ModuleLoaderBase
         size_t Size(void) const noexcept
         {
             return objects_.size();
-        } 
+        }
 
 
     private:

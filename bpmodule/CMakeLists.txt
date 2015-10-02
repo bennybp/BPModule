@@ -33,6 +33,7 @@ set(BPMODULE_EXCEPTION_HEADERS
             exception/OptionException.hpp
             exception/ModuleLoadException.hpp
             exception/ModuleCreateException.hpp
+            exception/ModuleStoreException.hpp
    )
 
 set(BPMODULE_PARALLEL_HEADERS

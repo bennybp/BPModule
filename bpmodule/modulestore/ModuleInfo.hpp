@@ -2,7 +2,7 @@
  *
  * \brief Structure storing information about a module (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_MODULEINFO_HPP_
@@ -28,7 +28,7 @@ struct ModuleInfo
     std::vector<std::string> authors;  //!< Authors of the module
     std::string description;           //!< A description of the module
     std::vector<std::string> refs;     //!< References for the module (articles, web pages, etc)
-    options::OptionMap options;      //!< Options for the module
+    options::OptionMap options;        //!< Options for the module
 
 
     ModuleInfo(void)                    = default;
@@ -38,8 +38,8 @@ struct ModuleInfo
 
 
     /*! \brief Construct from a python dictionary
-     * 
-     * \throw bpmodule::exception::PythonConvertException if conversion fails
+     *
+     * \throw bpmodule::exception::ModuleStoreException if conversion fails
      *        or the python dictionary is missing a required field
      */
     ModuleInfo(const boost::python::dict & dictionary);

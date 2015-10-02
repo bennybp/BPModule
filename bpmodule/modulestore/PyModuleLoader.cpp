@@ -2,7 +2,7 @@
  *
  * \brief Loading and storing of Python modules (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 #include "bpmodule/modulestore/PyModuleLoader.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
@@ -54,8 +54,8 @@ void PyModuleLoader::LoadPyModule(const std::string & key,
     // check if callable
     if(PyCallable_Check(func.ptr()) == 0)
         throw ModuleLoadException("Cannot load module: Object not callable",
-                                    mi.path, key, mi.name);
-        
+                                   mi.path, key, mi.name);
+
     ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::GeneratorWrapper_, this,
                                                        func,
                                                        std::placeholders::_1,

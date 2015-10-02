@@ -27,6 +27,7 @@ class ModuleCreateException : public GeneralException
          * \param [in] name Name of the module that couldn't be created
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
+        template<typename... Targs>
         ModuleCreateException(std::string what,
                               std::string path,
                               std::string key,

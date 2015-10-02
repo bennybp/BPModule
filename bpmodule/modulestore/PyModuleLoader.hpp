@@ -2,7 +2,7 @@
  *
  * \brief Loading and storing of Python modules (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_PYMODULELOADER_HPP_
@@ -27,11 +27,12 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
     public:
 
         /*! \copydoc ModuleLoaderBase::ModuleLoaderBase
-         */ 
+         */
         PyModuleLoader(modulestore::ModuleStore * mst);
 
+
         /*! Destructor
-         * 
+         *
          * Deletes all objects
          */
         ~PyModuleLoader();
@@ -52,7 +53,7 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
          * \throw bpmodule::exception::ModuleLoadException if there is a problem loading
          *        the module (duplicate key, etc)
          *
-         * \throw bpmodule::exception::PythonConvertException if there is a problem converting
+         * \throw bpmodule::exception::ModuleStoreException if there is a problem converting
          *        the module info.
          *
          * \exstrong
@@ -61,10 +62,11 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
          * \param [in] func Python object that is callable and which
          *                  returns a pointer to an object derived from ModuleBase
          * \param [in] minfo The module information, including the path and name
-         */ 
+         */
         void LoadPyModule(const std::string & key,
                           boost::python::object func,
                           const boost::python::dict & minfo);
+
 
     private:
         //! This object's base class

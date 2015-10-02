@@ -2,7 +2,7 @@
  *
  * \brief Loading and storing of C modules (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_CMODULELOADER_HPP_
@@ -25,11 +25,12 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
     public:
 
         /*! \copydoc ModuleLoaderBase::ModuleLoaderBase
-         */ 
+         */
         CModuleLoader(ModuleStore * mst);
 
+
         /*! Destructor
-         * 
+         *
          * Deletes all objects and closes all SO file handles
          */
         ~CModuleLoader();
@@ -55,14 +56,14 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
          * \throw bpmodule::exception::ModuleLoadException if there is a problem loading
          *        the module (duplicate key, function doesn't exist, etc)
          *
-         * \throw bpmodule::exception::PythonConvertException if there is a problem converting
+         * \throw bpmodule::exception::ModuleStoreException if there is a problem converting
          *        the module info.
          *
          * \exstrong
          *
          * \param [in] key The key for this module
          * \param [in] minfo The module information, including the path and name
-         */ 
+         */
         void LoadSO(const std::string & key, const boost::python::dict & minfo);
 
 

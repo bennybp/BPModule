@@ -2,7 +2,7 @@
  *
  * \brief Loading and storing of C modules (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #include <dlfcn.h>
@@ -82,7 +82,7 @@ void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & 
         // open the module
         if(!handle)
             throw ModuleLoadException("Cannot open SO file",
-                                        sopath, key, mi.name, dlerror());
+                                      sopath, key, mi.name, "dlerror", dlerror());
     }
 
 
@@ -92,7 +92,7 @@ void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & 
     {
         dlclose(handle);
         throw ModuleLoadException("Cannot find function in SO file",
-                                    sopath, key, mi.name, dlerror());
+                                    sopath, key, mi.name, "dlerror", dlerror());
     }
 
 

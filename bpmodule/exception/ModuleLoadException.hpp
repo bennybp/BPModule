@@ -29,12 +29,13 @@ class ModuleLoadException : public GeneralException
          * \param [in] name Name of the module that couldn't be loaded
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
+        template<typename... Targs>
         ModuleLoadException(std::string what,
                             std::string path,
                             std::string key,
                             std::string name,
                             Targs... exinfo)
-            : GeneralException(what, "path", path, "key", key, "name", name, exinfo)
+            : GeneralException(what, "path", path, "key", key, "name", name, exinfo...)
         { }
 
 

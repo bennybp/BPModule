@@ -6,7 +6,7 @@ set(BPMODULE_MODULESTORE_FILES
             PyModuleLoader.cpp
             export.cpp
    )
-  
+
 
 
 ADD_MODULE(modulestore
