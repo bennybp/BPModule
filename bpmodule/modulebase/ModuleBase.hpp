@@ -88,11 +88,15 @@ class ModuleBase
 
 
         /*! \brief Get the OptionMap object for this module
+         *
+         * \exnothrow
          */ 
         options::OptionMap & Options(void) noexcept;
 
 
         /*! \brief Get the OptionMap object for this module
+         *
+         * \exnothrow
          */ 
         const options::OptionMap & Options(void) const noexcept;
 
@@ -105,31 +109,9 @@ class ModuleBase
 
 
     protected:
-        /*! \brief Throw an exception
-         * 
-         * Throwing via this function will populate the exception with
-         * some information about this module.
-         *
-         * \param [in] exwhat A descriptive string describing the problem
-         * \param [in] exinfo Additional information
-         */
-        void ThrowException(const std::string & exwhat,
-                            const exception::GeneralException::ExceptionInfo & exinfo = {}) const;
-
-
         /*! \brief Get the internal ModuleStore that is in charge of this module
          */ 
         modulestore::ModuleStore & MStore(void) noexcept;
-
-
-        /*! \brief Throw an exception (to be called from a python class derived from this)
-         * 
-         * \copydetails ThrowException(const std::string &, const exception::GeneralException::ExceptionInfo &) const
-         *
-         * The exinfo parameter is a list of tuples
-         */ 
-        void ThrowException(const std::string & exwhat,
-                            const boost::python::list & exinfo);
 
 
     private:

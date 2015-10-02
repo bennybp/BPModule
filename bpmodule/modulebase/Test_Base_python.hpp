@@ -29,13 +29,6 @@ class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base
             : Test_Base(id, mstore, minfo)
         {}
 
-        // expose protected member functions
-        //! \copydoc bpmodule::modulebase::ModuleBase::ThrowException
-        void ThrowException(const std::string & exwhat,
-                            const boost::python::list & exinfo = boost::python::list())
-        {
-            ModuleBase::ThrowException(exwhat, PythonListToPairVec(exinfo));
-        }
 
         modulestore::ModuleStore & MStore(void)
         {

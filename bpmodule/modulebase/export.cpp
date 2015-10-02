@@ -24,7 +24,6 @@ namespace bpmodule {
 namespace modulebase {
 namespace export_python {
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(ThrowException_overloads, ThrowException, 1, 2)
 
 BOOST_PYTHON_MODULE(modulebase)
 {
@@ -46,7 +45,6 @@ BOOST_PYTHON_MODULE(modulebase)
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
     class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, ModuleInfo &>())
     .def("MStore", &Test_Base_Wrap::MStore, return_value_policy<reference_existing_object>()) 
-    .def("ThrowException", &Test_Base_Wrap::ThrowException, ThrowException_overloads())
     .def("RunTest", pure_virtual(&Test_Base::RunTest))
     .def("CallRunTest", pure_virtual(&Test_Base::CallRunTest))
     .def("Throw", pure_virtual(&Test_Base::Throw))
