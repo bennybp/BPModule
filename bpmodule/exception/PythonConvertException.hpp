@@ -27,7 +27,7 @@ class PythonConvertException : public GeneralException
          *
          * \param [in] what Brief description of the error
          * \param [in] fromtype  The source type of the conversion
-         * \param [in] toype  The destination type of the conversion
+         * \param [in] totype  The destination type of the conversion
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
@@ -46,7 +46,7 @@ class PythonConvertException : public GeneralException
          *
          * \param [in] gex Exception to copy
          * \param [in] fromtype  The source type of the conversion
-         * \param [in] toype  The destination type of the conversion
+         * \param [in] totype  The destination type of the conversion
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>

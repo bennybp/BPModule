@@ -75,7 +75,7 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph);
 template<typename T>
 OptionHolder<T>::OptionHolder(const std::string & key, T * def,
                               ValidatorFunc validator, bool required,
-                              PythonType pytype,
+                              python_helper::PythonType pytype,
                               const std::string & help)
     : OptionBase(key, required, pytype, help),
       default_(def),

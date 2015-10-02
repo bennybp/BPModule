@@ -47,6 +47,9 @@ class OptionHolder : public OptionBase
          * \param [in] key The key of this option
          * \param [in] def The default value
          * \param [in] validator A validator function for this object
+         * \param [in] required True if this option is required
+         * \param [in] pytype The python type of this option
+         * \param [in] help A help string for this option
          *
          */
         OptionHolder(const std::string & key, T * def,

@@ -14,4 +14,8 @@ inserting it's creation function into the module database.
 
 \section developer_output_sec Outputting Information
 
+\section developer_exception Exceptions
+
+Go over the exception construction, even number of strings, etc
+
  */
