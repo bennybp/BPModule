@@ -23,7 +23,11 @@
  */
 
 /*! \namespace bpmodule::datastore
- *  \brief Classes and functions for dealing with generic data storage, including options.
+ *  \brief Classes and functions for dealing with generic data storage
+ */
+
+/*! \namespace bpmodule::options
+ *  \brief Classes and functionality for handling options
  */
 
 /*! \namespace bpmodule::parallel
