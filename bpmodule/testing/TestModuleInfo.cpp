@@ -16,9 +16,9 @@ namespace bpmodule {
 namespace testing {
 
 
-int TestModuleInfo_Construct(int itest, const std::string & desc, bool expected, const boost::python::dict & mi)
+int TestModuleInfo_Construct(const boost::python::dict & mi)
 {
-    return TestConstruct<ModuleInfo>(itest, desc, expected, mi);
+    return TestConstruct<ModuleInfo>(mi);
 }
 
 

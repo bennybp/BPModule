@@ -35,16 +35,13 @@ struct FailObject
  *
  * \tparam T C++ type to use
  *
- * \param [in] itest A test number
- * \param [in] desc Some description
- * \param [in] expected True if this is supoosed to succeed, false if it should
- *                      throw an exception
  * \param [in] obj Object to convert
+ * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
-int TestConvertToCpp(int itest, const std::string & desc, bool expected, const boost::python::object & obj)
+int TestConvertToCpp(const boost::python::object & obj)
 {
-    return TestFunc(itest, desc, expected, bpmodule::python_helper::ConvertToCpp<T>, obj);
+    return TestFunc(bpmodule::python_helper::ConvertToCpp<T>, obj);
 }
 
 
@@ -52,16 +49,13 @@ int TestConvertToCpp(int itest, const std::string & desc, bool expected, const b
  *
  * \tparam T C++ type to use
  *
- * \param [in] itest A test number
- * \param [in] desc Some description
- * \param [in] expected True if this is supoosed to succeed, false if it should
- *                      throw an exception
  * \param [in] obj Object to convert
+ * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
-int TestConvertToPy(int itest, const std::string & desc, bool expected, const T & obj)
+int TestConvertToPy(const T & obj)
 {
-    return TestFunc(itest, desc, expected, bpmodule::python_helper::ConvertToPy<T>, obj);
+    return TestFunc(bpmodule::python_helper::ConvertToPy<T>, obj);
 }
 
 
@@ -70,6 +64,7 @@ int TestConvertToPy(int itest, const std::string & desc, bool expected, const T 
  * \tparam T C++ type to use
  *
  * \param [in] obj Object to convert
+ * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
 void PyCppPy(const boost::python::object & obj)
@@ -88,6 +83,7 @@ void PyCppPy(const boost::python::object & obj)
  * \tparam T C++ type to use
  *
  * \param [in] obj Object to convert
+ * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
 void PyCppPy_Fail(const boost::python::object & obj)
@@ -102,16 +98,13 @@ void PyCppPy_Fail(const boost::python::object & obj)
  *
  * \tparam T C++ type to use
  *
- * \param [in] itest A test number
- * \param [in] desc Some description
- * \param [in] expected True if this is supoosed to succeed, false if it should
- *                      throw an exception
  * \param [in] obj Object to convert
+ * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
-int TestPyCppPy(int itest, const std::string & desc, bool expected, const boost::python::object & obj)
+int TestPyCppPy(const boost::python::object & obj)
 {
-    return TestFunc(itest, desc, expected, PyCppPy<T>, obj);
+    return TestFunc(PyCppPy<T>, obj);
 }
 
 
@@ -120,16 +113,13 @@ int TestPyCppPy(int itest, const std::string & desc, bool expected, const boost:
  *
  * \tparam T C++ type to use
  *
- * \param [in] itest A test number
- * \param [in] desc Some description
- * \param [in] expected True if this is supoosed to succeed, false if it should
- *                      throw an exception
  * \param [in] obj Object to convert
+ * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
-int TestPyCppPy_Fail(int itest, const std::string & desc, bool expected, const boost::python::object & obj)
+int TestPyCppPy_Fail(const boost::python::object & obj)
 {
-    return TestFunc(itest, desc, expected, PyCppPy_Fail<T>, obj);
+    return TestFunc(PyCppPy_Fail<T>, obj);
 }
 
 

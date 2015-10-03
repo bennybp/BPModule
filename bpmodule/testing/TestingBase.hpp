@@ -27,80 +27,37 @@ namespace testing {
  * \tparam T A callable object type
  * \tparam Targs Types of the object's arguments
  *
- * \param [in] itest A test number
- * \param [in] desc Some description
- * \param [in] expected True if this is supoosed to succeed, false if it should
- *                      throw an exception
  * \param [in] func A callable object
  * \param [in] Fargs Arguments for that callable object
  *
- * \return 1 If the test fails, 0 if it succeeds
+ * \return 1 If the function fails (throws), 0 if it succeeds
  */
 template<typename T, typename... Targs>
-int TestFunc(int itest, const std::string & desc, bool expected, T func, Targs... Fargs)
+int TestFunc(T func, Targs... Fargs)
 {
-    std::string fmt("%|1$5| : %|2$-5|  %|3$-5|  %|4$-9|  : %5%\n");
-
     try {
        func(Fargs...); 
     }
     catch(const exception::GeneralException & ex)
     {
         Debug(ex.ExceptionString());
-        if(expected == false)
-        {
-            Output(fmt, itest, "False", "False", "Success", desc);
-            return 0;
-        }
-        else
-        {
-            Error(fmt, itest, "True", "False", "FAILED", desc);
-            return 1;
-        }
-        
+        return 1;
     }
     catch(std::exception & ex)
     {
         Debug(ex.what());
-        if(expected == false)
-        {
-            Output(fmt, itest, "False", "False", "Success", desc);
-            return 0;
-        }
-        else
-        {
-            Error(fmt, itest, "True", "False", "FAILED", desc);
-            return 1;
-        }
+        return 1;
     }   
     catch(...)
     {
-        if(expected == false)
-        {
-            Output(fmt, itest, "False", "False", "Success", desc);
-            return 0;
-        }
-        else
-        {
-            Error(fmt, itest, "True", "False", "FAILED", desc);
-            return 1;
-        }
+        Debug("Caught unknown exception\n");
+        return 1;
     }   
 
 
 
     // here if no exceptions are thrown
-    if(expected == true)
-    {
-        Output(fmt, itest, "True", "True", "Success", desc);
-        return 0;
-    }
-    else
-    {
-        Error(fmt, itest, "False", "True", "FAILED", desc);
-        return 1;
-    }
-
+    return 0;
 }
 
 
@@ -110,92 +67,38 @@ int TestFunc(int itest, const std::string & desc, bool expected, T func, Targs..
  * \tparam T A callable object type that returns a bool
  * \tparam Targs Types of the object's arguments
  *
- * \param [in] itest A test number
- * \param [in] desc Some description
- * \param [in] expected True if this is supoosed to succeed, false if it should
- *                      throw an exception
  * \param [in] func A callable object
  * \param [in] Fargs Arguments for that callable object
  *
- * \return 1 If the test fails, 0 if it succeeds
+ * \return 1 If the function fails (returns false or throws), 0 if it succeeds
  */
 template<typename T, typename... Targs>
-int TestBoolFunc(int itest, const std::string & desc, bool expected, T func, Targs... Fargs)
+int TestBoolFunc(T func, Targs... Fargs)
 {
-    std::string fmt("%|1$5| : %|2$-5|  %|3$-5|  %|4$-9|  : %5%\n");
-
     try {
-        bool b = func(Fargs...); 
-
-        if(b == true)
-        {
-            if(expected == true)
-            {
-                Output(fmt, itest, "True", "True", "Success", desc);
-                return 0;
-            }
-            else
-            {
-                Error(fmt, itest, "False", "True", "FAILED", desc);
-                return 1;
-            }
-        }
+        if(func(Fargs...))
+            return 0;
         else
-        {
-            if(expected == false)
-            {
-                Output(fmt, itest, "False", "False", "Success", desc);
-                return 0;
-            }
-            else
-            {
-                Error(fmt, itest, "True", "False", "FAILED", desc);
-                return 1;
-            }
-        }
+            return 1;
     }
     catch(const exception::GeneralException & ex)
     {
         Debug(ex.ExceptionString());
-        if(expected == false)
-        {
-            Output(fmt, itest, "False", "False", "Success", desc);
-            return 0;
-        }
-        else
-        {
-            Error(fmt, itest, "True", "False", "FAILED", desc);
-            return 1;
-        }
+        return 1;
         
     }
     catch(std::exception & ex)
     {
         Debug(ex.what());
-        if(expected == false)
-        {
-            Output(fmt, itest, "False", "False", "Success", desc);
-            return 0;
-        }
-        else
-        {
-            Error(fmt, itest, "True", "False", "FAILED", desc);
-            return 1;
-        }
+        return 1;
     }   
     catch(...)
     {
-        if(expected == false)
-        {
-            Output(fmt, itest, "False", "False", "Success", desc);
-            return 0;
-        }
-        else
-        {
-            Error(fmt, itest, "True", "False", "FAILED", desc);
-            return 1;
-        }
+        Debug("Caught unknown exception\n");
+        return 1;
     }   
+
+    return 0;
 }
 
 
@@ -206,78 +109,37 @@ int TestBoolFunc(int itest, const std::string & desc, bool expected, T func, Tar
  * \tparam T An object to construct
  * \tparam Targs Types of the object's constructor's arguments
  *
- * \param [in] itest A test number
- * \param [in] desc Some description
- * \param [in] expected True if this is supoosed to succeed, false if it should
- *                      throw an exception
  * \param [in] Fargs Arguments for the object's constructor
  *
- * \return 1 If the test fails, 0 if it succeeds
+ * \return 1 If the construction fails, 0 if it succeeds
  */
 template<typename T, typename... Targs>
-int TestConstruct(int itest, const std::string & desc, bool expected, Targs... Fargs)
+int TestConstruct(Targs... Fargs)
 {
-    std::string fmt("%|1$5| : %|2$-5|  %|3$-5|  %|4$-9|  : %5%\n");
-
     try {
        T obj(Fargs...); 
     }
     catch(const exception::GeneralException & ex)
     {
         Debug(ex.ExceptionString());
-        if(expected == false)
-        {
-            Output(fmt, itest, "False", "False", "Success", desc);
-            return 0;
-        }
-        else
-        {
-            Error(fmt, itest, "True", "False", "FAILED", desc);
-            return 1;
-        }
+        return 1;
         
     }
     catch(std::exception & ex)
     {
         Debug(ex.what());
-        if(expected == false)
-        {
-            Output(fmt, itest, "False", "False", "Success", desc);
-            return 0;
-        }
-        else
-        {
-            Error(fmt, itest, "True", "False", "FAILED", desc);
-            return 1;
-        }
+        return 1;
     }   
     catch(...)
     {
-        if(expected == false)
-        {
-            Output(fmt, itest, "False", "False", "Success", desc);
-            return 0;
-        }
-        else
-        {
-            Error(fmt, itest, "True", "False", "FAILED", desc);
-            return 1;
-        }
+        Debug("Caught unknown exception\n");
+        return 1;
     }   
 
 
 
     // here if no exceptions are thrown
-    if(expected == true)
-    {
-        Output(fmt, itest, "True", "True", "Success", desc);
-        return 0;
-    }
-    else
-    {
-        Error(fmt, itest, "False", "True", "FAILED", desc);
-        return 1;
-    }
+    return 0;
 }
 
 

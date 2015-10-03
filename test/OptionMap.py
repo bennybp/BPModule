@@ -37,7 +37,9 @@ def IsValid(t, d):
 
 def Run():
     try:
-        bp.testing.PrintHeader("Testing construction of OptionMap objects")
+
+        tester = bp.testing.Tester("Testing construction of OptionMap objects")
+        tester.PrintHeader()
 
         validtypes = ["int", "float", "bool", "str", "listint", "listfloat", "listbool", "liststr" ]
 
@@ -69,17 +71,12 @@ def Run():
         alltypes = sorted(set( x[0] for x in testelements ))
 
 
-        nfailed = 0
-        ntest = 1
-
-
         # Test single element, no validator, not required, with default
         for d1 in testelements:
             s = "Test construction with {}".format(d1[0])
             expected = (d1[0] in validtypes)
             opt = { d1[0] : ( d1[0], d1[1], False, None, "(no help)" ) }
-            nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
-            ntest += 1
+            tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, opt)
 
 
 
@@ -90,9 +87,7 @@ def Run():
                 expected = (d1[0] in validtypes) and (d2[0] in validtypes)
                 opt = { d1[0] : ( d1[0], d1[1], False, None, "(no help)" ),  
                         d2[0] : ( d2[0], d2[1], False, None, "(no help)" ) }
-                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
-                ntest += 1
-
+                tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, opt)
 
 
         # Test single element, no validator, not required, no default
@@ -100,8 +95,7 @@ def Run():
             s = "Test construction with {}".format(d1[0])
             expected = (d1[0] in validtypes)
             opt = { d1[0] : ( d1[0], None, False, None, "(no help)" ) }
-            nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
-            ntest += 1
+            tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, opt)
 
 
 
@@ -112,8 +106,7 @@ def Run():
                 expected = (d1[0] in validtypes) and (d2[0] in validtypes)
                 opt = { d1[0] : ( d1[0], None, False, None, "(no help)" ),  
                         d2[0] : ( d2[0], None, False, None, "(no help)" ) }
-                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
-                ntest += 1
+                tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, opt)
 
 
       
@@ -123,8 +116,7 @@ def Run():
             s = "Test construction with {}".format(d1[0])
             expected = False
             opt = { d1[0] : ( d1[0], d1[1], True, None, "(no help)" ) }
-            nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
-            ntest += 1
+            tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, opt)
 
 
 
@@ -136,8 +128,7 @@ def Run():
                 expected = False
                 opt = { d1[0] : ( d1[0], d1[1], True, None, "(no help)" ),  
                         d2[0] : ( d2[0], d2[1], True, None, "(no help)" ) }
-                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
-                ntest += 1
+                tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, opt)
 
 
 
@@ -146,8 +137,7 @@ def Run():
             s = "Test construction with {}".format(d1[0])
             expected = (d1[0] in validtypes)
             opt = { d1[0] : ( d1[0], None, True, None, "(no help)" ) }
-            nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
-            ntest += 1
+            tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, opt)
 
 
 
@@ -158,8 +148,7 @@ def Run():
                 expected = (d1[0] in validtypes) and (d2[0] in validtypes)
                 opt = { d1[0] : ( d1[0], None, True, None, "(no help)" ),  
                         d2[0] : ( d2[0], None, True, None, "(no help)" ) }
-                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
-                ntest += 1
+                tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, opt)
 
 
 
@@ -169,8 +158,8 @@ def Run():
                 s = "Test construction with {} -> {}".format(t1, d1[0])
                 expected = (t1 in validtypes) and (IsValid(t1, d1[0]))
                 opt = { d1[0] : ( t1, d1[1], False, None, "(no help)" ) }  
-                nfailed += bp.testing.PyTestFunc(ntest, s, expected, bp.options.OptionMap, opt)
-                ntest += 1
+                tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, opt)
+
 
 
 
@@ -181,67 +170,56 @@ def Run():
 
             # should be invalid
             s = "OptionMap {} : Testing validity".format(t1)
-            nfailed += bp.testing.PyTestBoolFunc(ntest, s, False, opm.IsValid)
-            ntest += 1
+            tester.Test(s, False, bp.testing.PyTestBoolFunc, opm.IsValid)
 
             s = "OptionMap {} : Has option?".format(t1)
-            nfailed += bp.testing.PyTestBoolFunc(ntest, s, True, opm.HasKey, "test_opt")
-            ntest += 1
+            tester.Test(s, True, bp.testing.PyTestBoolFunc, opm.HasKey, "test_opt")
 
             s = "OptionMap {} : Has option value?".format(t1)
-            nfailed += bp.testing.PyTestBoolFunc(ntest, s, False, opm.Has, "test_opt")
-            ntest += 1
+            tester.Test(s, False, bp.testing.PyTestBoolFunc, opm.Has, "test_opt")
 
             # set the value
             for d1 in testelements:
                 s = "OptionMap {} : Resetting option".format(t1)
-                nfailed += bp.testing.PyTestFunc(ntest, s, True, opm.ResetToDefault, "test_opt")
+                tester.Test(s, True, bp.testing.PyTestFunc, opm.ResetToDefault, "test_opt")
 
                 s = "OptionMap {} : Testing validity after resetting".format(t1)
-                nfailed += bp.testing.PyTestBoolFunc(ntest, s, False, opm.IsValid)
-                ntest += 1
+                tester.Test(s, False, bp.testing.PyTestBoolFunc, opm.IsValid)
 
                 s = "OptionMap {} : Setting option with {}".format(t1, d1[0])
                 expected = IsValid(t1, d1[0])
-                nfailed += bp.testing.PyTestFunc(ntest, s, expected, opm.Change, "test_opt", d1[1])
-                ntest += 1
+                tester.Test(s, expected, bp.testing.PyTestFunc, opm.Change, "test_opt", d1[1])
 
                 # should be valid if expected == True, since that means the value is now set
                 s = "OptionMap {} : Is valid now?".format(t1)
-                nfailed += bp.testing.PyTestBoolFunc(ntest, s, expected, opm.IsValid)
-                ntest += 1
+                tester.Test(s, expected, bp.testing.PyTestBoolFunc, opm.IsValid)
 
                 # Reset again
                 s = "OptionMap {} : Resetting option".format(t1)
-                nfailed += bp.testing.PyTestFunc(ntest, s, True, opm.ResetToDefault, "test_opt")
+                tester.Test(s, True, bp.testing.PyTestFunc, opm.ResetToDefault, "test_opt")
 
                 s = "OptionMap {} : Testing validity after resetting".format(t1)
-                nfailed += bp.testing.PyTestBoolFunc(ntest, s, False, opm.IsValid)
-                ntest += 1
+                tester.Test(s, False, bp.testing.PyTestBoolFunc, opm.IsValid)
 
                 s = "OptionMap {} : Setting option as dict with {}".format(t1, d1[0])
                 expected = IsValid(t1, d1[0])
-                nfailed += bp.testing.PyTestFunc(ntest, s, expected, opm.ChangeDict, { "test_opt" :  d1[1] })
-                ntest += 1
+                tester.Test(s, expected, bp.testing.PyTestFunc, opm.ChangeDict, { "test_opt" :  d1[1] })
 
                 # should be valid if expected == True, since that means the value is now set
                 s = "OptionMap {} : Is valid now?".format(t1)
-                nfailed += bp.testing.PyTestBoolFunc(ntest, s, expected, opm.IsValid)
-                ntest += 1
+                tester.Test(s, expected, bp.testing.PyTestBoolFunc, opm.IsValid)
 
                 # should still have the option
                 s = "OptionMap {} : Has option?".format(t1)
-                nfailed += bp.testing.PyTestBoolFunc(ntest, s, True, opm.HasKey, "test_opt")
-                ntest += 1
+                tester.Test(s, True, bp.testing.PyTestBoolFunc, opm.HasKey, "test_opt")
 
                 # value is set if expected == True
                 s = "OptionMap {} : Has option value?".format(t1)
-                nfailed += bp.testing.PyTestBoolFunc(ntest, s, expected, opm.Has, "test_opt")
-                ntest += 1
+                tester.Test(s, expected, bp.testing.PyTestBoolFunc, opm.Has, "test_opt")
 
 
 
-        bp.testing.PrintResults(nfailed) 
+        tester.PrintResults() 
 
 
     except Exception as e:

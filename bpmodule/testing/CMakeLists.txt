@@ -13,4 +13,4 @@ ADD_MODULE(testing
            ""
            "")
 
-INSTALL_COREMODULE(testing "")
+INSTALL_COREMODULE(testing "tester.py")

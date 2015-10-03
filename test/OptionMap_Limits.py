@@ -19,12 +19,12 @@ import bpmodule as bp
 
 def Run():
     try:
-        bp.testing.PrintHeader("Testing passing and getting large numebers, etc, from OptionMap objects")
+
+        tester = bp.testing.Tester("Testing passing and getting large numebers, etc, from OptionMap objects")
+        tester.PrintHeader()
+
 
         validtypes = ["int", "float", "bool", "str", "listint", "listfloat", "listbool", "liststr" ]
-
-        nfailed = 0
-        ntest = 1
 
 
         sshortlimits = bp.testing.Limits_sshort();
@@ -45,7 +45,7 @@ def Run():
         bp.output.Output("   Signed long long limits: [ %1% , %2% ]\n", slonglonglimits[0], slonglonglimits[1]);
         bp.output.Output(" Unsigned long long limits: [ %1% , %2% ]\n", ulonglonglimits[0], ulonglonglimits[1]);
 
-        bp.testing.PrintResults(nfailed) 
+        tester.PrintResults()
 
 
     except Exception as e:

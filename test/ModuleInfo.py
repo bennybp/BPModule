@@ -32,7 +32,9 @@ def ReplaceKey(m, key, val):
 
 def Run():
     try:
-        bp.testing.PrintHeader("Testing construction of ModuleInfo")
+
+        tester = bp.testing.Tester("Testing construction of ModuleInfo")
+        tester.PrintHeader()
 
         # This one should work
         # Note that we are not passing options
@@ -48,14 +50,9 @@ def Run():
             "options"     : { }
         }
 
-        nfailed = 0
-        ntest = 1
 
-        nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Acceptable ModuleInfo",        True,  minfo)
-        ntest += 1
-
-        nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Empty ModuleInfo",             False, {})
-        ntest += 1
+        tester.Test("Acceptable ModuleInfo", True, bp.testing.TestModuleInfo_Construct,  minfo)
+        tester.Test("Empty ModuleInfo", False, bp.testing.TestModuleInfo_Construct,  {})
 
         allkeys = sorted(minfo.keys())
         strkeys = copy.deepcopy(allkeys)
@@ -65,46 +62,31 @@ def Run():
         # test missing elements
         # test replacing keys with non-strings 
         for k in allkeys:
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Missing {}".format(k),                    False, RemoveKey(minfo, k)                      )
-            ntest += 1
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Replace {} with int".format(k),           False, ReplaceKey(minfo, k, int(5) )            )
-            ntest += 1
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Replace {} with float".format(k),         False, ReplaceKey(minfo, k, float(5) )          )
-            ntest += 1
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Replace {} with dict".format(k),          False, ReplaceKey(minfo, k, {"hi": 4} )         )
-            ntest += 1
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Replace {} with set".format(k),           False, ReplaceKey(minfo, k, {"hi", "4"} )       )
-            ntest += 1
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Replace {} with tuple".format(k),         False, ReplaceKey(minfo, k, ("hi", 4) )         )
-            ntest += 1
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Replace {} with list int".format(k),      False, ReplaceKey(minfo, k, [int(5)] )          )
-            ntest += 1
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Replace {} with list float".format(k),    False, ReplaceKey(minfo, k, [float(5)] )        )
-            ntest += 1
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Replace {} with list dict".format(k),     False, ReplaceKey(minfo, k, [{"hi": 4}] )       )
-            ntest += 1
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Replace {} with list set".format(k),      False, ReplaceKey(minfo, k, [{"hi", "4"}] )     )
-            ntest += 1
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Replace {} with list tuple".format(k),    False, ReplaceKey(minfo, k, [("hi", 4)] )       )
-            ntest += 1
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Replace {} with list list".format(k),     False, ReplaceKey(minfo, k, [[5, 4], [1, 0]] )  )
-            ntest += 1
+            tester.Test("Missing {}".format(k),                    False, bp.testing.TestModuleInfo_Construct, RemoveKey(minfo, k)                      )
+            tester.Test("Replace {} with int".format(k),           False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, int(5) )            )
+            tester.Test("Replace {} with float".format(k),         False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, float(5) )          )
+            tester.Test("Replace {} with dict".format(k),          False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, {"hi": 4} )         )
+            tester.Test("Replace {} with set".format(k),           False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, {"hi", "4"} )       )
+            tester.Test("Replace {} with tuple".format(k),         False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, ("hi", 4) )         )
+            tester.Test("Replace {} with list int".format(k),      False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [int(5)] )          )
+            tester.Test("Replace {} with list float".format(k),    False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [float(5)] )        )
+            tester.Test("Replace {} with list dict".format(k),     False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [{"hi": 4}] )       )
+            tester.Test("Replace {} with list set".format(k),      False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [{"hi", "4"}] )     )
+            tester.Test("Replace {} with list tuple".format(k),    False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [("hi", 4)] )       )
+            tester.Test("Replace {} with list list".format(k),     False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [[5, 4], [1, 0]] )  )
 
 
         # test replacing with a list of strings
         # (except those that are lists of strings)
         for k in strkeys:
-            nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Replace {} with list str".format(k),  False, ReplaceKey(minfo, k, ["Hello", "Hi"] )       )
-            ntest += 1
+            tester.Test("Replace {} with list str".format(k),  False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, ["Hello", "Hi"] )       )
 
 
-        nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Empty authors".format(k),  True, ReplaceKey(minfo, "authors", []))
-        ntest += 1
-        nfailed = nfailed + bp.testing.TestModuleInfo_Construct(ntest, "Empty refs".format(k),     True, ReplaceKey(minfo, "refs", []))
-        ntest += 1
+        tester.Test("Empty authors".format(k),  True, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, "authors", []))
+        tester.Test("Empty refs".format(k),     True, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, "refs", []))
 
 
-        bp.testing.PrintResults(nfailed) 
+        tester.PrintResults()
 
 
     except Exception as e:

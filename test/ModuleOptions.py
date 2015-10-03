@@ -33,6 +33,10 @@ def IsValid(t, d):
 def Run():
     try:
 
+        tester = bp.testing.Tester("Testing construction of Modules and Options")
+        tester.PrintHeader()
+
+
         # Load the python modules
         #             supermodule       module name       key
         bp.LoadModule("test_options",   "test_int",     "TEST_INT")
@@ -93,30 +97,25 @@ def Run():
             bp.output.Output("Got module key %|1$-20| %|2$-20| v%3%\n", m[0].Key(), m[0].Name(), m[0].Version())
 
 
-        bp.testing.Output("\n\n")
-        bp.testing.PrintHeader("Testing construction of OptionMap objects")
         nfailed = 0
         ntest = 1
 
         for m in allmod:
             # None should be valid - I haven't specified required options
             desc = "Testing validity of {}".format(m[0].Key())
-            nfailed += bp.testing.PyTestBoolFunc(ntest, desc, False, m[0].Options().IsValid)
-            ntest += 1
+            tester.Test(desc, False, bp.testing.PyTestBoolFunc, m[0].Options().IsValid)
 
         for m in allmod:
             for d in testelements:
                 if d[0] == m[1]:
                     desc = "Setting required option for {}".format(m[0].Key())
                     opt = d[0] + "_req"
-                    nfailed += bp.testing.PyTestFunc(ntest, desc, True, m[0].Options().Change, opt, d[1]) 
-                    ntest += 1
+                    tester.Test(desc, True, bp.testing.PyTestFunc, m[0].Options().Change, opt, d[1]) 
 
         for m in allmod:
             # Should be valid now
             desc = "Retesting validity of {}".format(m[0].Key())
-            nfailed += bp.testing.PyTestBoolFunc(ntest, desc, True, m[0].Options().IsValid)
-            ntest += 1
+            tester.Test(desc, True, bp.testing.PyTestBoolFunc, m[0].Options().IsValid)
 
 
         for m in allmod:
@@ -125,15 +124,10 @@ def Run():
                     opt = m[1] + o
                     expected = IsValid(m[1], d[0])
                     desc = "Setting {} option for {} -> {}".format(opt, m[0].Key(), d[0])
-                    nfailed += bp.testing.PyTestFunc(ntest, desc, expected, m[0].Options().Change, opt, d[1]) 
-                    ntest += 1
+                    tester.Test(desc, expected, bp.testing.PyTestFunc, m[0].Options().Change, opt, d[1])
 
-        bp.testing.PrintResults(nfailed)
+        tester.PrintResults()
 
-
-        for m in allmod:
-            m[0].Options().Print()
-        
 
 
     except Exception as e:
