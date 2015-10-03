@@ -420,7 +420,7 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
         }
         catch(const PythonConvertException & ex)
         {
-            throw OptionException(ex, key);
+            throw OptionException(ex, key, "desc", "Default could not be converted");
         }
 
     }
