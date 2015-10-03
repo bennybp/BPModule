@@ -13,10 +13,9 @@
 
 
 using bpmodule::python_helper::ConvertToCpp;
-using bpmodule::python_helper::TestConvertToCpp;
-
+using bpmodule::python_helper::DeterminePyType;
+using bpmodule::python_helper::GetPyClass;
 using bpmodule::exception::OptionException;
-
 using bpmodule::output::Output;
 
 
@@ -132,12 +131,15 @@ OptionMap::OptionMap(const boost::python::dict & opt)
 
     for(int i = 0; i < keylen; i++)
     {
-        if(!TestConvertToCpp<std::string>(keys[i]))
+        if(DeterminePyType(keys[i]) != python_helper::PythonType::String)
             throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
-                                  "element", std::to_string(i));
+                                  "element", std::to_string(i),
+                                  "pytype", GetPyClass(keys[i]));
 
         std::string key = LowerString_(ConvertToCpp<std::string>(keys[i]));
 
+        // should this ever happen? Keys should be unique in a
+        //  python dict
         if(opmap_.count(key))
             throw OptionException("Duplicate key on construction", key,
                                    "element", std::to_string(i));
@@ -173,8 +175,10 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
 
     for(int i = 0; i < keylen; i++)
     {
-        if(!TestConvertToCpp<std::string>(keys[i]))
-            throw OptionException("Cannot convert python dictionary index to string", "(unknown)", "element", std::to_string(i));
+        if(DeterminePyType(keys[i]) != python_helper::PythonType::String)
+            throw OptionException("Cannot convert python dictionary index to string", "(unknown)", 
+                                  "element", std::to_string(i),
+                                  "pytype", GetPyClass(keys[i]));
 
         std::string key = LowerString_(ConvertToCpp<std::string>(keys[i]));
 

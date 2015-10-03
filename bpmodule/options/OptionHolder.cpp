@@ -18,12 +18,11 @@ using bpmodule::python_helper::PythonType;
 using bpmodule::python_helper::StrToPythonType;
 using bpmodule::python_helper::GetPyClass;
 using bpmodule::python_helper::DeterminePyType;
-using bpmodule::python_helper::TestConvertToPy;
 using bpmodule::python_helper::ConvertToPy;
-using bpmodule::python_helper::TestConvertToCpp;
 using bpmodule::python_helper::ConvertToCpp;
 
 using bpmodule::exception::OptionException;
+using bpmodule::exception::PythonConvertException;
 
 
 
@@ -216,12 +215,8 @@ void OptionHolder<T>::ValidateOrThrow_(const T & value, const std::string & desc
 template<typename T>
 boost::python::object OptionHolder<T>::GetPy(void) const
 {
-    if(!TestConvertToPy(Get()))
-        throw OptionException("Cannot convert option value to python object", Key(),
-                                         "valuetype", Type());
-
     try {
-        return ConvertToPy(Get()); // may throw in extreme cases, even if test succeeds
+        return ConvertToPy(Get());
     }
     catch(exception::GeneralException & ex)
     {
@@ -233,15 +228,10 @@ boost::python::object OptionHolder<T>::GetPy(void) const
 template<typename T>
 void OptionHolder<T>::ChangePy(const boost::python::object & obj)
 {
-    if(!TestConvertToCpp<T>(obj))
-        throw OptionException("Cannot convert python object to option value", Key(),
-                                         "valuetype", Type(),
-                                         "pythontype", GetPyClass(obj));
-
     T val;
 
     try {
-        val = ConvertToCpp<T>(obj);  // may throw in extreme cases, even if test succeeds
+        val = ConvertToCpp<T>(obj);
     }
     catch(exception::GeneralException & ex)
     {
@@ -286,7 +276,7 @@ static void PrintOption_(const OptionHolder<T> & oph)
 {
     std::string optline = FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
                                     oph.Key(),                                                         // name/key
-                                    PythonTypeToStr(oph.PyType()),                      // type
+                                    PythonTypeToStr(oph.PyType()),                                     // type
                                     (oph.HasValue() ? OptToString_(oph.Get()) : "(none)"),             // value
                                     (oph.HasDefault() ? OptToString_(oph.GetDefault()) : "(none)"),    // default
                                     (oph.IsRequired() ? "True" : "False"),                             // required
@@ -344,7 +334,7 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
     std::vector<std::string> optlines;
     optlines.push_back(FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
                                  oph.Key(),                                                         // name/key
-                                 PythonTypeToStr(oph.PyType()),                      // type
+                                 PythonTypeToStr(oph.PyType()),                                     // type
                                  valstr,                                                            // value
                                  defstr,                                                            // default
                                  (oph.IsRequired() ? "True" : "False"),                             // required
@@ -425,14 +415,14 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
 
     if(ptype_default != PythonType::None)
     {
-        if(!TestConvertToCpp<T>(tup[1]))
-            throw OptionException("Default for option cannot be converted from python",
-                                  key,
-                                  "fromtype", GetPyClass(tup[1]),
-                                  "totype", typeid(T).name());
+        try {
+            def = new T(ConvertToCpp<T>(tup[1]));
+        }
+        catch(const PythonConvertException & ex)
+        {
+            throw OptionException(ex, key);
+        }
 
-        // shouldn't throw given the above
-        def = new T(ConvertToCpp<T>(tup[1]));
     }
 
     // Already checked
@@ -442,12 +432,10 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
         throw OptionException("\"Type\" element of tuple is not a bool", key, "type", GetPyClass(tup[0]));
     */
 
-    PythonType ptype_required = DeterminePyType(tup[2]);
-    if(ptype_required != PythonType::Bool)
+    if(DeterminePyType(tup[2]) != PythonType::Bool)
         throw OptionException("\"Required\" element of tuple is not a bool", key, "type", GetPyClass(tup[2]));
 
-    PythonType ptype_help = DeterminePyType(tup[4]);
-    if(ptype_help != PythonType::String)
+    if(DeterminePyType(tup[4]) != PythonType::String)
         throw OptionException("\"Help\" element of tuple is not a string", key, "type", GetPyClass(tup[4]));
 
 
@@ -486,7 +474,7 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
         throw OptionException("Python options tuple does not have 5 elements", key, "length", std::to_string(length));
 
 
-    if(!TestConvertToCpp<std::string>(tup[0]))
+    if(DeterminePyType(tup[0]) != PythonType::String)
         throw OptionException("\"Type\" element of tuple is not a string", key, "type", GetPyClass(tup[0]));
 
 

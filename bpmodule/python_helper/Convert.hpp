@@ -28,20 +28,6 @@ namespace python_helper {
 template<typename T>
 struct ToCppConverter
 {
-    /*! \brief Checks if a python object is convertible to type T
-     *
-     * \note Does not check for arithmetic underflows, overflows, etc
-     *
-     * \param [in] obj Object to check
-     */
-    static bool Check(const boost::python::object & obj)
-    {
-        boost::python::extract<T> conv(obj);
-        return conv.check() && TypeCheck(obj);
-    }
-
-
-
     /*! \brief Converts a python object to type \p T
      *
      * \throw bpmodule::exception::PythonConvertException
@@ -51,6 +37,11 @@ struct ToCppConverter
      */
     static T Convert(const boost::python::object & obj)
     {
+        // check for some disallowed conversions
+        if(!TypeCheck(obj))
+            throw exception::PythonConvertException("Cannot convert from python to C++: Incompatible types",
+                                                    GetPyClass(obj), typeid(T).name());
+
         /*
          * The extract below may throw a few different errors. In particular,
          * it may throw objects derived from std::bad_cast
@@ -58,8 +49,7 @@ struct ToCppConverter
          * indicate overflows and underflows.
          */
         try {
-            boost::python::extract<T> conv(obj);
-            return conv();
+            return boost::python::extract<T>(obj);
         }
         catch(const std::exception & ex)
         {
@@ -114,47 +104,9 @@ struct ToCppConverter
  *
  * \tparam T Type of the vector element to convert to
  */
-template<>
 template<typename T>
 struct ToCppConverter<std::vector<T>>
 {
-
-    /*! \brief Checks if a python object is convertible to type std::vector<T>
-     *
-     * Checks that the object is a boost::python::list and that
-     * all elements are convertible to type T
-     *
-     * \note Does not check for arithmetic underflows, overflows, etc
-     *
-     * \param [in] obj Object to check
-     */
-    static bool Check(const boost::python::object & obj)
-    {
-        // Check if all elements are convertible
-        boost::python::extract<boost::python::list> lconv(obj);
-        if(!lconv.check())
-            return false;
-
-        boost::python::list lst = lconv();
-
-        // ok if there are no elements
-        int length = boost::python::extract<int>(lst.attr("__len__")());
-        if(length == 0)
-            return true;
-
-
-        for (int i = 0; i < length; i++)
-        {
-            if(!ToCppConverter<T>::Check(lst[i]))
-                return false;
-        }
-
-        // if you are here, everything is ok
-        return true;
-    }
-
-
-
     /*! \brief Converts a python object to type std::vector<T>
      *
      * \throw bpmodule::exception::PythonConvertException
@@ -166,7 +118,13 @@ struct ToCppConverter<std::vector<T>>
     {
         std::vector<T> r;
 
-        boost::python::list lst = boost::python::extract<boost::python::list>(obj);
+        boost::python::extract<boost::python::list> lconv(obj);
+        if(!lconv.check())
+            throw exception::PythonConvertException("Cannot convert from python to C++ vector: Object is not a list",
+                                                    GetPyClass(obj), typeid(std::vector<T>).name());
+
+        boost::python::list lst = lconv();
+
         int length = boost::python::extract<int>(lst.attr("__len__")());
         if(length == 0)
             return r;
@@ -199,8 +157,6 @@ struct ToCppConverter<std::vector<T>>
 
 /*! \brief Convert a boost::python::object to a C++ type
  *
- * This function will check first, and throw if the check fails.
- *
  * \throw exception::PythonConvertException if the
  *        data could not be converted
  *
@@ -212,36 +168,9 @@ struct ToCppConverter<std::vector<T>>
 template<typename T>
 T ConvertToCpp(const boost::python::object & obj)
 {
-    if(!ToCppConverter<T>::Check(obj))
-    {
-        throw exception::PythonConvertException("Cannot convert from python to C++: Check failed",
-                                                GetPyClass(obj), typeid(T).name());
-    }
-
     // will throw if there is an issue
     return ToCppConverter<T>::Convert(obj);
 }
-
-
-
-
-/*! \brief Check if a conversion of a boost::python::object to a C++ type is valid
- *
- * \note Does not check for arithmetic underflows, overflows, etc
- *
- *
- * \tparam T The C++ type to convert to
- *
- * \param [in] obj The object to test
- * \return True if the data can be convert to type \p T
- */
-template<typename T>
-bool TestConvertToCpp(const boost::python::object & obj)
-{
-    return ToCppConverter<T>::Check(obj);
-}
-
-
 
 
 
@@ -269,34 +198,6 @@ boost::python::object ConvertToPy(const T & obj)
                                                 typeid(obj).name(), "boost::python::object",
                                                 "pythonex", exstr);
     }
-}
-
-
-
-
-
-
-/*! \brief Test conversion of a C++ object to a boost::python::object
- *
- * \tparam T The C++ type to convert from
- *
- * \todo better way to do this?
- *
- * \param [in] obj The object to test
- * \return True if the data can be converted to a boost::python::object
- */
-template<typename T>
-bool TestConvertToPy(const T & obj)
-{
-    try {
-        boost::python::object ret = boost::python::object(obj);
-    }
-    catch(...) //! \todo limit this?
-    {
-        return false;
-    }
-
-    return true;
 }
 
 
