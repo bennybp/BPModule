@@ -12,6 +12,7 @@ namespace python_helper {
 namespace detail {
 
 
+//! \todo what is throwing exceptions?
 std::string GetPyExceptionString(void)
 {
     try {

@@ -47,36 +47,36 @@ def Run():
 
 
                       # function                                            name                   acceptable python types
-        testfuncs =    [ (bp.testing.TestConvertToCpp_sshort,               "sshort",              ["int"]),
-                         (bp.testing.TestConvertToCpp_ushort,               "ushort",              ["int"]),
-                         (bp.testing.TestConvertToCpp_sint,                 "sint",                ["int"]),
-                         (bp.testing.TestConvertToCpp_uint,                 "uint",                ["int"]),
-                         (bp.testing.TestConvertToCpp_slong,                "slong",               ["int"]),
-                         (bp.testing.TestConvertToCpp_ulong,                "ulong",               ["int"]),
-                         (bp.testing.TestConvertToCpp_slonglong,            "slonglong",           ["int"]),
-                         (bp.testing.TestConvertToCpp_ulonglong,            "ulonglong",           ["int"]),
+        testfuncs =    [ (bp.testing.TestPyCppPy_sshort,               "sshort",              ["int"]),
+                         (bp.testing.TestPyCppPy_ushort,               "ushort",              ["int"]),
+                         (bp.testing.TestPyCppPy_sint,                 "sint",                ["int"]),
+                         (bp.testing.TestPyCppPy_uint,                 "uint",                ["int"]),
+                         (bp.testing.TestPyCppPy_slong,                "slong",               ["int"]),
+                         (bp.testing.TestPyCppPy_ulong,                "ulong",               ["int"]),
+                         (bp.testing.TestPyCppPy_slonglong,            "slonglong",           ["int"]),
+                         (bp.testing.TestPyCppPy_ulonglong,            "ulonglong",           ["int"]),
 
-                         (bp.testing.TestConvertToCpp_float,                "float",               ["float"]),
-                         (bp.testing.TestConvertToCpp_double,               "double",              ["float"]),
-                         (bp.testing.TestConvertToCpp_longdouble,           "longdouble",          ["float"]),
+                         (bp.testing.TestPyCppPy_float,                "float",               ["float"]),
+                         (bp.testing.TestPyCppPy_double,               "double",              ["float"]),
+                         (bp.testing.TestPyCppPy_longdouble,           "longdouble",          ["float"]),
 
-                         (bp.testing.TestConvertToCpp_string,               "string",              ["string"]),
+                         (bp.testing.TestPyCppPy_string,               "string",              ["string"]),
 
 
-                         (bp.testing.TestConvertToCpp_vector_sshort,        "vector<sshort>",      ["list<int>", "list<empty>"]),
-                         (bp.testing.TestConvertToCpp_vector_ushort,        "vector<ushort>",      ["list<int>", "list<empty>"]),
-                         (bp.testing.TestConvertToCpp_vector_sint,          "vector<sint>",        ["list<int>", "list<empty>"]),
-                         (bp.testing.TestConvertToCpp_vector_uint,          "vector<uint>",        ["list<int>", "list<empty>"]),
-                         (bp.testing.TestConvertToCpp_vector_slong,         "vector<slong>",       ["list<int>", "list<empty>"]),
-                         (bp.testing.TestConvertToCpp_vector_ulong,         "vector<ulong>",       ["list<int>", "list<empty>"]),
-                         (bp.testing.TestConvertToCpp_vector_slonglong,     "vector<slonglong>",   ["list<int>", "list<empty>"]),
-                         (bp.testing.TestConvertToCpp_vector_ulonglong,     "vector<ulonglong>",   ["list<int>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_sshort,        "vector<sshort>",      ["list<int>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_ushort,        "vector<ushort>",      ["list<int>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_sint,          "vector<sint>",        ["list<int>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_uint,          "vector<uint>",        ["list<int>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_slong,         "vector<slong>",       ["list<int>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_ulong,         "vector<ulong>",       ["list<int>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_slonglong,     "vector<slonglong>",   ["list<int>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_ulonglong,     "vector<ulonglong>",   ["list<int>", "list<empty>"]),
 
-                         (bp.testing.TestConvertToCpp_vector_float,         "vector<float>",       ["list<float>", "list<empty>"]),
-                         (bp.testing.TestConvertToCpp_vector_double,        "vector<double>",      ["list<float>", "list<empty>"]),
-                         (bp.testing.TestConvertToCpp_vector_longdouble,    "vector<long double>", ["list<float>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_float,         "vector<float>",       ["list<float>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_double,        "vector<double>",      ["list<float>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_longdouble,    "vector<long double>", ["list<float>", "list<empty>"]),
 
-                         (bp.testing.TestConvertToCpp_vector_string,        "vector<string>",      ["list<string>", "list<empty>"])
+                         (bp.testing.TestPyCppPy_vector_string,        "vector<string>",      ["list<string>", "list<empty>"])
                        ]  
 
 

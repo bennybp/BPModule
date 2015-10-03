@@ -21,12 +21,12 @@ namespace python_helper {
 
 
 
-/*! \brief Family of structs to convert python types to C++ types
+/*! \brief Family of structs to convert python types to and from C++ types
  *
- * \tparam T C++ type to convert to
+ * \tparam T C++ type to convert
  */
 template<typename T>
-struct ToCppConverter
+struct PyConverter
 {
     /*! \brief Converts a python object to type \p T
      *
@@ -35,7 +35,7 @@ struct ToCppConverter
      *
      * \param [in] obj Object to convert
      */
-    static T Convert(const boost::python::object & obj)
+    static T ConvertToCpp(const boost::python::object & obj)
     {
         // check for some disallowed conversions
         if(!TypeCheck(obj))
@@ -65,6 +65,31 @@ struct ToCppConverter
                                                     "pyex", exstr);
         }
     }
+
+
+    /*! \brief Convert a C++ object to a boost::python::object
+     *
+     * \throw exception::PythonConvertException if the
+     *        data could not be converted
+     *
+     * \param [in] obj The object to convert
+     * \return Converted data as a boost::python::object
+     */
+    static boost::python::object ConvertToPy(const T & obj)
+    {
+        try {
+           return boost::python::object(obj);
+        }
+        catch(...)
+        {
+            std::string exstr = detail::GetPyExceptionString();
+            throw exception::PythonConvertException("Cannot convert from C++ to python: Conversion failed",
+                                                    typeid(obj).name(), "boost::python::object",
+                                                    "pythonex", exstr);
+        }
+    }
+
+
 
 
     /*! \brief Prevents some implicit conversions
@@ -102,10 +127,10 @@ struct ToCppConverter
 
 /*! \brief Converts a python list to a std::vector
  *
- * \tparam T Type of the vector element to convert to
+ * \tparam T Type of the vector element to convert
  */
 template<typename T>
-struct ToCppConverter<std::vector<T>>
+struct PyConverter<std::vector<T>>
 {
     /*! \brief Converts a python object to type std::vector<T>
      *
@@ -114,7 +139,7 @@ struct ToCppConverter<std::vector<T>>
      *
      * \param [in] obj Object to convert
      */
-    static std::vector<T> Convert(const boost::python::object & obj)
+    static std::vector<T> ConvertToCpp(const boost::python::object & obj)
     {
         std::vector<T> r;
 
@@ -135,17 +160,47 @@ struct ToCppConverter<std::vector<T>>
         {
             // catch exceptions and add the element index
             try {
-                r.push_back(ToCppConverter<T>::Convert(lst[i]));
+                r.push_back(PyConverter<T>::ConvertToCpp(lst[i]));
             }
             catch(exception::PythonConvertException & ex)
             {
-                ex.AppendInfo("element", std::to_string(i));
+                ex.AppendInfo("vecto", typeid(std::vector<T>).name(),
+                              "element", std::to_string(i));
                 throw;
             }
         }
 
         return r;
 
+    }
+
+
+    /*! \brief Convert a C++ vector to a boost::python::object (list)
+     *
+     * \throw exception::PythonConvertException if the
+     *        data could not be converted
+     *
+     * \param [in] v The vector to convert
+     * \return Converted data as a boost::python::list
+     */
+    static boost::python::object ConvertToPy(const std::vector<T> & v)
+    {
+        boost::python::list result;
+
+        for(size_t i = 0; i < v.size(); ++i)
+        {
+            try {
+                result.append(PyConverter<T>::ConvertToPy(v[i]));
+            }
+            catch(exception::PythonConvertException & ex)
+            {
+                ex.AppendInfo("vecfrom", typeid(std::vector<T>).name(),
+                              "element", std::to_string(i));
+                throw;
+            }
+        }
+
+        return boost::python::object(result);
     }
 };
 
@@ -169,7 +224,7 @@ template<typename T>
 T ConvertToCpp(const boost::python::object & obj)
 {
     // will throw if there is an issue
-    return ToCppConverter<T>::Convert(obj);
+    return PyConverter<T>::ConvertToCpp(obj);
 }
 
 
@@ -188,51 +243,10 @@ T ConvertToCpp(const boost::python::object & obj)
 template<typename T>
 boost::python::object ConvertToPy(const T & obj)
 {
-    try {
-       return boost::python::object(obj);
-    }
-    catch(...)
-    {
-        std::string exstr = detail::GetPyExceptionString();
-        throw exception::PythonConvertException("Cannot convert from C++ to python: Conversion failed",
-                                                typeid(obj).name(), "boost::python::object",
-                                                "pythonex", exstr);
-    }
+    // will throw if there is an issue
+    return PyConverter<T>::ConvertToPy(obj);
 }
 
-
-
-
-
-/*! \brief Convert a C++ vector to a boost::python::list
- *
- * \throw exception::PythonConvertException if the
- *        data could not be converted
- *
- * \tparam T The C++ vector element type to convert from
- *
- * \param [in] v The vector to convert
- * \return Converted data as a boost::python::list
- */
-template<typename T>
-boost::python::list ConvertToPy(const std::vector<T> & v)
-{
-    boost::python::list result;
-
-    for(size_t i = 0; i < v.size(); ++i)
-    {
-        try {
-            result.append(ConvertToPy(v[i]));
-        }
-        catch(exception::PythonConvertException & ex)
-        {
-            ex.AppendInfo("element", std::to_string(i));
-            throw;
-        }
-    }
-
-    return result;
-}
 
 
 
