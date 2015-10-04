@@ -8,6 +8,7 @@
 #include <boost/python.hpp>
 
 #include "bpmodule/python_helper/Types.hpp"
+#include "bpmodule/python_helper/Convert.hpp"
 
 
 namespace bpmodule {
@@ -129,9 +130,23 @@ bool IsCallable(const boost::python::object & obj)
     return PyCallable_Check(obj.ptr());
 }
 
+bool IsCallable(const boost::python::object & obj, int narg)
+{
+    if(!IsCallable(obj))
+        return false;
+
+    int n = ConvertToCpp<int>(obj.attr("__code__").attr("co_argcount"));
+    return (narg == n);
+}
+
 bool HasCallableAttr(const boost::python::object & obj, const std::string & attr)
 {
     return HasAttr(obj, attr) && IsCallable(obj.attr(attr.c_str()));
+}
+
+bool HasCallableAttr(const boost::python::object & obj, const std::string & attr, int narg)
+{
+    return HasAttr(obj, attr) && IsCallable(obj.attr(attr.c_str()), narg);
 }
 
 

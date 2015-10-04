@@ -63,13 +63,26 @@ std::string GetPyClass(const boost::python::object & obj);
  */
 bool HasAttr(const boost::python::object & obj, const std::string & attr);
 
+
 /*! \brief Check if a python object is callable
  */ 
 bool IsCallable(const boost::python::object & obj);
 
+
+/*! \brief Check if a python object is callable taking the given number of arguments
+ */ 
+bool IsCallable(const boost::python::object & obj, int narg);
+
+
 /*! \brief Check if a python object has a given callable attribute
  */
 bool HasCallableAttr(const boost::python::object & obj, const std::string & attr);
+
+
+/*! \brief Check if a python object has a given callable attribute taking the given number of arguments
+ */
+bool HasCallableAttr(const boost::python::object & obj, const std::string & attr, int narg);
+
 
 
 } // close namespace python_helper

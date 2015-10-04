@@ -459,11 +459,13 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
     if(DeterminePyType(tup[3]) != PythonType::None)
     {
         // check for methods
-        if(!HasCallableAttr(tup[3], "Validate")) 
-            throw OptionException("Validator does not have a callable Validate() method", key,
+        // Don't forget that the method is part of a class
+        // so 1 argument is "self"
+        if(!HasCallableAttr(tup[3], "Validate", 2)) 
+            throw OptionException("Validator does not have a callable Validate() method taking one argument", key,
                                   "type", GetPyClass(tup[3]));
-        if(!HasCallableAttr(tup[3], "Desc")) 
-            throw OptionException("Validator does not have a callable Desc() method", key,
+        if(!HasCallableAttr(tup[3], "Desc", 1)) 
+            throw OptionException("Validator does not have a callable Desc() method taking zero arguments", key,
                                   "type", GetPyClass(tup[3]));
 
 

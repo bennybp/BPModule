@@ -10,8 +10,8 @@ sys.setdlopenflags(os.RTLD_LAZY | os.RTLD_GLOBAL)
 ##########################################
 # Load all the core modules
 ##########################################
-from . import python_helper
 from . import exception
+from . import python_helper
 from . import output
 from . import parallel
 from . import math

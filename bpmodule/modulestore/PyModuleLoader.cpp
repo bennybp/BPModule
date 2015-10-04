@@ -54,8 +54,9 @@ void PyModuleLoader::LoadPyModule(const std::string & key,
     ModuleInfo mi(minfo);
 
     // check if callable
-    if(!python_helper::IsCallable(func))
-        throw ModuleLoadException("Cannot load module: Object not callable",
+    // 4 arguments - name, id, mstore, minfo
+    if(!python_helper::IsCallable(func, 4))
+        throw ModuleLoadException("Cannot load module: Object not callable with four arguments",
                                    mi.path, key, mi.name);
 
     ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::GeneratorWrapper_, this,

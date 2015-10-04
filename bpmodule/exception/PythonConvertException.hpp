@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief An exception for options handling
+ * \brief An exception for python conversion errors
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
@@ -15,10 +15,6 @@ namespace exception {
 
 
 /*! \brief An exception thrown when there is a problem with converting to/from python
- *
- * \note This should rarely be propagated to the user. Generally, conversions should be
- *       tested first, and then run. If that last conversion fails, this is thrown, so
- *       it should be treated as sort of a developer error.
  */
 class PythonConvertException : public GeneralException
 {

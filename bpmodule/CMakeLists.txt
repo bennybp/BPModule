@@ -31,6 +31,7 @@ set(BPMODULE_EXCEPTION_HEADERS
             exception/GeneralException.hpp
             exception/MathException.hpp
             exception/PythonConvertException.hpp
+            exception/PythonCallException.hpp
             exception/OptionException.hpp
             exception/ModuleLoadException.hpp
             exception/ModuleCreateException.hpp
