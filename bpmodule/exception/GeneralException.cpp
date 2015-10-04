@@ -47,7 +47,6 @@ const char * GeneralException::what(void) const noexcept
 
 std::string GeneralException::ExceptionString(void) const
 {
-    //! \todo strip inner newlines and indent?
     ExceptionInfo exinfo = GetInfo();
     std::stringstream ss;
     output::Output(ss, "\n");
@@ -55,8 +54,19 @@ std::string GeneralException::ExceptionString(void) const
     output::Output(ss, "Exception thrown!\n");
     output::Output(ss, "what() = %1%\n", what());
     for(auto & it : exinfo)
+    {
         if(it.second.size())
-            output::Output(ss, "%|24| : %|-|\n", it.first, it.second);
+        {
+            std::stringstream sstr(it.second);
+            std::string str;
+            std::getline(sstr, str);
+
+            output::Output(ss, "%|24| : %|-|\n", it.first, str);
+
+            while(std::getline(sstr, str).good())
+                output::Output(ss, "%|24|       %|-|\n", "", str);
+        }
+    }
     return ss.str();
 }
 
