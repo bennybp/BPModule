@@ -20,6 +20,7 @@ using bpmodule::python_helper::GetPyClass;
 using bpmodule::python_helper::DeterminePyType;
 using bpmodule::python_helper::ConvertToPy;
 using bpmodule::python_helper::ConvertToCpp;
+using bpmodule::python_helper::HasCallableAttr;
 
 using bpmodule::exception::OptionException;
 using bpmodule::exception::PythonConvertException;
@@ -400,7 +401,7 @@ static bool ValidateWrapper(const boost::python::object & val, T arg)
 {
     // should ever really throw...
     boost::python::object obj = ConvertToPy(arg);
-    return boost::python::extract<bool>(val.attr("Validate")(obj));
+    return boost::python::extract<bool>(val(obj));
 }
 
 
@@ -449,21 +450,33 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
     PythonType pytype = StrToPythonType(boost::python::extract<std::string>(tup[0]));
 
 
-    //! \todo Check to make sure validator object is callable
-
     // Check if validator is given. If not, use EmptyValidator
     typename OptionHolder<T>::ValidatorFunc validator = EmptyValidator<T>;
     std::string validatordesc = "(no validator)";
 
     if(DeterminePyType(tup[3]) != PythonType::None)
     {
-        validator = std::bind(ValidateWrapper<T>, tup[3], std::placeholders::_1);
-        boost::python::object pyvalidatordesc = tup[3].attr("Desc")();
+        // check for methods
+        if(!HasCallableAttr(tup[3], "Validate")) 
+            throw OptionException("Validator does not have a callable Validate() method", key,
+                                  "type", GetPyClass(tup[3]));
+        if(!HasCallableAttr(tup[3], "Desc")) 
+            throw OptionException("Validator does not have a callable Desc() method", key,
+                                  "type", GetPyClass(tup[3]));
 
+
+        boost::python::object valfunc = tup[3].attr("Validate");
+        boost::python::object descfunc = tup[3].attr("Desc");
+
+        // bind the validator
+        validator = std::bind(ValidateWrapper<T>, valfunc, std::placeholders::_1);
+
+        // get the description
+        boost::python::object pyvalidatordesc = descfunc();
         if(DeterminePyType(pyvalidatordesc) != PythonType::String)
             throw OptionException("Validator description is not a string", key,
                                   "type", GetPyClass(pyvalidatordesc));
-        
+
         validatordesc = ConvertToCpp<std::string>(pyvalidatordesc);
     }
 

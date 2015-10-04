@@ -59,6 +59,18 @@ PythonType DeterminePyType(const boost::python::object & obj);
 std::string GetPyClass(const boost::python::object & obj);
 
 
+/*! \brief Check if a python object has a given attribute
+ */
+bool HasAttr(const boost::python::object & obj, const std::string & attr);
+
+/*! \brief Check if a python object is callable
+ */ 
+bool IsCallable(const boost::python::object & obj);
+
+/*! \brief Check if a python object has a given callable attribute
+ */
+bool HasCallableAttr(const boost::python::object & obj, const std::string & attr);
+
 
 } // close namespace python_helper
 } // close namespace bpmodule

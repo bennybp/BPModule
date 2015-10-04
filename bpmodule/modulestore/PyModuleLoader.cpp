@@ -7,6 +7,7 @@
 #include "bpmodule/modulestore/PyModuleLoader.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"
+#include "bpmodule/python_helper/Types.hpp"
 
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
@@ -52,7 +53,7 @@ void PyModuleLoader::LoadPyModule(const std::string & key,
     ModuleInfo mi(minfo);
 
     // check if callable
-    if(PyCallable_Check(func.ptr()) == 0)
+    if(!python_helper::IsCallable(func))
         throw ModuleLoadException("Cannot load module: Object not callable",
                                    mi.path, key, mi.name);
 

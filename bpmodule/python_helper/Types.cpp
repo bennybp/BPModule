@@ -119,6 +119,20 @@ PythonType DeterminePyType(const boost::python::object & obj)
 }
 
 
+bool HasAttr(const boost::python::object & obj, const std::string & attr)
+{
+    return PyObject_HasAttrString(obj.ptr(), attr.c_str());
+}
+
+bool IsCallable(const boost::python::object & obj)
+{
+    return PyCallable_Check(obj.ptr());
+}
+
+bool HasCallableAttr(const boost::python::object & obj, const std::string & attr)
+{
+    return HasAttr(obj, attr) && IsCallable(obj.attr(attr.c_str()));
+}
 
 
 } // close namespace python_helper
