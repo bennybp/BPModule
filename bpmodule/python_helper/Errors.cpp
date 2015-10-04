@@ -17,18 +17,25 @@ std::string GetPyExceptionString(void)
 {
     try {
         //! \todo leaking memory?
+        //! \todo Get traceback info?
         if(PyErr_Occurred() != NULL)
         {
-            PyObject *e, *v, *t;
-            PyErr_Fetch(&e, &v, &t);
+            PyObject *type, *value, *traceback;
+            PyErr_Fetch(&type, &value, &traceback);
 
-            boost::python::object e_obj(boost::python::handle<>(boost::python::allow_null(e)));
-            boost::python::object v_obj(boost::python::handle<>(boost::python::allow_null(v)));
-            boost::python::object t_obj(boost::python::handle<>(boost::python::allow_null(t)));
+            /*
+            boost::python::object type_obj(boost::python::handle<>(type));
+            boost::python::object value_obj(boost::python::handle<>(value));
+            boost::python::object traceback_obj(boost::python::handle<>(traceback));
+            */
+            std::string errstr = boost::python::extract<std::string>(value);
 
-            std::string errstr = boost::python::extract<std::string>(e_obj);
-            errstr += " : ";
-            errstr += boost::python::extract<std::string>(v_obj);
+            /*
+            errstr = boost::python::extract<std::string>(type);
+            //errstr += " : ";
+            errstr += boost::python::extract<std::string>(value);
+            */
+
             return errstr;
         }
         else
@@ -36,7 +43,8 @@ std::string GetPyExceptionString(void)
     }
     catch(...)
     {
-        return "(EXCEPTION THROWN IN GETTING EXCEPTION STRING)";
+        throw;
+        //return "(EXCEPTION THROWN IN GETTING EXCEPTION STRING)";
     }
 }
 
