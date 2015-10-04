@@ -34,6 +34,7 @@ class OptionBase
         OptionBase(const std::string & key,
                    bool required,
                    python_helper::PythonType pytype,
+                   const std::string & validatordesc,
                    const std::string & help);
 
         virtual ~OptionBase() noexcept    = default;
@@ -91,8 +92,11 @@ class OptionBase
 
 
         /*! \brief Set the option to its default
+         *
+         * \exnothrow
          */
         virtual void ResetToDefault(void) noexcept = 0;
+
 
 
 
@@ -186,13 +190,24 @@ class OptionBase
 
 
         /*! \brief Get the python type of this option
+         *
+         * \exnothrow
          */
         python_helper::PythonType PyType(void) const noexcept;
 
 
         /*! \brief Get the help string for this option
+         *
+         * \exnothrow
          */
         const std::string & Help(void) const noexcept;
+
+
+        /*! \brief Get the validator description string
+         *
+         * \exnothrow
+         */
+        const std::string & ValidatorDesc(void) const noexcept;
 
 
     private:
@@ -207,6 +222,9 @@ class OptionBase
 
         //! The python type of this option
         const python_helper::PythonType pytype_;
+
+        //! The description string from the validator
+        const std::string validatordesc_;
 
         //! The help string for this option
         const std::string help_;

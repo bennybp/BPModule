@@ -13,4 +13,4 @@ ADD_MODULE(options
            ""
            "")
 
-INSTALL_COREMODULE(options "")
+INSTALL_COREMODULE(options "optionvalidate.py")

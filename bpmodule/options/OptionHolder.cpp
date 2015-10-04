@@ -75,8 +75,9 @@ template<typename T>
 OptionHolder<T>::OptionHolder(const std::string & key, T * def,
                               ValidatorFunc validator, bool required,
                               python_helper::PythonType pytype,
+                              const std::string & validatordesc,
                               const std::string & help)
-    : OptionBase(key, required, pytype, help),
+    : OptionBase(key, required, pytype, validatordesc, help),
       default_(def),
       validator_(validator)
 {
@@ -199,7 +200,9 @@ void OptionHolder<T>::ValidateOrThrow_(const T & value, const std::string & desc
     {
         //! \todo add exception info from validator?
         if(!OptionBase::IsExpert())
-            throw OptionException("Value is not valid for this option", Key());
+            throw OptionException("Invalid value for this option", Key(),
+                                  "desc", desc,
+                                  "validator", ValidatorDesc());
         else
             output::Warning("Value for option %1% \"%2\" is invalid. Ignoring\n", desc, Key());
     }
@@ -448,13 +451,18 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
 
     // Check if validator is given. If not, use EmptyValidator
     typename OptionHolder<T>::ValidatorFunc validator = EmptyValidator<T>;
+    std::string validatordesc = "(no validator)";
 
     if(DeterminePyType(tup[3]) != PythonType::None)
+    {
         validator = std::bind(ValidateWrapper<T>, tup[3], std::placeholders::_1);
+        validatordesc = boost::python::extract<std::string>(tup[3].attr("Desc")());
+    }
 
 
 
-    return OptionBasePtr(new OptionHolder<T>(key, def, validator, req, pytype, help));
+
+    return OptionBasePtr(new OptionHolder<T>(key, def, validator, req, pytype, validatordesc, help));
 }
 
 

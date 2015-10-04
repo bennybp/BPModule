@@ -30,7 +30,6 @@ from . import testing
 ##########################################
 from .utils import *
 from .optioncheck import *
-from .optionvalidate import *
 
 
 ##########################################

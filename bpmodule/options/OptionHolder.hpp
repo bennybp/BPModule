@@ -49,12 +49,14 @@ class OptionHolder : public OptionBase
          * \param [in] validator A validator function for this object
          * \param [in] required True if this option is required
          * \param [in] pytype The python type of this option
+         * \param [in] validatordesc Description string from the validator 
          * \param [in] help A help string for this option
          *
          */
         OptionHolder(const std::string & key, T * def,
                      ValidatorFunc validator, bool required,
                      python_helper::PythonType pytype,
+                     const std::string & validatordesc,
                      const std::string & help);
 
 

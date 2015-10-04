@@ -112,7 +112,6 @@ set(BPMODULE_FILES
             __init__.py
             modinfo.py
             optioncheck.py
-            optionvalidate.py
             utils.py
    )
 install(FILES ${BPMODULE_FILES} DESTINATION modules/bpmodule)
