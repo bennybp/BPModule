@@ -398,7 +398,9 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
 template<typename T>
 static bool ValidateWrapper(const boost::python::object & val, T arg)
 {
-    return boost::python::extract<bool>(val.attr("Validate")(arg));
+    // should ever really throw...
+    boost::python::object obj = python_helper::ConvertToPy(arg);
+    return boost::python::extract<bool>(val.attr("Validate")(obj));
 }
 
 
