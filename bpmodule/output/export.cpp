@@ -22,11 +22,12 @@ namespace export_python {
  *
  * This function takes a boost::python list rather than the parameter pack
  *
+ * \param [in] os Output stream to send the output to
  * \param [in] type The type of output
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap(output::OutputType type, const std::string & fmt, const boost::python::list & args)
+void Output_Wrap(std::ostream & os, output::OutputType type, const std::string & fmt, const boost::python::list & args)
 {
     boost::format bfmt(fmt);
 
@@ -34,9 +35,9 @@ void Output_Wrap(output::OutputType type, const std::string & fmt, const boost::
 
     for(int i = 0; i < len; i++)
     {
-        python_helper::PythonType type = python_helper::DeterminePyType(args[i]);
+        python_helper::PythonType pytype = python_helper::DeterminePyType(args[i]);
 
-        switch(type)
+        switch(pytype)
         {
             case python_helper::PythonType::Int:
             {
@@ -71,7 +72,7 @@ void Output_Wrap(output::OutputType type, const std::string & fmt, const boost::
         }
     }
 
-    output::Output_(output::GetOut(), type, boost::str(bfmt));
+    output::Output_(os, type, boost::str(bfmt));
 }
 
 
@@ -83,7 +84,7 @@ void Output_Wrap(output::OutputType type, const std::string & fmt, const boost::
  */
 void Output_Wrap_Output(const std::string & fmt, const boost::python::list & args)
 {
-    Output_Wrap(OutputType::Output, fmt, args);
+    Output_Wrap(output::GetOut(), OutputType::Output, fmt, args);
 }
 
 
@@ -95,7 +96,7 @@ void Output_Wrap_Output(const std::string & fmt, const boost::python::list & arg
  */
 void Output_Wrap_Success(const std::string & fmt, const boost::python::list & args)
 {
-    Output_Wrap(OutputType::Success, fmt, args);
+    Output_Wrap(output::GetOut(), OutputType::Success, fmt, args);
 }
 
 
@@ -107,7 +108,7 @@ void Output_Wrap_Success(const std::string & fmt, const boost::python::list & ar
  */
 void Output_Wrap_Changed(const std::string & fmt, const boost::python::list & args)
 {
-    Output_Wrap(OutputType::Changed, fmt, args);
+    Output_Wrap(output::GetOut(), OutputType::Changed, fmt, args);
 }
 
 
@@ -119,7 +120,7 @@ void Output_Wrap_Changed(const std::string & fmt, const boost::python::list & ar
  */
 void Output_Wrap_Warning(const std::string & fmt, const boost::python::list & args)
 {
-    Output_Wrap(OutputType::Warning, fmt, args);
+    Output_Wrap(output::GetOut(), OutputType::Warning, fmt, args);
 }
 
 
@@ -131,7 +132,7 @@ void Output_Wrap_Warning(const std::string & fmt, const boost::python::list & ar
  */
 void Output_Wrap_Error(const std::string & fmt, const boost::python::list & args)
 {
-    Output_Wrap(OutputType::Error, fmt, args);
+    Output_Wrap(output::GetOut(), OutputType::Error, fmt, args);
 }
 
 
@@ -143,9 +144,22 @@ void Output_Wrap_Error(const std::string & fmt, const boost::python::list & args
  */
 void Output_Wrap_Debug(const std::string & fmt, const boost::python::list & args)
 {
-    Output_Wrap(OutputType::Debug, fmt, args);
+    Output_Wrap(output::GetOut(), OutputType::Debug, fmt, args);
 }
 
+
+
+/*! \brief Wrap 'FormatStr' for use from python
+ *
+ * \param [in] fmt Format string to use
+ * \param [in] args Arguments to the format string
+ */
+std::string Output_Wrap_FormatStr(const std::string & fmt, const boost::python::list & args)
+{
+    std::stringstream ss;
+    Output_Wrap(ss, OutputType::Output, fmt, args);
+    return ss.str();
+}
 
 
 ////////////////////////////
@@ -169,6 +183,9 @@ BOOST_PYTHON_MODULE(output)
     def("Error", Output_Wrap_Error);
     def("Changed", Output_Wrap_Changed);
     def("Debug", Output_Wrap_Debug);
+
+    // format string
+    def("FormatStr", Output_Wrap_FormatStr);
 }
 
 
