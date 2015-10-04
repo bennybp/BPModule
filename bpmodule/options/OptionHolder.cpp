@@ -399,7 +399,7 @@ template<typename T>
 static bool ValidateWrapper(const boost::python::object & val, T arg)
 {
     // should ever really throw...
-    boost::python::object obj = python_helper::ConvertToPy(arg);
+    boost::python::object obj = ConvertToPy(arg);
     return boost::python::extract<bool>(val.attr("Validate")(obj));
 }
 
@@ -458,7 +458,13 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
     if(DeterminePyType(tup[3]) != PythonType::None)
     {
         validator = std::bind(ValidateWrapper<T>, tup[3], std::placeholders::_1);
-        validatordesc = boost::python::extract<std::string>(tup[3].attr("Desc")());
+        boost::python::object pyvalidatordesc = tup[3].attr("Desc")();
+
+        if(DeterminePyType(pyvalidatordesc) != PythonType::String)
+            throw OptionException("Validator description is not a string", key,
+                                  "type", GetPyClass(pyvalidatordesc));
+        
+        validatordesc = ConvertToCpp<std::string>(pyvalidatordesc);
     }
 
 
