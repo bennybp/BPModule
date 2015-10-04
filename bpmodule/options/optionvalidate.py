@@ -27,10 +27,19 @@ class RangeCheck:
 
 class InList:
     def __init__(self, lst):
-        self.lst = lst
+        self.lst = []
+        for l in lst:
+            if type(l) == str:
+                self.lst.append(l.lower())
+            else:
+                self.lst.append(l)
+        
 
     def Validate(self, value):
-        return (value in self.lst)
+        if type(value) == str:
+            return (value.lower() in self.lst)
+        else:
+            return (value in self.lst)
 
 
     def Desc(self):

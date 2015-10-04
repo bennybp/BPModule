@@ -34,6 +34,8 @@ def Run():
                   ( "float range [0_100)", "float",  bp.options.RangeCheck(0, 100, includemin=True,  includemax=False), [1.0e-20, 5.0, 10.0, 15.0, 99.999, 0.0],        [-1.0, -1e-20, 101.0, 100.0001, 1000.0, -1000.0, 100.0] ),
                   ( "float range (0,100)", "float",  bp.options.RangeCheck(0, 100, includemin=False, includemax=False), [1.0e-20, 5.0, 10.0, 15.0, 99.999],             [-1.0, -1e-20, 101.0, 100.0001, 1000.0, -1000.0, 0.0, 100.0] ),
                   ( "int inlist 1", "int",           bp.options.InList([ -5, 5, 10, 15, 20, 25 ]),  [ -5, 5, 10, 15, 20, 25 ], [-4, 4, 9, 14, 19, 26, 29] ),
+                  ( "float inlist 1", "float",       bp.options.InList([ -5.0, 5.0, 10.0, 15.0, 20.0, 25.0 ]),  [ -5.0, 5.0, 10.0, 15.0, 20.0, 25.0 ], [-4.0, 4.0, 9.0, 14.0, 19.0, 26.0, 29.0] ),
+                  ( "str inlist 1", "str",           bp.options.InList([ "str1", "Str2", "sTr3" ]),  [ "str1", "Str2", "sTr3", "STR1", "STR2", "STR3", "str2", "str3"], ["no", "str4", "str5"] ),
                 ]
 
 
