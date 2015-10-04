@@ -8,6 +8,7 @@
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"
 #include "bpmodule/python_helper/Types.hpp"
+#include "bpmodule/python_helper/Call.hpp"
 
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
@@ -37,7 +38,7 @@ ModuleBase * PyModuleLoader::GeneratorWrapper_(boost::python::object fn,
                                                ModuleStore & mstore,
                                                ModuleInfo & minfo)
 {
-    boost::python::object newobj = fn(name, id, boost::ref(mstore), boost::ref(minfo));
+    boost::python::object newobj = python_helper::CallPyFunc(fn, name, id, boost::ref(mstore), boost::ref(minfo));
     ModuleBase * ptr = boost::python::extract<ModuleBase *>(newobj); // may throw
     BASE::CopyObject(id, newobj); // strong exception guarantee
     return ptr;

@@ -11,6 +11,7 @@
 #include "bpmodule/options/OptionTypes.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python_helper/Call.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/output/FormatStr.hpp"
 
@@ -21,6 +22,7 @@ using bpmodule::python_helper::DeterminePyType;
 using bpmodule::python_helper::ConvertToPy;
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::python_helper::HasCallableAttr;
+using bpmodule::python_helper::CallPyFunc;
 
 using bpmodule::exception::OptionException;
 using bpmodule::exception::PythonConvertException;
@@ -399,9 +401,9 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
 template<typename T>
 static bool ValidateWrapper(const boost::python::object & val, T arg)
 {
-    // should ever really throw...
+    // should never really throw...
     boost::python::object obj = ConvertToPy(arg);
-    return boost::python::extract<bool>(val(obj));
+    return boost::python::extract<bool>(CallPyFunc(val, obj));
 }
 
 
@@ -472,7 +474,7 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
         validator = std::bind(ValidateWrapper<T>, valfunc, std::placeholders::_1);
 
         // get the description
-        boost::python::object pyvalidatordesc = descfunc();
+        boost::python::object pyvalidatordesc = CallPyFunc(descfunc);
         if(DeterminePyType(pyvalidatordesc) != PythonType::String)
             throw OptionException("Validator description is not a string", key,
                                   "type", GetPyClass(pyvalidatordesc));

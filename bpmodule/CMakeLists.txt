@@ -19,6 +19,7 @@ set(BPMODULE_PYTHON_HELPER_HEADERS
             python_helper/Types.hpp
             python_helper/Convert.hpp
             python_helper/Errors.hpp
+            python_helper/Call.hpp
    )
 
 set(BPMODULE_OUTPUT_HEADERS
