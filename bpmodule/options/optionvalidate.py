@@ -36,6 +36,6 @@ class InList:
     def Desc(self):
         s = output.FormatStr("Value of must be one of the following %1% values\n", len(self.lst))
         for v in self.lst:
-            s += output.FormatStr("    %1%", v)
+            s += output.FormatStr("%1%\n", v)
 
         return s

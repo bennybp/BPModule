@@ -47,6 +47,7 @@ const char * GeneralException::what(void) const noexcept
 
 std::string GeneralException::ExceptionString(void) const
 {
+    //! \todo strip inner newlines and indent?
     ExceptionInfo exinfo = GetInfo();
     std::stringstream ss;
     output::Output(ss, "\n");
