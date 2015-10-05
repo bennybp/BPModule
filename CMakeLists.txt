@@ -7,6 +7,7 @@ enable_language(C) # for find_package(LAPACK)
 # Load macros
 #################################
 set(BPMODULE_PATH ${CMAKE_SOURCE_DIR})
+include("cmake/Flags.cmake")
 include("cmake/Common.cmake")
 include("cmake/AddModule.cmake")
 include("cmake/Install.cmake")

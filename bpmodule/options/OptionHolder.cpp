@@ -7,6 +7,7 @@
 
 #include <boost/python.hpp>
 
+#include "bpmodule/pragma.h"
 #include "bpmodule/options/OptionHolder.hpp"
 #include "bpmodule/options/OptionTypes.hpp"
 #include "bpmodule/output/Output.hpp"
@@ -417,14 +418,20 @@ static bool ValidateWrapper(const boost::python::object & val, T arg)
 }
 
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+
+// parameter is ignored on purpose
+PRAGMA_WARNING_PUSH
+PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS
+
 template<typename T>
 static bool EmptyValidator(T arg)
 {
     return true;
 }
-#pragma GCC diagnostic pop
+
+PRAGMA_WARNING_POP
+
+
 
 
 template<typename T>

@@ -20,8 +20,7 @@ macro(ADD_MODULE MODULE_NAME
         list(APPEND ${MODULE_NAME}_CXX_FLAGS "-DBPMODULE_MPI")
       endif()
 
-      list(APPEND ${MODULE_NAME}_CXX_FLAGS "-fPIC")
-      list(APPEND ${MODULE_NAME}_CXX_FLAGS "-std=c++11;-Wextra;-Wshadow;-Wall;-pedantic;-g;-O3")
+      list(APPEND ${MODULE_NAME}_CXX_FLAGS ${BPMODULE_CXX_STRICT_FLAGS})
       string(REPLACE ";" " " ${MODULE_NAME}_CXX_FLAGS "${${MODULE_NAME}_CXX_FLAGS}")
       set_target_properties(${MODULE_NAME} PROPERTIES COMPILE_FLAGS "${${MODULE_NAME}_CXX_FLAGS}")
       message(STATUS "${MODULE_NAME} cxx compile flags: ${${MODULE_NAME}_CXX_FLAGS}")
