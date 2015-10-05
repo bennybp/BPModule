@@ -361,8 +361,6 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
     // start at 1 since we did the first separately
     for(size_t i = 1; i < nrows; i++)
     {
-        std::string valstr, defstr;
-
         if(oph.HasValue())
         {
             auto valuevec = oph.Get();
@@ -418,11 +416,14 @@ static bool ValidateWrapper(const boost::python::object & val, T arg)
 }
 
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 template<typename T>
 static bool EmptyValidator(T arg)
 {
     return true;
 }
+#pragma GCC diagnostic pop
 
 
 template<typename T>

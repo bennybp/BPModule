@@ -15,6 +15,9 @@
 namespace bpmodule {
 namespace parallel {
 
+//ignore the fact that argv is not used
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 void InitParallel(const boost::python::list & argv)
 {
     #ifdef BPMODULE_MPI
@@ -46,6 +49,7 @@ void InitParallel(const boost::python::list & argv)
 
     output::Output("Initialized Process %1% of %2%\n", GetProcID(), GetNProc());
 }
+#pragma GCC diagnostic pop
 
 
 void FinalizeParallel(void)

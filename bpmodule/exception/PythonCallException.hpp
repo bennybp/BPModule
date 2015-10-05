@@ -21,17 +21,17 @@ class PythonCallException : public GeneralException
     public:
         /*! \brief Constructor
          *
-         * \param [in] what Brief description of the error
+         * \param [in] whatstr Brief description of the error
          * \param [in] fromtype  The source type of the conversion
          * \param [in] totype  The destination type of the conversion
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        PythonCallException(std::string what,
+        PythonCallException(std::string whatstr,
                             std::string pyex,
                             Targs... exinfo)
 
-            : GeneralException(what, "pyex", pyex, exinfo...)
+            : GeneralException(whatstr, "pyex", pyex, exinfo...)
         { }
 
 

@@ -23,16 +23,16 @@ class OptionException : public GeneralException
     public:
         /*! \brief Constructor
          *
-         * \param [in] what Brief description of the error
+         * \param [in] whatstr Brief description of the error
          * \param [in] key  Key of the option
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        OptionException(std::string what,
+        OptionException(std::string whatstr,
                         std::string key,
                         Targs... exinfo)
 
-            : GeneralException(what, "optionkey", key, exinfo...)
+            : GeneralException(whatstr, "optionkey", key, exinfo...)
         { }
 
 

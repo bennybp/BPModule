@@ -21,18 +21,18 @@ class PythonConvertException : public GeneralException
     public:
         /*! \brief Constructor
          *
-         * \param [in] what Brief description of the error
+         * \param [in] whatstr Brief description of the error
          * \param [in] fromtype  The source type of the conversion
          * \param [in] totype  The destination type of the conversion
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        PythonConvertException(std::string what,
+        PythonConvertException(std::string whatstr,
                                std::string fromtype,
                                std::string totype,
                                Targs... exinfo)
 
-            : GeneralException(what, "fromtype", fromtype, "totype", totype, exinfo...)
+            : GeneralException(whatstr, "fromtype", fromtype, "totype", totype, exinfo...)
         { }
 
 

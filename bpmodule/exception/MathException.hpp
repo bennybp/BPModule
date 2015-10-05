@@ -23,14 +23,14 @@ class MathException : public GeneralException
     public:
         /*! \brief Constructor
          *
-         * \param [in] what Brief description of the error
+         * \param [in] whatstr Brief description of the error
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        MathException(std::string what,
+        MathException(std::string whatstr,
                         Targs... exinfo)
 
-            : GeneralException(what, exinfo...)
+            : GeneralException(whatstr, exinfo...)
         { }
 
 

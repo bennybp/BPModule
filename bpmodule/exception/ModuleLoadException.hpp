@@ -23,19 +23,19 @@ class ModuleLoadException : public GeneralException
     public:
         /*! \brief Constructor
          *
-         * \param [in] what Brief description of the error
+         * \param [in] whatstr Brief description of the error
          * \param [in] path Path to the module that could't be loaded
          * \param [in] key  Key of the module that couldn't be loaded
          * \param [in] name Name of the module that couldn't be loaded
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        ModuleLoadException(std::string what,
+        ModuleLoadException(std::string whatstr,
                             std::string path,
                             std::string key,
                             std::string name,
                             Targs... exinfo)
-            : GeneralException(what, "path", path, "key", key, "name", name, exinfo...)
+            : GeneralException(whatstr, "path", path, "key", key, "name", name, exinfo...)
         { }
 
 
