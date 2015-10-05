@@ -221,6 +221,11 @@ void OptionHolder<T>::Print(void) const
 template<typename T>
 void OptionHolder<T>::ValidateOrThrow_(const T & value, const std::string & desc) const
 {
+    // validator_ may be empty!
+    // if so, no validator, and just return
+    if(!validator_)
+        return;
+
     if(!validator_(value))
     {
         //! \todo add exception info from validator?
@@ -428,22 +433,6 @@ static bool ValidateWrapper(const boost::python::object & val, T arg)
 
 
 
-// parameter is ignored on purpose
-//! \todo still gives warning on intel
-PRAGMA_WARNING_PUSH
-PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS
-
-template<typename T>
-static bool EmptyValidator(T arg)
-{
-    return true;
-}
-
-PRAGMA_WARNING_POP
-
-
-
-
 template<typename T>
 static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::python::tuple & tup)
 {
@@ -482,8 +471,8 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
     PythonType pytype = StrToPythonType(boost::python::extract<std::string>(tup[0]));
 
 
-    // Check if validator is given. If not, use EmptyValidator
-    typename OptionHolder<T>::ValidatorFunc validator = EmptyValidator<T>;
+    // Check if validator is given. If not, use an empty function object
+    typename OptionHolder<T>::ValidatorFunc validator;
     std::string validatordesc = "(no validator)";
 
     if(DeterminePyType(tup[3]) != PythonType::None)
