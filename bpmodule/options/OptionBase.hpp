@@ -29,6 +29,7 @@ class OptionBase
          * \param [in] key The key of this option
          * \param [in] required True if this is a required option
          * \param [in] pytype The python type of this option
+         * \param [in] validatordesc Description of the validator
          * \param [in] help A help string for this option
          */
         OptionBase(const std::string & key,

@@ -22,8 +22,7 @@ class PythonCallException : public GeneralException
         /*! \brief Constructor
          *
          * \param [in] whatstr Brief description of the error
-         * \param [in] fromtype  The source type of the conversion
-         * \param [in] totype  The destination type of the conversion
+         * \param [in] pyex Exception string from python
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
@@ -40,8 +39,7 @@ class PythonCallException : public GeneralException
          * Can be used to append additional information
          *
          * \param [in] gex Exception to copy
-         * \param [in] fromtype  The source type of the conversion
-         * \param [in] totype  The destination type of the conversion
+         * \param [in] pyex Exception string from python
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
