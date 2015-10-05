@@ -7,18 +7,18 @@ extern "C" {
 
 
 
-#if defined(__GNUC__) || defined(__GNUG__)
+#if defined(__ICC) || defined(__INTEL_COMPILER)
+
+    #define PRAGMA_WARNING_POP                            _Pragma("warning(pop)")
+    #define PRAGMA_WARNING_PUSH                           _Pragma("warning(push)")
+    #define PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS       _Pragma("warning(disable:869)")
+
+#elif defined(__GNUC__) || defined(__GNUG__)
 
     // pragmas for GCC
     #define PRAGMA_WARNING_PUSH                           _Pragma("GCC diagnostic push")
     #define PRAGMA_WARNING_POP                            _Pragma("GCC diagnostic pop")
     #define PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS       _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"")
-
-#elif defined(__ICC) || defined(__INTEL_COMPILER)
-
-    #define PRAGMA_WARNING_POP                            _Pragma("warning(pop)")
-    #define PRAGMA_WARNING_PUSH                           _Pragma("warning(push)")
-    #define PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS       
 
 #endif
 
