@@ -75,7 +75,7 @@ class PropHolder : public PropPlaceholder
         const T & GetRef(void) const noexcept;
 
 
-        virtual constexpr const char * Type(void) const noexcept
+        virtual const char * Type(void) const noexcept
         {
             return typeid(T).name();
         }

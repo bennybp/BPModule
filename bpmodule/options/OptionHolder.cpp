@@ -154,7 +154,7 @@ OptionBase * OptionHolder<T>::Clone(void) const
 
 
 template<typename T>
-constexpr const char * OptionHolder<T>::Type(void) const noexcept
+const char * OptionHolder<T>::Type(void) const noexcept
 {
     return typeid(T).name();
 }
@@ -189,8 +189,17 @@ bool OptionHolder<T>::IsDefault(void) const
     if(!value_ && default_)
         return true;
     else
+    {
+        //! \todo floating point equality? or just check if value_ is there?
+        PRAGMA_WARNING_PUSH
+        PRAGMA_WARNING_IGNORE_FP_EQUALITY
+
         return value_ && default_ && (*value_ == *default_);
+
+        PRAGMA_WARNING_POP
+    }
 }
+
 
 
 template<typename T>
@@ -420,6 +429,7 @@ static bool ValidateWrapper(const boost::python::object & val, T arg)
 
 
 // parameter is ignored on purpose
+//! \todo still gives warning on intel
 PRAGMA_WARNING_PUSH
 PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS
 

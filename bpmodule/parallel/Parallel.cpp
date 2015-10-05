@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-
+#include "bpmodule/pragma.h"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/parallel/Parallel.hpp"
 
@@ -16,8 +16,9 @@ namespace bpmodule {
 namespace parallel {
 
 //ignore the fact that argv is not used
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
+PRAGMA_WARNING_PUSH
+PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS
+
 void InitParallel(const boost::python::list & argv)
 {
     #ifdef BPMODULE_MPI
@@ -49,7 +50,9 @@ void InitParallel(const boost::python::list & argv)
 
     output::Output("Initialized Process %1% of %2%\n", GetProcID(), GetNProc());
 }
-#pragma GCC diagnostic pop
+
+PRAGMA_WARNING_POP
+
 
 
 void FinalizeParallel(void)

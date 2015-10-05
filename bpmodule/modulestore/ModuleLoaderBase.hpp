@@ -33,7 +33,7 @@ class ModuleLoaderBase
         { }
 
 
-        ~ModuleLoaderBase()
+        virtual ~ModuleLoaderBase()
         {
             if(objects_.size())
                 output::Error("ModuleLoaderBase: I still %1% have objects!!!", objects_.size());

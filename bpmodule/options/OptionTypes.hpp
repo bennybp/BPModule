@@ -58,7 +58,6 @@ struct IsValidType
  * The value static member will be true if type T is a valid
  * vector type for an option
  */
-template<>
 template<typename T>
 struct IsValidType<std::vector<T>>
 {
@@ -222,7 +221,6 @@ struct OptionConvert<T, false>
  *
  * For vector types
  */
-template<>
 template<typename T>
 struct OptionConvert<std::vector<T>, false>
 {

@@ -37,7 +37,7 @@ class PropertyMap
 {
     public:
         PropertyMap(void)  = default;
-        ~PropertyMap(void) = default;
+        virtual ~PropertyMap(void) = default;
 
 
         /*! \brief Copies a property map

@@ -120,7 +120,7 @@ class OptionHolder : public OptionBase
 
         virtual OptionBase * Clone(void) const;
 
-        virtual constexpr const char * Type(void) const noexcept;
+        virtual const char * Type(void) const noexcept;
 
         virtual const char * DemangledType(void) const noexcept;
 
