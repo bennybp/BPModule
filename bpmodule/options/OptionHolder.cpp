@@ -24,6 +24,7 @@ using bpmodule::python_helper::DeterminePyType;
 using bpmodule::python_helper::ConvertToPy;
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::python_helper::HasCallableAttr;
+using bpmodule::python_helper::HasAttr;
 using bpmodule::python_helper::CallPyFunc;
 
 using bpmodule::exception::OptionException;
@@ -476,24 +477,27 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
         if(!HasCallableAttr(tup[3], "Validate", 2)) 
             throw OptionException("Validator does not have a callable Validate() method taking one argument", key,
                                   "type", GetPyClass(tup[3]));
-        if(!HasCallableAttr(tup[3], "Desc", 1)) 
-            throw OptionException("Validator does not have a callable Desc() method taking zero arguments", key,
-                                  "type", GetPyClass(tup[3]));
 
 
+        // obtain the validator description string, if available
+        if(HasAttr(tup[3], "descstr"))
+        {
+            boost::python::object descstr = tup[3].attr("descstr");
+
+            // get the description
+            if(DeterminePyType(descstr) != PythonType::String)
+                throw OptionException("Validator description is not a string", key,
+                                      "type", GetPyClass(descstr));
+
+            validatordesc = ConvertToCpp<std::string>(descstr);
+        }
+        else
+            validatordesc = "(no description)";
+
+
+        // Set up the validator
         boost::python::object valfunc = tup[3].attr("Validate");
-        boost::python::object descfunc = tup[3].attr("Desc");
-
-        // bind the validator
         validator = std::bind(ValidateWrapper<T>, valfunc, std::placeholders::_1);
-
-        // get the description
-        boost::python::object pyvalidatordesc = CallPyFunc(descfunc);
-        if(DeterminePyType(pyvalidatordesc) != PythonType::String)
-            throw OptionException("Validator description is not a string", key,
-                                  "type", GetPyClass(pyvalidatordesc));
-
-        validatordesc = ConvertToCpp<std::string>(pyvalidatordesc);
     }
 
 

@@ -7,6 +7,12 @@ class RangeCheck:
         self.includemin = includemin
         self.includemax = includemax
 
+        # Read in from the C++ code as the description of this validator
+        self.descstr = output.FormatStr("Value must be in the range %1%%2%,%3%%4%",
+                                        "[" if self.includemin else "(",
+                                        self.min, self.max,
+                                        "]" if self.includemax else ")")
+
     def Validate(self, value):
         if (value > self.min) and (value < self.max):
             return True
@@ -17,13 +23,6 @@ class RangeCheck:
         else:
             return False
 
-    def Desc(self):
-        return output.FormatStr("Value must be in the range %1%%2%,%3%%4%",
-                                "[" if self.includemin else "(",
-                                self.min, self.max,
-                                "]" if self.includemax else ")")
-
-
 
 class InList:
     def __init__(self, lst):
@@ -33,6 +32,13 @@ class InList:
                 self.lst.append(l.lower())
             else:
                 self.lst.append(l)
+
+
+        # Read in from the C++ code as the description of this validator
+        self.descstr = output.FormatStr("Value of must be one of the following %1% values\n", len(self.lst)) 
+        for v in self.lst:
+            self.descstr += output.FormatStr("%1%\n", v)
+
         
 
     def Validate(self, value):
@@ -41,10 +47,3 @@ class InList:
         else:
             return (value in self.lst)
 
-
-    def Desc(self):
-        s = output.FormatStr("Value of must be one of the following %1% values\n", len(self.lst))
-        for v in self.lst:
-            s += output.FormatStr("%1%\n", v)
-
-        return s
