@@ -20,7 +20,7 @@ extern "C" {
     #define PRAGMA_WARNING_PUSH                           _Pragma("GCC diagnostic push")
     #define PRAGMA_WARNING_POP                            _Pragma("GCC diagnostic pop")
     #define PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS       _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"")
-    #define PRAGMA_WARNING_IGNORE_FP_EQUALITY             
+    #define PRAGMA_WARNING_IGNORE_FP_EQUALITY             _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"") 
 
 #endif
 
