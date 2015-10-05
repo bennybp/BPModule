@@ -122,6 +122,8 @@ class OptionHolder : public OptionBase
 
         virtual constexpr const char * Type(void) const noexcept;
 
+        virtual const char * DemangledType(void) const noexcept;
+
         virtual bool HasValue(void) const noexcept;
 
         virtual bool HasDefault(void) const noexcept;
@@ -145,6 +147,8 @@ class OptionHolder : public OptionBase
         std::unique_ptr<T> value_;
         std::unique_ptr<T> default_;
         ValidatorFunc validator_;
+
+        std::string demangledtype_; //!< The type of the object, but demangled
 
 
         /*! \brief Validate a potential value

@@ -14,6 +14,8 @@
 #include "bpmodule/python_helper/Call.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/output/FormatStr.hpp"
+#include "bpmodule/mangle/Mangle.hpp"
+
 
 using bpmodule::python_helper::PythonType;
 using bpmodule::python_helper::StrToPythonType;
@@ -89,6 +91,8 @@ OptionHolder<T>::OptionHolder(const std::string & key, T * def,
         ValidateOrThrow_(*default_, "initial default");
     if(def != nullptr && required)
         throw OptionException("Default value supplied for required option", Key());
+
+    demangledtype_ = mangle::DemangleCppType<T>();
 }
 
 
@@ -151,6 +155,13 @@ template<typename T>
 constexpr const char * OptionHolder<T>::Type(void) const noexcept
 {
     return typeid(T).name();
+}
+
+
+template<typename T>
+const char * OptionHolder<T>::DemangledType(void) const noexcept
+{
+    return demangledtype_.c_str();
 }
 
 
@@ -226,7 +237,7 @@ boost::python::object OptionHolder<T>::GetPy(void) const
     }
     catch(exception::GeneralException & ex)
     {
-        throw OptionException(ex, Key(), "valuetype", Type());
+        throw OptionException(ex, Key(), "valuetype", DemangledType());
     }
 }
 
@@ -241,7 +252,7 @@ void OptionHolder<T>::ChangePy(const boost::python::object & obj)
     }
     catch(exception::GeneralException & ex)
     {
-        throw OptionException(ex, Key(), "valuetype", Type());
+        throw OptionException(ex, Key(), "valuetype", DemangledType());
     }
 
     // will validate inside Change()

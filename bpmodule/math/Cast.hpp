@@ -21,7 +21,7 @@ Target numeric_cast(Source s)
 {
     static_assert(  ( std::is_integral<Source>::value && std::is_integral<Target>::value) ||
                     ( std::is_floating_point<Source>::value && std::is_floating_point<Target>::value),
-                    "Attempting to perform int <-> floating point conversion using numeric_cast. Consider round_cast");
+                    "Attempting to perform integer <-> floating point conversion using numeric_cast. Consider round_cast");
 
     try {
         // if both are integral types, ok

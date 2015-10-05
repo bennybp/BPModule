@@ -13,6 +13,7 @@
 #include "bpmodule/options/OptionTypes.hpp"
 #include "bpmodule/options/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
+#include "bpmodule/mangle/Mangle.hpp"
 
 
 namespace bpmodule {
@@ -324,8 +325,8 @@ class OptionMap
             const detail::OptionHolder<T> * oh = dynamic_cast<const detail::OptionHolder<T> *>(ptr.get());
             if(oh == nullptr)
                 throw exception::OptionException("Bad cast", key,
-                                                 "fromtype", ptr->Type(),
-                                                 "totype", typeid(T).name());
+                                                 "fromtype", ptr->DemangledType(),
+                                                 "totype", mangle::DemangleCppType<T>());
 
             return oh;
         }

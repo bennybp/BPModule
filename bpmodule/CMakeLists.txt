@@ -1,3 +1,4 @@
+add_subdirectory(mangle)
 add_subdirectory(python_helper)
 add_subdirectory(output)
 add_subdirectory(exception)
@@ -14,6 +15,11 @@ add_subdirectory(testing)
 
 
 # Install headers
+set(BPMODULE_MANGLE_HEADERS
+            mangle/Mangle.hpp
+)
+
+
 set(BPMODULE_PYTHON_HELPER_HEADERS
             python_helper/BoostPython_fwd.hpp
             python_helper/Types.hpp
@@ -96,6 +102,7 @@ set(BPMODULE_TESTING_HEADERS
    )
 
 
+install(FILES ${BPMODULE_MANGLE_HEADERS} DESTINATION include/bpmodule/mangle)
 install(FILES ${BPMODULE_PYTHON_HELPER_HEADERS} DESTINATION include/bpmodule/python_helper)
 install(FILES ${BPMODULE_EXCEPTION_HEADERS} DESTINATION include/bpmodule/exception)
 install(FILES ${BPMODULE_OUTPUT_HEADERS} DESTINATION include/bpmodule/output)

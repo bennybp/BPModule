@@ -15,6 +15,7 @@
 #include "bpmodule/modulestore/ScopedModule.hpp"
 #include "bpmodule/exception/ModuleCreateException.hpp"
 #include "bpmodule/exception/ModuleStoreException.hpp"
+#include "bpmodule/mangle/Mangle.hpp"
 
 
 // forward declarations
@@ -163,8 +164,8 @@ class ModuleStore
             {
                 throw exception::ModuleCreateException("Bad cast for module", se.mi.path,
                                                        key, se.mi.name, 
-                                                       "fromtype", typeid(mbptr).name(),
-                                                       "totype", typeid(T *).name());
+                                                       "fromtype", mangle::DemangleCppType(mbptr),
+                                                       "totype", mangle::DemangleCppType<T *>());
             }
 
 

@@ -66,6 +66,16 @@ class OptionBase
 
 
 
+        /*! \brief Returns a string representing the demangled type of the option stored
+         *
+         * \exnothrow
+         *
+         * \return A string representing the type (obtained via typeid().name(), but demangled)
+         */
+        virtual const char * DemangledType(void) const noexcept = 0;
+
+
+
         /*! \brief Check if this option has a value
          *
          * \exnothrow
@@ -140,6 +150,9 @@ class OptionBase
          * \exnothrow
          */
         const std::string & Key(void) const noexcept;
+
+
+
 
 
         /*! \brief Check if this options is required

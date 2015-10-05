@@ -13,6 +13,7 @@
 #include "bpmodule/python_helper/Types.hpp"
 #include "bpmodule/python_helper/Errors.hpp"
 #include "bpmodule/exception/PythonConvertException.hpp"
+#include "bpmodule/mangle/Mangle.hpp"
 
 
 namespace bpmodule {
@@ -40,7 +41,7 @@ struct PyConverter
         // check for some disallowed conversions
         if(!TypeCheck(obj))
             throw exception::PythonConvertException("Cannot convert from python to C++: Incompatible types",
-                                                    GetPyClass(obj), typeid(T).name());
+                                                    GetPyClass(obj), mangle::DemangleCppType<T>());
 
         /*
          * The extract below may throw a few different errors. In particular,
@@ -54,14 +55,14 @@ struct PyConverter
         catch(const std::exception & ex)
         {
             throw exception::PythonConvertException("Cannot convert from python to C++: Conversion failed",
-                                                    GetPyClass(obj), typeid(T).name(),
+                                                    GetPyClass(obj), mangle::DemangleCppType<T>(),
                                                     "stdex", ex.what());
         }
         catch(...)
         {
             std::string exstr = detail::GetPyExceptionString();
             throw exception::PythonConvertException("Cannot convert from python to C++: Conversion failed",
-                                                    GetPyClass(obj), typeid(T).name(),
+                                                    GetPyClass(obj), mangle::DemangleCppType<T>(),
                                                     "pyex", exstr);
         }
     }
@@ -84,7 +85,7 @@ struct PyConverter
         {
             std::string exstr = detail::GetPyExceptionString();
             throw exception::PythonConvertException("Cannot convert from C++ to python: Conversion failed",
-                                                    typeid(obj).name(), "boost::python::object",
+                                                    mangle::DemangleCppType(obj), "boost::python::object",
                                                     "pythonex", exstr);
         }
     }
@@ -146,7 +147,7 @@ struct PyConverter<std::vector<T>>
         boost::python::extract<boost::python::list> lconv(obj);
         if(!lconv.check())
             throw exception::PythonConvertException("Cannot convert from python to C++ vector: Object is not a list",
-                                                    GetPyClass(obj), typeid(std::vector<T>).name());
+                                                    GetPyClass(obj), mangle::DemangleCppType<std::vector<T>>());
 
         boost::python::list lst = lconv();
 
@@ -164,7 +165,7 @@ struct PyConverter<std::vector<T>>
             }
             catch(exception::PythonConvertException & ex)
             {
-                ex.AppendInfo("vecto", typeid(std::vector<T>).name(),
+                ex.AppendInfo("vecto", mangle::DemangleCppType<std::vector<T>>(),
                               "element", std::to_string(i));
                 throw;
             }
@@ -194,7 +195,7 @@ struct PyConverter<std::vector<T>>
             }
             catch(exception::PythonConvertException & ex)
             {
-                ex.AppendInfo("vecfrom", typeid(std::vector<T>).name(),
+                ex.AppendInfo("vecfrom", mangle::DemangleCppType<std::vector<T>>(),
                               "element", std::to_string(i));
                 throw;
             }

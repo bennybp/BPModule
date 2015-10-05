@@ -40,7 +40,7 @@ static T DictConvertHelper(const boost::python::dict & dictionary, const char * 
         throw ModuleStoreException("Python dictionary is missing key",
                                    "location", "ModuleInfo",
                                    "dictkey", key,
-                                   "totype", typeid(T).name());
+                                   "totype", mangle::DemangleCppType<T>());
 
 
     try {
