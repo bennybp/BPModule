@@ -124,7 +124,6 @@ template class PropHolder<long>;
 template class PropHolder<float>;
 template class PropHolder<double>;
 template class PropHolder<std::string>;
-template class PropHolder<tensor::Tensor>;
 
 template class PropHolder<std::vector<bool>>;
 template class PropHolder<std::vector<int>>;
@@ -132,7 +131,6 @@ template class PropHolder<std::vector<long>>;
 template class PropHolder<std::vector<float>>;
 template class PropHolder<std::vector<double>>;
 template class PropHolder<std::vector<std::string>>;
-template class PropHolder<std::vector<tensor::Tensor>>;
 ///////////////////////////////////
 ///////////////////////////////////
 // End types for PropHolder

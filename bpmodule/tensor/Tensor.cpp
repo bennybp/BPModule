@@ -33,8 +33,6 @@ void InitTensor(const boost::python::list & argv)
     }
     argvtmp[argc] = NULL;
 
-    ambit::initialize(argc, argvtmp);
-     
     for(int i = 0; i < argc; i++)
       delete [] argvtmp[i];
     delete [] argvtmp;
@@ -42,7 +40,6 @@ void InitTensor(const boost::python::list & argv)
 
 void FinalizeTensor(void)
 {
-   ambit::finalize(); 
 }
 
 
