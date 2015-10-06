@@ -92,7 +92,7 @@ void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & 
     {
         dlclose(handle);
         throw ModuleLoadException("Cannot find function in SO file",
-                                    sopath, key, mi.name, "dlerror", dlerror());
+                                    sopath, key, mi.name, "dlerror", error);
     }
 
 
