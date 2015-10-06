@@ -22,12 +22,13 @@ def Run():
         tester = bp.testing.Tester("Testing conversions from Python to C++")
         tester.PrintHeader()
 
+        # integer types
         inttypes = [ "sshort", "ushort", "sint", "uint", "slong", "ulong", "slonglong", "ulonglong",
                      "vector<sshort>", "vector<ushort>", "vector<sint>", "vector<uint>",
                      "vector<slong>", "vector<ulong>", "vector<slonglong>", "vector<ulonglong>",
                    ]
 
-
+        # The limits on various integer types
         intlimitdict = { "sshort"             : bp.testing.Limits_sshort(),
                          "ushort"             : bp.testing.Limits_ushort(),
                          "sint"               : bp.testing.Limits_sint(),
@@ -47,7 +48,7 @@ def Run():
                        }
 
 
-                      # function                                            name                   acceptable python types
+                      # function                                     failing function                                 name                   acceptable python types
         testfuncs =    [ (bp.testing.TestPyCppPy_sshort,             bp.testing.TestPyCppPy_Fail_sshort,               "sshort",              ["int"]),
                          (bp.testing.TestPyCppPy_ushort,             bp.testing.TestPyCppPy_Fail_ushort,               "ushort",              ["int"]),
                          (bp.testing.TestPyCppPy_sint,               bp.testing.TestPyCppPy_Fail_sint,                 "sint",                ["int"]),
@@ -92,11 +93,14 @@ def Run():
             testdat.append(  ( "list<int>", [ val[1]+1 ] ) )
             testdat.append(  ( "list<int>", [ val[0]-1 ] ) )
             testdat.append(  ( "list<int>", [ val[1]-1 ] ) )
+            testdat.append(  ( "list<int>", [ val[0], val[0]+1, val[0]-1 ] ) )
+            testdat.append(  ( "list<int>", [ val[1], val[1]+1, val[1]-1 ] ) )
+            testdat.append(  ( "list<int>", [ val[0], val[0]+1, val[1], val[1]-1 ] ) )
             
 
             
 
-
+        # some other random data
         testdat.extend( [ ( "int",                 int(-1)                             ),
                           ( "int",                 int(0)                              ),
                           ( "int",                 int(1)                              ),
