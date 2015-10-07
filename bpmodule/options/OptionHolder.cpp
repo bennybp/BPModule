@@ -494,8 +494,8 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
             boost::python::object descstr = tup[3].attr("descstr");
 
             // get the description
-            if(DeterminePyType(descstr) != PythonType::String)
-                throw OptionException("Validator description is not a string", key,
+            if(DeterminePyType(descstr) != PythonType::String && DeterminePyType(descstr) != PythonType::None)
+                throw OptionException("Validator description is not a string (or None)", key,
                                       "type", GetPyClass(descstr));
 
             validatordesc = ConvertToCpp<std::string>(descstr);

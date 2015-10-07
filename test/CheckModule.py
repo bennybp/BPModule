@@ -171,6 +171,14 @@ def TestOptions(minfo):
                     if not valid:
                         print(" -> " + indent4 + "Default value fails initial validation")
                         ret = False
+
+                if hasattr(val[3], "descstr"):
+                    descstr = val[3].descstr
+                    if descstr != None and type(descstr) != str:
+                        print(" -> " + indent4 + "Validator has descstr member, but it's not a string")
+                        ret = False
+                else
+                    print(indent5 + "No description string, but that's ok")
         
         
 
@@ -186,19 +194,15 @@ def TestOptions(minfo):
 
 
 
-
+##########################
+# START HERE
+##########################
 
 paths = sys.argv[1:]
-
-
-
 print()
 
-
-
-
+allok = True
 for supermodule in paths:
-
 
     try:
         print(indent1 + "Checking supermodule {}".format(supermodule))
@@ -249,8 +253,14 @@ for supermodule in paths:
             print(indent1 + "Supermodule {} looks ok to me!".format(supermodule))
         else:
             print(" -> " + "ISSUES WITH SUPERMODULE {}!".format(supermodule))
+            allok = False
         print()
 
+
+    if allok:
+        print("All supermodules seem ok")
+    else:
+        print("***Problem detected. Fix it!***")
     except RuntimeError as e:
         print("\n\n")
         print("******************************")
