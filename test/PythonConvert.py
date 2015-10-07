@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 
 
-############################
-# Testing of ModuleInfo
-############################
-
 import os
 import sys
 import argparse
