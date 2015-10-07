@@ -30,7 +30,7 @@ from . import testing
 # Load other python stuff from this directory
 ##########################################
 from .utils import *
-from .optioncheck import *
+from .modulecheck import *
 
 
 sys.setdlopenflags(olddl)

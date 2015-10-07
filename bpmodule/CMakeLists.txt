@@ -120,7 +120,7 @@ install(FILES ${BPMODULE_TESTING_HEADERS} DESTINATION include/testing/basisset)
 set(BPMODULE_FILES
             __init__.py
             modinfo.py
-            optioncheck.py
+            modulecheck.py
             utils.py
    )
 install(FILES ${BPMODULE_FILES} DESTINATION modules/bpmodule)
