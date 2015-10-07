@@ -7,7 +7,6 @@ import argparse
 import traceback
 
 sys.path.insert(0, "/home/ben/programming/BPModule/install/modules")
-sys.path.insert(0, "/home/ben/programming/ambit/install/lib")
 
 import bpmodule as bp
 

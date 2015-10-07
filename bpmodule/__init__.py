@@ -33,11 +33,6 @@ from .utils import *
 from .optioncheck import *
 
 
-##########################################
-# Load ambit
-##########################################
-import ambit
-
 sys.setdlopenflags(olddl)
 
 
