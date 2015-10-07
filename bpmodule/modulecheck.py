@@ -214,12 +214,18 @@ def CheckSupermodule(supermodule):
     if not hasattr(mod, 'minfo'):
         output.Error(" -> " + "\"{}\" does not have the minfo member\n")
 
+    allok = True
 
     # loop over the modules in the supermodule
     for mname,minfo in mod.minfo.items():
         output.Debug(indent2 + 'Checking module {}\n'.format(mname))
 
         ok = True
+
+        if type(mname) != str:
+            output.Error(" -> " + indent2 + "Module key is not a string")
+            ok = False            
+
         
         ok = ok and TestStringItem(minfo, "type", True)
         ok = ok and TestStringItem(minfo, "version", True)
@@ -238,9 +244,10 @@ def CheckSupermodule(supermodule):
             output.Debug(indent3 + "Module {} looks ok!\n".format(mname))
         else:
             output.Error(" -> " + indent2 + "PROBLEMS WITH MODULE {}!\n".format(mname))
+            allok = False
 
-    if ok:
+    if allok:
         output.Debug(indent1 + "Supermodule {} looks ok to me!\n".format(supermodule))
     else:
-        raise PyGeneralException("Problem in initial check of a supermodule", [ "supermodule", supermodule ])
+        raise PyGeneralException("Problem in initial check of a supermodule", [ ( "supermodule", supermodule) ])
 

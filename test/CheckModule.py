@@ -25,13 +25,14 @@ for supermodule in paths:
         output.Success("    Successfully checked supermodule %1%\n\n", supermodule)
 
     except PyGeneralException as e:
-        output.Error("Checking of supermodule %1% failed. See above for errors\n")
+        output.Error("Checking of supermodule %1% failed. See above for errors\n\n", supermodule)
         allok = False
     
 
 output.Output("\n\n")    
 if allok:
-    output.Success("All supermodules seem ok\n\n")
+    output.Success("All supermodules seem ok\n")
 else:
-    output.Error("***Problem detected. Fix it!***\n\n")
+    output.Error("***Problem detected. Fix it!***\n")
+output.Output("\n\n")
 
