@@ -466,7 +466,7 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
     std::string help = "(no help)";
 
     if(DeterminePyType(tup[4]) == PythonType::String)
-        std::string help = boost::python::extract<std::string>(tup[4]);
+        help = boost::python::extract<std::string>(tup[4]);
     else if(DeterminePyType(tup[4]) != PythonType::None)
         throw OptionException("\"Help\" element of tuple is not a string (or None)", key, "type", GetPyClass(tup[4]));
 
