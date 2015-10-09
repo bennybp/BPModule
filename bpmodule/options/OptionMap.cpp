@@ -90,19 +90,19 @@ bool OptionMap::IsValid(void) const noexcept
 }
 
 
-detail::OptionBasePtr & OptionMap::GetOrThrow_(const std::string & key)
+detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key)
 {
     if(opmap_.count(key))
-        return opmap_.at(key);
+        return opmap_.at(key).get();
     else
         throw OptionException("Key not found", key);
 }
 
 
-const detail::OptionBasePtr & OptionMap::GetOrThrow_(const std::string & key) const
+const detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
 {
     if(opmap_.count(key))
-        return opmap_.at(key);
+        return opmap_.at(key).get();
     else
         throw OptionException("Key not found", key);
 }
@@ -154,7 +154,7 @@ OptionMap::OptionMap(const boost::python::dict & opt)
 void OptionMap::ChangePy(const std::string & key, const boost::python::object & obj)
 {
     std::string lkey = LowerString_(key);
-    detail::OptionBasePtr & ptr = GetOrThrow_(lkey);
+    detail::OptionBase * ptr = GetOrThrow_(lkey);
 
     ptr->ChangePy(obj);
 }

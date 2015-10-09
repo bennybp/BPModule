@@ -291,24 +291,24 @@ class OptionMap
         std::map<std::string, detail::OptionBasePtr> opmap_;
 
 
-        /*! \brief Get an OptionBasePtr or throw if the key doesn't exist
+        /*! \brief Get an pointer to OptionBase or throw if the key doesn't exist
          *
          * \note Key should already have been transformed to lowercase
          *
          * \throw bpmodule::exception::OptionException
          *        if a key doesn't exist
          */
-        detail::OptionBasePtr & GetOrThrow_(const std::string & key);
+        detail::OptionBase * GetOrThrow_(const std::string & key);
 
 
 
         //! \copydoc GetOrThrow_
-        const detail::OptionBasePtr & GetOrThrow_(const std::string & key) const;
+        const detail::OptionBase * GetOrThrow_(const std::string & key) const;
 
 
 
 
-        /*! \brief Get an OptionBasePtr and cast to an appropriate OptionHolder
+        /*! \brief Get a pointer to OptionBase and cast it to an appropriate OptionHolder
          *
          * \note Key should already have been transformed to lowercase
          *
@@ -320,8 +320,8 @@ class OptionMap
         const detail::OptionHolder<T> * GetOrThrow_Cast_(const std::string & key) const
         {
             CheckType_<T>();
-            const detail::OptionBasePtr & ptr = GetOrThrow_(key);
-            const detail::OptionHolder<T> * oh = dynamic_cast<const detail::OptionHolder<T> *>(ptr.get());
+            const detail::OptionBase * ptr = GetOrThrow_(key);
+            const detail::OptionHolder<T> * oh = dynamic_cast<const detail::OptionHolder<T> *>(ptr);
             if(oh == nullptr)
                 throw exception::OptionException("Bad cast", key,
                                                  "fromtype", ptr->DemangledType(),

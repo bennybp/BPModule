@@ -267,7 +267,7 @@ class OptionBase
 
 
 //! A pointer to an option
-typedef std::shared_ptr<OptionBase> OptionBasePtr;
+typedef std::unique_ptr<OptionBase> OptionBasePtr;
 
 
 
