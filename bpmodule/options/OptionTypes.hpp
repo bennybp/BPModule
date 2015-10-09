@@ -113,11 +113,11 @@ struct OptionStoreType<T, false, true>
 };
 
 
-/*! \brief Determines the stored type for a floating point option
+/*! \brief Determines the stored type for a boolean option
  *
  * Bool type specialization. Bool is stored as bool. This
  * is required so that it isn't stored as an integral type
- * (since std::is_integral<bool>::value is true).
+ * (but std::is_integral<bool>::value is true).
  */
 template<>
 struct OptionStoreType<bool>

@@ -152,6 +152,11 @@ OptionBase * OptionHolder<T>::Clone(void) const
     return new OptionHolder<T>(*this);
 }
 
+template<typename T>
+const std::type_info & OptionHolder<T>::TypeInfo(void) const noexcept
+{
+    return typeid(T);
+}
 
 template<typename T>
 const char * OptionHolder<T>::Type(void) const noexcept

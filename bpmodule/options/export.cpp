@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Python exports for data storage
+ * \brief Python exports for options stuff
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 

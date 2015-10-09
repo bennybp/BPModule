@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Storage of options (source)
+ * \brief Storage of options for a module (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 

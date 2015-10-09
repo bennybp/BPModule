@@ -79,6 +79,7 @@ class OptionMap
             }
             catch(const exception::GeneralException & ex)
             {
+                // convert to an OptionException and add the key
                 throw exception::OptionException(ex, key);
             }
         }
@@ -97,9 +98,7 @@ class OptionMap
 
 
 
-        /*! \brief Determine if this object contains a key
-         *
-         * Checks to see if the map has the key
+        /*! \brief Determine if this object contains an option with the given key
          *
          * \param [in] key The key to the data
          * \return True if the key exists, false otherwise
@@ -108,7 +107,7 @@ class OptionMap
 
 
 
-        /*! \brief Return the number of elements contained
+        /*! \brief Return the number of elements contained in this object
          *
          * \exnothrow
          *
@@ -149,6 +148,7 @@ class OptionMap
             }
             catch(const exception::GeneralException & ex)
             {
+                // convert to an OptionException and add the key
                 throw exception::OptionException(ex, key);
             }
 
@@ -161,8 +161,7 @@ class OptionMap
         /*! \brief Sets an option to its default
          *
          * \throw bpmodule::exception::OptionException if
-         *        the option does not have a default or the
-         *        key doesn't exist
+         *        the key doesn't exist
          *
          * \exstrong
          */

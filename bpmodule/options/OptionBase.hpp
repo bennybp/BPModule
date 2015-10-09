@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Storage of generic data (base class)
+ * \brief Storage of generic data (base class) (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
@@ -9,7 +9,6 @@
 #define _GUARD_OPTIONBASE_HPP_
 
 #include <memory>
-#include <cstring>
 #include <string>
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
@@ -42,7 +41,6 @@ class OptionBase
 
         OptionBase & operator=(const OptionBase & rhs)  = delete;
         OptionBase & operator=(OptionBase && rhs)       = delete;
-        OptionBase(const OptionBase & rhs)              = default;
         OptionBase(const OptionBase && rhs)             = delete;
 
 
@@ -67,6 +65,16 @@ class OptionBase
 
 
 
+        /*! \brief Returns the std::type_info for the option stored
+         *
+         * \exnothrow
+         *
+         * \return A std::type_info structure representing the stored type
+         */
+        virtual const std::type_info & TypeInfo(void) const noexcept = 0;
+
+
+
         /*! \brief Returns a string representing the demangled type of the option stored
          *
          * \exnothrow
@@ -84,6 +92,7 @@ class OptionBase
          * \return True if this option has a value or a default
          */
         virtual bool HasValue(void) const noexcept = 0;
+
 
 
         /*! \brief Check if this option has a default
@@ -110,8 +119,7 @@ class OptionBase
 
 
 
-
-        /*! \brief Print the option information
+        /*! \brief Print out information about this option
          */
         virtual void Print(void) const = 0;
 
@@ -154,8 +162,6 @@ class OptionBase
 
 
 
-
-
         /*! \brief Check if this options is required
          *
          * \exnothrow
@@ -172,9 +178,12 @@ class OptionBase
 
 
 
-        /*! \brief Set the expert variable
+        /*! \brief Set the expert flag
+         *
+         * \exnothrow
          */
         void SetExpert(bool expert) noexcept;
+
 
 
         /*! \brief Check to see if this object is valid
@@ -199,8 +208,9 @@ class OptionBase
         template<typename U>
         bool IsType(void) const noexcept
         {
-           return (strcmp(typeid(U).name(), Type()) == 0);
+           return typeid(U) == TypeInfo();
         }
+
 
 
         /*! \brief Get the python type of this option
@@ -210,6 +220,7 @@ class OptionBase
         python_helper::PythonType PyType(void) const noexcept;
 
 
+
         /*! \brief Get the help string for this option
          *
          * \exnothrow
@@ -217,11 +228,18 @@ class OptionBase
         const std::string & Help(void) const noexcept;
 
 
+
         /*! \brief Get the validator description string
          *
          * \exnothrow
          */
         const std::string & ValidatorDesc(void) const noexcept;
+
+
+    protected:
+        // can only be called from Clone()
+        OptionBase(const OptionBase & rhs)              = default;
+
 
 
     private:

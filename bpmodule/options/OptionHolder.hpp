@@ -122,6 +122,8 @@ class OptionHolder : public OptionBase
 
         virtual const char * Type(void) const noexcept;
 
+        const std::type_info & TypeInfo(void) const noexcept;
+
         virtual const char * DemangledType(void) const noexcept;
 
         virtual bool HasValue(void) const noexcept;
