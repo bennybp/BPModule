@@ -224,10 +224,11 @@ struct OptionConvert<T, false>
 template<typename T>
 struct OptionConvert<std::vector<T>, false>
 {
-    typedef typename OptionConvert<T>::stored_type inner_type;
+    typedef typename OptionConvert<T>::stored_type  inner_stored_type;
+    typedef          T                              inner_ret_type;
 
-    typedef typename std::vector<inner_type> stored_type;
-    typedef std::vector<T> ret_type;
+    typedef typename std::vector<inner_stored_type> stored_type;
+    typedef std::vector<T>                          ret_type;
 
 
     /*! \brief Convert from a stored type to a given type
@@ -241,10 +242,10 @@ struct OptionConvert<std::vector<T>, false>
         ret_type ret;
         ret.reserve(val.size());
 
-        for(const auto & it : val)
+        for(auto it = val.begin(); it != val.end(); ++it)
         {
             try {
-                ret.push_back(OptionConvert<ret_type>::ConvertFromStored(it));
+                ret.push_back(OptionConvert<inner_ret_type>::ConvertFromStored(*it));
             }
             catch(exception::MathException & ex)  // catch overflow, etc
             {
@@ -268,10 +269,10 @@ struct OptionConvert<std::vector<T>, false>
         stored_type st;
         st.reserve(val.size());
 
-        for(const auto & it : val)
+        for(auto it = val.begin(); it != val.end(); ++it)
         {
             try {
-                st.push_back(OptionConvert<ret_type>::ConvertToStored(it));
+                st.push_back(OptionConvert<inner_stored_type>::ConvertToStored(*it));
             }
             catch(exception::MathException & ex)  // catch overflow, etc
             {
