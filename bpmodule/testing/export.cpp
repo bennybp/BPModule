@@ -87,9 +87,6 @@ BOOST_PYTHON_MODULE(testing)
 
 
 
-
-
-
     // ModuleInfo construction
     def("TestModuleInfo_Construct", TestModuleInfo_Construct);
 
@@ -107,6 +104,15 @@ BOOST_PYTHON_MODULE(testing)
     def("Limits_slonglong", Limits<signed long long>);
     def("Limits_ulonglong", Limits<unsigned long long>);
 
+    // Getting an option from a map
+    def("TestOptGet_sshort", TestOptGet<signed short>);
+    def("TestOptGet_ushort", TestOptGet<unsigned short>);
+    def("TestOptGet_sint", TestOptGet<signed int>);
+    def("TestOptGet_uint", TestOptGet<unsigned int>);
+    def("TestOptGet_slong", TestOptGet<signed long>);
+    def("TestOptGet_ulong", TestOptGet<unsigned long>);
+    def("TestOptGet_slonglong", TestOptGet<signed long long>);
+    def("TestOptGet_ulonglong", TestOptGet<unsigned long long>);
 }
 
 

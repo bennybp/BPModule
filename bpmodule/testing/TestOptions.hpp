@@ -10,6 +10,9 @@
 
 #include <string>
 
+#include "bpmodule/options/OptionMap.hpp"
+
+
 
 namespace bpmodule {
 namespace testing {
@@ -25,6 +28,15 @@ boost::python::tuple Limits(void)
                                       std::numeric_limits<T>::max()
                                     );
 }
+
+
+
+template<typename T>
+T TestOptGet(const options::OptionMap & opt, const std::string & key)
+{
+    return opt.Get<T>(key);
+}
+
 
 
 
