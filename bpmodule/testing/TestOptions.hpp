@@ -11,32 +11,28 @@
 #include <string>
 
 #include "bpmodule/options/OptionMap.hpp"
-
+#include "bpmodule/python_helper/Convert.hpp"
 
 
 namespace bpmodule {
 namespace testing {
 
 
-/*! \brief Returns the limits of a type as a python tuple
- */ 
 template<typename T>
-boost::python::tuple Limits(void)
-{ 
-    return boost::python::make_tuple( 
-                                      std::numeric_limits<T>::lowest(),
-                                      std::numeric_limits<T>::max()
-                                    );
-}
-
-
-
-template<typename T>
-T TestOptGet(const options::OptionMap & opt, const std::string & key)
+void TestOptionMap_Get(const options::OptionMap & opt, const std::string & key)
 {
-    return opt.Get<T>(key);
+    // ignore return value
+    opt.Get<T>(key);
 }
 
+
+template<typename T>
+void TestOptionMap_Change(options::OptionMap & opt, const std::string & key, boost::python::object & value)
+{
+    // ignore return value
+    const T tmp = python_helper::ConvertToCpp<T>(value);
+    opt.Change<T>(key, tmp);
+}
 
 
 

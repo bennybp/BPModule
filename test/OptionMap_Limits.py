@@ -25,32 +25,20 @@ def Run():
                          "slong"              : bp.testing.Limits_slong(),
                          "ulong"              : bp.testing.Limits_ulong(),
                          "slonglong"          : bp.testing.Limits_slonglong(),
-                         "ulonglong"          : bp.testing.Limits_ulonglong(),
-                         "vector<sshort>"     : bp.testing.Limits_sshort(),
-                         "vector<ushort>"     : bp.testing.Limits_ushort(),
-                         "vector<sint>"       : bp.testing.Limits_sint(),
-                         "vector<uint>"       : bp.testing.Limits_uint(),
-                         "vector<slong>"      : bp.testing.Limits_slong(),
-                         "vector<ulong>"      : bp.testing.Limits_ulong(),
-                         "vector<slonglong>"  : bp.testing.Limits_slonglong(),
-                         "vector<ulonglong>"  : bp.testing.Limits_ulonglong(),
+                         "ulonglong"          : bp.testing.Limits_ulonglong()
                        }
-        
-        
+
+
         # Dictionary of functions for getting/setting options through C++
-        intfuncdict = { "sshort"             : bp.testing.TestOptGet_sshort,
-                        "ushort"             : bp.testing.TestOptGet_ushort,
-                        "sint"               : bp.testing.TestOptGet_sint,
-                        "uint"               : bp.testing.TestOptGet_uint,
-                        "slong"              : bp.testing.TestOptGet_slong,
-                        "ulong"              : bp.testing.TestOptGet_ulong,
-                        "slonglong"          : bp.testing.TestOptGet_slonglong,
-                        "ulonglong"          : bp.testing.TestOptGet_ulonglong,
+        intfuncdict = { "sshort"             : ( bp.testing.TestOptionMapGet_sshort,    bp.testing.TestOptionMapGet_vector_sshort ),
+                        "ushort"             : ( bp.testing.TestOptionMapGet_ushort,    bp.testing.TestOptionMapGet_vector_ushort ),
+                        "sint"               : ( bp.testing.TestOptionMapGet_sint,      bp.testing.TestOptionMapGet_vector_sint ),
+                        "uint"               : ( bp.testing.TestOptionMapGet_uint,      bp.testing.TestOptionMapGet_vector_uint ),
+                        "slong"              : ( bp.testing.TestOptionMapGet_slong,     bp.testing.TestOptionMapGet_vector_slong ),
+                        "ulong"              : ( bp.testing.TestOptionMapGet_ulong,     bp.testing.TestOptionMapGet_vector_ulong ),
+                        "slonglong"          : ( bp.testing.TestOptionMapGet_slonglong, bp.testing.TestOptionMapGet_vector_slonglong ),
+                        "ulonglong"          : ( bp.testing.TestOptionMapGet_ulonglong, bp.testing.TestOptionMapGet_vector_ulonglong ),
                       }
-
-
-
-
 
 
  
@@ -64,12 +52,11 @@ def Run():
         tester.PrintHeader()
 
         # loop over integer types
-        for k in intfuncdict:
-            # get the limits
-            limits = intlimitdict[k]
+        for k,limits in intlimitdict.items():
 
             # create an OptionMap
-            opt = bp.options.OptionMap({ "test_opt" : ( "int", None, True, None, "(no help)" ) })
+            opt = bp.options.OptionMap({ "test_opt" : ( "int", None, True, None, "(no help)" ),
+                                         "test_opt_vec" : ( "listint", None, True, None, "(no help)" ) })
 
             # try setting the values
             vals = [ limits[0]-1, limits[0], limits[0]+1, limits[1]-1, limits[1], limits[1]+1 ]
@@ -80,17 +67,19 @@ def Run():
                     continue
 
                 opt.Change("test_opt", val)
+                opt.Change("test_opt_vec",  [val])
 
                 # now attempt to get it as various types
                 for k2,v2 in intfuncdict.items():
                     limits2 = intlimitdict[k2]
+                    expected = val >= limits2[0] and val <= limits2[1]
 
                     s = "Getting {} as {}".format(k, k2)
-                    expected = val >= limits2[0] and val <= limits2[1]
-                    tester.Test(s, expected, bp.testing.PyTestFunc, v2, opt,  "test_opt")
+                    tester.Test(s, expected, bp.testing.PyTestFunc, v2[0], opt,  "test_opt")
+
+                    s = "Getting {} as vector of {}".format(k, k2)
+                    tester.Test(s, expected, bp.testing.PyTestFunc, v2[1], opt,  "test_opt_vec")
                     
-            
-                     
 
 
         tester.PrintResults()

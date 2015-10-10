@@ -152,7 +152,7 @@ class OptionMap
                 throw exception::OptionException(ex, key);
             }
 
-            GetOrThrow_Cast_<T>(lkey)->Change(convval);
+            GetOrThrow_Cast_<stored_type>(lkey)->Change(convval);
         }
 
 
@@ -322,6 +322,23 @@ class OptionMap
             CheckType_<T>();
             const detail::OptionBase * ptr = GetOrThrow_(key);
             const detail::OptionHolder<T> * oh = dynamic_cast<const detail::OptionHolder<T> *>(ptr);
+            if(oh == nullptr)
+                throw exception::OptionException("Bad cast", key,
+                                                 "fromtype", ptr->DemangledType(),
+                                                 "totype", mangle::DemangleCppType<T>());
+
+            return oh;
+        }
+
+
+        /*! \copydoc GetOrThrow_Cast_
+         */
+        template<typename T>
+        detail::OptionHolder<T> * GetOrThrow_Cast_(const std::string & key)
+        {
+            CheckType_<T>();
+            detail::OptionBase * ptr = GetOrThrow_(key);
+            detail::OptionHolder<T> * oh = dynamic_cast<detail::OptionHolder<T> *>(ptr);
             if(oh == nullptr)
                 throw exception::OptionException("Bad cast", key,
                                                  "fromtype", ptr->DemangledType(),
