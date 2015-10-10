@@ -59,13 +59,13 @@ Target numeric_cast(Source s)
                 if(s > tmax)
                     throw exception::MathException("Error in numeric_cast",
                                                    "desc", "source value overflows target type",
-                                                   "fpfrom", mangle::DemangleCppType<Source>(),
-                                                   "fpto", mangle::DemangleCppType<Target>());
+                                                   "ifrom", mangle::DemangleCppType<Source>(),
+                                                   "ito", mangle::DemangleCppType<Target>());
                 else if(s < tmin)
                     throw exception::MathException("Error in numeric_cast",
                                                    "desc", "source value underflows target type",
-                                                   "fpfrom", mangle::DemangleCppType<Source>(),
-                                                   "fpto", mangle::DemangleCppType<Target>());
+                                                   "ifrom", mangle::DemangleCppType<Source>(),
+                                                   "ito", mangle::DemangleCppType<Target>());
 
                 else // safe!
                     return static_cast<Target>(s);
@@ -77,8 +77,8 @@ Target numeric_cast(Source s)
             if(s < 0)
                 throw exception::MathException("Error in numeric_cast",
                                                "desc", "source value underflows target type",
-                                               "fpfrom", mangle::DemangleCppType<Source>(),
-                                               "fpto", mangle::DemangleCppType<Target>());
+                                               "ifrom", mangle::DemangleCppType<Source>(),
+                                               "ito", mangle::DemangleCppType<Target>());
 
             
             // going from smaller to larger type - ok (since s >= 0)
@@ -92,8 +92,8 @@ Target numeric_cast(Source s)
                 if(s > tmax)
                     throw exception::MathException("Error in numeric_cast",
                                                    "desc", "source value overflows target type",
-                                                   "fpfrom", mangle::DemangleCppType<Source>(),
-                                                   "fpto", mangle::DemangleCppType<Target>());
+                                                   "ifrom", mangle::DemangleCppType<Source>(),
+                                                   "ito", mangle::DemangleCppType<Target>());
 
                 else // safe!
                     return static_cast<Target>(s);
@@ -114,8 +114,8 @@ Target numeric_cast(Source s)
                 if(s > tmax)
                     throw exception::MathException("Error in numeric_cast",
                                                    "desc", "source value overflows target type",
-                                                   "fpfrom", mangle::DemangleCppType<Source>(),
-                                                   "fpto", mangle::DemangleCppType<Target>());
+                                                   "ifrom", mangle::DemangleCppType<Source>(),
+                                                   "ito", mangle::DemangleCppType<Target>());
 
                 else // safe!
                     return static_cast<Target>(s);
