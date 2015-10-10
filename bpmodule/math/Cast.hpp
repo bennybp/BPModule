@@ -15,7 +15,8 @@ namespace math {
 
 /*! Perform a safe cast between integer types or between floating point types
  *
- * Checks for overflows and underflows.
+ * Checks for overflows and underflows, as well as loss of precision with floating
+ * point conversions.
  *
  * Cannot be used to convert integer <-> floating point. Use round_cast instead.
  *
@@ -28,32 +29,108 @@ Target numeric_cast(Source s)
                     ( std::is_floating_point<Source>::value && std::is_floating_point<Target>::value),
                     "Attempting to perform integer <-> floating point conversion using numeric_cast. Consider round_cast");
 
+    // no casting
+    if(std::is_same<Target, Source>::value)
+        return static_cast<Target>(s);  // cast to make compiler warnings go away
 
-    // check for overflow, underflow
-    if(s > std::numeric_limits<Source>::max())
-        throw exception::MathException("Error in numeric_cast",
-                                       "desc", "source value overflows target type",
-                                       "fpfrom", mangle::DemangleCppType<Source>(),
-                                       "fpto", mangle::DemangleCppType<Target>());
+    ////////////////////////////////////////////////////////////////////////////////
+    // this is written with branching so that the limits checking isn't always done
+    // (ie, going from short->int should be pretty much optimized out)
+    //
+    // Actually, most branching shown here should be optimized out at compile
+    ////////////////////////////////////////////////////////////////////////////////
 
-    if(s < std::numeric_limits<Source>::lowest())
-        throw exception::MathException("Error in numeric_cast",
-                                       "desc", "source value underflows target type",
-                                       "fpfrom", mangle::DemangleCppType<Source>(),
-                                       "fpto", mangle::DemangleCppType<Target>());
-
-
-    // if both are integral types, checking for overflow/underflow
-    // is all that's needed
+    ///////////////////
+    // for integers
+    ///////////////////
     if(std::is_integral<Source>::value && std::is_integral<Target>::value)
-        return static_cast<Target>(s);
+    {
+        // both are signed or unsigned
+        if(std::is_signed<Source>::value == std::is_signed<Target>::value)
+        {
+            // going from smaller to larger type - ok
+            if(std::numeric_limits<Target>::digits >= std::numeric_limits<Source>::digits)
+                return static_cast<Target>(s);
+            else
+            {
+                // source is larger type than target. check limits
+                Source tmax = static_cast<Source>(std::numeric_limits<Target>::max());
+                Source tmin = static_cast<Source>(std::numeric_limits<Target>::lowest());
+                if(s > tmax)
+                    throw exception::MathException("Error in numeric_cast",
+                                                   "desc", "source value overflows target type",
+                                                   "fpfrom", mangle::DemangleCppType<Source>(),
+                                                   "fpto", mangle::DemangleCppType<Target>());
+                else if(s < tmin)
+                    throw exception::MathException("Error in numeric_cast",
+                                                   "desc", "source value underflows target type",
+                                                   "fpfrom", mangle::DemangleCppType<Source>(),
+                                                   "fpto", mangle::DemangleCppType<Target>());
+
+                else // safe!
+                    return static_cast<Target>(s);
+
+            }
+        }
+        else if(std::is_signed<Source>::value) // Source is signed, Target is unsigned
+        {
+            if(s < 0)
+                throw exception::MathException("Error in numeric_cast",
+                                               "desc", "source value underflows target type",
+                                               "fpfrom", mangle::DemangleCppType<Source>(),
+                                               "fpto", mangle::DemangleCppType<Target>());
+
+            
+            // going from smaller to larger type - ok (since s >= 0)
+            if(std::numeric_limits<Target>::digits >= std::numeric_limits<Source>::digits)
+                return static_cast<Target>(s);
+            else
+            {
+                // source is larger type than target. check other limit
+                // casting to Source type should be ok since sizeof(Source) > sizeof(Target)
+                Source tmax = static_cast<Source>(std::numeric_limits<Target>::max());
+                if(s > tmax)
+                    throw exception::MathException("Error in numeric_cast",
+                                                   "desc", "source value overflows target type",
+                                                   "fpfrom", mangle::DemangleCppType<Source>(),
+                                                   "fpto", mangle::DemangleCppType<Target>());
+
+                else // safe!
+                    return static_cast<Target>(s);
+
+            }
+        }
+        else  // Source is unsigned, target is signed
+        {
+            // going from smaller to larger type - ok
+            // (since numeric_limits::digits reports bits without sign bit)
+            if(std::numeric_limits<Target>::digits >= std::numeric_limits<Source>::digits)
+                return static_cast<Target>(s);
+            else
+            {
+                // source is larger type than target. check max limit
+                // casting to Source type should be ok since sizeof(Source) > sizeof(Target)
+                Source tmax = static_cast<Source>(std::numeric_limits<Target>::max());
+                if(s > tmax)
+                    throw exception::MathException("Error in numeric_cast",
+                                                   "desc", "source value overflows target type",
+                                                   "fpfrom", mangle::DemangleCppType<Source>(),
+                                                   "fpto", mangle::DemangleCppType<Target>());
+
+                else // safe!
+                    return static_cast<Target>(s);
+
+            }
+        }
+    }
+
 
 
     // if both are floating point
     // we have to check that the conversion is valid
-    // Hackish way, but convert to target and back, then compare
-    if(std::is_floating_point<Source>::value && std::is_floating_point<Target>::value)
+    else if(std::is_floating_point<Source>::value && std::is_floating_point<Target>::value)
     {
+        // Hackish way, but convert to target and back, then compare
         // check for overflow and underflow
         Target t = static_cast<Target>(s);
         Source s2 = static_cast<Source>(t);
@@ -71,7 +148,8 @@ Target numeric_cast(Source s)
         PRAGMA_WARNING_POP
     }
 
-    throw std::logic_error("numeric_cast unhandled types");
+    else
+        throw std::logic_error("numeric_cast unhandled types");
 }
 
 
