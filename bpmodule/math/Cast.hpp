@@ -1,14 +1,16 @@
 #ifndef _GUARD_CAST_HPP_
 #define _GUARD_CAST_HPP_
 
-#include <boost/numeric/conversion/cast.hpp>
+#include <limits>
 
+#include "bpmodule/pragma.h"
 #include "bpmodule/exception/MathException.hpp"
+#include "bpmodule/mangle/Mangle.hpp"
 
-//! \todo maybe do manually to not draw in boost?
 
 namespace bpmodule {
 namespace math {
+
 
 
 /*! Perform a safe cast between integer types or between floating point types
@@ -26,18 +28,47 @@ Target numeric_cast(Source s)
                     ( std::is_floating_point<Source>::value && std::is_floating_point<Target>::value),
                     "Attempting to perform integer <-> floating point conversion using numeric_cast. Consider round_cast");
 
-    try {
-        // if both are integral types, ok
-        if(std::is_integral<Source>::value && std::is_integral<Target>::value)
-           return boost::numeric_cast<Target>(s);
 
-        // if both are floating point, ok
-        if(std::is_floating_point<Source>::value && std::is_floating_point<Target>::value)
-           return boost::numeric_cast<Target>(s);
-    }
-    catch(std::exception & ex)
+    // check for overflow, underflow
+    if(s > std::numeric_limits<Source>::max())
+        throw exception::MathException("Error in numeric_cast",
+                                       "desc", "source value overflows target type",
+                                       "fpfrom", mangle::DemangleCppType<Source>(),
+                                       "fpto", mangle::DemangleCppType<Target>());
+
+    if(s < std::numeric_limits<Source>::lowest())
+        throw exception::MathException("Error in numeric_cast",
+                                       "desc", "source value underflows target type",
+                                       "fpfrom", mangle::DemangleCppType<Source>(),
+                                       "fpto", mangle::DemangleCppType<Target>());
+
+
+    // if both are integral types, checking for overflow/underflow
+    // is all that's needed
+    if(std::is_integral<Source>::value && std::is_integral<Target>::value)
+        return static_cast<Target>(s);
+
+
+    // if both are floating point
+    // we have to check that the conversion is valid
+    // Hackish way, but convert to target and back, then compare
+    if(std::is_floating_point<Source>::value && std::is_floating_point<Target>::value)
     {
-        throw exception::MathException("Error in numeric_cast", "info", ex.what());
+        // check for overflow and underflow
+        Target t = static_cast<Target>(s);
+        Source s2 = static_cast<Source>(t);
+
+        // ignore this warning -- we are doing it on purpose
+        PRAGMA_WARNING_PUSH
+        PRAGMA_WARNING_IGNORE_FP_EQUALITY
+        if(s == s2)
+            return t;
+        else
+            throw exception::MathException("Error in numeric_cast",
+                                           "desc", "Floating point conversion results in loss of precision",
+                                           "fpfrom", mangle::DemangleCppType<Source>(),
+                                           "fpto", mangle::DemangleCppType<Target>());
+        PRAGMA_WARNING_POP
     }
 
     throw std::logic_error("numeric_cast unhandled types");
