@@ -1,3 +1,6 @@
+#ifndef _GUARD_CAST_HPP_
+#define _GUARD_CAST_HPP_
+
 #include <boost/numeric/conversion/cast.hpp>
 
 #include "bpmodule/exception/MathException.hpp"
@@ -60,3 +63,4 @@ Target round_cast(Source s)
 } // close namespace bpmodule
 
 
+#endif
