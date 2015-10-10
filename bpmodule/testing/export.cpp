@@ -43,9 +43,10 @@ BOOST_PYTHON_MODULE(testing)
     def("Limits_ulonglong", Limits<unsigned long long>);
 
 
-
+    /////////////////////////////////
     // Py-Cpp-Py round trip tests
     // Arithmetic types
+    /////////////////////////////////
     def("TestPyCppPy_sshort",            TestPyCppPy<signed short>);
     def("TestPyCppPy_ushort",            TestPyCppPy<unsigned short>);
     def("TestPyCppPy_sint",              TestPyCppPy<signed int>);
@@ -75,8 +76,8 @@ BOOST_PYTHON_MODULE(testing)
 
 
 
-    // Py-Cpp-Py round trip tests that should fail on the
-    // cpp-to-py step
+    // Py-Cpp-Py round trip tests that should
+    // fail on the cpp-to-py step
     // Arithmetic types
     def("TestPyCppPy_Fail_sshort",            TestPyCppPy_Fail<signed short>);
     def("TestPyCppPy_Fail_ushort",            TestPyCppPy_Fail<unsigned short>);
@@ -107,28 +108,25 @@ BOOST_PYTHON_MODULE(testing)
 
 
 
-
-
-
-
-    // ModuleInfo construction
-    def("TestModuleInfo_Construct", TestModuleInfo_Construct);
-
-
-
-    
-
+    ////////////////
     // Options
+    ////////////////
     // Getting an option from a map
-    def("TestOptionMapGet_sshort", &TestOptionMap_Get<signed short>);
-    def("TestOptionMapGet_ushort", &TestOptionMap_Get<unsigned short>);
-    def("TestOptionMapGet_sint", &TestOptionMap_Get<signed int>);
-    def("TestOptionMapGet_uint", &TestOptionMap_Get<unsigned int>);
-    def("TestOptionMapGet_slong", &TestOptionMap_Get<signed long>);
-    def("TestOptionMapGet_ulong", &TestOptionMap_Get<unsigned long>);
-    def("TestOptionMapGet_slonglong", &TestOptionMap_Get<signed long long>);
-    def("TestOptionMapGet_ulonglong", &TestOptionMap_Get<unsigned long long>);
+    def("TestOptionMapGet_bool",              &TestOptionMap_Get<bool>);
+    def("TestOptionMapGet_sshort",            &TestOptionMap_Get<signed short>);
+    def("TestOptionMapGet_ushort",            &TestOptionMap_Get<unsigned short>);
+    def("TestOptionMapGet_sint",              &TestOptionMap_Get<signed int>);
+    def("TestOptionMapGet_uint",              &TestOptionMap_Get<unsigned int>);
+    def("TestOptionMapGet_slong",             &TestOptionMap_Get<signed long>);
+    def("TestOptionMapGet_ulong",             &TestOptionMap_Get<unsigned long>);
+    def("TestOptionMapGet_slonglong",         &TestOptionMap_Get<signed long long>);
+    def("TestOptionMapGet_ulonglong",         &TestOptionMap_Get<unsigned long long>);
+    def("TestOptionMapGet_float",             &TestOptionMap_Get<float>);
+    def("TestOptionMapGet_double",            &TestOptionMap_Get<double>);
+    def("TestOptionMapGet_longdouble",        &TestOptionMap_Get<long double>);
+    def("TestOptionMapGet_string",            &TestOptionMap_Get<std::string>);
 
+    def("TestOptionMapGet_vector_bool",       &TestOptionMap_Get<std::vector<bool>>);
     def("TestOptionMapGet_vector_sshort",     &TestOptionMap_Get<std::vector<signed short>>);
     def("TestOptionMapGet_vector_ushort",     &TestOptionMap_Get<std::vector<unsigned short>>);
     def("TestOptionMapGet_vector_sint",       &TestOptionMap_Get<std::vector<signed int>>);
@@ -137,17 +135,27 @@ BOOST_PYTHON_MODULE(testing)
     def("TestOptionMapGet_vector_ulong",      &TestOptionMap_Get<std::vector<unsigned long>>);
     def("TestOptionMapGet_vector_slonglong",  &TestOptionMap_Get<std::vector<signed long long>>);
     def("TestOptionMapGet_vector_ulonglong",  &TestOptionMap_Get<std::vector<unsigned long long>>);
+    def("TestOptionMapGet_vector_float",      &TestOptionMap_Get<std::vector<float>>);
+    def("TestOptionMapGet_vector_double",     &TestOptionMap_Get<std::vector<double>>);
+    def("TestOptionMapGet_vector_longdouble", &TestOptionMap_Get<std::vector<long double>>);
+    def("TestOptionMapGet_vector_string",     &TestOptionMap_Get<std::vector<std::string>>);
 
     // Changing an option in the map
-    def("TestOptionMapChange_sshort", &TestOptionMap_Change<signed short>);
-    def("TestOptionMapChange_ushort", &TestOptionMap_Change<unsigned short>);
-    def("TestOptionMapChange_sint", &TestOptionMap_Change<signed int>);
-    def("TestOptionMapChange_uint", &TestOptionMap_Change<unsigned int>);
-    def("TestOptionMapChange_slong", &TestOptionMap_Change<signed long>);
-    def("TestOptionMapChange_ulong", &TestOptionMap_Change<unsigned long>);
-    def("TestOptionMapChange_slonglong", &TestOptionMap_Change<signed long long>);
-    def("TestOptionMapChange_ulonglong", &TestOptionMap_Change<unsigned long long>);
+    def("TestOptionMapChange_bool",              &TestOptionMap_Change<bool>);
+    def("TestOptionMapChange_sshort",            &TestOptionMap_Change<signed short>);
+    def("TestOptionMapChange_ushort",            &TestOptionMap_Change<unsigned short>);
+    def("TestOptionMapChange_sint",              &TestOptionMap_Change<signed int>);
+    def("TestOptionMapChange_uint",              &TestOptionMap_Change<unsigned int>);
+    def("TestOptionMapChange_slong",             &TestOptionMap_Change<signed long>);
+    def("TestOptionMapChange_ulong",             &TestOptionMap_Change<unsigned long>);
+    def("TestOptionMapChange_slonglong",         &TestOptionMap_Change<signed long long>);
+    def("TestOptionMapChange_ulonglong",         &TestOptionMap_Change<unsigned long long>);
+    def("TestOptionMapChange_float",             &TestOptionMap_Change<float>);
+    def("TestOptionMapChange_double",            &TestOptionMap_Change<double>);
+    def("TestOptionMapChange_longdouble",        &TestOptionMap_Change<long double>);
+    def("TestOptionMapChange_string",            &TestOptionMap_Change<std::string>);
 
+    def("TestOptionMapChange_vector_bool",       &TestOptionMap_Change<std::vector<bool>>);
     def("TestOptionMapChange_vector_sshort",     &TestOptionMap_Change<std::vector<signed short>>);
     def("TestOptionMapChange_vector_ushort",     &TestOptionMap_Change<std::vector<unsigned short>>);
     def("TestOptionMapChange_vector_sint",       &TestOptionMap_Change<std::vector<signed int>>);
@@ -156,6 +164,18 @@ BOOST_PYTHON_MODULE(testing)
     def("TestOptionMapChange_vector_ulong",      &TestOptionMap_Change<std::vector<unsigned long>>);
     def("TestOptionMapChange_vector_slonglong",  &TestOptionMap_Change<std::vector<signed long long>>);
     def("TestOptionMapChange_vector_ulonglong",  &TestOptionMap_Change<std::vector<unsigned long long>>);
+    def("TestOptionMapChange_vector_float",      &TestOptionMap_Change<std::vector<float>>);
+    def("TestOptionMapChange_vector_double",     &TestOptionMap_Change<std::vector<double>>);
+    def("TestOptionMapChange_vector_longdouble", &TestOptionMap_Change<std::vector<long double>>);
+    def("TestOptionMapChange_vector_string",     &TestOptionMap_Change<std::vector<std::string>>);
+
+
+
+
+    ////////////////////////////
+    // ModuleInfo construction
+    ////////////////////////////
+    def("TestModuleInfo_Construct", TestModuleInfo_Construct);
 }
 
 
