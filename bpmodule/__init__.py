@@ -181,14 +181,14 @@ def SetOptions(key, useropt):
     defopt = minfo["options"]
 
 
-    if not CheckOptions(useropt, defopt):
-      raise exception.PyGeneralException(
-                 "Problem parsing options",
-              [
-                 ("ModuleName", minfo["name"]),
-                 ("ModuleKey", minfo["key"]),
-                 ("ModulePath", minfo["path"])
-              ])
+#    if not CheckOptions(useropt, defopt):
+#      raise exception.PyGeneralException(
+#                 "Problem parsing options",
+#              [
+#                 ("ModuleName", minfo["name"]),
+#                 ("ModuleKey", minfo["key"]),
+#                 ("ModulePath", minfo["path"])
+#              ])
 
     mst.SetOptions(key, useropt);
 

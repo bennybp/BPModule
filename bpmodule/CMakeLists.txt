@@ -15,10 +15,13 @@ add_subdirectory(testing)
 
 
 # Install headers
+set(BPMODULE_TOP_HEADERS
+            pragma.h
+)
+
 set(BPMODULE_MANGLE_HEADERS
             mangle/Mangle.hpp
 )
-
 
 set(BPMODULE_PYTHON_HELPER_HEADERS
             python_helper/BoostPython_fwd.hpp
@@ -81,6 +84,7 @@ set(BPMODULE_MODULESTORE_HEADERS
             modulestore/ModuleInfo.hpp
             modulestore/ModuleStore.hpp
             modulestore/PyModuleLoader.hpp
+            modulestore/Graph.hpp
    )
 
 set(BPMODULE_MOLECULE_HEADERS
@@ -102,6 +106,7 @@ set(BPMODULE_TESTING_HEADERS
    )
 
 
+install(FILES ${BPMODULE_TOP_HEADERS} DESTINATION include/bpmodule)
 install(FILES ${BPMODULE_MANGLE_HEADERS} DESTINATION include/bpmodule/mangle)
 install(FILES ${BPMODULE_PYTHON_HELPER_HEADERS} DESTINATION include/bpmodule/python_helper)
 install(FILES ${BPMODULE_EXCEPTION_HEADERS} DESTINATION include/bpmodule/exception)

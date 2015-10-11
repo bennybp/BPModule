@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <atomic>
 
-#include "bpmodule/modulestore/ModuleInfo.hpp"
+#include "bpmodule/modulestore/Graph.hpp"
 #include "bpmodule/modulestore/ScopedModule.hpp"
 #include "bpmodule/exception/ModuleCreateException.hpp"
 #include "bpmodule/exception/ModuleStoreException.hpp"
