@@ -49,17 +49,15 @@ OptionMap & OptionMap::operator=(const OptionMap & rhs)
 
 bool OptionMap::Has(const std::string & key) const
 {
-    std::string lkey = LowerString_(key);
-    if(opmap_.count(lkey) == 0)
+    if(opmap_.count(key) == 0)
         return false;
-    return opmap_.at(lkey)->HasValue();
+    return opmap_.at(key)->HasValue();
 }
 
 
 bool OptionMap::HasKey(const std::string & key) const
 {
-    std::string lkey = LowerString_(key);
-    return opmap_.count(lkey);
+    return opmap_.count(key);
 }
 
 size_t OptionMap::Size(void) const noexcept
@@ -70,14 +68,12 @@ size_t OptionMap::Size(void) const noexcept
 
 bool OptionMap::IsDefault(const std::string & key) const
 {
-    std::string lkey = LowerString_(key);
-    return GetOrThrow_(lkey)->IsDefault();
+    return GetOrThrow_(key)->IsDefault();
 }
 
 void OptionMap::ResetToDefault(const std::string & key)
 {
-    std::string lkey = LowerString_(key);
-    GetOrThrow_(lkey)->ResetToDefault();
+    GetOrThrow_(key)->ResetToDefault();
 }
 
 
@@ -108,15 +104,6 @@ const detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
 }
 
 
-std::string OptionMap::LowerString_(const std::string & str)
-{
-    //! \todo assume ASCII
-    std::string ret(str);
-    std::transform(ret.begin(), ret.end(), ret.begin(), ::tolower);
-    return ret;
-}
-
-
 
 
 //////////////////////////////
@@ -136,7 +123,12 @@ OptionMap::OptionMap(const boost::python::dict & opt)
                                   "element", std::to_string(i),
                                   "pytype", GetPyClass(keys[i]));
 
-        std::string key = LowerString_(ConvertToCpp<std::string>(keys[i]));
+
+        std::string key = ConvertToCpp<std::string>(keys[i]);
+
+        // convert to lowercase
+        std::transform(key.begin(), key.end(), key.begin(), ::tolower);        
+        
 
         // should this ever happen? Keys should be unique in a
         //  python dict
@@ -153,9 +145,7 @@ OptionMap::OptionMap(const boost::python::dict & opt)
 
 void OptionMap::ChangePy(const std::string & key, const boost::python::object & obj)
 {
-    std::string lkey = LowerString_(key);
-    detail::OptionBase * ptr = GetOrThrow_(lkey);
-
+    detail::OptionBase * ptr = GetOrThrow_(key);
     ptr->ChangePy(obj);
 }
 
@@ -180,7 +170,7 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
                                   "element", std::to_string(i),
                                   "pytype", GetPyClass(keys[i]));
 
-        std::string key = LowerString_(ConvertToCpp<std::string>(keys[i]));
+        std::string key = ConvertToCpp<std::string>(keys[i]);
 
         if(!tmp.HasKey(key))
             throw OptionException("Python dictionary has a key that I do not", key, "element", std::to_string(i));
@@ -195,8 +185,7 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
 
 boost::python::object OptionMap::GetPy(const std::string & key) const
 {
-    std::string lkey = LowerString_(key);
-    return GetOrThrow_(lkey)->GetPy();
+    return GetOrThrow_(key)->GetPy();
 }
 
 

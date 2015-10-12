@@ -9,6 +9,7 @@
 #define _GUARD_OPTIONMAP_HPP_
 
 #include <map>
+#include <algorithm>
 
 #include "bpmodule/options/OptionTypes.hpp"
 #include "bpmodule/options/OptionHolder.hpp"
@@ -70,9 +71,8 @@ class OptionMap
             typedef typename detail::OptionConvert<T>::stored_type stored_type;
 
             CheckType_<T>();
-            std::string lkey = LowerString_(key);
 
-            stored_type val = GetOrThrow_Cast_<stored_type>(lkey)->Get();
+            stored_type val = GetOrThrow_Cast_<stored_type>(key)->Get();
 
             try {
                 return detail::OptionConvert<T>::ConvertFromStored(val);
@@ -140,7 +140,6 @@ class OptionMap
             typedef typename detail::OptionConvert<T>::stored_type stored_type;
 
             CheckType_<T>();
-            std::string lkey = LowerString_(key);
             stored_type convval;
 
             try {
@@ -152,7 +151,7 @@ class OptionMap
                 throw exception::OptionException(ex, key);
             }
 
-            GetOrThrow_Cast_<stored_type>(lkey)->Change(convval);
+            GetOrThrow_Cast_<stored_type>(key)->Change(convval);
         }
 
 
@@ -192,8 +191,7 @@ class OptionMap
             if(!HasKey(key))
                 return false;
 
-            std::string lkey = LowerString_(key);
-            return GetOrThrow_(lkey)->IsType<stored_type>();
+            return GetOrThrow_(key)->IsType<stored_type>();
         }
 
 
@@ -288,7 +286,22 @@ class OptionMap
 
 
     private:
-        std::map<std::string, detail::OptionBasePtr> opmap_;
+
+        //! \brief Comparison of a case-insensitive string
+        struct CaseInsensitiveCompare_
+        {
+            bool operator()(std::string lhs, std::string rhs) const
+            {
+                std::transform(lhs.begin(), lhs.end(), lhs.begin(), ::tolower);
+                std::transform(rhs.begin(), rhs.end(), rhs.begin(), ::tolower);
+                std::less<std::string> comp;
+                return comp(lhs, rhs);
+            }
+        }; 
+
+
+        //! Holds the options
+        std::map<std::string, detail::OptionBasePtr, CaseInsensitiveCompare_> opmap_;
 
 
         /*! \brief Get an pointer to OptionBase or throw if the key doesn't exist
@@ -347,10 +360,6 @@ class OptionMap
             return oh;
         }
 
-
-        /*! \brief Converts a string to lower case
-         */
-        static std::string LowerString_(const std::string & str);
 
 
         /*! \brief Checks if a given type is valid for an option
