@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include <boost/python.hpp>
+#include <boost/python/dict.hpp>
 
 #include "bpmodule/modulestore/ModuleStore.hpp"
 #include "bpmodule/output/Output.hpp"

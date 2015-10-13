@@ -4,6 +4,10 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
+#include <boost/python/module.hpp>
+#include <boost/python/def.hpp>
+#include <boost/python/tuple.hpp>
+#include <boost/python/dict.hpp>
 
 #include "bpmodule/testing/TestConvert.hpp"
 #include "bpmodule/testing/TestDatastore.hpp"

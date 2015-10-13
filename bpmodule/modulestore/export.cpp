@@ -4,6 +4,9 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+#include <boost/python/module.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/dict.hpp>
 
 // Various components
 #include "bpmodule/modulebase/All_python.hpp"

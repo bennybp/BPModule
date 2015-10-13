@@ -5,10 +5,9 @@
  */ 
 
 
+#include <boost/python/module.hpp>
+
 #include "bpmodule/molecule/Molecule.hpp"
-
-
-#include <boost/python.hpp>
 
 using namespace boost::python;
 

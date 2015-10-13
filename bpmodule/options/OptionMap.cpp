@@ -4,11 +4,11 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+#include <boost/python/dict.hpp>
+#include "bpmodule/python_helper/Convert.hpp"
 
-#include <boost/python.hpp>
 
 #include "bpmodule/options/OptionMap.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/output/Output.hpp"
 
 

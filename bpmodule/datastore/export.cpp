@@ -5,9 +5,11 @@
  */ 
 
 
+#include <boost/python/module.hpp>
+#include <boost/python/class.hpp>
+
 #include "bpmodule/datastore/CalcData.hpp"
 
-#include <boost/python.hpp>
 
 using namespace boost::python;
 

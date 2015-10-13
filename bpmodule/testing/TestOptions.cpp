@@ -7,15 +7,10 @@
 #include "bpmodule/testing/TestingBase.hpp"
 #include "bpmodule/options/OptionMap.hpp"
 
-#include <boost/python.hpp>
-
 using bpmodule::options::OptionMap;
 
 namespace bpmodule {
 namespace testing {
-
-
-
 
 
 

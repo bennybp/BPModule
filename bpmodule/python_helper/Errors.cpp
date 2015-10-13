@@ -4,6 +4,15 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+#include "bpmodule/pragma.h"
+
+// Ignore swich missing default case
+PRAGMA_WARNING_PUSH
+PRAGMA_WARNING_IGNORE_SWITCH_MISSING_DEFAULT
+#include <Python.h>  // directly from python headers, not boost
+PRAGMA_WARNING_POP
+
+#include <boost/python/extract.hpp>
 
 #include "bpmodule/python_helper/Errors.hpp"
 

@@ -7,7 +7,7 @@
 
 #include <dlfcn.h>
 
-#include <boost/python.hpp>
+#include <boost/python/dict.hpp>
 
 #include "bpmodule/modulestore/CModuleLoader.hpp"
 #include "bpmodule/output/Output.hpp"

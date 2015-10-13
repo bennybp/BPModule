@@ -4,11 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
+#include <boost/python/module.hpp>
+#include <boost/python/def.hpp>
+#include <boost/python/list.hpp> // needed since InitParallel takes lists
+                                 //! \todo move python parsing stuff to here?
 
 #include "bpmodule/parallel/Parallel.hpp"
-
-
-#include <boost/python.hpp>
 
 using namespace boost::python;
 

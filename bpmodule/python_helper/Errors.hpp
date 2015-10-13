@@ -8,8 +8,6 @@
 #ifndef _GUARD_ERRORS_HPP_
 #define _GUARD_ERRORS_HPP_
 
-#include <boost/python.hpp>
-
 namespace bpmodule {
 namespace python_helper {
 namespace detail {

@@ -4,6 +4,8 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+#include <boost/python/extract.hpp>
+
 #include "bpmodule/modulestore/PyModuleLoader.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"

@@ -1,7 +1,19 @@
+###################################################
+# Handling of warnings, etc
+###################################################
+# Note - -ww2338 has a lot of warnings from python
+#        includes. I don't know why these aren't
+#        found by -Wswitch-default in GCC. Boost
+#        doesn't seem to be supressing any itself
+###################################################
+
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-fPIC")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-std=c++11")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-w3")
+
+    #  2338  : switch statement does not have a default clause
+    #list(APPEND BPMODULE_CXX_STRICT_FLAGS "-ww2338")
 
     # some useless remarks
     #  1418  : external function definition with no prior declaration
@@ -26,6 +38,3 @@ elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     # maybe in the future. Seems to need a very new gcc compiler
     #list(APPEND BPMODULE_CXX_STRICT_FLAGS "-Wmisleading-indentation")
 endif()
-
-message(STATUS "Strict flags: ${BPMODULE_CXX_STRICT_FLAGS}")
-

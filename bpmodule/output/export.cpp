@@ -4,10 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
+#include <boost/python/module.hpp>
+#include <boost/python/def.hpp>
+#include <boost/python/long.hpp>
+
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
-
-#include <boost/python.hpp>
 
 using namespace boost::python;
 

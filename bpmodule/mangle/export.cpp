@@ -5,7 +5,8 @@
  */ 
 
 
-#include <boost/python.hpp>
+#include <boost/python/module.hpp>
+
 using namespace boost::python;
 
 

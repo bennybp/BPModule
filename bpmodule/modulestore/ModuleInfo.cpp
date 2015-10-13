@@ -5,8 +5,10 @@
  */
 
 
-#include "bpmodule/modulestore/ModuleInfo.hpp"
+#include <boost/python/dict.hpp>
 #include "bpmodule/python_helper/Convert.hpp"
+
+#include "bpmodule/modulestore/ModuleInfo.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/exception/ModuleStoreException.hpp"
 

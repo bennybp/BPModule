@@ -5,12 +5,16 @@
  */ 
 
 
+#include <boost/python/module.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/copy_const_reference.hpp>
+#include <boost/python/register_ptr_to_python.hpp>
+#include <boost/python/pure_virtual.hpp>
+
 #include "bpmodule/modulebase/All.hpp"
 #include "bpmodule/modulebase/All_python.hpp"
 #include "bpmodule/modulestore/ModuleStore.hpp"
 
-// included from above
-//#include <boost/python.hpp>
 
 using bpmodule::modulestore::ModuleStore;
 using bpmodule::modulestore::ModuleInfo;

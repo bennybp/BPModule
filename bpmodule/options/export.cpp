@@ -5,9 +5,11 @@
  */
 
 
-#include "bpmodule/options/OptionMap.hpp"
+#include <boost/python/module.hpp>
+#include <boost/python/class.hpp>
+#include <boost/python/dict.hpp>
 
-#include <boost/python.hpp>
+#include "bpmodule/options/OptionMap.hpp"
 
 using namespace boost::python;
 

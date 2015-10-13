@@ -8,9 +8,11 @@
 #ifndef _GUARD_TEST_BASE_PYTHON_HPP_
 #define _GUARD_TEST_BASE_PYTHON_HPP_
 
+#include <boost/python/wrapper.hpp>
+#include <boost/python/list.hpp>
+
 #include "bpmodule/modulebase/Test_Base.hpp"
 
-#include <boost/python.hpp>
 
 
 namespace bpmodule {

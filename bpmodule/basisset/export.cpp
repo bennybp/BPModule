@@ -5,10 +5,10 @@
  */ 
 
 
+#include <boost/python/module.hpp>
+
 #include "bpmodule/basisset/BasisSet.hpp"
 
-
-#include <boost/python.hpp>
 
 using namespace boost::python;
 

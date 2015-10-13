@@ -4,11 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
+#include <boost/python/dict.hpp>
+
 #include "bpmodule/testing/TestingBase.hpp"
 #include "bpmodule/testing/TestModuleInfo.hpp"
 #include "bpmodule/modulestore/ModuleInfo.hpp"
 
-#include <boost/python.hpp>
 
 using bpmodule::modulestore::ModuleInfo;
 

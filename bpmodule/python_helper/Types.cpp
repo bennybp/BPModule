@@ -5,7 +5,8 @@
  */
 
 
-#include <boost/python.hpp>
+#include <boost/python/list.hpp>  // includes object
+#include <boost/python/extract.hpp>
 
 #include "bpmodule/python_helper/Types.hpp"
 #include "bpmodule/python_helper/Convert.hpp"

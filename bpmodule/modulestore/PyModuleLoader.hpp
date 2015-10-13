@@ -8,8 +8,9 @@
 #ifndef _GUARD_PYMODULELOADER_HPP_
 #define _GUARD_PYMODULELOADER_HPP_
 
-#include <boost/python.hpp>
+#include <boost/python/object.hpp>
 
+#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 #include "bpmodule/modulestore/ModuleLoaderBase.hpp"
 
 

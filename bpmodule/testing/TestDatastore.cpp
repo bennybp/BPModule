@@ -8,8 +8,6 @@
 #include "bpmodule/testing/TestDatastore.hpp"
 #include "bpmodule/datastore/CalcData.hpp"
 
-#include <boost/python.hpp>
-
 using bpmodule::datastore::CalcData;
 
 namespace bpmodule {

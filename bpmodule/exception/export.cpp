@@ -4,10 +4,11 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+#include <boost/python/module.hpp>
+#include <boost/python/exception_translator.hpp>
 
 #include "bpmodule/exception/GeneralException.hpp"
 
-#include <boost/python.hpp>
 using namespace boost::python;
 
 
