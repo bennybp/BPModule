@@ -4,6 +4,18 @@ Intel compiler warning about float conversion (I think I saw)
 
 Think about extern template
 
+Options
+-----------
+Store arbitrary int and float (add conversions, etc)
+
+
+Output
+-----------
+Let upper process handle redirects?
+Allow setting output to null (change stdout, etc)
+Disable buffering?
+
+
 Datastore
 -----------
 Move Stuff from OptionHolder.cpp bach to .hpp?
@@ -14,6 +26,7 @@ Move options back to datastore - rename OptionHolder, etc, back
 
 Math
 -----------
+Add conversion to/from arbitrary types
 Add Constants - float, double, ld
 Add unit conversion functions
 Use python scripts to generate!
