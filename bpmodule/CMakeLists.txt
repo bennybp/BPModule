@@ -127,5 +127,6 @@ set(BPMODULE_FILES
             modinfo.py
             modulecheck.py
             utils.py
+            ModuleManager.py
    )
 install(FILES ${BPMODULE_FILES} DESTINATION modules/bpmodule)

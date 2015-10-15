@@ -249,7 +249,7 @@ class ModuleStore
         std::unordered_map<unsigned long, ModuleRemoverFunc> removemap_;
 
 
-        /*! \brief Map for storing object removal information
+        /*! \brief Map for storing created module information
          *
          * \todo will be replaced by a graph or tree
          */

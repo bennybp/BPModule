@@ -159,6 +159,12 @@ ModuleStore::~ModuleStore()
     // the objects. The deletion functors aren't
     // called here since this should be destructed
     // after all the loaders
+    //
+    // Deleting after the loader had been destructed
+    // probably wouldn't be a good idea, since the object
+    // wouldn't exist anymore...
+    //
+    //! \todo Check if maps are empty?
 }
 
 } // close namespace modulestore

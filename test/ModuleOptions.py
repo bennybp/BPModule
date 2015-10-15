@@ -29,7 +29,7 @@ def IsValid(t, d):
 
 
 
-def Run():
+def Run(mm):
     try:
 
         tester = bp.testing.Tester("Testing construction of Modules and Options")
@@ -38,25 +38,25 @@ def Run():
 
         # Load the python modules
         #             supermodule       module name       key
-        bp.LoadModule("test_options",   "test_int",     "TEST_INT")
-        bp.LoadModule("test_options",   "test_float",   "TEST_FLOAT")
-        bp.LoadModule("test_options",   "test_bool",    "TEST_BOOL")
-        bp.LoadModule("test_options",   "test_str",     "TEST_STR")
+        mm.LoadModule("test_options",   "test_int",     "TEST_INT")
+        mm.LoadModule("test_options",   "test_float",   "TEST_FLOAT")
+        mm.LoadModule("test_options",   "test_bool",    "TEST_BOOL")
+        mm.LoadModule("test_options",   "test_str",     "TEST_STR")
 
-        bp.LoadModule("test_options",   "test_listint",     "TEST_LIST_INT")
-        bp.LoadModule("test_options",   "test_listfloat",   "TEST_LIST_FLOAT")
-        bp.LoadModule("test_options",   "test_listbool",    "TEST_LIST_BOOL")
-        bp.LoadModule("test_options",   "test_liststr",     "TEST_LIST_STR")
+        mm.LoadModule("test_options",   "test_listint",     "TEST_LIST_INT")
+        mm.LoadModule("test_options",   "test_listfloat",   "TEST_LIST_FLOAT")
+        mm.LoadModule("test_options",   "test_listbool",    "TEST_LIST_BOOL")
+        mm.LoadModule("test_options",   "test_liststr",     "TEST_LIST_STR")
 
-        mod_int   = ( bp.mst.GetModule_Test("TEST_INT"),    "int"   )
-        mod_float = ( bp.mst.GetModule_Test("TEST_FLOAT"),  "float" )
-        mod_bool  = ( bp.mst.GetModule_Test("TEST_BOOL"),   "bool"  )
-        mod_str   = ( bp.mst.GetModule_Test("TEST_STR"),    "str"   )
+        mod_int   = ( mm.GetModule_Test("TEST_INT"),    "int"   )
+        mod_float = ( mm.GetModule_Test("TEST_FLOAT"),  "float" )
+        mod_bool  = ( mm.GetModule_Test("TEST_BOOL"),   "bool"  )
+        mod_str   = ( mm.GetModule_Test("TEST_STR"),    "str"   )
 
-        mod_listint   = ( bp.mst.GetModule_Test("TEST_LIST_INT"),   "listint"   )
-        mod_listfloat = ( bp.mst.GetModule_Test("TEST_LIST_FLOAT"), "listfloat" )
-        mod_listbool  = ( bp.mst.GetModule_Test("TEST_LIST_BOOL"),  "listbool"  )
-        mod_liststr   = ( bp.mst.GetModule_Test("TEST_LIST_STR"),   "liststr"   )
+        mod_listint   = ( mm.GetModule_Test("TEST_LIST_INT"),   "listint"   )
+        mod_listfloat = ( mm.GetModule_Test("TEST_LIST_FLOAT"), "listfloat" )
+        mod_listbool  = ( mm.GetModule_Test("TEST_LIST_BOOL"),  "listbool"  )
+        mod_liststr   = ( mm.GetModule_Test("TEST_LIST_STR"),   "liststr"   )
 
         allmod = [ mod_int, mod_float, mod_bool, mod_str,
                    mod_listint, mod_listfloat, mod_listbool, mod_liststr ]
@@ -140,5 +140,8 @@ def Run():
 
 
 bp.Init(sys.argv, out = "stdout", color = True, debug = True)
-Run()
+
+with bp.ModuleManager() as mm:
+    Run(mm)
+
 bp.Finalize()

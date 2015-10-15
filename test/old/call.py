@@ -11,20 +11,21 @@ sys.path.insert(0, "/home/ben/programming/BPModule/install/modules")
 import bpmodule as bp
 
 
-def Run():
+def Run(mm):
     try:
+
       # Load the python modules
       #             supermodule      module name      key
-      bp.LoadModule("testmodule1",   "testmodule1",   "TESTMOD1")
-      bp.LoadModule("testpymodule1", "testpymodule1", "TESTPYMOD1")
+      mm.LoadModule("testmodule1",   "testmodule1",   "TESTMOD1")
+      mm.LoadModule("testpymodule1", "testpymodule1", "TESTPYMOD1")
 
-      bp.SetOptions("TESTMOD1", { "double_opt_def": 1.111, "int_opt_def" : 55 })
-      bp.DumpModuleInfo()
-      bp.SanityCheck()
+      mm.SetOptions("TESTMOD1", { "double_opt_def": 1.111, "int_opt_def" : 55 })
+      mm.PrintInfo()
+      mm.SanityCheck()
 
 
-      b1 = bp.mst.GetModule_Test("TESTMOD1")
-      b2 = bp.mst.GetModule_Test("TESTPYMOD1")
+      b1 = mm.GetModule_Test("TESTMOD1")
+      b2 = mm.GetModule_Test("TESTPYMOD1")
 
       b1.RunTest()
       bp.output.Output("\n")
@@ -43,7 +44,9 @@ def Run():
 
 
 
-
 bp.Init(sys.argv, out = "stdout", color = True, debug = True)
-Run()
+
+with bp.ModuleManager() as mm:
+    Run(mm)
+
 bp.Finalize()
