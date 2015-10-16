@@ -53,6 +53,7 @@ set(BPMODULE_PARALLEL_HEADERS
 
 set(BPMODULE_MATH_HEADERS
             math/Cast.hpp
+            math/ExactCast.hpp
    )
 
 set(BPMODULE_TENSOR_HEADERS
