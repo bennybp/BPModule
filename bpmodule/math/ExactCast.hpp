@@ -37,10 +37,6 @@ struct ExactCast
         PRAGMA_WARNING_IGNORE_STATEMENT_UNREACHABLE
 
 
-        // no casting
-        if(std::is_same<Target, Source>::value)
-            return static_cast<Target>(s);  // cast to make compiler warnings go away
-
         ////////////////////////////////////////////////////////////////////////////////
         // this is written with branching so that the limits checking isn't always done
         // (ie, going from short->int should be pretty much optimized out)
@@ -164,6 +160,22 @@ struct ExactCast
     }
 };
 
+
+
+
+
+/*! \copydoc ExactCast
+ *
+ * Specialization for no conversion
+ */
+template<typename Source>
+struct ExactCast<Source, Source>
+{
+    static Source Cast(const Source & s)
+    {
+        return s;
+    }
+};
 
 
 
