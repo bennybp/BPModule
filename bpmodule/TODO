@@ -1,7 +1,5 @@
 Check return values from python-exported functions - reference existing object?
 
-Intel compiler warning about float conversion (I think I saw)
-
 Think about extern template
 
 Options

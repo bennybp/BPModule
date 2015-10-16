@@ -8,6 +8,7 @@
 #include "bpmodule/mangle/Mangle.hpp"
 
 
+
 namespace bpmodule {
 namespace math {
 
@@ -25,6 +26,15 @@ namespace math {
 template<typename Target, typename Source>
 Target numeric_cast(Source s)
 {
+    // These are disabled function wide. Intel seems to
+    // complain about stuff in branches that should
+    // be optimized out
+    PRAGMA_WARNING_PUSH
+    PRAGMA_WARNING_IGNORE_FP_CONVERT
+    PRAGMA_WARNING_IGNORE_POINTLESS_COMPARISON_UINT_0
+    PRAGMA_WARNING_IGNORE_STATEMENT_UNREACHABLE
+
+
     static_assert(  ( std::is_integral<Source>::value && std::is_integral<Target>::value) ||
                     ( std::is_floating_point<Source>::value && std::is_floating_point<Target>::value),
                     "Attempting to perform integer <-> floating point conversion using numeric_cast. Consider round_cast");
@@ -150,6 +160,9 @@ Target numeric_cast(Source s)
 
     else
         throw std::logic_error("numeric_cast unhandled types");
+
+
+    PRAGMA_WARNING_POP
 }
 
 
@@ -170,6 +183,7 @@ Target round_cast(Source s)
 
 } // close namespace math
 } // close namespace bpmodule
+
 
 
 #endif
