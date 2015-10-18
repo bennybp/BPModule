@@ -1,0 +1,9 @@
+INPUT += dox/basic.dox \
+         dox/dictionary.dox \
+         dox/exception.dox \
+         dox/options.dox \
+         dox/output.dox \
+         dox/philosophy.dox \
+         dox/developers.dox
+
+INPUT += dox/mainpage.dox

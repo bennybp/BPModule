@@ -12,7 +12,7 @@
 
 /*! \brief Create a formatted string
  *
- * \see \ref developer_output_sec
+ * \see \ref developer_output_page
  *
  * \throwno Throws boost exceptions for malformed inputs, etc
  *

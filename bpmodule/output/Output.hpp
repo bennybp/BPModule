@@ -44,21 +44,21 @@ bool Valid(void);
 
 /*! \brief Sets the output to stdout
  *
- * \see \ref developer_output_sec
+ * \see \ref developer_output_page
  */
 void SetOut_Stdout(void);
 
 
 /*! \brief Sets the output to stderr
  *
- * \see \ref developer_output_sec
+ * \see \ref developer_output_page
  */
 void SetOut_Stderr(void);
 
 
 /*! \brief Sets the output to a file
  *
- * \see \ref developer_output_sec
+ * \see \ref developer_output_page
  *
  * The directory containing the file must exist. An existing
  * file will be overwritten.
@@ -70,7 +70,7 @@ bool SetOut_File(const std::string & filepath);
 
 /*! \brief Enables or disables the use of colorized output
  *
- * \see \ref developer_output_sec
+ * \see \ref developer_output_page
  *
  * \exnothrow
  *
@@ -81,7 +81,7 @@ void SetColor(bool usecolor) noexcept;
 
 /*! \brief Enables or disables debugging output
  *
- * \see \ref developer_output_sec
+ * \see \ref developer_output_page
  *
  * \exnothrow
  *
@@ -92,7 +92,7 @@ void SetDebug(bool debug) noexcept;
 
 /*! \brief Flush the output buffers
  *
- * \see \ref developer_output_sec
+ * \see \ref developer_output_page
  */
 void Flush(void);
 
@@ -180,7 +180,7 @@ void Output_(std::ostream & out, OutputType type, const std::string & fmt, Targs
 
 /*! \brief Print general output to a stream
  * 
- * \see \ref developer_output_sec
+ * \see \ref developer_output_page
  *
  * \throwno Throws boost exceptions for malformed inputs, etc
  *
@@ -203,7 +203,7 @@ void Output(std::ostream & out, const std::string & fmt, Targs... Fargs)
  * The output can be set with SetOut_Stdout, SetOut_Stderr, or
  * SetOut_File.
  *
- * \see \ref developer_output_sec
+ * \see \ref developer_output_page
  *
  * \throwno Throws boost exceptions for malformed inputs, etc
  *
@@ -236,7 +236,7 @@ std::string OutputStr(const std::string & fmt, Targs... Fargs)
 
 /*! \brief Create a formatted string
  *
- * \see \ref developer_output_sec
+ * \see \ref developer_output_page
  *
  * \throwno Throws boost exceptions for malformed inputs, etc
  *

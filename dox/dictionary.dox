@@ -1,0 +1,10 @@
+/////////////////////////
+// Developer page      //
+// Terminology         //
+/////////////////////////
+/*! \page developer_dictionary_page Terminology
+
+Loading a module - Opening the SO file or python module and
+inserting it's creation function into the module database.
+
+*/

@@ -3,19 +3,11 @@
 /////////////////////////
 /*! \page developers_page Development notes
 
-\section developer_phil_sec Philosophy
+  - \ref developer_philosophy_page
+  - \ref developer_dictionary_page
+  - \ref developer_basic_page
+  - \ref developer_output_page
+  - \ref developer_exception_page
+  - \ref developer_options_page
 
-\section developer_basic_sec Basic Layout
-
-\section developer_dictionary Basic Terminology
-
-Loading a module - Opening the SO file or python module and
-inserting it's creation function into the module database.
-
-\section developer_output_sec Outputting Information
-
-\section developer_exception Exceptions
-
-Go over the exception construction, even number of strings, etc
-
- */
+*/
