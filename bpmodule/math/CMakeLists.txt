@@ -1,4 +1,5 @@
 set(BPMODULE_MATH_FILES
+            Factorial_LUT.cpp
             export.cpp
    )
   

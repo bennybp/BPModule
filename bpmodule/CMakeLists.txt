@@ -54,6 +54,8 @@ set(BPMODULE_PARALLEL_HEADERS
 set(BPMODULE_MATH_HEADERS
             math/Cast.hpp
             math/ExactCast.hpp
+            math/Factorial.hpp
+            math/Factorial_LUT.hpp
    )
 
 set(BPMODULE_TENSOR_HEADERS
