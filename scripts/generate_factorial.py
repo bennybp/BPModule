@@ -1,16 +1,28 @@
 #!/usr/bin/env python3
 
+import sys
+import bp_common
 
-def PrintArr(f, fh, lst, name, t):
-  fh.write("extern {} {}_lut_[{}];\n".format(t, name, len(lst)))
-  fh.write("static const int {}_LUT_MAX_ = {};      // Maximum index of {}\n".format(name.upper(), len(lst)-1, name))
-  fh.write("\n")
+
+
+if len(sys.argv) != 2:
+   print("Usage: generate_factorial.py outbase")
+   quit(1)
+
+
+outbase = sys.argv[1]
+
+
+def PrintArr(src, lst, name, t, fmt):
+  src.fh.write("extern {} {}_lut_[{}];\n".format(t, name, len(lst)))
+  src.fh.write("static const int {}_LUT_MAX_ = {};      // Maximum index of {}\n".format(name.upper(), len(lst)-1, name))
+  src.fh.write("\n")
 
   nameline = "{} {}_lut_[{}] = {{".format(t, name, len(lst))
-  f.write(nameline + "\n")
+  src.f.write(nameline + "\n")
   for v in lst:
-    f.write(" "*(len(nameline)+1) + "{},\n".format(v))
-  f.write(" "*(len(nameline)-1) + "}}; // close {}\n".format(name))
+    src.f.write(" "*(len(nameline)+1) + fmt.format(v) + ",\n")
+  src.f.write(" "*(len(nameline)-1) + "}}; // close {}\n".format(name))
 
 
 
@@ -102,35 +114,10 @@ guard = guard.replace('\\', '__')
 guard = "_GUARD_{}_".format(guard)
 
 
-with open(cppfile, 'w') as f:
-  with open(hppfile, 'w') as fh:
-    f.write("/*\n")
-    f.write("doxygen...\n")
-    f.write("*/\n")
-    f.write("\n\n")
-    f.write("#include <cstdint>\n")
-
-
-    fh.write("/*\n")
-    fh.write("doxygen...\n")
-    fh.write("*/\n")
-    fh.write("\n\n")
-    fh.write("#ifndef {}\n".format(guard))
-    fh.write("#define {}\n".format(guard))
-
-
-
-    f.write("\n\n\n")
-    f.write("namespace bpmodule {\n")
-    f.write("namespace math {\n")
-    f.write("namespace lut {\n")
-    f.write("\n\n\n")
-
-    fh.write("\n\n\n")
-    fh.write("namespace bpmodule {\n")
-    fh.write("namespace math {\n")
-    fh.write("namespace lut {\n")
-    fh.write("\n\n\n")
+with bp_common.HeaderSourceFiles(outbase, "LUT for factorial and related functions", 
+                                 ["math", "lut"],
+                                 hppincludes = ["<cstdint>"],
+                                 cppincludes = ["<cstdint>"]) as src:
 
     ########################################################
     # Create LUT
@@ -138,67 +125,54 @@ with open(cppfile, 'w') as f:
     ####################################################
     # Factorial
     ####################################################
-    f.write("// Factorial: 64-bit unsigned integer\n")
-    f.write("// fac_int_lut_[i] = i!\n")
-    PrintArr(f, fh, fac_int, "fac_int", "uint64_t")
-    f.write("\n\n\n")
+    src.f.write("// Factorial: 64-bit unsigned integer\n")
+    src.f.write("// fac_int_lut_[i] = i!\n")
+    PrintArr(src, fac_int, "fac_int", "uint64_t", "{}")
+    src.f.write("\n\n\n")
 
-    f.write("// Factorial: single-precision floating point\n")
-    f.write("// fac_float_lut_[i] = i!\n")
-    PrintArr(f, fh, fac_float, "fac_float", "float")
-    f.write("\n\n\n")
+    src.f.write("// Factorial: single-precision floating point\n")
+    src.f.write("// fac_float_lut_[i] = i!\n")
+    PrintArr(src, fac_float, "fac_float", "float", "{:.10e}f")
+    src.f.write("\n\n\n")
 
-    f.write("// Factorial: double-precision floating point\n")
-    f.write("// fac_double_lut_[i] = i!\n")
-    PrintArr(f, fh, fac_double, "fac_double", "double")
-    f.write("\n\n\n")
+    src.f.write("// Factorial: double-precision floating point\n")
+    src.f.write("// fac_double_lut_[i] = i!\n")
+    PrintArr(src, fac_double, "fac_double", "double", "{:.18e}")
+    src.f.write("\n\n\n")
 
     ####################################################
     # Double factorial
     ####################################################
-    f.write("// Double Factorial: 64-bit unsigned integer\n")
-    f.write("// dfac_int_lut_[i] = (i-1)!!\n")
-    PrintArr(f, fh, dfac_int, "dfac_int", "uint64_t")
-    f.write("\n\n\n")
+    src.f.write("// Double Factorial: 64-bit unsigned integer\n")
+    src.f.write("// dfac_int_lut_[i] = (i-1)!!\n")
+    PrintArr(src, dfac_int, "dfac_int", "uint64_t", "{}")
+    src.f.write("\n\n\n")
 
-    f.write("// Double Factorial: single-precision floating point\n")
-    f.write("// dfac_float_lut_[i] = (i-1)!!\n")
-    PrintArr(f, fh, dfac_float, "dfac_float", "float")
-    f.write("\n\n\n")
+    src.f.write("// Double Factorial: single-precision floating point\n")
+    src.f.write("// dfac_float_lut_[i] = (i-1)!!\n")
+    PrintArr(src, dfac_float, "dfac_float", "float", "{:.10e}f")
+    src.f.write("\n\n\n")
 
-    f.write("// Double Factorial: double-precision floating point\n")
-    f.write("// dfac_double_lut_[i] = (i-1)!!\n")
-    PrintArr(f, fh, dfac_double, "dfac_double", "double")
-    f.write("\n\n\n")
+    src.f.write("// Double Factorial: double-precision floating point\n")
+    src.f.write("// dfac_double_lut_[i] = (i-1)!!\n")
+    PrintArr(src, dfac_double, "dfac_double", "double", "{:.18e}")
+    src.f.write("\n\n\n")
 
     ####################################################
     # (2n-1)!!
     ####################################################
-    f.write("// (2n-1)!!: 64-bit unsigned integer\n")
-    f.write("// dfac_2nm1_int_lut_[i] = (2i-1)!!\n")
-    PrintArr(f, fh, dfac_2nm1_int, "dfac_2nm1_int", "uint64_t")
-    f.write("\n\n\n")
+    src.f.write("// (2n-1)!!: 64-bit unsigned integer\n")
+    src.f.write("// dfac_2nm1_int_lut_[i] = (2i-1)!!\n")
+    PrintArr(src, dfac_2nm1_int, "dfac_2nm1_int", "uint64_t", "{}")
+    src.f.write("\n\n\n")
 
-    f.write("// (2n-1)!!: single-precision floating point\n")
-    f.write("// dfac_2nm1_float_lut_[i] = (2i-1)!!\n")
-    PrintArr(f, fh, dfac_2nm1_float, "dfac_2nm1_float", "float")
-    f.write("\n\n\n")
+    src.f.write("// (2n-1)!!: single-precision floating point\n")
+    src.f.write("// dfac_2nm1_float_lut_[i] = (2i-1)!!\n")
+    PrintArr(src, dfac_2nm1_float, "dfac_2nm1_float", "float", "{:.10e}f")
+    src.f.write("\n\n\n")
 
-    f.write("// (2n-1)!!: double-precision floating point\n")
-    f.write("// dfac_2nm1_float_lut_[i] = (2i-1)!!\n")
-    PrintArr(f, fh, dfac_2nm1_double, "dfac_2nm1_double", "double")
-    f.write("\n\n\n")
-
-    
-    # footer
-    f.write("} // closing namespace lut\n")
-    f.write("} // closing namespace math\n")
-    f.write("} // closing namespace bpmodule\n")
-
-    fh.write("\n\n\n")
-    fh.write("} // closing namespace lut\n")
-    fh.write("} // closing namespace math\n")
-    fh.write("} // closing namespace bpmodule\n")
-    fh.write("\n")
-    fh.write("#endif\n")
+    src.f.write("// (2n-1)!!: double-precision floating point\n")
+    src.f.write("// dfac_2nm1_float_lut_[i] = (2i-1)!!\n")
+    PrintArr(src, dfac_2nm1_double, "dfac_2nm1_double", "double", "{:.18e}")
+    src.f.write("\n\n\n")
 

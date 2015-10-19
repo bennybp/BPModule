@@ -6,7 +6,7 @@
 import sys
 import os
 
-
+import bp_common
 
 
 for f in sys.argv[1:]:
@@ -14,13 +14,7 @@ for f in sys.argv[1:]:
     print("File doesn't exist or is not a file: {}".format(f)) 
     continue
 
-  base = os.path.basename(f)
-  guard = base.upper()
-  guard = guard.replace('.', '_')
-  guard = guard.replace('-', '_')
-  guard = guard.replace('/', '__')
-  guard = guard.replace('\\', '__')
-  guard = "_GUARD_{}_".format(guard)
+  guard = bp_common.GenIncludeGuard(f)
 
   print("Processing file {}".format(f)) 
   print("  Header guard: {}".format(guard)) 
