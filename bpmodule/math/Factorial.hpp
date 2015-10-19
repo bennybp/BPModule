@@ -19,7 +19,7 @@ namespace math {
  *
  * \throw exception::MathException if there is a problem (negative number, overflow/underflow, etc)
  */
-inline int64_t Factorial(int n)
+inline uint64_t Factorial(int n)
 {
     if(n < 0)
         throw exception::MathException("Factorial is not defined for negative integers", "n", std::to_string(n)); 
@@ -75,7 +75,7 @@ inline double FactorialD(int n)
  *
  * \throw exception::MathException if there is a problem (negative number, overflow/underflow, etc)
  */
-inline int64_t DoubleFactorial(int n)
+inline uint64_t DoubleFactorial(int n)
 {
     if(n < -1)
         throw exception::MathException("Double factorial is not defined for integers < -1", "n", std::to_string(n)); 
@@ -135,7 +135,7 @@ inline double DoubleFactorialD(int n)
  *
  * \throw exception::MathException if there is a problem (negative number, overflow/underflow, etc)
  */
-inline int64_t Double2nm1Factorial(int n)
+inline uint64_t Double2nm1Factorial(int n)
 {
     if(n < 0)
         throw exception::MathException("(2n-1)!! is not defined for integers n < 0", "n", std::to_string(n)); 
