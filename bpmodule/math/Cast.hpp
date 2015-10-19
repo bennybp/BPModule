@@ -8,7 +8,7 @@ namespace math {
 
 
 
-/*! Perform a safe cast between integer types or between floating point types
+/*! \brief Perform a safe cast between integer types or between floating point types
  *
  * Checks for overflows and underflows, as well as loss of precision with floating
  * point conversions.
