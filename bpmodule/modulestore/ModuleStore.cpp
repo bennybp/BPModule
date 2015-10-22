@@ -91,8 +91,14 @@ void ModuleStore::TestAll(void)
     {
         output::Debug("Testing %1% (%2%)...\n", it.first, it.second.mi.name);
 
-        if(!it.second.mi.options.IsValid())
-            output::Error("Error - module %1% [key %2%]\" failed options test - options are missing or otherwise invalid", it.second.mi.name, it.first);
+        if(!it.second.mi.options.AllReqSet())
+        {
+            output::Error("Error - module %1% [key %2%]\" failed options test - required options are missing", it.second.mi.name, it.first);
+
+            auto missingreq = it.second.mi.options.AllMissingReq();
+            for(const auto & optit : missingreq)
+                output::Error("    Missing \"%1%\"\n", optit);
+        }
 
         try {
             GetModule<ModuleBase>(it.first);

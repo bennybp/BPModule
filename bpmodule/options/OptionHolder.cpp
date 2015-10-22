@@ -322,7 +322,7 @@ static void PrintOption_(const OptionHolder<T> & oph)
                                     oph.Help());                                                       // help/description
 
 
-    if(!oph.IsValid())
+    if(!oph.IsSetIfRequired())
         output::Error(optline);
 
     if(!oph.IsDefault())
@@ -410,7 +410,7 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
 
     for(const auto & it : optlines)
     {
-        if(!oph.IsValid())
+        if(!oph.IsSetIfRequired())
             output::Error(it);
         else if(!oph.IsDefault())
             output::Changed(it);

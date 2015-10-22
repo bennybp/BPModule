@@ -168,12 +168,22 @@ class OptionMap
 
 
 
-        /*! \brief Check all options to see if they are valid
+        /*! \brief Check all options to see if all required options are set
          *
          * \exnothrow
          */
-        bool IsValid(void) const noexcept;
+        bool AllReqSet(void) const noexcept;
 
+
+        /*! \brief Obtain the option keys for all missing options
+         */
+        std::vector<std::string> AllMissingReq(void) const;
+
+
+        /*! \brief Check the validity of all the options
+         *
+         */
+        //bool IsValid(void) const; 
 
 
         /*! \brief Check if the map has a key with a given type
@@ -209,8 +219,11 @@ class OptionMap
          *
          * \throw bpmodule::exception::OptionException if there is
          *        a problem with the option (validation, conversion, duplicate key, etc)
+         *
+         *  \param [in] opt A dictionary with the options
+         *  \param [in] wholevalidfunc Pointer to a function to validate the whole options object
          */
-        OptionMap(const boost::python::dict & opt);
+        OptionMap(const boost::python::dict & opt, const boost::python::object & wholevalidfunc);
 
 
 
@@ -286,6 +299,9 @@ class OptionMap
 
 
     private:
+        //! Function that validates the whole option container
+        typedef std::function<bool (void)> WholeOptionValidator;
+
 
         //! \brief Comparison of a case-insensitive string
         struct CaseInsensitiveCompare_
@@ -302,6 +318,10 @@ class OptionMap
 
         //! Holds the options
         std::map<std::string, detail::OptionBasePtr, CaseInsensitiveCompare_> opmap_;
+ 
+
+        //!< Validates the whole options container
+        WholeOptionValidator wholevalid_;
 
 
         /*! \brief Get an pointer to OptionBase or throw if the key doesn't exist

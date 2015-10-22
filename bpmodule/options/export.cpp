@@ -24,7 +24,7 @@ BOOST_PYTHON_MODULE(options)
     // OptionMap
     /////////////////////////
     // OptionMap always returns copies, so this should be safe
-    class_<OptionMap>("OptionMap", init<const boost::python::dict &>())
+    class_<OptionMap>("OptionMap", init<const boost::python::dict &, const boost::python::object &>())
     .def("MaxInt", &OptionMap::MaxInt)
     .def("MinInt", &OptionMap::MinInt)
     .def("MaxFloat", &OptionMap::MaxFloat)
@@ -34,7 +34,7 @@ BOOST_PYTHON_MODULE(options)
     .def("HasKey", &OptionMap::HasKey)
     .def("Size", &OptionMap::Size)
     .def("ResetToDefault", &OptionMap::ResetToDefault)
-    .def("IsValid", &OptionMap::IsValid)
+    .def("AllReqSet", &OptionMap::AllReqSet)
     .def("Print", &OptionMap::Print)
     .def("Change", &OptionMap::ChangePy)
     .def("ChangeDict", &OptionMap::ChangePyDict);

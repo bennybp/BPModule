@@ -105,7 +105,13 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
         authors     = DictConvertHelperVec<std::string>(dictionary, "authors");
         refs        = DictConvertHelperVec<std::string>(dictionary, "refs");
 
-        options     = OptionMap(DictConvertHelper<boost::python::dict>(dictionary, "options"));
+
+        // 'None' is ok for whole options validator
+        boost::python::object wholeoptvalid;
+        if(dictionary.has_key("wholeoptvalidator"))
+            wholeoptvalid = dictionary["wholeoptvalidator"];
+
+        options     = OptionMap(DictConvertHelper<boost::python::dict>(dictionary, "options"), wholeoptvalid);
 
         // soname is optional
         if(dictionary.has_key("soname"))

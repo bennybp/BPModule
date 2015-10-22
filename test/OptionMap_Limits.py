@@ -56,7 +56,7 @@ def Run():
 
             # create an OptionMap
             opt = bp.options.OptionMap({ "test_opt" : ( "int", None, True, None, "(no help)" ),
-                                         "test_opt_vec" : ( "listint", None, True, None, "(no help)" ) })
+                                         "test_opt_vec" : ( "listint", None, True, None, "(no help)" ) }, None)
 
             # try setting the values
             vals = [ limits[0]-1, limits[0], limits[0]+1, limits[1]-1, limits[1], limits[1]+1 ]

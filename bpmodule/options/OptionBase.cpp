@@ -47,7 +47,7 @@ void OptionBase::SetExpert(bool expert) noexcept
 }
 
 
-bool OptionBase::IsValid(void) const noexcept
+bool OptionBase::IsSetIfRequired(void) const noexcept
 {
     return HasValue() || HasDefault() || !IsRequired();
 }

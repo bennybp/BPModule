@@ -6,6 +6,7 @@
 
 #include <boost/python/dict.hpp>
 #include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python_helper/Call.hpp"
 
 
 #include "bpmodule/options/OptionMap.hpp"
@@ -29,6 +30,7 @@ namespace options {
 ////////////////////////////////////////////////
 
 OptionMap::OptionMap(const OptionMap & rhs)
+    : wholevalid_(rhs.wholevalid_)
 {
     for(const auto & it : rhs.opmap_)
         opmap_.emplace(it.first, detail::OptionBasePtr(it.second->Clone()));
@@ -39,6 +41,8 @@ OptionMap & OptionMap::operator=(const OptionMap & rhs)
 {
     if(this != &rhs)
     {
+        wholevalid_ = rhs.wholevalid_;
+
         opmap_.clear();
         for(const auto & it : rhs.opmap_)
             opmap_.emplace(it.first, detail::OptionBasePtr(it.second->Clone()));
@@ -77,12 +81,23 @@ void OptionMap::ResetToDefault(const std::string & key)
 }
 
 
-bool OptionMap::IsValid(void) const noexcept
+bool OptionMap::AllReqSet(void) const noexcept
 {
     for(const auto & it : opmap_)
-        if(!it.second->IsValid())
+        if(!it.second->IsSetIfRequired())
             return false;
     return true;
+}
+        
+
+std::vector<std::string> OptionMap::AllMissingReq(void) const
+{
+    std::vector<std::string> req;
+    for(const auto & it : opmap_)
+        if(!it.second->IsSetIfRequired())
+            req.push_back(it.first);
+
+    return req;
 }
 
 
@@ -104,12 +119,16 @@ const detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
 }
 
 
+static bool WholeOptValidatorWrapper(const boost::python::object & val, const OptionMap & op)
+{
+    return boost::python::extract<bool>(python_helper::CallPyFunc(val, op));
+}
 
 
 //////////////////////////////
 // Python functions
 //////////////////////////////
-OptionMap::OptionMap(const boost::python::dict & opt)
+OptionMap::OptionMap(const boost::python::dict & opt, const boost::python::object & wholevalidfunc)
 {
     boost::python::list keys = opt.keys();
 
@@ -139,6 +158,19 @@ OptionMap::OptionMap(const boost::python::dict & opt)
         // this will throw needed exceptions
         opmap_.emplace(key, detail::OptionHolderFactory(key, opt[key]));
     }
+
+    // add whole validator (if it exists)
+    if(DeterminePyType(wholevalidfunc) != python_helper::PythonType::None)
+    {
+        // Don't forget that the method is part of a class
+        // so 1 argument is "self"
+        if(!python_helper::HasCallableAttr(wholevalidfunc, "Validate", 2)) 
+                throw OptionException("Whole options validator does not have a callable Validate() method taking one argument", "(none)",
+                                      "pytype", GetPyClass(wholevalidfunc));
+
+        wholevalid_ = std::bind(WholeOptValidatorWrapper, wholevalidfunc, *this);
+    }
+
 }
 
 

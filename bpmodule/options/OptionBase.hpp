@@ -186,14 +186,14 @@ class OptionBase
 
 
 
-        /*! \brief Check to see if this object is valid
+        /*! \brief Check to see if this object is set if required
          *
          * \exnothrow
          *
          * \return True if there is a value or a default, or if this
          *         option is not required
          */
-        bool IsValid(void) const noexcept;
+        bool IsSetIfRequired(void) const noexcept;
 
 
 
