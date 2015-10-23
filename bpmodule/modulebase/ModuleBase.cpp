@@ -6,11 +6,11 @@
 
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/modulestore/ModuleStore.hpp"
+#include "bpmodule/modulelocator/ModuleLocator.hpp"
 #include "bpmodule/output/Output.hpp"
 
-using bpmodule::modulestore::ModuleStore;
-using bpmodule::modulestore::ModuleInfo;
+using bpmodule::modulelocator::ModuleLocator;
+using bpmodule::modulelocator::ModuleInfo;
 using bpmodule::exception::GeneralException;
 
 
@@ -19,10 +19,10 @@ namespace modulebase {
 
 
 ModuleBase::ModuleBase(unsigned long id,
-                       ModuleStore & mstore,
+                       ModuleLocator & mlocator,
                        ModuleInfo & minfo)
     : id_(id), minfo_(minfo),
-      mstore_(mstore)
+      mlocator_(mlocator)
 {
     output::Debug("Constructed module [%1%] : %2% v%3%\n", ID(), Name(), Version());
 }
@@ -67,9 +67,9 @@ const std::string & ModuleBase::Version(void) const noexcept
 
 
 
-ModuleStore & ModuleBase::MStore(void) noexcept
+ModuleLocator & ModuleBase::MLocator(void) noexcept
 {
-    return mstore_;
+    return mlocator_;
 }
 
 

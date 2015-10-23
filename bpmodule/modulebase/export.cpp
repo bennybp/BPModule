@@ -13,11 +13,11 @@
 
 #include "bpmodule/modulebase/All.hpp"
 #include "bpmodule/modulebase/All_python.hpp"
-#include "bpmodule/modulestore/ModuleStore.hpp"
+#include "bpmodule/modulelocator/ModuleLocator.hpp"
 
 
-using bpmodule::modulestore::ModuleStore;
-using bpmodule::modulestore::ModuleInfo;
+using bpmodule::modulelocator::ModuleLocator;
+using bpmodule::modulelocator::ModuleInfo;
 using bpmodule::options::OptionMap;
 
 using namespace boost::python;
@@ -36,7 +36,7 @@ BOOST_PYTHON_MODULE(modulebase)
     ///////////////////////
     // python should never derive from ModuleBase, so a constructor should not be needed
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
-//    .def("MStore", &ModuleBase::MStore, return_internal_reference<>())
+//    .def("MLocator", &ModuleBase::MLocator, return_internal_reference<>())
     .def("ID", &ModuleBase::ID)
     .def("Key", &ModuleBase::Key, return_value_policy<copy_const_reference>())
     .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
@@ -47,8 +47,8 @@ BOOST_PYTHON_MODULE(modulebase)
 
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
-    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleStore &, ModuleInfo &>())
-    .def("MStore", &Test_Base_Wrap::MStore, return_value_policy<reference_existing_object>()) 
+    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleLocator &, ModuleInfo &>())
+    .def("MLocator", &Test_Base_Wrap::MLocator, return_value_policy<reference_existing_object>()) 
     .def("RunTest", pure_virtual(&Test_Base::RunTest))
     .def("CallRunTest", pure_virtual(&Test_Base::CallRunTest))
     .def("Throw", pure_virtual(&Test_Base::Throw))

@@ -12,8 +12,8 @@
 
 // forward declarations
 namespace bpmodule {
-namespace modulestore {
-class ModuleStore;
+namespace modulelocator {
+class ModuleLocator;
 struct ModuleInfo;
 }
 
@@ -41,12 +41,12 @@ class ModuleBase
         /*! \brief Constructor
          *
          * \param [in] id The unique ID for this module
-         * \param [in] mstore The ModuleStore in charge of this module
+         * \param [in] mlocator The ModuleLocator in charge of this module
          * \param [in] minfo The information about this module
          */
         ModuleBase(unsigned long id,
-                   modulestore::ModuleStore & mstore,
-                   modulestore::ModuleInfo & minfo);
+                   modulelocator::ModuleLocator & mlocator,
+                   modulelocator::ModuleInfo & minfo);
 
         virtual ~ModuleBase();
 
@@ -109,9 +109,9 @@ class ModuleBase
 
 
     protected:
-        /*! \brief Get the internal ModuleStore that is in charge of this module
+        /*! \brief Get the internal ModuleLocator that is in charge of this module
          */ 
-        modulestore::ModuleStore & MStore(void) noexcept;
+        modulelocator::ModuleLocator & MLocator(void) noexcept;
 
 
     private:
@@ -119,10 +119,10 @@ class ModuleBase
         unsigned long id_;
 
         //! All the information for this module
-        modulestore::ModuleInfo & minfo_;
+        modulelocator::ModuleInfo & minfo_;
 
-        //! The ModuleStore in charge of this module
-        modulestore::ModuleStore & mstore_;
+        //! The ModuleLocator in charge of this module
+        modulelocator::ModuleLocator & mlocator_;
 };
 
 

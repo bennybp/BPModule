@@ -1,18 +1,18 @@
-set(BPMODULE_MODULESTORE_FILES
+set(BPMODULE_MODULELOCATOR_FILES
             CModuleLoader.cpp
             export.cpp
             ModuleInfo.cpp
-            ModuleStore.cpp
+            ModuleLocator.cpp
             PyModuleLoader.cpp
             export.cpp
    )
 
 
 
-ADD_MODULE(modulestore
-           "${BPMODULE_MODULESTORE_FILES}"
+ADD_MODULE(modulelocator
+           "${BPMODULE_MODULELOCATOR_FILES}"
            ""
            ""
            "")
 
-INSTALL_COREMODULE(modulestore "")
+INSTALL_COREMODULE(modulelocator "")

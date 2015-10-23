@@ -6,7 +6,7 @@
 
 #include <boost/python/extract.hpp>
 
-#include "bpmodule/modulestore/PyModuleLoader.hpp"
+#include "bpmodule/modulelocator/PyModuleLoader.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"
 #include "bpmodule/python_helper/Types.hpp"
@@ -16,12 +16,12 @@ using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
 
 namespace bpmodule {
-namespace modulestore {
+namespace modulelocator {
 
 
 
-PyModuleLoader::PyModuleLoader(ModuleStore * mst)
-    : BASE(mst)
+PyModuleLoader::PyModuleLoader(ModuleLocator * mlt)
+    : BASE(mlt)
 {
 }
 
@@ -37,10 +37,10 @@ PyModuleLoader::~PyModuleLoader()
 ModuleBase * PyModuleLoader::GeneratorWrapper_(boost::python::object fn,
                                                const std::string & name,
                                                unsigned long id,
-                                               ModuleStore & mstore,
+                                               ModuleLocator & mlocator,
                                                ModuleInfo & minfo)
 {
-    boost::python::object newobj = python_helper::CallPyFunc(fn, name, id, boost::ref(mstore), boost::ref(minfo));
+    boost::python::object newobj = python_helper::CallPyFunc(fn, name, id, boost::ref(mlocator), boost::ref(minfo));
     ModuleBase * ptr = boost::python::extract<ModuleBase *>(newobj); // may throw
     BASE::CopyObject(id, newobj); // strong exception guarantee
     return ptr;
@@ -56,24 +56,24 @@ void PyModuleLoader::LoadPyModule(const std::string & key,
     ModuleInfo mi(minfo);
 
     // check if callable
-    // 4 arguments - name, id, mstore, minfo
+    // 4 arguments - name, id, mlocator, minfo
     if(!python_helper::IsCallable(func, 4))
         throw ModuleLoadException("Cannot load module: Object not callable with four arguments",
                                    mi.path, key, mi.name);
 
-    ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::GeneratorWrapper_, this,
+    ModuleLocator::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::GeneratorWrapper_, this,
                                                        func,
                                                        std::placeholders::_1,
                                                        std::placeholders::_2,
                                                        std::placeholders::_3,
                                                        std::placeholders::_4);
 
-    ModuleStore::ModuleRemoverFunc dfunc = std::bind(&PyModuleLoader::DeleteObject, this, std::placeholders::_1);
+    ModuleLocator::ModuleRemoverFunc dfunc = std::bind(&PyModuleLoader::DeleteObject, this, std::placeholders::_1);
 
     // strong exception guarantee
     BASE::InsertModule(key, cfunc, dfunc, mi);  // conversion constructor
 }
 
 
-} // close namespace modulestore
+} // close namespace modulelocator
 } // close namespace bpmodule

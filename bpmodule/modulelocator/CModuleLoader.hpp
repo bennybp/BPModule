@@ -8,11 +8,11 @@
 #ifndef _GUARD_CMODULELOADER_HPP_
 #define _GUARD_CMODULELOADER_HPP_
 
-#include "bpmodule/modulestore/ModuleLoaderBase.hpp"
+#include "bpmodule/modulelocator/ModuleLoaderBase.hpp"
 
 
 namespace bpmodule {
-namespace modulestore {
+namespace modulelocator {
 
 
 /*! \brief Loads C/C++ modules
@@ -26,7 +26,7 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
 
         /*! \copydoc ModuleLoaderBase::ModuleLoaderBase
          */
-        CModuleLoader(ModuleStore * mst);
+        CModuleLoader(ModuleLocator * mlt);
 
 
         /*! Destructor
@@ -56,7 +56,7 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
          * \throw bpmodule::exception::ModuleLoadException if there is a problem loading
          *        the module (duplicate key, function doesn't exist, etc)
          *
-         * \throw bpmodule::exception::ModuleStoreException if there is a problem converting
+         * \throw bpmodule::exception::ModuleLocatorException if there is a problem converting
          *        the module info.
          *
          * \exstrong
@@ -73,7 +73,7 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
         typedef ModuleLoaderBase< std::unique_ptr<modulebase::ModuleBase> > BASE;
 
         //! Pointer to a generator function in an SO file
-        typedef modulebase::ModuleBase *(*GeneratorFunc)(const std::string &, unsigned long, ModuleStore &, ModuleInfo &);
+        typedef modulebase::ModuleBase *(*GeneratorFunc)(const std::string &, unsigned long, ModuleLocator &, ModuleInfo &);
 
 
         //! Stores handles to to open SO files
@@ -87,18 +87,18 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
          * \param [in] fn Creation function pointer in SO file
          * \param [in] name Name of the module to create
          * \param [in] id ID of the new module
-         * \param [in] mstore ModuleStore that is in charge of this object
+         * \param [in] mlocator ModuleLocator that is in charge of this object
          * \param [in] minfo The information for this module (including options)
          * \return Pointer to a new object derived from ModuleBase
          */
         modulebase::ModuleBase * GeneratorWrapper_(GeneratorFunc fn,
                                                    const std::string & name,
                                                    unsigned long id,
-                                                   ModuleStore & mstore,
+                                                   ModuleLocator & mlocator,
                                                    ModuleInfo & minfo);
 };
 
-} // close namespace modulestore
+} // close namespace modulelocator
 } // close namespace bpmodule
 
 

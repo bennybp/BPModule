@@ -22,7 +22,7 @@ from . import tensor
 from . import datastore
 from . import options
 from . import modulebase
-from . import modulestore
+from . import modulelocator
 from . import molecule
 from . import basisset
 
@@ -67,10 +67,10 @@ def Init(argv, out = "stdout", color = True, debug = False):
   # Set some info about the base module and
   # print it
   # Also, set some options (currently unused)
-  for name,minfo in modulestore.minfo.items():
+  for name,minfo in modulelocator.minfo.items():
       minfo["name"] = name
       minfo["key"] = "CORE"
-      minfo["path"] = os.path.dirname(modulestore.__file__) + "/"
+      minfo["path"] = os.path.dirname(modulelocator.__file__) + "/"
 
 
 

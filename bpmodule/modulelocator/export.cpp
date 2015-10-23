@@ -10,8 +10,8 @@
 
 // Various components
 #include "bpmodule/modulebase/All_python.hpp"
-#include "bpmodule/modulestore/CModuleLoader.hpp"
-#include "bpmodule/modulestore/PyModuleLoader.hpp"
+#include "bpmodule/modulelocator/CModuleLoader.hpp"
+#include "bpmodule/modulelocator/PyModuleLoader.hpp"
 
 
 using bpmodule::modulebase::ModuleBase;
@@ -20,7 +20,7 @@ using namespace boost::python;
 
 
 namespace bpmodule {
-namespace modulestore {
+namespace modulelocator {
 namespace export_python {
 
 
@@ -29,19 +29,19 @@ namespace export_python {
  *
  * This uses boost::shared_ptr, which boost::python automatically handles
  *
- * Putting this in the ModuleStore source and headers would have required including boost for
+ * Putting this in the ModuleLocator source and headers would have required including boost for
  * basically every file in the project.
  *
  * \tparam T Type of module to get
  *
- * \param [in] ms ModuleStore object to get the module from
+ * \param [in] ms ModuleLocator object to get the module from
  * \param [in] key Key to get
  *
  * \return boost::shared_ptr containing a pointer to the new object
  */
 template<typename T>
 static
-boost::shared_ptr<T> Wrap_GetModule(ModuleStore * ms, const std::string & key)
+boost::shared_ptr<T> Wrap_GetModule(ModuleLocator * ms, const std::string & key)
 {
     ScopedModule<T> mod = ms->GetModule<T>(key);
     std::function<void(ModuleBase *)> dfunc = mod.get_deleter();
@@ -56,35 +56,35 @@ boost::shared_ptr<T> Wrap_GetModule(ModuleStore * ms, const std::string & key)
 // Main boost python part
 ////////////////////////////
 
-BOOST_PYTHON_MODULE(modulestore)
+BOOST_PYTHON_MODULE(modulelocator)
 {
     // This is only needed because we pass through python
     // No need to do declare all the members, etc
     class_<ModuleInfo, boost::noncopyable>("ModuleInfo");
 
 
-    class_<ModuleStore, boost::noncopyable>("ModuleStore")
-    .def("Size", &ModuleStore::Size)
-    .def("Has", &ModuleStore::Has)
-    .def("SetOptions", static_cast<void(ModuleStore::*)(const std::string &, const boost::python::dict &)>(&ModuleStore::SetOptions))
-    .def("GetKeys", &ModuleStore::GetKeys)
-    .def("KeyInfo", &ModuleStore::KeyInfo)
-    .def("PrintInfo", &ModuleStore::PrintInfo)
-    .def("TestAll", &ModuleStore::TestAll)
+    class_<ModuleLocator, boost::noncopyable>("ModuleLocator")
+    .def("Size", &ModuleLocator::Size)
+    .def("Has", &ModuleLocator::Has)
+    .def("SetOptions", static_cast<void(ModuleLocator::*)(const std::string &, const boost::python::dict &)>(&ModuleLocator::SetOptions))
+    .def("GetKeys", &ModuleLocator::GetKeys)
+    .def("KeyInfo", &ModuleLocator::KeyInfo)
+    .def("PrintInfo", &ModuleLocator::PrintInfo)
+    .def("TestAll", &ModuleLocator::TestAll)
     .def("GetModule", Wrap_GetModule<ModuleBase>)
     .def("GetModule_Test", Wrap_GetModule<Test_Base>);
 
 
-    class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleStore *>())
+    class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleLocator *>())
     .def("LoadSO", static_cast<void(CModuleLoader::*)(const std::string &, const boost::python::dict &)>(&CModuleLoader::LoadSO));
 
-    class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleStore *>())
+    class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleLocator *>())
     .def("LoadPyModule", static_cast<void(PyModuleLoader::*)(const std::string &, boost::python::object, const boost::python::dict &)>(&PyModuleLoader::LoadPyModule));
 
 }
 
 
 } // close namespace export_python
-} // close namespace modulestore
+} // close namespace modulelocator
 } // close namespace bpmodule
 

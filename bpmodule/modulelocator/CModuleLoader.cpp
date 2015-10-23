@@ -9,7 +9,7 @@
 
 #include <boost/python/dict.hpp>
 
-#include "bpmodule/modulestore/CModuleLoader.hpp"
+#include "bpmodule/modulelocator/CModuleLoader.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"
@@ -19,10 +19,10 @@ using bpmodule::exception::ModuleLoadException;
 
 
 namespace bpmodule {
-namespace modulestore {
+namespace modulelocator {
 
-CModuleLoader::CModuleLoader(ModuleStore * mst)
-    : BASE(mst)
+CModuleLoader::CModuleLoader(ModuleLocator * mlt)
+    : BASE(mlt)
 { }
 
 
@@ -46,13 +46,13 @@ CModuleLoader::~CModuleLoader()
 ModuleBase * CModuleLoader::GeneratorWrapper_(GeneratorFunc fn,
                                               const std::string & name,
                                               unsigned long id,
-                                              ModuleStore & mstore,
+                                              ModuleLocator & mlocator,
                                               ModuleInfo & minfo)
 {
     // Have the base ModuleLoaderBase class take ownership,
     // but return the ptr
 
-    ModuleBase * newobj = fn(name, id, mstore, minfo);
+    ModuleBase * newobj = fn(name, id, mlocator, minfo);
     std::unique_ptr<ModuleBase> uptr(newobj);
     BASE::TakeObject(id, std::move(uptr));  // strong exception guarantee
     return newobj;
@@ -98,13 +98,13 @@ void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & 
 
     output::Success("Successfully opened %1%\n", sopath);
 
-    ModuleStore::ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::GeneratorWrapper_, this, fn,
+    ModuleLocator::ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::GeneratorWrapper_, this, fn,
                                                        std::placeholders::_1,
                                                        std::placeholders::_2,
                                                        std::placeholders::_3,
                                                        std::placeholders::_4);
 
-    ModuleStore::ModuleRemoverFunc dfunc = std::bind(&CModuleLoader::DeleteObject, this, std::placeholders::_1);
+    ModuleLocator::ModuleRemoverFunc dfunc = std::bind(&CModuleLoader::DeleteObject, this, std::placeholders::_1);
 
     BASE::InsertModule(key, cfunc, dfunc, mi); // strong exception guarantee
     if(handles_.count(sopath) == 0)
@@ -113,5 +113,5 @@ void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & 
 
 
 
-} // close namespace modulestore
+} // close namespace modulelocator
 } // close namespace bpmodule

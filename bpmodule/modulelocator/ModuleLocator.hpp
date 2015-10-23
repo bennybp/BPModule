@@ -5,16 +5,16 @@
  */
 
 
-#ifndef _GUARD_MODULESTORE_HPP_
-#define _GUARD_MODULESTORE_HPP_
+#ifndef _GUARD_MODULELOCATOR_HPP_
+#define _GUARD_MODULELOCATOR_HPP_
 
 #include <unordered_map>
 #include <atomic>
 
-#include "bpmodule/modulestore/Graph.hpp"
-#include "bpmodule/modulestore/ScopedModule.hpp"
+#include "bpmodule/modulelocator/Graph.hpp"
+#include "bpmodule/modulelocator/ScopedModule.hpp"
 #include "bpmodule/exception/ModuleCreateException.hpp"
-#include "bpmodule/exception/ModuleStoreException.hpp"
+#include "bpmodule/exception/ModuleLocatorException.hpp"
 #include "bpmodule/mangle/Mangle.hpp"
 
 
@@ -24,7 +24,7 @@ namespace modulebase {
 class ModuleBase;
 }
 
-namespace modulestore {
+namespace modulelocator {
 
 template<typename T>
 class ModuleLoaderBase;
@@ -36,7 +36,7 @@ class PyModuleLoader;
 // end forward declarations
 
 namespace bpmodule {
-namespace modulestore {
+namespace modulelocator {
 
 
 
@@ -44,18 +44,18 @@ namespace modulestore {
  *
  * Holds loaded modules for later use
  */
-class ModuleStore
+class ModuleLocator
 {
     public:
-        ModuleStore();
-        ~ModuleStore();
+        ModuleLocator();
+        ~ModuleLocator();
 
 
         // no copy construction or assignment
-        ModuleStore(const ModuleStore & rhs)             = delete;
-        ModuleStore(ModuleStore && rhs)                  = delete;
-        ModuleStore & operator=(const ModuleStore & rhs) = delete;
-        ModuleStore & operator=(ModuleStore && rhs)      = delete;
+        ModuleLocator(const ModuleLocator & rhs)             = delete;
+        ModuleLocator(ModuleLocator && rhs)                  = delete;
+        ModuleLocator & operator=(const ModuleLocator & rhs) = delete;
+        ModuleLocator & operator=(ModuleLocator && rhs)      = delete;
 
 
         /*! \brief Returns the number of modules in the database
@@ -72,7 +72,7 @@ class ModuleStore
 
         /*! \brief Returns the information about a module with a given key
          *
-         * \throw bpmodule::exception::ModuleStoreException
+         * \throw bpmodule::exception::ModuleLocatorException
          *        if the key doesn't exist in the database
          *
          * \param [in] key A module key
@@ -100,7 +100,7 @@ class ModuleStore
          * The dictionary has strings for keys and arbitrary data types for
          * the values
          *
-         * \throw bpmodule::exception::ModuleStoreException
+         * \throw bpmodule::exception::ModuleLocatorException
          *        if the key doesn't exist in the database
          *
          * \throw bpmodule::exception::OptionException
@@ -131,7 +131,7 @@ class ModuleStore
 
         /*! \brief Return a new module object wrapped in an RAII-style scoping object
          *
-         * \throw bpmodule::exception::ModuleStoreException
+         * \throw bpmodule::exception::ModuleLocatorException
          *        if the key doesn't exist in the database
          *
          * \throw bpmodule::exception::ModuleCreateException if there are other
@@ -171,8 +171,8 @@ class ModuleStore
 
 
 
-            // make the deleter function the DeleteObject_() of this ModuleStore object
-            std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleStore::*)(modulebase::ModuleBase *)>(&ModuleStore::DeleteObject_),
+            // make the deleter function the DeleteObject_() of this ModuleLocator object
+            std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleLocator::*)(modulebase::ModuleBase *)>(&ModuleLocator::DeleteObject_),
                                                                             this,
                                                                             std::placeholders::_1);
 
@@ -180,7 +180,7 @@ class ModuleStore
             ScopedModule<T> ret(dptr, dfunc); // construction shouldn't throw?
 
             // store the deleter
-            // This is the only part that modifies this ModuleStore object and so do here
+            // This is the only part that modifies this ModuleLocator object and so do here
             // for strong exception guarantee
             removemap_.emplace(curid_, se.dfunc);
 
@@ -203,7 +203,7 @@ class ModuleStore
         friend class PyModuleLoader;
 
         //! A function that generates a module derived from ModuleBase
-        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long, ModuleStore &, ModuleInfo &)> ModuleGeneratorFunc;
+        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long, ModuleLocator &, ModuleInfo &)> ModuleGeneratorFunc;
 
 
         //! A function that deletes a module (by id)
@@ -263,7 +263,7 @@ class ModuleStore
 
         /*! \brief Obtain a module or throw exception
          *
-         * \throw bpmodule::exception::ModuleStoreException
+         * \throw bpmodule::exception::ModuleLocatorException
          *        if the key doesn't exist
          *
          * \param [in] key A module key
@@ -274,7 +274,7 @@ class ModuleStore
 
         /*! \brief Obtain a module or throw exception
          *
-         * \throw bpmodule::exception::ModuleStoreException
+         * \throw bpmodule::exception::ModuleLocatorException
          *        if the key doesn't exist
          *
          * \param [in] key A module key
@@ -317,7 +317,7 @@ class ModuleStore
 
 
 
-} // close namespace modulestore
+} // close namespace modulelocator
 } // close namespace bpmodule
 
 

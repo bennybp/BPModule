@@ -6,29 +6,29 @@
 
 #include <boost/python/dict.hpp>
 
-#include "bpmodule/modulestore/ModuleStore.hpp"
+#include "bpmodule/modulelocator/ModuleLocator.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"
 
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
-using bpmodule::exception::ModuleStoreException;
+using bpmodule::exception::ModuleLocatorException;
 using bpmodule::exception::GeneralException;
 
 
 namespace bpmodule {
-namespace modulestore {
+namespace modulelocator {
 
 
 
-ModuleStore::ModuleStore()
+ModuleLocator::ModuleLocator()
     : curid_(0)
 { }
 
 
 
-void ModuleStore::InsertModule(const std::string & key, ModuleGeneratorFunc func,
+void ModuleLocator::InsertModule(const std::string & key, ModuleGeneratorFunc func,
                                ModuleRemoverFunc dfunc, const ModuleInfo & minfo)
 {
     // add to store
@@ -41,19 +41,19 @@ void ModuleStore::InsertModule(const std::string & key, ModuleGeneratorFunc func
 }
 
 
-void ModuleStore::SetOptions(const std::string & key, const boost::python::dict & opt)
+void ModuleLocator::SetOptions(const std::string & key, const boost::python::dict & opt)
 {
     GetOrThrow_(key).mi.options.ChangePyDict(opt);
 }
 
 
-size_t ModuleStore::Size(void) const noexcept
+size_t ModuleLocator::Size(void) const noexcept
 {
     return store_.size();
 }
 
 
-std::vector<std::string> ModuleStore::GetKeys(void) const
+std::vector<std::string> ModuleLocator::GetKeys(void) const
 {
     std::vector<std::string> vec;
     vec.reserve(store_.size());
@@ -64,27 +64,27 @@ std::vector<std::string> ModuleStore::GetKeys(void) const
 
 
 
-bool ModuleStore::Has(const std::string & key) const
+bool ModuleLocator::Has(const std::string & key) const
 {
     return store_.count(key);
 }
 
 
 
-ModuleInfo ModuleStore::KeyInfo(const std::string & key) const
+ModuleInfo ModuleLocator::KeyInfo(const std::string & key) const
 {
     return GetOrThrow_(key).mi;
 }
 
 
-void ModuleStore::PrintInfo(void) const
+void ModuleLocator::PrintInfo(void) const
 {
     for(const auto & it : store_)
         it.second.mi.Print();
 }
 
 
-void ModuleStore::TestAll(void)
+void ModuleLocator::TestAll(void)
 {
     output::Debug("Testing all modules\n");
     for(const auto & it : store_)
@@ -115,12 +115,12 @@ void ModuleStore::TestAll(void)
 }
 
 
-void ModuleStore::DeleteObject_(ModuleBase * mb)
+void ModuleLocator::DeleteObject_(ModuleBase * mb)
 {
     DeleteObject_(mb->ID());
 }
 
-void ModuleStore::DeleteObject_(unsigned long id)
+void ModuleLocator::DeleteObject_(unsigned long id)
 {
     if(removemap_.count(id))
     {
@@ -136,29 +136,29 @@ void ModuleStore::DeleteObject_(unsigned long id)
 
 
 
-const ModuleStore::StoreEntry & ModuleStore::GetOrThrow_(const std::string & key) const
+const ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & key) const
 {
     if(Has(key))
         return store_.at(key);
     else
-        throw ModuleStoreException("Missing module key",
-                                   "location", "ModuleStore",
+        throw ModuleLocatorException("Missing module key",
+                                   "location", "ModuleLocator",
                                    "modulekey", key);
 }
 
 
-ModuleStore::StoreEntry & ModuleStore::GetOrThrow_(const std::string & key)
+ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & key)
 {
     if(Has(key))
         return store_.at(key);
     else
-        throw ModuleStoreException("Missing module key",
-                                   "location", "ModuleStore",
+        throw ModuleLocatorException("Missing module key",
+                                   "location", "ModuleLocator",
                                    "modulekey", key);
 }
 
 
-ModuleStore::~ModuleStore()
+ModuleLocator::~ModuleLocator()
 {
     // it is the responsiblility of the various
     // loaders to be responsible for deleting all
@@ -173,5 +173,5 @@ ModuleStore::~ModuleStore()
     //! \todo Check if maps are empty?
 }
 
-} // close namespace modulestore
+} // close namespace modulelocator
 } // close namespace bpmodule

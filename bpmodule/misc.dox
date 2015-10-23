@@ -2,7 +2,7 @@
  *  \brief Main namespace for the module library
  */
 
-/*! \namespace bpmodule::modulestore
+/*! \namespace bpmodule::modulelocator
  *  \brief Classes and functions for module loading and storage, and the module database
  */
 

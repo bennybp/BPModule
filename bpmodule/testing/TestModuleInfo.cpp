@@ -8,10 +8,10 @@
 
 #include "bpmodule/testing/TestingBase.hpp"
 #include "bpmodule/testing/TestModuleInfo.hpp"
-#include "bpmodule/modulestore/ModuleInfo.hpp"
+#include "bpmodule/modulelocator/ModuleInfo.hpp"
 
 
-using bpmodule::modulestore::ModuleInfo;
+using bpmodule::modulelocator::ModuleInfo;
 
 namespace bpmodule {
 namespace testing {

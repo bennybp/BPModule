@@ -8,12 +8,12 @@
 #ifndef _GUARD_MODULELOADERBASE_HPP_
 #define _GUARD_MODULELOADERBASE_HPP_
 
-#include "bpmodule/modulestore/ModuleStore.hpp"
+#include "bpmodule/modulelocator/ModuleLocator.hpp"
 #include "bpmodule/output/Output.hpp"
 
 
 namespace bpmodule {
-namespace modulestore {
+namespace modulelocator {
 
 
 /*! \brief A base class for module loaders
@@ -26,10 +26,10 @@ class ModuleLoaderBase
     public:
         /*! \brief Constructor
          *
-         * \param [in] mst ModuleStore to associate with this object
+         * \param [in] mlt ModuleLocator to associate with this object
          */
-        ModuleLoaderBase(ModuleStore * mst)
-            : mst_(mst)
+        ModuleLoaderBase(ModuleLocator * mlt)
+            : mlt_(mlt)
         { }
 
 
@@ -47,17 +47,17 @@ class ModuleLoaderBase
 
     protected:
 
-        /*! \brief Inserts a module to the ModuleStore
+        /*! \brief Inserts a module to the ModuleLocator
          *
-         * \copydetails ModuleStore::InsertModule
+         * \copydetails ModuleLocator::InsertModule
          *
          */
         void InsertModule(const std::string & key,
-                       ModuleStore::ModuleGeneratorFunc func,
-                       ModuleStore::ModuleRemoverFunc dfunc,
+                       ModuleLocator::ModuleGeneratorFunc func,
+                       ModuleLocator::ModuleRemoverFunc dfunc,
                        ModuleInfo & minfo)
         {
-            mst_->InsertModule(key, func, dfunc, minfo);
+            mlt_->InsertModule(key, func, dfunc, minfo);
         }
 
 
@@ -139,11 +139,11 @@ class ModuleLoaderBase
         //! Internal storage - maps ID to objects
         std::unordered_map<unsigned long, T> objects_;
 
-        //! Pointer to the associated ModuleStore object
-        ModuleStore * mst_;
+        //! Pointer to the associated ModuleLocator object
+        ModuleLocator * mlt_;
 };
 
-} // close namespace modulestore
+} // close namespace modulelocator
 } // close namespace bpmodule
 
 

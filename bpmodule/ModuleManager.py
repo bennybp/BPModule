@@ -2,17 +2,17 @@ import sys
 import os
 import importlib
 
-from . import modulestore, output, CheckSupermodule
+from . import modulelocator, output, CheckSupermodule
 
 
 
-class ModuleManager(modulestore.ModuleStore):
+class ModuleManager(modulelocator.ModuleLocator):
     def __init__(self):
         super(ModuleManager, self).__init__()
 
         # Main module store and module loaders
-        self.cml = modulestore.CModuleLoader(self)
-        self.pml = modulestore.PyModuleLoader(self) 
+        self.cml = modulelocator.CModuleLoader(self)
+        self.pml = modulelocator.PyModuleLoader(self) 
         self.modmap = {}
 
         self.paths = [ ]

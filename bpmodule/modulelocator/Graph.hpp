@@ -8,11 +8,11 @@
 #ifndef _GUARD_GRAPH_HPP_
 #define _GUARD_GRAPH_HPP_
 
-#include "bpmodule/modulestore/ModuleInfo.hpp"
+#include "bpmodule/modulelocator/ModuleInfo.hpp"
 #include "bpmodule/datastore/CalcData.hpp"
 
 namespace bpmodule {
-namespace modulestore {
+namespace modulelocator {
 
 namespace detail {
 
@@ -29,7 +29,7 @@ namespace detail {
 
 
 
-} // close namespace modulestore
+} // close namespace modulelocator
 } // close namespace bpmodule
 
 

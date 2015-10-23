@@ -11,11 +11,11 @@
 #include <boost/python/object.hpp>
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
-#include "bpmodule/modulestore/ModuleLoaderBase.hpp"
+#include "bpmodule/modulelocator/ModuleLoaderBase.hpp"
 
 
 namespace bpmodule {
-namespace modulestore {
+namespace modulelocator {
 
 
 /*! \brief Loads python modules
@@ -29,7 +29,7 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
 
         /*! \copydoc ModuleLoaderBase::ModuleLoaderBase
          */
-        PyModuleLoader(modulestore::ModuleStore * mst);
+        PyModuleLoader(modulelocator::ModuleLocator * mlt);
 
 
         /*! Destructor
@@ -54,7 +54,7 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
          * \throw bpmodule::exception::ModuleLoadException if there is a problem loading
          *        the module (duplicate key, etc)
          *
-         * \throw bpmodule::exception::ModuleStoreException if there is a problem converting
+         * \throw bpmodule::exception::ModuleLocatorException if there is a problem converting
          *        the module info.
          *
          * \exstrong
@@ -82,20 +82,20 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
          * \param [in] fn Generator function object
          * \param [in] name Name of the module to create
          * \param [in] id ID of the new module
-         * \param [in] mstore ModuleStore that is in charge of this object
+         * \param [in] mlocator ModuleLocator that is in charge of this object
          * \param [in] minfo The information for this module (including options)
          * \return Pointer to a new object derived from ModuleBase
          */
         modulebase::ModuleBase * GeneratorWrapper_(boost::python::object fn,
                                                    const std::string & name,
                                                    unsigned long id,
-                                                   ModuleStore & mstore,
+                                                   ModuleLocator & mlocator,
                                                    ModuleInfo & minfo);
 
 };
 
 
-} // close namespace modulestore
+} // close namespace modulelocator
 } // close namespace bpmodule
 
 

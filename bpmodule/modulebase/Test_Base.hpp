@@ -22,8 +22,8 @@ class Test_Base : public ModuleBase
 {
     public:
         Test_Base(unsigned long id, 
-                  modulestore::ModuleStore & mstore,
-                  modulestore::ModuleInfo & minfo);
+                  modulelocator::ModuleLocator & mlocator,
+                  modulelocator::ModuleInfo & minfo);
 
         //! \brief Just test some functionality
         virtual void RunTest(void) = 0;

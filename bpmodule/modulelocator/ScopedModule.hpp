@@ -24,22 +24,22 @@ namespace modulebase {
 class ModuleBase;
 }
 
-namespace modulestore {
-class ModuleStore;
+namespace modulelocator {
+class ModuleLocator;
 
 namespace export_python {
 template<typename T>
-boost::shared_ptr<T> Wrap_GetModule(ModuleStore *, const std::string &);
+boost::shared_ptr<T> Wrap_GetModule(ModuleLocator *, const std::string &);
 }
 
-} // close modulestore
+} // close modulelocator
 } // close bpmodule
 
 // end forward declarations
 
 
 namespace bpmodule {
-namespace modulestore {
+namespace modulelocator {
 
 //template<typename T>
 //using ScopedModule = std::unique_ptr<T, std::function<void(modulebase::ModuleBase *)>>;
@@ -103,7 +103,7 @@ class ScopedModule : private std::unique_ptr<T, std::function<void(modulebase::M
         // These are needed by the python wrapper
 
         template<typename U>
-        friend boost::shared_ptr<U> export_python::Wrap_GetModule(ModuleStore *, const std::string &);
+        friend boost::shared_ptr<U> export_python::Wrap_GetModule(ModuleLocator *, const std::string &);
 
 
         /*! \brief Release ownership
@@ -123,7 +123,7 @@ class ScopedModule : private std::unique_ptr<T, std::function<void(modulebase::M
 };
 
 
-} // close namespace modulestore
+} // close namespace modulelocator
 } // close namespace bpmodule
 
 #endif

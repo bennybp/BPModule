@@ -1,8 +1,8 @@
-minfo = { "BPModule_ModuleStore" :
+minfo = { "BPModule_ModuleLocator" :
   {
     "type"        : "core",
     "version"     : "0.1a",
-    "description" : "Basic modulestore for BPModule",
+    "description" : "Basic modulelocator for BPModule",
     "authors"     : [],
     "refs"        : [],
     "options"     : {}

@@ -7,16 +7,16 @@
 
 #include "bpmodule/modulebase/Test_Base.hpp"
 
-using bpmodule::modulestore::ModuleStore;
-using bpmodule::modulestore::ModuleInfo;
+using bpmodule::modulelocator::ModuleLocator;
+using bpmodule::modulelocator::ModuleInfo;
 
 namespace bpmodule {
 namespace modulebase {
 
 Test_Base::Test_Base(unsigned long id,
-                     ModuleStore & mstore, 
+                     ModuleLocator & mlocator, 
                      ModuleInfo & minfo)
-    : ModuleBase(id, mstore, minfo)
+    : ModuleBase(id, mlocator, minfo)
 {
 }
 

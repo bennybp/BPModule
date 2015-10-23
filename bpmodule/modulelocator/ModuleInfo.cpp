@@ -8,25 +8,25 @@
 #include <boost/python/dict.hpp>
 #include "bpmodule/python_helper/Convert.hpp"
 
-#include "bpmodule/modulestore/ModuleInfo.hpp"
+#include "bpmodule/modulelocator/ModuleInfo.hpp"
 #include "bpmodule/output/Output.hpp"
-#include "bpmodule/exception/ModuleStoreException.hpp"
+#include "bpmodule/exception/ModuleLocatorException.hpp"
 
 
 using bpmodule::options::OptionMap;
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::exception::GeneralException;
-using bpmodule::exception::ModuleStoreException;
+using bpmodule::exception::ModuleLocatorException;
 
 namespace bpmodule {
-namespace modulestore {
+namespace modulelocator {
 
 
 /*! \brief Converts types for ModuleInfo
  *
  * Catches exceptions in the conversion and appends some information
  *
- * \throw bpmodule::exception::ModuleStoreException
+ * \throw bpmodule::exception::ModuleLocatorException
  *        if there is a conversion problem or a
  *        required key doesn't exist
  *
@@ -39,7 +39,7 @@ template<typename T>
 static T DictConvertHelper(const boost::python::dict & dictionary, const char * key)
 {
     if(!dictionary.has_key(key))
-        throw ModuleStoreException("Python dictionary is missing key",
+        throw ModuleLocatorException("Python dictionary is missing key",
                                    "location", "ModuleInfo",
                                    "dictkey", key,
                                    "totype", mangle::DemangleCppType<T>());
@@ -51,7 +51,7 @@ static T DictConvertHelper(const boost::python::dict & dictionary, const char * 
     }
     catch(const GeneralException & ex)
     {
-        throw ModuleStoreException(ex, "dictkey", key, "location", "ModuleInfo");
+        throw ModuleLocatorException(ex, "dictkey", key, "location", "ModuleInfo");
     }
 }
 
@@ -61,7 +61,7 @@ static T DictConvertHelper(const boost::python::dict & dictionary, const char * 
  *
  * Catches exceptions in the conversion and appends some information
  *
- * \throw bpmodule::exception::ModuleStoreException
+ * \throw bpmodule::exception::ModuleLocatorException
  *        if there is a conversion problem or a
  *        required key doesn't exist
  *
@@ -84,7 +84,7 @@ static std::vector<T> DictConvertHelperVec(const boost::python::dict & dictionar
     }
     catch(const GeneralException & ex)
     {
-        throw ModuleStoreException(ex, "dictkey", key, "location", "ModuleInfo");
+        throw ModuleLocatorException(ex, "dictkey", key, "location", "ModuleInfo");
     }
 }
 
@@ -119,7 +119,7 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
     }
     catch(const GeneralException & ex)
     {
-        throw ModuleStoreException(ex, "modulename", name, "modulekey", key); // name and key may or may not be set
+        throw ModuleLocatorException(ex, "modulename", name, "modulekey", key); // name and key may or may not be set
     }
 }
 
@@ -154,6 +154,6 @@ void ModuleInfo::Print(void) const
 
 
 
-} // close namespace modulestore
+} // close namespace modulelocator
 } // close namespace bpmodule
 

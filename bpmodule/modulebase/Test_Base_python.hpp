@@ -26,15 +26,15 @@ class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base
 {
     public:
         Test_Base_Wrap(unsigned long id,
-                       modulestore::ModuleStore & mstore,
-                       modulestore::ModuleInfo & minfo)
-            : Test_Base(id, mstore, minfo)
+                       modulelocator::ModuleLocator & mlocator,
+                       modulelocator::ModuleInfo & minfo)
+            : Test_Base(id, mlocator, minfo)
         {}
 
 
-        modulestore::ModuleStore & MStore(void)
+        modulelocator::ModuleLocator & MLocator(void)
         {
-            return ModuleBase::MStore();
+            return ModuleBase::MLocator();
         }
 
 

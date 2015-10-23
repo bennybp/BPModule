@@ -13,7 +13,7 @@
 
 
 namespace bpmodule {
-namespace modulestore {
+namespace modulelocator {
 
 /*! \brief Structure that stores information about a loaded module
  */
@@ -39,7 +39,7 @@ struct ModuleInfo
 
     /*! \brief Construct from a python dictionary
      *
-     * \throw bpmodule::exception::ModuleStoreException if conversion fails
+     * \throw bpmodule::exception::ModuleLocatorException if conversion fails
      *        or the python dictionary is missing a required field
      */
     ModuleInfo(const boost::python::dict & dictionary);
@@ -51,7 +51,7 @@ struct ModuleInfo
 };
 
 
-} // close namespace modulestore
+} // close namespace modulelocator
 } // close namespace bpmodule
 
 

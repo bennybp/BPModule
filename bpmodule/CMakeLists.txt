@@ -8,7 +8,7 @@ add_subdirectory(tensor)
 add_subdirectory(datastore)
 add_subdirectory(options)
 add_subdirectory(modulebase)
-add_subdirectory(modulestore)
+add_subdirectory(modulelocator)
 add_subdirectory(molecule)
 add_subdirectory(basisset)
 add_subdirectory(testing)
@@ -44,7 +44,7 @@ set(BPMODULE_EXCEPTION_HEADERS
             exception/OptionException.hpp
             exception/ModuleLoadException.hpp
             exception/ModuleCreateException.hpp
-            exception/ModuleStoreException.hpp
+            exception/ModuleLocatorException.hpp
    )
 
 set(BPMODULE_PARALLEL_HEADERS
@@ -81,13 +81,13 @@ set(BPMODULE_MODULEBASE_HEADERS
             modulebase/Test_Base.hpp
    )
 
-set(BPMODULE_MODULESTORE_HEADERS
-            modulestore/ScopedModule.hpp
-            modulestore/CModuleLoader.hpp
-            modulestore/ModuleInfo.hpp
-            modulestore/ModuleStore.hpp
-            modulestore/PyModuleLoader.hpp
-            modulestore/Graph.hpp
+set(BPMODULE_MODULELOCATOR_HEADERS
+            modulelocator/ScopedModule.hpp
+            modulelocator/CModuleLoader.hpp
+            modulelocator/ModuleInfo.hpp
+            modulelocator/ModuleLocator.hpp
+            modulelocator/PyModuleLoader.hpp
+            modulelocator/Graph.hpp
    )
 
 set(BPMODULE_MOLECULE_HEADERS
@@ -120,7 +120,7 @@ install(FILES ${BPMODULE_TENSOR_HEADERS} DESTINATION include/bpmodule/tensor)
 install(FILES ${BPMODULE_DATASTORE_HEADERS} DESTINATION include/bpmodule/datastore)
 install(FILES ${BPMODULE_OPTIONS_HEADERS} DESTINATION include/bpmodule/options)
 install(FILES ${BPMODULE_MODULEBASE_HEADERS} DESTINATION include/bpmodule/modulebase)
-install(FILES ${BPMODULE_MODULESTORE_HEADERS} DESTINATION include/bpmodule/modulestore)
+install(FILES ${BPMODULE_MODULELOCATOR_HEADERS} DESTINATION include/bpmodule/modulelocator)
 install(FILES ${BPMODULE_MOLECULE_HEADERS} DESTINATION include/bpmodule/molecule)
 install(FILES ${BPMODULE_BASISSET_HEADERS} DESTINATION include/bpmodule/basisset)
 install(FILES ${BPMODULE_TESTING_HEADERS} DESTINATION include/testing/basisset)

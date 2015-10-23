@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GUARD_MODULESTOREEXCEPTION_HPP_
-#define _GUARD_MODULESTOREEXCEPTION_HPP_
+#ifndef _GUARD_MODULELOCATOREXCEPTION_HPP_
+#define _GUARD_MODULELOCATOREXCEPTION_HPP_
 
 #include "bpmodule/exception/GeneralException.hpp"
 
@@ -14,9 +14,9 @@ namespace bpmodule {
 namespace exception {
 
 
-/*! \brief An exception thrown when there is a problem in the ModuleStore
+/*! \brief An exception thrown when there is a problem in the ModuleLocator
  */
-class ModuleStoreException : public GeneralException
+class ModuleLocatorException : public GeneralException
 {
     public:
         /*! \brief Constructor
@@ -25,7 +25,7 @@ class ModuleStoreException : public GeneralException
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        ModuleStoreException(std::string whatstr,
+        ModuleLocatorException(std::string whatstr,
                              Targs... exinfo)
             : GeneralException(whatstr, exinfo...)
         { }
@@ -39,18 +39,18 @@ class ModuleStoreException : public GeneralException
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        ModuleStoreException(const GeneralException & gex,
+        ModuleLocatorException(const GeneralException & gex,
                               Targs... exinfo)
             : GeneralException(gex, exinfo...)
         { }
 
 
-        ModuleStoreException()                                             = delete;
-        ModuleStoreException(const ModuleStoreException & rhs)             = default;
-        ModuleStoreException(ModuleStoreException && rhs)                  = default;
-        ModuleStoreException & operator=(const ModuleStoreException & rhs) = default;
-        ModuleStoreException & operator=(ModuleStoreException && rhs)      = default;
-        virtual ~ModuleStoreException() = default;
+        ModuleLocatorException()                                             = delete;
+        ModuleLocatorException(const ModuleLocatorException & rhs)             = default;
+        ModuleLocatorException(ModuleLocatorException && rhs)                  = default;
+        ModuleLocatorException & operator=(const ModuleLocatorException & rhs) = default;
+        ModuleLocatorException & operator=(ModuleLocatorException && rhs)      = default;
+        virtual ~ModuleLocatorException() = default;
 
 };
 
