@@ -102,7 +102,7 @@ def Run(mm):
         for m in allmod:
             # None should be valid - I haven't specified required options
             desc = "Testing validity of {}".format(m[0].Key())
-            tester.Test(desc, False, bp.testing.PyTestBoolFunc, m[0].Options().IsValid)
+            tester.Test(desc, False, bp.testing.PyTestBoolFunc, m[0].Options().AllReqSet)
 
         for m in allmod:
             for d in testelements:
@@ -114,7 +114,7 @@ def Run(mm):
         for m in allmod:
             # Should be valid now
             desc = "Retesting validity of {}".format(m[0].Key())
-            tester.Test(desc, True, bp.testing.PyTestBoolFunc, m[0].Options().IsValid)
+            tester.Test(desc, True, bp.testing.PyTestBoolFunc, m[0].Options().AllReqSet)
 
 
         for m in allmod:
