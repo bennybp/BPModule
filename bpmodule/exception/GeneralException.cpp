@@ -32,6 +32,11 @@ const char * GeneralException::GetField(const std::string & field) const noexcep
 }
 
 
+void GeneralException::AppendInfo(void)
+{
+}
+
+
 void GeneralException::AppendInfo(const std::string & key, const std::string & value)
 {
     exinfo_.push_back({key, value});

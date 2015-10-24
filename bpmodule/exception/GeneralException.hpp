@@ -103,6 +103,12 @@ class GeneralException : public std::exception
          */
         void AppendInfo(const std::string & key, const std::string & value);
 
+        /*! \brief Add information to this exception object
+         * 
+         * Used to terminate the parameter pack expansion (in some instances)
+         */
+        void AppendInfo(void);
+
 
         /*! \brief Add information to this exception object
          *
