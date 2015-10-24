@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Various string formatting functions (source)
+ * \brief Various string helper functions (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
