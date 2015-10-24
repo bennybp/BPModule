@@ -118,6 +118,31 @@ class GeneralException : public std::exception
         }
 
 
+        /*! \brief Add information to this exception object
+         *
+         * Overload for a vector of strings. Each element will get its own line.
+         *
+         * There must be an even number of arguments.
+         */
+        template<typename... Targs>
+        void AppendInfo(const std::string & key, const std::vector<std::string> & value, Targs... exinfo)
+        {
+            static_assert( (sizeof...(exinfo) % 2) == 0,
+                           "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
+            std::string str = "(empty)";
+
+            // this is done manually (rather than output::Join)
+            // to prevent a dependence on bpmodule::output
+            if(value.size())
+                str = value[0];
+            for(size_t i = 1; i < value.size(); i++)
+                str = str + "\n" + value[i];
+
+            AppendInfo(key, str);
+            AppendInfo(exinfo...);
+        }
+
+
         /*! \brief Print out the "what" string
          */
         const char * what(void) const noexcept;
