@@ -1,5 +1,6 @@
 set(BPMODULE_OUTPUT_FILES
             Output.cpp 
+            FormatStr.cpp
             export.cpp
    )
 
