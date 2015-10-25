@@ -161,7 +161,7 @@ class OptionHolder : public OptionBase
          * \param [in] value The value to validate
          * \param [in] desc Short description of what is being validated
          */
-        void ValidateOrThrow_(const T & value, const std::string & desc) const;
+        void Validate_(const T & value, const std::string & desc) const;
 };
 
 

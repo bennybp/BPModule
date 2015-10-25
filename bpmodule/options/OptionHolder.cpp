@@ -90,7 +90,7 @@ OptionHolder<T>::OptionHolder(const std::string & key, T * def,
 {
     // check the default using the validator
     if(def != nullptr)
-        ValidateOrThrow_(*default_, "initial default");
+        Validate_(*default_, "initial default");
     if(def != nullptr && required)
         throw OptionException("Default value supplied for required option", Key());
 
@@ -117,7 +117,7 @@ OptionHolder<T>::OptionHolder(const OptionHolder & oph)
 template<typename T>
 void OptionHolder<T>::Change(const T & value)
 {
-    ValidateOrThrow_(value, "new value");
+    Validate_(value, "new value");
     value_ = std::unique_ptr<T>(new T(value));
 }
 
@@ -224,7 +224,7 @@ void OptionHolder<T>::Print(void) const
 
 
 template<typename T>
-void OptionHolder<T>::ValidateOrThrow_(const T & value, const std::string & desc) const
+void OptionHolder<T>::Validate_(const T & value, const std::string & desc) const
 {
     // validator_ may be empty!
     // if so, no validator, and just return
