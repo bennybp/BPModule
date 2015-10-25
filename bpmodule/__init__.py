@@ -13,11 +13,10 @@ olddl = sys.getdlopenflags()
 sys.setdlopenflags(os.RTLD_LAZY | os.RTLD_GLOBAL)
 
 # TODO - can we get some order that will work with RTLD_NOW
-from . import output
-from . import exception
 from . import mangle
-
+from . import exception
 from . import python_helper
+from . import output
 from . import parallel
 from . import math
 from . import tensor
