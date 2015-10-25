@@ -26,7 +26,7 @@ std::string Join(const std::vector<std::string> & vec, const std::string & j);
  *
  * \param [inout] str String to convert to lowercase
  */
-void ToLower(std::string> & str);
+void ToLower(std::string & str);
 
 
 /*! \brief Transform a string to lower case, copying to a new string
