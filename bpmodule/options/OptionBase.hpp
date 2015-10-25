@@ -28,13 +28,11 @@ class OptionBase
          * \param [in] key The key of this option
          * \param [in] required True if this is a required option
          * \param [in] pytype The python type of this option
-         * \param [in] validatordesc Description of the validator
          * \param [in] help A help string for this option
          */
         OptionBase(const std::string & key,
                    bool required,
                    python_helper::PythonType pytype,
-                   const std::string & validatordesc,
                    const std::string & help);
 
         virtual ~OptionBase() noexcept    = default;
@@ -229,13 +227,6 @@ class OptionBase
 
 
 
-        /*! \brief Get the validator description string
-         *
-         * \exnothrow
-         */
-        const std::string & ValidatorDesc(void) const noexcept;
-
-
     protected:
         // can only be called from Clone()
         OptionBase(const OptionBase & rhs)              = default;
@@ -254,9 +245,6 @@ class OptionBase
 
         //! The python type of this option
         const python_helper::PythonType pytype_;
-
-        //! The description string from the validator
-        const std::string validatordesc_;
 
         //! The help string for this option
         const std::string help_;

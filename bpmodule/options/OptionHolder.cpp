@@ -83,9 +83,8 @@ template<typename T>
 OptionHolder<T>::OptionHolder(const std::string & key, T * def,
                               ValidatorFunc validator, bool required,
                               python_helper::PythonType pytype,
-                              const std::string & validatordesc,
                               const std::string & help)
-    : OptionBase(key, required, pytype, validatordesc, help),
+    : OptionBase(key, required, pytype, help),
       default_(def),
       validator_(validator)
 {
@@ -237,8 +236,7 @@ void OptionHolder<T>::ValidateOrThrow_(const T & value, const std::string & desc
         //! \todo add exception info from validator?
         if(!OptionBase::IsExpert())
             throw OptionException("Invalid value for this option", Key(),
-                                  "desc", desc,
-                                  "validator", ValidatorDesc());
+                                  "desc", desc);
         else
             output::Warning("Value for option %1% \"%2\" is invalid. Ignoring\n", desc, Key());
     }
@@ -482,7 +480,6 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
 
     // Check if validator is given. If not, use an empty function object
     typename OptionHolder<T>::ValidatorFunc validator;
-    std::string validatordesc = "(no validator)";
 
     if(DeterminePyType(tup[3]) != PythonType::None)
     {
@@ -493,23 +490,6 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
             throw OptionException("Validator does not have a callable Validate() method taking one argument", key,
                                   "type", GetPyClass(tup[3]));
 
-
-        // obtain the validator description string, if available
-        if(HasAttr(tup[3], "descstr"))
-        {
-            boost::python::object descstr = tup[3].attr("descstr");
-
-            // get the description
-            if(DeterminePyType(descstr) != PythonType::String && DeterminePyType(descstr) != PythonType::None)
-                throw OptionException("Validator description is not a string (or None)", key,
-                                      "type", GetPyClass(descstr));
-
-            validatordesc = ConvertToCpp<std::string>(descstr);
-        }
-        else
-            validatordesc = "(no description)";
-
-
         // Set up the validator
         boost::python::object valfunc = tup[3].attr("Validate");
         validator = std::bind(ValidateWrapper<T>, valfunc, std::placeholders::_1);
@@ -518,7 +498,7 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
 
 
 
-    return OptionBasePtr(new OptionHolder<T>(key, def, validator, req, pytype, validatordesc, help));
+    return OptionBasePtr(new OptionHolder<T>(key, def, validator, req, pytype, help));
 }
 
 
