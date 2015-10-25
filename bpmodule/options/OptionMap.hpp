@@ -9,12 +9,12 @@
 #define _GUARD_OPTIONMAP_HPP_
 
 #include <map>
-#include <algorithm>
 
 #include "bpmodule/options/OptionTypes.hpp"
 #include "bpmodule/options/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/mangle/Mangle.hpp"
+#include "bpmodule/output/StrHelp.hpp"
 
 
 namespace bpmodule {
@@ -317,8 +317,8 @@ class OptionMap
         {
             bool operator()(std::string lhs, std::string rhs) const
             {
-                std::transform(lhs.begin(), lhs.end(), lhs.begin(), ::tolower);
-                std::transform(rhs.begin(), rhs.end(), rhs.begin(), ::tolower);
+                output::ToLower(lhs);
+                output::ToLower(rhs);
                 std::less<std::string> comp;
                 return comp(lhs, rhs);
             }

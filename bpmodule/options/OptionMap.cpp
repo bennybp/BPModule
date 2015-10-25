@@ -152,7 +152,7 @@ OptionMap::OptionMap(const boost::python::dict & opt, const boost::python::objec
         std::string key = ConvertToCpp<std::string>(keys[i]);
 
         // convert to lowercase
-        std::transform(key.begin(), key.end(), key.begin(), ::tolower);        
+        output::ToLower(key);
         
 
         // should this ever happen? Keys should be unique in a
