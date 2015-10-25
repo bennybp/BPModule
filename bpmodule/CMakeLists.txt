@@ -34,6 +34,7 @@ set(BPMODULE_PYTHON_HELPER_HEADERS
 set(BPMODULE_OUTPUT_HEADERS
             output/Output.hpp
             output/FormatStr.hpp
+            output/StrHelp.hpp
    )
 
 set(BPMODULE_EXCEPTION_HEADERS
