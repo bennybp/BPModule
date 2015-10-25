@@ -30,7 +30,9 @@ namespace options {
 ////////////////////////////////////////////////
 
 OptionMap::OptionMap(const OptionMap & rhs)
-    : wholevalid_(rhs.wholevalid_)
+    : expert_(rhs.expert_),
+      wholevalid_(rhs.wholevalid_)
+
 {
     for(const auto & it : rhs.opmap_)
         opmap_.emplace(it.first, detail::OptionBasePtr(it.second->Clone()));
@@ -41,6 +43,7 @@ OptionMap & OptionMap::operator=(const OptionMap & rhs)
 {
     if(this != &rhs)
     {
+        expert_ = rhs.expert_;
         wholevalid_ = rhs.wholevalid_;
 
         opmap_.clear();
@@ -91,6 +94,7 @@ bool OptionMap::AllReqSet(void) const noexcept
 
 void OptionMap::SetExpert(bool expert) noexcept 
 {
+    expert_ = expert;
     for(const auto & it : opmap_)
         it.second->SetExpert(expert);
 }
@@ -174,7 +178,7 @@ OptionMap::OptionMap(const boost::python::dict & opt, const boost::python::objec
                 throw OptionException("Whole options validator does not have a callable Validate() method taking one argument", "(none)",
                                       "pytype", GetPyClass(wholevalidfunc));
 
-        wholevalid_ = std::bind(WholeOptValidatorWrapper, wholevalidfunc, *this);
+        wholevalid_ = std::bind(WholeOptValidatorWrapper, wholevalidfunc, std::placeholders::_1);
     }
 
 }

@@ -308,8 +308,12 @@ class OptionMap
 
 
     private:
+
+        //! If true, don't throw exceptions on validation errors
+        bool expert_;
+
         //! Function that validates the whole option container
-        typedef std::function<bool (void)> WholeOptionValidator;
+        typedef std::function<bool (const OptionMap &)> WholeOptionValidator;
 
 
         //! \brief Comparison of a case-insensitive string
