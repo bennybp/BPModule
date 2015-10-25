@@ -180,6 +180,15 @@ class OptionMap
         std::vector<std::string> AllMissingReq(void) const;
 
 
+
+        /*! \brief Turn on expert mode for all options
+         * 
+         * In expert mode, failures (validation, etc) will print warnings,
+         * but the program will otherwise continue
+         */
+        void SetExpert(bool expert) noexcept;
+
+
         /*! \brief Check the validity of all the options
          *
          */

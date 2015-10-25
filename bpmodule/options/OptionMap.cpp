@@ -88,6 +88,12 @@ bool OptionMap::AllReqSet(void) const noexcept
             return false;
     return true;
 }
+
+void OptionMap::SetExpert(bool expert) noexcept 
+{
+    for(const auto & it : opmap_)
+        it.second->SetExpert(expert);
+}
         
 
 std::vector<std::string> OptionMap::AllMissingReq(void) const
