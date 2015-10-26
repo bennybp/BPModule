@@ -97,6 +97,44 @@ void OptionMap::SetExpert(bool expert) noexcept
     expert_ = expert;
 }
         
+void OptionMap::LockValid(bool lockvalid)
+{
+    lockvalid_ = lockvalid;
+}
+
+void OptionMap::Validate(void) const
+{
+    OptionMapIssues omi = GetIssues();
+    bool throwme = false;
+
+    if(omi.toplevel.size())
+    {
+        throwme = true;
+        output::Warning("OptionMap top level issues:\n");
+        for(const auto & it : omi.toplevel)
+            output::Warning("    %1%", it);
+    }
+    if(omi.optissues.size())
+    {
+        output::Warning("Individual option issues:\n");
+        for(const auto & it : omi.optissues)
+        {
+            output::Warning("    %1%\n", it.first);
+            for(const auto & it2 : it.second)
+                output::Warning("        %1%\n", it2);
+        }
+        throwme = true;
+    }
+
+    if(throwme)
+    {
+        if(expert_)
+            output::Warning("Expert mode is set for the OptionMap. You're on you're own\n");
+        else
+            throw exception::GeneralException("OptionMap is in an invalid state. See above for errors");
+    }
+}
+
 
 std::vector<std::string> OptionMap::AllMissingReq(void) const
 {
@@ -127,6 +165,30 @@ const detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
 }
 
 
+OptionMapIssues OptionMap::GetIssues(void) const
+{
+    //! \todo Whole Map validator
+
+    OptionMapIssues omi;
+
+    for(const auto & it : opmap_)
+    {
+        detail::OptionIssues oi = it.second->GetIssues();
+        if(oi.size())
+            omi.optissues.emplace(it.first, oi);
+    }
+
+    return omi;
+}
+
+
+bool OptionMap::HasIssues(void) const
+{
+    OptionMapIssues omi = GetIssues();
+    return (omi.toplevel.size() == 0 && omi.optissues.size() == 0);
+}
+
+
 static bool WholeOptValidatorWrapper(const boost::python::object & val, const OptionMap & op)
 {
     return boost::python::extract<bool>(python_helper::CallPyFunc(val, op));
@@ -137,6 +199,7 @@ static bool WholeOptValidatorWrapper(const boost::python::object & val, const Op
 // Python functions
 //////////////////////////////
 OptionMap::OptionMap(const boost::python::dict & opt, const boost::python::object & wholevalidfunc)
+    : expert_(false), lockvalid_(false)
 {
     boost::python::list keys = opt.keys();
 
@@ -187,6 +250,9 @@ void OptionMap::ChangePy(const std::string & key, const boost::python::object & 
 {
     detail::OptionBase * ptr = GetOrThrow_(key);
     ptr->ChangePy(obj);
+
+    if(lockvalid_)
+        Validate();
 }
 
 
@@ -219,6 +285,9 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
     }
 
     swap(*this, tmp);
+
+    if(lockvalid_)
+        Validate();
 }
 
 

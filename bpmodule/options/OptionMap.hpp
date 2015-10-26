@@ -21,6 +21,12 @@ namespace bpmodule {
 namespace options {
 
 
+struct OptionMapIssues
+{
+    std::vector<std::string> toplevel;
+    std::map<std::string, detail::OptionIssues> optissues;
+};
+
 
 /*! \brief A class for holding options to a module
  *
@@ -181,6 +187,28 @@ class OptionMap
 
 
 
+        /*! \brief Validate this OptionMap
+         * 
+         * Checks to see if all are set, and calls the validator
+         * for all options. Also calls the overall map validator.
+         *
+         * \note This is not meant to be called from python
+         *
+         * \throw bpmodule::exception::OptionException if there is a problem
+         *        with validation.
+         */
+        OptionMapIssues GetIssues(void) const;
+
+
+
+        /*! \brief Check the validity of all the options
+         *
+         * \throw bpmodule::exception::OptionException if there is a problem
+         *        with validation.
+         */
+        bool HasIssues(void) const; 
+
+
         /*! \brief Turn on expert mode for all options
          * 
          * In expert mode, failures (validation, etc) will print warnings,
@@ -189,10 +217,26 @@ class OptionMap
         void SetExpert(bool expert) noexcept;
 
 
-        /*! \brief Check the validity of all the options
+        /*! \brief Lock the validity of this map
+         * 
+         * Causes this OptionMap to be fixed in a valid state.
+         * Additional changes will cause validation to be
+         * run and exceptions to possibly be thrown.
          *
+         * The validity of this map is is checked first.
          */
-        //bool IsValid(void) const; 
+        void LockValid(bool);
+
+
+
+        /*! \brief Validate this map
+         * 
+         * Causes all the problems with this map to be
+         * printed out. If there is a problem (and this OptionMap
+         * is not in expert mode), an exception is thrown.
+         */
+        void Validate(void) const;
+
 
 
         /*! \brief Check if the map has a key with a given type
@@ -311,6 +355,9 @@ class OptionMap
 
         //! If true, don't throw exceptions on validation errors
         bool expert_;
+
+        //! If true, changing the OptionMap causes validation to be run
+        bool lockvalid_;
 
         //! Function that validates the whole option container
         typedef std::function<bool (const OptionMap &)> WholeOptionValidator;

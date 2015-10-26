@@ -129,7 +129,7 @@ class OptionHolder : public OptionBase
 
         virtual void Print(void) const;
 
-        virtual OptionIssues Validate(void) const;
+        virtual OptionIssues GetIssues(void) const;
 
         /////////////////////////////////////////
         // Python-related functions
@@ -140,7 +140,7 @@ class OptionHolder : public OptionBase
 
 
     private:
-        OptionIssues ValidateValue_(T val) const;
+        OptionIssues GetIssues_(T val) const;
 
         std::unique_ptr<T> value_;
         std::unique_ptr<T> default_;

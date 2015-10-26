@@ -1,5 +1,3 @@
-from bpmodule import output
-
 class RangeCheck:
     def __init__(self, min, max, includemin = True, includemax = True):
         self.min = min
@@ -7,11 +5,10 @@ class RangeCheck:
         self.includemin = includemin
         self.includemax = includemax
 
-        # Read in from the C++ code as the description of this validator
-        self.descstr = output.FormatStr("Value must be in the range %1%%2%,%3%%4%",
-                                        "[" if self.includemin else "(",
-                                        self.min, self.max,
-                                        "]" if self.includemax else ")")
+        self.errstr = [ "Value must be in the range {}{},{}{}".format("[" if self.includemin else "(",
+                                                                      self.min, self.max,
+                                                                      "]" if self.includemax else ")")
+                      ]
 
     def Validate(self, value):
         if (value > self.min) and (value < self.max):
@@ -21,7 +18,14 @@ class RangeCheck:
         elif (self.includemax == True) and (value == self.max):
             return True
         else:
-            return False
+            err = [ "Value \"{}\" is not valid".format(value) ]
+            err.extend(self.errstr)
+            return err
+
+
+
+
+
 
 
 class InList:
@@ -34,16 +38,19 @@ class InList:
                 self.lst.append(l)
 
 
-        # Read in from the C++ code as the description of this validator
-        self.descstr = output.FormatStr("Value of must be one of the following %1% values\n", len(self.lst)) 
+        self.errstr = [ "Value of must be one of the following {} values".format(len(self.lst)) ]
         for v in self.lst:
-            self.descstr += output.FormatStr("%1%\n", v)
+            self.errstr.append("    {}".format(v))
 
         
 
     def Validate(self, value):
+        v = value
         if type(value) == str:
-            return (value.lower() in self.lst)
-        else:
-            return (value in self.lst)
+            v = v.lower()
+
+        if not v in self.lst:
+            err = [ "Value \"{}\" is not valid".format(v) ]
+            err.extend(self.errstr)
+            return err
 

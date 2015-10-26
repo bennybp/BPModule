@@ -37,7 +37,10 @@ BOOST_PYTHON_MODULE(options)
     .def("AllReqSet", &OptionMap::AllReqSet)
     .def("Print", &OptionMap::Print)
     .def("Change", &OptionMap::ChangePy)
-    .def("ChangeDict", &OptionMap::ChangePyDict);
+    .def("ChangeDict", &OptionMap::ChangePyDict)
+    .def("LockValid", &OptionMap::LockValid)
+    .def("Validate", &OptionMap::Validate)
+    .def("HasIssues", &OptionMap::HasIssues);
 }
 
 

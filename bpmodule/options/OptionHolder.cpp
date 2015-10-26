@@ -93,7 +93,7 @@ OptionHolder<T>::OptionHolder(const std::string & key, T * def,
     if(def != nullptr)
     {
         // check for a problem with the default value. This should be an exception
-        OptionIssues iss = ValidateValue_(*default_);
+        OptionIssues iss = GetIssues_(*default_);
         if(iss.size())
             throw OptionException("Default value for this option does not pass validation", Key(), "issues", iss);
     }
@@ -225,18 +225,18 @@ void OptionHolder<T>::Print(void) const
 
 
 template<typename T>
-OptionIssues OptionHolder<T>::Validate(void) const
+OptionIssues OptionHolder<T>::GetIssues(void) const
 {
     if(!IsSetIfRequired())
         return OptionIssues{"Option is not set, but is required"};
     else
-        return ValidateValue_(Get());
+        return GetIssues_(Get());
 }
 
 
 
 template<typename T>
-OptionIssues OptionHolder<T>::ValidateValue_(T val) const
+OptionIssues OptionHolder<T>::GetIssues_(T val) const
 {
     // if no validator, that's ok
     if(!validator_)
@@ -437,7 +437,7 @@ static OptionIssues ValidateWrapper(const boost::python::object & func, T val, c
     boost::python::object ret;
 
     try {
-        CallPyFunc(func, obj);
+        ret = CallPyFunc(func, obj);
     }
     catch(bpmodule::exception::GeneralException & ex)
     {
@@ -467,7 +467,7 @@ static OptionIssues ValidateWrapper(const boost::python::object & func, T val, c
             throw OptionException("Invalid type returned from validator", key, "pytype", GetPyClass(ret)); 
     }
 
-    throw std::logic_error("Contact a develope - code in OptionHolder / ValidateWrapper should never reach this point");
+    throw std::logic_error("Contact a developer - code in OptionHolder / ValidateWrapper should never reach this point");
 }
 
 

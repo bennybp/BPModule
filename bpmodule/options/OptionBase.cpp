@@ -51,9 +51,9 @@ const std::string & OptionBase::Help(void) const noexcept
 }
 
 
-bool OptionBase::IsValid(void) const
+bool OptionBase::HasIssues(void) const
 {
-    return (Validate().size() == 0);
+    return (GetIssues().size() == 0);
 }
 
 

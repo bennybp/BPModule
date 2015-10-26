@@ -58,11 +58,18 @@ def Run():
                 for valid in v[3]:
                     s = "Changing -> {}".format(valid)
                     opt = { "test_opt" : valid }
+                    opm.LockValid(False)
+                    tester.Test(s, True, bp.testing.PyTestFunc, opm.Change, "test_opt", valid)
+
+                    opm.LockValid(True)
                     tester.Test(s, True, bp.testing.PyTestFunc, opm.Change, "test_opt", valid)
                 
                 for invalid in v[4]:
                     s = "Changing -> {}".format(invalid)
                     opt = { "test_opt" : ( v[1], invalid, False, v[2], "(no help)" ) } 
+                    opm.LockValid(False)
+                    tester.Test(s, True, bp.testing.PyTestFunc, opm.Change, "test_opt", invalid)
+                    opm.LockValid(True)
                     tester.Test(s, False, bp.testing.PyTestFunc, opm.Change, "test_opt", invalid)
 
         tester.PrintResults() 

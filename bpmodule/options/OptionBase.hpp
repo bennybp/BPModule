@@ -116,7 +116,7 @@ class OptionBase
         virtual void ResetToDefault(void) noexcept = 0;
 
 
-        /*! \brief Validate the option
+        /*! \brief Get any issues for this option
          *
          * Checks to see if it is set (if required), and calls the validator.
          * Does not throw on validation error.
@@ -124,7 +124,7 @@ class OptionBase
          * \throw bpmodule::exception::OptionException if there is a problem
          *        with the validation
          */
-        virtual OptionIssues Validate(void) const = 0;
+        virtual OptionIssues GetIssues(void) const = 0;
 
 
 
@@ -220,9 +220,12 @@ class OptionBase
         const std::string & Help(void) const noexcept;
 
 
-        /*! \brief Test if this is valid or not
+        /*! \brief Test if this option has issues
+         * 
+         * \throw bpmodule::exception::OptionException if there is a problem
+         *        with the validation
          */
-        bool IsValid(void) const;
+        bool HasIssues(void) const;
 
 
     protected:
