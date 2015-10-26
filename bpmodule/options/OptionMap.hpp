@@ -21,11 +21,15 @@ namespace bpmodule {
 namespace options {
 
 
+typedef std::vector<std::string> WholeOptionMapIssues;
+
 struct OptionMapIssues
 {
-    std::vector<std::string> toplevel;
+    WholeOptionMapIssues toplevel;
     std::map<std::string, detail::OptionIssues> optissues;
 };
+
+
 
 
 /*! \brief A class for holding options to a module
@@ -89,6 +93,13 @@ class OptionMap
                 throw exception::OptionException(ex, key);
             }
         }
+
+
+
+        /*! \brief Return the module key that these options belong to
+         */
+        const std::string & ModuleKey(void) const noexcept;
+
 
 
 
@@ -275,8 +286,9 @@ class OptionMap
          *
          *  \param [in] opt A dictionary with the options
          *  \param [in] wholevalidfunc Pointer to a function to validate the whole options object
+         *  \param [in] modulekey The module key that these options belong to
          */
-        OptionMap(const boost::python::dict & opt, const boost::python::object & wholevalidfunc);
+        OptionMap(const std::string & modulekey, const boost::python::dict & opt, const boost::python::object & wholevalidfunc);
 
 
 
@@ -352,6 +364,8 @@ class OptionMap
 
 
     private:
+        //! The module these options belong to
+        std::string modulekey_;
 
         //! If true, don't throw exceptions on validation errors
         bool expert_;
@@ -360,7 +374,7 @@ class OptionMap
         bool lockvalid_;
 
         //! Function that validates the whole option container
-        typedef std::function<bool (const OptionMap &)> WholeOptionValidator;
+        typedef std::function<WholeOptionMapIssues (const OptionMap &)> WholeOptionValidator;
 
 
         //! \brief Comparison of a case-insensitive string

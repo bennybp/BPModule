@@ -8,6 +8,7 @@
 #include <boost/python/module.hpp>
 #include <boost/python/class.hpp>
 #include <boost/python/dict.hpp>
+#include <boost/python/copy_const_reference.hpp>
 
 #include "bpmodule/options/OptionMap.hpp"
 
@@ -24,7 +25,7 @@ BOOST_PYTHON_MODULE(options)
     // OptionMap
     /////////////////////////
     // OptionMap always returns copies, so this should be safe
-    class_<OptionMap>("OptionMap", init<const boost::python::dict &, const boost::python::object &>())
+    class_<OptionMap>("OptionMap", init<const std::string &, const boost::python::dict &, const boost::python::object &>())
     .def("MaxInt", &OptionMap::MaxInt)
     .def("MinInt", &OptionMap::MinInt)
     .def("MaxFloat", &OptionMap::MaxFloat)
@@ -40,6 +41,7 @@ BOOST_PYTHON_MODULE(options)
     .def("ChangeDict", &OptionMap::ChangePyDict)
     .def("LockValid", &OptionMap::LockValid)
     .def("Validate", &OptionMap::Validate)
+    .def("ModuleKey", &OptionMap::ModuleKey, return_value_policy<copy_const_reference>())
     .def("HasIssues", &OptionMap::HasIssues);
 }
 

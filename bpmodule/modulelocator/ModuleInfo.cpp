@@ -111,7 +111,7 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
         if(dictionary.has_key("wholeoptvalidator"))
             wholeoptvalid = dictionary["wholeoptvalidator"];
 
-        options     = OptionMap(DictConvertHelper<boost::python::dict>(dictionary, "options"), wholeoptvalid);
+        options     = OptionMap(key, DictConvertHelper<boost::python::dict>(dictionary, "options"), wholeoptvalid);
 
         // soname is optional
         if(dictionary.has_key("soname"))

@@ -93,7 +93,7 @@ OptionHolder<T>::OptionHolder(const std::string & key, T * def,
     if(def != nullptr)
     {
         // check for a problem with the default value. This should be an exception
-        OptionIssues iss = GetIssues_(*default_);
+        OptionIssues iss = GetIssues();
         if(iss.size())
             throw OptionException("Default value for this option does not pass validation", Key(), "issues", iss);
     }
@@ -229,21 +229,12 @@ OptionIssues OptionHolder<T>::GetIssues(void) const
 {
     if(!IsSetIfRequired())
         return OptionIssues{"Option is not set, but is required"};
+    else if(validator_)
+        return validator_(*this);
     else
-        return GetIssues_(Get());
-}
-
-
-
-template<typename T>
-OptionIssues OptionHolder<T>::GetIssues_(T val) const
-{
-    // if no validator, that's ok
-    if(!validator_)
         return OptionIssues();
-    else
-        return validator_(val);
 }
+
 
 
 /////////////////////////////////////////
@@ -428,10 +419,10 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
 // CreateOptionHolder & helper functions
 ////////////////////////////////////////////////////////
 template<typename T>
-static OptionIssues ValidateWrapper(const boost::python::object & func, T val, const std::string & key)
+static OptionIssues ValidateWrapper(const boost::python::object & func, const OptionHolder<T> & val)
 {
     // should never really throw...
-    boost::python::object obj = ConvertToPy(val);
+    boost::python::object obj = ConvertToPy(val.Get());
 
     // get the return value
     boost::python::object ret;
@@ -441,7 +432,7 @@ static OptionIssues ValidateWrapper(const boost::python::object & func, T val, c
     }
     catch(bpmodule::exception::GeneralException & ex)
     {
-        throw OptionException(ex, key, "when", "While calling validator function");
+        throw OptionException(ex, val.Key(), "when", "While calling validator function");
     }
 
 
@@ -464,7 +455,7 @@ static OptionIssues ValidateWrapper(const boost::python::object & func, T val, c
         case PythonType::ListString:
             return OptionIssues(ConvertToCpp<std::vector<std::string>>(ret));
         default:
-            throw OptionException("Invalid type returned from validator", key, "pytype", GetPyClass(ret)); 
+            throw OptionException("Invalid type returned from validator", val.Key(), "pytype", GetPyClass(ret)); 
     }
 
     throw std::logic_error("Contact a developer - code in OptionHolder / ValidateWrapper should never reach this point");
@@ -527,7 +518,7 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
 
         // Set up the validator
         boost::python::object valfunc = tup[3].attr("Validate");
-        validator = std::bind(ValidateWrapper<T>, valfunc, std::placeholders::_1, key);
+        validator = std::bind(ValidateWrapper<T>, valfunc, std::placeholders::_1);
     }
 
 

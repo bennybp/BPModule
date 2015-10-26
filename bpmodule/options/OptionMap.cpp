@@ -16,7 +16,10 @@
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::python_helper::DeterminePyType;
 using bpmodule::python_helper::GetPyClass;
+using bpmodule::python_helper::CallPyFunc;
+using bpmodule::python_helper::PythonType;
 using bpmodule::exception::OptionException;
+using bpmodule::exception::GeneralException;
 using bpmodule::output::Output;
 
 
@@ -53,6 +56,10 @@ OptionMap & OptionMap::operator=(const OptionMap & rhs)
     return *this;
 }
 
+const std::string & OptionMap::ModuleKey(void) const noexcept
+{
+    return modulekey_;
+}
 
 bool OptionMap::Has(const std::string & key) const
 {
@@ -107,21 +114,24 @@ void OptionMap::Validate(void) const
     OptionMapIssues omi = GetIssues();
     bool throwme = false;
 
+    if(omi.toplevel.size() || omi.optissues.size())
+        output::Warning("OptionMap has some issues\n");
+
     if(omi.toplevel.size())
     {
         throwme = true;
-        output::Warning("OptionMap top level issues:\n");
+        output::Warning("    OptionMap top level issues:\n");
         for(const auto & it : omi.toplevel)
-            output::Warning("    %1%", it);
+            output::Warning("        %1%", it);
     }
     if(omi.optissues.size())
     {
-        output::Warning("Individual option issues:\n");
+        output::Warning("    Individual option issues:\n");
         for(const auto & it : omi.optissues)
         {
-            output::Warning("    %1%\n", it.first);
+            output::Warning("        %1%\n", it.first);
             for(const auto & it2 : it.second)
-                output::Warning("        %1%\n", it2);
+                output::Warning("            %1%\n", it2);
         }
         throwme = true;
     }
@@ -167,9 +177,10 @@ const detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
 
 OptionMapIssues OptionMap::GetIssues(void) const
 {
-    //! \todo Whole Map validator
-
     OptionMapIssues omi;
+ 
+    if(wholevalid_)
+        omi.toplevel = wholevalid_(*this);
 
     for(const auto & it : opmap_)
     {
@@ -189,17 +200,51 @@ bool OptionMap::HasIssues(void) const
 }
 
 
-static bool WholeOptValidatorWrapper(const boost::python::object & val, const OptionMap & op)
+static WholeOptionMapIssues WholeOptValidateWrapper(const boost::python::object & func, const OptionMap & val)
 {
-    return boost::python::extract<bool>(python_helper::CallPyFunc(val, op));
+    // get the return value
+    boost::python::object ret;
+
+    try {
+        ret = CallPyFunc(func, val);
+    }
+    catch(bpmodule::exception::GeneralException & ex)
+    {
+        throw GeneralException(ex, "modulekey", val.ModuleKey(), "when", "While calling validator function");
+    }
+
+
+    PythonType rettype = DeterminePyType(ret);
+
+    switch(rettype)
+    {
+        case PythonType::None:
+            return WholeOptionMapIssues();
+        case PythonType::Bool:
+        {
+            bool b = ConvertToCpp<bool>(ret);
+            if(b)
+                return WholeOptionMapIssues();
+            else
+                return WholeOptionMapIssues{"(false returned, but no issue given)"};
+        }
+        case PythonType::String:
+            return WholeOptionMapIssues{ConvertToCpp<std::string>(ret)};
+        case PythonType::ListString:
+            return WholeOptionMapIssues(ConvertToCpp<std::vector<std::string>>(ret));
+        default:
+            throw GeneralException("Invalid type returned from validator", "modulekey", val.ModuleKey(), "pytype", GetPyClass(ret)); 
+    }
+
+    throw std::logic_error("Contact a developer - code in OptionMap / WholeValidateWrapper should never reach this point");
 }
 
 
 //////////////////////////////
 // Python functions
 //////////////////////////////
-OptionMap::OptionMap(const boost::python::dict & opt, const boost::python::object & wholevalidfunc)
-    : expert_(false), lockvalid_(false)
+OptionMap::OptionMap(const std::string & modulekey, const boost::python::dict & opt, const boost::python::object & wholevalidfunc)
+    : modulekey_(modulekey), expert_(false), lockvalid_(false)
 {
     boost::python::list keys = opt.keys();
 
@@ -239,7 +284,7 @@ OptionMap::OptionMap(const boost::python::dict & opt, const boost::python::objec
                 throw OptionException("Whole options validator does not have a callable Validate() method taking one argument", "(none)",
                                       "pytype", GetPyClass(wholevalidfunc));
 
-        wholevalid_ = std::bind(WholeOptValidatorWrapper, wholevalidfunc, std::placeholders::_1);
+        wholevalid_ = std::bind(WholeOptValidateWrapper, wholevalidfunc, std::placeholders::_1);
     }
 
 }

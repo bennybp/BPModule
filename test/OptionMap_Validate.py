@@ -40,19 +40,19 @@ def Run():
             for valid in v[3]:
                 s = "Construction with \"{}\" -> {}".format(v[0], valid)
                 opt = { "test_opt" : ( v[1], valid, False, v[2], "(no help)" ) } 
-                tester.Test(s, True, bp.testing.PyTestFunc, bp.options.OptionMap, opt, None)
+                tester.Test(s, True, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
 
             for invalid in v[4]:
                 s = "Construction with \"{}\" -> {}".format(v[0], invalid)
                 opt = { "test_opt" : ( v[1], invalid, False, v[2], "(no help)" ) } 
-                tester.Test(s, False, bp.testing.PyTestFunc, bp.options.OptionMap, opt, None)
+                tester.Test(s, False, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
 
         # Test validator with changing values
         for v in tests:
     
             for val in v[3]:
                 opt = { "test_opt" : ( v[1], val, False, v[2], "(no help)" ) } 
-                opm = bp.options.OptionMap(opt, None)
+                opm = bp.options.OptionMap("nomodule", opt, None)
                 # test for validity?
 
                 for valid in v[3]:

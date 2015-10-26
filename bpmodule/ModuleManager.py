@@ -59,7 +59,6 @@ class ModuleManager(modulelocator.ModuleLocator):
 
             # get full path of loaded supermodule
             spath = os.path.dirname(m.__file__)
-            output.Warning("HERE: {}".format(spath))
 
             # check options, etc
             CheckSupermodule(spath)

@@ -30,7 +30,7 @@ class OptionHolder : public OptionBase
 {
     public:
         //! A function that can validate an object of type T
-        typedef std::function<OptionIssues (T)> ValidatorFunc;
+        typedef std::function<OptionIssues (const OptionHolder<T> &)> ValidatorFunc;
 
 
         /*! \brief Constructs via pointers
@@ -140,7 +140,6 @@ class OptionHolder : public OptionBase
 
 
     private:
-        OptionIssues GetIssues_(T val) const;
 
         std::unique_ptr<T> value_;
         std::unique_ptr<T> default_;
