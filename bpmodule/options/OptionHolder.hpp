@@ -30,7 +30,7 @@ class OptionHolder : public OptionBase
 {
     public:
         //! A function that can validate an object of type T
-        typedef std::function<bool(T)> ValidatorFunc;
+        typedef std::function<OptionIssues (T)> ValidatorFunc;
 
 
         /*! \brief Constructs via pointers
@@ -129,6 +129,7 @@ class OptionHolder : public OptionBase
 
         virtual void Print(void) const;
 
+        virtual OptionIssues Validate(void) const;
 
         /////////////////////////////////////////
         // Python-related functions
@@ -139,19 +140,13 @@ class OptionHolder : public OptionBase
 
 
     private:
+        OptionIssues ValidateValue_(T val) const;
+
         std::unique_ptr<T> value_;
         std::unique_ptr<T> default_;
         ValidatorFunc validator_;
 
         std::string demangledtype_; //!< The type of the object, but demangled
-
-
-        /*! \brief Validate a potential value
-         *
-         * \param [in] value The value to validate
-         * \param [in] desc Short description of what is being validated
-         */
-        void Validate_(const T & value, const std::string & desc) const;
 };
 
 

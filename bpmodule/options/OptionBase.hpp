@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
@@ -17,6 +18,7 @@ namespace bpmodule {
 namespace options {
 namespace detail {
 
+typedef std::vector<std::string> OptionIssues;
 
 class OptionBase
 {
@@ -114,6 +116,17 @@ class OptionBase
         virtual void ResetToDefault(void) noexcept = 0;
 
 
+        /*! \brief Validate the option
+         *
+         * Checks to see if it is set (if required), and calls the validator.
+         * Does not throw on validation error.
+         *
+         * \throw bpmodule::exception::OptionException if there is a problem
+         *        with the validation
+         */
+        virtual OptionIssues Validate(void) const = 0;
+
+
 
         /*! \brief Print out information about this option
          */
@@ -206,6 +219,10 @@ class OptionBase
          */
         const std::string & Help(void) const noexcept;
 
+
+        /*! \brief Test if this is valid or not
+         */
+        bool IsValid(void) const;
 
 
     protected:

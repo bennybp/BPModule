@@ -86,15 +86,19 @@ OptionHolder<T>::OptionHolder(const std::string & key, T * def,
                               const std::string & help)
     : OptionBase(key, required, pytype, help),
       default_(def),
-      validator_(validator)
+      validator_(validator),
+      demangledtype_(mangle::DemangleCppType<T>())
 {
     // check the default using the validator
     if(def != nullptr)
-        Validate_(*default_, "initial default");
+    {
+        // check for a problem with the default value. This should be an exception
+        OptionIssues iss = ValidateValue_(*default_);
+        if(iss.size())
+            throw OptionException("Default value for this option does not pass validation", Key(), "issues", iss);
+    }
     if(def != nullptr && required)
         throw OptionException("Default value supplied for required option", Key());
-
-    demangledtype_ = mangle::DemangleCppType<T>();
 }
 
 
@@ -117,7 +121,6 @@ OptionHolder<T>::OptionHolder(const OptionHolder & oph)
 template<typename T>
 void OptionHolder<T>::Change(const T & value)
 {
-    Validate_(value, "new value");
     value_ = std::unique_ptr<T>(new T(value));
 }
 
@@ -221,25 +224,26 @@ void OptionHolder<T>::Print(void) const
 }
 
 
-
-
 template<typename T>
-void OptionHolder<T>::Validate_(const T & value, const std::string & desc) const
+OptionIssues OptionHolder<T>::Validate(void) const
 {
-    // validator_ may be empty!
-    // if so, no validator, and just return
-    if(!validator_)
-        return;
-
-    if(!validator_(value))
-    {
-        //! \todo add exception info from validator?
-        output::Warning("Value for option %1% \"%2\" is invalid. Ignoring\n", desc, Key());
-    }
+    if(!IsSetIfRequired())
+        return OptionIssues{"Option is not set, but is required"};
+    else
+        return ValidateValue_(Get());
 }
 
 
 
+template<typename T>
+OptionIssues OptionHolder<T>::ValidateValue_(T val) const
+{
+    // if no validator, that's ok
+    if(!validator_)
+        return OptionIssues();
+    else
+        return validator_(val);
+}
 
 
 /////////////////////////////////////////
@@ -424,11 +428,46 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
 // CreateOptionHolder & helper functions
 ////////////////////////////////////////////////////////
 template<typename T>
-static bool ValidateWrapper(const boost::python::object & val, T arg)
+static OptionIssues ValidateWrapper(const boost::python::object & func, T val, const std::string & key)
 {
     // should never really throw...
-    boost::python::object obj = ConvertToPy(arg);
-    return boost::python::extract<bool>(CallPyFunc(val, obj));
+    boost::python::object obj = ConvertToPy(val);
+
+    // get the return value
+    boost::python::object ret;
+
+    try {
+        CallPyFunc(func, obj);
+    }
+    catch(bpmodule::exception::GeneralException & ex)
+    {
+        throw OptionException(ex, key, "when", "While calling validator function");
+    }
+
+
+    PythonType rettype = DeterminePyType(ret);
+
+    switch(rettype)
+    {
+        case PythonType::None:
+            return OptionIssues();
+        case PythonType::Bool:
+        {
+            bool b = ConvertToCpp<bool>(ret);
+            if(b)
+                return OptionIssues();
+            else
+                return OptionIssues{"(false returned, but no issue given)"};
+        }
+        case PythonType::String:
+            return OptionIssues{ConvertToCpp<std::string>(ret)};
+        case PythonType::ListString:
+            return OptionIssues(ConvertToCpp<std::vector<std::string>>(ret));
+        default:
+            throw OptionException("Invalid type returned from validator", key, "pytype", GetPyClass(ret)); 
+    }
+
+    throw std::logic_error("Contact a develope - code in OptionHolder / ValidateWrapper should never reach this point");
 }
 
 
@@ -488,7 +527,7 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
 
         // Set up the validator
         boost::python::object valfunc = tup[3].attr("Validate");
-        validator = std::bind(ValidateWrapper<T>, valfunc, std::placeholders::_1);
+        validator = std::bind(ValidateWrapper<T>, valfunc, std::placeholders::_1, key);
     }
 
 

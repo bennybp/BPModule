@@ -51,6 +51,11 @@ const std::string & OptionBase::Help(void) const noexcept
 }
 
 
+bool OptionBase::IsValid(void) const
+{
+    return (Validate().size() == 0);
+}
+
 
 } //closing namespace detail
 } //closing namespace options
