@@ -234,11 +234,7 @@ void OptionHolder<T>::Validate_(const T & value, const std::string & desc) const
     if(!validator_(value))
     {
         //! \todo add exception info from validator?
-        if(!OptionBase::IsExpert())
-            throw OptionException("Invalid value for this option", Key(),
-                                  "desc", desc);
-        else
-            output::Warning("Value for option %1% \"%2\" is invalid. Ignoring\n", desc, Key());
+        output::Warning("Value for option %1% \"%2\" is invalid. Ignoring\n", desc, Key());
     }
 }
 

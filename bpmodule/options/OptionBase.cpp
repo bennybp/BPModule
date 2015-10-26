@@ -16,7 +16,7 @@ OptionBase::OptionBase(const std::string & key,
            bool required,
            python_helper::PythonType pytype,
            const std::string & help)
-    : key_(key), required_(required), expert_(false),
+    : key_(key), required_(required),
       pytype_(pytype), help_(help)
 { }
 
@@ -31,19 +31,6 @@ bool OptionBase::IsRequired(void) const noexcept
     return required_;
 }
 
-
-
-bool OptionBase::IsExpert(void) const noexcept
-{
-    return expert_;
-}
-
-
-
-void OptionBase::SetExpert(bool expert) noexcept
-{
-    expert_ = expert;
-}
 
 
 bool OptionBase::IsSetIfRequired(void) const noexcept

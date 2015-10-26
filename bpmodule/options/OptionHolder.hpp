@@ -38,7 +38,7 @@ class OptionHolder : public OptionBase
          * This object will take ownership of the value and def pointers.
          * The initial value and default will be validated (if given).
          *
-         * The value is not set on construction, only the default. Expert is set to false.
+         * The value is not set on construction, only the default
          *
          * \throw bpmodule::exception::OptionException
          *        If the initial value or default is invalid, or
@@ -79,11 +79,6 @@ class OptionHolder : public OptionBase
         /*! \brief Change the stored value
          *
          * This object will copy construct a new value
-         *
-         * The new value will be validated.
-         *
-         * \throw bpmodule::exception::OptionException
-         *        If the new value is invalid (and expert mode is off).
          *
          * \exstrong
          */
@@ -152,11 +147,6 @@ class OptionHolder : public OptionBase
 
 
         /*! \brief Validate a potential value
-         *
-         * If IsExpert(), a warning is printed. Otherwise, an exception is thrown.
-         *
-         * \throw bpmodule::exception::OptionException
-         *        If the value is invalid and IsExpert() == false
          *
          * \param [in] value The value to validate
          * \param [in] desc Short description of what is being validated

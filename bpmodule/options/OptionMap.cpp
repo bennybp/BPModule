@@ -95,8 +95,6 @@ bool OptionMap::AllReqSet(void) const noexcept
 void OptionMap::SetExpert(bool expert) noexcept 
 {
     expert_ = expert;
-    for(const auto & it : opmap_)
-        it.second->SetExpert(expert);
 }
         
 

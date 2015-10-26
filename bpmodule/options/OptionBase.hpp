@@ -23,8 +23,6 @@ class OptionBase
     public:
         /*! \brief Constructor
          *
-         * Expert is set to false.
-         *
          * \param [in] key The key of this option
          * \param [in] required True if this is a required option
          * \param [in] pytype The python type of this option
@@ -138,8 +136,7 @@ class OptionBase
         /*! \brief Change the value with a boost python object
          *
          * \throw bpmodule::exception::OptionException
-         *        if there is a problem with the python conversion or
-         *        if the new value is invalid (and expert mode is off).
+         *        if there is a problem with the python conversion
          *
          *  \exstrong
          */
@@ -165,22 +162,6 @@ class OptionBase
          * \exnothrow
          */
         bool IsRequired(void) const noexcept;
-
-
-
-        /*! \brief See if expert mode is enabled for this object
-         *
-         * \exnothrow
-         */
-        bool IsExpert(void) const noexcept;
-
-
-
-        /*! \brief Set the expert flag
-         *
-         * \exnothrow
-         */
-        void SetExpert(bool expert) noexcept;
 
 
 
@@ -239,9 +220,6 @@ class OptionBase
 
         //! Is this option required
         const bool required_;
-
-        //! If set to true, validation errors print warnings rather than throw exceptions.
-        bool expert_;
 
         //! The python type of this option
         const python_helper::PythonType pytype_;
