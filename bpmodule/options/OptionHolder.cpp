@@ -108,7 +108,8 @@ OptionHolder<T>::OptionHolder(const std::string & key, T * def,
 template<typename T>
 OptionHolder<T>::OptionHolder(const OptionHolder & oph)
     : OptionBase(oph),
-      validator_(oph.validator_)
+      validator_(oph.validator_),
+      demangledtype_(oph.demangledtype_)
 {
     if(oph.value_)
         value_ = std::unique_ptr<T>(new T(*oph.value_));
@@ -266,7 +267,6 @@ void OptionHolder<T>::ChangePy(const boost::python::object & obj)
         throw OptionException(ex, Key(), "valuetype", DemangledType());
     }
 
-    // will validate inside Change()
     Change(val);
 }
 
@@ -418,47 +418,22 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
 ////////////////////////////////////////////////////////
 // CreateOptionHolder & helper functions
 ////////////////////////////////////////////////////////
+
+// Wraps the python call to the validator function
 template<typename T>
 static OptionIssues ValidateWrapper(const boost::python::object & func, const OptionHolder<T> & val)
 {
     // should never really throw...
     boost::python::object obj = ConvertToPy(val.Get());
 
-    // get the return value
-    boost::python::object ret;
-
     try {
-        ret = CallPyFunc(func, obj);
+        return CallPyFunc<std::vector<std::string>>(func, obj);
     }
-    catch(bpmodule::exception::GeneralException & ex)
+    catch(bpmodule::exception::PythonCallException & ex)
     {
-        throw OptionException(ex, val.Key(), "when", "While calling validator function");
+        ex.AppendInfo("when", "while Calling validator function for an option", "optionkey", val.Key());
+        throw;
     }
-
-
-    PythonType rettype = DeterminePyType(ret);
-
-    switch(rettype)
-    {
-        case PythonType::None:
-            return OptionIssues();
-        case PythonType::Bool:
-        {
-            bool b = ConvertToCpp<bool>(ret);
-            if(b)
-                return OptionIssues();
-            else
-                return OptionIssues{"(false returned, but no issue given)"};
-        }
-        case PythonType::String:
-            return OptionIssues{ConvertToCpp<std::string>(ret)};
-        case PythonType::ListString:
-            return OptionIssues(ConvertToCpp<std::vector<std::string>>(ret));
-        default:
-            throw OptionException("Invalid type returned from validator", val.Key(), "pytype", GetPyClass(ret)); 
-    }
-
-    throw std::logic_error("Contact a developer - code in OptionHolder / ValidateWrapper should never reach this point");
 }
 
 

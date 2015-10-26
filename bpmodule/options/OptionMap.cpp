@@ -202,41 +202,14 @@ bool OptionMap::HasIssues(void) const
 
 static WholeOptionMapIssues WholeOptValidateWrapper(const boost::python::object & func, const OptionMap & val)
 {
-    // get the return value
-    boost::python::object ret;
-
     try {
-        ret = CallPyFunc(func, val);
+        return CallPyFunc<std::vector<std::string>>(func, val);
     }
-    catch(bpmodule::exception::GeneralException & ex)
+    catch(bpmodule::exception::PythonCallException & ex)
     {
-        throw GeneralException(ex, "modulekey", val.ModuleKey(), "when", "While calling validator function");
+        ex.AppendInfo("when", "while Calling validator function for an option map", "modulekey", val.ModuleKey());
+        throw;
     }
-
-
-    PythonType rettype = DeterminePyType(ret);
-
-    switch(rettype)
-    {
-        case PythonType::None:
-            return WholeOptionMapIssues();
-        case PythonType::Bool:
-        {
-            bool b = ConvertToCpp<bool>(ret);
-            if(b)
-                return WholeOptionMapIssues();
-            else
-                return WholeOptionMapIssues{"(false returned, but no issue given)"};
-        }
-        case PythonType::String:
-            return WholeOptionMapIssues{ConvertToCpp<std::string>(ret)};
-        case PythonType::ListString:
-            return WholeOptionMapIssues(ConvertToCpp<std::vector<std::string>>(ret));
-        default:
-            throw GeneralException("Invalid type returned from validator", "modulekey", val.ModuleKey(), "pytype", GetPyClass(ret)); 
-    }
-
-    throw std::logic_error("Contact a developer - code in OptionMap / WholeValidateWrapper should never reach this point");
 }
 
 
@@ -314,6 +287,9 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
 
     OptionMap tmp(*this);
 
+    // unlock for the moment. Some intermediate states may not be valid
+    tmp.LockValid(false);
+
     for(int i = 0; i < keylen; i++)
     {
         if(DeterminePyType(keys[i]) != python_helper::PythonType::String)
@@ -328,6 +304,10 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
 
         tmp.ChangePy(key, opt[key]);
     }
+
+    // set the validity lock to whatever it is in this OptionMap
+    // (also, will validate if needed)
+    tmp.LockValid(lockvalid_);
 
     swap(*this, tmp);
 

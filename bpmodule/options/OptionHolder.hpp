@@ -36,13 +36,16 @@ class OptionHolder : public OptionBase
         /*! \brief Constructs via pointers
          *
          * This object will take ownership of the value and def pointers.
-         * The initial value and default will be validated (if given).
+         * The default value will be validated (if given).
          *
          * The value is not set on construction, only the default
          *
          * \throw bpmodule::exception::OptionException
          *        If the initial value or default is invalid, or
          *        there is a default argument supplied for a 'required' option.
+         *
+         *  \throw bpmodule::exception::PythonCallException
+         *        If there is a problem calling the validation function
          *
          * \param [in] key The key of this option
          * \param [in] def The default value
@@ -131,6 +134,8 @@ class OptionHolder : public OptionBase
 
         virtual OptionIssues GetIssues(void) const;
 
+
+
         /////////////////////////////////////////
         // Python-related functions
         /////////////////////////////////////////
@@ -158,6 +163,9 @@ class OptionHolder : public OptionBase
  *
  * \throw bpmodule::exception::OptionException
  *        If there is a problem with the option (validation or python conversion problems)
+ *
+ * \throw bpmodule::exception::PythonCallException
+ *        If there is a problem calling the validation function (in validating the default)
  */
 OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::object & obj);
 

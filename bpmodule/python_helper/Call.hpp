@@ -13,6 +13,7 @@
 #include "bpmodule/exception/PythonCallException.hpp"
 #include "bpmodule/python_helper/Types.hpp"
 #include "bpmodule/python_helper/Errors.hpp"
+#include "bpmodule/python_helper/Convert.hpp"
 
 
 namespace bpmodule {
@@ -23,8 +24,8 @@ namespace python_helper {
  *
  * Wraps exceptions in bmodule exceptions
  */
-template<typename... Targs>
-boost::python::object CallPyFunc(const boost::python::object & obj, Targs... Fargs)
+template<typename Ret, typename... Targs>
+Ret CallPyFunc(const boost::python::object & obj, Targs... Fargs)
 {
     int nargs = static_cast<int>(sizeof...(Fargs));
 
@@ -34,14 +35,26 @@ boost::python::object CallPyFunc(const boost::python::object & obj, Targs... Far
         throw exception::PythonCallException("Object is not callable!", "(none)",
                                              "nargs", std::to_string(nargs));
 
+    boost::python::object ret;
+
     try {
-        return obj(Fargs...);
+        ret = obj(Fargs...);
     }
     catch(...)
     {
         throw exception::PythonCallException("Unable to call python function",
                                              detail::GetPyExceptionString(),
                                              "nargs", std::to_string(nargs));
+    }
+
+    try {
+        return ConvertToCpp<Ret>(ret);
+    }
+    catch(const bpmodule::exception::PythonConvertException & ex)
+    {
+        // change to a PythonCallException
+        throw bpmodule::exception::PythonCallException(ex, "(none)",
+                                                       "desc", "Unable to convert return value from python function");
     }
 }
 

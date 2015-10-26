@@ -135,6 +135,9 @@ class OptionMap
 
 
         /*! \brief Check if the option is currently set to the default
+         * 
+         * \throw bpmodule::exception::OptionException if
+         *        the key doesn't exist
          */
         bool IsDefault(const std::string & key) const;
 
@@ -212,9 +215,9 @@ class OptionMap
 
 
 
-        /*! \brief Check the validity of all the options
+        /*! \brief Get all issues for this OptionMap
          *
-         * \throw bpmodule::exception::OptionException if there is a problem
+         * \throw bpmodule::exception::PythonCallException if there is a problem
          *        with validation.
          */
         bool HasIssues(void) const; 
@@ -222,7 +225,7 @@ class OptionMap
 
         /*! \brief Turn on expert mode for all options
          * 
-         * In expert mode, failures (validation, etc) will print warnings,
+         * In expert mode, some failures (mostly validation) will print warnings,
          * but the program will otherwise continue
          */
         void SetExpert(bool expert) noexcept;
@@ -234,9 +237,12 @@ class OptionMap
          * Additional changes will cause validation to be
          * run and exceptions to possibly be thrown.
          *
-         * The validity of this map is is checked first.
+         * The validity of this map is checked first if setting to true.
+         *
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with validation.
          */
-        void LockValid(bool);
+        void LockValid(bool lockvalid);
 
 
 
@@ -245,6 +251,9 @@ class OptionMap
          * Causes all the problems with this map to be
          * printed out. If there is a problem (and this OptionMap
          * is not in expert mode), an exception is thrown.
+         *
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with validation.
          */
         void Validate(void) const;
 
@@ -285,6 +294,7 @@ class OptionMap
          *        a problem with the option (validation, conversion, duplicate key, etc)
          *
          *  \param [in] opt A dictionary with the options
+         *  \param [in] modulekey The module key of the the module that has these options
          *  \param [in] wholevalidfunc Pointer to a function to validate the whole options object
          *  \param [in] modulekey The module key that these options belong to
          */

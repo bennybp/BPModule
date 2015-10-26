@@ -40,7 +40,7 @@ ModuleBase * PyModuleLoader::GeneratorWrapper_(boost::python::object fn,
                                                ModuleLocator & mlocator,
                                                ModuleInfo & minfo)
 {
-    boost::python::object newobj = python_helper::CallPyFunc(fn, name, id, boost::ref(mlocator), boost::ref(minfo));
+    boost::python::object newobj = python_helper::CallPyFunc<boost::python::object>(fn, name, id, boost::ref(mlocator), boost::ref(minfo));
     ModuleBase * ptr = boost::python::extract<ModuleBase *>(newobj); // may throw
     BASE::CopyObject(id, newobj); // strong exception guarantee
     return ptr;

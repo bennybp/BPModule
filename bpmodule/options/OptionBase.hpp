@@ -119,12 +119,23 @@ class OptionBase
         /*! \brief Get any issues for this option
          *
          * Checks to see if it is set (if required), and calls the validator.
-         * Does not throw on validation error.
+         * Does not throw on validation error, but will throw if the validator
+         * cannot be called (python issues, etc).
          *
-         * \throw bpmodule::exception::OptionException if there is a problem
-         *        with the validation
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with the validation function
          */
         virtual OptionIssues GetIssues(void) const = 0;
+
+
+
+        /*! \brief Test if this option has issues
+         * 
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with the validation function
+         */
+        bool HasIssues(void) const;
+
 
 
 
@@ -218,14 +229,6 @@ class OptionBase
          * \exnothrow
          */
         const std::string & Help(void) const noexcept;
-
-
-        /*! \brief Test if this option has issues
-         * 
-         * \throw bpmodule::exception::OptionException if there is a problem
-         *        with the validation
-         */
-        bool HasIssues(void) const;
 
 
     protected:

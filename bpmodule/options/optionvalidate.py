@@ -5,21 +5,20 @@ class RangeCheck:
         self.includemin = includemin
         self.includemax = includemax
 
-        self.errstr = [ "Value must be in the range {}{},{}{}".format("[" if self.includemin else "(",
-                                                                      self.min, self.max,
-                                                                      "]" if self.includemax else ")")
-                      ]
+        self.errstr = "Value must be in the range {}{},{}{}".format("[" if self.includemin else "(",
+                                                                    self.min, self.max,
+                                                                    "]" if self.includemax else ")")
 
     def Validate(self, value):
         if (value > self.min) and (value < self.max):
-            return True
+            return []
         elif (self.includemin == True) and (value == self.min):
-            return True
+            return []
         elif (self.includemax == True) and (value == self.max):
-            return True
+            return []
         else:
-            err = [ "Value \"{}\" is not valid".format(value) ]
-            err.extend(self.errstr)
+            err = [ "Value \"{}\" is not valid.".format(value) + self.errstr ]
+            err.append(self.errstr)
             return err
 
 
@@ -38,7 +37,7 @@ class InList:
                 self.lst.append(l)
 
 
-        self.errstr = [ "Value of must be one of the following {} values".format(len(self.lst)) ]
+        self.errstr = [ ]
         for v in self.lst:
             self.errstr.append("    {}".format(v))
 
@@ -49,8 +48,10 @@ class InList:
         if type(value) == str:
             v = v.lower()
 
-        if not v in self.lst:
-            err = [ "Value \"{}\" is not valid".format(v) ]
+        if v in self.lst:
+            return []
+        else:
+            err = [ "Value \"{}\" is not valid. Value must be one of the following {} values".format(v, len(self.lst)) ]
             err.extend(self.errstr)
             return err
 
