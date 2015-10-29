@@ -106,13 +106,6 @@ dfac_2nm1_double = [ float(v) for v in dfac_2nm1 ]
 cppfile = "test.cpp"
 hppfile = "test.hpp"
 
-guard = hppfile.upper()
-guard = guard.replace('.', '_')
-guard = guard.replace('-', '_')
-guard = guard.replace('/', '__')
-guard = guard.replace('\\', '__')
-guard = "_GUARD_{}_".format(guard)
-
 
 with bp_common.HeaderSourceFiles(outbase, "LUT for factorial and related functions", 
                                  ["math", "lut"],
