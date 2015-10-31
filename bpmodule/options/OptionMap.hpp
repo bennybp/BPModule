@@ -387,21 +387,8 @@ class OptionMap
         typedef std::function<WholeOptionMapIssues (const OptionMap &)> WholeOptionValidator;
 
 
-        //! \brief Comparison of a case-insensitive string
-        struct CaseInsensitiveCompare_
-        {
-            bool operator()(std::string lhs, std::string rhs) const
-            {
-                output::ToLower(lhs);
-                output::ToLower(rhs);
-                std::less<std::string> comp;
-                return comp(lhs, rhs);
-            }
-        }; 
-
-
         //! Holds the options
-        std::map<std::string, detail::OptionBasePtr, CaseInsensitiveCompare_> opmap_;
+        std::map<std::string, detail::OptionBasePtr, output::CaseInsensitiveCompare> opmap_;
  
 
         //!< Validates the whole options container

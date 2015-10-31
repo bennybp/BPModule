@@ -37,6 +37,18 @@ void ToLower(std::string & str);
 std::string ToLowerCopy(std::string str);
 
 
+
+/*! \brief Comparison of a case-insensitive string
+ *
+ * Useful for containers (maps) where the key is
+ * case insensitive
+ */
+struct CaseInsensitiveCompare
+{
+    bool operator()(std::string lhs, std::string rhs) const;
+}; 
+
+
 } // close namespace output
 } // close namespace bpmodule
 

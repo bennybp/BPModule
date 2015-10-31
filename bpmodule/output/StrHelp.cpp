@@ -6,6 +6,7 @@
 
 
 #include "bpmodule/output/FormatStr.hpp"
+#include "bpmodule/output/StrHelp.hpp"
 
 
 namespace bpmodule {
@@ -41,6 +42,14 @@ std::string ToLowerCopy(std::string str)
     return str;
 }
 
+
+bool CaseInsensitiveCompare::operator()(std::string lhs, std::string rhs) const
+{
+    output::ToLower(lhs);
+    output::ToLower(rhs);
+    std::less<std::string> comp;
+    return comp(lhs, rhs);
+}
 
 
 } // close namespace output
