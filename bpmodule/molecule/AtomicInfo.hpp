@@ -40,32 +40,50 @@ struct AtomicData
 // Free functions
 //////////////////////////
 
-//! Get atomic data by Z number
-AtomicData AtomicInfo(int Z);
+/*! \brief Get atomic data by Z number
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        data does not exist for this Z number
+ */
+const AtomicData & AtomicInfo(int Z);
 
 
 /*! \brief Get atomic data by symbol
  *
  * Symbol is not case sensitive
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        data does not exist for this symbol
  */
-AtomicData AtomicInfo(const std::string & sym);
+const AtomicData & AtomicInfo(const std::string & sym);
 
 
 
-//! Get isotope data by Z number and isotope number
-IsotopeData IsotopeInfo(int Z, int isonum);
+/*! \brief Get isotope data by Z number and isotope number
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        data does not exist for this Z number and isotope number.
+ */
+const IsotopeData & IsotopeInfo(int Z, int isonum);
 
 
 
 /*! \brief Get isotope data by symbol and isotope number
  *
  * Symbol is not case sensitive
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        data does not exist for this symbol and isotope number.
  */
-IsotopeData IsotopeInfo(const std::string & sym, int isonum);
+const IsotopeData & IsotopeInfo(const std::string & sym, int isonum);
 
 
 
-//! Look up an atomic mass by Z number
+/*! \brief Look up an atomic mass by Z number
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        data does not exist for this Z number
+ */
 double AtomicMass(int Z);
 
 
@@ -73,12 +91,19 @@ double AtomicMass(int Z);
 /*! \brief Look up an atomic mass by symbol
  *
  * Symbol is not case sensitive
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        data does not exist for this symbol
  */
 double AtomicMass(const std::string & sym);
 
 
 
-//! Look up an isotope mass by Z number and isotope number
+/*! \brief Look up an isotope mass by Z number and isotope number
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        data does not exist for this Z number and isotope number.
+ */
 double IsotopeMass(int Z, int isonum);
 
 
@@ -86,6 +111,9 @@ double IsotopeMass(int Z, int isonum);
 /*! \brief Look up an isotope mass by symbol and isotope number
  *
  * Symbol is not case sensitive
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        data does not exist for this symbol and isotope number
  */
 double IsotopeMass(const std::string & sym, int isonum);
 
@@ -99,12 +127,19 @@ std::string AtomicSymbol(int Z);
 /*! \brief Look up Z number by symbol
  *
  * Symbol is not case sensitive
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        symbol is not defined for this Z number
  */
 int AtomicZNumber(const std::string & sym);
 
 
 
-//! Look up an atomic name by Z number
+/*! Look up an atomic name by Z number
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        name is not defined for this Z number
+ */
 std::string AtomicName(int Z);
 
 
@@ -112,6 +147,9 @@ std::string AtomicName(int Z);
 /*! \brief Look up an atomic name by symbol
  *
  * Symbol is not case sensitive
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        name is not defined for this symbol
  */
 std::string AtomicName(const std::string & sym);
 

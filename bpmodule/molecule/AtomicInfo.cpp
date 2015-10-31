@@ -38,7 +38,7 @@ std::string AtomicSymbol(int Z)
 
 
 
-AtomicData AtomicInfo(int Z)
+const AtomicData & AtomicInfo(int Z)
 {
     if(atomic_Z_data_.count(Z))
         return atomic_Z_data_.at(Z);
@@ -49,14 +49,14 @@ AtomicData AtomicInfo(int Z)
 
 
 
-AtomicData AtomicInfo(const std::string & sym)
+const AtomicData & AtomicInfo(const std::string & sym)
 {
     return AtomicInfo(AtomicZNumber(sym));
 }
 
 
 
-IsotopeData IsotopeInfo(int Z, int isonum)
+const IsotopeData & IsotopeInfo(int Z, int isonum)
 {
     AtomicData ad = AtomicInfo(Z);
     
@@ -71,7 +71,7 @@ IsotopeData IsotopeInfo(int Z, int isonum)
 
 
 
-IsotopeData IsotopeInfo(const std::string & sym, int isonum)
+const IsotopeData & IsotopeInfo(const std::string & sym, int isonum)
 {
     return IsotopeInfo(AtomicZNumber(sym), isonum); 
 }
