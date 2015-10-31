@@ -30,10 +30,10 @@ def NumberStr(n):
   # remove "exactly" for the carbon mass
   s = s.replace('(exactly)', '')
 
-  # if only a number, double
+  # if only a number, put it three times
   m = bnum.match(s)
   if m: 
-    s = "{:<25} {:<25}".format(m.group(1), m.group(1))  
+    s = "{:<25} {:<25} {:<25}".format(m.group(1), m.group(1), m.group(1))  
 
   # if parentheses uncertainty...
   m = buncertain.match(s)
@@ -52,16 +52,19 @@ def NumberStr(n):
     serr = mp.mpf(s2)
     scenter = mp.mpf(m.group(1))
 
-    s = "{:<25} {:<25}".format(mp.nstr(scenter-serr, 18), mp.nstr(scenter+serr, 18))
+    s = "{:<25} {:<25} {:<25}".format(mp.nstr(scenter, 18), mp.nstr(scenter-serr, 18), mp.nstr(scenter+serr, 18))
 
   # Replace bracketed ranges with parentheses
   m = brange.match(s)
   if m:
-    s = "{:<25} {:<25}".format(m.group(1), m.group(2))
+    slow = mp.mpf(m.group(1))
+    shigh = mp.mpf(m.group(2))
+    smid = (shigh + slow)/mp.mpf("2.0")
+    s = "{:<25} {:<25} {:<25}".format(mp.nstr(smid, 18), mp.nstr(slow, 18), mp.nstr(shigh, 18))
 
   # just a dash?
   if s == "-":
-    s = "{:<25} {:<25}".format(0, 0)
+    s = "{:<25} {:<25} {:<25}".format(0, 0, 0)
 
 
   return s

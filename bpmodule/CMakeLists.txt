@@ -92,6 +92,8 @@ set(BPMODULE_MODULELOCATOR_HEADERS
    )
 
 set(BPMODULE_MOLECULE_HEADERS
+            molecule/AtomicInfo.hpp
+            molecule/AtomicInfo_LUT.hpp
             molecule/Molecule.hpp
             molecule/Atoms.hpp
    )
