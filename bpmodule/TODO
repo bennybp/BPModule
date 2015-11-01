@@ -29,3 +29,8 @@ Add Constants - float, double, ld
 Add unit conversion functions
 Use python scripts to generate!
 PrintNumberWithUnit()
+
+
+General
+----------
+Utilize extern templates? Ie, vectors of standard types are instantiated already in python helper
