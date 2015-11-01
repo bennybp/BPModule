@@ -20,10 +20,23 @@ def Run():
 
         for i in range(1, 20):
             bp.output.Output("Z = %1%\n", i)
-            bp.output.Output("    Name: %1%\n", bp.molecule.AtomicNameFromZ(i))
-            bp.output.Output("  Symbol: %1%\n", bp.molecule.AtomicSymFromZ(i))
-            bp.output.Output("    Mass: %1%\n", bp.molecule.AtomicMassFromZ(i))
+            bp.output.Output("      Name: %1%\n", bp.molecule.AtomicNameFromZ(i))
+            bp.output.Output("    Symbol: %1%\n", bp.molecule.AtomicSymFromZ(i))
+            bp.output.Output("      Mass: %1%\n", bp.molecule.AtomicMassFromZ(i))
+            ad = bp.molecule.AtomicInfoFromZ(i)
+
+            bp.output.Output("  Isotopes: %1%\n", len(ad.isotopes))
+
+            for iso in ad.isotopes:
+                bp.output.Output("        Number: %1%\n", iso.isonum)
+                bp.output.Output("                Mass: %1%\n", iso.mass)
+                bp.output.Output("           Abundance: %1%\n", iso.abund)
+                bp.output.Output("\n")
+
             bp.output.Output("\n")
+
+
+
 
         tester.PrintResults() 
 
