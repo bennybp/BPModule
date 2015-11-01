@@ -252,6 +252,27 @@ boost::python::object ConvertToPy(const T & obj)
 
 
 
+
+/*! \brief Use to create to_python converters
+ *
+ * This uses the ConvertToPy function from this file.
+ *
+ * Particularly, use this to export a vector
+ * of class objects that have already been
+ * exported to python.
+ *
+ * \throw exception::PythonConvertException if the
+ *        data could not be converted
+ */
+template<typename T>
+struct CppToPyExport
+{
+    static PyObject * convert(const T & v)
+    {
+        return boost::python::incref(ConvertToPy(v).ptr());
+    }  
+};
+
 } // close namespace python_helper
 } // close namespace bpmodule
 

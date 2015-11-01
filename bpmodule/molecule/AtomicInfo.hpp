@@ -33,6 +33,9 @@ struct AtomicData
 
     // All isotope information for this atom
     std::vector<IsotopeData> isotopes;
+
+    std::vector<IsotopeData> GetIsotopes(void) { return isotopes; }
+
 };
 
 
