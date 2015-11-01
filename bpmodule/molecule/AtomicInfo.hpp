@@ -45,7 +45,7 @@ struct AtomicData
  * \throw bpmodule::exception::MoleculeException if the
  *        data does not exist for this Z number
  */
-const AtomicData & AtomicInfo(int Z);
+const AtomicData & AtomicInfoFromZ(int Z);
 
 
 /*! \brief Get atomic data by symbol
@@ -55,7 +55,7 @@ const AtomicData & AtomicInfo(int Z);
  * \throw bpmodule::exception::MoleculeException if the
  *        data does not exist for this symbol
  */
-const AtomicData & AtomicInfo(const std::string & sym);
+const AtomicData & AtomicInfoFromSym(const std::string & sym);
 
 
 
@@ -64,7 +64,7 @@ const AtomicData & AtomicInfo(const std::string & sym);
  * \throw bpmodule::exception::MoleculeException if the
  *        data does not exist for this Z number and isotope number.
  */
-const IsotopeData & IsotopeInfo(int Z, int isonum);
+const IsotopeData & IsotopeInfoFromZ(int Z, int isonum);
 
 
 
@@ -75,7 +75,7 @@ const IsotopeData & IsotopeInfo(int Z, int isonum);
  * \throw bpmodule::exception::MoleculeException if the
  *        data does not exist for this symbol and isotope number.
  */
-const IsotopeData & IsotopeInfo(const std::string & sym, int isonum);
+const IsotopeData & IsotopeInfoFromSym(const std::string & sym, int isonum);
 
 
 
@@ -84,7 +84,7 @@ const IsotopeData & IsotopeInfo(const std::string & sym, int isonum);
  * \throw bpmodule::exception::MoleculeException if the
  *        data does not exist for this Z number
  */
-double AtomicMass(int Z);
+double AtomicMassFromZ(int Z);
 
 
 
@@ -95,7 +95,7 @@ double AtomicMass(int Z);
  * \throw bpmodule::exception::MoleculeException if the
  *        data does not exist for this symbol
  */
-double AtomicMass(const std::string & sym);
+double AtomicMassFromSym(const std::string & sym);
 
 
 
@@ -104,7 +104,7 @@ double AtomicMass(const std::string & sym);
  * \throw bpmodule::exception::MoleculeException if the
  *        data does not exist for this Z number and isotope number.
  */
-double IsotopeMass(int Z, int isonum);
+double IsotopeMassFromZ(int Z, int isonum);
 
 
 
@@ -115,12 +115,12 @@ double IsotopeMass(int Z, int isonum);
  * \throw bpmodule::exception::MoleculeException if the
  *        data does not exist for this symbol and isotope number
  */
-double IsotopeMass(const std::string & sym, int isonum);
+double IsotopeMassFromSym(const std::string & sym, int isonum);
 
 
 
 //! Look up a atomic symbol by Z number 
-std::string AtomicSymbol(int Z);
+std::string AtomicSymFromZ(int Z);
 
 
 
@@ -131,7 +131,7 @@ std::string AtomicSymbol(int Z);
  * \throw bpmodule::exception::MoleculeException if the
  *        symbol is not defined for this Z number
  */
-int AtomicZNumber(const std::string & sym);
+int AtomicZNumberFromSym(const std::string & sym);
 
 
 
@@ -140,7 +140,7 @@ int AtomicZNumber(const std::string & sym);
  * \throw bpmodule::exception::MoleculeException if the
  *        name is not defined for this Z number
  */
-std::string AtomicName(int Z);
+std::string AtomicNameFromZ(int Z);
 
 
 
@@ -151,7 +151,7 @@ std::string AtomicName(int Z);
  * \throw bpmodule::exception::MoleculeException if the
  *        name is not defined for this symbol
  */
-std::string AtomicName(const std::string & sym);
+std::string AtomicNameFromSym(const std::string & sym);
 
 
 

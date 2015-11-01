@@ -16,7 +16,7 @@ using lut::atomic_sym_Z_;
 using lut::atomic_Z_data_;
 
 
-int AtomicZNumber(const std::string & sym)
+int AtomicZNumberFromSym(const std::string & sym)
 {
     if(atomic_sym_Z_.count(sym))
         return atomic_sym_Z_.at(sym);
@@ -27,7 +27,7 @@ int AtomicZNumber(const std::string & sym)
 
 
 
-std::string AtomicSymbol(int Z)
+std::string AtomicSymFromZ(int Z)
 {
     if(atomic_Z_sym_.count(Z))
         return atomic_Z_sym_.at(Z);
@@ -38,7 +38,7 @@ std::string AtomicSymbol(int Z)
 
 
 
-const AtomicData & AtomicInfo(int Z)
+const AtomicData & AtomicInfoFromZ(int Z)
 {
     if(atomic_Z_data_.count(Z))
         return atomic_Z_data_.at(Z);
@@ -49,16 +49,16 @@ const AtomicData & AtomicInfo(int Z)
 
 
 
-const AtomicData & AtomicInfo(const std::string & sym)
+const AtomicData & AtomicInfoFromSym(const std::string & sym)
 {
-    return AtomicInfo(AtomicZNumber(sym));
+    return AtomicInfoFromZ(AtomicZNumberFromSym(sym));
 }
 
 
 
-const IsotopeData & IsotopeInfo(int Z, int isonum)
+const IsotopeData & IsotopeInfoFromZ(int Z, int isonum)
 {
-    AtomicData ad = AtomicInfo(Z);
+    AtomicData ad = AtomicInfoFromZ(Z);
     
     for(const auto & it : ad.isotopes)
         if(it.isonum == isonum)
@@ -71,51 +71,51 @@ const IsotopeData & IsotopeInfo(int Z, int isonum)
 
 
 
-const IsotopeData & IsotopeInfo(const std::string & sym, int isonum)
+const IsotopeData & IsotopeInfoFromSym(const std::string & sym, int isonum)
 {
-    return IsotopeInfo(AtomicZNumber(sym), isonum); 
+    return IsotopeInfoFromZ(AtomicZNumberFromSym(sym), isonum); 
 }
 
 
 
-double AtomicMass(int Z)
+double AtomicMassFromZ(int Z)
 {
-    return AtomicInfo(Z).mass;
+    return AtomicInfoFromZ(Z).mass;
 }
 
 
 
-double AtomicMass(const std::string & sym)
+double AtomicMassFromSym(const std::string & sym)
 {
-    return AtomicInfo(sym).mass;
+    return AtomicInfoFromSym(sym).mass;
 }
 
 
 
-double IsotopeMass(int Z, int isonum)
+double IsotopeMassFromZ(int Z, int isonum)
 {
-    return IsotopeInfo(Z, isonum).mass;
+    return IsotopeInfoFromZ(Z, isonum).mass;
 }
 
 
 
-double IsotopeMass(const std::string & sym, int isonum)
+double IsotopeMassFromSym(const std::string & sym, int isonum)
 {
-    return IsotopeInfo(sym, isonum).mass;
+    return IsotopeInfoFromSym(sym, isonum).mass;
 }
 
 
 
-std::string AtomicName(int Z)
+std::string AtomicNameFromZ(int Z)
 {
-    return AtomicInfo(Z).name;
+    return AtomicInfoFromZ(Z).name;
 }
 
 
 
-std::string AtomicName(const std::string & sym)
+std::string AtomicNameFromSym(const std::string & sym)
 {
-    return AtomicInfo(sym).name;
+    return AtomicInfoFromSym(sym).name;
 }
 
 
