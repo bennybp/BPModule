@@ -14,11 +14,11 @@ outbase = sys.argv[1]
 
 
 def PrintArr(src, lst, name, t, fmt):
-  src.fh.write("extern {} {}_lut_[{}];\n".format(t, name, len(lst)))
+  src.fh.write("extern const {} {}_lut_[{}];\n".format(t, name, len(lst)))
   src.fh.write("static const int {}_LUT_MAX_ = {};      // Maximum index of {}\n".format(name.upper(), len(lst)-1, name))
   src.fh.write("\n")
 
-  nameline = "{} {}_lut_[{}] = {{".format(t, name, len(lst))
+  nameline = "extern const {} {}_lut_[{}] = {{".format(t, name, len(lst))
   src.f.write(nameline + "\n")
   for v in lst:
     src.f.write(" "*(len(nameline)+1) + fmt.format(v) + ",\n")
