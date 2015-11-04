@@ -39,17 +39,11 @@ OptionMap::OptionMap(const OptionMap & rhs)
 
 OptionMap & OptionMap::operator=(const OptionMap & rhs)
 {
-    if(this != &rhs)
-    {
-        modulekey_ = rhs.modulekey_;
-        expert_ = rhs.expert_;
-        lockvalid_ = rhs.lockvalid_;
-        wholevalid_ = rhs.wholevalid_;
+    using std::swap;
 
-        opmap_.clear();
-        for(const auto & it : rhs.opmap_)
-            opmap_.emplace(it.first, it.second->Clone());
-    }
+    // copy and swap it
+    OptionMap copy(rhs);
+    swap(*this, copy);
     return *this;
 }
 
