@@ -17,6 +17,7 @@ from . import mangle
 from . import exception
 from . import python_helper
 from . import output
+from . import util
 from . import parallel
 from . import math
 from . import tensor
@@ -37,7 +38,6 @@ sys.setdlopenflags(olddl)
 ##########################################
 # Load other python stuff from this directory
 ##########################################
-from .utils import *
 from .modulecheck import *
 from .ModuleManager import *
 

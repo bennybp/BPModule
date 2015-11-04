@@ -258,7 +258,7 @@ OptionMap::OptionMap(const std::string & modulekey, const boost::python::dict & 
         std::string key = ConvertToCpp<std::string>(keys[i]);
 
         // convert to lowercase
-        output::ToLower(key);
+        util::ToLower(key);
 
 
         // should this ever happen? Keys should be unique in a
@@ -323,7 +323,7 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
         std::string key = ConvertToCpp<std::string>(keys[i]);
 
         // convert to lowercase
-        output::ToLower(key);
+        util::ToLower(key);
 
 
         if(!tmp.HasKey(key))

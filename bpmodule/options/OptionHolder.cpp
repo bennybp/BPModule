@@ -11,12 +11,12 @@
 
 #include "bpmodule/options/OptionHolder.hpp"
 #include "bpmodule/options/OptionTypes.hpp"
-#include "bpmodule/output/Output.hpp"
 #include "bpmodule/exception/OptionException.hpp"
-#include "bpmodule/output/FormatStr.hpp"
+#include "bpmodule/util/FormatStr.hpp"
 
 using namespace bpmodule::python_helper;
 using namespace bpmodule::exception;
+using namespace bpmodule::util;
 
 
 namespace bpmodule {
@@ -314,7 +314,7 @@ static void PrintOption_(const OptionHolder<T> & oph)
     if(oph.HasIssues())
         output::Error(optline);
 
-    if(!oph.IsDefault())
+    else if(!oph.IsDefault())
         output::Changed(optline);
     else
         output::Output(optline);

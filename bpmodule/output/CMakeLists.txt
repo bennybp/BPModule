@@ -1,6 +1,5 @@
 set(BPMODULE_OUTPUT_FILES
             Output.cpp 
-            StrHelp.cpp
             export.cpp
    )
 

@@ -4,13 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-
-#include "bpmodule/output/FormatStr.hpp"
-#include "bpmodule/output/StrHelp.hpp"
+#include <algorithm>
+#include "bpmodule/util/StrUtil.hpp"
 
 
 namespace bpmodule {
-namespace output {
+namespace util {
 
 std::string Join(const std::vector<std::string> & vec, const std::string & j)
 {
@@ -45,13 +44,20 @@ std::string ToLowerCopy(std::string str)
 
 bool CaseInsensitiveCompare::operator()(std::string lhs, std::string rhs) const
 {
-    output::ToLower(lhs);
-    output::ToLower(rhs);
+    ToLower(lhs);
+    ToLower(rhs);
     std::less<std::string> comp;
     return comp(lhs, rhs);
 }
 
 
-} // close namespace output
+std::string Line(char c, int n)
+{
+    return std::string(n, c) + "\n";
+}
+
+
+
+} // close namespace util
 } // close namespace bpmodule
 

@@ -13,19 +13,22 @@
 #include "bpmodule/options/OptionTypes.hpp"
 #include "bpmodule/options/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
-#include "bpmodule/output/StrHelp.hpp"
+#include "bpmodule/util/StrUtil.hpp"
 
 
 namespace bpmodule {
 namespace options {
 
 
+//! Holds top-level issues with an OptionMap
 typedef std::vector<std::string> WholeOptionMapIssues;
 
+
+//! Holds all issues related to an OptionMap
 struct OptionMapIssues
 {
-    WholeOptionMapIssues toplevel;
-    std::map<std::string, detail::OptionIssues> optissues;
+    WholeOptionMapIssues toplevel;                          //!< Issues with the map itself
+    std::map<std::string, detail::OptionIssues> optissues;  //!< Issues with any individual options
 };
 
 
@@ -400,7 +403,7 @@ class OptionMap
         bool lockvalid_;
 
         //! Holds the options
-        std::map<std::string, detail::OptionBasePtr, output::CaseInsensitiveCompare> opmap_;
+        std::map<std::string, detail::OptionBasePtr, util::CaseInsensitiveCompare> opmap_;
 
 
         //!< Validates the whole options container

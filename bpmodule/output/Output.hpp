@@ -105,17 +105,6 @@ std::ostream & GetOut(void);
 
 
 
-/*! \brief Create a line of characters
- *
- * Repeats a character a number of times. A newline is included.
- *
- * \param [in] c The character to use
- * \param [in] n The number of times to repeat the character
- */
-std::string Line(char c, int n = 80);
-
-
-
 /*! \brief Output to a stream
  *
  * \throwno Throws boost exceptions for malformed inputs, etc
@@ -436,6 +425,26 @@ std::string DebugStr(const std::string & fmt, Targs... Fargs)
     Debug(ss, fmt, Fargs...);
     return ss.str();
 }
+
+
+
+
+/*! \brief Wrap printing functions for use from python
+ *
+ * This function takes a boost::python list rather than the parameter pack
+ *
+ * \param [in] os Output stream to send the output to
+ * \param [in] type The type of output
+ * \param [in] fmt Format string to use
+ * \param [in] args Arguments to the format string
+ */
+void OutputPy_(std::ostream & os, output::OutputType type, const std::string & fmt, const boost::python::list & args);
+
+
+
+
+
+
 
 
 } // close namespace output

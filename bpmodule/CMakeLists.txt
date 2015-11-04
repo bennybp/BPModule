@@ -1,6 +1,7 @@
 add_subdirectory(mangle)
 add_subdirectory(python_helper)
 add_subdirectory(output)
+add_subdirectory(util)
 add_subdirectory(exception)
 add_subdirectory(parallel)
 add_subdirectory(math)
@@ -33,8 +34,11 @@ set(BPMODULE_PYTHON_HELPER_HEADERS
 
 set(BPMODULE_OUTPUT_HEADERS
             output/Output.hpp
-            output/FormatStr.hpp
-            output/StrHelp.hpp
+   )
+
+set(BPMODULE_UTIL_HEADERS
+            util/FormatStr.hpp
+            util/StrUtil.hpp
    )
 
 set(BPMODULE_EXCEPTION_HEADERS
@@ -116,6 +120,7 @@ install(FILES ${BPMODULE_MANGLE_HEADERS} DESTINATION include/bpmodule/mangle)
 install(FILES ${BPMODULE_PYTHON_HELPER_HEADERS} DESTINATION include/bpmodule/python_helper)
 install(FILES ${BPMODULE_EXCEPTION_HEADERS} DESTINATION include/bpmodule/exception)
 install(FILES ${BPMODULE_OUTPUT_HEADERS} DESTINATION include/bpmodule/output)
+install(FILES ${BPMODULE_UTIL_HEADERS} DESTINATION include/bpmodule/util)
 install(FILES ${BPMODULE_PARALLEL_HEADERS} DESTINATION include/bpmodule/parallel)
 install(FILES ${BPMODULE_MATH_HEADERS} DESTINATION include/bpmodule/math)
 install(FILES ${BPMODULE_TENSOR_HEADERS} DESTINATION include/bpmodule/tensor)
@@ -131,7 +136,6 @@ set(BPMODULE_FILES
             __init__.py
             modinfo.py
             modulecheck.py
-            utils.py
             ModuleManager.py
    )
 install(FILES ${BPMODULE_FILES} DESTINATION modules/bpmodule)

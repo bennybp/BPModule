@@ -53,7 +53,7 @@ const std::string & OptionBase::Help(void) const noexcept
 
 bool OptionBase::HasIssues(void) const
 {
-    return (GetIssues().size() == 0);
+    return (GetIssues().size());
 }
 
 

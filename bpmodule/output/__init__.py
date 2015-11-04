@@ -62,7 +62,5 @@ def FormatStr(s, *args):
       return FormatStr_(s, [])
 
 
-def Line(char, n = 80):
-    return char * n + "\n" 
 
 

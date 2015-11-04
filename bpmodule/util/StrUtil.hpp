@@ -9,9 +9,10 @@
 #define _GUARD_STRHELP_HPP_
 
 #include <vector>
+#include <string>
 
 namespace bpmodule {
-namespace output {
+namespace util {
 
 /*! \brief Joins each element of a vector of strings
  *
@@ -49,7 +50,21 @@ struct CaseInsensitiveCompare
 }; 
 
 
-} // close namespace output
+
+/*! \brief Create a line of characters
+ *
+ * Repeats a character a number of times. A newline is included.
+ *
+ * \param [in] c The character to use
+ * \param [in] n The number of times to repeat the character
+ */
+std::string Line(char c, int n = 80);
+
+
+
+
+} // close namespace util
 } // close namespace bpmodule
 
 #endif
+

@@ -2,7 +2,7 @@ import sys
 import os
 import importlib
 
-from . import modulelocator, output, CheckSupermodule
+from . import modulelocator, output, exception, CheckSupermodule
 
 
 

@@ -1,5 +1,6 @@
 # For output
-from bpmodule.output import Output, Error, Warning, Success, Debug, Line
+from bpmodule.output import Output, Error, Warning, Success, Debug
+from bpmodule.util import Line
 
 class Tester:
     def __init__(self, desc):

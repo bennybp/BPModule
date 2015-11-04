@@ -7,7 +7,7 @@ from .testing import *
 from .tester import *
 
 # For output
-from bpmodule.output import Output, Error, Warning, Success, Debug, Line
+from bpmodule.output import Output, Error, Warning, Success, Debug
 
 
 ##################
