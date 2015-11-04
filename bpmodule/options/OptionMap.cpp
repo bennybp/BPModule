@@ -41,7 +41,9 @@ OptionMap & OptionMap::operator=(const OptionMap & rhs)
 {
     if(this != &rhs)
     {
+        modulekey_ = rhs.modulekey_;
         expert_ = rhs.expert_;
+        lockvalid_ = rhs.lockvalid_;
         wholevalid_ = rhs.wholevalid_;
 
         opmap_.clear();

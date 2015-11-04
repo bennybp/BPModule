@@ -57,6 +57,8 @@ class OptionMap
         /*! \brief Assignment
         *
         * Deep copies (clones) all the stored options
+        *
+        * \todo copy and swap
         */
         OptionMap & operator=(const OptionMap & rhs);
 
