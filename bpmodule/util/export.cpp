@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Python exports for output and printing functions
+ * \brief Python exports for miscellaneous utilities
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -33,6 +33,6 @@ BOOST_PYTHON_MODULE(util)
 
 
 } // close namespace export_python
-} // close namespace output
+} // close namespace utilt
 } // close namespace bpmodule
 
