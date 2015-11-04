@@ -6,32 +6,17 @@
 
 
 #include <boost/python/tuple.hpp>
-#include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/python_helper/Call.hpp"
 
 
-#include "bpmodule/pragma.h"
 #include "bpmodule/options/OptionHolder.hpp"
 #include "bpmodule/options/OptionTypes.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/output/FormatStr.hpp"
-#include "bpmodule/mangle/Mangle.hpp"
 
-
-using bpmodule::python_helper::PythonType;
-using bpmodule::python_helper::StrToPythonType;
-using bpmodule::python_helper::GetPyClass;
-using bpmodule::python_helper::DeterminePyType;
-using bpmodule::python_helper::ConvertToPy;
-using bpmodule::python_helper::ConvertToCpp;
-using bpmodule::python_helper::HasCallableAttr;
-using bpmodule::python_helper::HasAttr;
-using bpmodule::python_helper::CallPyFunc;
-
-using bpmodule::exception::OptionException;
-using bpmodule::exception::PythonConvertException;
-
+using namespace bpmodule::python_helper;
+using namespace bpmodule::exception;
 
 
 namespace bpmodule {
@@ -70,19 +55,13 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph);
 
 
 
-
-
-
-
-
-
 ///////////////////////////////////////////////////
 // OptionHolder members
 ///////////////////////////////////////////////////
 template<typename T>
 OptionHolder<T>::OptionHolder(const std::string & key, T * def,
                               ValidatorFunc validator, bool required,
-                              python_helper::PythonType pytype,
+                              PythonType pytype,
                               const std::string & help)
     : OptionBase(key, required, pytype, help),
       default_(def),
@@ -97,6 +76,7 @@ OptionHolder<T>::OptionHolder(const std::string & key, T * def,
         if(iss.size())
             throw OptionException("Default value for this option does not pass validation", Key(), "issues", iss);
     }
+
     if(def != nullptr && required)
         throw OptionException("Default value supplied for required option", Key());
 }
@@ -151,9 +131,9 @@ const T & OptionHolder<T>::GetDefault(void) const
 
 
 template<typename T>
-OptionBase * OptionHolder<T>::Clone(void) const
+OptionBasePtr OptionHolder<T>::Clone(void) const
 {
-    return new OptionHolder<T>(*this);
+    return OptionBasePtr(new OptionHolder<T>(*this));
 }
 
 template<typename T>
@@ -199,7 +179,7 @@ bool OptionHolder<T>::IsDefault(void) const
         return true;
     else
     {
-        //! \todo floating point equality? or just check if value_ is there?
+        // ignore compiler warnings about floating point equality
         PRAGMA_WARNING_PUSH
         PRAGMA_WARNING_IGNORE_FP_EQUALITY
 
@@ -221,6 +201,7 @@ void OptionHolder<T>::ResetToDefault(void) noexcept
 template<typename T>
 void OptionHolder<T>::Print(void) const
 {
+    // call the free function
     PrintOption_(*this);
 }
 
@@ -280,25 +261,44 @@ void OptionHolder<T>::ChangePy(const boost::python::object & obj)
 //////////////////
 // Helpers
 //////////////////
+
+/*! \brief Converts an option value to a string
+ *
+ * \todo Printing of floating point values
+ */
 template<typename T>
 static std::string OptToString_(const T & opt)
 {
     return std::to_string(opt);
 }
 
+
+/*! \brief Converts an option value to a string
+ *
+ * Overload for string types
+ */
 static std::string OptToString_(const std::string & opt)
 {
     return opt;
 }
 
 
+/*! \brief Converts an option value to a string
+ *
+ * Overload for a bool type
+ */
 static std::string OptToString_(const bool & opt)
 {
     return (opt ? "True" : "False");
 }
 
 
-
+/*! \brief Prints a line corresponding to an option
+ *
+ * Will print its key, type, etc. If there is a problem
+ * with the option, the Error() output is used. If the
+ * option is not the default, the Changed() output is used.
+ */
 template<typename T>
 static void PrintOption_(const OptionHolder<T> & oph)
 {
@@ -311,7 +311,7 @@ static void PrintOption_(const OptionHolder<T> & oph)
                                     oph.Help());                                                       // help/description
 
 
-    if(!oph.IsSetIfRequired())
+    if(oph.HasIssues())
         output::Error(optline);
 
     if(!oph.IsDefault())
@@ -322,6 +322,14 @@ static void PrintOption_(const OptionHolder<T> & oph)
 
 
 
+/*! \brief Prints a line corresponding to an option
+ *
+ * Overload for a vector type
+ *
+ * Will print its key, type, etc. If there is a problem
+ * with the option, the Error() output is used. If the
+ * option is not the default, the Changed() output is used.
+ */
 template<typename T>
 static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
 {
@@ -419,7 +427,14 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
 // CreateOptionHolder & helper functions
 ////////////////////////////////////////////////////////
 
-// Wraps the python call to the validator function
+/*! \brief A wrapper around a python validation function
+ *
+ * Will call the python function \p func and give it \p val as its only argument
+ *
+ * \throw bpmodule::exception::PythonCallException if there is a problem calling
+ *        the python function or if the return type can't be converted
+ *
+ */
 template<typename T>
 static OptionIssues ValidateWrapper(const boost::python::object & func, const OptionHolder<T> & val)
 {
@@ -429,7 +444,7 @@ static OptionIssues ValidateWrapper(const boost::python::object & func, const Op
     try {
         return CallPyFunc<std::vector<std::string>>(func, obj);
     }
-    catch(bpmodule::exception::PythonCallException & ex)
+    catch(PythonCallException & ex)
     {
         ex.AppendInfo("when", "while Calling validator function for an option", "optionkey", val.Key());
         throw;
@@ -438,13 +453,18 @@ static OptionIssues ValidateWrapper(const boost::python::object & func, const Op
 
 
 
+/*! \brief Helps create an OptionHolder from a python tuple
+ */
 template<typename T>
 static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::python::tuple & tup)
 {
-    PythonType ptype_default = DeterminePyType(tup[1]);
-
     T * def = nullptr;
 
+
+    // The python type of the 'default' element of the tuple
+    PythonType ptype_default = DeterminePyType(tup[1]);
+
+    // If a default value was given, try to convert it
     if(ptype_default != PythonType::None)
     {
         try {
@@ -470,11 +490,13 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
     // default, for help = None
     std::string help = "(no help)";
 
+    // get if it is a string, throw if it's not a string or None
     if(DeterminePyType(tup[4]) == PythonType::String)
         help = boost::python::extract<std::string>(tup[4]);
     else if(DeterminePyType(tup[4]) != PythonType::None)
         throw OptionException("\"Help\" element of tuple is not a string (or None)", key, "type", GetPyClass(tup[4]));
 
+    // get the 'required' element and the type
     bool req = boost::python::extract<bool>(tup[2]);
     PythonType pytype = StrToPythonType(boost::python::extract<std::string>(tup[0]));
 
@@ -484,23 +506,24 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, const boost::py
 
     if(DeterminePyType(tup[3]) != PythonType::None)
     {
-        // check for methods
+        // check for method
         // Don't forget that the method is part of a class
         // so 1 argument is "self"
-        if(!HasCallableAttr(tup[3], "Validate", 2)) 
+        if(!HasCallableAttr(tup[3], "Validate", 2))
             throw OptionException("Validator does not have a callable Validate() method taking one argument", key,
                                   "type", GetPyClass(tup[3]));
 
-        // Set up the validator
+        // Set up the validator with wrapper
         boost::python::object valfunc = tup[3].attr("Validate");
         validator = std::bind(ValidateWrapper<T>, valfunc, std::placeholders::_1);
     }
 
 
 
-
     return OptionBasePtr(new OptionHolder<T>(key, def, validator, req, pytype, help));
 }
+
+
 
 
 

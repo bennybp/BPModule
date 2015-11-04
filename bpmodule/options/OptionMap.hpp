@@ -13,7 +13,6 @@
 #include "bpmodule/options/OptionTypes.hpp"
 #include "bpmodule/options/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
-#include "bpmodule/mangle/Mangle.hpp"
 #include "bpmodule/output/StrHelp.hpp"
 
 
@@ -65,37 +64,6 @@ class OptionMap
 
 
 
-        /*! \brief Obtain the value for an option
-         *
-         * Will attempt some safe conversions between integer types
-         * or between floating point types.
-         *
-         * \throw bpmodule::exception::OptionException if the
-         *        option does not have a value or if the
-         *        key does not exist or if the value cannot be
-         *        cast to the appropriate type
-         */
-        template<typename T>
-        T Get(const std::string & key) const
-        {
-            typedef typename detail::OptionConvert<T>::stored_type stored_type;
-
-            CheckType_<T>();
-
-            stored_type val = GetOrThrow_Cast_<stored_type>(key)->Get();
-
-            try {
-                return detail::OptionConvert<T>::ConvertFromStored(val);
-            }
-            catch(const exception::GeneralException & ex)
-            {
-                // convert to an OptionException and add the key
-                throw exception::OptionException(ex, key);
-            }
-        }
-
-
-
         /*! \brief Return the module key that these options belong to
          */
         const std::string & ModuleKey(void) const noexcept;
@@ -135,11 +103,153 @@ class OptionMap
 
 
         /*! \brief Check if the option is currently set to the default
-         * 
+         *
          * \throw bpmodule::exception::OptionException if
          *        the key doesn't exist
          */
         bool IsDefault(const std::string & key) const;
+
+
+
+        /*! \brief Sets an option to its default
+         *
+         * \throw bpmodule::exception::OptionException if
+         *        the key doesn't exist
+         *
+         * \exstrong
+         */
+        void ResetToDefault(const std::string & key);
+
+
+
+        /*! \brief Check all options to see if all required options are set
+         *
+         * \exnothrow
+         */
+        bool AllReqSet(void) const noexcept;
+
+
+        /*! \brief Obtain the option keys for all missing required options
+         */
+        std::vector<std::string> AllMissingReq(void) const;
+
+
+
+        /*! \brief Validate this OptionMap
+         *
+         * Checks to see if all are set, and calls the validator
+         * for all options. Also calls the overall map validator.
+         *
+         * \note This is not meant to be called from python
+         *
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with calling a validation function
+         */
+        OptionMapIssues GetIssues(void) const;
+
+
+
+        /*! \brief See if there are any issues with this OptionMap
+         *
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with validation.
+         */
+        bool HasIssues(void) const;
+
+
+
+        /*! \brief Turn on expert mode for all options
+         *
+         * In expert mode, some failures (mostly invalid options) will print warnings,
+         * but an exception will not be thrown
+         */
+        void SetExpert(bool expert) noexcept;
+
+
+
+        /*! \brief Lock the validity of this map
+         *
+         * If true, this OptionMap to be fixed in a valid state.
+         * Additional changes will cause validation to be
+         * run and exceptions to possibly be thrown.
+         *
+         * The validity of this map is checked first if setting to true.
+         *
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with validation.
+         */
+        void LockValid(bool lockvalid);
+
+
+
+        /*! \brief Validate this map
+         *
+         * Causes all the problems with this map to be
+         * printed out. If there is a problem (and this OptionMap
+         * is not in expert mode), an exception is thrown.
+         *
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with validation.
+         */
+        void Validate(void) const;
+
+
+
+        /*! \brief Dumps the options to the output
+        */
+        void Print(void) const;
+
+
+
+        /*! \brief Check if the map has a key with a given type
+         *
+         *  Does not check for validity or if the stored value
+         *  can be successfully converted (ie, overflow)
+         */
+        template<typename T>
+        bool HasType(const std::string & key) const
+        {
+            typedef typename detail::OptionConvert<T>::stored_type stored_type;
+
+            CheckType_<T>();
+
+            if(!HasKey(key))
+                return false;
+
+            return GetOrThrow_(key)->IsType<stored_type>();
+        }
+
+
+
+
+        /*! \brief Obtain the value for an option
+         *
+         * Will attempt some safe conversions between integer types
+         * or between floating point types.
+         *
+         * \throw bpmodule::exception::OptionException if the
+         *        option does not have a value or if the
+         *        key does not exist or if the value cannot be
+         *        cast to the appropriate type
+         */
+        template<typename T>
+        T Get(const std::string & key) const
+        {
+            typedef typename detail::OptionConvert<T>::stored_type stored_type;
+
+            CheckType_<T>();
+
+            stored_type val = GetOrThrow_Cast_<stored_type>(key)->Get();
+
+            try {
+                return detail::OptionConvert<T>::ConvertFromStored(val);
+            }
+            catch(const exception::GeneralException & ex)
+            {
+                // convert to an OptionException and add the key
+                throw exception::OptionException(ex, key);
+            }
+        }
 
 
 
@@ -177,121 +287,16 @@ class OptionMap
 
 
 
-        /*! \brief Sets an option to its default
-         *
-         * \throw bpmodule::exception::OptionException if
-         *        the key doesn't exist
-         *
-         * \exstrong
-         */
-        void ResetToDefault(const std::string & key);
-
-
-
-        /*! \brief Check all options to see if all required options are set
-         *
-         * \exnothrow
-         */
-        bool AllReqSet(void) const noexcept;
-
-
-        /*! \brief Obtain the option keys for all missing options
-         */
-        std::vector<std::string> AllMissingReq(void) const;
-
-
-
-        /*! \brief Validate this OptionMap
-         * 
-         * Checks to see if all are set, and calls the validator
-         * for all options. Also calls the overall map validator.
-         *
-         * \note This is not meant to be called from python
-         *
-         * \throw bpmodule::exception::OptionException if there is a problem
-         *        with validation.
-         */
-        OptionMapIssues GetIssues(void) const;
-
-
-
-        /*! \brief Get all issues for this OptionMap
-         *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
-         *        with validation.
-         */
-        bool HasIssues(void) const; 
-
-
-        /*! \brief Turn on expert mode for all options
-         * 
-         * In expert mode, some failures (mostly validation) will print warnings,
-         * but the program will otherwise continue
-         */
-        void SetExpert(bool expert) noexcept;
-
-
-        /*! \brief Lock the validity of this map
-         * 
-         * Causes this OptionMap to be fixed in a valid state.
-         * Additional changes will cause validation to be
-         * run and exceptions to possibly be thrown.
-         *
-         * The validity of this map is checked first if setting to true.
-         *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
-         *        with validation.
-         */
-        void LockValid(bool lockvalid);
-
-
-
-        /*! \brief Validate this map
-         * 
-         * Causes all the problems with this map to be
-         * printed out. If there is a problem (and this OptionMap
-         * is not in expert mode), an exception is thrown.
-         *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
-         *        with validation.
-         */
-        void Validate(void) const;
-
-
-
-        /*! \brief Check if the map has a key with a given type
-         *
-         *  Does not check for validity or if the stored value
-         *  can be successfully converted (ie, overflow)
-         */
-        template<typename T>
-        bool HasType(const std::string & key) const
-        {
-            typedef typename detail::OptionConvert<T>::stored_type stored_type;
-
-            CheckType_<T>();
-
-            if(!HasKey(key))
-                return false;
-
-            return GetOrThrow_(key)->IsType<stored_type>();
-        }
-
-
-
-        /*! \brief Dumps the options to the output
-        */
-        void Print(void) const;
-
-
-
         /////////////////////////////
         // Python-related functions
         /////////////////////////////
         /*! \brief Construct options from a python dictionary
          *
          * \throw bpmodule::exception::OptionException if there is
-         *        a problem with the option (validation, conversion, duplicate key, etc)
+         *        a problem with the option (validation, conversion, etc)
+         *
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with the validation itself.
          *
          *  \param [in] opt A dictionary with the options
          *  \param [in] modulekey The module key of the the module that has these options
@@ -302,27 +307,33 @@ class OptionMap
 
 
 
-        /*! \brief Change options via python dictionary
-         *
-         * Dictionary is simple string key -> value mapping.
-         *
-         * \throw bpmodule::exception::OptionException if there is
-         *        a problem with the option (nonexistant key, validation, conversion, duplicate key, etc)
-         *
-         * \exstrong
-         */
-        void ChangePyDict(const boost::python::dict & opt);
-
-
-
         /*! \brief Change an option by passing a boost::python object
          *
          * \throw bpmodule::exception::OptionException if there is
          *        a problem with the option (nonexistant key, validation, conversion, etc)
          *
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with the validation itself.
+         *
          * \exstrong
          */
         void ChangePy(const std::string & key, const boost::python::object & obj);
+
+
+
+        /*! \brief Change options via python dictionary
+         *
+         * Dictionary is simple string key -> value mapping.
+         *
+         * \throw bpmodule::exception::OptionException if there is
+         *        a problem with the option (nonexistant key, validation, conversion, etc)
+         *
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with the validation itself.
+         *
+         * \exstrong
+         */
+        void ChangePyDict(const boost::python::dict & opt);
 
 
 
@@ -374,6 +385,11 @@ class OptionMap
 
 
     private:
+        //! Function that validates the whole option container
+        typedef std::function<WholeOptionMapIssues (const OptionMap &)> WholeOptionValidator;
+
+
+
         //! The module these options belong to
         std::string modulekey_;
 
@@ -383,16 +399,17 @@ class OptionMap
         //! If true, changing the OptionMap causes validation to be run
         bool lockvalid_;
 
-        //! Function that validates the whole option container
-        typedef std::function<WholeOptionMapIssues (const OptionMap &)> WholeOptionValidator;
-
-
         //! Holds the options
         std::map<std::string, detail::OptionBasePtr, output::CaseInsensitiveCompare> opmap_;
- 
+
 
         //!< Validates the whole options container
         WholeOptionValidator wholevalid_;
+
+
+
+
+
 
 
         /*! \brief Get an pointer to OptionBase or throw if the key doesn't exist

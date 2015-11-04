@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <typeinfo>
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
@@ -18,8 +19,27 @@ namespace bpmodule {
 namespace options {
 namespace detail {
 
+
+// forward declare class
+class OptionBase;
+
+
+
+//! A collection of problems with an option
 typedef std::vector<std::string> OptionIssues;
 
+
+//! A pointer to an option
+typedef std::unique_ptr<OptionBase> OptionBasePtr;
+
+
+
+
+
+/*! \brief Base class of OptionHolder
+ *
+ * Defines the interface for generic stored options
+ */
 class OptionBase
 {
     public:
@@ -35,8 +55,9 @@ class OptionBase
                    python_helper::PythonType pytype,
                    const std::string & help);
 
-        virtual ~OptionBase() noexcept    = default;
+        virtual ~OptionBase() noexcept                  = default;
 
+        // Don't allow copying / assigning
         OptionBase & operator=(const OptionBase & rhs)  = delete;
         OptionBase & operator=(OptionBase && rhs)       = delete;
         OptionBase(const OptionBase && rhs)             = delete;
@@ -49,11 +70,11 @@ class OptionBase
 
         /*! \brief Create a clone of this object
          */
-        virtual OptionBase * Clone(void) const = 0;
+        virtual OptionBasePtr Clone(void) const = 0;
 
 
 
-        /*! \brief Returns a string representing the type of the option stored
+        /*! \brief Returns a string representing the type of the stored option
          *
          * \exnothrow
          *
@@ -63,7 +84,7 @@ class OptionBase
 
 
 
-        /*! \brief Returns the std::type_info for the option stored
+        /*! \brief Returns the std::type_info for the stored option
          *
          * \exnothrow
          *
@@ -73,7 +94,7 @@ class OptionBase
 
 
 
-        /*! \brief Returns a string representing the demangled type of the option stored
+        /*! \brief Returns a string representing the demangled type of the stored option
          *
          * \exnothrow
          *
@@ -87,7 +108,7 @@ class OptionBase
          *
          * \exnothrow
          *
-         * \return True if this option has a value or a default
+         * \return True if this option has a set value or a default value, false otherwise
          */
         virtual bool HasValue(void) const noexcept = 0;
 
@@ -97,13 +118,17 @@ class OptionBase
          *
          * \exnothrow
          *
-         * \return True if this option has a default
+         * \return True if this option has a default, false otherwise
          */
         virtual bool HasDefault(void) const noexcept = 0;
 
 
 
         /*! \brief Check if this option is set to the default
+         *
+         * Will perform a comparison.
+         *
+         * \note May be tricky with floating point types.
          */
         virtual bool IsDefault(void) const = 0;
 
@@ -124,13 +149,15 @@ class OptionBase
          *
          * \throw bpmodule::exception::PythonCallException if there is a problem
          *        with the validation function
+         *
+         * \return Any problems / issues with this option
          */
         virtual OptionIssues GetIssues(void) const = 0;
 
 
 
         /*! \brief Test if this option has issues
-         * 
+         *
          * \throw bpmodule::exception::PythonCallException if there is a problem
          *        with the validation function
          */
@@ -138,10 +165,11 @@ class OptionBase
 
 
 
-
         /*! \brief Print out information about this option
          */
         virtual void Print(void) const = 0;
+
+
 
 
         /////////////////////////////////////////
@@ -157,7 +185,7 @@ class OptionBase
 
 
 
-        /*! \brief Change the value with a boost python object
+        /*! \brief Change the value via a boost python object
          *
          * \throw bpmodule::exception::OptionException
          *        if there is a problem with the python conversion
@@ -232,8 +260,11 @@ class OptionBase
 
 
     protected:
-        // can only be called from Clone()
-        OptionBase(const OptionBase & rhs)              = default;
+        /*! \brief Copy constructor
+         *
+         * Should only be called from Clone(), hence it is kept protected
+         */
+        OptionBase(const OptionBase & rhs) = default;
 
 
 
@@ -254,9 +285,6 @@ class OptionBase
 
 };
 
-
-//! A pointer to an option
-typedef std::unique_ptr<OptionBase> OptionBasePtr;
 
 
 

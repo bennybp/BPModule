@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Safe conversions of some options
+ * \brief Safe conversions option types
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
@@ -9,10 +9,6 @@
 #define _GUARD_OPTIONTYPES_HPP_
 
 
-#include <stdexcept>
-#include <limits>
-#include <vector>
-#include <typeinfo>
 #include <cstdint>
 
 #include "bpmodule/math/Cast.hpp"
@@ -28,7 +24,11 @@ namespace detail {
 // Storage types for integral and floating point
 ////////////////////////////////////////////////
 //! \todo Arbitrary precision math lib?
+
+//! Integer options are stored as this type
 typedef intmax_t OptionInt;
+
+//! Floating point options are stored as this type
 typedef long double OptionFloat;
 
 
@@ -43,7 +43,7 @@ typedef long double OptionFloat;
 /*! \brief Determines if a type is valid for an option
  *
  * The value static member will be true if type T is a valid type
- * for an option
+ * for an option, Otherwise it will be false.
  */
 template<typename T>
 struct IsValidType
@@ -55,8 +55,8 @@ struct IsValidType
 
 /*! \brief Determines if a vector type is valid for an option
  *
- * The value static member will be true if type T is a valid
- * vector type for an option
+ * The value static member will be true if a vector of type T is a valid
+ * type for an option. Otherwise it will be false.
  */
 template<typename T>
 struct IsValidType<std::vector<T>>
@@ -89,9 +89,8 @@ struct OptionStoreType
 
 /*! \brief Determines the stored type for an integral option
  *
- * Integral type specialization. The store_type
- * typedef represents the type stored for all integral
- * options
+ * The store_type typedef represents the type stored for all
+ * integral options
  */
 template<typename T>
 struct OptionStoreType<T, true, false>
@@ -102,9 +101,8 @@ struct OptionStoreType<T, true, false>
 
 /*! \brief Determines the stored type for a floating point option
  *
- * Floating point type specialization. The store_type
- * typedef represents the type stored for all floating point
- * options
+ * The store_type typedef represents the type stored
+ * for all floating point options
  */
 template<typename T>
 struct OptionStoreType<T, false, true>
@@ -115,9 +113,9 @@ struct OptionStoreType<T, false, true>
 
 /*! \brief Determines the stored type for a boolean option
  *
- * Bool type specialization. Bool is stored as bool. This
+ * Bool is stored as bool. This
  * is required so that it isn't stored as an integral type
- * (but std::is_integral<bool>::value is true).
+ * (since std::is_integral<bool>::value is true).
  */
 template<>
 struct OptionStoreType<bool>
@@ -128,11 +126,15 @@ struct OptionStoreType<bool>
 
 
 
+
+
+
+
 /////////////////////////////
-// Structure for conversion
+// Structures for conversion
 /////////////////////////////
 
-/*! \brief Converts an option value from its stored type
+/*! \brief Converts an option value to/from its stored type
  *
  * Default struct is empty, therefore invalid for use
  */
@@ -149,7 +151,12 @@ struct OptionConvert
 ////////////////////
 /*! \brief Structure used for converting to/from stored option types
  *
- * For arithmetic types
+ * For arithmetic types. The conversions will use a safe numeric
+ * cast that will check for integer overflows and underflows,
+ * as well as make sure conversions involving floating point
+ * types will not result in a loss of precision.
+ *
+ * \tparam T The type convert to/from the stored type.
  */
 template<typename T>
 struct OptionConvert<T, true>
@@ -219,7 +226,8 @@ struct OptionConvert<T, false>
 /////////////////////////////
 /*! \brief Structure used for converting to/from stored option types
  *
- * For vector types
+ * For vector types. Will perform the same conversions as other
+ * OptionConvert structures, but element-wise in the vector.
  */
 template<typename T>
 struct OptionConvert<std::vector<T>, false>

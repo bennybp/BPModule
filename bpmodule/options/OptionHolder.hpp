@@ -41,11 +41,11 @@ class OptionHolder : public OptionBase
          * The value is not set on construction, only the default
          *
          * \throw bpmodule::exception::OptionException
-         *        If the initial value or default is invalid, or
+         *        If the default value is invalid, or
          *        there is a default argument supplied for a 'required' option.
          *
-         *  \throw bpmodule::exception::PythonCallException
-         *        If there is a problem calling the validation function
+         * \throw bpmodule::exception::PythonCallException
+         *       If there is a problem calling the validation function
          *
          * \param [in] key The key of this option
          * \param [in] def The default value
@@ -114,7 +114,7 @@ class OptionHolder : public OptionBase
         // Virtual functions from OptionBase
         ////////////////////////////////////////
 
-        virtual OptionBase * Clone(void) const;
+        virtual OptionBasePtr Clone(void) const;
 
         virtual const char * Type(void) const noexcept;
 
@@ -145,12 +145,18 @@ class OptionHolder : public OptionBase
 
 
     private:
-
+        //! A set value for the option
         std::unique_ptr<T> value_;
+
+        //! The default for the option
         std::unique_ptr<T> default_;
+
+        //! Validation function object
         ValidatorFunc validator_;
 
-        std::string demangledtype_; //!< The type of the object, but demangled
+        //! The type of the object (from typeid(), but demangled)
+        std::string demangledtype_;
+
 };
 
 
@@ -158,8 +164,6 @@ class OptionHolder : public OptionBase
 
 
 /*! \brief Create an OptionHolder from a boost python object
- *
- * Returns as a pointer to the OptionBase class
  *
  * \throw bpmodule::exception::OptionException
  *        If there is a problem with the option (validation or python conversion problems)

@@ -41,7 +41,7 @@ class InList:
         for v in self.lst:
             self.errstr.append("    {}".format(v))
 
-        
+
 
     def Validate(self, value):
         v = value
