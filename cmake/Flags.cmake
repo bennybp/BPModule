@@ -21,11 +21,15 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
     #  1419  : external declaration in primary source file (happens in boost files)
     #   383  : value copied to temporary, reference to temporary used (generally ok in c++)
     #   981  : operands are evaluated in unspecified order (generally ok in c++)
+    #   869  : parameter "XXX" was never referenced.
+    #          This is due to a bug in Intel before Intel 16 that causes this
+    #          remark to be printed for variadic templates
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd1418")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd1419")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd411")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd383")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd981")
+    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd869")
 
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-fPIC")
