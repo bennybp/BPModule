@@ -11,7 +11,7 @@
 #include <map>
 
 #include "bpmodule/exception/GeneralException.hpp"
-#include "bpmodule/datastore/PropHolder.hpp"
+#include "bpmodule/datastore/GenericHolder.hpp"
 
 
 namespace bpmodule {
@@ -176,7 +176,7 @@ class PropertyMap
         template<typename T>
         const T & GetRef(const std::string & key) const
         {
-            const detail::PropHolder<T> * ph = GetOrThrow_Cast_<T>(key);
+            const detail::GenericHolder<T> * ph = GetOrThrow_Cast_<T>(key);
             return ph->GetRef();
         }
 
@@ -217,7 +217,7 @@ class PropertyMap
         template<typename T>
         void Set(const std::string & key, const T & value)
         {
-            detail::PropPlaceholderPtr v(new detail::PropHolder<T>(value));
+            detail::GenericBasePtr v(new detail::GenericHolder<T>(value));
             Set_(key, std::move(v));
         }
 
@@ -232,7 +232,7 @@ class PropertyMap
         template<typename T>
         void Take(const std::string & key, T && value)
         {
-            detail::PropPlaceholderPtr v(new detail::PropHolder<T>(std::move(value)));
+            detail::GenericBasePtr v(new detail::GenericHolder<T>(std::move(value)));
             Set_(key, std::move(v));
         }
 
@@ -315,7 +315,7 @@ class PropertyMap
          */
         struct PropMapEntry
         {
-            detail::PropPlaceholderPtr value;
+            detail::GenericBasePtr value;
         };
 
 
@@ -369,19 +369,19 @@ class PropertyMap
 
 
 
-        /*! \brief Obtains a pointer to a PropHolder cast to desired type
+        /*! \brief Obtains a pointer to a GenericHolder cast to desired type
          * 
          * \throw bpmodule::exception::MapException if key 
          *        doesn't exist or if the cast fails.
          *
          * \param [in] key Key of the data to get
-         * \return detail::PropHolder containing the data for the given key
+         * \return detail::GenericHolder containing the data for the given key
          */ 
         template<typename T>
-        const detail::PropHolder<T> * GetOrThrow_Cast_(const std::string & key) const
+        const detail::GenericHolder<T> * GetOrThrow_Cast_(const std::string & key) const
         {
             const PropMapEntry & pme = GetOrThrow_(key);
-            const detail::PropHolder<T> * ph = dynamic_cast<const detail::PropHolder<T> *>(pme.value.get());
+            const detail::GenericHolder<T> * ph = dynamic_cast<const detail::GenericHolder<T> *>(pme.value.get());
             if(ph == nullptr)
                 throw exception::GeneralException("Bad cast",
                                                   "location", "PropertyMap",
@@ -394,14 +394,14 @@ class PropertyMap
 
 
 
-        /*! \brief Sets the data for a given key via a PropPlaceholderPtr
+        /*! \brief Sets the data for a given key via a GenericBasePtr
          * 
          * \exstrong
          *
          * \param [in] key Key of the data to set
          * \param [in] value Pointer to the data to set
          */ 
-        void Set_(const std::string & key, detail::PropPlaceholderPtr && value)
+        void Set_(const std::string & key, detail::GenericBasePtr && value)
         {
             if(opmap_.count(key))
             {

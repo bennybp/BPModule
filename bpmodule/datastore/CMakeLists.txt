@@ -1,5 +1,5 @@
 set(BPMODULE_DATASTORE_FILES
-            PropHolder.cpp
+            GenericHolder.cpp
             PropertyMap_python.cpp
             export.cpp
    )

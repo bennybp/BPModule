@@ -66,7 +66,7 @@ PropertyMap::PropertyMap(const boost::python::list & olist)
 
 
         boost::python::object dat = olist[i][1];
-        Set_(key, std::move(detail::PropHolderFactory(dat)));
+        Set_(key, std::move(detail::GenericHolderFactory(dat)));
     }
 }
 
@@ -84,13 +84,13 @@ boost::python::object PropertyMap::GetCopy<>(const std::string & key) const
 template<>
 void PropertyMap::Set<>(const std::string & key, const boost::python::object & value)
 {
-    // catch errors from conversions in PropHolderFactory
+    // catch errors from conversions in GenericHolderFactory
     try {
-        Set_(key, detail::PropHolderFactory(value));
+        Set_(key, detail::GenericHolderFactory(value));
     }
     catch(GeneralException & ex)
     {
-        // append key info if PropHolderFactory throws
+        // append key info if GenericHolderFactory throws
         ex.AppendInfo("mapkey", key);
         throw;
     }

@@ -5,10 +5,15 @@
  */ 
 
 
-#ifndef _GUARD_PROPHOLDER_HPP_
-#define _GUARD_PROPHOLDER_HPP_
+#ifndef _GUARD_GENERICHOLDER_HPP_
+#define _GUARD_GENERICHOLDER_HPP_
 
-#include "bpmodule/datastore/PropPlaceholder.hpp"
+#include "bpmodule/datastore/GenericBase.hpp"
+
+
+//! \todo I hate including python stuff here...
+#include "bpmodule/python_helper/Convert.hpp"
+
 
 namespace bpmodule {
 namespace datastore {
@@ -21,7 +26,7 @@ namespace detail {
  * \tparam T The type of the data this object is holding
  */ 
 template<typename T>
-class PropHolder : public PropPlaceholder
+class GenericHolder : public GenericBase
 {
     public:
         /*! \brief Construct via copying a data object
@@ -33,7 +38,9 @@ class PropHolder : public PropPlaceholder
          *
          *  \param [in] m The object to copy
          */
-        PropHolder(const T & m);
+        GenericHolder(const T & m)
+            : obj(m)
+        { }
 
 
         /*! \brief Construct via moving a data object
@@ -45,16 +52,19 @@ class PropHolder : public PropPlaceholder
          *
          * \param [in] m The object to move
          */
-        PropHolder(T && m);
+        GenericHolder(T && m)
+            : obj(std::move(m))
+
+        { }
 
 
         // no other constructors, etc
-        PropHolder(void)                                = delete;
-        PropHolder(const PropHolder & oph)              = delete;
-        PropHolder(PropHolder && oph)                   = delete;
-        PropHolder & operator=(const PropHolder & oph)  = delete;
-        PropHolder & operator=(PropHolder && oph)       = delete;
-        virtual ~PropHolder()                           = default;
+        GenericHolder(void)                                = delete;
+        GenericHolder(const GenericHolder & oph)              = delete;
+        GenericHolder(GenericHolder && oph)                   = delete;
+        GenericHolder & operator=(const GenericHolder & oph)  = delete;
+        GenericHolder & operator=(GenericHolder && oph)       = delete;
+        virtual ~GenericHolder()                           = default;
 
 
         /*! Return a reference to the underlying data
@@ -63,7 +73,10 @@ class PropHolder : public PropPlaceholder
          *
          * \return A reference to the underlying data
          */ 
-        T & GetRef(void) noexcept;
+        T & GetRef(void) noexcept
+        {
+            return obj;
+        }
 
 
         /*! Return a const reference to the underlying data
@@ -72,16 +85,41 @@ class PropHolder : public PropPlaceholder
          *
          * \return A const reference to the underlying data
          */ 
-        const T & GetRef(void) const noexcept;
+        const T & GetRef(void) const noexcept
+        {
+            return obj;
+        }
 
 
+        ////////////////////////////////////////
+        // Virtual functions from PropBase
+        ////////////////////////////////////////
         virtual const char * Type(void) const noexcept
         {
             return typeid(T).name();
         }
 
+        virtual const std::type_info & TypeInfo(void) const noexcept
+        {
+            return typeid(T);
+        }
 
-        virtual boost::python::object GetPy(void) const;
+
+        virtual std::string DemangledType(void) const
+        {
+            return mangle::DemangleCppType<T>();
+        }
+
+
+
+        ///////////////////////////////////////
+        // Python-related functions
+        ///////////////////////////////////////
+        virtual boost::python::object GetPy(void) const
+        {
+            return python_helper::ConvertToPy(obj);
+        }
+
 
     private:
         //! The actual data
@@ -90,7 +128,7 @@ class PropHolder : public PropPlaceholder
 
 
 
-/*! \brief Create a detail::PropPlaceHolder from python object
+/*! \brief Create a detail::GenericBasePtr from python object
  *
  * This copies the data from the object.
  * 
@@ -98,7 +136,7 @@ class PropHolder : public PropPlaceholder
  *
  * \param [in] obj A python object containing data to copy
  */ 
-PropPlaceholderPtr PropHolderFactory(const boost::python::object & obj);
+GenericBasePtr GenericHolderFactory(const boost::python::object & obj);
 
 
 
