@@ -65,8 +65,7 @@ OptionHolder<T>::OptionHolder(const std::string & key, T * def,
                               const std::string & help)
     : OptionBase(key, required, pytype, help),
       default_(def),
-      validator_(validator),
-      demangledtype_(mangle::DemangleCppType<T>())
+      validator_(validator)
 {
     // check the default using the validator
     if(def != nullptr)
@@ -88,8 +87,7 @@ OptionHolder<T>::OptionHolder(const std::string & key, T * def,
 template<typename T>
 OptionHolder<T>::OptionHolder(const OptionHolder & oph)
     : OptionBase(oph),
-      validator_(oph.validator_),
-      demangledtype_(oph.demangledtype_)
+      validator_(oph.validator_)
 {
     if(oph.value_)
         value_ = std::unique_ptr<T>(new T(*oph.value_));
@@ -150,9 +148,9 @@ const char * OptionHolder<T>::Type(void) const noexcept
 
 
 template<typename T>
-const char * OptionHolder<T>::DemangledType(void) const noexcept
+std::string OptionHolder<T>::DemangledType(void) const
 {
-    return demangledtype_.c_str();
+    return mangle::DemangleCppType<T>();
 }
 
 

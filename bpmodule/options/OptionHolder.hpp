@@ -120,7 +120,7 @@ class OptionHolder : public OptionBase
 
         const std::type_info & TypeInfo(void) const noexcept;
 
-        virtual const char * DemangledType(void) const noexcept;
+        virtual std::string DemangledType(void) const;
 
         virtual bool HasValue(void) const noexcept;
 
@@ -153,10 +153,6 @@ class OptionHolder : public OptionBase
 
         //! Validation function object
         ValidatorFunc validator_;
-
-        //! The type of the object (from typeid(), but demangled)
-        std::string demangledtype_;
-
 };
 
 

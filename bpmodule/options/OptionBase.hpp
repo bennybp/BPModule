@@ -96,11 +96,9 @@ class OptionBase
 
         /*! \brief Returns a string representing the demangled type of the stored option
          *
-         * \exnothrow
-         *
          * \return A string representing the type (obtained via typeid().name(), but demangled)
          */
-        virtual const char * DemangledType(void) const noexcept = 0;
+        virtual std::string DemangledType(void) const = 0;
 
 
 
