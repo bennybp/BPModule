@@ -15,7 +15,6 @@
 #include "bpmodule/modulelocator/ScopedModule.hpp"
 #include "bpmodule/exception/ModuleCreateException.hpp"
 #include "bpmodule/exception/ModuleLocatorException.hpp"
-#include "bpmodule/mangle/Mangle.hpp"
 
 
 // forward declarations

@@ -9,10 +9,8 @@
 #define _GUARD_PROPERTYMAP_HPP_
 
 #include <map>
-#include <memory>
 
 #include "bpmodule/exception/GeneralException.hpp"
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 #include "bpmodule/datastore/PropHolder.hpp"
 
 

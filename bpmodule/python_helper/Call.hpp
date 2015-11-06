@@ -8,8 +8,6 @@
 #ifndef _GUARD_CALL_HPP_
 #define _GUARD_CALL_HPP_
 
-#include <string>
-
 #include "bpmodule/exception/PythonCallException.hpp"
 #include "bpmodule/python_helper/Types.hpp"
 #include "bpmodule/python_helper/Errors.hpp"
