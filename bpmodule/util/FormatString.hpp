@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_FORMATSTR_HPP_
-#define _GUARD_FORMATSTR_HPP_
+#ifndef _GUARD_FORMATSTRING_HPP_
+#define _GUARD_FORMATSTRING_HPP_
 
 #include <iostream>
 #include <sstream>

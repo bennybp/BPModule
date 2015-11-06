@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_STRHELP_HPP_
-#define _GUARD_STRHELP_HPP_
+#ifndef _GUARD_STRINGUTIL_HPP_
+#define _GUARD_STRINGUTIL_HPP_
 
 #include <vector>
 #include <string>

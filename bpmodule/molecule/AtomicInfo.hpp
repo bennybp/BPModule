@@ -1,5 +1,5 @@
-#ifndef _GUARD_ATOMICINFO_H_
-#define _GUARD_ATOMICINFO_H_
+#ifndef _GUARD_ATOMICINFO_HPP_
+#define _GUARD_ATOMICINFO_HPP_
 
 #include <vector>
 #include <string>
