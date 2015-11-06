@@ -130,7 +130,7 @@ install(FILES ${BPMODULE_MODULEBASE_HEADERS} DESTINATION include/bpmodule/module
 install(FILES ${BPMODULE_MODULELOCATOR_HEADERS} DESTINATION include/bpmodule/modulelocator)
 install(FILES ${BPMODULE_MOLECULE_HEADERS} DESTINATION include/bpmodule/molecule)
 install(FILES ${BPMODULE_BASISSET_HEADERS} DESTINATION include/bpmodule/basisset)
-install(FILES ${BPMODULE_TESTING_HEADERS} DESTINATION include/testing/basisset)
+install(FILES ${BPMODULE_TESTING_HEADERS} DESTINATION include/bpmodule/testing)
 
 set(BPMODULE_FILES
             __init__.py
