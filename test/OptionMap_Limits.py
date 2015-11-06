@@ -15,7 +15,7 @@ import bpmodule as bp
 def Run():
     try:
         bp.output.Output("\n")
-        bp.output.Output(bp.output.Line('-'))
+        bp.output.Output(bp.util.Line('-'))
 
         # The limits on various integer types
         intlimitdict = { "sshort"             : bp.testing.Limits_sshort(),
@@ -44,7 +44,7 @@ def Run():
  
         for k,v in intlimitdict.items():
             bp.output.Output("Limit for %|1$-18| : [ %|2$-21| , %|3$-21| ]\n", k, v[0], v[1])
-        bp.output.Output(bp.output.Line('-'))
+        bp.output.Output(bp.util.Line('-'))
         bp.output.Output("\n")
 
 

@@ -13,7 +13,7 @@
 #include "bpmodule/options/OptionTypes.hpp"
 #include "bpmodule/options/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
-#include "bpmodule/util/StrUtil.hpp"
+#include "bpmodule/util/StringUtil.hpp"
 
 
 namespace bpmodule {

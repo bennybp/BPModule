@@ -27,7 +27,7 @@ namespace export_python {
  */
 void Output_Wrap_Output(const std::string & fmt, const boost::python::list & args)
 {
-    OutputPy_(output::GetOut(), OutputType::Output, fmt, args);
+    OutputPy_(output::GetOut(), detail::OutputType::Output, fmt, args);
 }
 
 
@@ -39,7 +39,7 @@ void Output_Wrap_Output(const std::string & fmt, const boost::python::list & arg
  */
 void Output_Wrap_Success(const std::string & fmt, const boost::python::list & args)
 {
-    OutputPy_(output::GetOut(), OutputType::Success, fmt, args);
+    OutputPy_(output::GetOut(), detail::OutputType::Success, fmt, args);
 }
 
 
@@ -51,7 +51,7 @@ void Output_Wrap_Success(const std::string & fmt, const boost::python::list & ar
  */
 void Output_Wrap_Changed(const std::string & fmt, const boost::python::list & args)
 {
-    OutputPy_(output::GetOut(), OutputType::Changed, fmt, args);
+    OutputPy_(output::GetOut(), detail::OutputType::Changed, fmt, args);
 }
 
 
@@ -63,7 +63,7 @@ void Output_Wrap_Changed(const std::string & fmt, const boost::python::list & ar
  */
 void Output_Wrap_Warning(const std::string & fmt, const boost::python::list & args)
 {
-    OutputPy_(output::GetOut(), OutputType::Warning, fmt, args);
+    OutputPy_(output::GetOut(), detail::OutputType::Warning, fmt, args);
 }
 
 
@@ -75,7 +75,7 @@ void Output_Wrap_Warning(const std::string & fmt, const boost::python::list & ar
  */
 void Output_Wrap_Error(const std::string & fmt, const boost::python::list & args)
 {
-    OutputPy_(output::GetOut(), OutputType::Error, fmt, args);
+    OutputPy_(output::GetOut(), detail::OutputType::Error, fmt, args);
 }
 
 
@@ -87,22 +87,9 @@ void Output_Wrap_Error(const std::string & fmt, const boost::python::list & args
  */
 void Output_Wrap_Debug(const std::string & fmt, const boost::python::list & args)
 {
-    OutputPy_(output::GetOut(), OutputType::Debug, fmt, args);
+    OutputPy_(output::GetOut(), detail::OutputType::Debug, fmt, args);
 }
 
-
-
-/*! \brief Wrap 'FormatStr' for use from python
- *
- * \param [in] fmt Format string to use
- * \param [in] args Arguments to the format string
- */
-std::string Output_Wrap_FormatStr(const std::string & fmt, const boost::python::list & args)
-{
-    std::stringstream ss;
-    OutputPy_(ss, OutputType::Output, fmt, args);
-    return ss.str();
-}
 
 
 ////////////////////////////
@@ -126,9 +113,6 @@ BOOST_PYTHON_MODULE(output)
     def("Error", Output_Wrap_Error);
     def("Changed", Output_Wrap_Changed);
     def("Debug", Output_Wrap_Debug);
-
-    // format string
-    def("FormatStr", Output_Wrap_FormatStr);
 }
 
 

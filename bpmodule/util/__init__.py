@@ -1,7 +1,7 @@
 from .modinfo import *
 
 # SO file
-from .util import FormatStr as FormatStr_
+from .util import FormatString as FormatString_
 
 def FormatStr(s, *args):
     if(len(args)) > 0:

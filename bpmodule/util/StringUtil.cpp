@@ -5,7 +5,7 @@
  */ 
 
 #include <algorithm>
-#include "bpmodule/util/StrUtil.hpp"
+#include "bpmodule/util/StringUtil.hpp"
 
 
 namespace bpmodule {

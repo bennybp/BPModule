@@ -8,17 +8,18 @@
 #include <boost/python/def.hpp>
 #include <boost/python/list.hpp>
 
-#include "bpmodule/util/FormatStr.hpp"
+#include "bpmodule/util/FormatString.hpp"
 
-//! \todo export the rest?
 
 using namespace boost::python;
 
 
+//! \todo export the rest?
 
 namespace bpmodule {
 namespace util {
 namespace export_python {
+
 
 
 ////////////////////////////
@@ -28,7 +29,7 @@ namespace export_python {
 BOOST_PYTHON_MODULE(util)
 {
     // format string
-    def("FormatStr", FormatStrPy_);
+    def("FormatString", FormatStringPy);
 }
 
 

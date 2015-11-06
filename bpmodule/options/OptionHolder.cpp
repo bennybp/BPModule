@@ -12,7 +12,7 @@
 #include "bpmodule/options/OptionHolder.hpp"
 #include "bpmodule/options/OptionTypes.hpp"
 #include "bpmodule/exception/OptionException.hpp"
-#include "bpmodule/util/FormatStr.hpp"
+#include "bpmodule/output/Output.hpp"
 
 using namespace bpmodule::python_helper;
 using namespace bpmodule::exception;
@@ -302,13 +302,13 @@ static std::string OptToString_(const bool & opt)
 template<typename T>
 static void PrintOption_(const OptionHolder<T> & oph)
 {
-    std::string optline = FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
-                                    oph.Key(),                                                         // name/key
-                                    PythonTypeToStr(oph.PyType()),                                     // type
-                                    (oph.HasValue() ? OptToString_(oph.Get()) : "(none)"),             // value
-                                    (oph.HasDefault() ? OptToString_(oph.GetDefault()) : "(none)"),    // default
-                                    (oph.IsRequired() ? "True" : "False"),                             // required
-                                    oph.Help());                                                       // help/description
+    std::string optline = FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+                                       oph.Key(),                                                         // name/key
+                                       PythonTypeToStr(oph.PyType()),                                     // type
+                                       (oph.HasValue() ? OptToString_(oph.Get()) : "(none)"),             // value
+                                       (oph.HasDefault() ? OptToString_(oph.GetDefault()) : "(none)"),    // default
+                                       (oph.IsRequired() ? "True" : "False"),                             // required
+                                       oph.Help());                                                       // help/description
 
 
     if(oph.HasIssues())
@@ -368,13 +368,13 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
 
 
     std::vector<std::string> optlines;
-    optlines.push_back(FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
-                                 oph.Key(),                                                         // name/key
-                                 PythonTypeToStr(oph.PyType()),                                     // type
-                                 valstr,                                                            // value
-                                 defstr,                                                            // default
-                                 (oph.IsRequired() ? "True" : "False"),                             // required
-                                 oph.Help()));                                                      // help/description
+    optlines.push_back(FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+                                    oph.Key(),                                                         // name/key
+                                    PythonTypeToStr(oph.PyType()),                                     // type
+                                    valstr,                                                            // value
+                                    defstr,                                                            // default
+                                    (oph.IsRequired() ? "True" : "False"),                             // required
+                                    oph.Help()));                                                      // help/description
 
 
     // start at 1 since we did the first separately
@@ -395,13 +395,13 @@ static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
                 defstr = OptToString_(defvec[i]);
         }
 
-        optlines.push_back(FormatStr("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
-                                     "",              // name/key
-                                     "",              // type
-                                     valstr,          // value
-                                     defstr,          // default
-                                     "",              // required
-                                     ""));            // help/description
+        optlines.push_back(FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+                                        "",              // name/key
+                                        "",              // type
+                                        valstr,          // value
+                                        defstr,          // default
+                                        "",              // required
+                                        ""));            // help/description
 
     }
 

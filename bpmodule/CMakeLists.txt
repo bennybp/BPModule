@@ -37,8 +37,8 @@ set(BPMODULE_OUTPUT_HEADERS
    )
 
 set(BPMODULE_UTIL_HEADERS
-            util/FormatStr.hpp
-            util/StrUtil.hpp
+            util/FormatString.hpp
+            util/StringUtil.hpp
    )
 
 set(BPMODULE_EXCEPTION_HEADERS

@@ -78,10 +78,10 @@ with bp_common.HeaderSourceFiles(outbase, "LUTs for Atomic Information",
                                  createheader = True,
                                  hppincludes = ["<map>",
                                                 "\"bpmodule/molecule/AtomicInfo.hpp\"",
-                                                "\"bpmodule/util/StrUtil.hpp\""],
+                                                "\"bpmodule/util/StringUtil.hpp\""],
                                  cppincludes = ["<map>",
                                                 "\"bpmodule/molecule/AtomicInfo.hpp\"",
-                                                "\"bpmodule/util/StrUtil.hpp\""]) as src:
+                                                "\"bpmodule/util/StringUtil.hpp\""]) as src:
 
     # Header file
     src.fh.write("//////////////////////////////////////////////////\n")

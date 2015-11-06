@@ -46,6 +46,10 @@
  *  \brief Helper classes and functions for tensors and matrices
  */
 
+/*! \namespace bpmodule::util
+ *  \brief Miscellaneous funcionality, such as string formatting, etc
+ */
+
 /*! \namespace bpmodule::testing
  *  \brief Functions for testing the core library
  */

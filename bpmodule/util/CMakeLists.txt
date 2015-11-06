@@ -1,6 +1,6 @@
 set(BPMODULE_UTIL_FILES
-            StrUtil.cpp 
-            FormatStr.cpp 
+            StringUtil.cpp 
+            FormatString.cpp
             export.cpp
    )
 

@@ -9,7 +9,8 @@
 
 #include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/output/Output.hpp"
-#include "bpmodule/util/StrUtil.hpp"
+#include "bpmodule/util/FormatString.hpp"
+#include "bpmodule/util/StringUtil.hpp"
 
 
 namespace bpmodule {
@@ -55,10 +56,10 @@ std::string GeneralException::ExceptionString(void) const
 {
     ExceptionInfo exinfo = GetInfo();
     std::stringstream ss;
-    output::Output(ss, "\n");
-    output::Output(ss, util::Line('*'));
-    output::Output(ss, "Exception thrown!\n");
-    output::Output(ss, "what() = %1%\n", what());
+    util::FormatStream(ss, "\n");
+    util::FormatStream(ss, util::Line('*'));
+    util::FormatStream(ss, "Exception thrown!\n");
+    util::FormatStream(ss, "what() = %1%\n", what());
     for(auto & it : exinfo)
     {
         if(it.second.size())
@@ -67,10 +68,10 @@ std::string GeneralException::ExceptionString(void) const
             std::string str;
             std::getline(sstr, str);
 
-            output::Output(ss, "%|24| : %|-|\n", it.first, str);
+            util::FormatStream(ss, "%|24| : %|-|\n", it.first, str);
 
             while(std::getline(sstr, str).good())
-                output::Output(ss, "%|24|       %|-|\n", "", str);
+                util::FormatStream(ss, "%|24|       %|-|\n", "", str);
         }
     }
     return ss.str();

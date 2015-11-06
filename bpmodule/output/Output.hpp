@@ -9,10 +9,8 @@
 #define _GUARD_OUTPUT_HPP_
 
 #include <iostream>
-#include <sstream>
 
-#include <boost/format.hpp>
-
+#include "bpmodule/util/FormatString.hpp"
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 
@@ -20,6 +18,15 @@
 
 namespace bpmodule {
 namespace output {
+
+
+
+
+
+
+
+
+namespace detail {
 
 /*! The type of information being output
  *
@@ -34,6 +41,26 @@ enum class OutputType
     Error,   //!< Something is very wrong
     Debug    //!< For developers
 };
+
+
+/*! \brief Output to a stream
+ *
+ * \throwno Throws boost exceptions for malformed inputs, etc
+ * \warning Internal use only
+ *
+ * \param [in] out The stream to print to
+ * \param [in] type The type of output (output, debug, etc)
+ * \param [in] str A string to output
+ */
+void Output_(std::ostream & out, OutputType type, const std::string & str);
+
+} // close namespace detail
+
+
+
+
+
+
 
 
 
@@ -105,61 +132,7 @@ std::ostream & GetOut(void);
 
 
 
-/*! \brief Output to a stream
- *
- * \throwno Throws boost exceptions for malformed inputs, etc
- * \warning Internal use only
- *
- * \param [in] out The stream to print to
- * \param [in] type The type of output (output, debug, etc)
- * \param [in] bfmt A boost::format string
- */
-void Output_(std::ostream & out, OutputType type, const boost::format & bfmt);
 
-
-
-
-
-/*! \brief Builds up a boost::format string
- *
- * \throwno Throws boost exceptions for malformed inputs, etc
- * \warning Internal use only
- *
- * \tparam T The type of object to print
- * \tparam Targs The types of the rest of the arguments to print
- *
- * \param [in] out The stream to print to
- * \param [in] type The type of output (output, debug, etc)
- * \param [inout] bfmt The boost::format string built up so far
- * \param [in] targ Something to print
- * \param [in] Fargs The rest of the stuff to print
- */
-template<typename T, typename... Targs>
-void Output_(std::ostream & out, OutputType type, boost::format & bfmt, T targ, Targs... Fargs)
-{
-    bfmt % targ;
-    Output_(out, type, bfmt, Fargs...);
-}
-
-
-/*! \brief Start building up a boost::format string
- *
- * \throwno Throws boost exceptions for malformed inputs, etc
- * \warning Internal use only
- *
- * \tparam Targs The types of the arguments to print
- *
- * \param [in] out The stream to print to
- * \param [in] type The type of output (output, debug, etc)
- * \param [in] fmt The format string to use
- * \param [in] Fargs The stuff to print
- */
-template<typename... Targs>
-void Output_(std::ostream & out, OutputType type, const std::string & fmt, Targs... Fargs)
-{
-    boost::format bfmt(fmt);
-    Output_(out, type, bfmt, Fargs...);
-}
 
 
 
@@ -182,7 +155,7 @@ void Output_(std::ostream & out, OutputType type, const std::string & fmt, Targs
 template<typename... Targs>
 void Output(std::ostream & out, const std::string & fmt, Targs... Fargs)
 {
-    Output_(out, OutputType::Output, fmt, Fargs...);
+    detail::Output_(out, detail::OutputType::Output, util::FormatString(fmt, Fargs...));
 }
 
 
@@ -209,39 +182,6 @@ void Output(const std::string & fmt, Targs... Fargs)
 
 
 
-/*! \brief Print general output to a string
- * 
- * \copydetails bpmodule::output::FormatStr 
- */
-template<typename... Targs>
-std::string OutputStr(const std::string & fmt, Targs... Fargs)
-{
-    std::stringstream ss;
-    Output(ss, fmt, Fargs...);
-    return ss.str();
-}
-
-
-
-/*! \brief Create a formatted string
- *
- * \see \ref developer_output_page
- *
- * \throwno Throws boost exceptions for malformed inputs, etc
- *
- * \tparam Targs The types of the arguments to print
- *
- * \param [in] fmt The format string to use
- * \param [in] Fargs The arguments to the format string
- */
-template<typename... Targs>
-std::string FormatStr(const std::string & fmt, Targs... Fargs)
-{
-    std::stringstream ss;
-    Output(ss, fmt, Fargs...);
-    return ss.str();
-}
-
 
 /////////////////////
 // Changed
@@ -253,7 +193,7 @@ std::string FormatStr(const std::string & fmt, Targs... Fargs)
 template<typename... Targs>
 void Changed(std::ostream & out, const std::string & fmt, Targs... Fargs)
 {
-    Output_(out, OutputType::Changed, fmt, Fargs...);
+    detail::Output_(out, detail::OutputType::Changed, util::FormatString(fmt, Fargs...));
 }
 
 
@@ -264,18 +204,6 @@ template<typename... Targs>
 void Changed(const std::string & fmt, Targs... Fargs)
 {
     Changed(GetOut(), fmt, Fargs...);
-}
-
-
-/*! \brief Print changed information to a string
- * \copydetails OutputStr(const std::string &, Targs...)
- */
-template<typename... Targs>
-std::string ChangedStr(const std::string & fmt, Targs... Fargs)
-{
-    std::stringstream ss;
-    Changed(ss, fmt, Fargs...);
-    return ss.str();
 }
 
 
@@ -290,7 +218,7 @@ std::string ChangedStr(const std::string & fmt, Targs... Fargs)
 template<typename... Targs>
 void Error(std::ostream & out, const std::string & fmt, Targs... Fargs)
 {
-    Output_(out, OutputType::Error, fmt, Fargs...);
+    detail::Output_(out, detail::OutputType::Error, util::FormatString(fmt, Fargs...));
 }
 
 
@@ -304,19 +232,6 @@ void Error(const std::string & fmt, Targs... Fargs)
 }
 
 
-/*! \brief Print error information to a string
- * \copydetails OutputStr(const std::string &, Targs...)
- */
-template<typename... Targs>
-std::string ErrorStr(const std::string & fmt, Targs... Fargs)
-{
-    std::stringstream ss;
-    Error(ss, fmt, Fargs...);
-    return ss.str();
-}
-
-
-
 /////////////////////
 // Warning
 /////////////////////
@@ -327,7 +242,7 @@ std::string ErrorStr(const std::string & fmt, Targs... Fargs)
 template<typename... Targs>
 void Warning(std::ostream & out, const std::string & fmt, Targs... Fargs)
 {
-    Output_(out, OutputType::Warning, fmt, Fargs...);
+    detail::Output_(out, detail::OutputType::Warning, util::FormatString(fmt, Fargs...));
 }
 
 
@@ -338,18 +253,6 @@ template<typename... Targs>
 void Warning(const std::string & fmt, Targs... Fargs)
 {
     Warning(GetOut(), fmt, Fargs...);
-}
-
-
-/*! \brief Print warning information to a string
- * \copydetails OutputStr(const std::string &, Targs...)
- */
-template<typename... Targs>
-std::string WarningStr(const std::string & fmt, Targs... Fargs)
-{
-    std::stringstream ss;
-    Warning(ss, fmt, Fargs...);
-    return ss.str();
 }
 
 
@@ -364,7 +267,7 @@ std::string WarningStr(const std::string & fmt, Targs... Fargs)
 template<typename... Targs>
 void Success(std::ostream & out, const std::string & fmt, Targs... Fargs)
 {
-    Output_(out, OutputType::Success, fmt, Fargs...);
+    detail::Output_(out, detail::OutputType::Success, util::FormatString(fmt, Fargs...));
 }
 
 
@@ -378,17 +281,6 @@ void Success(const std::string & fmt, Targs... Fargs)
 }
 
 
-/*! \brief Print success information to a string
- * \copydetails OutputStr(const std::string &, Targs...)
- */
-template<typename... Targs>
-std::string SuccessStr(const std::string & fmt, Targs... Fargs)
-{
-    std::stringstream ss;
-    Success(ss, fmt, Fargs...);
-    return ss.str();
-}
-
 
 
 /////////////////////
@@ -401,7 +293,7 @@ std::string SuccessStr(const std::string & fmt, Targs... Fargs)
 template<typename... Targs>
 void Debug(std::ostream & out, const std::string & fmt, Targs... Fargs)
 {
-    Output_(out, OutputType::Debug, fmt, Fargs...);
+    detail::Output_(out, detail::OutputType::Debug, util::FormatString(fmt, Fargs...));
 }
 
 
@@ -415,19 +307,11 @@ void Debug(const std::string & fmt, Targs... Fargs)
 }
 
 
-/*! \brief Print debug information to a string
- * \copydetails OutputStr(const std::string &, Targs...)
- */
-template<typename... Targs>
-std::string DebugStr(const std::string & fmt, Targs... Fargs)
-{
-    std::stringstream ss;
-    Debug(ss, fmt, Fargs...);
-    return ss.str();
-}
 
 
 
+
+namespace export_python {
 
 /*! \brief Wrap printing functions for use from python
  *
@@ -438,10 +322,10 @@ std::string DebugStr(const std::string & fmt, Targs... Fargs)
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void OutputPy_(std::ostream & os, output::OutputType type, const std::string & fmt, const boost::python::list & args);
+void OutputPy_(std::ostream & os, detail::OutputType type,
+               const std::string & fmt, const boost::python::list & args);
 
-
-
+} // close namespace export_python
 
 
 

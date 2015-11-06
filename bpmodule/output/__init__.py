@@ -9,7 +9,6 @@ from .output import Warning as Warning_
 from .output import Error as Error_
 from .output import Changed as Changed_
 from .output import Debug as Debug_
-from .output import FormatStr as FormatStr_
 
 # for output:
 # package args into a list then pass to SO file
@@ -53,14 +52,4 @@ def Changed(s, *args):
       Changed_(s, list(args))
     else:
       Changed_(s, [])
-
-
-def FormatStr(s, *args):
-    if(len(args)) > 0:
-      return FormatStr_(s, list(args))
-    else:
-      return FormatStr_(s, [])
-
-
-
 
