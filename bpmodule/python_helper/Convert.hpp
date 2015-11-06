@@ -167,7 +167,7 @@ struct PyConverter<std::vector<T>>
             catch(exception::PythonConvertException & ex)
             {
                 ex.AppendInfo("vecto", mangle::DemangleCppType<std::vector<T>>(),
-                              "element", std::to_string(i));
+                              "element", i);
                 throw;
             }
         }
@@ -197,7 +197,7 @@ struct PyConverter<std::vector<T>>
             catch(exception::PythonConvertException & ex)
             {
                 ex.AppendInfo("vecfrom", mangle::DemangleCppType<std::vector<T>>(),
-                              "element", std::to_string(i));
+                              "element", i);
                 throw;
             }
         }

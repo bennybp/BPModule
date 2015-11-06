@@ -257,7 +257,7 @@ struct OptionConvert<std::vector<T>, false>
             }
             catch(exception::MathException & ex)  // catch overflow, etc
             {
-                ex.AppendInfo("vectorelement", std::to_string(std::distance(val.begin(), it)));
+                ex.AppendInfo("vectorelement", std::distance(val.begin(), it));
                 throw;
             }
         }
@@ -284,7 +284,7 @@ struct OptionConvert<std::vector<T>, false>
             }
             catch(exception::MathException & ex)  // catch overflow, etc
             {
-                ex.AppendInfo("vectorelement", std::to_string(std::distance(val.begin(), it)));
+                ex.AppendInfo("vectorelement", std::distance(val.begin(), it));
                 throw;
             }
         }

@@ -103,6 +103,27 @@ class GeneralException : public std::exception
          */
         void AppendInfo(const std::string & key, const std::string & value);
 
+
+        /*! \brief Add information to this exception object
+         *
+         * \p value is converted to a string via std::to_string
+         */
+        template<typename T>
+        void AppendInfo(const std::string & key, const T & value)
+        {
+            AppendInfo(key, std::to_string(value));
+        }
+
+        /*! \brief Add information to this exception object
+         *
+         * Overload for const char * (since there isn't a std::to_string for const char *)
+         */
+        void AppendInfo(const std::string & key, const char * value)
+        {
+            AppendInfo(key, std::string(value));
+        }
+
+
         /*! \brief Add information to this exception object
          * 
          * Used to terminate the parameter pack expansion (in some instances)
@@ -126,6 +147,34 @@ class GeneralException : public std::exception
 
         /*! \brief Add information to this exception object
          *
+         * There must be an even number of arguments.
+         *
+         * \p value is converted to a string via std::to_string
+         */
+        template<typename T, typename... Targs>
+        void AppendInfo(const std::string & key, const T & value, Targs... exinfo)
+        {
+            AppendInfo(key, std::to_string(value));
+            AppendInfo(exinfo...);
+        }
+
+
+        /*! \brief Add information to this exception object
+         *
+         * There must be an even number of arguments.
+         *
+         * \p value is converted to a string via std::to_string
+         */
+        template<typename... Targs>
+        void AppendInfo(const std::string & key, const char * value, Targs... exinfo)
+        {
+            AppendInfo(key, std::string(value));
+            AppendInfo(exinfo...);
+        }
+
+
+        /*! \brief Add information to this exception object
+         *
          * Overload for a vector of strings. Each element will get its own line.
          *
          * There must be an even number of arguments.
@@ -137,8 +186,8 @@ class GeneralException : public std::exception
                            "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
             std::string str = "(empty)";
 
-            // this is done manually (rather than output::Join)
-            // to prevent a dependence on bpmodule::output
+            // this is done manually
+            // to prevent a dependence on other core modules
             if(value.size())
                 str = value[0];
             for(size_t i = 1; i < value.size(); i++)

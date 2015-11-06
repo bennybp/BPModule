@@ -68,7 +68,7 @@ void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & 
     // trailing slash on path should have been added by python scripts
     std::string sopath = mi.path + mi.soname;
 
-    char * error; // for dlerror
+    char const * error; // for dlerror
     void * handle;
 
     // see if the module is loaded
@@ -82,7 +82,7 @@ void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & 
         // open the module
         if(!handle)
             throw ModuleLoadException("Cannot open SO file",
-                                      sopath, key, mi.name, "dlerror", dlerror());
+                                      sopath, key, mi.name, "dlerror", std::string(dlerror()));
     }
 
 

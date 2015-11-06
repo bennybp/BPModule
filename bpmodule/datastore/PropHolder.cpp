@@ -85,7 +85,7 @@ PropPlaceholderPtr PropHolderFactory(const boost::python::object & obj)
             std::string cltmp = boost::python::extract<std::string>(lst[i].attr("__class__").attr("__name__"));
             if(cl2 != cltmp)
                 throw GeneralException("Cannot convert heterogeneous python list",
-                                       "type1", cl2, "type2", cltmp, "element", std::to_string(i));
+                                       "type1", cl2, "type2", cltmp, "element", i);
         }
 
         // now parse list

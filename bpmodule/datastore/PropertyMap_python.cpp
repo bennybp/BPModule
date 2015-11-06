@@ -37,7 +37,7 @@ PropertyMap::PropertyMap(const boost::python::list & olist)
             throw GeneralException("PropertyMap element is not a tuple",
                                    "location", "PropertyMap",
                                    "mapkey", key,
-                                   "element", std::to_string(i),
+                                   "element", i,
                                    "fromtype", cl,
                                    "totype", "tuple");
         }
@@ -50,8 +50,8 @@ PropertyMap::PropertyMap(const boost::python::list & olist)
             throw GeneralException("PropertyMap element is not a tuple of 2 elements",
                                    "location", "PropertyMap",
                                    "mapkey", key,
-                                   "element", std::to_string(i),
-                                   "length", std::to_string(tuplelen));
+                                   "element", i,
+                                   "length", tuplelen);
         }
 
 

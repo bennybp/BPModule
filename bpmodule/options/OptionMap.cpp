@@ -247,7 +247,7 @@ OptionMap::OptionMap(const std::string & modulekey, const boost::python::dict & 
     {
         if(DeterminePyType(keys[i]) != python_helper::PythonType::String)
             throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
-                                  "element", std::to_string(i),
+                                  "element", i,
                                   "pytype", GetPyClass(keys[i]));
 
 
@@ -261,7 +261,7 @@ OptionMap::OptionMap(const std::string & modulekey, const boost::python::dict & 
         // python dict
         if(opmap_.count(key))
             throw OptionException("Duplicate key on construction", key,
-                                   "element", std::to_string(i));
+                                   "element", i);
 
         // this will throw needed exceptions
         opmap_.emplace(key, detail::OptionHolderFactory(key, opt[key]));
@@ -312,7 +312,7 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
     {
         if(DeterminePyType(keys[i]) != python_helper::PythonType::String)
             throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
-                                  "element", std::to_string(i),
+                                  "element", i,
                                   "pytype", GetPyClass(keys[i]));
 
 
@@ -323,7 +323,7 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
 
 
         if(!tmp.HasKey(key))
-            throw OptionException("Python dictionary has a key that I do not", key, "element", std::to_string(i));
+            throw OptionException("Python dictionary has a key that I do not", key, "element", i);
 
         // may throw
         tmp.ChangePy(key, opt[key]);

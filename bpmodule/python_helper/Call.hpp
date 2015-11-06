@@ -33,7 +33,7 @@ Ret CallPyFunc(const boost::python::object & obj, Targs... Fargs)
     // and Fargs... doesn't include self
     if(!IsCallable(obj))  
         throw exception::PythonCallException("Object is not callable!", "(none)",
-                                             "nargs", std::to_string(nargs));
+                                             "nargs", nargs);
 
     boost::python::object ret;
 
@@ -44,7 +44,7 @@ Ret CallPyFunc(const boost::python::object & obj, Targs... Fargs)
     {
         throw exception::PythonCallException("Unable to call python function",
                                              detail::GetPyExceptionString(),
-                                             "nargs", std::to_string(nargs));
+                                             "nargs", nargs);
     }
 
     try {

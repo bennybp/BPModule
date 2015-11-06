@@ -33,7 +33,7 @@ std::string AtomicSymFromZ(int Z)
         return atomic_Z_sym_.at(Z);
     else
         throw exception::MoleculeException("No symbol for this Z number",
-                                           "Z", std::to_string(Z));
+                                           "Z", Z);
 }
 
 
@@ -44,7 +44,7 @@ const AtomicData & AtomicInfoFromZ(int Z)
         return atomic_Z_data_.at(Z);
     else
         throw exception::MoleculeException("No atomic data for this Z number",
-                                           "Z", std::to_string(Z));
+                                           "Z", Z);
 }
 
 
@@ -65,8 +65,8 @@ const IsotopeData & IsotopeInfoFromZ(int Z, int isonum)
             return it;
 
     throw exception::MoleculeException("No isotope data for this Z and isotope number",
-                                           "Z", std::to_string(Z),
-                                           "isotope", std::to_string(isonum));
+                                           "Z", Z,
+                                           "isotope", isonum);
 }
 
 

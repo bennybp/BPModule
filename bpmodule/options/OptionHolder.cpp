@@ -539,7 +539,7 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
 
     int length = boost::python::extract<int>(tup.attr("__len__")());
     if(length != 5)
-        throw OptionException("Python options tuple does not have 5 elements", key, "length", std::to_string(length));
+        throw OptionException("Python options tuple does not have 5 elements", key, "length", length);
 
 
     if(DeterminePyType(tup[0]) != PythonType::String)
