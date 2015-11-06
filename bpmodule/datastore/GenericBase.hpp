@@ -9,7 +9,6 @@
 #define _GUARD_GENERICBASE_HPP_
 
 #include <memory>
-#include <cstring>
 
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 

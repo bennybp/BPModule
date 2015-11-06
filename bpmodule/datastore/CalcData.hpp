@@ -31,7 +31,7 @@ namespace datastore {
  *  is changed. This goes against the "immutability" of the PropertyMap and CalcData.
  *  Python, unfortunately, would have to work with copies.
  */
-class CalcData : public PropertyMap
+class CalcData : public PropertyMap<std::string>
 {
     public:
         CalcData(void) = default;
@@ -69,9 +69,9 @@ class CalcData : public PropertyMap
 
         //! \copydoc bpmodule::datastore::PropertyMap::Set
         template<typename T>
-        void Set(const std::string & key, const T & value)
+        void Set(const std::string & key, const T & value, const modulelocator::ModuleInfo & source)
         {
-            PropertyMap::Set(key, value);
+            PropertyMap::Set(key, value, source);
         }
 
 
@@ -103,6 +103,21 @@ class CalcData : public PropertyMap
             PropertyMap::SetRef(other, key, newkey);
         }
 
+
+        ////////////////////////////////////
+        // Python functions
+        ////////////////////////////////////
+        //! \copydoc bpmodule::datastore::PropertyMap::GetCopyPy
+        boost::python::object GetCopyPy(const std::string & key) const
+        {
+            return PropertyMap::GetCopyPy(key);
+        }
+
+        //! \copydoc bpmodule::datastore::PropertyMap::SetPy
+        void SetPy(const std::string & key, const boost::python::object & value, const modulelocator::ModuleInfo & source)
+        {
+            PropertyMap::SetPy(key, value, source);
+        }
 };
 
 

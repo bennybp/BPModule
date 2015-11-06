@@ -31,10 +31,12 @@ struct ModuleInfo
     options::OptionMap options;        //!< Options for the module
 
 
-    ModuleInfo(void)                    = default;
-    ModuleInfo(const ModuleInfo & rhs)  = default;
-    ModuleInfo(ModuleInfo && rhs)       = default;
-    ~ModuleInfo(void)                   = default;
+    ModuleInfo(void)                               = default;
+    ModuleInfo(const ModuleInfo & rhs)             = default;
+    ModuleInfo(ModuleInfo && rhs)                  = default;
+
+    ModuleInfo & operator=(const ModuleInfo & rhs) = default;
+    ~ModuleInfo(void)                              = default;
 
 
     /*! \brief Construct from a python dictionary

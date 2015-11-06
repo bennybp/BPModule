@@ -12,13 +12,13 @@
 
 #include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/datastore/GenericHolder.hpp"
-
+#include "bpmodule/modulelocator/ModuleInfo.hpp"
 
 namespace bpmodule {
 namespace datastore {
 
 
-/*! \brief A mapping of strings to arbirtrary data with some copy-on-write semantics
+/*! \brief A mapping of arbirtrary data with some copy-on-write semantics
  *
  * A PropertyMap can store an arbitrary data type, as long that data type
  * has a copy and move constructor. Once stored, the data itself is immutable.
@@ -28,13 +28,13 @@ namespace datastore {
  * another. Erasing or replacing the data in one map leaves the references
  * in any other maps referencing this data untouched.
  *
- * Additional information can be stored by instantiating the class with a structure
- * INFO that contains additional information
+ * \tparam KEYTYPE the type of key to use in the map.
  */
+template<typename KEYTYPE>
 class PropertyMap
 {
     public:
-        PropertyMap(void)  = default;
+        PropertyMap(void)          = default;
         virtual ~PropertyMap(void) = default;
 
 
@@ -74,22 +74,12 @@ class PropertyMap
 
 
 
-        /*! \brief Construct via python list of tuples
-         * 
-         * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
-         *
-         * \param [in] olist A python list containing objects to copy into this map
-         */  
-        PropertyMap(const boost::python::list & olist);
-
-
-
         /*! \brief Determine if this object contains data for a key
          *
          * \param [in] key The key to the data
          * \return True if the key exists, false otherwise
          */
-        bool Has(const std::string & key) const
+        bool HasKey(const KEYTYPE & key) const
         {
             return opmap_.count(key);
         }
@@ -104,12 +94,13 @@ class PropertyMap
          * \return True if the key exists and is of type T, false otherwise
          */
         template<typename T>
-        bool HasType(const std::string & key) const
+        bool HasType(const KEYTYPE & key) const
         {
-            if(!Has(key))
+            if(!HasKey(key))
                 return false;
 
-            return GetOrThrow_(key).value->IsType<T>();
+            // craziest syntax
+            return GetOrThrow_(key).value->template IsType<T>();
         }
 
 
@@ -122,10 +113,26 @@ class PropertyMap
          * \param [in] key The key to the data
          * \return A string representing the type for a key
          */
-        std::string GetType(const std::string & key) const
+        std::string GetType(const KEYTYPE & key) const
         {
             return GetOrThrow_(key).value->Type();
         }
+
+
+
+        /*! \brief Get a string representing the type for a given key (demangled)
+         *
+         * \throw bpmodule::exception::MapException
+         *        if the key doesn't exist
+         *
+         * \param [in] key The key to the data
+         * \return A string representing the type for a key
+         */
+        std::string GetDemangledType(const KEYTYPE & key) const
+        {
+            return GetOrThrow_(key).value->DemangledType();
+        }
+
 
 
 
@@ -133,13 +140,27 @@ class PropertyMap
          * 
          * \return A vector of strings containing all the keys
          */
-        std::vector<std::string> GetKeys(void) const
+        std::vector<KEYTYPE> GetKeys(void) const
         {
             std::vector<std::string> v;
             v.reserve(opmap_.size());
             for(auto & it : opmap_)
                 v.push_back(it.first);
             return v;
+        }
+
+
+
+        /*! \brief Returns the source of the information
+         *
+         * \throw bpmodule::exception::MapException
+         *        if the key doesn't exist
+         *
+         * \param [in] key The key to the data
+         */
+        modulelocator::ModuleInfo GetSource(const KEYTYPE & key) const
+        {
+            return GetOrThrow_(key).source;   
         }
 
 
@@ -174,7 +195,7 @@ class PropertyMap
          * \return A const referance to the data
          */
         template<typename T>
-        const T & GetRef(const std::string & key) const
+        const T & GetRef(const KEYTYPE & key) const
         {
             const detail::GenericHolder<T> * ph = GetOrThrow_Cast_<T>(key);
             return ph->GetRef();
@@ -194,10 +215,12 @@ class PropertyMap
          * \return A copy of the data
          */
         template<typename T>
-        T GetCopy(const std::string & key) const
+        T GetCopy(const KEYTYPE & key) const
         {
             return GetRef<T>(key);
         }
+
+
 
 
 
@@ -215,13 +238,11 @@ class PropertyMap
          * \param [in] value The data to store
          */
         template<typename T>
-        void Set(const std::string & key, const T & value)
+        void Set(const KEYTYPE & key, const T & value, const modulelocator::ModuleInfo & source)
         {
             detail::GenericBasePtr v(new detail::GenericHolder<T>(value));
-            Set_(key, std::move(v));
+            Set_(key, std::move(v), source);
         }
-
-
 
 
 
@@ -230,7 +251,7 @@ class PropertyMap
          * \copydetails Set
          */
         template<typename T>
-        void Take(const std::string & key, T && value)
+        void Take(const KEYTYPE & key, T && value, const modulelocator::ModuleInfo & source)
         {
             detail::GenericBasePtr v(new detail::GenericHolder<T>(std::move(value)));
             Set_(key, std::move(v));
@@ -252,7 +273,7 @@ class PropertyMap
          * \param [in] other The other object from which to get the data
          * \param [in] key The key of the object in the other object
          */
-        void SetRef(const PropertyMap & other, const std::string & key)
+        void SetRef(const PropertyMap<KEYTYPE> & other, const KEYTYPE & key)
         {
             //Setref with the same key
             SetRef(other, key, key);
@@ -263,7 +284,7 @@ class PropertyMap
         /*! \copydoc SetRef
          * \param [in] newkey The key under which to store the data in this object
          */
-        void SetRef(const PropertyMap & other, const std::string & key, const std::string & newkey)
+        void SetRef(const PropertyMap<KEYTYPE> & other, const KEYTYPE & key, const KEYTYPE & newkey)
         {
             // get the shared ptr, etc, from the other property map
             // This should copy the shared_ptr
@@ -291,11 +312,49 @@ class PropertyMap
          * \param [in] key The key to the data
          * \return The number of elements removed
          */
-        size_t Erase(const std::string & key)
+        size_t Erase(const KEYTYPE & key)
         {
             return opmap_.erase(key);
         }
 
+
+
+        ///////////////////////////////////
+        // Python functions
+        ///////////////////////////////////
+
+        /*! \copydoc GetCopy
+         *
+         * Returns the data as a python object. 
+         *
+         * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
+         */
+        boost::python::object GetCopyPy(const KEYTYPE & key) const
+        {
+            // may throw
+            return GetOrThrow_(key).value->GetPy();
+        }
+
+
+        /*! \copydoc Set
+         *
+         * Copies the internal python data to a C++ type. Specializes the templated function.
+         *
+         * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
+         */
+        void SetPy(const KEYTYPE & key, const boost::python::object & value, const modulelocator::ModuleInfo & source)
+        {
+            // catch errors from conversions in GenericHolderFactory
+            try {
+                Set_(key, detail::GenericHolderFactory(value), source);
+            }
+            catch(exception::GeneralException & ex)
+            {
+                // append key info if GenericHolderFactory throws
+                ex.AppendInfo("mapkey", key);
+                throw;
+            }
+        }
 
 
 
@@ -307,15 +366,12 @@ class PropertyMap
         // Actual storage of the data //
         ////////////////////////////////
 
-
-
         /*! \brief Stores a pointer to a placeholder, plus some other information
-         *
-         * May be expanded in the future. 
          */
         struct PropMapEntry
         {
-            detail::GenericBasePtr value;
+            detail::GenericBasePtr value;      //! The stored data
+            modulelocator::ModuleInfo source;  //! Where the data came from
         };
 
 
@@ -343,7 +399,7 @@ class PropertyMap
          * \param [in] key Key of the data to get
          * \return PropMapEntry containing the data for the given key
          */ 
-        PropMapEntry & GetOrThrow_(const std::string & key)
+        PropMapEntry & GetOrThrow_(const KEYTYPE & key)
         {
             if(opmap_.count(key))
                 return opmap_.at(key);
@@ -356,7 +412,7 @@ class PropertyMap
 
 
         //! \copydoc GetOrThrow_
-        const PropMapEntry & GetOrThrow_(const std::string & key) const
+        const PropMapEntry & GetOrThrow_(const KEYTYPE & key) const
         {
             if(opmap_.count(key))
                 return opmap_.at(key);
@@ -378,7 +434,7 @@ class PropertyMap
          * \return detail::GenericHolder containing the data for the given key
          */ 
         template<typename T>
-        const detail::GenericHolder<T> * GetOrThrow_Cast_(const std::string & key) const
+        const detail::GenericHolder<T> * GetOrThrow_Cast_(const KEYTYPE & key) const
         {
             const PropMapEntry & pme = GetOrThrow_(key);
             const detail::GenericHolder<T> * ph = dynamic_cast<const detail::GenericHolder<T> *>(pme.value.get());
@@ -401,7 +457,7 @@ class PropertyMap
          * \param [in] key Key of the data to set
          * \param [in] value Pointer to the data to set
          */ 
-        void Set_(const std::string & key, detail::GenericBasePtr && value)
+        void Set_(const KEYTYPE & key, detail::GenericBasePtr && value, const modulelocator::ModuleInfo & source)
         {
             if(opmap_.count(key))
             {
@@ -410,7 +466,7 @@ class PropertyMap
             }
             else
             {
-                PropMapEntry phe{std::move(value)};
+                PropMapEntry phe{std::move(value), source};
 
                 // emplace has strong exception guarantee
                 opmap_.emplace(key, std::move(phe));
@@ -422,23 +478,6 @@ class PropertyMap
 
 };
 
-
-/*! \copydoc GetCopy
- *
- * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
- */
-template<>
-boost::python::object PropertyMap::GetCopy<>(const std::string & key) const;
-
-
-/*! \copydoc Set
- *
- * Copies the internal python data to a C++ type. Specializes the templated function.
- *
- * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
- */
-template<>
-void PropertyMap::Set<>(const std::string & key, const boost::python::object & value);
 
 
 

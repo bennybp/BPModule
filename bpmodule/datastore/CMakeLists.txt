@@ -1,6 +1,5 @@
 set(BPMODULE_DATASTORE_FILES
             GenericHolder.cpp
-            PropertyMap_python.cpp
             export.cpp
    )
   
