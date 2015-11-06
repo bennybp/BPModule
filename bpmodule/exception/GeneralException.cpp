@@ -8,9 +8,6 @@
 #include <sstream>
 
 #include "bpmodule/exception/GeneralException.hpp"
-#include "bpmodule/output/Output.hpp"
-#include "bpmodule/util/FormatString.hpp"
-#include "bpmodule/util/StringUtil.hpp"
 
 
 namespace bpmodule {
@@ -54,12 +51,14 @@ const char * GeneralException::what(void) const noexcept
 
 std::string GeneralException::ExceptionString(void) const
 {
+    // This is made to explicitly NOT depend on other core modules
+    // so it duplicates some minor stuff (formatting, line, etc)
     ExceptionInfo exinfo = GetInfo();
     std::stringstream ss;
-    util::FormatStream(ss, "\n");
-    util::FormatStream(ss, util::Line('*'));
-    util::FormatStream(ss, "Exception thrown!\n");
-    util::FormatStream(ss, "what() = %1%\n", what());
+    ss << "\n";
+    ss << std::string(80, '*') << "\n";
+    ss << "Exception thrown!\n";
+    ss << "what() = " << what() << "\n"; 
     for(auto & it : exinfo)
     {
         if(it.second.size())
@@ -68,10 +67,18 @@ std::string GeneralException::ExceptionString(void) const
             std::string str;
             std::getline(sstr, str);
 
-            util::FormatStream(ss, "%|24| : %|-|\n", it.first, str);
+            auto oldw = ss.width(24);
+            ss << it.first;
+            ss.width(oldw);
+            ss << " : " << str << "\n";
 
             while(std::getline(sstr, str).good())
-                util::FormatStream(ss, "%|24|       %|-|\n", "", str);
+            {
+                oldw = ss.width(24);
+                ss << " ";
+                ss.width(oldw);
+                ss << "     " << str << "\n";
+            }
         }
     }
     return ss.str();

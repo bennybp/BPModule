@@ -12,17 +12,22 @@ import importlib
 olddl = sys.getdlopenflags()
 sys.setdlopenflags(os.RTLD_LAZY | os.RTLD_GLOBAL)
 
-# TODO - can we get some order that will work with RTLD_NOW
-from . import mangle
+# Standalone (don't depend on other core modules)
 from . import exception
+from . import mangle
+
+
+# TODO - can we get some order that will work with RTLD_NOW?
+# Probably not - there are circular dependencies
+# (modulelocator and modulebase, for example)
 from . import python_helper
-from . import output
 from . import util
+from . import output
+from . import options
 from . import parallel
 from . import math
 from . import tensor
 from . import datastore
-from . import options
 from . import modulebase
 from . import modulelocator
 from . import molecule
