@@ -153,7 +153,7 @@ std::ostream & GetOut(void);
  * \param [in] Fargs The arguments to the format string
  */
 template<typename... Targs>
-void Output(std::ostream & out, const std::string & fmt, Targs... Fargs)
+void Output(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 {
     detail::Output_(out, detail::OutputType::Output, util::FormatString(fmt, Fargs...));
 }
@@ -175,7 +175,7 @@ void Output(std::ostream & out, const std::string & fmt, Targs... Fargs)
  * \param [in] Fargs The arguments to the format string
  */
 template<typename... Targs>
-void Output(const std::string & fmt, Targs... Fargs)
+void Output(const std::string & fmt, const Targs&... Fargs)
 {
     Output(GetOut(), fmt, Fargs...);
 }
@@ -191,7 +191,7 @@ void Output(const std::string & fmt, Targs... Fargs)
  * \copydetails Output(std::ostream &, const std::string &, Targs...)
  */
 template<typename... Targs>
-void Changed(std::ostream & out, const std::string & fmt, Targs... Fargs)
+void Changed(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 {
     detail::Output_(out, detail::OutputType::Changed, util::FormatString(fmt, Fargs...));
 }
@@ -201,7 +201,7 @@ void Changed(std::ostream & out, const std::string & fmt, Targs... Fargs)
  * \copydetails Output(const std::string &, Targs...)
  */
 template<typename... Targs>
-void Changed(const std::string & fmt, Targs... Fargs)
+void Changed(const std::string & fmt, const Targs&... Fargs)
 {
     Changed(GetOut(), fmt, Fargs...);
 }
@@ -216,7 +216,7 @@ void Changed(const std::string & fmt, Targs... Fargs)
  * \copydetails Output(std::ostream &, const std::string &, Targs...)
  */
 template<typename... Targs>
-void Error(std::ostream & out, const std::string & fmt, Targs... Fargs)
+void Error(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 {
     detail::Output_(out, detail::OutputType::Error, util::FormatString(fmt, Fargs...));
 }
@@ -226,7 +226,7 @@ void Error(std::ostream & out, const std::string & fmt, Targs... Fargs)
  * \copydetails Output(const std::string &, Targs...)
  */
 template<typename... Targs>
-void Error(const std::string & fmt, Targs... Fargs)
+void Error(const std::string & fmt, const Targs&... Fargs)
 {
     Error(GetOut(), fmt, Fargs...);
 }
@@ -240,7 +240,7 @@ void Error(const std::string & fmt, Targs... Fargs)
  * \copydetails Output(std::ostream &, const std::string &, Targs...)
  */
 template<typename... Targs>
-void Warning(std::ostream & out, const std::string & fmt, Targs... Fargs)
+void Warning(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 {
     detail::Output_(out, detail::OutputType::Warning, util::FormatString(fmt, Fargs...));
 }
@@ -250,7 +250,7 @@ void Warning(std::ostream & out, const std::string & fmt, Targs... Fargs)
  * \copydetails Output(const std::string &, Targs...)
  */
 template<typename... Targs>
-void Warning(const std::string & fmt, Targs... Fargs)
+void Warning(const std::string & fmt, const Targs&... Fargs)
 {
     Warning(GetOut(), fmt, Fargs...);
 }
@@ -265,7 +265,7 @@ void Warning(const std::string & fmt, Targs... Fargs)
  * \copydetails Output(std::ostream &, const std::string &, Targs...)
  */
 template<typename... Targs>
-void Success(std::ostream & out, const std::string & fmt, Targs... Fargs)
+void Success(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 {
     detail::Output_(out, detail::OutputType::Success, util::FormatString(fmt, Fargs...));
 }
@@ -275,7 +275,7 @@ void Success(std::ostream & out, const std::string & fmt, Targs... Fargs)
  * \copydetails Output(const std::string &, Targs...)
  */
 template<typename... Targs>
-void Success(const std::string & fmt, Targs... Fargs)
+void Success(const std::string & fmt, const Targs&... Fargs)
 {
     Success(GetOut(), fmt, Fargs...);
 }
@@ -291,7 +291,7 @@ void Success(const std::string & fmt, Targs... Fargs)
  * \copydetails Output(std::ostream &, const std::string &, Targs...)
  */
 template<typename... Targs>
-void Debug(std::ostream & out, const std::string & fmt, Targs... Fargs)
+void Debug(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 {
     detail::Output_(out, detail::OutputType::Debug, util::FormatString(fmt, Fargs...));
 }
@@ -301,7 +301,7 @@ void Debug(std::ostream & out, const std::string & fmt, Targs... Fargs)
  * \copydetails Output(const std::string &, Targs...)
  */
 template<typename... Targs>
-void Debug(const std::string & fmt, Targs... Fargs)
+void Debug(const std::string & fmt, const Targs&... Fargs)
 {
     Debug(GetOut(), fmt, Fargs...);
 }

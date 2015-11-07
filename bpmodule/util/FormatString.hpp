@@ -50,7 +50,8 @@ inline void FormatStream(std::ostream & os, const boost::format & bfmt)
  * \param [in] Fargs The arguments to the format string
  */
 template<typename T, typename... Targs>
-void FormatStream(std::ostream & os, boost::format & bfmt, T targ, Targs... Fargs)
+void FormatStream(std::ostream & os, boost::format & bfmt,
+                  const T & targ, const Targs&... Fargs)
 {
     bfmt % targ;
     FormatStream(os, bfmt, Fargs...);
@@ -75,7 +76,8 @@ void FormatStream(std::ostream & os, boost::format & bfmt, T targ, Targs... Farg
  * \param [in] Fargs The arguments to the format string
  */
 template<typename... Targs>
-void FormatStream(std::ostream & os, const std::string & fmt, Targs... Fargs)
+void FormatStream(std::ostream & os, const std::string & fmt,
+                  const Targs&... Fargs)
 {
     boost::format bfmt(fmt);
     detail::FormatStream(os, bfmt, Fargs...);
@@ -111,7 +113,7 @@ inline void FormatStream(std::ostream & os, const std::string & fmt)
  * \param [in] Fargs The arguments to the format string
  */
 template<typename... Targs>
-std::string FormatString(const std::string & fmt, Targs... Fargs)
+std::string FormatString(const std::string & fmt, const Targs&... Fargs)
 {
     std::stringstream ss;
     FormatStream(ss, fmt, Fargs...);
