@@ -267,17 +267,7 @@ void OptionHolder<T>::ChangePy(const boost::python::object & obj)
 template<typename T>
 static std::string OptToString_(const T & opt)
 {
-    return std::to_string(opt);
-}
-
-
-/*! \brief Converts an option value to a string
- *
- * Overload for string types
- */
-static std::string OptToString_(const std::string & opt)
-{
-    return opt;
+    return FormatString("%1%", opt);
 }
 
 
