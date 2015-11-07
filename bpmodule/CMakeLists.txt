@@ -50,6 +50,7 @@ set(BPMODULE_EXCEPTION_HEADERS
             exception/ModuleLoadException.hpp
             exception/ModuleCreateException.hpp
             exception/ModuleLocatorException.hpp
+            exception/DataStoreException.hpp
    )
 
 set(BPMODULE_PARALLEL_HEADERS
