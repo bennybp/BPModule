@@ -30,7 +30,7 @@ class PythonConvertException : public GeneralException
         PythonConvertException(std::string whatstr,
                                std::string fromtype,
                                std::string totype,
-                               Targs... exinfo)
+                               const Targs&... exinfo)
 
             : GeneralException(whatstr, "fromtype", fromtype, "totype", totype, exinfo...)
         { }
@@ -49,7 +49,7 @@ class PythonConvertException : public GeneralException
         PythonConvertException(const GeneralException & gex,
                                std::string fromtype,
                                std::string totype,
-                               Targs... exinfo)
+                               const Targs&... exinfo)
             : GeneralException(gex, "fromtype", fromtype, "totype", totype, exinfo...)
         { }
 

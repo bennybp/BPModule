@@ -26,7 +26,7 @@ class ModuleLocatorException : public GeneralException
          */
         template<typename... Targs>
         ModuleLocatorException(std::string whatstr,
-                             Targs... exinfo)
+                             const Targs&... exinfo)
             : GeneralException(whatstr, exinfo...)
         { }
 
@@ -40,7 +40,7 @@ class ModuleLocatorException : public GeneralException
          */
         template<typename... Targs>
         ModuleLocatorException(const GeneralException & gex,
-                              Targs... exinfo)
+                              const Targs&... exinfo)
             : GeneralException(gex, exinfo...)
         { }
 

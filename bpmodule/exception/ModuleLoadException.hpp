@@ -34,7 +34,7 @@ class ModuleLoadException : public GeneralException
                             std::string path,
                             std::string key,
                             std::string name,
-                            Targs... exinfo)
+                            const Targs&... exinfo)
             : GeneralException(whatstr, "path", path, "key", key, "name", name, exinfo...)
         { }
 
@@ -54,7 +54,7 @@ class ModuleLoadException : public GeneralException
                             std::string path,
                             std::string key,
                             std::string name,
-                            Targs... exinfo)
+                            const Targs&... exinfo)
             : GeneralException(gex, "path", path, "key", key, "name", name, exinfo...)
         { }
 

@@ -29,7 +29,7 @@ class MoleculeException : public GeneralException
          */
         template<typename... Targs>
         MoleculeException(std::string whatstr,
-                        Targs... exinfo)
+                        const Targs&... exinfo)
 
             : GeneralException(whatstr, exinfo...)
         { }
@@ -43,7 +43,7 @@ class MoleculeException : public GeneralException
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        MoleculeException(const GeneralException & gex, Targs... exinfo)
+        MoleculeException(const GeneralException & gex, const Targs&... exinfo)
             : GeneralException(gex, exinfo...)
         { }
 

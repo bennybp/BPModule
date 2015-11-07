@@ -28,7 +28,7 @@ class MathException : public GeneralException
          */
         template<typename... Targs>
         MathException(std::string whatstr,
-                        Targs... exinfo)
+                        const Targs&... exinfo)
 
             : GeneralException(whatstr, exinfo...)
         { }
@@ -42,7 +42,7 @@ class MathException : public GeneralException
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        MathException(const GeneralException & gex, Targs... exinfo)
+        MathException(const GeneralException & gex, const Targs&... exinfo)
             : GeneralException(gex, exinfo...)
         { }
 

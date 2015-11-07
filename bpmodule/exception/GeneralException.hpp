@@ -13,6 +13,7 @@
 #include <vector>
 #include <string>
 #include <utility>
+#include <sstream>
 
 
 namespace bpmodule {
@@ -38,7 +39,7 @@ class GeneralException : public std::exception
          *
          * \param [in] whatstr Some descriptive string
          */
-        GeneralException(std::string whatstr)
+        GeneralException(const std::string & whatstr)
             : whatstr_(whatstr)
         { }
 
@@ -50,7 +51,7 @@ class GeneralException : public std::exception
          * \param [in] exinfo Pairs of strings with other information.
          */
         template<typename... Targs>
-        GeneralException(std::string whatstr, Targs... exinfo)
+        GeneralException(std::string whatstr, const Targs& ... exinfo)
             : whatstr_(whatstr)
         {
             // check that there is an even number of exinfo
@@ -68,7 +69,7 @@ class GeneralException : public std::exception
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        GeneralException(const GeneralException & gex, Targs... exinfo)
+        GeneralException(const GeneralException & gex, const Targs&... exinfo)
             : GeneralException(gex)
         {
             // check that there is an even number of exinfo
@@ -92,6 +93,7 @@ class GeneralException : public std::exception
         const ExceptionInfo & GetInfo(void) const noexcept;
 
 
+
         /*! \brief Get some specific additional information
          *
          * If the field doesn't exist, a string "(field not found)" is returned instead.
@@ -106,22 +108,16 @@ class GeneralException : public std::exception
 
         /*! \brief Add information to this exception object
          *
-         * \p value is converted to a string via std::to_string
+         * \p value is converted via stringstreams
          */
         template<typename T>
         void AppendInfo(const std::string & key, const T & value)
         {
-            AppendInfo(key, std::to_string(value));
+            std::stringstream ss;
+            ss << value;
+            AppendInfo(key, ss.str());
         }
 
-        /*! \brief Add information to this exception object
-         *
-         * Overload for const char * (since there isn't a std::to_string for const char *)
-         */
-        void AppendInfo(const std::string & key, const char * value)
-        {
-            AppendInfo(key, std::string(value));
-        }
 
 
         /*! \brief Add information to this exception object
@@ -131,12 +127,14 @@ class GeneralException : public std::exception
         void AppendInfo(void);
 
 
+
         /*! \brief Add information to this exception object
          *
          * There must be an even number of arguments.
          */
         template<typename... Targs>
-        void AppendInfo(const std::string & key, const std::string & value, Targs... exinfo)
+        void AppendInfo(const std::string & key, const std::string & value,
+                        const Targs&... exinfo)
         {
             static_assert( (sizeof...(exinfo) % 2) == 0,
                            "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
@@ -148,29 +146,15 @@ class GeneralException : public std::exception
         /*! \brief Add information to this exception object
          *
          * There must be an even number of arguments.
-         *
-         * \p value is converted to a string via std::to_string
          */
         template<typename T, typename... Targs>
-        void AppendInfo(const std::string & key, const T & value, Targs... exinfo)
+        void AppendInfo(const std::string & key, const T & value,
+                        const Targs&... exinfo)
         {
-            AppendInfo(key, std::to_string(value));
+            AppendInfo(key, value);
             AppendInfo(exinfo...);
         }
 
-
-        /*! \brief Add information to this exception object
-         *
-         * There must be an even number of arguments.
-         *
-         * \p value is converted to a string via std::to_string
-         */
-        template<typename... Targs>
-        void AppendInfo(const std::string & key, const char * value, Targs... exinfo)
-        {
-            AppendInfo(key, std::string(value));
-            AppendInfo(exinfo...);
-        }
 
 
         /*! \brief Add information to this exception object
@@ -179,8 +163,10 @@ class GeneralException : public std::exception
          *
          * There must be an even number of arguments.
          */
-        template<typename... Targs>
-        void AppendInfo(const std::string & key, const std::vector<std::string> & value, Targs... exinfo)
+        template<typename T, typename... Targs>
+        void AppendInfo(const std::string & key,
+                        const std::vector<T> & value,
+                        const Targs&... exinfo)
         {
             static_assert( (sizeof...(exinfo) % 2) == 0,
                            "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
@@ -188,12 +174,13 @@ class GeneralException : public std::exception
 
             // this is done manually
             // to prevent a dependence on other core modules
+            std::stringstream ss;
             if(value.size())
-                str = value[0];
+                ss << value[0];
             for(size_t i = 1; i < value.size(); i++)
-                str = str + "\n" + value[i];
+                ss << "\n" << value[i];
 
-            AppendInfo(key, str);
+            AppendInfo(key, ss.str());
             AppendInfo(exinfo...);
         }
 
@@ -219,4 +206,5 @@ class GeneralException : public std::exception
 
 } // close namespace exception
 } // close namespace bpmodule
+
 #endif

@@ -1,12 +1,12 @@
 /*! \file
  *
- * \brief An exception for options handling
+ * \brief An exception for data storage (CalcData, etc)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
 
-#ifndef _GUARD_OPTIONEXCEPTION_HPP_
-#define _GUARD_OPTIONEXCEPTION_HPP_
+#ifndef _GUARD_DATASTOREEXCEPTION_HPP_
+#define _GUARD_DATASTOREEXCEPTION_HPP_
 
 #include "bpmodule/exception/GeneralException.hpp"
 
@@ -18,7 +18,7 @@ namespace exception {
  *
  * This may be thrown on validation errors, etc.
  */
-class OptionException : public GeneralException
+class DataStoreException : public GeneralException
 {
     public:
         /*! \brief Constructor
@@ -28,11 +28,11 @@ class OptionException : public GeneralException
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        OptionException(std::string whatstr,
+        DataStoreException(std::string whatstr,
                         std::string key,
                         const Targs&... exinfo)
 
-            : GeneralException(whatstr, "optionkey", key, exinfo...)
+            : GeneralException(whatstr, "datakey", key, exinfo...)
         { }
 
 
@@ -42,25 +42,25 @@ class OptionException : public GeneralException
          * Can be used to append additional information
          *
          * \param [in] gex Exception to copy
-         * \param [in] key  Key of the option
+         * \param [in] key Key causing the issue
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        OptionException(const GeneralException & gex, std::string key, const Targs&... exinfo)
-            : GeneralException(gex, "optionkey", key, exinfo...)
+        DataStoreException(const GeneralException & gex, std::string key, const Targs&... exinfo)
+            : GeneralException(gex, "datakey", key, exinfo...)
         { }
 
 
-        OptionException()                                        = delete;
-        OptionException(const OptionException & rhs)             = default;
-        OptionException(OptionException && rhs)                  = default;
-        OptionException & operator=(const OptionException & rhs) = default;
-        OptionException & operator=(OptionException && rhs)      = default;
-        virtual ~OptionException() = default;
+        DataStoreException()                                        = delete;
+        DataStoreException(const DataStoreException & rhs)             = default;
+        DataStoreException(DataStoreException && rhs)                  = default;
+        DataStoreException & operator=(const DataStoreException & rhs) = default;
+        DataStoreException & operator=(DataStoreException && rhs)      = default;
+        virtual ~DataStoreException() = default;
 
 
         //! Return the key of the option with problems
-        const char * Key(void) const noexcept     { return GeneralException::GetField("optionkey");  }
+        const char * Key(void) const noexcept     { return GeneralException::GetField("datakey");  }
 };
 
 
