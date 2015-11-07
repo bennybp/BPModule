@@ -10,7 +10,7 @@
 
 #include <map>
 
-#include "bpmodule/exception/GeneralException.hpp"
+#include "bpmodule/exception/DataStoreException.hpp"
 #include "bpmodule/datastore/GenericHolder.hpp"
 #include "bpmodule/modulelocator/ModuleInfo.hpp"
 
@@ -107,7 +107,7 @@ class PropertyMap
 
         /*! \brief Get a string representing the type for a given key
          *
-         * \throw bpmodule::exception::MapException
+         * \throw bpmodule::exception::DataStoreException
          *        if the key doesn't exist 
          *
          * \param [in] key The key to the data
@@ -122,7 +122,7 @@ class PropertyMap
 
         /*! \brief Get a string representing the type for a given key (demangled)
          *
-         * \throw bpmodule::exception::MapException
+         * \throw bpmodule::exception::DataStoreException
          *        if the key doesn't exist
          *
          * \param [in] key The key to the data
@@ -153,7 +153,7 @@ class PropertyMap
 
         /*! \brief Returns the source of the information
          *
-         * \throw bpmodule::exception::MapException
+         * \throw bpmodule::exception::DataStoreException
          *        if the key doesn't exist
          *
          * \param [in] key The key to the data
@@ -185,7 +185,7 @@ class PropertyMap
 
         /*! \brief Return a const reference to the underlying data
          *
-         * \throw bpmodule::exception::MapException
+         * \throw bpmodule::exception::DataStoreException
          *        if the key doesn't exist or 
          *        is of the wrong type
          *
@@ -205,7 +205,7 @@ class PropertyMap
 
         /*! \brief Return a copy of the underlying data
          *
-         * \throw bpmodule::exception::MapException
+         * \throw bpmodule::exception::DataStoreException
          *        if the key doesn't exist or 
          *        is of the wrong type
          *
@@ -266,7 +266,7 @@ class PropertyMap
          * affect the other map. If the key already exists in this map, it is
          * replaced.
          *
-         * \throw bpmodule::exception:MapException if the key is not found in the other map
+         * \throw bpmodule::exception:DataStoreException if the key is not found in the other map
          *
          * \exstrong
          *
@@ -348,7 +348,7 @@ class PropertyMap
             try {
                 Set_(key, detail::GenericHolderFactory(value), source);
             }
-            catch(exception::GeneralException & ex)
+            catch(exception::DataStoreException & ex)
             {
                 // append key info if GenericHolderFactory throws
                 ex.AppendInfo("mapkey", key);
@@ -392,7 +392,7 @@ class PropertyMap
 
         /*! \brief Obtains a PropMapEntry or throws if key doesn't exist
          * 
-         * \throw bpmodule::exception::MapException if key doesn't exist
+         * \throw bpmodule::exception::DataStoreException if key doesn't exist
          *
          * \exstrong
          *
@@ -404,9 +404,8 @@ class PropertyMap
             if(opmap_.count(key))
                 return opmap_.at(key);
             else
-                throw exception::GeneralException("Key not found",
-                                                  "location", "PropertyMap",
-                                                  "mapkey", key); 
+                throw exception::DataStoreException("Key not found", key,
+                                                    "location", "PropertyMap");
         }
 
 
@@ -417,9 +416,8 @@ class PropertyMap
             if(opmap_.count(key))
                 return opmap_.at(key);
             else
-                throw exception::GeneralException("Key not found",
-                                                  "location", "PropertyMap",
-                                                  "mapkey", key); 
+                throw exception::DataStoreException("Key not found", key,
+                                                    "location", "PropertyMap");
         }
 
 
@@ -427,7 +425,7 @@ class PropertyMap
 
         /*! \brief Obtains a pointer to a GenericHolder cast to desired type
          * 
-         * \throw bpmodule::exception::MapException if key 
+         * \throw bpmodule::exception::DataStoreException if key 
          *        doesn't exist or if the cast fails.
          *
          * \param [in] key Key of the data to get
@@ -439,11 +437,10 @@ class PropertyMap
             const PropMapEntry & pme = GetOrThrow_(key);
             const detail::GenericHolder<T> * ph = dynamic_cast<const detail::GenericHolder<T> *>(pme.value.get());
             if(ph == nullptr)
-                throw exception::GeneralException("Bad cast",
-                                                  "location", "PropertyMap",
-                                                  "mapkey", key,
-                                                  "fromtype", pme.value->Type(),
-                                                  "totype", typeid(T).name()); 
+                throw exception::DataStoreException("Bad cast", key,
+                                                    "location", "PropertyMap",
+                                                    "fromtype", pme.value->Type(),
+                                                    "totype", typeid(T).name()); 
 
             return ph;
         }
