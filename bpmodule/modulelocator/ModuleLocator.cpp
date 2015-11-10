@@ -125,12 +125,27 @@ void ModuleLocator::DeleteObject_(unsigned long id)
     if(removemap_.count(id))
     {
         ModuleRemoverFunc dfunc = removemap_.at(id);
-        removemap_.erase(id);  // should always happen
-        minfomap_.erase(id); //! \todo remove after moving to tree
 
-        // throwing ok from here. Stuff has already been removed from this map
-        // (but this shouldn't really throw)
-        dfunc(id);
+        // Throwing from destructor is bad
+        bool destructorthrew = false;
+
+        try {
+            dfunc(id);
+        }
+        catch(...)
+        {
+            destructorthrew = true;
+        }
+
+        removemap_.erase(id);
+        minfomap_.erase(id);
+
+        if(destructorthrew)
+            throw exception::ModuleLocatorException("Destructor for a module threw an exception",
+                                                    "moduleid", id,
+                                                    "name", minfomap_.at(id).name,
+                                                    "key", minfomap_.at(id).key);
+
     }
 }
 
