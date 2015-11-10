@@ -96,22 +96,6 @@ void FormatStream(std::ostream & os, const std::string & fmt,
 
 
 
-/*! \brief Output a formatted string to a stream
- *
- * Overload for format string with no arguments
- *
- * \param [in] os The stream to output to
- * \param [in] fmt The format string to use
- */
-inline void FormatStream(std::ostream & os, const std::string & fmt)
-{
-    os << fmt;
-}
-
-
-
-
-
 /*! \brief Create a formatted string
  *
  * \throw bpmodule::exception::GeneralException for malformed inputs, etc
@@ -128,25 +112,6 @@ std::string FormatString(const std::string & fmt, const Targs&... Fargs)
     FormatStream(ss, fmt, Fargs...);
     return ss.str();
 }
-
-
-
-
-
-/*! \brief Create a formatted string
- *
- * Overload for format string with no arguments
- *
- * \param [in] fmt The format string to use
- */
-inline std::string FormatString(const std::string & fmt)
-{
-    return fmt;
-}
-
-
-
-
 
 
 
