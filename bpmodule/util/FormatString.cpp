@@ -28,53 +28,62 @@ namespace export_python {
 
 std::string FormatStringPy(const std::string & fmt, const boost::python::list & args)
 {
-    boost::format bfmt(fmt);
+    try {
 
-    int len = boost::python::extract<int>(args.attr("__len__")());
+        boost::format bfmt(fmt);
 
-    for(int i = 0; i < len; i++)
-    {
-        python_helper::PythonType pytype = python_helper::DeterminePyType(args[i]);
+        int len = boost::python::extract<int>(args.attr("__len__")());
 
-        switch(pytype)
+        for(int i = 0; i < len; i++)
         {
-            case python_helper::PythonType::Int:
+            python_helper::PythonType pytype = python_helper::DeterminePyType(args[i]);
+
+            switch(pytype)
             {
-                // make this safe for large signed and unsigned numbers
-                //! \todo Not much we can do if l < min() though...
-                boost::python::long_ l = extract<boost::python::long_>(args[i]);
-                if(l > std::numeric_limits<intmax_t>::max())
-                    bfmt % python_helper::ConvertToCpp<uintmax_t>(l);
-                else
-                    bfmt % python_helper::ConvertToCpp<intmax_t>(l);
-                break;
-            }
-            case python_helper::PythonType::Bool:
-            {   
-                bfmt % python_helper::ConvertToCpp<bool>(args[i]);
-                break;
-            }
-            case python_helper::PythonType::Float:
-            {   
-                bfmt % python_helper::ConvertToCpp<long double>(args[i]);
-                break;
-            }
-            case python_helper::PythonType::String:
-            {   
-                bfmt % python_helper::ConvertToCpp<std::string>(args[i]);
-                break;
-            }
-            default: //! \todo Throw exception when printing unknown python object?
-            {   
-                bfmt % static_cast<std::string>(extract<std::string>(args[i].attr("__str__")()));
+                case python_helper::PythonType::Int:
+                {
+                    // make this safe for large signed and unsigned numbers
+                    //! \todo Not much we can do if l < min() though...
+                    boost::python::long_ l = extract<boost::python::long_>(args[i]);
+                    if(l > std::numeric_limits<intmax_t>::max())
+                        bfmt % python_helper::ConvertToCpp<uintmax_t>(l);
+                    else
+                        bfmt % python_helper::ConvertToCpp<intmax_t>(l);
+                    break;
+                }
+                case python_helper::PythonType::Bool:
+                {   
+                    bfmt % python_helper::ConvertToCpp<bool>(args[i]);
+                    break;
+                }
+                case python_helper::PythonType::Float:
+                {   
+                    bfmt % python_helper::ConvertToCpp<long double>(args[i]);
+                    break;
+                }
+                case python_helper::PythonType::String:
+                {   
+                    bfmt % python_helper::ConvertToCpp<std::string>(args[i]);
+                    break;
+                }
+                default: //! \todo Throw exception when printing unknown python object?
+                {   
+                    bfmt % static_cast<std::string>(extract<std::string>(args[i].attr("__str__")()));
+                }
             }
         }
-    }
 
-    //! \todo can I just convert boost::format to a string?
-    std::stringstream ss;
-    detail::FormatStream(ss, bfmt);
-    return ss.str();
+        //! \todo can I just convert boost::format to a string?
+        std::stringstream ss;
+        detail::FormatStream(ss, bfmt);
+        return ss.str();
+    }
+    catch(const boost::io::format_error & ex)  // let other exceptions pass through
+    {
+        throw exception::GeneralException("Error in formatting a string or stream from python",
+                                          "bfmterr", ex.what(),
+                                          "fmt", fmt, "nargs", len);
+    }
 }
 
 

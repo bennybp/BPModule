@@ -14,6 +14,7 @@
 
 #include <boost/format.hpp>
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
+#include "bpmodule/exception/GeneralException.hpp"
 
 
 namespace bpmodule {
@@ -25,6 +26,8 @@ namespace detail {
 
 
 /*! \brief Output a boost::format object to a stream
+ *
+ * Terminates the variadic tempalates
  *
  * \throwno Throws boost exceptions for malformed inputs, etc
  *
@@ -67,7 +70,7 @@ void FormatStream(std::ostream & os, boost::format & bfmt,
 
 /*! \brief Output a formatted string to a stream
  *
- * \throwno Throws boost exceptions for malformed inputs, etc
+ * \throw bpmodule::exception::GeneralException for malformed inputs, etc
  *
  * \tparam Targs The types of the arguments to print
  *
@@ -79,8 +82,16 @@ template<typename... Targs>
 void FormatStream(std::ostream & os, const std::string & fmt,
                   const Targs&... Fargs)
 {
-    boost::format bfmt(fmt);
-    detail::FormatStream(os, bfmt, Fargs...);
+    try {
+      boost::format bfmt(fmt);
+      detail::FormatStream(os, bfmt, Fargs...);
+    }
+    catch(const boost::io::format_error & ex)
+    {
+        throw exception::GeneralException("Error in formatting a string or stream",
+                                          "bfmterr", ex.what(),
+                                          "fmt", fmt, "nargs", sizeof...(Fargs));
+    }
 }
 
 
@@ -88,8 +99,6 @@ void FormatStream(std::ostream & os, const std::string & fmt,
 /*! \brief Output a formatted string to a stream
  *
  * Overload for format string with no arguments
- *
- * \throwno Throws boost exceptions for malformed inputs, etc
  *
  * \param [in] os The stream to output to
  * \param [in] fmt The format string to use
@@ -105,7 +114,7 @@ inline void FormatStream(std::ostream & os, const std::string & fmt)
 
 /*! \brief Create a formatted string
  *
- * \throwno Throws boost exceptions for malformed inputs, etc
+ * \throw bpmodule::exception::GeneralException for malformed inputs, etc
  *
  * \tparam Targs The types of the arguments to print
  *
@@ -128,8 +137,6 @@ std::string FormatString(const std::string & fmt, const Targs&... Fargs)
  *
  * Overload for format string with no arguments
  *
- * \throwno Throws boost exceptions for malformed inputs, etc
- *
  * \param [in] fmt The format string to use
  */
 inline std::string FormatString(const std::string & fmt)
@@ -149,6 +156,10 @@ inline std::string FormatString(const std::string & fmt)
 namespace export_python {
 
 /*! \brief Create a format string from python
+ *
+ * \throw bpmodule::exception::GeneralException for malformed inputs, etc
+ * 
+ * \throw bpmodule::exception::PythonConvertException for some rare conversion problems
  *
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
