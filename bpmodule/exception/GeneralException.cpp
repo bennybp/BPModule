@@ -81,7 +81,19 @@ std::string GeneralException::ExceptionString(void) const
             }
         }
     }
-    return ss.str();
+
+    // escape the boost::format percent signs
+    std::string escaped;
+
+    for(const auto & it : ss.str())
+    {
+        if(it == '%')
+            escaped.append("%%");
+        else
+            escaped.push_back(it);
+    }
+
+    return escaped;
 }
 
 
