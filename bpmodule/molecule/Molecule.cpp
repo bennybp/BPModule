@@ -15,10 +15,10 @@ void Molecule::AddAtom(int z, CoordType xyz)
 {
     int isonum = MostCommonIsotopeFromZ(z);
 
-    atoms_.push_back(Atom(curid_, z, isonum,
+    atoms_.push_back(Atom{curid_, z, isonum,
                           IsotopeMassFromZ(z, isonum),
                           xyz
-                         ));
+                         });
     curid_++;
 }
 

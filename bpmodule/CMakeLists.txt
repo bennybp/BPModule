@@ -100,6 +100,7 @@ set(BPMODULE_MOLECULE_HEADERS
             molecule/AtomicInfo.hpp
             molecule/AtomicInfo_LUT.hpp
             molecule/Molecule.hpp
+            molecule/Atom.hpp
    )
 
 set(BPMODULE_BASISSET_HEADERS
