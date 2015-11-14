@@ -26,9 +26,15 @@ class Molecule
 
         void AddAtom(int Z, CoordType xyz);
 
+        Atom GetAtom(int i) const;
+
+        int NAtoms(void) const noexcept;
+
+
         // Iteration over all atoms
         const_iterator cbegin(void) const;
         const_iterator cend(void) const;
+
 
 
     private:

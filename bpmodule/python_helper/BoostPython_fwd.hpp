@@ -18,6 +18,7 @@ class object;
 using api::object;
 class list;
 class dict;
+class tuple;
 
 }
 }

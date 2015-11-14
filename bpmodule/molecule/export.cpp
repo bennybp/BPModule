@@ -10,6 +10,7 @@
 #include <boost/python/def.hpp>
 #include <boost/python/copy_const_reference.hpp>
 #include <boost/python/to_python_converter.hpp>
+#include <boost/python/tuple.hpp>
 
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/molecule/AtomicInfo.hpp"
@@ -17,6 +18,7 @@
 
 using namespace boost::python;
 using bpmodule::python_helper::CppToPyExport;
+using bpmodule::python_helper::ConvertToCpp;
 
 namespace bpmodule {
 namespace molecule {
@@ -28,6 +30,20 @@ namespace export_python {
 // Python won't use the to_python_converter. So we use add_property
 // instead and create a little wrapper function
 std::vector<IsotopeData> AtomicDataIsotopes_(AtomicData & ad) { return ad.isotopes; }
+
+
+
+// Molecule::AddAtom wrapper
+void Molecule_AddAtomWrapper(Molecule & mol, int Z, const boost::python::tuple & xyz)
+{
+    //! \todo check for tuple of length 3
+    double x = ConvertToCpp<double>(xyz[0]);
+    double y = ConvertToCpp<double>(xyz[1]);
+    double z = ConvertToCpp<double>(xyz[2]);
+    return mol.AddAtom(Z, {x, y, z});
+}
+
+
 
 
 BOOST_PYTHON_MODULE(molecule)
@@ -73,6 +89,25 @@ BOOST_PYTHON_MODULE(molecule)
     def("AtomicZNumberFromSym", AtomicZNumberFromSym);
     def("AtomicNameFromZ", AtomicNameFromZ);
     def("AtomicNameFromSym", AtomicNameFromSym);
+
+
+    // Atom structure
+    class_<Atom>("Atom", no_init)
+    .def_readwrite("id", &Atom::id)
+    .def_readwrite("z", &Atom::z)
+    .def_readwrite("isonum", &Atom::isonum)
+    .def_readwrite("mass", &Atom::mass)
+    .def_readwrite("xyz", &Atom::xyz)
+    ;
+
+    // Molecule class
+    class_<Molecule>("Molecule", init<>())
+    .def("AddAtom", Molecule_AddAtomWrapper)
+    .def("GetAtom", &Molecule::GetAtom)
+    .def("NAtoms", &Molecule::NAtoms)
+    ;
+
+
 }
 
 

@@ -15,7 +15,7 @@ import bpmodule as bp
 def Run():
     try:
 
-        tester = bp.testing.Tester("Testing construction of OptionMap objects")
+        tester = bp.testing.Tester("Testing molecule / atomic data")
         tester.PrintHeader()
 
         for i in range(1, 20):

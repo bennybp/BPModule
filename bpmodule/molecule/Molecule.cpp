@@ -23,6 +23,18 @@ void Molecule::AddAtom(int z, CoordType xyz)
 }
 
 
+//! \todo wrap exceptions
+Atom Molecule::GetAtom(int i) const
+{
+    return atoms_.at(i);
+}
+
+int Molecule::NAtoms(void) const noexcept
+{
+    return static_cast<int>(atoms_.size());
+}
+
+
 Molecule::const_iterator Molecule::cbegin(void) const
 {
     return atoms_.cbegin();

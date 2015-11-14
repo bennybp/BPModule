@@ -104,6 +104,7 @@ set(BPMODULE_MOLECULE_HEADERS
    )
 
 set(BPMODULE_BASISSET_HEADERS
+            basisset/GaussianShell.hpp
             basisset/BasisSet.hpp
    )
 
