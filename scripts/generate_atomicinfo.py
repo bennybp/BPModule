@@ -95,13 +95,13 @@ with bp_common.HeaderSourceFiles(outbase, "LUTs for Atomic Information",
     # First, atomic Z to symbol map
     src.f.write("extern const std::map<int, std::string> atomic_Z_sym_{\n")
     for k,v in sorted(atomicinfo.items()):
-        src.f.write("  {{ {:<5} , \"{:<5}\" }},\n".format(k, v["sym"]))
+        src.f.write("  {{ {} , \"{}\" }},\n".format(k, v["sym"]))
     src.f.write("}; // close atomic_Z_sym_\n\n\n")
 
     # Next, atomic symbol to Z
     src.f.write("extern const std::map<std::string, int, util::CaseInsensitiveCompare> atomic_sym_Z_{\n")
     for k,v in sorted(atomicinfo.items()):
-        src.f.write("  {{ \"{:<5}\" , {:<5} }},\n".format(v["sym"], k))
+        src.f.write("  {{ \"{}\" , {} }},\n".format(v["sym"], k))
     src.f.write("}; // close atomic_sym_Z_\n\n\n")
 
     # Next, full atomic data
