@@ -62,6 +62,8 @@ BOOST_PYTHON_MODULE(molecule)
     def("AtomicInfoFromSym", AtomicInfoFromSym, return_value_policy<copy_const_reference>());
     def("IsotopeInfoFromZ", IsotopeInfoFromZ, return_value_policy<copy_const_reference>());
     def("IsotopeInfoFromSym", IsotopeInfoFromSym, return_value_policy<copy_const_reference>());
+    def("MostCommonIsotopeFromZ", MostCommonIsotopeFromZ);
+    def("MostCommonIsotopeFromSym", MostCommonIsotopeFromSym);
 
     def("AtomicMassFromZ", AtomicMassFromZ);
     def("AtomicMassFromSym", AtomicMassFromSym);
