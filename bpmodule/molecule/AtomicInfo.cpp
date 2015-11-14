@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "bpmodule/molecule/AtomicInfo.hpp"
 #include "bpmodule/molecule/AtomicInfo_LUT.hpp"
 #include "bpmodule/exception/MoleculeException.hpp"
@@ -77,6 +79,26 @@ const IsotopeData & IsotopeInfoFromSym(const std::string & sym, int isonum)
 }
 
 
+int MostCommonIsotopeFromZ(int Z)
+{
+    const AtomicData & ad = AtomicInfoFromZ(Z);
+    if(ad.isotopes.size() == 0)
+        throw exception::MoleculeException("Developer error: No isotopes for this Z number?",
+                                           "Z", Z);
+
+    auto maxit = std::max_element(ad.isotopes.begin(), ad.isotopes.end(),
+                                  [](const IsotopeData & idat1, const IsotopeData & idat2)
+                                    { return idat1.abund < idat2.abund; }
+                                 );
+
+    return maxit->isonum;
+}
+
+int MostCommonIsotopeFromSym(const std::string & sym)
+{
+    return MostCommonIsotopeFromZ(AtomicZNumberFromSym(sym));
+}
+ 
 
 double AtomicMassFromZ(int Z)
 {

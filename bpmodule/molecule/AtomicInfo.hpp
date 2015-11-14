@@ -33,9 +33,6 @@ struct AtomicData
 
     // All isotope information for this atom
     std::vector<IsotopeData> isotopes;
-
-    std::vector<IsotopeData> GetIsotopes(void) { return isotopes; }
-
 };
 
 
@@ -79,6 +76,26 @@ const IsotopeData & IsotopeInfoFromZ(int Z, int isonum);
  *        data does not exist for this symbol and isotope number.
  */
 const IsotopeData & IsotopeInfoFromSym(const std::string & sym, int isonum);
+
+
+
+/*! \brief Get the most common isotope by Z number
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        data does not exist for this Z number and isotope number.
+ */
+int MostCommonIsotopeFromZ(int Z); 
+
+
+
+/*! \brief Get the most common isotope by symbol
+ *
+ * Symbol is not case sensitive
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        data does not exist for this symbol and isotope number.
+ */
+int MostCommonIsotopeFromSym(const std::string & sym); 
 
 
 
