@@ -20,6 +20,11 @@ class GaussianShell
             : id_(0), am_(am), cart_(cart), xyz_(xyz)
         { }
 
+        //! \todo construct from python list
+        GaussianShell(int am, bool cart, double x, double y, double z)
+            : id_(0), am_(am), cart_(cart), xyz_{x,y,z}
+        { }
+
 
         // compiler generated ok
         GaussianShell(const GaussianShell & rhs)             = default;
@@ -42,13 +47,13 @@ class GaussianShell
         int NSpherical(void) const noexcept { return (2*am_+1); }
         int NFunctions(void) const noexcept { return (cart_ ? NCartesian() : NSpherical()); } 
 
-        bool IsCart(void) const noexcept { return cart_; }
+        bool IsCartesian(void) const noexcept { return cart_; }
         bool IsSpherical(void) const noexcept { return !cart_; }
 
 
         //! \todo check if zero nprim?
-        double const * Alphas(void) const noexcept { return alphas_.data(); }
-        double const * Coefs(void) const noexcept { return coefs_.data(); }
+        std::vector<double> Alphas(void) const noexcept { return alphas_; }
+        std::vector<double> Coefs(void) const noexcept { return coefs_; }
 
 
         //! \todo wrap exceptions

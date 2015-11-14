@@ -19,11 +19,19 @@ def Run():
         tester.PrintHeader()
 
         mol = bp.molecule.Molecule()
-        mol.AddAtom(1, (0.0, 0.0, 0.0) )
-        mol.AddAtom(1, (1.0, 0.0, 0.0) )
-        mol.AddAtom(1, (0.0, 1.0, 0.0) )
-        mol.AddAtom(1, (0.0, 0.0, 1.0) )
+        mol.AddAtom(1, [0.0, 0.0, 0.0] )
+        mol.AddAtom(2, [1.0, 0.0, 0.0] )
+        mol.AddAtom(3, [0.0, 1.0, 0.0] )
+        mol.AddAtom(4, [0.0, 0.0, 1.0] )
         bp.output.Output("Number of atoms: %1%\n", mol.NAtoms())
+
+        for i in range(0, mol.NAtoms()):
+          a = mol.GetAtom(i)
+          print("{:<4}  {:<4}  {:<15}  {:<20}   {}".format(i,
+                                                             a.Symbol(),
+                                                             a.Name(),
+                                                             a.Mass(),
+                                                             a.xyz))
 
         tester.PrintResults() 
 
