@@ -52,8 +52,8 @@ class GaussianShell
 
 
         //! \todo wrap exceptions
-        double Alpha(size_t i) const { return alphas_.at(i); }
-        double Coef(size_t i) const { return coefs_.at(i); }
+        double Alpha(int i) const { return alphas_.at(i); }
+        double Coef(int i) const { return coefs_.at(i); }
 
         CoordType Coordinates(void) const { return xyz_; }
 
