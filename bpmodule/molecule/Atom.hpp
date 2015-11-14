@@ -11,12 +11,19 @@ namespace molecule {
 
 struct Atom
 {
-    unsigned long id; //!< Unique id of this center
-    int z;            //!< Atomic Z number
-    int isonum;       //!< Isotope number
-    double mass;      //!< Atomic mass for this atom/isotope
+    unsigned long id;   //!< Unique id of this center
+    int z;              //!< Atomic Z number
+    int isonum;         //!< Isotope number
+    CoordType xyz;      //!< XYZ coordinates
 
-    CoordType xyz;
+    //! Atomic mass for this atom/isotope
+    double Mass(void) const;
+
+    //! Name of the element
+    std::string Name(void) const;
+
+    //! Symbol of the element;
+    std::string Symbol(void) const;
 };
 
 

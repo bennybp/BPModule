@@ -98,8 +98,10 @@ BOOST_PYTHON_MODULE(molecule)
     .def_readwrite("id", &Atom::id)
     .def_readwrite("z", &Atom::z)
     .def_readwrite("isonum", &Atom::isonum)
-    .def_readwrite("mass", &Atom::mass)
     .add_property("xyz", AtomXYZ_)
+    .def("Mass", &Atom::Mass)
+    .def("Name", &Atom::Name)
+    .def("Symbol", &Atom::Symbol)
     ;
 
     // Molecule class

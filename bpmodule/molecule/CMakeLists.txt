@@ -1,6 +1,7 @@
 set(BPMODULE_MOLECULE_FILES
     AtomicInfo.cpp
     AtomicInfo_LUT.cpp
+    Atom.cpp
     Molecule.cpp
     export.cpp
    )
