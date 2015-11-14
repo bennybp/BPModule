@@ -10,7 +10,6 @@
 #include <boost/python/def.hpp>
 #include <boost/python/copy_const_reference.hpp>
 #include <boost/python/to_python_converter.hpp>
-#include <boost/python/tuple.hpp>
 
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/molecule/AtomicInfo.hpp"
@@ -29,14 +28,17 @@ namespace export_python {
 // Since we want isotopes to be a data member, and not a function,
 // Python won't use the to_python_converter. So we use add_property
 // instead and create a little wrapper function
-std::vector<IsotopeData> AtomicDataIsotopes_(AtomicData & ad) { return ad.isotopes; }
+std::vector<IsotopeData> AtomicDataIsotopes_(const AtomicData & ad) { return ad.isotopes; }
+
+// Ditto for atom XYZ
+std::array<double, 3> AtomXYZ_(const Atom & a) { return a.xyz; }
 
 
 
 // Molecule::AddAtom wrapper
-void Molecule_AddAtomWrapper(Molecule & mol, int Z, const boost::python::tuple & xyz)
+void Molecule_AddAtomWrapper(Molecule & mol, int Z, const boost::python::list & xyz)
 {
-    //! \todo check for tuple of length 3
+    //! \todo check for list of length 3
     double x = ConvertToCpp<double>(xyz[0]);
     double y = ConvertToCpp<double>(xyz[1]);
     double z = ConvertToCpp<double>(xyz[2]);
@@ -97,7 +99,7 @@ BOOST_PYTHON_MODULE(molecule)
     .def_readwrite("z", &Atom::z)
     .def_readwrite("isonum", &Atom::isonum)
     .def_readwrite("mass", &Atom::mass)
-    .def_readwrite("xyz", &Atom::xyz)
+    .add_property("xyz", AtomXYZ_)
     ;
 
     // Molecule class
