@@ -33,6 +33,12 @@ BOOST_PYTHON_MODULE(python_helper)
     to_python_converter<std::vector<signed long long>,    CppToPyExport<std::vector<signed long long>>>();
     to_python_converter<std::vector<unsigned long long>,  CppToPyExport<std::vector<unsigned long long>>>();
 
+    // implicit conversions of some std::arrays
+    to_python_converter<std::array<float, 3>,              CppToPyExport<std::array<float, 3>>>();
+    to_python_converter<std::array<double, 3>,             CppToPyExport<std::array<double, 3>>>();
+    to_python_converter<std::array<long double, 3>,        CppToPyExport<std::array<long double, 3>>>();
+
+
     to_python_converter<std::vector<float>,               CppToPyExport<std::vector<float>>>();
     to_python_converter<std::vector<double>,              CppToPyExport<std::vector<double>>>();
     to_python_converter<std::vector<long double>,         CppToPyExport<std::vector<long double>>>();

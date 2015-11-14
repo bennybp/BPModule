@@ -127,7 +127,7 @@ struct PyConverter
 
 
 
-/*! \brief Converts a python list to a std::vector
+/*! \brief Converts a python list to/from an std::vector
  *
  * \tparam T Type of the vector element to convert
  */
@@ -206,6 +206,91 @@ struct PyConverter<std::vector<T>>
     }
 };
 
+
+
+/*! \brief Converts a python list to/from an std::array
+ *
+ * \tparam T Type of the array element to convert
+ * \tparam N Length of the array
+ */
+template<typename T, size_t N>
+struct PyConverter<std::array<T, N>>
+{
+    /*! \brief Converts a python object to type std::array<T,N>
+     *
+     * \throw bpmodule::exception::PythonConvertException
+     *        if there is a problem with the conversion
+     *
+     * \param [in] obj Object to convert
+     */
+    static std::array<T, N> ConvertToCpp(const boost::python::object & obj)
+    {
+        std::array<T, N> r;
+
+        boost::python::extract<boost::python::list> lconv(obj);
+        if(!lconv.check())
+            throw exception::PythonConvertException("Cannot convert from python to C++ array: Object is not a list",
+                                                    GetPyClass(obj), mangle::DemangleCppType<std::vector<T>>());
+
+        boost::python::list lst = lconv();
+
+        size_t length = boost::python::extract<size_t>(lst.attr("__len__")());
+        if(length != N)
+            throw exception::PythonConvertException("Cannot convert from python to C++ array : Inconsistent lengths",
+                                                    GetPyClass(obj), mangle::DemangleCppType<std::array<T,N>>(),
+                                                    "expected", N,
+                                                    "got", length);
+ 
+
+        r.reserve(length);
+
+        for (int i = 0; i < length; i++)
+        {
+            // catch exceptions and add the element index
+            try {
+                r.push_back(PyConverter<T>::ConvertToCpp(lst[i]));
+            }
+            catch(exception::PythonConvertException & ex)
+            {
+                ex.AppendInfo("arrayto", mangle::DemangleCppType<std::array<T,N>>(),
+                              "element", i);
+                throw;
+            }
+        }
+
+        return r;
+
+    }
+
+
+    /*! \brief Convert a C++ array to a boost::python::object (list)
+     *
+     * \throw exception::PythonConvertException if the
+     *        data could not be converted
+     *
+     * \param [in] v The array to convert
+     * \return Converted data as a boost::python::list
+     */
+    static boost::python::object ConvertToPy(const std::array<T,N> & v)
+    {
+        boost::python::list result;
+
+        for(size_t i = 0; i < v.size(); ++i)
+        {
+            try {
+                result.append(PyConverter<T>::ConvertToPy(v[i]));
+            }
+            catch(exception::PythonConvertException & ex)
+            {
+                ex.AppendInfo("vecfrom", mangle::DemangleCppType<std::array<T,N>>(),
+                              "element", i);
+                throw;
+            }
+        }
+
+        return boost::python::object(result);
+    }
+};
 
 
 
