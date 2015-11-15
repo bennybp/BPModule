@@ -77,9 +77,9 @@ class CalcData : public PropertyMap<std::string>
 
         //! \copydoc bpmodule::datastore::PropertyMap::Take
         template<typename T>
-        void Take(const std::string & key, T && value)
+        void Take(const std::string & key, T && value, const modulelocator::ModuleInfo & source)
         {
-            PropertyMap::Take(key, std::move(value));
+            PropertyMap::Take(key, std::move(value), source);
         }
 
 
@@ -91,7 +91,7 @@ class CalcData : public PropertyMap<std::string>
 
 
         //! \copydoc bpmodule::datastore::PropertyMap::SetRef(const PropertyMap &, const std::string &)
-        void SetRef(const CalcData &other, const std::string & key)
+        void SetRef(const CalcData & other, const std::string & key)
         {
             PropertyMap::SetRef(other, key);
         }

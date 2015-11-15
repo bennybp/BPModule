@@ -254,7 +254,7 @@ class PropertyMap
         void Take(const KEYTYPE & key, T && value, const modulelocator::ModuleInfo & source)
         {
             detail::GenericBasePtr v(new detail::GenericHolder<T>(std::move(value)));
-            Set_(key, std::move(v));
+            Set_(key, std::move(v), source);
         }
 
 
@@ -293,7 +293,7 @@ class PropertyMap
             // add it here
             // should have strong exception guarantee
             if(opmap_.count(newkey))
-                opmap_.at(newkey) = pe;
+                opmap_.at(newkey) = std::move(pe);
             else
                 opmap_.emplace(newkey, std::move(pe));
         }
@@ -460,6 +460,7 @@ class PropertyMap
             {
                 PropMapEntry & phe = GetOrThrow_(key);
                 phe.value = std::move(value);
+                phe.source = source;
             }
             else
             {

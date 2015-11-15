@@ -9,6 +9,7 @@
 #include <boost/python/class.hpp>
 
 #include "bpmodule/datastore/CalcData.hpp"
+#include "bpmodule/datastore/CacheData.hpp"
 
 
 using namespace boost::python;
