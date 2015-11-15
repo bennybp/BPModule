@@ -18,18 +18,17 @@ def Run():
         tester = bp.testing.Tester("Testing BasisSet class")
         tester.PrintHeader()
 
-        bs = bp.basisset.BasisSet()
+        mol = bp.molecule.Molecule()
+        mol.AddAtom(1, [0.0, 0.0, 0.0] )
+        mol.AddAtom(1, [1.0, 0.0, 0.0] )
+        mol.AddAtom(8, [0.0, 1.0, 0.0] )
 
-        gs = bp.basisset.GaussianShell(0, False, 0.0, 0.0, 0.0)
-        gs.AddPrimitive(0.50, 1.00)
-        gs.AddPrimitive(0.25, 0.50)
-        gs.AddPrimitive(0.10, 0.25)
-        bs.AddShell(gs)
 
-        gs = bs.Shell(0)
+        bs = bp.basisset.SimpleCreator("/home/ben/programming/BPModule/install/basis/sto-3g.gbs", mol);
 
         bp.output.Output("Number of shells: %1%\n", bs.NShell())
         for i in range(0, bs.NShell()):
+           gs = bs.Shell(i)
            print("ID={}  Cart={}   NPrim={}   {}".format(gs.ID(), gs.IsCartesian(), gs.NPrim(), gs.Coordinates()))
            for j in range(0, gs.NPrim()):
              print("      Prim {:<4} :  {:<10}    {:<10}".format(j, gs.Alpha(j), gs.Coef(j)))

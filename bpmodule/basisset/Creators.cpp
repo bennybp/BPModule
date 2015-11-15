@@ -4,6 +4,8 @@
 #include "bpmodule/basisset/Creators.hpp"
 #include "bpmodule/basisset/AMConvert.hpp"
 #include "bpmodule/molecule/AtomicInfo.hpp"
+#include "bpmodule/output/Output.hpp"
+
 
 using bpmodule::molecule::AtomicZNumberFromSym;
 
@@ -17,8 +19,11 @@ BasisMap ReadBasisFile(const std::string & path)
 {
     BasisMap bm;
 
-    //! \todo check status and catch exceptions
+    //! \todo change to basis set exception
     std::ifstream f(path.c_str());
+    if(!f.is_open())
+        throw exception::GeneralException("Unable to open basis set file",
+                                          "path", path);
 
     std::string line;
 
@@ -90,16 +95,20 @@ BasisMap ReadBasisFile(const std::string & path)
                 }
                 gsv.push_back(gs);
             }
+            getline(f, line);
         }   
 
         if(gsv.size())
+        {
             bm[AtomicZNumberFromSym(sym)] = gsv;
+            gsv.clear();
+        }
     }
 
     return bm;
 }
 
-}
+} // close namespace detail
 
 
 
@@ -107,13 +116,14 @@ BasisSet SimpleCreator(const std::string & basispath, const molecule::Molecule &
 {
     detail::BasisMap bm = detail::ReadBasisFile(basispath);
 
+    output::Output("Basis read with %1% elements\n", bm.size());
     BasisSet bs;
 
     for(const auto & atom : mol)
     {
         auto gsv = bm.at(atom.z);
-        for(const auto & gs : gsv)
-            
+        for(const auto & gb : gsv)
+            bs.AddShell(GaussianShell(gb, 0, atom.id, atom.xyz));
     }
 
     return bs;

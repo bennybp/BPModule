@@ -7,8 +7,10 @@
 
 #include <boost/python/module.hpp>
 #include <boost/python/class.hpp>
+#include <boost/python/def.hpp>
 
 #include "bpmodule/basisset/BasisSet.hpp"
+#include "bpmodule/basisset/Creators.hpp"
 
 
 using namespace boost::python;
@@ -18,12 +20,10 @@ namespace bpmodule {
 namespace basisset {
 namespace export_python {
 
-//! \todo export GaussianBaseShell, etc
 
 BOOST_PYTHON_MODULE(basisset)
 {
-    class_<GaussianShell>("GaussianShell", no_init)
-    .def("ID", &GaussianShell::ID)
+    class_<GaussianBasisShell>("GaussianBasisShell", init<int, bool>())
     .def("AM", &GaussianShell::AM)
     .def("NPrim", &GaussianShell::NPrim)
     .def("NCartesian", &GaussianShell::NCartesian)
@@ -35,8 +35,14 @@ BOOST_PYTHON_MODULE(basisset)
     .def("Coefs", &GaussianShell::Coefs)
     .def("Alpha", &GaussianShell::Alpha)
     .def("Coef", &GaussianShell::Coef)
-    .def("Coordinates", &GaussianShell::Coordinates)
     .def("AddPrimitive", &GaussianShell::AddPrimitive)
+    ;
+
+    class_<GaussianShell, bases<GaussianBasisShell>>("GaussianShell", init<int, bool, unsigned long, unsigned long, double, double, double>())
+    .def(init<const GaussianBasisShell &, unsigned long, unsigned long, double, double, double>())
+    .def("ID", &GaussianShell::ID)
+    .def("Center", &GaussianShell::Center)
+    .def("Coordinates", &GaussianShell::Coordinates)
     ;
 
 
@@ -45,6 +51,10 @@ BOOST_PYTHON_MODULE(basisset)
     .def("NShell", &BasisSet::NShell)
     .def("Shell", &BasisSet::Shell)
     ;
+
+
+    // Creators
+    def("SimpleCreator", bpmodule::basisset::SimpleCreator);
 }
 
 

@@ -71,10 +71,24 @@ class GaussianShell : public GaussianBasisShell
     public:
         //! \todo construct from python list
         GaussianShell(const GaussianBasisShell & gbs, unsigned long id,
-                      double x, double y, double z)
-            : GaussianBasisShell(gbs), id_(id), xyz_{x,y,z}
+                      unsigned long center, double x, double y, double z)
+            : GaussianBasisShell(gbs), id_(id), center_(center), xyz_{x,y,z}
         { }
 
+        GaussianShell(int am, bool cart, unsigned long id,
+                      unsigned long center, double x, double y, double z)
+            : GaussianBasisShell(am, cart), id_(id), center_(center), xyz_{x,y,z}
+        { }
+
+        GaussianShell(const GaussianBasisShell & gbs, unsigned long id,
+                      unsigned long center, const CoordType & xyz)
+            : GaussianBasisShell(gbs), id_(id), center_(center), xyz_(xyz)
+        { }
+
+        GaussianShell(int am, bool cart, unsigned long id,
+                      unsigned long center, const CoordType & xyz)
+            : GaussianBasisShell(am, cart), id_(id), center_(center), xyz_(xyz)
+        { }
 
         // compiler generated ok
         GaussianShell(const GaussianShell & rhs)             = default;
@@ -83,6 +97,7 @@ class GaussianShell : public GaussianBasisShell
         GaussianShell & operator=(GaussianShell && rhs)      = default;
         
         unsigned long ID(void) const noexcept { return id_; }
+        unsigned long Center(void) const noexcept { return center_; }
 
         CoordType Coordinates(void) const { return xyz_; }
 
@@ -95,6 +110,7 @@ class GaussianShell : public GaussianBasisShell
 
     private:
         unsigned long id_;          //!< Unique id for this shell
+        unsigned long center_;      //!< ID of the center
         CoordType xyz_;             //!< XYZ coordindates of this center
     
 };
