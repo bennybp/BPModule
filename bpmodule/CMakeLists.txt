@@ -71,7 +71,9 @@ set(BPMODULE_TENSOR_HEADERS
    )
 
 set(BPMODULE_DATASTORE_HEADERS
+            datastore/Hashable.hpp
             datastore/CalcData.hpp
+            datastore/CacheData.hpp
             datastore/PropertyMap.hpp
             datastore/GenericHolder.hpp
             datastore/GenericBase.hpp
