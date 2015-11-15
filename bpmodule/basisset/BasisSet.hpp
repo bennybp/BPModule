@@ -33,8 +33,8 @@ class BasisSet
 
 
         // iterate over shells
-        const_iterator cbegin(void) const;
-        const_iterator cend(void) const;
+        const_iterator begin(void) const;
+        const_iterator end(void) const;
 
     private:
         unsigned long curid_;

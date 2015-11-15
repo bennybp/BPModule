@@ -29,14 +29,14 @@ GaussianShell BasisSet::Shell(int i) const
 }
 
 
-BasisSet::const_iterator BasisSet::cbegin(void) const
+BasisSet::const_iterator BasisSet::begin(void) const
 {
-    return shells_.cbegin();
+    return shells_.begin();
 }
 
-BasisSet::const_iterator BasisSet::cend(void) const
+BasisSet::const_iterator BasisSet::end(void) const
 {
-    return shells_.cend();
+    return shells_.end();
 }
 
 

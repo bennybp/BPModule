@@ -32,8 +32,8 @@ class Molecule
 
 
         // Iteration over all atoms
-        const_iterator cbegin(void) const;
-        const_iterator cend(void) const;
+        const_iterator begin(void) const;
+        const_iterator end(void) const;
 
 
 

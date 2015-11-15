@@ -13,24 +13,22 @@ typedef std::array<double, 3> CoordType;
 class BasisSet;
 
 
-class GaussianShell
+//! \todo maybe GaussianShell privately derives from GaussianBasisShell?
+//        this would remove the AddPrimitive function, which might be desirable
+
+class GaussianBasisShell
 {
     public:
-        GaussianShell(int am, bool cart, CoordType xyz)
-            : id_(0), am_(am), cart_(cart), xyz_(xyz)
-        { }
-
-        //! \todo construct from python list
-        GaussianShell(int am, bool cart, double x, double y, double z)
-            : id_(0), am_(am), cart_(cart), xyz_{x,y,z}
+        GaussianBasisShell(int am, bool cart)
+            : am_(am), cart_(cart)
         { }
 
 
         // compiler generated ok
-        GaussianShell(const GaussianShell & rhs)             = default;
-        GaussianShell(GaussianShell && rhs)                  = default;
-        GaussianShell & operator=(const GaussianShell & rhs) = default;
-        GaussianShell & operator=(GaussianShell && rhs)      = default;
+        GaussianBasisShell(const GaussianBasisShell & rhs)             = default;
+        GaussianBasisShell(GaussianBasisShell && rhs)                  = default;
+        GaussianBasisShell & operator=(const GaussianBasisShell & rhs) = default;
+        GaussianBasisShell & operator=(GaussianBasisShell && rhs)      = default;
 
         void AddPrimitive(double alpha, double coef)
         {
@@ -39,7 +37,6 @@ class GaussianShell
         }
 
 
-        unsigned long ID(void) const noexcept { return id_; }
         int AM(void) const noexcept { return am_; }
 
         int NPrim(void) const noexcept { return static_cast<int>(alphas_.size()); }
@@ -60,20 +57,45 @@ class GaussianShell
         double Alpha(int i) const { return alphas_.at(i); }
         double Coef(int i) const { return coefs_.at(i); }
 
+
+    private:
+        int am_;                    //!< Angular momentum
+        bool cart_;                 //!< Is cartesian?
+        std::vector<double> alphas_; //!< Exponents
+        std::vector<double> coefs_; //!< Exponents
+};
+
+
+class GaussianShell : public GaussianBasisShell
+{
+    public:
+        //! \todo construct from python list
+        GaussianShell(const GaussianBasisShell & gbs, unsigned long id,
+                      double x, double y, double z)
+            : GaussianBasisShell(gbs), id_(id), xyz_{x,y,z}
+        { }
+
+
+        // compiler generated ok
+        GaussianShell(const GaussianShell & rhs)             = default;
+        GaussianShell(GaussianShell && rhs)                  = default;
+        GaussianShell & operator=(const GaussianShell & rhs) = default;
+        GaussianShell & operator=(GaussianShell && rhs)      = default;
+        
+        unsigned long ID(void) const noexcept { return id_; }
+
         CoordType Coordinates(void) const { return xyz_; }
+
 
     protected:
         friend class BasisSet;
 
         void SetID(unsigned long id) { id_ = id; }
 
+
     private:
         unsigned long id_;          //!< Unique id for this shell
-        int am_;                    //!< Angular momentum
-        bool cart_;                 //!< Is cartesian?
         CoordType xyz_;             //!< XYZ coordindates of this center
-        std::vector<double> alphas_; //!< Exponents
-        std::vector<double> coefs_; //!< Exponents
     
 };
 

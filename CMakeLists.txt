@@ -22,3 +22,4 @@ add_subdirectory(bpmodule)
 
 #install(DIRECTORY bppython DESTINATION ${CMAKE_INSTALL_PREFIX}/modules)
 install(DIRECTORY cmake DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(DIRECTORY basis DESTINATION ${CMAKE_INSTALL_PREFIX})

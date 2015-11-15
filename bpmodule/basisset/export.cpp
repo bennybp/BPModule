@@ -18,9 +18,11 @@ namespace bpmodule {
 namespace basisset {
 namespace export_python {
 
+//! \todo export GaussianBaseShell, etc
+
 BOOST_PYTHON_MODULE(basisset)
 {
-    class_<GaussianShell>("GaussianShell", init<int, bool, double, double, double>())
+    class_<GaussianShell>("GaussianShell", no_init)
     .def("ID", &GaussianShell::ID)
     .def("AM", &GaussianShell::AM)
     .def("NPrim", &GaussianShell::NPrim)

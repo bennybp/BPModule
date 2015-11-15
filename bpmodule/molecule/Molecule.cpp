@@ -32,15 +32,15 @@ int Molecule::NAtoms(void) const noexcept
 }
 
 
-Molecule::const_iterator Molecule::cbegin(void) const
+Molecule::const_iterator Molecule::begin(void) const
 {
-    return atoms_.cbegin();
+    return atoms_.begin();
 }
 
 
-Molecule::const_iterator Molecule::cend(void) const
+Molecule::const_iterator Molecule::end(void) const
 {
-    return atoms_.cend();
+    return atoms_.end();
 }
 
 
