@@ -10,6 +10,8 @@
 
 #include "bpmodule/modulelocator/ModuleInfo.hpp"
 #include "bpmodule/datastore/CalcData.hpp"
+#include "bpmodule/molecule/Molecule.hpp"
+#include "bpmodule/basisset/BasisSet.hpp"
 
 namespace bpmodule {
 namespace modulelocator {
@@ -18,8 +20,8 @@ namespace detail {
 
     struct GraphNodeData
     {
-        //molecule
-        //basis
+        molecule::Molecule molecule;
+        basisset::BasisSet basisset;
         ModuleInfo minfo;
         datastore::CalcData data;
     };
