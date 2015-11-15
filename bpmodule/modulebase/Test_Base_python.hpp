@@ -25,12 +25,9 @@ namespace export_python {
 class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base>
 {
     public:
-        Test_Base_Wrap(unsigned long id,
-                       modulelocator::ModuleLocator & mlocator,
-                       modulelocator::ModuleInfo & minfo)
-            : Test_Base(id, mlocator, minfo)
-        {}
-
+        Test_Base_Wrap(unsigned long id)
+            : Test_Base(id)
+        { }
 
         modulelocator::ModuleLocator & MLocator(void)
         {

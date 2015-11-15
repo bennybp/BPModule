@@ -15,6 +15,7 @@ namespace bpmodule {
 namespace modulelocator {
 class ModuleLocator;
 struct ModuleInfo;
+struct GraphNodeData;
 }
 
 namespace options {
@@ -39,14 +40,8 @@ class ModuleBase
     public:
 
         /*! \brief Constructor
-         *
-         * \param [in] id The unique ID for this module
-         * \param [in] mlocator The ModuleLocator in charge of this module
-         * \param [in] minfo The information about this module
          */
-        ModuleBase(unsigned long id,
-                   modulelocator::ModuleLocator & mlocator,
-                   modulelocator::ModuleInfo & minfo);
+        ModuleBase(unsigned long id);
 
         virtual ~ModuleBase();
 
@@ -68,40 +63,57 @@ class ModuleBase
 
         /*! \brief Get the key of this module
          *
-         * \exnothrow
+         * \throw std::logic_error if there is a severe developer error
          */   
-        const std::string & Key(void) const noexcept;
+        std::string Key(void) const;
 
 
         /*! \brief Get the descriptive name of this module
          *
-         * \exnothrow
+         * \throw std::logic_error if there is a severe developer error
          */   
-        const std::string & Name(void) const noexcept;
+        std::string Name(void) const;
 
 
         /*! \brief Get the version of this module
          *
-         * \exnothrow
+         * \throw std::logic_error if there is a severe developer error
          */   
-        const std::string & Version(void) const noexcept;
+        std::string Version(void) const;
 
 
         /*! \brief Get the OptionMap object for this module
          *
-         * \exnothrow
+         * \throw std::logic_error if there is a severe developer error
          */ 
-        options::OptionMap & Options(void) noexcept;
+        options::OptionMap & Options(void);
 
 
         /*! \brief Get the OptionMap object for this module
          *
-         * \exnothrow
+         * \throw std::logic_error if there is a severe developer error
          */ 
-        const options::OptionMap & Options(void) const noexcept;
+        const options::OptionMap & Options(void) const;
+
+
+        /*! \brief Get all module information
+         *
+         * \throw std::logic_error if there is a severe developer error
+         */ 
+        modulelocator::ModuleInfo & MInfo(void);
+
+
+        /*! \brief Get the data from the graph node
+         *
+         * \throw std::logic_error if there is a severe developer error
+         */ 
+        const modulelocator::ModuleInfo & MInfo(void) const;
+
 
 
         /*! \brief Print the information for this module
+         *
+         * \throw std::logic_error if there is a severe developer error
          */
         void Print(void) const; 
 
@@ -110,19 +122,61 @@ class ModuleBase
 
     protected:
         /*! \brief Get the internal ModuleLocator that is in charge of this module
+         *
+         * \throw std::logic_error if it hasn't been set
          */ 
-        modulelocator::ModuleLocator & MLocator(void) noexcept;
+        modulelocator::ModuleLocator & MLocator(void);
+
+
+        /*! \brief Get the internal ModuleLocator that is in charge of this module
+         *
+         * \throw std::logic_error if it hasn't been set
+         */ 
+        const modulelocator::ModuleLocator & MLocator(void) const;
+
+
+        /*! \brief Get all module information
+         *
+         * \throw std::logic_error if it hasn't been set
+         */ 
+        modulelocator::GraphNodeData & GraphData(void);
+
+
+        /*! \brief Get all module information
+         *
+         * \throw std::logic_error if it hasn't been set
+         */ 
+        const modulelocator::GraphNodeData & GraphData(void) const;
+
+
 
 
     private:
-        //! The unique ID of this module
-        unsigned long id_;
+        // allow ModuleLocator to set up the pointers
+        friend class modulelocator::ModuleLocator;
 
-        //! All the information for this module
-        modulelocator::ModuleInfo & minfo_;
+
+        //! The unique ID of this module
+        const unsigned long id_;
 
         //! The ModuleLocator in charge of this module
-        modulelocator::ModuleLocator & mlocator_;
+        modulelocator::ModuleLocator * mlocator_;
+
+        //! My graph node data
+        modulelocator::GraphNodeData * graphdata_;
+
+
+
+        ////////////////////
+        // Functions
+        ////////////////////
+        /*! \brief Set the mlocator_ pointer
+         */
+        void SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept;
+
+        /*! \brief Set the graph data pointer
+         */
+        void SetGraphData_(modulelocator::GraphNodeData * gdat) noexcept;
 };
 
 

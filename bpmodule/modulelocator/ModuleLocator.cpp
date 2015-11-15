@@ -77,6 +77,7 @@ ModuleInfo ModuleLocator::KeyInfo(const std::string & key) const
 }
 
 
+
 void ModuleLocator::PrintInfo(void) const
 {
     for(const auto & it : store_)
@@ -138,13 +139,13 @@ void ModuleLocator::DeleteObject_(unsigned long id)
         }
 
         removemap_.erase(id);
-        minfomap_.erase(id);
+        //graphdata_.erase(id);
 
         if(destructorthrew)
             throw exception::ModuleLocatorException("Destructor for a module threw an exception",
                                                     "moduleid", id,
-                                                    "name", minfomap_.at(id).name,
-                                                    "key", minfomap_.at(id).key);
+                                                    "name", graphdata_.at(id).minfo.name,
+                                                    "key", graphdata_.at(id).minfo.key);
 
     }
 }

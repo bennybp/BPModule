@@ -21,9 +21,8 @@ namespace modulebase {
 class Test_Base : public ModuleBase
 {
     public:
-        Test_Base(unsigned long id, 
-                  modulelocator::ModuleLocator & mlocator,
-                  modulelocator::ModuleInfo & minfo);
+        Test_Base(unsigned long id);
+
 
         //! \brief Just test some functionality
         virtual void RunTest(void) = 0;

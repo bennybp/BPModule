@@ -13,15 +13,13 @@
 
 #include "bpmodule/modulelocator/Graph.hpp"
 #include "bpmodule/modulelocator/ScopedModule.hpp"
+#include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleCreateException.hpp"
 #include "bpmodule/exception/ModuleLocatorException.hpp"
 
 
 // forward declarations
 namespace bpmodule {
-namespace modulebase {
-class ModuleBase;
-}
 
 namespace modulelocator {
 
@@ -79,7 +77,7 @@ class ModuleLocator
         ModuleInfo KeyInfo(const std::string & key) const;
 
 
-
+        
         /*! \brief Prints all the information about the loaded modules
          */
         void PrintInfo(void) const;
@@ -136,11 +134,13 @@ class ModuleLocator
          * \throw bpmodule::exception::ModuleCreateException if there are other
          *        problems creating the module
          *
-         * \exstrong
+         * \exbasic
          *
          * \param [in] key A module key
          *
          * \return A ScopedModule for an object of the requested type
+         *
+         * \todo Move most of this to a source file
          */
         template<typename T>
         ScopedModule<T> GetModule(const std::string & key)
@@ -148,14 +148,34 @@ class ModuleLocator
             // obtain the creator
             const StoreEntry & se = GetOrThrow_(key);
 
-            // add the moduleinfo to the map
-            minfomap_.emplace(curid_, se.mi);
-
             // create
-            // NOTE: name is passed in through two places. This is because the
-            // ModuleInfo struct is not converted to python, so python must still
-            // get the name
-            modulebase::ModuleBase * mbptr = se.func(se.mi.name, curid_, *this, minfomap_.at(curid_));
+            modulebase::ModuleBase * mbptr = nullptr;
+            try {
+              mbptr = se.func(se.mi.name, curid_);
+            }
+            catch(const exception::GeneralException & gex)
+            {
+                throw exception::ModuleCreateException(gex,
+                                                       se.mi.path,
+                                                       se.mi.key,
+                                                       se.mi.name);
+            }
+
+            if(mbptr == nullptr)
+                throw exception::ModuleCreateException("Create function returned a null pointer",
+                                                       se.mi.path,
+                                                       se.mi.key,
+                                                       se.mi.name);
+            
+            // add the moduleinfo to the graph
+            // \todo Molecule, basis set, inherited from parent
+            GraphNodeData gdata{nullptr, nullptr, se.mi, datastore::CalcData()};
+            graphdata_.emplace(curid_, gdata);
+
+            // set the info
+            mbptr->SetMLocator_(this);
+            mbptr->SetGraphData_(&(graphdata_.at(curid_)));
+
 
             // test
             T * dptr = dynamic_cast<T *>(mbptr);
@@ -202,7 +222,7 @@ class ModuleLocator
         friend class PyModuleLoader;
 
         //! A function that generates a module derived from ModuleBase
-        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long, ModuleLocator &, ModuleInfo &)> ModuleGeneratorFunc;
+        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long)> ModuleGeneratorFunc;
 
 
         //! A function that deletes a module (by id)
@@ -252,12 +272,20 @@ class ModuleLocator
          *
          * \todo will be replaced by a graph or tree
          */
-        std::unordered_map<unsigned long, ModuleInfo> minfomap_;
+        std::unordered_map<unsigned long, GraphNodeData> graphdata_;
 
 
         //! The id to assign to the next created module
         std::atomic<unsigned long> curid_;
 
+
+        /*! \brief Map of cache data
+         *
+         * The key is a combination of the module name and version
+         *
+         * \todo is this enough to guarantee uniqueness?
+         */
+        std::unordered_map<std::string, datastore::CalcData> cachemap_;
 
 
         /*! \brief Obtain a module or throw exception

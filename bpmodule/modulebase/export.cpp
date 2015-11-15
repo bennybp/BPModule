@@ -38,16 +38,16 @@ BOOST_PYTHON_MODULE(modulebase)
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
 //    .def("MLocator", &ModuleBase::MLocator, return_internal_reference<>())
     .def("ID", &ModuleBase::ID)
-    .def("Key", &ModuleBase::Key, return_value_policy<copy_const_reference>())
-    .def("Name", &ModuleBase::Name, return_value_policy<copy_const_reference>())
-    .def("Version", &ModuleBase::Version, return_value_policy<copy_const_reference>())
+    .def("Key", &ModuleBase::Key)
+    .def("Name", &ModuleBase::Name)
+    .def("Version", &ModuleBase::Version)
     .def("Print", &ModuleBase::Print)
     .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_value_policy<reference_existing_object>());  // should be safe?
 
 
 
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
-    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long, ModuleLocator &, ModuleInfo &>())
+    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long>())
     .def("MLocator", &Test_Base_Wrap::MLocator, return_value_policy<reference_existing_object>()) 
     .def("RunTest", pure_virtual(&Test_Base::RunTest))
     .def("CallRunTest", pure_virtual(&Test_Base::CallRunTest))

@@ -10,25 +10,32 @@
 
 #include "bpmodule/modulelocator/ModuleInfo.hpp"
 #include "bpmodule/datastore/CalcData.hpp"
-#include "bpmodule/molecule/Molecule.hpp"
-#include "bpmodule/basisset/BasisSet.hpp"
 
+
+// forward declarations
 namespace bpmodule {
-namespace modulelocator {
+namespace molecule {
+class Molecule;
+}
 
-namespace detail {
-
-    struct GraphNodeData
-    {
-        molecule::Molecule molecule;
-        basisset::BasisSet basisset;
-        ModuleInfo minfo;
-        datastore::CalcData data;
-    };
+namespace basisset {
+class BasisSet;
+}
 }
 
 
 
+
+namespace bpmodule {
+namespace modulelocator {
+
+struct GraphNodeData
+{
+    molecule::Molecule * molecule;
+    basisset::BasisSet * basisset;
+    ModuleInfo minfo;
+    datastore::CalcData data;
+};
 
 
 } // close namespace modulelocator

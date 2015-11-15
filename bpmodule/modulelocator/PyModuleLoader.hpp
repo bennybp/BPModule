@@ -81,16 +81,12 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
          *
          * \param [in] fn Generator function object
          * \param [in] name Name of the module to create
-         * \param [in] id ID of the new module
-         * \param [in] mlocator ModuleLocator that is in charge of this object
-         * \param [in] minfo The information for this module (including options)
+         * \param [in] id Unique ID for the created module
          * \return Pointer to a new object derived from ModuleBase
          */
         modulebase::ModuleBase * GeneratorWrapper_(boost::python::object fn,
                                                    const std::string & name,
-                                                   unsigned long id,
-                                                   ModuleLocator & mlocator,
-                                                   ModuleInfo & minfo);
+                                                   unsigned long id);
 
 };
 

@@ -22,6 +22,17 @@ class ModuleCreateException : public GeneralException
         /*! \brief Constructor
          *
          * \param [in] whatstr Brief description of the error
+         * \param [in] name Name of the module that couldn't be created
+         */
+        template<typename... Targs>
+        ModuleCreateException(std::string whatstr,
+                              std::string name)
+            : GeneralException(whatstr, "name", name)
+        { }
+
+        /*! \brief Constructor
+         *
+         * \param [in] whatstr Brief description of the error
          * \param [in] path Path to the module that could't be created
          * \param [in] key  Key of the module that couldn't be created
          * \param [in] name Name of the module that couldn't be created

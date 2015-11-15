@@ -73,7 +73,7 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
         typedef ModuleLoaderBase< std::unique_ptr<modulebase::ModuleBase> > BASE;
 
         //! Pointer to a generator function in an SO file
-        typedef modulebase::ModuleBase *(*GeneratorFunc)(const std::string &, unsigned long, ModuleLocator &, ModuleInfo &);
+        typedef modulebase::ModuleBase *(*GeneratorFunc)(const std::string &, unsigned long);
 
 
         //! Stores handles to to open SO files
@@ -86,16 +86,12 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
          *
          * \param [in] fn Creation function pointer in SO file
          * \param [in] name Name of the module to create
-         * \param [in] id ID of the new module
-         * \param [in] mlocator ModuleLocator that is in charge of this object
-         * \param [in] minfo The information for this module (including options)
+         * \param [in] id Unique ID for the created module
          * \return Pointer to a new object derived from ModuleBase
          */
         modulebase::ModuleBase * GeneratorWrapper_(GeneratorFunc fn,
                                                    const std::string & name,
-                                                   unsigned long id,
-                                                   ModuleLocator & mlocator,
-                                                   ModuleInfo & minfo);
+                                                   unsigned long id);
 };
 
 } // close namespace modulelocator

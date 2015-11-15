@@ -13,12 +13,9 @@ using bpmodule::modulelocator::ModuleInfo;
 namespace bpmodule {
 namespace modulebase {
 
-Test_Base::Test_Base(unsigned long id,
-                     ModuleLocator & mlocator, 
-                     ModuleInfo & minfo)
-    : ModuleBase(id, mlocator, minfo)
-{
-}
+Test_Base::Test_Base(unsigned long id)
+    : ModuleBase(id)
+{ }
 
 
 } // close namespace modulebase

@@ -45,14 +45,12 @@ CModuleLoader::~CModuleLoader()
 
 ModuleBase * CModuleLoader::GeneratorWrapper_(GeneratorFunc fn,
                                               const std::string & name,
-                                              unsigned long id,
-                                              ModuleLocator & mlocator,
-                                              ModuleInfo & minfo)
+                                              unsigned long id)
 {
     // Have the base ModuleLoaderBase class take ownership,
     // but return the ptr
 
-    ModuleBase * newobj = fn(name, id, mlocator, minfo);
+    ModuleBase * newobj = fn(name, id);
     std::unique_ptr<ModuleBase> uptr(newobj);
     BASE::TakeObject(id, std::move(uptr));  // strong exception guarantee
     return newobj;
@@ -100,9 +98,7 @@ void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & 
 
     ModuleLocator::ModuleGeneratorFunc cfunc = std::bind(&CModuleLoader::GeneratorWrapper_, this, fn,
                                                        std::placeholders::_1,
-                                                       std::placeholders::_2,
-                                                       std::placeholders::_3,
-                                                       std::placeholders::_4);
+                                                       std::placeholders::_2);
 
     ModuleLocator::ModuleRemoverFunc dfunc = std::bind(&CModuleLoader::DeleteObject, this, std::placeholders::_1);
 

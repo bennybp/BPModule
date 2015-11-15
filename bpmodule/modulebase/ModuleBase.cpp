@@ -18,13 +18,10 @@ namespace bpmodule {
 namespace modulebase {
 
 
-ModuleBase::ModuleBase(unsigned long id,
-                       ModuleLocator & mlocator,
-                       ModuleInfo & minfo)
-    : id_(id), minfo_(minfo),
-      mlocator_(mlocator)
+ModuleBase::ModuleBase(unsigned long id)
+    : id_(id), mlocator_(nullptr), graphdata_(nullptr)
 {
-    output::Debug("Constructed module [%1%] : %2% v%3%\n", ID(), Name(), Version());
+    output::Debug("Constructed module [%1%]\n", id);
 }
 
 
@@ -45,48 +42,100 @@ unsigned long ModuleBase::ID(void) const noexcept
 }
 
 
-
-const std::string & ModuleBase::Key(void) const noexcept
+std::string ModuleBase::Key(void) const 
 {
-    return minfo_.key;
+    return MInfo().key;
 }
 
 
-
-const std::string & ModuleBase::Name(void) const noexcept
+std::string ModuleBase::Name(void) const 
 {
-    return minfo_.name;
+    return MInfo().name;
 }
 
 
-
-const std::string & ModuleBase::Version(void) const noexcept
+std::string ModuleBase::Version(void) const 
 {
-    return minfo_.version;
+    return MInfo().version;
 }
 
 
-
-ModuleLocator & ModuleBase::MLocator(void) noexcept
+const options::OptionMap & ModuleBase::Options(void) const
 {
-    return mlocator_;
+    return MInfo().options;
 }
 
+options::OptionMap & ModuleBase::Options(void)
+{
+    return MInfo().options;
+}
+
+
+ModuleInfo & ModuleBase::MInfo(void)
+{
+    return GraphData().minfo;
+}
+
+const ModuleInfo & ModuleBase::MInfo(void) const
+{
+    return GraphData().minfo;
+}
 
 void ModuleBase::Print(void) const
 {
-    minfo_.Print();
+    MInfo().Print();
+}
+
+////////////////////////////////
+// Protected functions
+////////////////////////////////
+const ModuleLocator & ModuleBase::MLocator(void) const
+{
+    if(mlocator_ == nullptr)
+        throw std::logic_error("Developer error - mlocator is null for a module!");
+
+    return *mlocator_;
+}
+
+ModuleLocator & ModuleBase::MLocator(void)
+{
+    if(mlocator_ == nullptr)
+        throw std::logic_error("Developer error - mlocator is null for a module!");
+
+    return *mlocator_;
+}
+
+const modulelocator::GraphNodeData & ModuleBase::GraphData(void) const
+{
+    if(graphdata_ == nullptr)
+        throw std::logic_error("Developer error - graphdata_ is null for a module!");
+
+    return *graphdata_;
+}
+
+modulelocator::GraphNodeData & ModuleBase::GraphData(void)
+{
+    if(graphdata_ == nullptr)
+        throw std::logic_error("Developer error - graphdata_ is null for a module!");
+
+    return *graphdata_;
 }
 
 
-options::OptionMap & ModuleBase::Options(void) noexcept
+
+
+
+////////////////////////////////
+// Private functions
+////////////////////////////////
+void ModuleBase::SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept
 {
-    return minfo_.options;
+    mlocator_ = mloc;
 }
 
-const options::OptionMap & ModuleBase::Options(void) const noexcept
+void ModuleBase::SetGraphData_(modulelocator::GraphNodeData * gdat) noexcept
 {
-    return minfo_.options;
+    graphdata_ = gdat;
 }
 
 

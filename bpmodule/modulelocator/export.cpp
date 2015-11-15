@@ -58,11 +58,6 @@ boost::shared_ptr<T> Wrap_GetModule(ModuleLocator * ms, const std::string & key)
 
 BOOST_PYTHON_MODULE(modulelocator)
 {
-    // This is only needed because we pass through python
-    // No need to do declare all the members, etc
-    class_<ModuleInfo, boost::noncopyable>("ModuleInfo");
-
-
     class_<ModuleLocator, boost::noncopyable>("ModuleLocator")
     .def("Size", &ModuleLocator::Size)
     .def("Has", &ModuleLocator::Has)
