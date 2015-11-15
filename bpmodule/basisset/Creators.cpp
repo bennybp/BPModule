@@ -4,6 +4,7 @@
 #include "bpmodule/basisset/Creators.hpp"
 #include "bpmodule/basisset/AMConvert.hpp"
 #include "bpmodule/molecule/AtomicInfo.hpp"
+#include "bpmodule/exception/BasisSetException.hpp"
 #include "bpmodule/output/Output.hpp"
 
 

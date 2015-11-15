@@ -1,4 +1,5 @@
 #include "bpmodule/basisset/BasisSet.hpp"
+#include "bpmodule/exception/BasisSetException.hpp"
 
 
 namespace bpmodule {
