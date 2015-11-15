@@ -22,10 +22,13 @@ int BasisSet::NShell(void) const noexcept
 }
 
 
-//! \todo wrap exceptions
 GaussianShell BasisSet::Shell(int i) const
 {
-    return shells_.at(i);
+    if(static_cast<size_t>(i) < shells_.size() )
+        return shells_[i];
+    else
+        throw exception::BasisSetException("Shell index out of range",
+                                           "index", i, "nshells", shells_.size());
 }
 
 

@@ -2,6 +2,7 @@
 
 #include "bpmodule/basisset/AMConvert.hpp"
 #include "bpmodule/util/StringUtil.hpp" // for case insensitive compare
+#include "bpmodule/exception/BasisSetException.hpp"
 
 using bpmodule::util::CaseInsensitiveCompare;
 
@@ -37,16 +38,22 @@ static const std::map<int, std::string> tostr_{ {  0, "s"},
 namespace bpmodule {
 namespace basisset {
 
-//! \todo exceptions
+
 int StringToAM(const std::string & s)
 {
-    return toi_.at(s);
+    if(toi_.count(s))
+        return toi_.at(s);
+    else
+        throw exception::BasisSetException("Cannot find integer AM for this string", "str", s);
 }
 
-//! \todo exceptions
+
 std::string AMToString(int am)
 {
-    return tostr_.at(am);
+    if(tostr_.count(am))
+        return tostr_.at(am);
+    else
+        throw exception::BasisSetException("Cannot find string for this integer AM", "int", am);
 }
 
 

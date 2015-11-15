@@ -51,6 +51,8 @@ set(BPMODULE_EXCEPTION_HEADERS
             exception/ModuleCreateException.hpp
             exception/ModuleLocatorException.hpp
             exception/DataStoreException.hpp
+            exception/MoleculeException.hpp
+            exception/BasisSetException.hpp
    )
 
 set(BPMODULE_PARALLEL_HEADERS

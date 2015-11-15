@@ -19,11 +19,10 @@ BasisMap ReadBasisFile(const std::string & path)
 {
     BasisMap bm;
 
-    //! \todo change to basis set exception
     std::ifstream f(path.c_str());
     if(!f.is_open())
-        throw exception::GeneralException("Unable to open basis set file",
-                                          "path", path);
+        throw exception::BasisSetException("Unable to open basis set file",
+                                           "path", path);
 
     std::string line;
 
