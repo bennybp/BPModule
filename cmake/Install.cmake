@@ -9,12 +9,15 @@ endmacro()
 
 
 macro(INSTALL_COREMODULE MODULE_NAME
+                     HEADER_FILES
                      ADD_PYTHON_FILES)
 
   INSTALL_COREPYMODULE(${MODULE_NAME} "${ADD_PYTHON_FILES}")
 
   install(TARGETS ${MODULE_NAME} LIBRARY DESTINATION modules/bpmodule/${MODULE_NAME}
                                  RUNTIME DESTINATION modules/bpmodule/${MODULE_NAME})
+
+  install(FILES ${HEADER_FILES} DESTINATION include/bpmodule/${MODULE_NAME})
 endmacro()
 
 

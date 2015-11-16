@@ -4,7 +4,13 @@ set(BPMODULE_BASISSET_FILES
     AMConvert.cpp
     export.cpp
    )
-  
+
+set(BPMODULE_BASISSET_HEADERS
+            GaussianShell.hpp
+            BasisSet.hpp
+            AMConvert.hpp
+            Creators.hpp
+   )
 
 
 ADD_MODULE(basisset
@@ -13,4 +19,4 @@ ADD_MODULE(basisset
            ""
            "")
 
-INSTALL_COREMODULE(basisset "")
+INSTALL_COREMODULE(basisset "${BPMODULE_BASISSET_HEADERS}" "")

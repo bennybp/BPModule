@@ -3,6 +3,20 @@ set(BPMODULE_EXCEPTION_FILES
             export.cpp
    )
 
+set(BPMODULE_EXCEPTION_HEADERS
+            GeneralException.hpp
+            MathException.hpp
+            PythonConvertException.hpp
+            PythonCallException.hpp
+            OptionException.hpp
+            ModuleLoadException.hpp
+            ModuleCreateException.hpp
+            ModuleLocatorException.hpp
+            DataStoreException.hpp
+            MoleculeException.hpp
+            BasisSetException.hpp
+   )
+
 
 ADD_MODULE(exception
            "${BPMODULE_EXCEPTION_FILES}"
@@ -10,4 +24,5 @@ ADD_MODULE(exception
            ""
            "")
 
-INSTALL_COREMODULE(exception "PyGeneralException.py")
+
+INSTALL_COREMODULE(exception "${BPMODULE_EXCEPTION_HEADERS}" "PyGeneralException.py")

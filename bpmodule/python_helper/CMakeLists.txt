@@ -4,6 +4,14 @@ set(BPMODULE_PYTHON_HELPER_FILES
         export.cpp
    )
 
+set(BPMODULE_PYTHON_HELPER_HEADERS
+            BoostPython_fwd.hpp
+            Types.hpp
+            Convert.hpp
+            Errors.hpp
+            Call.hpp
+   )
+
 
 ADD_MODULE(python_helper
            "${BPMODULE_PYTHON_HELPER_FILES}"
@@ -11,4 +19,4 @@ ADD_MODULE(python_helper
            ""
            "")
 
-INSTALL_COREMODULE(python_helper "")
+INSTALL_COREMODULE(python_helper "${BPMODULE_PYTHON_HELPER_HEADERS}" "")

@@ -4,6 +4,11 @@ set(BPMODULE_UTIL_FILES
             export.cpp
    )
 
+set(BPMODULE_UTIL_HEADERS
+            FormatString.hpp
+            StringUtil.hpp
+   )
+
 
 ADD_MODULE(util 
            "${BPMODULE_UTIL_FILES}"
@@ -11,4 +16,4 @@ ADD_MODULE(util
            ""
            "")
 
-INSTALL_COREMODULE(util "")
+INSTALL_COREMODULE(util "${BPMODULE_UTIL_HEADERS}" "")

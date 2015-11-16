@@ -4,6 +4,14 @@ set(BPMODULE_TESTING_FILES
             TestOptions.cpp
             export.cpp
    )
+
+set(BPMODULE_TESTING_HEADERS
+            TestingBase.hpp
+            TestConvert.hpp
+            TestDatastore.hpp
+            TestOptions.hpp
+            TestModuleInfo.hpp
+   )
   
 
 
@@ -13,4 +21,4 @@ ADD_MODULE(testing
            ""
            "")
 
-INSTALL_COREMODULE(testing "tester.py")
+INSTALL_COREMODULE(testing "${BPMODULE_TESTING_HEADERS}" "tester.py")

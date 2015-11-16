@@ -5,6 +5,13 @@ set(BPMODULE_OPTIONS_FILES
             export.cpp
    )
 
+set(BPMODULE_OPTIONS_HEADERS
+            OptionTypes.hpp
+            OptionMap.hpp
+            OptionBase.hpp
+            OptionHolder.hpp
+   )
+
 
 
 ADD_MODULE(options
@@ -13,4 +20,4 @@ ADD_MODULE(options
            ""
            "")
 
-INSTALL_COREMODULE(options "optionvalidate.py")
+INSTALL_COREMODULE(options "${BPMODULE_OPTIONS_HEADERS}" "optionvalidate.py")

@@ -3,6 +3,10 @@ set(BPMODULE_MANGLE_FILES
             export.cpp
    )
 
+set(BPMODULE_MANGLE_HEADERS
+            Mangle.hpp
+)
+
 
 ADD_MODULE(mangle
            "${BPMODULE_MANGLE_FILES}"
@@ -10,4 +14,4 @@ ADD_MODULE(mangle
            ""
            "")
 
-INSTALL_COREMODULE(mangle "")
+INSTALL_COREMODULE(mangle "${BPMODULE_MANGLE_HEADERS}" "")

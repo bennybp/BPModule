@@ -3,6 +3,12 @@ set(BPMODULE_MATH_FILES
             export.cpp
    )
   
+set(BPMODULE_MATH_HEADERS
+            Cast.hpp
+            ExactCast.hpp
+            Factorial.hpp
+            Factorial_LUT.hpp
+   )
 
 
 ADD_MODULE(math
@@ -11,4 +17,4 @@ ADD_MODULE(math
            ""
            "")
 
-INSTALL_COREMODULE(math "")
+INSTALL_COREMODULE(math "${BPMODULE_MATH_HEADERS}" "")

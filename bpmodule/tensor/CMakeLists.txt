@@ -3,6 +3,9 @@ set(BPMODULE_TENSOR_FILES
     export.cpp
    )
   
+set(BPMODULE_TENSOR_HEADERS
+            Tensor.hpp
+   )
 
 
 ADD_MODULE(tensor
@@ -11,4 +14,4 @@ ADD_MODULE(tensor
            ""
            "")
 
-INSTALL_COREMODULE(tensor "")
+INSTALL_COREMODULE(tensor "${BPMODULE_TENSOR_HEADERS}" "")

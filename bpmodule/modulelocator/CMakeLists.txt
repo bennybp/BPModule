@@ -7,6 +7,14 @@ set(BPMODULE_MODULELOCATOR_FILES
             export.cpp
    )
 
+set(BPMODULE_MODULELOCATOR_HEADERS
+            ScopedModule.hpp
+            CModuleLoader.hpp
+            ModuleInfo.hpp
+            ModuleLocator.hpp
+            PyModuleLoader.hpp
+            Graph.hpp
+   )
 
 
 ADD_MODULE(modulelocator
@@ -15,4 +23,4 @@ ADD_MODULE(modulelocator
            ""
            "")
 
-INSTALL_COREMODULE(modulelocator "")
+INSTALL_COREMODULE(modulelocator "${BPMODULE_MODULELOCATOR_HEADERS}" "")

@@ -4,6 +4,11 @@ set(BPMODULE_MODULEBASE_FILES
             export.cpp
    )
 
+set(BPMODULE_MODULEBASE_HEADERS
+            ModuleBase.hpp
+            Test_Base.hpp
+   )
+
 
 ADD_MODULE(modulebase
            "${BPMODULE_MODULEBASE_FILES}"
@@ -11,5 +16,5 @@ ADD_MODULE(modulebase
            ""
            "")
 
-INSTALL_COREMODULE(modulebase "")
+INSTALL_COREMODULE(modulebase "${BPMODULE_MODULEBASE_HEADERS}" "")
 
