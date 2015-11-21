@@ -82,8 +82,12 @@ public:
     {
         CalcData output;
         Output("HERE: %1%\n", output.HasType<double>("Hello"));
+
         MatrixD testmat(3,3);
         Output("Matrix dimensions: %1% x %2%\n", testmat.Height(), testmat.Width());
+
+        DistMatrixD testdmat(100,100);
+        Output("DistMatrix dimensions: %1% x %2%\n", testdmat.Height(), testdmat.Width());
 
         return output;
     }

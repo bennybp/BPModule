@@ -47,10 +47,10 @@ find_package(PythonLibs REQUIRED)
 ############################
 # Math libraries  
 ############################
-#find_package(LAPACK) # Also finds blas
-#if(NOT LAPACK_FOUND) 
-#  message(FATAL_ERROR "Error - LAPACK is required!")
-#endif()
+find_package(LAPACK) # Also finds blas
+if(NOT LAPACK_FOUND) 
+  message(FATAL_ERROR "Error - LAPACK is required!")
+endif()
 
 
 ############################

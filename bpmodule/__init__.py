@@ -67,7 +67,7 @@ def Init(argv, out = "stdout", color = True, debug = False):
   parallel.InitParallel(argv)
 
   # Initialize tensor
-  tensor.InitTensor(argv)
+  tensor.Init(argv)
 
 
   # Set some info about the base module and
@@ -82,7 +82,7 @@ def Init(argv, out = "stdout", color = True, debug = False):
 
 def Finalize():
   output.Output("Finalizing tensors\n")
-  tensor.FinalizeTensor()
+  tensor.Finalize()
 
   output.Output("Finalizing parallelization\n")
   parallel.FinalizeParallel()
