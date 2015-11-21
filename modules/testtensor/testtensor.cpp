@@ -4,6 +4,7 @@
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/Test_Base.hpp"
+#include "bpmodule/tensor/Matrix.hpp"
 
 using namespace bpmodule::output;
 using namespace bpmodule::modulebase;
@@ -74,6 +75,9 @@ public:
 
         if(inputs.HasKey("TEST_INPUT_1"))
             d2 *= inputs.GetRef<double>("TEST_INPUT_1");
+
+        MatrixD testmat(3,3);
+        
 
         return output;
     }

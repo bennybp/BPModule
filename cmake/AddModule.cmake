@@ -10,11 +10,15 @@ macro(ADD_MODULE MODULE_NAME
       add_library(${MODULE_NAME} MODULE ${MODULE_FILES} )
 
 
-
+      #################
       # CXX Flags
+      #################
       list(APPEND ${MODULE_NAME}_CXX_FLAGS "${MODULE_CXX_FLAGS}")
+
+      # OpenMP
       list(APPEND ${MODULE_NAME}_CXX_FLAGS "${OpenMP_CXX_FLAGS}")
 
+      # MPI
       if(BPMODULE_MPI)
         list(APPEND ${MODULE_NAME}_CXX_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
         list(APPEND ${MODULE_NAME}_CXX_FLAGS "-DBPMODULE_MPI")
@@ -27,24 +31,30 @@ macro(ADD_MODULE MODULE_NAME
 
 
 
+      #################
       # Includes
+      #################
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_PATH}")          # When building the core, in-source tree
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_PATH}/include")  # Out-of-source module build
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${Boost_INCLUDE_DIRS}")
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${PYTHON_INCLUDE_DIRS}")
+      list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_LIBEL_PATH}/include")
 
       if(BPMODULE_MPI)
         list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${MPI_CXX_INCLUDE_PATH}")
       endif()
 
-      #list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_AMBIT_PATH}/include")
+      list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_LIBEL_PATH}/include")
+
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${MODULE_CXX_INCLUDES}")
       set_target_properties(${MODULE_NAME} PROPERTIES INCLUDE_DIRECTORIES "${${MODULE_NAME}_CXX_INCLUDES}")
       message(STATUS "${MODULE_NAME} cxx includes: ${${MODULE_NAME}_CXX_INCLUDES}")
 
 
 
+      #################
       # Linker flags
+      #################
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${MODULE_CXX_LINK_FLAGS}")
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${OpenMP_CXX_FLAGS}")
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${Boost_LIBRARIES}")
@@ -57,7 +67,9 @@ macro(ADD_MODULE MODULE_NAME
         list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${MPI_CXX_LIBRARIES}")
       endif()
 
-      #list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${BPMODULE_AMBIT_PATH}/lib/libambit.so")
+      list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${BPMODULE_LIBEL_PATH}/lib/libEl.a")
+      list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${BPMODULE_LIBEL_PATH}/lib/libpmrrr.a")
+    
       target_link_libraries(${MODULE_NAME} "${${MODULE_NAME}_CXX_LINK_FLAGS}")
       message(STATUS "${MODULE_NAME} cxx link flags: ${${MODULE_NAME}_CXX_LINK_FLAGS}")
 

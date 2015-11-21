@@ -4,6 +4,7 @@ set(BPMODULE_TENSOR_FILES
    )
   
 set(BPMODULE_TENSOR_HEADERS
+            Matrix.hpp
             Tensor.hpp
    )
 
