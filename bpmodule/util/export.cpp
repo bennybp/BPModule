@@ -9,7 +9,7 @@
 #include <boost/python/list.hpp>
 
 #include "bpmodule/util/FormatString.hpp"
-
+#include "bpmodule/util/Cmdline.hpp"
 
 using namespace boost::python;
 
@@ -29,7 +29,11 @@ namespace export_python {
 BOOST_PYTHON_MODULE(util)
 {
     // format string
-    def("FormatString", FormatStringPy);
+    def("FormatString_", FormatStringPy);
+
+    // command line
+    def("SetCmdline", SetCmdline);
+    def("ClearCmdline", ClearCmdline);
 }
 
 
