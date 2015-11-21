@@ -107,12 +107,12 @@ BOOST_PYTHON_MODULE(output)
     def("Flush", Flush);
 
     // printing to output
-    def("Output", Output_Wrap_Output);
-    def("Success", Output_Wrap_Success);
-    def("Warning", Output_Wrap_Warning);
-    def("Error", Output_Wrap_Error);
-    def("Changed", Output_Wrap_Changed);
-    def("Debug", Output_Wrap_Debug);
+    def("Output_", Output_Wrap_Output);
+    def("Success_", Output_Wrap_Success);
+    def("Warning_", Output_Wrap_Warning);
+    def("Error_", Output_Wrap_Error);
+    def("Changed_", Output_Wrap_Changed);
+    def("Debug_", Output_Wrap_Debug);
 }
 
 
