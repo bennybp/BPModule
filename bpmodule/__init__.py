@@ -63,11 +63,14 @@ def Init(argv, out = "stdout", color = True, debug = False):
   output.SetColor(color)
   output.SetDebug(debug) 
 
+  # Set the command line
+  util.SetCmdline(argv)
+
   # Initialize Parallel
-  parallel.InitParallel(argv)
+  parallel.InitParallel()
 
   # Initialize tensor
-  tensor.Init(argv)
+  tensor.Init()
 
 
   # Set some info about the base module and
@@ -86,4 +89,6 @@ def Finalize():
 
   output.Output("Finalizing parallelization\n")
   parallel.FinalizeParallel()
+
+  util.ClearCmdline()
 

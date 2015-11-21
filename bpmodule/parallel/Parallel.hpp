@@ -19,10 +19,8 @@ namespace parallel {
 /*! \brief Initialize the parallelization functionality
  *
  * This is meant to be called from python
- *
- * \param argv Arguments supplied to the python process
  */
-void InitParallel(const boost::python::list & argv);
+void InitParallel(void);
 
 
 /*! \brief Finalize parallelization functionality

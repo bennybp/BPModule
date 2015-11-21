@@ -7,7 +7,7 @@
 namespace bpmodule {
 namespace tensor {
 
-void Init(const boost::python::list & argv);
+void Init(void);
 void Finalize(void);
 
 
