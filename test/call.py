@@ -31,6 +31,9 @@ def Run(mm):
       bp.output.Output("\n")
       b2.RunTest()
       bp.output.Output("\n")
+    
+      inp = bp.datastore.CalcData()
+      b1.CalcTest(inp)
 
       bp.output.Output("\nDone testing\n")
 

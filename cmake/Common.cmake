@@ -22,11 +22,9 @@ endif()
 #######################
 # Find MPI if requested
 #######################
-if(BPMODULE_MPI)
-  find_package(MPI)
-  if(NOT MPI_CXX_FOUND) 
-    message(FATAL_ERROR "Cannot find MPI!")
-  endif()
+find_package(MPI)
+if(NOT MPI_CXX_FOUND) 
+  message(FATAL_ERROR "Cannot find MPI!")
 endif()
 
 # For some reason, this has a leading whitespace

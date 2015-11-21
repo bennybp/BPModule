@@ -4,11 +4,13 @@
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/Test_Base.hpp"
+#include "bpmodule/tensor/Matrix.hpp"
 
 using namespace bpmodule::output;
 using namespace bpmodule::modulebase;
 using namespace bpmodule::modulelocator;
 using namespace bpmodule::datastore;
+using namespace bpmodule::tensor;
 using bpmodule::exception::GeneralException;
 using bpmodule::exception::ModuleCreateException;
 
@@ -80,6 +82,8 @@ public:
     {
         CalcData output;
         Output("HERE: %1%\n", output.HasType<double>("Hello"));
+        MatrixD testmat(3,3);
+        Output("Matrix dimensions: %1% x %2%\n", testmat.Height(), testmat.Width());
 
         return output;
     }
