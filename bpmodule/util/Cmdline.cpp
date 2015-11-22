@@ -1,4 +1,11 @@
-#include <bpmodule/python_helper/Convert.hpp>
+/*! \file
+ *
+ * \brief Storage and retrieval of command line arguments (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */ 
+
+#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/util/Cmdline.hpp"
 
 namespace {
   int argc_;
@@ -12,21 +19,24 @@ namespace util {
 
 int * GetArgc(void)
 {
-    //! \todo check if set
+    if(!set_)
+        throw exception::GeneralException("Command line has not been set! Definite developer error");
+
     return &argc_;
 }
 
 char *** GetArgv(void)
 {
-    //! \todo check if set
+    if(!set_)
+        throw exception::GeneralException("Command line has not been set! Definite developer error");
+
     return &argv_;
 }
 
 void SetCmdline(const boost::python::list & argv)
 {
-    //! \todo check if set (or else memory leak...)
-    //! \todo Check for buffer overflows
-
+    if(set_)
+        ClearCmdline();
 
     argc_ = boost::python::extract<int>(argv.attr("__len__")());
 
@@ -34,6 +44,7 @@ void SetCmdline(const boost::python::list & argv)
     // argv[argc] should always be NULL
     // see http://www.open-mpi.org/community/lists/users/2013/11/22955.php
     argv_ = new char*[argc_+1];
+
     for(int i = 0; i < argc_; i++)
     {
         std::string arg = python_helper::ConvertToCpp<std::string>(argv[i]);
@@ -41,14 +52,23 @@ void SetCmdline(const boost::python::list & argv)
         argv_[i] = new char[len+1];
         strncpy(argv_[i], arg.c_str(), len+1);
     }
+
     argv_[argc_] = NULL;
+
+    set_ = true;
 }
+
 
 void ClearCmdline(void)
 {
-    for(int i = 0; i < argc_; i++)
-        delete [] argv_[i];
-    delete [] argv_;
+    if(set_)
+    {
+        for(int i = 0; i < argc_; i++)
+            delete [] argv_[i];
+        delete [] argv_;
+
+        set_ = false;
+    }
 }
 
 
