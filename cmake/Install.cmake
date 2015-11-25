@@ -39,4 +39,10 @@ macro(INSTALL_SUPERMODULE MODULE_NAME
 
   install(TARGETS ${MODULE_NAME} LIBRARY DESTINATION modules/${MODULE_NAME}
                                  RUNTIME DESTINATION modules/${MODULE_NAME})
+
+  # Use this variable to get to your module's install path
+  set(${MODULE_NAME}_INSTALL_PATH ${CMAKE_INSTALL_PREFIX}/modules/${MODULE_NAME})
+
+  # Todo - set rpath here?
+
 endmacro()
