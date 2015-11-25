@@ -98,7 +98,7 @@ class ModuleManager(modulelocator.ModuleLocator):
 
         if minfo["type"] == "c_module":
             self.cml.LoadSO(key, minfo)
-        elif minfo["type"] == "python_module":
+        elif minfo["type"] == "python_module":  # TODO - check for CreateModule
             self.pml.LoadPyModule(key, m.CreateModule, minfo)
         output.Debug("Done importing module %1% from %2%\n", key, supermodule)
         output.Output("\n")
