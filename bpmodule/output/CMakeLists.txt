@@ -7,7 +7,7 @@ set(BPMODULE_OUTPUT_HEADERS
             Output.hpp
    )
 
-ADD_MODULE(output 
+ADD_SUPERMODULE(output 
            "${BPMODULE_OUTPUT_FILES}"
            ""
            ""

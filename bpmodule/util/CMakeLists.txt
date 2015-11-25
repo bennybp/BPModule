@@ -12,7 +12,7 @@ set(BPMODULE_UTIL_HEADERS
    )
 
 
-ADD_MODULE(util 
+ADD_SUPERMODULE(util 
            "${BPMODULE_UTIL_FILES}"
            ""
            ""

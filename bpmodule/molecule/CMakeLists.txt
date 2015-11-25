@@ -14,7 +14,7 @@ set(BPMODULE_MOLECULE_HEADERS
    )
 
 
-ADD_MODULE(molecule
+ADD_SUPERMODULE(molecule
            "${BPMODULE_MOLECULE_FILES}"
            ""
            ""

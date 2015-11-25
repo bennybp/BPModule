@@ -18,7 +18,7 @@ set(BPMODULE_EXCEPTION_HEADERS
    )
 
 
-ADD_MODULE(exception
+ADD_SUPERMODULE(exception
            "${BPMODULE_EXCEPTION_FILES}"
            ""
            ""

@@ -11,7 +11,7 @@ set(BPMODULE_MATH_HEADERS
    )
 
 
-ADD_MODULE(math
+ADD_SUPERMODULE(math
            "${BPMODULE_MATH_FILES}"
            ""
            ""

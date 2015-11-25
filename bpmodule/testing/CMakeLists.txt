@@ -15,7 +15,7 @@ set(BPMODULE_TESTING_HEADERS
   
 
 
-ADD_MODULE(testing
+ADD_SUPERMODULE(testing
            "${BPMODULE_TESTING_FILES}"
            ""
            ""

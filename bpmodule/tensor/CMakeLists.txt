@@ -11,7 +11,7 @@ set(BPMODULE_TENSOR_HEADERS
    )
 
 
-ADD_MODULE(tensor
+ADD_SUPERMODULE(tensor
            "${BPMODULE_TENSOR_FILES}"
            ""
            ""

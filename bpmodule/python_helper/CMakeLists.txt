@@ -13,7 +13,7 @@ set(BPMODULE_PYTHON_HELPER_HEADERS
    )
 
 
-ADD_MODULE(python_helper
+ADD_SUPERMODULE(python_helper
            "${BPMODULE_PYTHON_HELPER_FILES}"
            ""
            ""

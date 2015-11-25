@@ -1,9 +1,9 @@
 # Creates a target for a module
-macro(ADD_MODULE MODULE_NAME
-                 MODULE_FILES
-                 MODULE_CXX_FLAGS
-                 MODULE_CXX_LINK_FLAGS
-                 MODULE_CXX_INCLUDES)
+macro(ADD_SUPERMODULE MODULE_NAME
+                      MODULE_FILES
+                      MODULE_CXX_FLAGS
+                      MODULE_CXX_LINK_FLAGS
+                      MODULE_CXX_INCLUDES)
 
   if(NOT "${MODULE_FILES}" STREQUAL "")
       message(STATUS "Adding module ${MODULE_NAME}")

@@ -8,7 +8,7 @@ set(BPMODULE_MANGLE_HEADERS
 )
 
 
-ADD_MODULE(mangle
+ADD_SUPERMODULE(mangle
            "${BPMODULE_MANGLE_FILES}"
            ""
            ""

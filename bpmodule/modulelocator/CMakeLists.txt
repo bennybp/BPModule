@@ -17,7 +17,7 @@ set(BPMODULE_MODULELOCATOR_HEADERS
    )
 
 
-ADD_MODULE(modulelocator
+ADD_SUPERMODULE(modulelocator
            "${BPMODULE_MODULELOCATOR_FILES}"
            ""
            ""

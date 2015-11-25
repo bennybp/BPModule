@@ -8,7 +8,7 @@ set(BPMODULE_PARALLEL_HEADERS
    )
 
 
-ADD_MODULE(parallel
+ADD_SUPERMODULE(parallel
            "${BPMODULE_PARALLEL_FILES}"
            ""
            ""

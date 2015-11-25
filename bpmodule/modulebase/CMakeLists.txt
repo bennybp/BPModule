@@ -10,7 +10,7 @@ set(BPMODULE_MODULEBASE_HEADERS
    )
 
 
-ADD_MODULE(modulebase
+ADD_SUPERMODULE(modulebase
            "${BPMODULE_MODULEBASE_FILES}"
            ""
            ""

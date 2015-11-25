@@ -14,7 +14,7 @@ set(BPMODULE_OPTIONS_HEADERS
 
 
 
-ADD_MODULE(options
+ADD_SUPERMODULE(options
            "${BPMODULE_OPTIONS_FILES}"
            ""
            ""

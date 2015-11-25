@@ -13,7 +13,7 @@ set(BPMODULE_DATASTORE_HEADERS
    )
 
 
-ADD_MODULE(datastore
+ADD_SUPERMODULE(datastore
            "${BPMODULE_DATASTORE_FILES}"
            ""
            ""

@@ -13,7 +13,7 @@ set(BPMODULE_BASISSET_HEADERS
    )
 
 
-ADD_MODULE(basisset
+ADD_SUPERMODULE(basisset
            "${BPMODULE_BASISSET_FILES}"
            ""
            ""
