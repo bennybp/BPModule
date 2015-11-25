@@ -4,7 +4,10 @@ import os
 import sys
 from  importlib.machinery import SourceFileLoader
 
-sys.path.insert(0, "/home/ben/programming/BPModule/install/modules")
+# Add the bpmodule path
+thispath = os.path.dirname(os.path.realpath(__file__))
+bppath = os.path.join(os.path.dirname(thispath), "modules")
+sys.path.insert(0, bppath)
 
 from bpmodule import output, CheckSupermodule
 from bpmodule.exception import PyGeneralException
