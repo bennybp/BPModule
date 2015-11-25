@@ -52,8 +52,7 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("RunTest", pure_virtual(&Test_Base::RunTest))
     .def("CallRunTest", pure_virtual(&Test_Base::CallRunTest))
     .def("Throw", pure_virtual(&Test_Base::Throw))
-    .def("CallThrow", pure_virtual(&Test_Base::CallThrow))
-    .def("CalcTest", pure_virtual(&Test_Base::CalcTest), return_value_policy<return_by_value>());
+    .def("CallThrow", pure_virtual(&Test_Base::CallThrow));
 
 }
 

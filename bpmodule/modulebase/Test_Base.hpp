@@ -48,14 +48,6 @@ class Test_Base : public ModuleBase
          */ 
         virtual void CallThrow(const std::string & other) = 0;
 
-
-
-        /*! \brief Calculate some data and return it
-         * 
-         * \param [in] inputs Some calculation inputs
-         * \return Some calculated data
-         */
-        virtual datastore::CalcData CalcTest(datastore::CalcData inputs) = 0;
 };
 
 } // close namespace modulebase
