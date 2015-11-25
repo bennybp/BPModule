@@ -16,7 +16,7 @@ def Run(mm):
 
       # Load the python modules
       #             supermodule      module name      key
-      mm.LoadModule("testextlib",   "testextlib",   "TESTEXTLIB")
+      mm.LoadModule("TestModules",   "TestExtLib",   "TESTEXTLIB")
       mm.PrintInfo()
       mm.SanityCheck()
 

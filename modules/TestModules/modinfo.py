@@ -1,5 +1,77 @@
-minfo = { 
-  "test_int" :
+minfo = {
+
+  "TestModule1" :
+  {
+    "type"        : "c_module",
+    "soname"      : "TestModules.so",
+    "version"     : "0.1a",
+    "description" : "Some test module",
+    "authors"     : ["me", "myself", "I"],
+    "refs"        : ["some paper", "some other paper"],
+    "options"     : {
+                        # Key                 Type    Default     Req     Check   Help
+                        "bool_opt_def":    (  "bool",  False,     False,   None,  "Some help string"),
+                        "bool_opt":        (  "bool",  None,      False,   None,  "Some help string"),
+
+                        "int_opt_def":     (  "int",    1,        False,   None,  "Some help string"),
+                        "int_opt":         (  "int",    None,     False,   None,  "Some help string"),
+
+                        "double_opt_def":  ( "float",   6.02e23,  False,   None,  "Some help string"),
+                        "double_opt":      ( "float",   None,     False,   None,  "Some help string"),
+
+                        "str_opt_def":     (  "str",    "Hi",     False,   None,  "Some help string"),
+                        "str_opt":         (  "str",    None,     False,   None,  "Some help string"),
+                    }
+  },
+
+
+ "TestPyModule1" :
+  {
+    "type"        : "python_module",
+    "version"     : "0.1a",
+    "description" : "Some test module",
+    "authors"     : ["me", "myself", "I"],
+    "refs"        : ["some paper", "some other paper"],
+    "options"     : {
+                        # Key                 Type    Default     Req     Check   Help
+                        "bool_opt_def":    (  "bool",  False,     False,   None,  "Some help string"),
+                        "bool_opt":        (  "bool",  None,      False,   None,  "Some help string"),
+
+                        "int_opt_def":     (  "int",    1,        False,   None,  "Some help string"),
+                        "int_opt":         (  "int",    None,     False,   None,  "Some help string"),
+
+                        "double_opt_def":  ( "float",   6.02e23,  False,   None,  "Some help string"),
+                        "double_opt":      ( "float",   None,     False,   None,  "Some help string"),
+
+                        "str_opt_def":     (  "str",    "Hi",     False,   None,  "Some help string"),
+                        "str_opt":         (  "str",    None,     False,   None,  "Some help string"),
+                    }
+  },
+
+
+  ##########################################
+  # Testing of linking to external libraries
+  ##########################################
+  "TestExtLib" :
+  {
+    "type"        : "c_module",
+    "soname"      : "TestModules.so",
+    "version"     : "0.1a",
+    "description" : "Some test module",
+    "authors"     : ["me", "myself", "I"],
+    "refs"        : ["some paper", "some other paper"],
+    "options"     : {
+                        # Key                 Type    Default     Req     Check   Help
+                    }
+  },
+
+
+
+  ##########################################
+  # Testing of options parsing. These modules
+  # aren't meant to be loaded
+  ##########################################
+  "TestOptions_int" :
   {
     "type"        : "python_module",
     "version"     : "0.1a",
@@ -14,7 +86,7 @@ minfo = {
                     }
   },
 
-  "test_float" :
+  "TestOptions_float" :
   {
     "type"        : "python_module",
     "version"     : "0.1a",
@@ -29,7 +101,7 @@ minfo = {
                     }
   },
 
-  "test_bool" :
+  "TestOptions_bool" :
   {
     "type"        : "python_module",
     "version"     : "0.1a",
@@ -44,7 +116,7 @@ minfo = {
                     }
   },
 
-  "test_str" :
+  "TestOptions_str" :
   {
     "type"        : "python_module",
     "version"     : "0.1a",
@@ -59,7 +131,7 @@ minfo = {
                     }
   },
 
-  "test_listint" :
+  "TestOptions_listint" :
   {
     "type"        : "python_module",
     "version"     : "0.1a",
@@ -74,7 +146,7 @@ minfo = {
                     }
   },
 
-  "test_listfloat" :
+  "TestOptions_listfloat" :
   {
     "type"        : "python_module",
     "version"     : "0.1a",
@@ -89,7 +161,7 @@ minfo = {
                     }
   },
 
-  "test_listbool" :
+  "TestOptions_listbool" :
   {
     "type"        : "python_module",
     "version"     : "0.1a",
@@ -104,7 +176,7 @@ minfo = {
                     }
   },
 
-  "test_liststr" :
+  "TestOptions_liststr" :
   {
     "type"        : "python_module",
     "version"     : "0.1a",
@@ -117,7 +189,9 @@ minfo = {
                         "liststr_req":      ( "liststr",    None,                     True,  None, "Some help string"),
                         "liststr_opt":      ( "liststr",    None,                     False, None, "Some help string"),
                     }
-  }
+  },
 
 
 }
+
+

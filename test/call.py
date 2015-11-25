@@ -16,8 +16,8 @@ def Run(mm):
 
       # Load the python modules
       #             supermodule      module name      key
-      mm.LoadModule("testmodule1",   "testmodule1",   "TESTMOD1")
-      mm.LoadModule("testpymodule1", "testpymodule1", "TESTPYMOD1")
+      mm.LoadModule("TestModules",   "TestModule1",   "TESTMOD1")
+      mm.LoadModule("TestModules",   "TestPyModule1", "TESTPYMOD1")
 
       mm.SetOptions("TESTMOD1", { "double_opt_def": 1.111, "int_opt_def" : 55 })
       mm.PrintInfo()
@@ -32,9 +32,6 @@ def Run(mm):
       b2.RunTest()
       bp.output.Output("\n")
     
-      inp = bp.datastore.CalcData()
-      b1.CalcTest(inp)
-
       bp.output.Output("\nDone testing\n")
 
 

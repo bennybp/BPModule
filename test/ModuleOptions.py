@@ -38,15 +38,15 @@ def Run(mm):
 
         # Load the python modules
         #             supermodule       module name       key
-        mm.LoadModule("test_options",   "test_int",     "TEST_INT")
-        mm.LoadModule("test_options",   "test_float",   "TEST_FLOAT")
-        mm.LoadModule("test_options",   "test_bool",    "TEST_BOOL")
-        mm.LoadModule("test_options",   "test_str",     "TEST_STR")
+        mm.LoadModule("TestModules",   "TestOptions_int",     "TEST_INT")
+        mm.LoadModule("TestModules",   "TestOptions_float",   "TEST_FLOAT")
+        mm.LoadModule("TestModules",   "TestOptions_bool",    "TEST_BOOL")
+        mm.LoadModule("TestModules",   "TestOptions_str",     "TEST_STR")
 
-        mm.LoadModule("test_options",   "test_listint",     "TEST_LIST_INT")
-        mm.LoadModule("test_options",   "test_listfloat",   "TEST_LIST_FLOAT")
-        mm.LoadModule("test_options",   "test_listbool",    "TEST_LIST_BOOL")
-        mm.LoadModule("test_options",   "test_liststr",     "TEST_LIST_STR")
+        mm.LoadModule("TestModules",   "TestOptions_listint",     "TEST_LIST_INT")
+        mm.LoadModule("TestModules",   "TestOptions_listfloat",   "TEST_LIST_FLOAT")
+        mm.LoadModule("TestModules",   "TestOptions_listbool",    "TEST_LIST_BOOL")
+        mm.LoadModule("TestModules",   "TestOptions_liststr",     "TEST_LIST_STR")
 
         mod_int   = ( mm.GetModule_Test("TEST_INT"),    "int"   )
         mod_float = ( mm.GetModule_Test("TEST_FLOAT"),  "float" )
