@@ -56,6 +56,5 @@ Modules are installed into the same top-level directory as the core.
 
 ## Running tests
 
-Scripts in `test` can be run as is, with the exception that the path
-at the top has to be changed to the install path. Dirty hack, I know.
-Sorry about that :(
+Tests can be run from the `test` subdirectory of the install directory. All paths should
+be determined automatically.
