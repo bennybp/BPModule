@@ -40,7 +40,7 @@ find_package(Boost COMPONENTS python3 REQUIRED)
 ############################
 # Find Python libraries
 ############################
-set(Python_ADDITIONAL_VERSIONS "3.3;3.4")
+set(Python_ADDITIONAL_VERSIONS "3.3;3.4;3.5")
 find_package(PythonLibs REQUIRED)
 
 
