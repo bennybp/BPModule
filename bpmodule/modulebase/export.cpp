@@ -12,7 +12,6 @@
 #include <boost/python/pure_virtual.hpp>
 
 #include "bpmodule/modulebase/All.hpp"
-#include "bpmodule/modulebase/All_python.hpp"
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
 
 
@@ -43,6 +42,7 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("Name", &ModuleBase::Name)
     .def("Version", &ModuleBase::Version)
     .def("Print", &ModuleBase::Print)
+    .def("IsPythonModule", &ModuleBase::IsPythonModule)
     .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_value_policy<reference_existing_object>());  // should be safe?
 
 
@@ -51,12 +51,12 @@ BOOST_PYTHON_MODULE(modulebase)
     /////////////////////////
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
 
-    class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long>())
-    .def("MLocator", &Test_Base_Wrap::MLocator, return_value_policy<reference_existing_object>()) 
-    .def("RunTest", pure_virtual(&Test_Base::RunTest))
-    .def("CallRunTest", pure_virtual(&Test_Base::CallRunTest))
-    .def("Throw", pure_virtual(&Test_Base::Throw))
-    .def("CallThrow", pure_virtual(&Test_Base::CallThrow));
+    class_<Test_Base, bases<ModuleBase>, boost::shared_ptr<Test_Base>, boost::noncopyable>("Test_Base", init<PyObject *, unsigned long>())
+    .def("MLocator", static_cast<ModuleLocator &(Test_Base::*)(void)>(&Test_Base::MLocator), return_value_policy<reference_existing_object>()) 
+    .def("RunTest", &Test_Base::RunTest)
+    .def("CallRunTest", &Test_Base::CallRunTest)
+    .def("Throw", &Test_Base::Throw)
+    .def("CallThrow", &Test_Base::CallThrow);
 
 }
 

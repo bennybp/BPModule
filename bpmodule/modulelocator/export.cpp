@@ -37,15 +37,6 @@ namespace export_python {
  *
  * \return boost::shared_ptr containing a pointer to the new object
  */
-boost::shared_ptr<ModuleBase> Wrap_GetModule(ModuleLocator * ms, const std::string & key)
-{
-    ScopedModule<ModuleBase> mod = ms->GetModule<ModuleBase>(key);
-    std::function<void(ModuleBase *)> dfunc = mod.get_deleter();
-    ModuleBase * ptr = mod.release();
-    return boost::shared_ptr<ModuleBase>(ptr, dfunc);
-}
-
-
 
 
 ////////////////////////////
@@ -62,7 +53,7 @@ BOOST_PYTHON_MODULE(modulelocator)
     .def("KeyInfo", &ModuleLocator::KeyInfo)
     .def("PrintInfo", &ModuleLocator::PrintInfo)
     .def("TestAll", &ModuleLocator::TestAll)
-    .def("GetModule", Wrap_GetModule);
+    .def("GetModule", &ModuleLocator::GetModulePy);
 
 
     class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleLocator *>())

@@ -8,7 +8,12 @@
 #ifndef _GUARD_MODULEBASE_HPP_
 #define _GUARD_MODULEBASE_HPP_
 
-#include "bpmodule/datastore/CalcData.hpp"
+#include <string>
+#include <boost/python/call_method.hpp>
+#include <boost/python/object.hpp> //! \todo forward declare PyObject?
+
+#include "bpmodule/python_helper/BoostPython_fwd.hpp"
+
 
 // forward declarations
 namespace bpmodule {
@@ -42,6 +47,11 @@ class ModuleBase
         /*! \brief Constructor
          */
         ModuleBase(unsigned long id);
+
+        /*! \brief Constructor for python
+         */
+        ModuleBase(PyObject * self, unsigned long id);
+
 
         virtual ~ModuleBase();
 
@@ -117,16 +127,19 @@ class ModuleBase
          */
         void Print(void) const; 
 
+
+        /*! \brief See if this module is a python module
+         */
+        bool IsPythonModule(void) const;
+
         ///@}
 
-
-    protected:
+        //! \todo where do I belong
         /*! \brief Get the internal ModuleLocator that is in charge of this module
          *
          * \throw std::logic_error if it hasn't been set
          */ 
         modulelocator::ModuleLocator & MLocator(void);
-
 
         /*! \brief Get the internal ModuleLocator that is in charge of this module
          *
@@ -134,6 +147,14 @@ class ModuleBase
          */ 
         const modulelocator::ModuleLocator & MLocator(void) const;
 
+
+
+        // Create a boost::python::object from a boost::shared_ptr to this
+        // The returned object will now be responsible for deletion
+        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter) = 0;
+
+
+    protected:
 
         /*! \brief Get all module information
          *
@@ -149,11 +170,27 @@ class ModuleBase
         const modulelocator::GraphNodeData & GraphData(void) const;
 
 
+        /*! \brief Call a python method
+         */
+        template<typename R, typename ... An>
+        R CallPyMethod(const char * fname, const An &... args)
+        {
+            //! \todo check if this is actually a python module
+            return boost::python::call_method<R>(pyself_, fname, args...);
+        }
 
 
     private:
+        // python self pointer
+        // Only used if this is a python module. Otherwise it is null
+        PyObject * pyself_;
+
         // allow ModuleLocator to set up the pointers
+        // and to call MoveToPyObject_
         friend class modulelocator::ModuleLocator;
+
+
+
 
 
         //! The unique ID of this module

@@ -174,6 +174,62 @@ ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & key)
 }
 
 
+std::pair<ModuleBase *, std::function<void(modulebase::ModuleBase *)>>
+ModuleLocator::CreateModule(const std::string & key)
+{
+    // obtain the creator
+    const StoreEntry & se = GetOrThrow_(key);
+
+    // create
+    modulebase::ModuleBase * mbptr = nullptr;
+    try {
+      mbptr = se.func(se.mi.name, curid_);
+    }
+    catch(const exception::GeneralException & gex)
+    {
+        throw exception::ModuleCreateException(gex,
+                                               se.mi.path,
+                                               se.mi.key,
+                                               se.mi.name);
+    }
+
+    if(mbptr == nullptr)
+        throw exception::ModuleCreateException("Create function returned a null pointer",
+                                               se.mi.path,
+                                               se.mi.key,
+                                               se.mi.name);
+    
+    // add the moduleinfo to the graph
+    // \todo Molecule, basis set, inherited from parent
+    GraphNodeData gdata{nullptr, nullptr, se.mi, datastore::CalcData()};
+    graphdata_.emplace(curid_, gdata);
+
+    // set the info
+    mbptr->SetMLocator_(this);
+    mbptr->SetGraphData_(&(graphdata_.at(curid_)));
+
+    // make the deleter function the DeleteObject_() of this ModuleLocator object
+    std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleLocator::*)(modulebase::ModuleBase *)>(&ModuleLocator::DeleteObject_),
+                                                                    this,
+                                                                    std::placeholders::_1);
+
+    removemap_.emplace(curid_, se.dfunc);
+
+    // next id
+    curid_++;
+
+    return {mbptr, dfunc};
+}
+
+
+boost::python::object ModuleLocator::GetModulePy(const std::string & key)
+{
+    auto mod = CreateModule(key);
+    return mod.first->MoveToPyObject_(mod.second);
+}
+
+
+
 ModuleLocator::~ModuleLocator()
 {
     // it is the responsiblility of the various

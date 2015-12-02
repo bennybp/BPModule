@@ -19,9 +19,15 @@ namespace modulebase {
 
 
 ModuleBase::ModuleBase(unsigned long id)
-    : id_(id), mlocator_(nullptr), graphdata_(nullptr)
+    : pyself_(nullptr), id_(id), mlocator_(nullptr), graphdata_(nullptr)
 {
     output::Debug("Constructed module [%1%]\n", id);
+}
+
+ModuleBase::ModuleBase(PyObject * self, unsigned long id)
+    : pyself_(self), id_(id), mlocator_(nullptr), graphdata_(nullptr)
+{
+    output::Debug("Constructed python module [%1%]\n", id);
 }
 
 
@@ -84,6 +90,11 @@ const ModuleInfo & ModuleBase::MInfo(void) const
 void ModuleBase::Print(void) const
 {
     MInfo().Print();
+}
+
+bool ModuleBase::IsPythonModule(void) const
+{
+    return (pyself_ != nullptr);
 }
 
 ////////////////////////////////

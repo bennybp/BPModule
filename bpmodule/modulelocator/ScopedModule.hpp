@@ -28,7 +28,7 @@ namespace modulelocator {
 class ModuleLocator;
 
 namespace export_python {
-boost::shared_ptr<modulebase::ModuleBase> Wrap_GetModule(ModuleLocator *, const std::string &);
+boost::python::object Wrap_GetModule(ModuleLocator *, const std::string &);
 }
 
 } // close modulelocator
@@ -101,7 +101,7 @@ class ScopedModule : private std::unique_ptr<T, std::function<void(modulebase::M
     private:
         // These are needed by the python wrapper
 
-        friend boost::shared_ptr<modulebase::ModuleBase> export_python::Wrap_GetModule(ModuleLocator *, const std::string &);
+        friend boost::python::object export_python::Wrap_GetModule(ModuleLocator *, const std::string &);
 
 
         /*! \brief Release ownership
