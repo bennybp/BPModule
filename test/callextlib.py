@@ -23,7 +23,7 @@ def Run(mm):
       mm.PrintInfo()
       mm.SanityCheck()
 
-      b1 = mm.GetModule_Test("TESTEXTLIB")
+      b1 = mm.GetModule("TESTEXTLIB")
 
       b1.RunTest()
       bp.output.Output("\n")
