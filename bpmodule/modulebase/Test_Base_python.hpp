@@ -54,25 +54,6 @@ class Test_Base_Wrap : public Test_Base, public boost::python::wrapper<Test_Base
         {
             this->get_override("CallThrow")(other);
         }
-
-
-    private:
-        static exception::GeneralException::ExceptionInfo
-        PythonListToPairVec(const boost::python::list & exinfo)
-        {
-            int length = boost::python::extract<int>(exinfo.attr("__len__")());
-            exception::GeneralException::ExceptionInfo inf;
-            inf.reserve(length);
-
-            for (int i = 0; i < length; i++)
-                inf.push_back({
-                                boost::python::extract<std::string>(exinfo[i][0]),
-                                boost::python::extract<std::string>(exinfo[i][1]),
-                              });
-
-            return inf;
-        }
-
 };
 
 
