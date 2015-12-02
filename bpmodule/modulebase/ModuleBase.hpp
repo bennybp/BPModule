@@ -121,6 +121,19 @@ class ModuleBase
         const modulelocator::ModuleInfo & MInfo(void) const;
 
 
+        /*! \brief Get the internal ModuleLocator that is in charge of this module
+         *
+         * \throw std::logic_error if it hasn't been set
+         */ 
+        modulelocator::ModuleLocator & MLocator(void);
+
+
+        /*! \brief Get the internal ModuleLocator that is in charge of this module
+         *
+         * \throw std::logic_error if it hasn't been set
+         */ 
+        const modulelocator::ModuleLocator & MLocator(void) const;
+
 
         /*! \brief Print the information for this module
          *
@@ -134,19 +147,6 @@ class ModuleBase
         bool IsPythonModule(void) const noexcept;
 
         ///@}
-
-        //! \todo where do I belong
-        /*! \brief Get the internal ModuleLocator that is in charge of this module
-         *
-         * \throw std::logic_error if it hasn't been set
-         */ 
-        modulelocator::ModuleLocator & MLocator(void);
-
-        /*! \brief Get the internal ModuleLocator that is in charge of this module
-         *
-         * \throw std::logic_error if it hasn't been set
-         */ 
-        const modulelocator::ModuleLocator & MLocator(void) const;
 
 
 
