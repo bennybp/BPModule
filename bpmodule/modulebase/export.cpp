@@ -43,7 +43,8 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("Version", &ModuleBase::Version)
     .def("Print", &ModuleBase::Print)
     .def("IsPythonModule", &ModuleBase::IsPythonModule)
-    .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_value_policy<reference_existing_object>());  // should be safe?
+    .def("MLocator", static_cast<ModuleLocator &(ModuleBase::*)(void)>(&ModuleBase::MLocator), return_value_policy<reference_existing_object>()) 
+    .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_value_policy<reference_existing_object>());
 
 
     /////////////////////////
@@ -51,8 +52,7 @@ BOOST_PYTHON_MODULE(modulebase)
     /////////////////////////
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
 
-    class_<Test_Base, bases<ModuleBase>, boost::shared_ptr<Test_Base>, boost::noncopyable>("Test_Base", init<PyObject *, unsigned long>())
-    .def("MLocator", static_cast<ModuleLocator &(Test_Base::*)(void)>(&Test_Base::MLocator), return_value_policy<reference_existing_object>()) 
+    class_<Test_Base, bases<ModuleBase>, boost::noncopyable>("Test_Base", init<PyObject *, unsigned long>())
     .def("RunTest", &Test_Base::RunTest)
     .def("CallRunTest", &Test_Base::CallRunTest)
     .def("Throw", &Test_Base::Throw)

@@ -50,46 +50,36 @@ unsigned long ModuleBase::ID(void) const noexcept
 
 std::string ModuleBase::Key(void) const 
 {
-    return MInfo().key;
+    return MInfo_().key;
 }
 
 
 std::string ModuleBase::Name(void) const 
 {
-    return MInfo().name;
+    return MInfo_().name;
 }
 
 
 std::string ModuleBase::Version(void) const 
 {
-    return MInfo().version;
+    return MInfo_().version;
 }
 
 
 const options::OptionMap & ModuleBase::Options(void) const
 {
-    return MInfo().options;
+    return MInfo_().options;
 }
 
 options::OptionMap & ModuleBase::Options(void)
 {
-    return MInfo().options;
+    return MInfo_().options;
 }
 
-
-ModuleInfo & ModuleBase::MInfo(void)
-{
-    return GraphData().minfo;
-}
-
-const ModuleInfo & ModuleBase::MInfo(void) const
-{
-    return GraphData().minfo;
-}
 
 void ModuleBase::Print(void) const
 {
-    MInfo().Print();
+    MInfo_().Print();
 }
 
 bool ModuleBase::IsPythonModule(void) const noexcept
@@ -139,6 +129,16 @@ modulelocator::GraphNodeData & ModuleBase::GraphData(void)
 ////////////////////////////////
 // Private functions
 ////////////////////////////////
+ModuleInfo & ModuleBase::MInfo_(void)
+{
+    return GraphData().minfo;
+}
+
+const ModuleInfo & ModuleBase::MInfo_(void) const
+{
+    return GraphData().minfo;
+}
+
 void ModuleBase::SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept
 {
     mlocator_ = mloc;

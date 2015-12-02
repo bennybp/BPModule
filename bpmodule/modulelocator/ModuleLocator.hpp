@@ -150,7 +150,7 @@ class ModuleLocator
             T * dptr = dynamic_cast<T *>(mod.first);
             if(dptr == nullptr)
             {
-                const ModuleInfo & mi = mod.first->MInfo();
+                const ModuleInfo & mi = mod.first->MInfo_();
 
                 throw exception::ModuleCreateException("Bad cast for module", mi.path,
                                                        key, mi.name, 

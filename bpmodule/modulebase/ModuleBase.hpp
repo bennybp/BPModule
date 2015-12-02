@@ -2,7 +2,7 @@
  *
  * \brief The base class for all modules (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef _GUARD_MODULEBASE_HPP_
@@ -68,70 +68,56 @@ class ModuleBase
         /*! \brief Get the unique ID of this module
          *
          * \exnothrow
-         */   
+         */
         unsigned long ID(void) const noexcept;
 
 
         /*! \brief Get the key of this module
          *
          * \throw std::logic_error if there is a severe developer error
-         */   
+         */
         std::string Key(void) const;
 
 
         /*! \brief Get the descriptive name of this module
          *
          * \throw std::logic_error if there is a severe developer error
-         */   
+         */
         std::string Name(void) const;
 
 
         /*! \brief Get the version of this module
          *
          * \throw std::logic_error if there is a severe developer error
-         */   
+         */
         std::string Version(void) const;
 
 
         /*! \brief Get the OptionMap object for this module
          *
          * \throw std::logic_error if there is a severe developer error
-         */ 
+         */
         options::OptionMap & Options(void);
 
 
         /*! \brief Get the OptionMap object for this module
          *
          * \throw std::logic_error if there is a severe developer error
-         */ 
+         */
         const options::OptionMap & Options(void) const;
-
-
-        /*! \brief Get all module information
-         *
-         * \throw std::logic_error if there is a severe developer error
-         */ 
-        modulelocator::ModuleInfo & MInfo(void);
-
-
-        /*! \brief Get the data from the graph node
-         *
-         * \throw std::logic_error if there is a severe developer error
-         */ 
-        const modulelocator::ModuleInfo & MInfo(void) const;
 
 
         /*! \brief Get the internal ModuleLocator that is in charge of this module
          *
          * \throw std::logic_error if it hasn't been set
-         */ 
+         */
         modulelocator::ModuleLocator & MLocator(void);
 
 
         /*! \brief Get the internal ModuleLocator that is in charge of this module
          *
          * \throw std::logic_error if it hasn't been set
-         */ 
+         */
         const modulelocator::ModuleLocator & MLocator(void) const;
 
 
@@ -139,7 +125,7 @@ class ModuleBase
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        void Print(void) const; 
+        void Print(void) const;
 
 
         /*! \brief See if this module is a python module
@@ -157,20 +143,20 @@ class ModuleBase
         /*! \brief Get all module information
          *
          * \throw std::logic_error if it hasn't been set
-         */ 
+         */
         modulelocator::GraphNodeData & GraphData(void);
 
 
         /*! \brief Get all module information
          *
          * \throw std::logic_error if it hasn't been set
-         */ 
+         */
         const modulelocator::GraphNodeData & GraphData(void) const;
 
 
 
         /*! \brief Throw an exception
-         * 
+         *
          * Will create the exception of the specified type, add the arguments,
          * and then add information about the module
          */
@@ -222,9 +208,25 @@ class ModuleBase
         ////////////////////
         // Functions
         ////////////////////
+        //
+        /*! \brief Get all module information from the graph node
+         *
+         * \throw std::logic_error if there is a severe developer error
+         */
+        modulelocator::ModuleInfo & MInfo_(void);
+
+
+        /*! \brief Get all module information from the graph node
+         *
+         * \throw std::logic_error if there is a severe developer error
+         */
+        const modulelocator::ModuleInfo & MInfo_(void) const;
+
+
         /*! \brief Set the mlocator_ pointer
          */
         void SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept;
+
 
         /*! \brief Set the graph data pointer
          */
