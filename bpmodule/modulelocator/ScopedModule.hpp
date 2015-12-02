@@ -94,22 +94,6 @@ class ScopedModule : private std::unique_ptr<T, std::function<void(modulebase::M
 
         //! \brief Access the functions of the underlying pointer
         pointer operator->() const { return BASE::operator->(); }
-
-    private:
-        /*! \brief Release ownership
-         *
-         * Ownership is given up, but the deleter is not called
-         */
-        pointer release(void) { return BASE::release(); }
-
-
-        /*! \brief Get the associated deletion function
-         */
-        deleter_type & get_deleter(void) { return BASE::get_deleter(); }
-
-        /*! \brief Get the associated deletion function
-         */
-        const deleter_type & get_deleter(void) const { return BASE::get_deleter(); }
 };
 
 
