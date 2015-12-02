@@ -35,8 +35,9 @@ BOOST_PYTHON_MODULE(modulebase)
     // Module Base classes
     ///////////////////////
     // python should never derive from ModuleBase, so a constructor should not be needed
+    register_ptr_to_python<boost::shared_ptr<ModuleBase>>();
+
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
-//    .def("MLocator", &ModuleBase::MLocator, return_internal_reference<>())
     .def("ID", &ModuleBase::ID)
     .def("Key", &ModuleBase::Key)
     .def("Name", &ModuleBase::Name)
@@ -45,8 +46,11 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_value_policy<reference_existing_object>());  // should be safe?
 
 
-
+    /////////////////////////
+    // Test class
+    /////////////////////////
     register_ptr_to_python<boost::shared_ptr<Test_Base>>();
+
     class_<Test_Base_Wrap, bases<ModuleBase>, boost::shared_ptr<Test_Base_Wrap>, boost::noncopyable>("Test_Base", init<unsigned long>())
     .def("MLocator", &Test_Base_Wrap::MLocator, return_value_policy<reference_existing_object>()) 
     .def("RunTest", pure_virtual(&Test_Base::RunTest))
