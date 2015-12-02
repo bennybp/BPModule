@@ -12,6 +12,7 @@
 #include <boost/python/call_method.hpp>
 #include <boost/python/object.hpp> //! \todo forward declare PyObject?
 
+#include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 
@@ -130,7 +131,7 @@ class ModuleBase
 
         /*! \brief See if this module is a python module
          */
-        bool IsPythonModule(void) const;
+        bool IsPythonModule(void) const noexcept;
 
         ///@}
 
@@ -149,9 +150,6 @@ class ModuleBase
 
 
 
-        // Create a boost::python::object from a boost::shared_ptr to this
-        // The returned object will now be responsible for deletion
-        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter) = 0;
 
 
     protected:
@@ -170,14 +168,33 @@ class ModuleBase
         const modulelocator::GraphNodeData & GraphData(void) const;
 
 
+
+        /*! \brief Throw an exception
+         * 
+         * Will create the exception of the specified type, add the arguments,
+         * and then add information about the module
+         */
+        template<typename T, typename ... Targs>
+        void Throw(const Targs &... args)
+        {
+            T ex(args...);
+            ex.AppendInfo("modulekey", Key());
+            ex.AppendInfo("modulename", Name());
+            ex.AppendInfo("moduleversion", Version());
+            throw ex;
+        }
+
+
         /*! \brief Call a python method
          */
         template<typename R, typename ... An>
         R CallPyMethod(const char * fname, const An &... args)
         {
-            //! \todo check if this is actually a python module
+            if (!IsPythonModule())
+                Throw<exception::GeneralException>("Attempting to call a virtual function in a C++ module that is missing from the derived class");
             return boost::python::call_method<R>(pyself_, fname, args...);
         }
+
 
 
     private:
@@ -188,8 +205,6 @@ class ModuleBase
         // allow ModuleLocator to set up the pointers
         // and to call MoveToPyObject_
         friend class modulelocator::ModuleLocator;
-
-
 
 
 
@@ -214,6 +229,16 @@ class ModuleBase
         /*! \brief Set the graph data pointer
          */
         void SetGraphData_(modulelocator::GraphNodeData * gdat) noexcept;
+
+
+        /*! \brief Create a boost::python::object from a boost::shared_ptr to this
+         *
+         * The returned object will now be responsible for deletion
+         *
+         * \note This does not use shared_from_this. Instead, it will always create a new
+         *       shared pointer. Beware!
+         */
+        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter) = 0;
 };
 
 

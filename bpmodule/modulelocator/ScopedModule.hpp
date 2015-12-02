@@ -27,9 +27,6 @@ class ModuleBase;
 namespace modulelocator {
 class ModuleLocator;
 
-namespace export_python {
-boost::python::object Wrap_GetModule(ModuleLocator *, const std::string &);
-}
 
 } // close modulelocator
 } // close bpmodule
@@ -99,11 +96,6 @@ class ScopedModule : private std::unique_ptr<T, std::function<void(modulebase::M
         pointer operator->() const { return BASE::operator->(); }
 
     private:
-        // These are needed by the python wrapper
-
-        friend boost::python::object export_python::Wrap_GetModule(ModuleLocator *, const std::string &);
-
-
         /*! \brief Release ownership
          *
          * Ownership is given up, but the deleter is not called

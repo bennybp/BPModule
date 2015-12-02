@@ -23,22 +23,6 @@ namespace modulelocator {
 namespace export_python {
 
 
-
-/*! \brief Wraps GetModule so that it returns a type compatible with python
- *
- * This uses boost::shared_ptr, which boost::python automatically handles.
- * So we have to convert from a ScopedModule to a boost::shared_ptr.
- *
- * We return only a pointer to a ModuleBase. Python typing should
- * handle the rest
- *
- * \param [in] ms ModuleLocator object to get the module from
- * \param [in] key Key to get
- *
- * \return boost::shared_ptr containing a pointer to the new object
- */
-
-
 ////////////////////////////
 // Main boost python part
 ////////////////////////////

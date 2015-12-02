@@ -139,15 +139,13 @@ class ModuleLocator
          * \param [in] key A module key
          *
          * \return A ScopedModule for an object of the requested type
-         *
-         * \todo Move most of this to a source file
          */
         template<typename T>
         ScopedModule<T> GetModule(const std::string & key)
         {
             // may throw
-            // CreateModule returns a pointer/deleter pair
-            auto mod = CreateModule(key);
+            // CreateModule_ returns a pointer/deleter pair
+            auto mod = CreateModule_(key);
 
             T * dptr = dynamic_cast<T *>(mod.first);
             if(dptr == nullptr)
@@ -174,6 +172,10 @@ class ModuleLocator
          *
          * \throw bpmodule::exception::ModuleCreateException if there are other
          *        problems creating the module
+         *
+         * \exbasic
+         *
+         * \return The module wrapped in a boost::python object
          */
         boost::python::object GetModulePy(const std::string & key);
 
@@ -192,6 +194,10 @@ class ModuleLocator
 
         //! A function that deletes a module (by id)
         typedef std::function<void(unsigned long)> ModuleRemoverFunc;
+
+
+        //! A deleter function to pass to smart pointers
+        typedef std::function<void(modulebase::ModuleBase *)> DeleterFunc;
 
 
 
@@ -282,9 +288,16 @@ class ModuleLocator
          * \throw bpmodule::exception::ModuleCreateException if there are other
          *        problems creating the module
          *
+         * \return A pair with the first member being a raw pointer and
+         *         the second member being its deleter func
+         * 
+         * \exbasic
+         *
+         * \note The calling function is responsible for managing the pointer
+         *
          */
-        std::pair<modulebase::ModuleBase *, std::function<void(modulebase::ModuleBase *)>>
-        CreateModule(const std::string & key);
+        std::pair<modulebase::ModuleBase *, DeleterFunc>
+        CreateModule_(const std::string & key);
 
 
         /*! \brief Removes a created module object from storage

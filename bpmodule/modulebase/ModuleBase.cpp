@@ -92,7 +92,7 @@ void ModuleBase::Print(void) const
     MInfo().Print();
 }
 
-bool ModuleBase::IsPythonModule(void) const
+bool ModuleBase::IsPythonModule(void) const noexcept
 {
     return (pyself_ != nullptr);
 }
