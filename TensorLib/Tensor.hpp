@@ -4,12 +4,11 @@
 #include <array>
 #include "TensorSettings.hpp"
 
-
 /*! \brief The main tensor wrapper class
  *
  *  Terminology.  Tensor terms vary depending on whom you talk to.  I will
  *  refer to the number of indices as the "rank" of the tensor, i.e. a
- *  scalar is a rank 0 tensor, a vector is a rank 1, and a matrix is a rank
+ *  scalar is a rank 0 tensor, a vector is rank 1, and a matrix is  rank
  *  2.  Each index has a maximum value, the set of these values will be
  *  called the shape of the tensor,
  *  i.e. a scalar has the empty set, \f$\lbrace\emptyset\rbrace\f$,
@@ -59,7 +58,7 @@
  *      0 & W2
  *  \end{array}\right)
  *  \f]
- *  This is known as the direct sum.  This is performed by the +=()
+ *  This is known as the direct sum of W1 and W2.  This is performed by the +=()
  *  operator.  Note:
  *  \code
  *  Tensor<double,3> A(10,10,10);
@@ -73,6 +72,70 @@
  *  The + operator is also defined for direct summation, if one wishes to
  *  preserve the input tensors.
  *
+ *  The direct sum combined with the fact that tensors default to null
+ *  tensors leads to a quick way to build a tensor if you know the
+ *  structure ahead of time.  We can build the above shape like:
+ *  \code
+ *  Tensor<double,2> W1(nbf,nbf),W2(nbf,nbf),W12;
+ *  W12=W1+W2;  //All tensors are still 0, we just have a shape
+ *  \endcode
+ *  The resulting tensor, W12, can be thought of as
+ *  rank four (you have two indices for specifying
+ *  the monomer block and then two indices within each block
+ *  for specifying the density element).  For convenience, we
+ *  may want to refer to the two indices we introduced as "W1"
+ *  and "W2".  We can do this via:
+ *  \code
+ *  //Syntax is rank we are mapping to, then values, in the order
+ *  //we want
+ *  W12.MapIndices(0,{"W1","W2"});
+ *  W12.MapIndices(1,{"W1","W2"});
+ *  \endcode
+ *
+ *  The W1 tensor can then be retrieved from W12 as:
+ *  \code
+ *  //Note the placement of the quotes
+ *  W1copy=W12("W1","W1");
+ *
+ *  //This would sum W1 and W2:
+ *  W1pW2=W12("W1,W1");
+ *
+ *  //This is W1 squared
+ *  W1_2("i,k")=W12("W1","W1")("i,j")*W12("W1,W1")("j,k");
+ *  \endcode
+ *
+ *  Note that in C++ the default copy constructor as
+ *  well as the default assignment operator are shallow
+ *  copies.  We follow this convention for our tensors.
+ *  This is to say W1copy above is a shallow copy of
+ *  the W1 block of W12, but W1_2 is a shallow copy of a
+ *  "temporary" (quotes because no temporary is actually made,
+ *  thanks to lazy evaluation, the temporary is just built in W1_2)
+ *  and will thus represent a memory chunk distinct from W12.
+ *
+ *  There is an ambiguity here, what does this do?:
+ *  \code
+ *  WhatIsThis=W12("W1")*W12("W1");
+ *  \endcode
+ *  This is related to the ambiguity of Einstein notation.
+ *  Do I want the product of the W1 elements or am I
+ *  contracting over the first dimension?  Presently
+ *  there is no ambiguity because all indices must be
+ *  specified for a contraction, that is we have one
+ *  of the following (plus their permutations and
+ *  furthermore ignoring the fact that some of these
+ *  aren't possible due to incompatible shapes) :
+ *  \code
+ *  R("i,j,k,l,m,n")=W12("W1")("i,j,k")*W12("W1")("l,m,n");
+ *  R("i,j,k,l,m")=W12("W1")("i,j,k")*W12("W1")("l,m,m");
+ *  R("i,j,k,l")=W12("W1")("i,j,m")*W12("W1")("m,k,l");
+ *  R("i,j,l")=W12("W1")("i,j,k")*W12("W1")("k,k,l");
+ *  R("i,j")=W12("W1")("i,k,l")*W12("W1")("k,l,j");
+ *  R("i")=W12("W1")("i,j,k")*W12("W1")("j,j,k");
+ *  R=W12("W1")("i,j,k")*W12("W1")("i,j,k");
+ *  \endcode
+ *  For the sake of argument, if W12 is a vector
+ *  then the ambiguity is
  *
  *
  *  You may default construct a tensor, but it will
@@ -96,112 +159,119 @@
  *  \param Impl_t Class that wraps basic implementation details
  */
 
-template<typename T,size_t Rank,typename Impl_t=TImpl<T,Rank> >
-class Tensor{
-   private:
-      ///For my sanity and internal use only
-      typedef typename Impl_t::TensorBase_t TBase_t;
-      typedef typename Impl_t::IndexedTensor_t ITensor_t;
-      typedef Impl_t::iterator iterator;
-      //typedef Impl_t::const_iterator const_iterator;
-      typedef Tensor<T,Rank,Impl_t> My_t;
-   public:
-      ///Convenient typedef of the Shape object
-      typedef std::array<size_t,Rank> Shape_t;
+template<typename T, size_t Rank, typename Impl_t = TImpl<T, Rank> >
+class Tensor {
+private:
+	///For my sanity and internal use only
+	typedef typename Impl_t::TensorBase_t TBase_t;
+	typedef typename Impl_t::IndexedTensor_t ITensor_t;
+	typedef Impl_t::iterator iterator;
+	//typedef Impl_t::const_iterator const_iterator;
+	typedef Tensor<T, Rank, Impl_t> My_t;
+public:
+	///Convenient typedef of the Shape object
+	typedef std::array<size_t, Rank> Shape_t;
 
-      ///Makes a tensor which requires a shape to work
-      Tensor():ActualTensor_(nullptr){}
+	///Makes a tensor which requires a shape to work
+	Tensor() :
+			ActualTensor_(nullptr) {
+	}
 
-      ///Frees Impl_
-      ~Tensor(){if(ActualTensor_!=nullptr)delete ActualTensor_;}
+	///Frees Impl_
+	~Tensor() {
+		if (ActualTensor_ != nullptr)
+			delete ActualTensor_;
+	}
 
-      ///Makes a tensor given a shape
-      Tensor(const Shape_t& Shape):
-         ActualTensor_(Impl_t::Make(Shape)),Shape_(Shape){}
+	///Makes a tensor given a shape
+	Tensor(const Shape_t& Shape) :
+			ActualTensor_(Impl_t::Make(Shape)), Shape_(Shape) {
+	}
 
-      template<typename... Args>
-      Tensor(Args... args):
-         ActualTensor_(Impl_t::Make(Shape_t({args...}))),Shape_({args...}){}
+	template<typename ... Args>
+	Tensor(Args ... args) :
+			ActualTensor_(Impl_t::Make(Shape_t( { args... }))), Shape_( {
+					args... }) {
+	}
 
-      ///How you specify the contraction pattern.
-      ///(Don't worry about the signature...)
-      ITensor_t operator[](const char* string){
-         if(ActualTensor_==nullptr)//Shape better be set now
-            ActualTensor_=Impl_t::Make(Shape_);
-         return Impl_t::DeRef(string,*ActualTensor_);
-      }
+	///How you specify the contraction pattern.
+	///(Don't worry about the signature...)
+	ITensor_t operator[](const char* string) {
+		if (ActualTensor_ == nullptr)      //Shape better be set now
+			ActualTensor_ = Impl_t::Make(Shape_);
+		return Impl_t::DeRef(string, *ActualTensor_);
+	}
 
-      ///Fills this tensor with a value (technically only the local block)
-      void Fill(const T& value){
-         Impl_t::Fill(value,*ActualTensor_);
-      }
+	///Fills this tensor with a value (technically only the local block)
+	void Fill(const T& value) {
+		Impl_t::Fill(value, *ActualTensor_);
+	}
 
-      ///Sets the shape of the tensor
-      ///@{
-      void SetShape(const Shape_t& Shape){Shape_=Shape;}
+	///Sets the shape of the tensor
+	///@{
+	void SetShape(const Shape_t& Shape) {
+		Shape_ = Shape;
+	}
 
-      template<typename... Args>
-      void SetShape(Args... args){Shape_={args...};}
-      ///@}
+	template<typename ... Args>
+	void SetShape(Args ... args) {
+		Shape_= {args...};}
+	///@}
 
+	/*! \brief begin/end iterators for looping over the data
+	 *
+	 *  This iterator should really only be used to fill the tensor.
+	 *
+	 *  In general the data in the tensor will be stored in a pattern that
+	 *  is unbeknownst to you.  That is you won't know where it resides or
+	 *  even which elements are next to each other in RAM or on disk.  The
+	 *  point of this class is to serve as the liaison to you so that you
+	 *  can fill in the tensor.  When you are given an instance of this
+	 *  class you will use it like:
+	 *  \code
+	 *  //Make a 10 by 10 matrix
+	 *  Tensor<double,2> T(10,10);
+	 *
+	 *  //Get an iterator to it's elements
+	 *  T::iterator Itr=T.begin(),ItrEnd=T.end();
+	 *
+	 *  //Buffer to hold the current index
+	 *  std::array<size_t,2> Idx
+	 *
+	 *  //Loop over the blocks contained in the iterator
+	 *  while(Itr!=ItrEnd){
+	 *    Idx=Itr.Index();
+	 *Itr=value(Idx);//Fills in element i,j
+	 *    ++Itr;
+	 *  }
+	 *  \endcode
+	 *
+	 *  \todo Implement const_iterator
+	 */
+	///@{
+	iterator begin() {return Impl_t::begin(*ActualTensor_);}
+	//const_iterator begin()const{return Impl_t::begin(*ActualTensor_);}
+	iterator end() {return Impl_t::end(*ActualTensor_);}
+	//const_iterator end()const{return Impl_t::end(*ActualTensor_);}
+	///@}
 
-      /*! \brief begin/end iterators for looping over the data
-       *
-       *  This iterator should really only be used to fill the tensor.
-       *
-       *  In general the data in the tensor will be stored in a pattern that
-       *  is unbeknownst to you.  That is you won't know where it resides or
-       *  even which elements are next to each other in RAM or on disk.  The
-       *  point of this class is to serve as the liaison to you so that you
-       *  can fill in the tensor.  When you are given an instance of this
-       *  class you will use it like:
-       *  \code
-       *  //Make a 10 by 10 matrix
-       *  Tensor<double,2> T(10,10);
-       *
-       *  //Get an iterator to it's elements
-       *  T::iterator Itr=T.begin(),ItrEnd=T.end();
-       *
-       *  //Buffer to hold the current index
-       *  std::array<size_t,2> Idx
-       *
-       *  //Loop over the blocks contained in the iterator
-       *  while(Itr!=ItrEnd){
-       *    Idx=Itr.Index();
-            *Itr=value(Idx);//Fills in element i,j
-       *    ++Itr;
-       *  }
-       *  \endcode
-       *
-       *  \todo Implement const_iterator
-       */
-      ///@{
-      iterator begin(){return Impl_t::begin(*ActualTensor_);}
-      //const_iterator begin()const{return Impl_t::begin(*ActualTensor_);}
-      iterator end(){return Impl_t::end(*ActualTensor_);}
-      //const_iterator end()const{return Impl_t::end(*ActualTensor_);}
-      ///@}
+	std::ostream& operator<<(std::ostream& os)const {
+		return Impl_t::PrintOut(os,*ActualTensor_);
+	}
 
-      std::ostream& operator<<(std::ostream& os)const{
-         return Impl_t::PrintOut(os,*ActualTensor_);
-      }
+private:
+	///The actual tensor
+	TBase_t* ActualTensor_;
 
-
-
-   private:
-      ///The actual tensor
-      TBase_t* ActualTensor_;
-
-      ///The shape of our current tensor
-      Shape_t Shape_;
+	///The shape of our current tensor
+	Shape_t Shape_;
 };
 
-template<typename T,size_t Rank,typename Impl_t>
+template<typename T, size_t Rank, typename Impl_t>
 inline std::ostream& operator<<(std::ostream& os,
-      const Tensor<T,Rank,Impl_t>& Ten){
-   Ten<<os;
-   return os;
+		const Tensor<T, Rank, Impl_t>& Ten) {
+	Ten << os;
+	return os;
 }
-
 
 #endif /* TENSOR_H_ */
