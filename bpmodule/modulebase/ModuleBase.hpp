@@ -233,12 +233,17 @@ class ModuleBase
         void SetGraphData_(modulelocator::GraphNodeData * gdat) noexcept;
 
 
-        /*! \brief Create a boost::python::object from a boost::shared_ptr to this
+        /*! \brief Create a boost::python::object that manages this
          *
-         * The returned object will now be responsible for deletion
+         * This object will now be managed by the python object.
          *
-         * \note This does not use shared_from_this. Instead, it will always create a new
-         *       shared pointer. Beware!
+         * \warning Internal use only. Really should only be accessed via the ModuleLocator. 
+         *
+         * \warning Do not call more than once on an object, and do not call on
+         *          one not created via new. The python object will
+         *          manage this as if it were a smart pointer.
+         *
+         * \todo exception documentation/wrapping
          */
         virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter) = 0;
 };

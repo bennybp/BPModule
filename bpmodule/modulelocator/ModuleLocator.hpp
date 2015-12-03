@@ -121,6 +121,9 @@ class ModuleLocator
          * not attempt to cast them, though. This is a simple sanity check
          *
          * \throw bpmodule::exception::ModuleCreateException if there is a problem
+         *
+         * \exbasic
+         * \todo make strong?
          */
         void TestAll(void);
 
@@ -135,6 +138,7 @@ class ModuleLocator
          *        problems creating the module
          *
          * \exbasic
+         * \todo make strong?
          *
          * \param [in] key A module key
          *
@@ -174,6 +178,7 @@ class ModuleLocator
          *        problems creating the module
          *
          * \exbasic
+         * \todo make strong?
          *
          * \return The module wrapped in a boost::python object
          */

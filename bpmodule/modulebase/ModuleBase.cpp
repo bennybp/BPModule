@@ -87,6 +87,8 @@ bool ModuleBase::IsPythonModule(void) const noexcept
     return (pyself_ != nullptr);
 }
 
+
+
 ////////////////////////////////
 // Protected functions
 ////////////////////////////////
