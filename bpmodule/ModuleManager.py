@@ -107,32 +107,6 @@ class ModuleManager(modulelocator.ModuleLocator):
 
 
 
-    # Set the options for a module under a given key
-    def SetOptions(self, key, useropt):
-        if not key in self.modmap:
-            raise exception.PyGeneralException(
-                                     "Key not loaded, so I can't change the options!",
-                                    [
-                                      ("Key", key)
-                                    ]
-                                   )
-
-        minfo = self.modmap[key]
-        defopt = minfo["options"]
-
-
-    #    if not CheckOptions(useropt, defopt):
-    #      raise exception.PyGeneralException(
-    #                 "Problem parsing options",
-    #              [
-    #                 ("ModuleName", minfo["name"]),
-    #                 ("ModuleKey", minfo["key"]),
-    #                 ("ModulePath", minfo["path"])
-    #              ])
-
-        super(ModuleManager, self).SetOptions(key, useropt);
-
-
     def SanityCheck(self):
         # May add more here
         super(ModuleManager, self).TestAll() 

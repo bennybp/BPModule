@@ -22,6 +22,8 @@ namespace export_python {
 BOOST_PYTHON_MODULE(python_helper)
 {
     // implicit conversions of vectors
+    to_python_converter<std::vector<std::string>,         CppToPyExport<std::vector<std::string>>>();
+
     to_python_converter<std::vector<signed char>,         CppToPyExport<std::vector<signed char>>>();
     to_python_converter<std::vector<unsigned char>,       CppToPyExport<std::vector<unsigned char>>>();
     to_python_converter<std::vector<signed short>,        CppToPyExport<std::vector<signed short>>>();

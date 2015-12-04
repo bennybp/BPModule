@@ -25,8 +25,8 @@ struct ModuleInfo
     std::string path;                  //!< Path for the module (not including the filename for an so file)
     std::string soname;                //!< SO filename (for c modules)
     std::string version;               //!< Arbitrary version string
-    std::vector<std::string> authors;  //!< Authors of the module
     std::string description;           //!< A description of the module
+    std::vector<std::string> authors;  //!< Authors of the module
     std::vector<std::string> refs;     //!< References for the module (articles, web pages, etc)
     options::OptionMap options;        //!< Options for the module
 

@@ -29,15 +29,40 @@ namespace export_python {
 
 BOOST_PYTHON_MODULE(modulelocator)
 {
+    //////////////////////
+    // ModuleInfo
+    //////////////////////
+    // for now, we won't allow initialization from python
+    class_<ModuleInfo>("ModuleInfo", no_init)
+    .def("Print", &ModuleInfo::Print)
+    .def_readonly("key", &ModuleInfo::key)
+    .def_readonly("name", &ModuleInfo::name)
+    .def_readonly("type", &ModuleInfo::type)
+    .def_readonly("path", &ModuleInfo::path)
+    .def_readonly("soname", &ModuleInfo::soname)
+    .def_readonly("version", &ModuleInfo::version)
+    .def_readonly("description", &ModuleInfo::description)
+    .add_property("authors", boost::python::make_getter(&ModuleInfo::authors, return_value_policy<return_by_value>()))
+    .add_property("refs", boost::python::make_getter(&ModuleInfo::refs, return_value_policy<return_by_value>()))
+    .add_property("options", boost::python::make_getter(&ModuleInfo::options, return_value_policy<return_by_value>()))
+    ;
+     
+
+
+    //////////////////////////
+    // Main ModuleLocator and
+    // module loaders
+    //////////////////////////
     class_<ModuleLocator, boost::noncopyable>("ModuleLocator")
     .def("Size", &ModuleLocator::Size)
-    .def("Has", &ModuleLocator::Has)
-    .def("SetOptions", static_cast<void(ModuleLocator::*)(const std::string &, const boost::python::dict &)>(&ModuleLocator::SetOptions))
     .def("GetKeys", &ModuleLocator::GetKeys)
     .def("KeyInfo", &ModuleLocator::KeyInfo)
     .def("PrintInfo", &ModuleLocator::PrintInfo)
+    .def("Has", &ModuleLocator::Has)
+    .def("SetOptions", static_cast<void(ModuleLocator::*)(const std::string &, const boost::python::dict &)>(&ModuleLocator::SetOptions))
     .def("TestAll", &ModuleLocator::TestAll)
-    .def("GetModule", &ModuleLocator::GetModulePy);
+    .def("GetModule", &ModuleLocator::GetModulePy)
+    ;
 
 
     class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleLocator *>())
