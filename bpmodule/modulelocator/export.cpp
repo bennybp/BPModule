@@ -42,9 +42,9 @@ BOOST_PYTHON_MODULE(modulelocator)
     .def_readonly("soname", &ModuleInfo::soname)
     .def_readonly("version", &ModuleInfo::version)
     .def_readonly("description", &ModuleInfo::description)
-    .add_property("authors", boost::python::make_getter(&ModuleInfo::authors, return_value_policy<return_by_value>()))
-    .add_property("refs", boost::python::make_getter(&ModuleInfo::refs, return_value_policy<return_by_value>()))
-    .add_property("options", boost::python::make_getter(&ModuleInfo::options, return_value_policy<return_by_value>()))
+    .add_property("authors", make_getter(&ModuleInfo::authors, return_value_policy<return_by_value>()))
+    .add_property("refs", make_getter(&ModuleInfo::refs, return_value_policy<return_by_value>()))
+    .add_property("options", make_getter(&ModuleInfo::options, return_value_policy<return_by_value>()))
     ;
      
 
