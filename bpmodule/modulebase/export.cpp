@@ -43,8 +43,8 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("Version", &ModuleBase::Version)
     .def("Print", &ModuleBase::Print)
     .def("IsPythonModule", &ModuleBase::IsPythonModule)
-    .def("MLocator", static_cast<ModuleLocator &(ModuleBase::*)(void)>(&ModuleBase::MLocator), return_value_policy<reference_existing_object>()) 
-    .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_value_policy<reference_existing_object>());
+    .def("MLocator", static_cast<ModuleLocator &(ModuleBase::*)(void) const>(&ModuleBase::MLocator), return_value_policy<return_internal_reference>()) 
+    .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_value_policy<retrurn_internal_reference>());
 
 
     /////////////////////////

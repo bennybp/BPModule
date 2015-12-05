@@ -106,19 +106,11 @@ class ModuleBase
          */
         const options::OptionMap & Options(void) const;
 
-
         /*! \brief Get the internal ModuleLocator that is in charge of this module
          *
          * \throw std::logic_error if it hasn't been set
          */
-        modulelocator::ModuleLocator & MLocator(void);
-
-
-        /*! \brief Get the internal ModuleLocator that is in charge of this module
-         *
-         * \throw std::logic_error if it hasn't been set
-         */
-        const modulelocator::ModuleLocator & MLocator(void) const;
+        modulelocator::ModuleLocator & MLocator(void) const;
 
 
         /*! \brief Print the information for this module
@@ -139,21 +131,6 @@ class ModuleBase
 
 
     protected:
-
-        /*! \brief Get all module information
-         *
-         * \throw std::logic_error if it hasn't been set
-         */
-        modulelocator::GraphNodeData & GraphData(void);
-
-
-        /*! \brief Get all module information
-         *
-         * \throw std::logic_error if it hasn't been set
-         */
-        const modulelocator::GraphNodeData & GraphData(void) const;
-
-
 
         /*! \brief Throw an exception
          *
@@ -231,6 +208,21 @@ class ModuleBase
         /*! \brief Set the graph data pointer
          */
         void SetGraphData_(modulelocator::GraphNodeData * gdat) noexcept;
+
+
+        /*! \brief Get all module information stored on the graph
+         *
+         * \throw std::logic_error if it hasn't been set
+         */
+        modulelocator::GraphNodeData & GraphData(void);
+
+
+        /*! \brief Get all module information stored on the graph
+         *
+         * \throw std::logic_error if it hasn't been set
+         */
+        const modulelocator::GraphNodeData & GraphData(void) const;
+
 
 
         /*! \brief Create a boost::python::object that manages this

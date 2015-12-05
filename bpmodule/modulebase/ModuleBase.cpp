@@ -92,15 +92,7 @@ bool ModuleBase::IsPythonModule(void) const noexcept
 ////////////////////////////////
 // Protected functions
 ////////////////////////////////
-const ModuleLocator & ModuleBase::MLocator(void) const
-{
-    if(mlocator_ == nullptr)
-        throw std::logic_error("Developer error - mlocator is null for a module!");
-
-    return *mlocator_;
-}
-
-ModuleLocator & ModuleBase::MLocator(void)
+ModuleLocator & ModuleBase::MLocator(void) const
 {
     if(mlocator_ == nullptr)
         throw std::logic_error("Developer error - mlocator is null for a module!");
