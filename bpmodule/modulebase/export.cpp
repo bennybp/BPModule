@@ -7,7 +7,7 @@
 
 #include <boost/python/module.hpp>
 #include <boost/python/class.hpp>
-#include <boost/python/copy_const_reference.hpp>
+#include <boost/python/return_internal_reference.hpp>
 #include <boost/python/register_ptr_to_python.hpp>
 #include <boost/python/pure_virtual.hpp>
 
@@ -43,8 +43,8 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("Version", &ModuleBase::Version)
     .def("Print", &ModuleBase::Print)
     .def("IsPythonModule", &ModuleBase::IsPythonModule)
-    .def("MLocator", static_cast<ModuleLocator &(ModuleBase::*)(void) const>(&ModuleBase::MLocator), return_value_policy<return_internal_reference>()) 
-    .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_value_policy<retrurn_internal_reference>());
+    .def("MLocator", static_cast<ModuleLocator &(ModuleBase::*)(void) const>(&ModuleBase::MLocator), return_internal_reference<>()) 
+    .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_internal_reference<>());
 
 
     /////////////////////////
