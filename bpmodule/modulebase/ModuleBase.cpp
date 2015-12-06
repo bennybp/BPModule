@@ -100,7 +100,7 @@ ModuleLocator & ModuleBase::MLocator(void) const
     return *mlocator_;
 }
 
-const modulelocator::GraphNodeData & ModuleBase::GraphData(void) const
+const datastore::GraphNodeData & ModuleBase::GraphData(void) const
 {
     if(graphdata_ == nullptr)
         throw std::logic_error("Developer error - graphdata_ is null for a module!");
@@ -108,7 +108,7 @@ const modulelocator::GraphNodeData & ModuleBase::GraphData(void) const
     return *graphdata_;
 }
 
-modulelocator::GraphNodeData & ModuleBase::GraphData(void)
+datastore::GraphNodeData & ModuleBase::GraphData(void)
 {
     if(graphdata_ == nullptr)
         throw std::logic_error("Developer error - graphdata_ is null for a module!");
@@ -138,7 +138,7 @@ void ModuleBase::SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept
     mlocator_ = mloc;
 }
 
-void ModuleBase::SetGraphData_(modulelocator::GraphNodeData * gdat) noexcept
+void ModuleBase::SetGraphData_(datastore::GraphNodeData * gdat) noexcept
 {
     graphdata_ = gdat;
 }

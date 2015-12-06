@@ -11,7 +11,8 @@
 #include <unordered_map>
 #include <atomic>
 
-#include "bpmodule/modulelocator/Graph.hpp"
+#include "bpmodule/datastore/GraphNodeData.hpp"
+#include "bpmodule/datastore/CalcData.hpp"
 #include "bpmodule/modulelocator/ScopedModule.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleCreateException.hpp"
@@ -248,7 +249,7 @@ class ModuleLocator
          *
          * \todo will be replaced by a graph or tree
          */
-        std::unordered_map<unsigned long, GraphNodeData> graphdata_;
+        std::unordered_map<unsigned long, datastore::GraphNodeData> graphdata_;
 
 
         //! The id to assign to the next created module

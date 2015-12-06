@@ -21,6 +21,9 @@ namespace bpmodule {
 namespace modulelocator {
 class ModuleLocator;
 struct ModuleInfo;
+}
+
+namespace datastore {
 struct GraphNodeData;
 }
 
@@ -178,7 +181,7 @@ class ModuleBase
         modulelocator::ModuleLocator * mlocator_;
 
         //! My graph node data
-        modulelocator::GraphNodeData * graphdata_;
+        datastore::GraphNodeData * graphdata_;
 
 
 
@@ -207,21 +210,21 @@ class ModuleBase
 
         /*! \brief Set the graph data pointer
          */
-        void SetGraphData_(modulelocator::GraphNodeData * gdat) noexcept;
+        void SetGraphData_(datastore::GraphNodeData * gdat) noexcept;
 
 
         /*! \brief Get all module information stored on the graph
          *
          * \throw std::logic_error if it hasn't been set
          */
-        modulelocator::GraphNodeData & GraphData(void);
+        datastore::GraphNodeData & GraphData(void);
 
 
         /*! \brief Get all module information stored on the graph
          *
          * \throw std::logic_error if it hasn't been set
          */
-        const modulelocator::GraphNodeData & GraphData(void) const;
+        const datastore::GraphNodeData & GraphData(void) const;
 
 
 

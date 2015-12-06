@@ -4,6 +4,8 @@ set(BPMODULE_DATASTORE_FILES
    )
   
 set(BPMODULE_DATASTORE_HEADERS
+            Wavefunction.hpp
+            GraphNodeData.hpp
             Hashable.hpp
             CalcData.hpp
             CacheData.hpp

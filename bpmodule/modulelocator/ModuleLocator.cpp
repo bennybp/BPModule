@@ -11,6 +11,7 @@
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"
 
+using bpmodule::datastore::GraphNodeData;
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
 using bpmodule::exception::ModuleLocatorException;
@@ -220,7 +221,7 @@ ModuleLocator::CreateModule_(const std::string & key)
     
     // add the moduleinfo to the graph
     // \todo Molecule, basis set, inherited from parent
-    GraphNodeData gdata{nullptr, nullptr, se.mi, datastore::CalcData()};
+    GraphNodeData gdata{datastore::Wavefunction(), se.mi};
     graphdata_.emplace(curid_, gdata);
 
     // set the info

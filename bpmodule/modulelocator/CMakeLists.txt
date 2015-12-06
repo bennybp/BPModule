@@ -13,7 +13,6 @@ set(BPMODULE_MODULELOCATOR_HEADERS
             ModuleInfo.hpp
             ModuleLocator.hpp
             PyModuleLoader.hpp
-            Graph.hpp
    )
 
 
