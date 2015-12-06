@@ -7,10 +7,12 @@
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
+#include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/output/Output.hpp"
 
 using bpmodule::modulelocator::ModuleLocator;
 using bpmodule::modulelocator::ModuleInfo;
+using bpmodule::datastore::Wavefunction;
 using bpmodule::exception::GeneralException;
 
 
@@ -131,6 +133,16 @@ ModuleInfo & ModuleBase::MInfo_(void)
 const ModuleInfo & ModuleBase::MInfo_(void) const
 {
     return GraphData().minfo;
+}
+
+Wavefunction & ModuleBase::Wfn_(void)
+{
+    return GraphData().wfn;
+}
+
+const Wavefunction & ModuleBase::Wfn_(void) const
+{
+    return GraphData().wfn;
 }
 
 void ModuleBase::SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept

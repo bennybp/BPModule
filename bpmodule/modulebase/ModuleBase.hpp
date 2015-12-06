@@ -25,6 +25,7 @@ struct ModuleInfo;
 
 namespace datastore {
 struct GraphNodeData;
+struct Wavefunction;
 }
 
 namespace options {
@@ -201,6 +202,21 @@ class ModuleBase
          * \throw std::logic_error if there is a severe developer error
          */
         const modulelocator::ModuleInfo & MInfo_(void) const;
+
+
+        /*! \brief Get the wavefunction for this graph node
+         *
+         * \throw std::logic_error if there is a severe developer error
+         */
+        datastore::Wavefunction & Wfn_(void);
+
+
+        /*! \brief Get the wavefunction for this graph node
+         *
+         * \throw std::logic_error if there is a severe developer error
+         */
+        const datastore::Wavefunction & Wfn_(void) const;
+
 
 
         /*! \brief Set the mlocator_ pointer

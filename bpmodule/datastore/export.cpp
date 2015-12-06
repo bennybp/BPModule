@@ -9,10 +9,28 @@
 #include <boost/python/class.hpp>
 
 #include "bpmodule/datastore/CalcData.hpp"
-#include "bpmodule/datastore/CacheData.hpp"
+#include "bpmodule/datastore/Wavefunction.hpp"
+
 
 
 using namespace boost::python;
+using bpmodule::basisset::BasisSet;
+using bpmodule::molecule::Molecule;
+using bpmodule::datastore::Wavefunction;
+using bpmodule::tensor::DistMatrixD;
+
+
+//! \todo move to Wavefunction structure?
+static BasisSet GetWfnBasis(const Wavefunction * wfn) { return *(wfn->basis); }
+static void SetWfnBasis(Wavefunction * wfn, const BasisSet & basis) { wfn->basis = std::shared_ptr<const BasisSet>(new BasisSet(basis)); }
+
+static Molecule GetWfnMolecule(const Wavefunction * wfn) { return *(wfn->molecule); }
+static void SetWfnMolecule(Wavefunction * wfn, const Molecule & molecule) { wfn->molecule = std::shared_ptr<const Molecule>(new Molecule(molecule)); }
+
+static DistMatrixD GetWfnCMat(const Wavefunction * wfn) { return *(wfn->cmat); }
+static void SetWfnCMat(Wavefunction * wfn, const DistMatrixD & cmat) { wfn->cmat = std::shared_ptr<const DistMatrixD>(new DistMatrixD(cmat)); }
+
+
 
 
 namespace bpmodule {
@@ -21,6 +39,15 @@ namespace export_python {
 
 BOOST_PYTHON_MODULE(datastore)
 {
+    /* Similar to CalcData, python will have to work with copies
+     */
+    class_<Wavefunction>("Wavefunction", init<>()) //! \todo python init for wfn?
+    .add_property("basis", GetWfnBasis, SetWfnBasis)
+    .add_property("molecule", GetWfnMolecule, SetWfnMolecule)
+    .add_property("cmat", GetWfnCMat, SetWfnCMat)
+    ;
+  
+
     /*
      * GetRef() is not exported to python. This is because python does not enforce
      * const semantics, which could lead to behavior where the underlying data
