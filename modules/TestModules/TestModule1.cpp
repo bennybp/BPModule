@@ -62,7 +62,7 @@ void TestModule1::CallRunTest(const std::string & other)
 
 
 
-void TestModule1::Throw(void)
+void TestModule1::TestThrow(void)
 {
     Warning("+++ In TestModule1: Throwing an exception!\n");
     throw GeneralException("This is a test exception",
@@ -78,7 +78,7 @@ void TestModule1::CallThrow(const std::string & other)
 
     ScopedModule<Test_Base> tb2 = MLocator().GetModule<Test_Base>(other);
     Output("  + Obtained scoped module ID %1%\n", tb2->ID());
-    tb2->Throw();
+    tb2->TestThrow();
 
     // shouldn't be called
     Output("+++Done\n");

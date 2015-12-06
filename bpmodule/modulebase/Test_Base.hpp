@@ -40,7 +40,7 @@ class Test_Base : public ModuleBase
 
 
         //! Throw an exception
-        virtual void Throw(void);
+        virtual void TestThrow(void);
 
 
 

@@ -12,7 +12,7 @@ public:
 
     virtual void CallRunTest(const std::string & other);
 
-    virtual void Throw(void);
+    virtual void TestThrow(void);
 
     virtual void CallThrow(const std::string & other);
 

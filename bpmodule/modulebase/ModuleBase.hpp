@@ -18,6 +18,7 @@
 
 // forward declarations
 namespace bpmodule {
+
 namespace modulelocator {
 class ModuleLocator;
 struct ModuleInfo;
@@ -30,6 +31,13 @@ struct Wavefunction;
 
 namespace options {
 class OptionMap;
+}
+
+// for friend
+namespace modulebase {
+namespace export_python {
+void init_module_modulebase(void);
+}
 }
 
 }
@@ -110,13 +118,6 @@ class ModuleBase
          */
         const options::OptionMap & Options(void) const;
 
-        /*! \brief Get the internal ModuleLocator that is in charge of this module
-         *
-         * \throw std::logic_error if it hasn't been set
-         */
-        modulelocator::ModuleLocator & MLocator(void) const;
-
-
         /*! \brief Print the information for this module
          *
          * \throw std::logic_error if there is a severe developer error
@@ -135,6 +136,21 @@ class ModuleBase
 
 
     protected:
+        /* This is the function created by BOOST_PYTHON_MODULE
+         * This is needed to allow protected members to be
+         * accessed to derived classes written in python
+         * (alternative is a wrapper class, which is messy in our case)
+         */
+        friend void export_python::init_module_modulebase(void);
+
+
+        /*! \brief Get the internal ModuleLocator that is in charge of this module
+         *
+         * \throw std::logic_error if it hasn't been set
+         */
+        modulelocator::ModuleLocator & MLocator(void) const;
+
+
 
         /*! \brief Throw an exception
          *
@@ -149,6 +165,15 @@ class ModuleBase
             ex.AppendInfo("modulename", Name());
             ex.AppendInfo("moduleversion", Version());
             throw ex;
+        }
+
+
+
+        /*! \brief Throw an exception from python
+         */
+        void ThrowPy(const std::string & whatstr)
+        {
+            Throw<exception::GeneralException>(whatstr);
         }
 
 

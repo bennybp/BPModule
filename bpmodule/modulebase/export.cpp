@@ -44,7 +44,9 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("Print", &ModuleBase::Print)
     .def("IsPythonModule", &ModuleBase::IsPythonModule)
     .def("MLocator", static_cast<ModuleLocator &(ModuleBase::*)(void) const>(&ModuleBase::MLocator), return_internal_reference<>()) 
-    .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_internal_reference<>());
+    .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_internal_reference<>())
+    .def("Throw", &ModuleBase::ThrowPy)
+    ;
 
 
     /////////////////////////
@@ -55,7 +57,7 @@ BOOST_PYTHON_MODULE(modulebase)
     class_<Test_Base, bases<ModuleBase>, boost::noncopyable>("Test_Base", init<PyObject *, unsigned long>())
     .def("RunTest", &Test_Base::RunTest)
     .def("CallRunTest", &Test_Base::CallRunTest)
-    .def("Throw", &Test_Base::Throw)
+    .def("TestThrow", &Test_Base::TestThrow)
     .def("CallThrow", &Test_Base::CallThrow);
 
 }

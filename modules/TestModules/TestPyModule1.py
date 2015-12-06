@@ -31,16 +31,16 @@ class TestPyModule1(bp.modulebase.Test_Base):
 
     bp.output.Output("+++Done\n");
 
-  def Throw(self):
-    bp.output.Warning("+++ In TestPyModule1: Throwing an exception!\n")
-    self.ThrowException("This is a test exception from python")
+  def TestThrow(self):
+    self.Throw("This is a test exception from python")
+
 
   def CallThrow(self, s):
     bp.output.Output("+++ In TestPyModule1: CallRunTest with %1%\n", s)
 
     tb = self.MLocator().GetModule_Test(s)
     bp.output.Output("  + Obtained scoped module ID %1%\n", tb.ID())
-    tb.Throw()
+    tb.TestThrow()
 
     # shouldn't be run?
     bp.output.Output("+++Done\n");

@@ -38,9 +38,9 @@ void Test_Base::CallRunTest(const std::string & other)
 
 
 
-void Test_Base::Throw(void)
+void Test_Base::TestThrow(void)
 {
-    ModuleBase::CallPyMethod<void>("Throw");
+    ModuleBase::CallPyMethod<void>("TestThrow");
 }
 
 
