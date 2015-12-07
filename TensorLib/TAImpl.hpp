@@ -127,6 +127,9 @@ class TAImpl{
                return *this;
             }
 
+            ///Returns the index
+            const std::array<size_t,Rank>& Index()const{return Index_;}
+
             ///Returns the spot where you should put your data
             Data_t& operator*(){
                return Tile_[Tile_.range().ordinal(Index_)];
