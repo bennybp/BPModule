@@ -5,6 +5,7 @@ set(BPMODULE_MODULEBASE_FILES
    )
 
 set(BPMODULE_MODULEBASE_HEADERS
+            All.hpp
             ModuleBase.hpp
             Test_Base.hpp
    )

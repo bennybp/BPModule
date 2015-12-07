@@ -121,6 +121,9 @@ class ModuleLocator
          * not attempt to cast them, though. This is a simple sanity check
          *
          * \throw bpmodule::exception::ModuleCreateException if there is a problem
+         *
+         * \exbasic
+         * \todo make strong?
          */
         void TestAll(void);
 
@@ -135,82 +138,51 @@ class ModuleLocator
          *        problems creating the module
          *
          * \exbasic
+         * \todo make strong?
          *
          * \param [in] key A module key
          *
          * \return A ScopedModule for an object of the requested type
-         *
-         * \todo Move most of this to a source file
          */
         template<typename T>
         ScopedModule<T> GetModule(const std::string & key)
         {
-            // obtain the creator
-            const StoreEntry & se = GetOrThrow_(key);
+            // may throw
+            // CreateModule_ returns a pointer/deleter pair
+            auto mod = CreateModule_(key);
 
-            // create
-            modulebase::ModuleBase * mbptr = nullptr;
-            try {
-              mbptr = se.func(se.mi.name, curid_);
-            }
-            catch(const exception::GeneralException & gex)
-            {
-                throw exception::ModuleCreateException(gex,
-                                                       se.mi.path,
-                                                       se.mi.key,
-                                                       se.mi.name);
-            }
-
-            if(mbptr == nullptr)
-                throw exception::ModuleCreateException("Create function returned a null pointer",
-                                                       se.mi.path,
-                                                       se.mi.key,
-                                                       se.mi.name);
-            
-            // add the moduleinfo to the graph
-            // \todo Molecule, basis set, inherited from parent
-            GraphNodeData gdata{nullptr, nullptr, se.mi, datastore::CalcData()};
-            graphdata_.emplace(curid_, gdata);
-
-            // set the info
-            mbptr->SetMLocator_(this);
-            mbptr->SetGraphData_(&(graphdata_.at(curid_)));
-
-
-            // test
-            T * dptr = dynamic_cast<T *>(mbptr);
+            T * dptr = dynamic_cast<T *>(mod.first);
             if(dptr == nullptr)
             {
-                throw exception::ModuleCreateException("Bad cast for module", se.mi.path,
-                                                       key, se.mi.name, 
-                                                       "fromtype", mangle::DemangleCppType(mbptr),
+                const ModuleInfo & mi = mod.first->MInfo_();
+
+                throw exception::ModuleCreateException("Bad cast for module", mi.path,
+                                                       key, mi.name, 
+                                                       "fromtype", mangle::DemangleCppType(mod.first),
                                                        "totype", mangle::DemangleCppType<T *>());
             }
 
-
-
-
-            // make the deleter function the DeleteObject_() of this ModuleLocator object
-            std::function<void(modulebase::ModuleBase *)> dfunc = std::bind(static_cast<void(ModuleLocator::*)(modulebase::ModuleBase *)>(&ModuleLocator::DeleteObject_),
-                                                                            this,
-                                                                            std::placeholders::_1);
-
-
-            ScopedModule<T> ret(dptr, dfunc); // construction shouldn't throw?
-
-            // store the deleter
-            // This is the only part that modifies this ModuleLocator object and so do here
-            // for strong exception guarantee
-            removemap_.emplace(curid_, se.dfunc);
-
-            // next id
-            curid_++;
-
+            ScopedModule<T> ret(dptr, mod.second); // construction shouldn't throw?
 
             return ret;
         }
 
 
+
+        /*! \brief Retrieve a module as a python object
+         * 
+         * \throw bpmodule::exception::ModuleLocatorException
+         *        if the key doesn't exist in the database
+         *
+         * \throw bpmodule::exception::ModuleCreateException if there are other
+         *        problems creating the module
+         *
+         * \exbasic
+         * \todo make strong?
+         *
+         * \return The module wrapped in a boost::python object
+         */
+        boost::python::object GetModulePy(const std::string & key);
 
 
 
@@ -227,6 +199,10 @@ class ModuleLocator
 
         //! A function that deletes a module (by id)
         typedef std::function<void(unsigned long)> ModuleRemoverFunc;
+
+
+        //! A deleter function to pass to smart pointers
+        typedef std::function<void(modulebase::ModuleBase *)> DeleterFunc;
 
 
 
@@ -309,6 +285,24 @@ class ModuleLocator
         StoreEntry & GetOrThrow_(const std::string & key);
 
 
+        /*! \brief Create a module and its deleter functor
+         * 
+         * \throw bpmodule::exception::ModuleLocatorException
+         *        if the key doesn't exist in the database
+         *
+         * \throw bpmodule::exception::ModuleCreateException if there are other
+         *        problems creating the module
+         *
+         * \return A pair with the first member being a raw pointer and
+         *         the second member being its deleter func
+         * 
+         * \exbasic
+         *
+         * \note The calling function is responsible for managing the pointer
+         *
+         */
+        std::pair<modulebase::ModuleBase *, DeleterFunc>
+        CreateModule_(const std::string & key);
 
 
         /*! \brief Removes a created module object from storage

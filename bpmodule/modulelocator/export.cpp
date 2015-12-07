@@ -9,13 +9,12 @@
 #include <boost/python/dict.hpp>
 
 // Various components
-#include "bpmodule/modulebase/All_python.hpp"
+#include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/modulelocator/CModuleLoader.hpp"
 #include "bpmodule/modulelocator/PyModuleLoader.hpp"
 
 
 using bpmodule::modulebase::ModuleBase;
-using bpmodule::modulebase::Test_Base;
 using namespace boost::python;
 
 
@@ -24,50 +23,46 @@ namespace modulelocator {
 namespace export_python {
 
 
-
-/*! \brief Wraps GetModule so that it returns a type compatible with python
- *
- * This uses boost::shared_ptr, which boost::python automatically handles
- *
- * Putting this in the ModuleLocator source and headers would have required including boost for
- * basically every file in the project.
- *
- * \tparam T Type of module to get
- *
- * \param [in] ms ModuleLocator object to get the module from
- * \param [in] key Key to get
- *
- * \return boost::shared_ptr containing a pointer to the new object
- */
-template<typename T>
-static
-boost::shared_ptr<T> Wrap_GetModule(ModuleLocator * ms, const std::string & key)
-{
-    ScopedModule<T> mod = ms->GetModule<T>(key);
-    std::function<void(ModuleBase *)> dfunc = mod.get_deleter();
-    T * ptr = mod.release();
-    return boost::shared_ptr<T>(ptr, dfunc);
-}
-
-
-
-
 ////////////////////////////
 // Main boost python part
 ////////////////////////////
 
 BOOST_PYTHON_MODULE(modulelocator)
 {
+    //////////////////////
+    // ModuleInfo
+    //////////////////////
+    // for now, we won't allow initialization from python
+    class_<ModuleInfo>("ModuleInfo", no_init)
+    .def("Print", &ModuleInfo::Print)
+    .def_readonly("key", &ModuleInfo::key)
+    .def_readonly("name", &ModuleInfo::name)
+    .def_readonly("type", &ModuleInfo::type)
+    .def_readonly("path", &ModuleInfo::path)
+    .def_readonly("soname", &ModuleInfo::soname)
+    .def_readonly("version", &ModuleInfo::version)
+    .def_readonly("description", &ModuleInfo::description)
+    .add_property("authors", make_getter(&ModuleInfo::authors, return_value_policy<return_by_value>()))
+    .add_property("refs", make_getter(&ModuleInfo::refs, return_value_policy<return_by_value>()))
+    .add_property("options", make_getter(&ModuleInfo::options, return_value_policy<return_by_value>()))
+    ;
+     
+
+
+    //////////////////////////
+    // Main ModuleLocator and
+    // module loaders
+    //////////////////////////
     class_<ModuleLocator, boost::noncopyable>("ModuleLocator")
     .def("Size", &ModuleLocator::Size)
-    .def("Has", &ModuleLocator::Has)
-    .def("SetOptions", static_cast<void(ModuleLocator::*)(const std::string &, const boost::python::dict &)>(&ModuleLocator::SetOptions))
     .def("GetKeys", &ModuleLocator::GetKeys)
     .def("KeyInfo", &ModuleLocator::KeyInfo)
     .def("PrintInfo", &ModuleLocator::PrintInfo)
+    .def("Has", &ModuleLocator::Has)
+    .def("SetOptions", static_cast<void(ModuleLocator::*)(const std::string &, const boost::python::dict &)>(&ModuleLocator::SetOptions))
     .def("TestAll", &ModuleLocator::TestAll)
-    .def("GetModule", Wrap_GetModule<ModuleBase>)
-    .def("GetModule_Test", Wrap_GetModule<Test_Base>);
+    .def("GetModule", &ModuleLocator::GetModulePy)
+    ;
 
 
     class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleLocator *>())

@@ -23,9 +23,11 @@ class Test_Base : public ModuleBase
     public:
         Test_Base(unsigned long id);
 
+        Test_Base(PyObject * self, unsigned long id);
+
 
         //! \brief Just test some functionality
-        virtual void RunTest(void) = 0;
+        virtual void RunTest(void);
 
 
 
@@ -33,12 +35,12 @@ class Test_Base : public ModuleBase
          *
          * \param [in] other Key of the other module in the database
          */ 
-        virtual void CallRunTest(const std::string & other) = 0;
+        virtual void CallRunTest(const std::string & other);
 
 
 
         //! Throw an exception
-        virtual void Throw(void) = 0;
+        virtual void Throw(void);
 
 
 
@@ -46,7 +48,11 @@ class Test_Base : public ModuleBase
          *
          * \param [in] other Key of the other module in the database
          */ 
-        virtual void CallThrow(const std::string & other) = 0;
+        virtual void CallThrow(const std::string & other);
+
+
+    private:
+        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter);
 
 };
 

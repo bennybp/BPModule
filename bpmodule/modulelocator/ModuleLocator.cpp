@@ -27,6 +27,22 @@ ModuleLocator::ModuleLocator()
 { }
 
 
+ModuleLocator::~ModuleLocator()
+{
+    // it is the responsiblility of the various
+    // loaders to be responsible for deleting all
+    // the objects. The deletion functors aren't
+    // called here since this should be destructed
+    // after all the loaders
+    //
+    // Deleting after the loader had been destructed
+    // probably wouldn't be a good idea, since the object
+    // wouldn't exist anymore...
+    //
+    //! \todo Check if maps are empty?
+}
+
+
 
 void ModuleLocator::InsertModule(const std::string & key, ModuleGeneratorFunc func,
                                ModuleRemoverFunc dfunc, const ModuleInfo & minfo)
@@ -174,20 +190,68 @@ ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & key)
 }
 
 
-ModuleLocator::~ModuleLocator()
+/////////////////////////////////////////
+// Module Creation
+/////////////////////////////////////////
+std::pair<modulebase::ModuleBase *, ModuleLocator::DeleterFunc>
+ModuleLocator::CreateModule_(const std::string & key)
 {
-    // it is the responsiblility of the various
-    // loaders to be responsible for deleting all
-    // the objects. The deletion functors aren't
-    // called here since this should be destructed
-    // after all the loaders
-    //
-    // Deleting after the loader had been destructed
-    // probably wouldn't be a good idea, since the object
-    // wouldn't exist anymore...
-    //
-    //! \todo Check if maps are empty?
+    // obtain the creator
+    const StoreEntry & se = GetOrThrow_(key);
+
+    // create
+    modulebase::ModuleBase * mbptr = nullptr;
+    try {
+      mbptr = se.func(se.mi.name, curid_);
+    }
+    catch(const exception::GeneralException & gex)
+    {
+        throw exception::ModuleCreateException(gex,
+                                               se.mi.path,
+                                               se.mi.key,
+                                               se.mi.name);
+    }
+
+    if(mbptr == nullptr)
+        throw exception::ModuleCreateException("Create function returned a null pointer",
+                                               se.mi.path,
+                                               se.mi.key,
+                                               se.mi.name);
+    
+    // add the moduleinfo to the graph
+    // \todo Molecule, basis set, inherited from parent
+    GraphNodeData gdata{nullptr, nullptr, se.mi, datastore::CalcData()};
+    graphdata_.emplace(curid_, gdata);
+
+    // set the info
+    mbptr->SetMLocator_(this);
+    mbptr->SetGraphData_(&(graphdata_.at(curid_)));
+
+    // make the deleter function the DeleteObject_() of this ModuleLocator object
+    DeleterFunc dfunc = std::bind(static_cast<void(ModuleLocator::*)(modulebase::ModuleBase *)>(&ModuleLocator::DeleteObject_),
+                                  this,
+                                  std::placeholders::_1);
+
+    removemap_.emplace(curid_, se.dfunc);
+
+    // next id
+    curid_++;
+
+    return {mbptr, dfunc};
 }
+
+
+////////////////////
+// Python
+////////////////////
+boost::python::object ModuleLocator::GetModulePy(const std::string & key)
+{
+    auto mod = CreateModule_(key);
+    return mod.first->MoveToPyObject_(mod.second);
+}
+
+
+
 
 } // close namespace modulelocator
 } // close namespace bpmodule

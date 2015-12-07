@@ -27,10 +27,6 @@ class ModuleBase;
 namespace modulelocator {
 class ModuleLocator;
 
-namespace export_python {
-template<typename T>
-boost::shared_ptr<T> Wrap_GetModule(ModuleLocator *, const std::string &);
-}
 
 } // close modulelocator
 } // close bpmodule
@@ -98,28 +94,6 @@ class ScopedModule : private std::unique_ptr<T, std::function<void(modulebase::M
 
         //! \brief Access the functions of the underlying pointer
         pointer operator->() const { return BASE::operator->(); }
-
-    private:
-        // These are needed by the python wrapper
-
-        template<typename U>
-        friend boost::shared_ptr<U> export_python::Wrap_GetModule(ModuleLocator *, const std::string &);
-
-
-        /*! \brief Release ownership
-         *
-         * Ownership is given up, but the deleter is not called
-         */
-        pointer release(void) { return BASE::release(); }
-
-
-        /*! \brief Get the associated deletion function
-         */
-        deleter_type & get_deleter(void) { return BASE::get_deleter(); }
-
-        /*! \brief Get the associated deletion function
-         */
-        const deleter_type & get_deleter(void) const { return BASE::get_deleter(); }
 };
 
 

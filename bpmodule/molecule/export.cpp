@@ -24,12 +24,6 @@ namespace molecule {
 namespace export_python {
 
 
-// A bit of a hack
-// Since we want isotopes to be a data member, and not a function,
-// Python won't use the to_python_converter. So we use add_property
-// instead and create a little wrapper function
-std::vector<IsotopeData> AtomicDataIsotopes_(const AtomicData & ad) { return ad.isotopes; }
-
 // Ditto for atom XYZ
 std::array<double, 3> AtomXYZ_(const Atom & a) { return a.xyz; }
 
@@ -71,7 +65,7 @@ BOOST_PYTHON_MODULE(molecule)
     .def_readonly("mass", &AtomicData::mass)
     .def_readonly("mass_low", &AtomicData::mass_low)
     .def_readonly("mass_high", &AtomicData::mass_high)
-    .add_property("isotopes", AtomicDataIsotopes_)
+    .add_property("isotopes", make_getter(&AtomicData::isotopes, return_value_policy<return_by_value>()))
     ;
 
 
@@ -98,7 +92,7 @@ BOOST_PYTHON_MODULE(molecule)
     .def_readwrite("id", &Atom::id)
     .def_readwrite("z", &Atom::z)
     .def_readwrite("isonum", &Atom::isonum)
-    .add_property("xyz", AtomXYZ_)
+    .add_property("xyz", make_getter(&Atom::xyz, return_value_policy<return_by_value>()), make_setter(&Atom::xyz, return_value_policy<return_by_value>()))
     .def("Mass", &Atom::Mass)
     .def("Name", &Atom::Name)
     .def("Symbol", &Atom::Symbol)
