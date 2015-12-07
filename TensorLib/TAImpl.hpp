@@ -2,9 +2,10 @@
 #define TAIMPL_HPP_
 
 #include "tiledarray.h"
-
+#include "Shape.hpp"
 extern TiledArray::World* world;
 
+namespace TensorWrap{
 
 /*! \brief Implements the tensor guts for Tiled Array
  *
@@ -22,12 +23,9 @@ class TAImpl{
       typedef typename TiledArray::expressions::TsrExpr<TensorBase_t>
          IndexedTensor_t;
 
-      ///Convenient typedef of the type of the shape
-      typedef std::array<size_t,Rank> Shape_t;
-
       ///Wraps the constructor
-      static TensorBase_t* Make(const Shape_t& Shape){
-         return new TensorBase_t(*world,MakeRanges(Shape));
+      static TensorBase_t* Make(const Shape& ShapeIn){
+         return new TensorBase_t(*world,MakeRanges(ShapeIn));
       }
 
       ///Fills this processor's elements with the given value
@@ -36,22 +34,34 @@ class TAImpl{
       }
 
       ///Converts TensorBase to indexed tensor
-      static IndexedTensor_t DeRef(const char* string,TensorBase_t& ATensor){
+      static IndexedTensor_t DeRef(const char* string,
+                                   TensorBase_t& ATensor){
          return ATensor(string);
       }
 
 
       ///Prints the tensor out
       static std::ostream& PrintOut(std::ostream& os,
-            const TensorBase_t& ATensor){
+                                    const TensorBase_t& ATensor){
          os<<ATensor;
          return os;
       }
 
+      ///Returns the element with the given coordinate index
+      template<size_t Rank2>
+      static TensorBase_t* Get(const std::array<size_t,Rank2>& Idx,
+            TensorBase_t& ATensor){
+
+         //TARng_t Range=MakeRanges(ATensor.range().upbound(),
+          //                        ATensor.range().lobound(),Rank2)
+         //TensorBase_t::value_type ATensor.get(Idx);
+
+      }
    private:
 
       ///A typedef of TA's one-dimensional range object
       typedef TiledArray::TiledRange1 TARng1_t;
+
       ///A typedef of TA's range object
       typedef TiledArray::TiledRange TARng_t;
 
@@ -81,45 +91,56 @@ class TAImpl{
        *   \f]
        *   where \f$L_i\f$ is the length of rank i.
        */
-      static TARng_t MakeRanges(const Shape_t& Shape){
+      template<typename T2>
+      static TARng_t MakeRanges(const T2& ShapeIn){
+         std::cout<<ShapeIn<<std::endl;
          std::vector<TARng1_t> Range;
-         for(size_t r=0;r<Rank;++r)Range.push_back(TARng1_t(0,Shape[r]));
+         for(size_t r=0;r<ShapeIn.size();++r)
+            Range.push_back(TARng1_t(ShapeIn[r].cbegin(),ShapeIn[r].cend()));
          return TARng_t(Range.begin(),Range.end());
       }
 
       ///An iterator to a TA tensor
       class TAItr{
          public:
+            ///Moves to next coordinate index
             TAItr& operator++(){
                bool Changed=false;
-               for(size_t r=Rank-1;r>=0&&!Changed;--r){
-                  if(Index_[r]<Finish_[r]){
-                     ++Index_[r];
-                     Changed=true;
-                     if(r!=Rank-1){
-                        for(size_t s=r+1;s<Rank;++s)
+               for(size_t r=Rank;r>0 && !Changed;--r){
+                  if(Index_[r-1]<Finish_[r-1]){
+                     ++Index_[r-1];
+                     if(Index_[r-1]<Finish_[r-1])Changed=true;
+                     if(r!=Rank&&Changed)
+                        for(size_t s=r;s<Rank;++s)
                            Index_[s]=Start_[s];
-                     }
                   }
                }
                if(!Changed){
+                  *TileI_=Tile_;
                   ++TileI_;
                   if(TileI_!=Parent_.end()){
                      Tile_=Parent_.trange().make_tile_range(TileI_.ordinal());
-                     Start_=Tile_.range().start();
-                     Finish_=Tile_.range().end();
+                     Start_=Tile_.range().lobound();
+                     Finish_=Tile_.range().upbound();
                   }
                }
                return *this;
             }
-            Data_t& operator*(){return Tile_[Index_];}
-            bool operator==(const TAItr& other){
-               return (TileI_==other.TileI_) && (Index_==other.Index_);
+
+            ///Returns the spot where you should put your data
+            Data_t& operator*(){
+               return Tile_[Tile_.range().ordinal(Index_)];
             }
+
+            ///True if iterators equal each other (defer's to TA's iterators)
+            bool operator==(const TAItr& other){
+               return (TileI_==other.TileI_); //&& (Index_==other.Index_);
+            }
+
+            ///Returns true if two iterators are different Negates operator==()
             bool operator!=(const TAItr& other){return !(*this==other);}
             std::ostream& operator<<(std::ostream& os){
-               for(size_t i=0;i<Rank;i++)
-                  os<<Index_[i]<<" ";
+               for(size_t i=0;i<Rank;i++)os<<Index_[i]<<" ";
                os<<std::endl;
                return os;
             }
@@ -130,18 +151,19 @@ class TAImpl{
                TileI_(!AtEnd?Tensor.begin():Tensor.end()),
                TileEnd_(Tensor.end()),
                Tile_(Tensor.begin()!=Tensor.end()?
-                     Tensor.trange().make_tile_range(TileI_.ordinal()):
-                     TensorBase_t::value_type),
-               Start_(Tile_.range().start()),
-               Finish_(Tile_.range().end()),
-               Index_(Rank){
+                     Tensor.trange().make_tile_range(Tensor.begin().ordinal()):
+                     TensorBase_t::value_type()),
+               Start_(Tile_.range().lobound()),
+               Finish_(Tile_.range().upbound()),
+               Index_({}){
 
             }
             TensorBase_t& Parent_;
-            TensorBase_t::iterator TileI_,TileEnd_;
-            TensorBase_t::value_type Tile_;
-            const TensorBase_t::range_type::size_array& Start_,Finish_;
-            std::vector<size_t> Index_;
+            typename TensorBase_t::iterator TileI_;
+            typename TensorBase_t::const_iterator TileEnd_;
+            typename TensorBase_t::value_type Tile_;
+            std::vector<size_t> Start_,Finish_;
+            std::array<size_t,Rank> Index_;
       };
 
    public:
@@ -154,6 +176,15 @@ class TAImpl{
          return TAItr(ATensor,true);
       }
 };
+
+}//End namespace TensorWrap
+
+template<typename Data_t, size_t Rank>
+inline std::ostream& operator<<(std::ostream& os, 
+      const typename TensorWrap::TAImpl<Data_t,Rank>::TAItr& itr){
+   itr<<os;
+   return os;
+}
 
 
 

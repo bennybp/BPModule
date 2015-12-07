@@ -17,19 +17,22 @@
 
 
 #define TILED_ARRAY 1
+#if TILED_ARRAY
+
 #include "tiledarray.h"
 
 ///Our wrapper to TA
 #include "TAImpl.hpp"
 
+namespace TensorWrap{
+
 template<typename Data_t,size_t Rank>
 using TImpl=TAImpl<Data_t,Rank>;
 
-#if TILED_ARRAY
-
-
-
-
+}
 #endif /*TILED_ARRAY*/
+
+
+
 
 #endif /* TENSORSETTINGS_HPP_ */

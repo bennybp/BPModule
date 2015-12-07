@@ -35,7 +35,7 @@ if(${TENSOR_BACKEND} STREQUAL TA)
               -DBLAS_LIBRARIES=-mkl
       INSTALL_DIR "${TBE_SRC}"
    )
-   set(TA_BUILD ${TBE_SRC}/src/TiledArray-build)
+   set(TA_BUILD ${TBE_SRC})
    set(TBE_HEADER_FILES ${TA_BUILD}/include
                        ${TA_BUILD}/include/eigen3
    )
@@ -60,7 +60,8 @@ endif()
 include_directories(${TBE_HEADER_FILES})
 
 
-set(TensorHeaders TensorSetttings.hpp
+set(TensorHeaders Shape.hpp
+                  TensorSetttings.hpp
                   TAImpl.hpp
                   Tensor.hpp
 )
