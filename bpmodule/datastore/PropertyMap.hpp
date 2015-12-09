@@ -323,7 +323,7 @@ class PropertyMap
 
         /*! \copydoc Set
          *
-         * Copies the internal python data to a C++ type. Specializes the templated function.
+         * Copies the internal python data to a C++ type.
          *
          * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
          */
