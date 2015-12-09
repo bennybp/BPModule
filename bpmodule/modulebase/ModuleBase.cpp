@@ -158,6 +158,11 @@ void ModuleBase::SetGraphNode_(datastore::GraphNode * node) noexcept
     graphnode_ = node;
 }
 
+void ModuleBase::SetCache_(datastore::CalcData * cache) noexcept
+{
+    cache_ = cache;
+}
+
 ModuleInfo & ModuleBase::MInfo_(void)
 {
     return GraphData().minfo;

@@ -49,6 +49,10 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("Throw", &ModuleBase::ThrowPy)
     .def("Wfn", static_cast<datastore::Wavefunction &(ModuleBase::*)(void)>(&ModuleBase::Wfn), return_internal_reference<>())
     .def("CreateChildModule", &ModuleBase::CreateChildModulePy)
+    .def("CacheHas", &ModuleBase::CacheHas)
+    .def("CacheGetCopy", &ModuleBase::CacheGetCopyPy)
+    .def("CacheSet", &ModuleBase::CacheSetPy)
+    .def("CacheErase", &ModuleBase::CacheErase)
     ;
 
 
