@@ -12,6 +12,7 @@
 
 #include "bpmodule/exception/DataStoreException.hpp"
 #include "bpmodule/datastore/GenericHolder.hpp"
+#include "bpmodule/modulelocator/ModuleInfo.hpp"
 
 namespace bpmodule {
 namespace datastore {
@@ -150,6 +151,20 @@ class PropertyMap
 
 
 
+        /*! \brief Returns the source of the information
+         *
+         * \throw bpmodule::exception::DataStoreException
+         *        if the key doesn't exist
+         *
+         * \param [in] key The key to the data
+         */
+        modulelocator::ModuleInfo GetSource(const KEYTYPE & key) const
+        {
+            return GetOrThrow_(key).source;   
+        }
+
+
+
         /*! \brief Return the number of elements contained
          *
          * \exnothrow
@@ -223,10 +238,10 @@ class PropertyMap
          * \param [in] value The data to store
          */
         template<typename T>
-        void Set(const KEYTYPE & key, const T & value)
+        void Set(const KEYTYPE & key, const T & value, const modulelocator::ModuleInfo & source)
         {
             detail::GenericBasePtr v(new detail::GenericHolder<T>(value));
-            Set_(key, std::move(v));
+            Set_(key, std::move(v), source);
         }
 
 
@@ -236,10 +251,10 @@ class PropertyMap
          * \copydetails Set
          */
         template<typename T>
-        void Take(const KEYTYPE & key, T && value)
+        void Take(const KEYTYPE & key, T && value, const modulelocator::ModuleInfo & source)
         {
             detail::GenericBasePtr v(new detail::GenericHolder<T>(std::move(value)));
-            Set_(key, std::move(v));
+            Set_(key, std::move(v), source);
         }
 
 
@@ -327,11 +342,11 @@ class PropertyMap
          *
          * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
          */
-        void SetPy(const KEYTYPE & key, const boost::python::object & value)
+        void SetPy(const KEYTYPE & key, const boost::python::object & value, const modulelocator::ModuleInfo & source)
         {
             // catch errors from conversions in GenericHolderFactory
             try {
-                Set_(key, detail::GenericHolderFactory(value));
+                Set_(key, detail::GenericHolderFactory(value), source);
             }
             catch(exception::DataStoreException & ex)
             {
@@ -356,6 +371,7 @@ class PropertyMap
         struct PropMapEntry
         {
             detail::GenericBasePtr value;      //! The stored data
+            modulelocator::ModuleInfo source;  //! Where the data came from
         };
 
 
@@ -438,16 +454,17 @@ class PropertyMap
          * \param [in] key Key of the data to set
          * \param [in] value Pointer to the data to set
          */ 
-        void Set_(const KEYTYPE & key, detail::GenericBasePtr && value)
+        void Set_(const KEYTYPE & key, detail::GenericBasePtr && value, const modulelocator::ModuleInfo & source)
         {
             if(opmap_.count(key))
             {
                 PropMapEntry & phe = GetOrThrow_(key);
                 phe.value = std::move(value);
+                phe.source = source;
             }
             else
             {
-                PropMapEntry phe{std::move(value)};
+                PropMapEntry phe{std::move(value), source};
 
                 // emplace has strong exception guarantee
                 opmap_.emplace(key, std::move(phe));

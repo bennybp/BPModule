@@ -1,4 +1,5 @@
 set(BPMODULE_DATASTORE_FILES
+            Wavefunction.cpp
             GenericHolder.cpp
             export.cpp
    )

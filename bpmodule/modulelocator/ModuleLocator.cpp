@@ -10,8 +10,21 @@
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"
+#include "bpmodule/datastore/Wavefunction.hpp"
+
+//////////////////////////////////////////////
+//! \todo can probably be removed when graph inheritance is done
+#include "bpmodule/basisset/BasisSet.hpp"
+#include "bpmodule/molecule/Molecule.hpp"
+#include "bpmodule/tensor/Matrix.hpp"
+using bpmodule::molecule::Molecule;
+using bpmodule::basisset::BasisSet;
+using bpmodule::tensor::DistMatrixD;
+//////////////////////////////////////////////
+
 
 using bpmodule::datastore::GraphNodeData;
+using bpmodule::datastore::Wavefunction;
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
 using bpmodule::exception::ModuleLocatorException;
@@ -221,7 +234,13 @@ ModuleLocator::CreateModule_(const std::string & key)
     
     // add the moduleinfo to the graph
     // \todo Molecule, basis set, inherited from parent
-    GraphNodeData gdata{datastore::Wavefunction(), se.mi};
+    GraphNodeData gdata{std::shared_ptr<const Wavefunction>(new Wavefunction(
+                                                              BasisSet(),
+                                                              Molecule(),
+                                                              tensor::DistMatrixD(),
+                                                              tensor::DistMatrixD()
+                                                             )
+                                                           ), se.mi};
     graphdata_.emplace(curid_, gdata);
 
     // set the info

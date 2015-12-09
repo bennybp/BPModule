@@ -124,7 +124,6 @@ class ModuleBase
          */
         void Print(void) const;
 
-
         /*! \brief See if this module is a python module
          */
         bool IsPythonModule(void) const noexcept;
@@ -149,7 +148,6 @@ class ModuleBase
          * \throw std::logic_error if it hasn't been set
          */
         modulelocator::ModuleLocator & MLocator(void) const;
-
 
 
         /*! \brief Throw an exception
@@ -186,6 +184,21 @@ class ModuleBase
                 Throw<exception::GeneralException>("Attempting to call a virtual function in a C++ module that is missing from the derived class");
             return boost::python::call_method<R>(pyself_, fname, args...);
         }
+
+
+        /*! \brief Get the wavefunction for this graph node
+         *
+         * \throw std::logic_error if there is a severe developer error
+         */
+        const datastore::Wavefunction & Wfn(void) const;
+
+
+        /*! \brief Set the wavefunction for this graph node
+         *
+         * \throw std::logic_error if there is a severe developer error
+         */
+        void SetWfn(const datastore::Wavefunction & wfn);
+ 
 
 
 
@@ -227,21 +240,6 @@ class ModuleBase
          * \throw std::logic_error if there is a severe developer error
          */
         const modulelocator::ModuleInfo & MInfo_(void) const;
-
-
-        /*! \brief Get the wavefunction for this graph node
-         *
-         * \throw std::logic_error if there is a severe developer error
-         */
-        datastore::Wavefunction & Wfn_(void);
-
-
-        /*! \brief Get the wavefunction for this graph node
-         *
-         * \throw std::logic_error if there is a severe developer error
-         */
-        const datastore::Wavefunction & Wfn_(void) const;
-
 
 
         /*! \brief Set the mlocator_ pointer

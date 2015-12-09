@@ -8,16 +8,21 @@
 #ifndef _GUARD_GRAPHNODEDATA_HPP_
 #define _GUARD_GRAPHNODEDATA_HPP_
 
+#include <memory>
+
 #include "bpmodule/modulelocator/ModuleInfo.hpp"
-#include "bpmodule/datastore/Wavefunction.hpp"
+
 
 
 namespace bpmodule {
 namespace datastore {
 
+class Wavefunction;
+
+
 struct GraphNodeData
 {
-    datastore::Wavefunction wfn;
+    std::shared_ptr<const datastore::Wavefunction> wfn;
     modulelocator::ModuleInfo minfo;
 };
 

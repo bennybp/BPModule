@@ -13,6 +13,7 @@
 using bpmodule::modulelocator::ModuleLocator;
 using bpmodule::modulelocator::ModuleInfo;
 using bpmodule::datastore::Wavefunction;
+using bpmodule::datastore::GraphNodeData;
 using bpmodule::exception::GeneralException;
 
 
@@ -102,7 +103,7 @@ ModuleLocator & ModuleBase::MLocator(void) const
     return *mlocator_;
 }
 
-const datastore::GraphNodeData & ModuleBase::GraphData(void) const
+const GraphNodeData & ModuleBase::GraphData(void) const
 {
     if(graphdata_ == nullptr)
         throw std::logic_error("Developer error - graphdata_ is null for a module!");
@@ -110,12 +111,22 @@ const datastore::GraphNodeData & ModuleBase::GraphData(void) const
     return *graphdata_;
 }
 
-datastore::GraphNodeData & ModuleBase::GraphData(void)
+GraphNodeData & ModuleBase::GraphData(void)
 {
     if(graphdata_ == nullptr)
         throw std::logic_error("Developer error - graphdata_ is null for a module!");
 
     return *graphdata_;
+}
+
+const Wavefunction & ModuleBase::Wfn(void) const
+{
+    return *(GraphData().wfn);
+}
+
+void ModuleBase::SetWfn(const Wavefunction & wfn)
+{
+    GraphData().wfn = std::shared_ptr<const Wavefunction>(new Wavefunction(wfn));
 }
 
 
@@ -133,16 +144,6 @@ ModuleInfo & ModuleBase::MInfo_(void)
 const ModuleInfo & ModuleBase::MInfo_(void) const
 {
     return GraphData().minfo;
-}
-
-Wavefunction & ModuleBase::Wfn_(void)
-{
-    return GraphData().wfn;
-}
-
-const Wavefunction & ModuleBase::Wfn_(void) const
-{
-    return GraphData().wfn;
 }
 
 void ModuleBase::SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept

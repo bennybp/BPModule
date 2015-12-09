@@ -7,11 +7,12 @@
 
 #include <boost/python/module.hpp>
 #include <boost/python/class.hpp>
+#include <boost/python/copy_const_reference.hpp>
 #include <boost/python/return_internal_reference.hpp>
 #include <boost/python/register_ptr_to_python.hpp>
-#include <boost/python/pure_virtual.hpp>
 
 #include "bpmodule/modulebase/All.hpp"
+#include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
 
 
@@ -46,6 +47,8 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("MLocator", static_cast<ModuleLocator &(ModuleBase::*)(void) const>(&ModuleBase::MLocator), return_internal_reference<>()) 
     .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_internal_reference<>())
     .def("Throw", &ModuleBase::ThrowPy)
+    .def("Wfn", &ModuleBase::Wfn, return_value_policy<copy_const_reference>())
+    .def("SetWfn", &ModuleBase::SetWfn)
     ;
 
 

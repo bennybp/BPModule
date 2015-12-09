@@ -4,11 +4,13 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-
 #include <boost/python/module.hpp>
 #include <boost/python/class.hpp>
+#include <boost/python/copy_const_reference.hpp>
 
 #include "bpmodule/datastore/CalcData.hpp"
+#include "bpmodule/basisset/BasisSet.hpp"
+#include "bpmodule/molecule/Molecule.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 
 
@@ -20,19 +22,6 @@ using bpmodule::datastore::Wavefunction;
 using bpmodule::tensor::DistMatrixD;
 
 
-//! \todo move to Wavefunction structure?
-static BasisSet GetWfnBasis(const Wavefunction * wfn) { return *(wfn->basis); }
-static void SetWfnBasis(Wavefunction * wfn, const BasisSet & basis) { wfn->basis = std::shared_ptr<const BasisSet>(new BasisSet(basis)); }
-
-static Molecule GetWfnMolecule(const Wavefunction * wfn) { return *(wfn->molecule); }
-static void SetWfnMolecule(Wavefunction * wfn, const Molecule & molecule) { wfn->molecule = std::shared_ptr<const Molecule>(new Molecule(molecule)); }
-
-static DistMatrixD GetWfnCMat(const Wavefunction * wfn) { return *(wfn->cmat); }
-static void SetWfnCMat(Wavefunction * wfn, const DistMatrixD & cmat) { wfn->cmat = std::shared_ptr<const DistMatrixD>(new DistMatrixD(cmat)); }
-
-
-
-
 namespace bpmodule {
 namespace datastore {
 namespace export_python {
@@ -41,10 +30,11 @@ BOOST_PYTHON_MODULE(datastore)
 {
     /* Similar to CalcData, python will have to work with copies
      */
-    class_<Wavefunction>("Wavefunction", init<>()) //! \todo python init for wfn?
-    .add_property("basis", GetWfnBasis, SetWfnBasis)
-    .add_property("molecule", GetWfnMolecule, SetWfnMolecule)
-    .add_property("cmat", GetWfnCMat, SetWfnCMat)
+    class_<Wavefunction>("Wavefunction", no_init) //! \todo python init for wfn?
+    .def("Basis", &Wavefunction::Basis, return_value_policy<copy_const_reference>()) 
+    .def("Molecule", &Wavefunction::Molecule, return_value_policy<copy_const_reference>()) 
+    .def("CMat", &Wavefunction::CMat, return_value_policy<copy_const_reference>()) 
+    .def("Epsilon", &Wavefunction::Epsilon, return_value_policy<copy_const_reference>()) 
     ;
   
 
@@ -59,7 +49,6 @@ BOOST_PYTHON_MODULE(datastore)
     /////////////////////////
     class_<CalcData>("CalcData", init<>())
     .def(init<const CalcData &>())
-    .def("GetSource", &CalcData::GetSource)
     .def("HasKey", &CalcData::HasKey)
     .def("GetCopy", &CalcData::GetCopyPy)
     .def("Set", &CalcData::SetPy)

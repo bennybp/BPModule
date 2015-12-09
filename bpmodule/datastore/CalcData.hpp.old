@@ -69,17 +69,17 @@ class CalcData : public PropertyMap<std::string>
 
         //! \copydoc bpmodule::datastore::PropertyMap::Set
         template<typename T>
-        void Set(const std::string & key, const T & value)
+        void Set(const std::string & key, const T & value, const modulelocator::ModuleInfo & source)
         {
-            PropertyMap::Set(key, value);
+            PropertyMap::Set(key, value, source);
         }
 
 
         //! \copydoc bpmodule::datastore::PropertyMap::Take
         template<typename T>
-        void Take(const std::string & key, T && value)
+        void Take(const std::string & key, T && value, const modulelocator::ModuleInfo & source)
         {
-            PropertyMap::Take(key, std::move(value));
+            PropertyMap::Take(key, std::move(value), source);
         }
 
 
@@ -114,9 +114,9 @@ class CalcData : public PropertyMap<std::string>
         }
 
         //! \copydoc bpmodule::datastore::PropertyMap::SetPy
-        void SetPy(const std::string & key, const boost::python::object & value)
+        void SetPy(const std::string & key, const boost::python::object & value, const modulelocator::ModuleInfo & source)
         {
-            PropertyMap::SetPy(key, value);
+            PropertyMap::SetPy(key, value, source);
         }
 };
 
