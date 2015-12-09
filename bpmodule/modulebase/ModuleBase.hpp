@@ -11,6 +11,7 @@
 #include <string>
 #include <boost/python/call_method.hpp>
 #include <boost/python/object.hpp> //! \todo forward declare PyObject?
+#include <boost/shared_ptr.hpp> //! \todo May be able to use std::shared_ptr instead with some workarounds
 
 #include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
@@ -213,6 +214,17 @@ class ModuleBase
          * Python version 
          */ 
         boost::python::object CreateChildModulePy(const std::string & key) const;
+
+
+
+        template<typename T>
+        static
+        boost::python::object MoveToPyObjectHelper_(std::function<void(modulebase::ModuleBase *)> deleter, T * obj)
+        {
+            boost::shared_ptr<T> me(obj, deleter);
+            return boost::python::object(me);
+        }
+
 
 
     private:

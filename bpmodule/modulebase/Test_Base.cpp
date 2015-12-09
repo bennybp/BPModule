@@ -4,13 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include <boost/shared_ptr.hpp>
-#include <boost/python/object.hpp>
-
 #include "bpmodule/modulebase/Test_Base.hpp"
-
-using bpmodule::modulelocator::ModuleLocator;
-using bpmodule::modulelocator::ModuleInfo;
 
 namespace bpmodule {
 namespace modulebase {
@@ -58,8 +52,7 @@ void Test_Base::CallThrow(const std::string & other)
 ////////////////////////////
 boost::python::object Test_Base::MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
 {
-    boost::shared_ptr<Test_Base> me(this, deleter);
-    return boost::python::object(me);
+    return ModuleBase::MoveToPyObjectHelper_<Test_Base>(deleter, this);
 }
 
 
