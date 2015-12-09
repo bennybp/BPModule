@@ -8,8 +8,7 @@ class TestPyModule1(bp.modulebase.Test_Base):
   def RunTest(self):
     bp.output.Output("+++ In TestPyModule1: RunTest. Info: (%1%) %2% %3% v%4%\n", self.ID(), self.Key(), self.Name(), self.Version());
 
-    bp.output.Output("    Basis function id: %1% (valid? %2%\n", self.Wfn().basis.UID(), self.Wfn().basis.Valid())
-    bp.output.Output("    Molecule id: %1% (valid? %2%\n", self.Wfn().molecule.UID(), self.Wfn().molecule.Valid())
+    bp.output.Output("    Wavefunction: %1% \n", self.Wfn().UniqueString())
 
     bp.output.Output("   double_opt_def:    %1%\n", self.Options().Get("double_opt_def"));
     bp.output.Output("      int_opt_def:    %1%\n", self.Options().Get("int_opt_def"));

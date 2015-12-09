@@ -6,7 +6,7 @@
 
 #include <boost/python/module.hpp>
 #include <boost/python/class.hpp>
-#include <boost/python/copy_const_reference.hpp>
+#include <boost/python/return_internal_reference.hpp>
 
 #include "bpmodule/datastore/CalcData.hpp"
 #include "bpmodule/basisset/BasisSet.hpp"
@@ -35,6 +35,8 @@ RegisterUIDPointer(void)
     class_<UIDPointer<T>>(pyname.c_str(), no_init) //! \todo python init for UIDPointer?
     .def("Valid", &UIDPointer<T>::Valid)
     .def("UID", &UIDPointer<T>::UID)
+    .def("Set", &UIDPointer<T>::Set)
+    .def("Get", &UIDPointer<T>::Get, return_internal_reference<>())
     ;
 }
 
@@ -47,6 +49,7 @@ BOOST_PYTHON_MODULE(datastore)
     /* Similar to CalcData, python will have to work with copies
      */
     class_<Wavefunction>("Wavefunction", no_init) //! \todo python init for wfn?
+    .def("UniqueString", &Wavefunction::UniqueString)
     .def_readwrite("basis", &Wavefunction::basis)
     .def_readwrite("molecule", &Wavefunction::molecule)
     .def_readwrite("cmat", &Wavefunction::cmat)

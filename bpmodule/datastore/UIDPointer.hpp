@@ -73,6 +73,12 @@ public:
     }
 
     //! \todo noexcept?
+    const T & Get(void) const
+    {
+        return *data_;
+    }
+
+    //! \todo noexcept?
     const T * operator->(void)
     {
         return data_.get();

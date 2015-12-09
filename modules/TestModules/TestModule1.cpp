@@ -28,8 +28,7 @@ void TestModule1::RunTest(void)
 {
     Output("+++ In TestModule1: RunTest. Info: (%1%) %2% %3% v%4%\n", ID(), Key(), Name(), Version());
 
-    Output("    Basis function id: %1% (valid? %2%\n", Wfn().basis.UID(), Wfn().basis.Valid());
-    Output("    Molecule id: %1% (valid? %2%\n", Wfn().molecule.UID(), Wfn().molecule.Valid());
+    Output("    Wavefunction: %1% \n", Wfn().UniqueString());
 
     Output("   double_opt_def:    %1%\n", Options().Get<double>("double_opt_def"));
     Output("      int_opt_def:    %1%\n", Options().Get<int>("int_opt_def"));

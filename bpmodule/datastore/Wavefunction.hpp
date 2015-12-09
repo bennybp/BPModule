@@ -42,6 +42,16 @@ public:
     UIDPointer<molecule::Molecule> molecule;
     UIDPointer<tensor::DistMatrixD> cmat; //! \todo REPLACE ME WITH TENSOR<2> or <3>
     UIDPointer<tensor::DistMatrixD> epsilon; //! \todo REPLACE ME WITH TENSOR<1> or <2>
+
+    std::string UniqueString(void) const
+    {
+        std::string s = "WFN_";
+        s += "B:" + std::to_string(basis.Valid()) + "_" + std::to_string(basis.UID()) + "_";
+        s += "M:" + std::to_string(molecule.Valid()) + "_" + std::to_string(molecule.UID()) + "_";
+        s += "C:" + std::to_string(cmat.Valid()) + "_" + std::to_string(cmat.UID()) + "_";
+        s += "E:" + std::to_string(epsilon.Valid()) + "_" + std::to_string(epsilon.UID()) + ";";
+        return s;
+    }
 };
 
 
