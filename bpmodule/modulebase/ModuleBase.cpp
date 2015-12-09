@@ -14,6 +14,7 @@ using bpmodule::modulelocator::ModuleLocator;
 using bpmodule::modulelocator::ModuleInfo;
 using bpmodule::datastore::Wavefunction;
 using bpmodule::datastore::GraphNodeData;
+using bpmodule::datastore::GraphNode;
 using bpmodule::exception::GeneralException;
 
 
@@ -22,13 +23,13 @@ namespace modulebase {
 
 
 ModuleBase::ModuleBase(unsigned long id)
-    : pyself_(nullptr), id_(id), mlocator_(nullptr), graphdata_(nullptr)
+    : pyself_(nullptr), id_(id), mlocator_(nullptr), graphnode_(nullptr)
 {
     output::Debug("Constructed module [%1%]\n", id);
 }
 
 ModuleBase::ModuleBase(PyObject * self, unsigned long id)
-    : pyself_(self), id_(id), mlocator_(nullptr), graphdata_(nullptr)
+    : pyself_(self), id_(id), mlocator_(nullptr), graphnode_(nullptr)
 {
     output::Debug("Constructed python module [%1%]\n", id);
 }
@@ -91,6 +92,14 @@ bool ModuleBase::IsPythonModule(void) const noexcept
 }
 
 
+const GraphNode * ModuleBase::MyNode(void) const
+{
+    if(mlocator_ == nullptr)
+        throw std::logic_error("Developer error - graphnode is null for a module!");
+
+    return graphnode_;
+}
+
 
 ////////////////////////////////
 // Protected functions
@@ -105,18 +114,18 @@ ModuleLocator & ModuleBase::MLocator(void) const
 
 const GraphNodeData & ModuleBase::GraphData(void) const
 {
-    if(graphdata_ == nullptr)
-        throw std::logic_error("Developer error - graphdata_ is null for a module!");
+    if(graphnode_ == nullptr)
+        throw std::logic_error("Developer error - graphnode_ is null for a module!");
 
-    return *graphdata_;
+    return graphnode_->data;
 }
 
 GraphNodeData & ModuleBase::GraphData(void)
 {
-    if(graphdata_ == nullptr)
-        throw std::logic_error("Developer error - graphdata_ is null for a module!");
+    if(graphnode_ == nullptr)
+        throw std::logic_error("Developer error - graphnode_ is null for a module!");
 
-    return *graphdata_;
+    return graphnode_->data;
 }
 
 const Wavefunction & ModuleBase::Wfn(void) const
@@ -129,6 +138,11 @@ Wavefunction & ModuleBase::Wfn(void)
     return GraphData().wfn;
 }
 
+boost::python::object ModuleBase::CreateChildModulePy(const std::string & key) const
+{
+    return mlocator_->GetModulePy(key, id_);
+}
+
 
 ////////////////////////////////
 // Private functions
@@ -139,9 +153,9 @@ void ModuleBase::SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept
     mlocator_ = mloc;
 }
 
-void ModuleBase::SetGraphData_(datastore::GraphNodeData * gdat) noexcept
+void ModuleBase::SetGraphNode_(datastore::GraphNode * node) noexcept
 {
-    graphdata_ = gdat;
+    graphnode_ = node;
 }
 
 ModuleInfo & ModuleBase::MInfo_(void)

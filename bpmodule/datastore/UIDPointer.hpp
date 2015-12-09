@@ -38,9 +38,13 @@ public:
 
     operator bool(void) const
     {
-        return bool(data_);
+        return Valid();
     }
 
+    bool Valid(void) const
+    {
+        return bool(data_);
+    }
 
     size_t UID(void) const
     {

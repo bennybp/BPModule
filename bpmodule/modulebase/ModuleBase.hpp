@@ -14,18 +14,15 @@
 
 #include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
+#include "bpmodule/modulelocator/ModuleLocator.hpp"
 
 
 // forward declarations
 namespace bpmodule {
 
-namespace modulelocator {
-class ModuleLocator;
-struct ModuleInfo;
-}
-
 namespace datastore {
 struct GraphNodeData;
+struct GraphNode;
 struct Wavefunction;
 }
 
@@ -74,9 +71,6 @@ class ModuleBase
         ModuleBase & operator= (ModuleBase && rhs)      = delete;
 
 
-        //! \name Basic Info
-        ///@ {
-
         /*! \brief Get the unique ID of this module
          *
          * \exnothrow
@@ -124,13 +118,24 @@ class ModuleBase
          */
         void Print(void) const;
 
+
         /*! \brief See if this module is a python module
          */
         bool IsPythonModule(void) const noexcept;
 
-        ///@}
+
+        /*! \brief Return a pointer to my node on the graph
+         *
+         * \throw std::logic_error if there is a severe developer error
+         */
+        const datastore::GraphNode * MyNode(void) const;
 
 
+        /*! \brief Get the wavefunction for this graph node
+         *
+         * \throw std::logic_error if there is a severe developer error
+         */
+        datastore::Wavefunction & Wfn(void);
 
 
 
@@ -192,11 +197,22 @@ class ModuleBase
          */
         const datastore::Wavefunction & Wfn(void) const;
 
-        /*! \brief Get the wavefunction for this graph node
+
+        /*! \brief Create a module that is a child of this one
+         */ 
+        template<typename T>
+        modulelocator::ScopedModule<T> CreateChildModule(const std::string & key) const
+        {
+            return mlocator_->GetModule<T>(key, id_);
+        }
+
+
+
+        /*! \brief Create a module that is a child of this one
          *
-         * \throw std::logic_error if there is a severe developer error
-         */
-        datastore::Wavefunction & Wfn(void);
+         * Python version 
+         */ 
+        boost::python::object CreateChildModulePy(const std::string & key) const;
 
 
     private:
@@ -216,8 +232,8 @@ class ModuleBase
         //! The ModuleLocator in charge of this module
         modulelocator::ModuleLocator * mlocator_;
 
-        //! My graph node data
-        datastore::GraphNodeData * graphdata_;
+        //! My graph node
+        datastore::GraphNode * graphnode_;
 
 
 
@@ -246,7 +262,7 @@ class ModuleBase
 
         /*! \brief Set the graph data pointer
          */
-        void SetGraphData_(datastore::GraphNodeData * gdat) noexcept;
+        void SetGraphNode_(datastore::GraphNode * node) noexcept;
 
 
         /*! \brief Get all module information stored on the graph

@@ -48,6 +48,7 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_internal_reference<>())
     .def("Throw", &ModuleBase::ThrowPy)
     .def("Wfn", static_cast<datastore::Wavefunction &(ModuleBase::*)(void)>(&ModuleBase::Wfn), return_internal_reference<>())
+    .def("CreateChildModule", &ModuleBase::CreateChildModulePy)
     ;
 
 

@@ -27,6 +27,10 @@ TestModule1::~TestModule1()
 void TestModule1::RunTest(void)
 {
     Output("+++ In TestModule1: RunTest. Info: (%1%) %2% %3% v%4%\n", ID(), Key(), Name(), Version());
+
+    Output("    Basis function id: %1% (valid? %2%\n", Wfn().basis.UID(), Wfn().basis.Valid());
+    Output("    Molecule id: %1% (valid? %2%\n", Wfn().molecule.UID(), Wfn().molecule.Valid());
+
     Output("   double_opt_def:    %1%\n", Options().Get<double>("double_opt_def"));
     Output("      int_opt_def:    %1%\n", Options().Get<int>("int_opt_def"));
     Output("     bool_opt_def:    %1%\n", Options().Get<bool>("bool_opt_def"));
@@ -52,7 +56,7 @@ void TestModule1::CallRunTest(const std::string & other)
 {
     Output("+++ In TestModule1: CallRunTest with %1%\n", other);
 
-    ScopedModule<Test_Base> tb2 = MLocator().GetModule<Test_Base>(other);
+    ScopedModule<Test_Base> tb2 = CreateChildModule<Test_Base>(other);
     Output("  + Obtained scoped module ID %1%\n", tb2->ID());
     tb2->RunTest();
     Output("  + Finished with scoped module %1%. Deleting automatically\n", tb2->ID());
@@ -76,7 +80,7 @@ void TestModule1::CallThrow(const std::string & other)
 {
     Output("+++ In TestModule1: CallThrowTest with %1%\n", other);
 
-    ScopedModule<Test_Base> tb2 = MLocator().GetModule<Test_Base>(other);
+    ScopedModule<Test_Base> tb2 = CreateChildModule<Test_Base>(other);
     Output("  + Obtained scoped module ID %1%\n", tb2->ID());
     tb2->TestThrow();
 

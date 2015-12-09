@@ -33,6 +33,7 @@ RegisterUIDPointer(void)
     std::string pyname = std::string("UIDPointer_") + typeid(T).name();
 
     class_<UIDPointer<T>>(pyname.c_str(), no_init) //! \todo python init for UIDPointer?
+    .def("Valid", &UIDPointer<T>::Valid)
     .def("UID", &UIDPointer<T>::UID)
     ;
 }

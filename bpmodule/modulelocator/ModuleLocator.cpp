@@ -24,6 +24,7 @@ using bpmodule::tensor::DistMatrixD;
 
 
 using bpmodule::datastore::GraphNodeData;
+using bpmodule::datastore::GraphNode;
 using bpmodule::datastore::Wavefunction;
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
@@ -37,7 +38,7 @@ namespace modulelocator {
 
 
 ModuleLocator::ModuleLocator()
-    : curid_(0)
+    : curid_(100) // reserve some for my use
 { }
 
 
@@ -132,7 +133,7 @@ void ModuleLocator::TestAll(void)
         }
 
         try {
-            GetModule<ModuleBase>(it.first);
+            GetModule<ModuleBase>(it.first, 0);
         }
         catch(GeneralException & ex)
         {
@@ -169,13 +170,13 @@ void ModuleLocator::DeleteObject_(unsigned long id)
         }
 
         removemap_.erase(id);
-        //graphdata_.erase(id);
+        //graphnodes_.erase(id);
 
         if(destructorthrew)
             throw exception::ModuleLocatorException("Destructor for a module threw an exception",
                                                     "moduleid", id,
-                                                    "name", graphdata_.at(id).minfo.name,
-                                                    "key", graphdata_.at(id).minfo.key);
+                                                    "name", graphnodes_.at(id).data.minfo.name,
+                                                    "key", graphnodes_.at(id).data.minfo.key);
 
     }
 }
@@ -208,7 +209,7 @@ ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & key)
 // Module Creation
 /////////////////////////////////////////
 std::pair<modulebase::ModuleBase *, ModuleLocator::DeleterFunc>
-ModuleLocator::CreateModule_(const std::string & key)
+ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
 {
     // obtain the creator
     const StoreEntry & se = GetOrThrow_(key);
@@ -233,13 +234,22 @@ ModuleLocator::CreateModule_(const std::string & key)
                                                se.mi.name);
     
     // add the moduleinfo to the graph
-    // \todo Molecule, basis set, inherited from parent
-    GraphNodeData gdata{Wavefunction(), se.mi};
-    graphdata_.emplace(curid_, gdata);
+    //! \todo replace with actual graph
+    if(parentid != 0)
+    {
+        GraphNode & parent = graphnodes_.at(parentid);
+        GraphNodeData gdata{parent.data.wfn, se.mi};
+        graphnodes_.emplace(curid_, GraphNode{gdata});
+    }
+    else
+    {
+        GraphNodeData gdata{Wavefunction(), se.mi};
+        graphnodes_.emplace(curid_, GraphNode{gdata});
+    }
 
     // set the info
     mbptr->SetMLocator_(this);
-    mbptr->SetGraphData_(&(graphdata_.at(curid_)));
+    mbptr->SetGraphNode_(&(graphnodes_.at(curid_)));
 
     // make the deleter function the DeleteObject_() of this ModuleLocator object
     DeleterFunc dfunc = std::bind(static_cast<void(ModuleLocator::*)(modulebase::ModuleBase *)>(&ModuleLocator::DeleteObject_),
@@ -258,13 +268,11 @@ ModuleLocator::CreateModule_(const std::string & key)
 ////////////////////
 // Python
 ////////////////////
-boost::python::object ModuleLocator::GetModulePy(const std::string & key)
+boost::python::object ModuleLocator::GetModulePy(const std::string & key, unsigned long parentid)
 {
-    auto mod = CreateModule_(key);
+    auto mod = CreateModule_(key, parentid);
     return mod.first->MoveToPyObject_(mod.second);
 }
-
-
 
 
 } // close namespace modulelocator

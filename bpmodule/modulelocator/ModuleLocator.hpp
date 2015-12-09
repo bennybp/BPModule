@@ -14,13 +14,16 @@
 #include "bpmodule/datastore/GraphNodeData.hpp"
 #include "bpmodule/datastore/CalcData.hpp"
 #include "bpmodule/modulelocator/ScopedModule.hpp"
-#include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleCreateException.hpp"
 #include "bpmodule/exception/ModuleLocatorException.hpp"
 
 
 // forward declarations
 namespace bpmodule {
+
+namespace modulebase {
+class ModuleBase;
+}
 
 namespace modulelocator {
 
@@ -35,6 +38,7 @@ class PyModuleLoader;
 
 namespace bpmodule {
 namespace modulelocator {
+
 
 
 
@@ -146,16 +150,16 @@ class ModuleLocator
          * \return A ScopedModule for an object of the requested type
          */
         template<typename T>
-        ScopedModule<T> GetModule(const std::string & key)
+        ScopedModule<T> GetModule(const std::string & key, unsigned long parentid)
         {
             // may throw
             // CreateModule_ returns a pointer/deleter pair
-            auto mod = CreateModule_(key);
+            auto mod = CreateModule_(key, parentid);
 
             T * dptr = dynamic_cast<T *>(mod.first);
             if(dptr == nullptr)
             {
-                const ModuleInfo & mi = mod.first->MInfo_();
+                ModuleInfo mi = store_.at(key).mi;
 
                 throw exception::ModuleCreateException("Bad cast for module", mi.path,
                                                        key, mi.name, 
@@ -167,7 +171,6 @@ class ModuleLocator
 
             return ret;
         }
-
 
 
         /*! \brief Retrieve a module as a python object
@@ -183,7 +186,8 @@ class ModuleLocator
          *
          * \return The module wrapped in a boost::python object
          */
-        boost::python::object GetModulePy(const std::string & key);
+        boost::python::object GetModulePy(const std::string & key, unsigned long parentid);
+
 
 
 
@@ -249,7 +253,7 @@ class ModuleLocator
          *
          * \todo will be replaced by a graph or tree
          */
-        std::unordered_map<unsigned long, datastore::GraphNodeData> graphdata_;
+        std::unordered_map<unsigned long, datastore::GraphNode> graphnodes_;
 
 
         //! The id to assign to the next created module
@@ -303,7 +307,7 @@ class ModuleLocator
          *
          */
         std::pair<modulebase::ModuleBase *, DeleterFunc>
-        CreateModule_(const std::string & key);
+        CreateModule_(const std::string & key, unsigned long parentid);
 
 
         /*! \brief Removes a created module object from storage

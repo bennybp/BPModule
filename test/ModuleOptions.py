@@ -51,15 +51,15 @@ def Run(mm):
         mm.LoadModule("TestModules",   "TestOptions_listbool",    "TEST_LIST_BOOL")
         mm.LoadModule("TestModules",   "TestOptions_liststr",     "TEST_LIST_STR")
 
-        mod_int   = ( mm.GetModule("TEST_INT"),    "int"   )
-        mod_float = ( mm.GetModule("TEST_FLOAT"),  "float" )
-        mod_bool  = ( mm.GetModule("TEST_BOOL"),   "bool"  )
-        mod_str   = ( mm.GetModule("TEST_STR"),    "str"   )
+        mod_int   = ( mm.GetModule("TEST_INT", 0),    "int"   )
+        mod_float = ( mm.GetModule("TEST_FLOAT", 0),  "float" )
+        mod_bool  = ( mm.GetModule("TEST_BOOL", 0),   "bool"  )
+        mod_str   = ( mm.GetModule("TEST_STR", 0),    "str"   )
 
-        mod_listint   = ( mm.GetModule("TEST_LIST_INT"),   "listint"   )
-        mod_listfloat = ( mm.GetModule("TEST_LIST_FLOAT"), "listfloat" )
-        mod_listbool  = ( mm.GetModule("TEST_LIST_BOOL"),  "listbool"  )
-        mod_liststr   = ( mm.GetModule("TEST_LIST_STR"),   "liststr"   )
+        mod_listint   = ( mm.GetModule("TEST_LIST_INT", 0),   "listint"   )
+        mod_listfloat = ( mm.GetModule("TEST_LIST_FLOAT", 0), "listfloat" )
+        mod_listbool  = ( mm.GetModule("TEST_LIST_BOOL", 0),  "listbool"  )
+        mod_liststr   = ( mm.GetModule("TEST_LIST_STR", 0),   "liststr"   )
 
         allmod = [ mod_int, mod_float, mod_bool, mod_str,
                    mod_listint, mod_listfloat, mod_listbool, mod_liststr ]

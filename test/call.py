@@ -27,8 +27,8 @@ def Run(mm):
       mm.SanityCheck()
 
 
-      b1 = mm.GetModule("TESTMOD1")
-      b2 = mm.GetModule("TESTPYMOD1")
+      b1 = mm.GetModule("TESTMOD1", 0)
+      b2 = mm.GetModule("TESTPYMOD1", 0)
 
       b1.RunTest()
       bp.output.Output("\n")

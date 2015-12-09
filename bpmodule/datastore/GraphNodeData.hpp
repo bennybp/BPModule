@@ -23,6 +23,12 @@ struct GraphNodeData
     modulelocator::ModuleInfo minfo;
 };
 
+//! \todo Replace with actual graph node
+struct GraphNode
+{
+    GraphNodeData data;
+};
+
 
 } // close namespace modulelocator
 } // close namespace bpmodule
