@@ -1,6 +1,8 @@
 set(BPMODULE_MODULEBASE_FILES
             ModuleBase.cpp
             Test_Base.cpp
+            OneElectronIntegralIMPL.cpp
+            TwoElectronIntegralIMPL.cpp
             export.cpp
    )
 
@@ -8,6 +10,8 @@ set(BPMODULE_MODULEBASE_HEADERS
             All.hpp
             ModuleBase.hpp
             Test_Base.hpp
+            OneElectronIntegralIMPL.hpp
+            TwoElectronIntegralIMPL.hpp
    )
 
 

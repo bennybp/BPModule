@@ -10,5 +10,7 @@
 
 //#include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/modulebase/Test_Base.hpp"
+#include "bpmodule/modulebase/OneElectronIntegralIMPL.hpp"
+#include "bpmodule/modulebase/TwoElectronIntegralIMPL.hpp"
 
 #endif

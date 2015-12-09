@@ -61,7 +61,28 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("RunTest", &Test_Base::RunTest)
     .def("CallRunTest", &Test_Base::CallRunTest)
     .def("TestThrow", &Test_Base::TestThrow)
-    .def("CallThrow", &Test_Base::CallThrow);
+    .def("CallThrow", &Test_Base::CallThrow)
+    ;
+
+
+    /////////////////////////
+    // One electron integral implementation
+    /////////////////////////
+    register_ptr_to_python<boost::shared_ptr<OneElectronIntegralIMPL>>();
+
+    class_<OneElectronIntegralIMPL, bases<ModuleBase>, boost::noncopyable>("OneElectronIntegralIMPL", init<PyObject *, unsigned long>())
+    .def("SetBases", &OneElectronIntegralIMPL::SetBases)
+    ;
+
+
+    /////////////////////////
+    // Two electron integral implementation
+    /////////////////////////
+    register_ptr_to_python<boost::shared_ptr<TwoElectronIntegralIMPL>>();
+
+    class_<TwoElectronIntegralIMPL, bases<ModuleBase>, boost::noncopyable>("TwoElectronIntegralIMPL", init<PyObject *, unsigned long>())
+    .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
+    ;
 
 }
 

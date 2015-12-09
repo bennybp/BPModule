@@ -24,7 +24,7 @@ CLASSNAME::CLASSNAME(PyObject * self, unsigned long id)
 ////////////////////////////
 boost::python::object CLASSNAME::MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
 {
-    return ModuleBase::MoveToPyObjectHelper_<Test_Base>(deleter, this);
+    return ModuleBase::MoveToPyObjectHelper_<CLASSNAME>(deleter, this);
 }
 
 
