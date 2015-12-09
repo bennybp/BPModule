@@ -74,8 +74,10 @@ BOOST_PYTHON_MODULE(modulebase)
     /////////////////////////
     register_ptr_to_python<boost::shared_ptr<OneElectronIntegralIMPL>>();
 
+    //! \todo Don't know about from Calculate to python
     class_<OneElectronIntegralIMPL, bases<ModuleBase>, boost::noncopyable>("OneElectronIntegralIMPL", init<PyObject *, unsigned long>())
     .def("SetBases", &OneElectronIntegralIMPL::SetBases)
+    .def("Calculate", &OneElectronIntegralIMPL::Calculate)
     ;
 
 
@@ -86,6 +88,7 @@ BOOST_PYTHON_MODULE(modulebase)
 
     class_<TwoElectronIntegralIMPL, bases<ModuleBase>, boost::noncopyable>("TwoElectronIntegralIMPL", init<PyObject *, unsigned long>())
     .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
+    .def("Calculate", &TwoElectronIntegralIMPL::Calculate)
     ;
 
 }

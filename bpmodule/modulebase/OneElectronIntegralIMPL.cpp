@@ -18,11 +18,18 @@ OneElectronIntegralIMPL::OneElectronIntegralIMPL(PyObject * self, unsigned long 
 { }
 
 
-void OneElectronIntegralIMPL::SetBases(datastore::UIDPointer<basisset::BasisSet> bs1,
-                                       datastore::UIDPointer<basisset::BasisSet> bs2)
+void OneElectronIntegralIMPL::SetBases(const datastore::UIDPointer<basisset::BasisSet> & bs1,
+                                       const datastore::UIDPointer<basisset::BasisSet> & bs2)
 {
     ModuleBase::CallPyMethod<void>("SetBases", bs1, bs2);
 }
+
+
+long OneElectronIntegralIMPL::Calculate(int shell1, int shell2, double * outbuf)
+{
+    return ModuleBase::CallPyMethod<long>("Calculate", shell1, shell2, outbuf);
+}
+
 
 
 ////////////////////////////

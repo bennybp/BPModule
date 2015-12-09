@@ -30,10 +30,15 @@ class TwoElectronIntegralIMPL : public ModuleBase
          * \param [in] ncenter The number of centers for the integrals (ie, 3-center, 2-center)
          */
         virtual void SetBases(int ncenter,
-                              datastore::UIDPointer<basisset::BasisSet> bs1,
-                              datastore::UIDPointer<basisset::BasisSet> bs2,
-                              datastore::UIDPointer<basisset::BasisSet> bs3,
-                              datastore::UIDPointer<basisset::BasisSet> bs4);
+                              const datastore::UIDPointer<basisset::BasisSet> & bs1,
+                              const datastore::UIDPointer<basisset::BasisSet> & bs2,
+                              const datastore::UIDPointer<basisset::BasisSet> & bs3,
+                              const datastore::UIDPointer<basisset::BasisSet> & bs4);
+
+
+        //! \todo don't know about passing outbuf to python
+        virtual long Calculate(int shell1, int shell2, int shell3, int shell4, double * outbuf);
+
 
     private:
         virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter);

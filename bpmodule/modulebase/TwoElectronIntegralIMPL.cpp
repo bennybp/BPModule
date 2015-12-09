@@ -19,14 +19,19 @@ TwoElectronIntegralIMPL::TwoElectronIntegralIMPL(PyObject * self, unsigned long 
 
 
 void TwoElectronIntegralIMPL::SetBases(int ncenter,
-                                       datastore::UIDPointer<basisset::BasisSet> bs1,
-                                       datastore::UIDPointer<basisset::BasisSet> bs2,
-                                       datastore::UIDPointer<basisset::BasisSet> bs3,
-                                       datastore::UIDPointer<basisset::BasisSet> bs4)
+                                       const datastore::UIDPointer<basisset::BasisSet> & bs1,
+                                       const datastore::UIDPointer<basisset::BasisSet> & bs2,
+                                       const datastore::UIDPointer<basisset::BasisSet> & bs3,
+                                       const datastore::UIDPointer<basisset::BasisSet> & bs4)
 {
     ModuleBase::CallPyMethod<void>("SetBases", ncenter, bs1, bs2, bs3, bs4);
 }
 
+
+long TwoElectronIntegralIMPL::Calculate(int shell1, int shell2, int shell3, int shell4, double * outbuf)
+{
+    return ModuleBase::CallPyMethod<long>("Calculate", shell1, shell2, shell3, shell4, outbuf);
+}
 
 ////////////////////////////
 // Private functions

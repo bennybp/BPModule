@@ -24,8 +24,12 @@ class OneElectronIntegralIMPL : public ModuleBase
 
         OneElectronIntegralIMPL(PyObject * self, unsigned long id);
 
-        virtual void SetBases(datastore::UIDPointer<basisset::BasisSet> bs1,
-                              datastore::UIDPointer<basisset::BasisSet> bs2);
+        virtual void SetBases(const datastore::UIDPointer<basisset::BasisSet> & bs1,
+                              const datastore::UIDPointer<basisset::BasisSet> & bs2);
+
+
+        //! \todo don't know about passing outbuf to python
+        virtual long Calculate(int shell1, int shell2, double * outbuf);
 
     private:
         virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter);
