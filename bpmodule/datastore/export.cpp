@@ -26,15 +26,30 @@ namespace bpmodule {
 namespace datastore {
 namespace export_python {
 
+template<typename T>
+static void
+RegisterUIDPointer(void)
+{
+    std::string pyname = std::string("UIDPointer_") + typeid(T).name();
+
+    class_<UIDPointer<T>>(pyname.c_str(), no_init) //! \todo python init for UIDPointer?
+    .def("UID", &UIDPointer<T>::UID)
+    ;
+}
+
 BOOST_PYTHON_MODULE(datastore)
 {
+    RegisterUIDPointer<BasisSet>();
+    RegisterUIDPointer<Molecule>();
+    RegisterUIDPointer<DistMatrixD>();
+
     /* Similar to CalcData, python will have to work with copies
      */
     class_<Wavefunction>("Wavefunction", no_init) //! \todo python init for wfn?
-    .def("Basis", &Wavefunction::Basis, return_value_policy<copy_const_reference>()) 
-    .def("Molecule", &Wavefunction::Molecule, return_value_policy<copy_const_reference>()) 
-    .def("CMat", &Wavefunction::CMat, return_value_policy<copy_const_reference>()) 
-    .def("Epsilon", &Wavefunction::Epsilon, return_value_policy<copy_const_reference>()) 
+    .def_readwrite("basis", &Wavefunction::basis)
+    .def_readwrite("molecule", &Wavefunction::molecule)
+    .def_readwrite("cmat", &Wavefunction::cmat)
+    .def_readwrite("epsilon", &Wavefunction::epsilon)
     ;
   
 

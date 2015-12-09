@@ -121,30 +121,18 @@ GraphNodeData & ModuleBase::GraphData(void)
 
 const Wavefunction & ModuleBase::Wfn(void) const
 {
-    return *(GraphData().wfn);
+    return GraphData().wfn;
 }
 
-void ModuleBase::SetWfn(const Wavefunction & wfn)
+Wavefunction & ModuleBase::Wfn(void)
 {
-    GraphData().wfn = std::shared_ptr<const Wavefunction>(new Wavefunction(wfn));
+    return GraphData().wfn;
 }
-
-
-
 
 
 ////////////////////////////////
 // Private functions
 ////////////////////////////////
-ModuleInfo & ModuleBase::MInfo_(void)
-{
-    return GraphData().minfo;
-}
-
-const ModuleInfo & ModuleBase::MInfo_(void) const
-{
-    return GraphData().minfo;
-}
 
 void ModuleBase::SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept
 {
@@ -154,6 +142,16 @@ void ModuleBase::SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept
 void ModuleBase::SetGraphData_(datastore::GraphNodeData * gdat) noexcept
 {
     graphdata_ = gdat;
+}
+
+ModuleInfo & ModuleBase::MInfo_(void)
+{
+    return GraphData().minfo;
+}
+
+const ModuleInfo & ModuleBase::MInfo_(void) const
+{
+    return GraphData().minfo;
 }
 
 

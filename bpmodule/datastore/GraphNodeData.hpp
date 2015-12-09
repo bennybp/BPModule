@@ -11,18 +11,15 @@
 #include <memory>
 
 #include "bpmodule/modulelocator/ModuleInfo.hpp"
-
+#include "bpmodule/datastore/Wavefunction.hpp"
 
 
 namespace bpmodule {
 namespace datastore {
 
-class Wavefunction;
-
-
 struct GraphNodeData
 {
-    std::shared_ptr<const datastore::Wavefunction> wfn;
+    datastore::Wavefunction wfn;
     modulelocator::ModuleInfo minfo;
 };
 

@@ -192,14 +192,11 @@ class ModuleBase
          */
         const datastore::Wavefunction & Wfn(void) const;
 
-
-        /*! \brief Set the wavefunction for this graph node
+        /*! \brief Get the wavefunction for this graph node
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        void SetWfn(const datastore::Wavefunction & wfn);
- 
-
+        datastore::Wavefunction & Wfn(void);
 
 
     private:
@@ -208,7 +205,7 @@ class ModuleBase
         PyObject * pyself_;
 
         // allow ModuleLocator to set up the pointers
-        // and to call MoveToPyObject_
+        // and to call MoveToPyObject_, etc
         friend class modulelocator::ModuleLocator;
 
 

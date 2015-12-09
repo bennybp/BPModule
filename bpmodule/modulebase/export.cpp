@@ -47,8 +47,7 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("MLocator", static_cast<ModuleLocator &(ModuleBase::*)(void) const>(&ModuleBase::MLocator), return_internal_reference<>()) 
     .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_internal_reference<>())
     .def("Throw", &ModuleBase::ThrowPy)
-    .def("Wfn", &ModuleBase::Wfn, return_value_policy<copy_const_reference>())
-    .def("SetWfn", &ModuleBase::SetWfn)
+    .def("Wfn", static_cast<datastore::Wavefunction &(ModuleBase::*)(void)>(&ModuleBase::Wfn), return_internal_reference<>())
     ;
 
 

@@ -234,13 +234,7 @@ ModuleLocator::CreateModule_(const std::string & key)
     
     // add the moduleinfo to the graph
     // \todo Molecule, basis set, inherited from parent
-    GraphNodeData gdata{std::shared_ptr<const Wavefunction>(new Wavefunction(
-                                                              BasisSet(),
-                                                              Molecule(),
-                                                              tensor::DistMatrixD(),
-                                                              tensor::DistMatrixD()
-                                                             )
-                                                           ), se.mi};
+    GraphNodeData gdata{Wavefunction(), se.mi};
     graphdata_.emplace(curid_, gdata);
 
     // set the info
