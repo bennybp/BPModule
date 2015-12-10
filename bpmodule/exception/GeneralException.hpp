@@ -51,7 +51,7 @@ class GeneralException : public std::exception
          * \param [in] exinfo Pairs of strings with other information.
          */
         template<typename... Targs>
-        GeneralException(std::string whatstr, const Targs& ... exinfo)
+        GeneralException(const std::string & whatstr, const Targs& ... exinfo)
             : whatstr_(whatstr)
         {
             // check that there is an even number of exinfo

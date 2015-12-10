@@ -62,10 +62,9 @@ struct PyConverter
         }
         catch(...)
         {
-            std::string exstr = detail::GetPyExceptionString();
-            throw exception::PythonConvertException("Cannot convert from python to C++: Conversion failed",
+            throw exception::PythonConvertException(detail::GetPyException(),
                                                     GetPyClass(obj), mangle::DemangleCppType<T>(),
-                                                    "pyex", exstr);
+                                                    "what", "Cannot convert from python to C++: Conversion failed");
         }
     }
 
@@ -85,10 +84,9 @@ struct PyConverter
         }
         catch(...)
         {
-            std::string exstr = detail::GetPyExceptionString();
-            throw exception::PythonConvertException("Cannot convert from C++ to python: Conversion failed",
-                                                    mangle::DemangleCppType(obj), "boost::python::object",
-                                                    "pythonex", exstr);
+            throw exception::PythonConvertException(detail::GetPyException(),
+                                                    mangle::DemangleCppType(obj), "boost::python::object", 
+                                                    "what", "Cannot convert from C++ to python: Conversion failed");
         }
     }
 

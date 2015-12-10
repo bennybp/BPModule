@@ -28,7 +28,7 @@ class DataStoreException : public GeneralException
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        DataStoreException(std::string whatstr,
+        DataStoreException(const std::string & whatstr,
                         std::string key,
                         const Targs&... exinfo)
 

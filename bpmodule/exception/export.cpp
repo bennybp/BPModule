@@ -5,12 +5,13 @@
  */
 
 #include <boost/python/module.hpp>
+#include <boost/python/class.hpp>
 #include <boost/python/exception_translator.hpp>
 
 #include "bpmodule/exception/GeneralException.hpp"
 
 using namespace boost::python;
-
+using namespace bpmodule::exception;
 
 namespace bpmodule {
 namespace exception {
@@ -28,6 +29,11 @@ BOOST_PYTHON_MODULE(exception)
 {
     // set the translator for exceptions
     register_exception_translator<GeneralException>(&TranslateException);
+
+    class_<GeneralException>("GeneralException", init<const std::string &>())
+    .def("AppendInfo", static_cast<void(GeneralException::*)(const std::string &, const std::string &)>(&GeneralException::AppendInfo))
+    .def("ExceptionString", &GeneralException::ExceptionString)
+    ;
 }
 
 

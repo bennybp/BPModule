@@ -25,7 +25,7 @@ class ModuleLocatorException : public GeneralException
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        ModuleLocatorException(std::string whatstr,
+        ModuleLocatorException(const std::string & whatstr,
                              const Targs&... exinfo)
             : GeneralException(whatstr, exinfo...)
         { }

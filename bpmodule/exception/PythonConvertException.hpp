@@ -27,7 +27,7 @@ class PythonConvertException : public GeneralException
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        PythonConvertException(std::string whatstr,
+        PythonConvertException(const std::string & whatstr,
                                std::string fromtype,
                                std::string totype,
                                const Targs&... exinfo)

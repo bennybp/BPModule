@@ -5,7 +5,7 @@ import sys
 from  importlib.machinery import SourceFileLoader
 
 from bpmodule import output
-from bpmodule.exception import PyGeneralException
+from bpmodule.exception import GeneralException
 
 sys.path.insert(0, "/home/ben/programming/BPModule/install/modules")
 
@@ -249,5 +249,5 @@ def CheckSupermodule(supermodule):
     if allok:
         output.Debug(indent1 + "Supermodule {} looks ok to me!\n".format(supermodule))
     else:
-        raise PyGeneralException("Problem in initial check of a supermodule", [ ( "supermodule", supermodule) ])
+        raise GeneralException("Problem in initial check of a supermodule", [ ( "supermodule", supermodule) ])
 

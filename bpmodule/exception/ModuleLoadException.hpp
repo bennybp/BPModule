@@ -30,7 +30,7 @@ class ModuleLoadException : public GeneralException
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        ModuleLoadException(std::string whatstr,
+        ModuleLoadException(const std::string & whatstr,
                             std::string path,
                             std::string key,
                             std::string name,

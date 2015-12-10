@@ -8,6 +8,14 @@
 #ifndef _GUARD_ERRORS_HPP_
 #define _GUARD_ERRORS_HPP_
 
+
+namespace bpmodule {
+namespace exception {
+class GeneralException;
+}
+}
+
+
 namespace bpmodule {
 namespace python_helper {
 namespace detail {
@@ -15,7 +23,7 @@ namespace detail {
 
 /*! \brief Get the current python exception description as a string
  */
-std::string GetPyExceptionString(void);
+bpmodule::exception::GeneralException GetPyException(void);
 
 
 } // close namespace detail

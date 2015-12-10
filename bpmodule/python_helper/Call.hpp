@@ -40,9 +40,7 @@ Ret CallPyFunc(const boost::python::object & obj, Targs... Fargs)
     }
     catch(...)
     {
-        throw exception::PythonCallException("Unable to call python function",
-                                             detail::GetPyExceptionString(),
-                                             "nargs", nargs);
+        throw detail::GetPyException();
     }
 
     try {

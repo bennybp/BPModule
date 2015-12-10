@@ -28,7 +28,7 @@ class MoleculeException : public GeneralException
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        MoleculeException(std::string whatstr,
+        MoleculeException(const std::string & whatstr,
                         const Targs&... exinfo)
 
             : GeneralException(whatstr, exinfo...)

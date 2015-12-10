@@ -25,4 +25,4 @@ ADD_SUPERMODULE(exception
            "")
 
 
-INSTALL_COREMODULE(exception "${BPMODULE_EXCEPTION_HEADERS}" "PyGeneralException.py")
+INSTALL_COREMODULE(exception "${BPMODULE_EXCEPTION_HEADERS}" "GeneralException.py")

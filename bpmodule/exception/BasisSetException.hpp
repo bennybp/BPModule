@@ -25,7 +25,7 @@ class BasisSetException : public GeneralException
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        BasisSetException(std::string whatstr,
+        BasisSetException(const std::string & whatstr,
                         const Targs&... exinfo)
 
             : GeneralException(whatstr, exinfo...)

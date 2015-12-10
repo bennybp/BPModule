@@ -25,7 +25,7 @@ class ModuleCreateException : public GeneralException
          * \param [in] name Name of the module that couldn't be created
          */
         template<typename... Targs>
-        ModuleCreateException(std::string whatstr,
+        ModuleCreateException(const std::string & whatstr,
                               std::string name)
             : GeneralException(whatstr, "name", name)
         { }
@@ -39,7 +39,7 @@ class ModuleCreateException : public GeneralException
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        ModuleCreateException(std::string whatstr,
+        ModuleCreateException(const std::string & whatstr,
                               std::string path,
                               std::string key,
                               std::string name,
