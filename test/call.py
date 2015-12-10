@@ -35,6 +35,14 @@ def Run(mm):
       b2.RunTest()
       bp.output.Output("\n")
     
+      b3 = mm.GetModule("TESTMOD1", 0)
+      b4 = mm.GetModule("TESTPYMOD1", 0)
+
+      b3.RunTest()
+      bp.output.Output("\n")
+      b4.RunTest()
+      bp.output.Output("\n")
+    
       bp.output.Output("\nDone testing\n")
 
 

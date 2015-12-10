@@ -191,6 +191,13 @@ class ModuleLocator
 
 
 
+        /*! \brief Clears all entries in the cache and performs some cleanup
+         */
+        void ClearCache(void);
+
+
+
+
     protected:
         template<typename T>
         friend class ModuleLoaderBase;

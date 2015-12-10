@@ -68,10 +68,14 @@ BOOST_PYTHON_MODULE(datastore)
     /////////////////////////
     class_<CalcData>("CalcData", init<>())
     .def(init<const CalcData &>())
+    .def("Size", &CalcData::Size)
+    .def("GetKeys", &CalcData::GetKeys)
     .def("HasKey", &CalcData::HasKey)
     .def("GetCopy", &CalcData::GetCopyPy)
     .def("Set", &CalcData::SetPy)
     .def("Erase", &CalcData::Erase)
+    .def("GetType", &CalcData::GetType)
+    .def("GetDemangledType", &CalcData::GetDemangledType)
     .def("SetRef", static_cast<void(CalcData::*)(const CalcData &, const std::string &, const std::string &)>(&CalcData::SetRef))
     .def("SetRef", static_cast<void(CalcData::*)(const CalcData &, const std::string &)>(&CalcData::SetRef));
 }

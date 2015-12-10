@@ -19,6 +19,16 @@ class ModuleManager(modulelocator.ModuleLocator):
 
 
     def Finalize(self):
+
+        #################################################
+        # WARNING WARNING WARNING
+        # Clearing the cache MUST be done BEFORE unloading
+        # the modules or else deleting elements will cause a segfault.
+        # The GenericHolder is a template, so the code for
+        # the destructors exists in the modules
+        #################################################
+        super(ModuleManager, self).ClearCache()
+
         output.Output("Deleting python modules\n")
         del self.pml
 

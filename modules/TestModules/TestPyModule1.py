@@ -9,6 +9,10 @@ class TestPyModule1(bp.modulebase.Test_Base):
     bp.output.Output("+++ In TestPyModule1: RunTest. Info: (%1%) %2% %3% v%4%\n", self.ID(), self.Key(), self.Name(), self.Version());
 
     bp.output.Output("    Wavefunction: %1% \n", self.Wfn().UniqueString())
+    bp.output.Output("   Cache entries: %1%\n", self.Cache().Size());
+
+    for it in self.Cache().GetKeys():
+        bp.output.Output("                  > %1%  (%2%)\n", it, self.Cache().GetDemangledType(it));
 
     bp.output.Output("   double_opt_def:    %1%\n", self.Options().Get("double_opt_def"));
     bp.output.Output("      int_opt_def:    %1%\n", self.Options().Get("int_opt_def"));
@@ -23,6 +27,13 @@ class TestPyModule1(bp.modulebase.Test_Base):
         bp.output.Output("         bool_opt:    %1%\n", self.Options().Get("bool_opt"));
     if self.Options().Has("str_opt"):
         bp.output.Output("          str_opt:    %1%\n", self.Options().Get("str_opt"));
+
+
+    # cache something
+    self.Cache().Set( "Element 1", "Something in the python cache" )
+    self.Cache().Set( "Element 2", 42 )
+    self.Cache().Set( "Element 3", 42.0 )
+    self.Cache().Set( "Element 4", [ 1, 2, 3, 4 ] )
 
   def CallRunTest_(self, s):
     bp.output.Output("+++ In TestPyModule1: CallRunTest with %1%\n", s)

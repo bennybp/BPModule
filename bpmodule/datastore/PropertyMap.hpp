@@ -225,8 +225,7 @@ class PropertyMap
         template<typename T>
         void Set(const KEYTYPE & key, const T & value)
         {
-            detail::GenericBasePtr v(new detail::GenericHolder<T>(value));
-            Set_(key, std::move(v));
+            Set_(key, detail::GenericBasePtr(new detail::GenericHolder<T>(value)));
         }
 
 
@@ -238,8 +237,7 @@ class PropertyMap
         template<typename T>
         void Take(const KEYTYPE & key, T && value)
         {
-            detail::GenericBasePtr v(new detail::GenericHolder<T>(std::move(value)));
-            Set_(key, std::move(v));
+            Set_(key, detail::GenericBasePtr(new detail::GenericHolder<T>(value)));
         }
 
 
@@ -278,9 +276,9 @@ class PropertyMap
             // add it here
             // should have strong exception guarantee
             if(opmap_.count(newkey))
-                opmap_.at(newkey) = std::move(pe);
+                opmap_.at(newkey) = pe;
             else
-                opmap_.emplace(newkey, std::move(pe));
+                opmap_.emplace(newkey, pe);
         }
 
 
@@ -443,14 +441,12 @@ class PropertyMap
             if(opmap_.count(key))
             {
                 PropMapEntry & phe = GetOrThrow_(key);
-                phe.value = std::move(value);
+                phe.value = value;
             }
             else
             {
-                PropMapEntry phe{std::move(value)};
-
                 // emplace has strong exception guarantee
-                opmap_.emplace(key, std::move(phe));
+                opmap_.emplace(key, PropMapEntry{value});
             }
         }
 

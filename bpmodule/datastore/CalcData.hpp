@@ -79,7 +79,7 @@ class CalcData : public PropertyMap<std::string>
         template<typename T>
         void Take(const std::string & key, T && value)
         {
-            PropertyMap::Take(key, std::move(value));
+            PropertyMap::Take(key, value);
         }
 
 

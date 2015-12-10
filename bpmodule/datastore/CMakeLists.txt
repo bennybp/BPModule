@@ -10,7 +10,6 @@ set(BPMODULE_DATASTORE_HEADERS
             Wavefunction.hpp
             GraphNodeData.hpp
             CalcData.hpp
-            CacheData.hpp
             PropertyMap.hpp
             GenericHolder.hpp
             GenericBase.hpp

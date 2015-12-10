@@ -182,6 +182,11 @@ void ModuleLocator::DeleteObject_(unsigned long id)
 }
 
 
+void ModuleLocator::ClearCache(void)
+{
+    cachemap_.clear();
+}
+
 
 const ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & key) const
 {
@@ -250,6 +255,11 @@ ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
     // set the info
     mbptr->SetMLocator_(this);
     mbptr->SetGraphNode_(&(graphnodes_.at(curid_)));
+
+    // get this modules cache
+    // no need to use .at() -- we need it created if it doesn't exist already
+    std::string mbstr = mbptr->Name() + "_v" + mbptr->Version();
+    mbptr->SetCache_(&(cachemap_[mbstr]));
 
     // make the deleter function the DeleteObject_() of this ModuleLocator object
     DeleterFunc dfunc = std::bind(static_cast<void(ModuleLocator::*)(modulebase::ModuleBase *)>(&ModuleLocator::DeleteObject_),

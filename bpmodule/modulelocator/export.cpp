@@ -61,6 +61,7 @@ BOOST_PYTHON_MODULE(modulelocator)
     .def("Has", &ModuleLocator::Has)
     .def("SetOptions", static_cast<void(ModuleLocator::*)(const std::string &, const boost::python::dict &)>(&ModuleLocator::SetOptions))
     .def("TestAll", &ModuleLocator::TestAll)
+    .def("ClearCache", &ModuleLocator::ClearCache)
     .def("GetModule", &ModuleLocator::GetModulePy)
     ;
 
