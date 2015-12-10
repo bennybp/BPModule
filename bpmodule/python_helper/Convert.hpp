@@ -11,6 +11,7 @@
 #include <boost/python/list.hpp>  // includes object
 #include <boost/python/extract.hpp>
 
+#include "bpmodule/pragma.h"
 #include "bpmodule/python_helper/Types.hpp"
 #include "bpmodule/python_helper/Errors.hpp"
 #include "bpmodule/exception/PythonConvertException.hpp"
@@ -205,6 +206,39 @@ struct PyConverter<std::vector<T>>
         return boost::python::object(result);
     }
 };
+
+
+
+
+/*! \brief Dummy converter for void types
+ */
+template<>
+struct PyConverter<void>
+{
+    PRAGMA_WARNING_PUSH
+    PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS
+    static void ConvertToCpp(const boost::python::object & obj)
+    {
+        return;
+    }
+    PRAGMA_WARNING_POP
+
+
+    /*! \brief Convert a C++ vector to a boost::python::object (list)
+     *
+     * \throw exception::PythonConvertException if the
+     *        data could not be converted
+     *
+     * \param [in] v The vector to convert
+     * \return Converted data as a boost::python::list
+     */
+    static boost::python::object ConvertToPy(void)
+    {
+        return boost::python::object();
+    }
+};
+
+
 
 
 

@@ -57,6 +57,33 @@ Ret CallPyFunc(const boost::python::object & obj, Targs... Fargs)
 }
 
 
+
+
+
+/*! \brief Calls a function that is part of a python object
+ *
+ * Wraps exceptions in bmodule exceptions
+ */
+template<typename Ret, typename... Targs>
+Ret CallPyFuncAttr(const boost::python::object & obj, const char * fname, Targs... Fargs)
+{
+
+    int nargs = static_cast<int>(sizeof...(Fargs));
+
+    if(!HasCallableAttr(obj, fname))
+        throw exception::PythonCallException("Object does not have callable attribute!", "(none)",
+                                             "function", fname,
+                                             "nargs", nargs);
+
+    return CallPyFunc<Ret>(obj.attr(fname), Fargs...); 
+}
+
+
+
+
+
+
+
 } // close namespace python_helper
 } // close namespace bpmodule
 
