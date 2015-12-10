@@ -9,12 +9,10 @@
 #define _GUARD_MODULEBASE_HPP_
 
 #include <string>
-#include <boost/python/call_method.hpp>
-#include <boost/python/object.hpp> //! \todo forward declare PyObject?
 #include <boost/shared_ptr.hpp> //! \todo May be able to use std::shared_ptr instead with some workarounds
 
 #include "bpmodule/exception/GeneralException.hpp"
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
+#include "bpmodule/python_helper/Call.hpp"
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
 
 
@@ -165,44 +163,58 @@ class ModuleBase
 
 
 
-
-        ///////////////////////////////
-        // Exceptions
-        ///////////////////////////////
-
-        /*! \brief Throw an exception
+        /*! \brief Call a function, catching exceptions
+         * 
+         * Meant to be used to call virtual functions that are
+         * implemented in a the derived class.
          *
-         * Will create the exception of the specified type, add the arguments,
-         * and then add information about the module
+         * \tparam R Return type
+         * \tparam P Derived class type
+         * \tparam args Arguments to forward
+         *
+         * \param [in] func Pointer to member function of class P and returning R
+         * \param [in] args Arguments to forward
          */
-        template<typename T, typename ... Targs>
-        void Throw(const Targs &... args)
+        template<typename R, typename P, typename ... Targs>
+        R CallFunction( R(P::*func)(Targs...), Targs &&... args)
         {
-            T ex(args...);
-            ex.AppendInfo("modulekey", Key());
-            ex.AppendInfo("modulename", Name());
-            ex.AppendInfo("moduleversion", Version());
-            throw ex;
-        }
+            //////////////////////////////////////////////////////////////////
+            // So you think you like pointers and templates?
+            //////////////////////////////////////////////////////////////////
+            try {
 
-
-
-        /*! \brief Throw an exception from python
-         */
-        void ThrowPy(const std::string & whatstr)
-        {
-            Throw<exception::GeneralException>(whatstr);
+                P * ptr = dynamic_cast<P *>(this);                    // cast this to type P
+                return ((*ptr).*func)(std::forward<Targs>(args)...);  // call the function
+            }
+            catch(bpmodule::exception::GeneralException & ex)
+            {
+                ex.AppendInfo("modulekey", Key());
+                ex.AppendInfo("modulename", Name());
+                ex.AppendInfo("moduleversion", Version());
+                throw;
+            }
+            catch(std::exception & ex)
+            {
+                throw bpmodule::exception::GeneralException("Caught std::exception", "what", ex.what());
+            }
+            catch(...)
+            {
+                throw bpmodule::exception::GeneralException("Caught unknown exception. Get your debugger warmed up.");
+            }
         }
 
 
         /*! \brief Call a python method
+         * 
+         * No need to handle exceptions since this should be called from within CallFunction
          */
         template<typename R, typename ... An>
         R CallPyMethod(const char * fname, const An &... args)
         {
             if (!IsPythonModule())
-                Throw<exception::GeneralException>("Attempting to call a virtual function in a C++ module that is missing from the derived class");
-            return boost::python::call_method<R>(pyself_, fname, args...);
+                throw exception::GeneralException("Attempting to call a virtual function in a C++ module that is missing from the derived class");
+
+            return bpmodule::python_helper::CallPyFuncAttr<R>(pyselfobj_, fname, args...);
         }
 
 
@@ -245,6 +257,7 @@ class ModuleBase
         // python self pointer
         // Only used if this is a python module. Otherwise it is null
         PyObject * pyself_;
+        boost::python::object pyselfobj_;
 
         // allow ModuleLocator to set up the pointers
         // and to call MoveToPyObject_, etc

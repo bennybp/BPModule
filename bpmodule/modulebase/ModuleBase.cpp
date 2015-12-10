@@ -30,7 +30,7 @@ ModuleBase::ModuleBase(unsigned long id)
 }
 
 ModuleBase::ModuleBase(PyObject * self, unsigned long id)
-    : pyself_(self), id_(id), mlocator_(nullptr), graphnode_(nullptr)
+    : pyself_(self), pyselfobj_(boost::python::handle<>(self)), id_(id), mlocator_(nullptr), graphnode_(nullptr)
 {
     output::Debug("Constructed python module [%1%]\n", id);
 }

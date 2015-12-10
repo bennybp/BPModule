@@ -37,6 +37,7 @@ BOOST_PYTHON_MODULE(modulebase)
     // python should never derive from ModuleBase, so a constructor should not be needed
     register_ptr_to_python<boost::shared_ptr<ModuleBase>>();
 
+    // CallFunc doesn't need to be exported 
     class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
     .def("ID", &ModuleBase::ID)
     .def("Key", &ModuleBase::Key)
@@ -46,7 +47,6 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("IsPythonModule", &ModuleBase::IsPythonModule)
     .def("MLocator", static_cast<ModuleLocator &(ModuleBase::*)(void) const>(&ModuleBase::MLocator), return_internal_reference<>()) 
     .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_internal_reference<>())
-    .def("Throw", &ModuleBase::ThrowPy)
     .def("Wfn", static_cast<datastore::Wavefunction &(ModuleBase::*)(void)>(&ModuleBase::Wfn), return_internal_reference<>())
     .def("CreateChildModule", &ModuleBase::CreateChildModulePy)
     .def("Cache", &ModuleBase::Cache, return_internal_reference<>())

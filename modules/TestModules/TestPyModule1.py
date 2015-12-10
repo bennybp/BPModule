@@ -5,7 +5,7 @@ class TestPyModule1(bp.modulebase.Test_Base):
     super(TestPyModule1, self).__init__(self, myid)
 
 
-  def RunTest(self):
+  def RunTest_(self):
     bp.output.Output("+++ In TestPyModule1: RunTest. Info: (%1%) %2% %3% v%4%\n", self.ID(), self.Key(), self.Name(), self.Version());
 
     bp.output.Output("    Wavefunction: %1% \n", self.Wfn().UniqueString())
@@ -24,7 +24,7 @@ class TestPyModule1(bp.modulebase.Test_Base):
     if self.Options().Has("str_opt"):
         bp.output.Output("          str_opt:    %1%\n", self.Options().Get("str_opt"));
 
-  def CallRunTest(self, s):
+  def CallRunTest_(self, s):
     bp.output.Output("+++ In TestPyModule1: CallRunTest with %1%\n", s)
 
     tb = self.MLocator().CreateChildModule(s)
@@ -34,11 +34,11 @@ class TestPyModule1(bp.modulebase.Test_Base):
 
     bp.output.Output("+++Done\n");
 
-  def TestThrow(self):
+  def TestThrow_(self):
     self.Throw("This is a test exception from python")
 
 
-  def CallThrow(self, s):
+  def CallThrow_(self, s):
     bp.output.Output("+++ In TestPyModule1: CallRunTest with %1%\n", s)
 
     tb = self.MLocator().CreateChildModule(s)

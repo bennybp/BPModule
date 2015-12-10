@@ -8,13 +8,13 @@ class TestModule1 : public bpmodule::modulebase::Test_Base
 public:
     TestModule1(unsigned long id);
 
-    virtual void RunTest(void);
+    virtual void RunTest_(void);
 
-    virtual void CallRunTest(const std::string & other);
+    virtual void CallRunTest_(const std::string & other);
 
-    virtual void TestThrow(void);
+    virtual void TestThrow_(void);
 
-    virtual void CallThrow(const std::string & other);
+    virtual void CallThrow_(const std::string & other);
 
     virtual ~TestModule1();
 

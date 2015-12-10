@@ -24,7 +24,7 @@ TestModule1::~TestModule1()
 
 
 
-void TestModule1::RunTest(void)
+void TestModule1::RunTest_(void)
 {
     Output("+++ In TestModule1: RunTest. Info: (%1%) %2% %3% v%4%\n", ID(), Key(), Name(), Version());
 
@@ -51,7 +51,7 @@ void TestModule1::RunTest(void)
 
 
 
-void TestModule1::CallRunTest(const std::string & other)
+void TestModule1::CallRunTest_(const std::string & other)
 {
     Output("+++ In TestModule1: CallRunTest with %1%\n", other);
 
@@ -65,7 +65,7 @@ void TestModule1::CallRunTest(const std::string & other)
 
 
 
-void TestModule1::TestThrow(void)
+void TestModule1::TestThrow_(void)
 {
     Warning("+++ In TestModule1: Throwing an exception!\n");
     throw GeneralException("This is a test exception",
@@ -75,7 +75,7 @@ void TestModule1::TestThrow(void)
 
 
 
-void TestModule1::CallThrow(const std::string & other)
+void TestModule1::CallThrow_(const std::string & other)
 {
     Output("+++ In TestModule1: CallThrowTest with %1%\n", other);
 
