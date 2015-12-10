@@ -14,19 +14,26 @@
 namespace bpmodule {
 namespace modulebase {
 
-/*! \brief MODULEDESC new module
+/*! \brief MODULEDESC
  *
  */
 class CLASSNAME : public ModuleBase
 {
     public:
-        CLASSNAME(unsigned long id);
+        CLASSNAME(unsigned long id)
+            : ModuleBase(id)
+        { }
 
-        CLASSNAME(PyObject * self, unsigned long id);
+        CLASSNAME(PyObject * self, unsigned long id)
+            : ModuleBase(self, id)
+        { }
 
 
     private:
-        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter);
+        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
+        {
+            return ModuleBase::MoveToPyObjectHelper_<CLASSNAME>(deleter, this);
+        }
 
 };
 

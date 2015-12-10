@@ -35,13 +35,3 @@ with open(hfilepath, 'w') as dest:
       l = l.replace("CLASSNAME", args.name)
       l = l.replace("HEADERGUARD", hguard)
       dest.write(l)
-     
-print("Creating {}".format(cfilepath))
-with open(cfilepath, 'w') as dest:
-    for l in open(ctemplatepath, 'r').readlines():
-      l = l.replace("AUTHOR", args.author)
-      l = l.replace("MODULEDESC", args.desc)
-      l = l.replace("CLASSNAME", args.name)
-      l = l.replace("HEADERGUARD", hguard)
-      dest.write(l)
-

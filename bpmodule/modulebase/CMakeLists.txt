@@ -1,7 +1,5 @@
 set(BPMODULE_MODULEBASE_FILES
             ModuleBase.cpp
-            OneElectronIntegralIMPL.cpp
-            TwoElectronIntegralIMPL.cpp
             export.cpp
    )
 

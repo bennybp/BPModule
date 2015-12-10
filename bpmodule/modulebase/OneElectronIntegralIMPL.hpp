@@ -14,25 +14,66 @@
 namespace bpmodule {
 namespace modulebase {
 
-/*! \brief One-electron integral implementation new module
+/*! \brief One-electron integral implementation
  *
  */
 class OneElectronIntegralIMPL : public ModuleBase
 {
     public:
-        OneElectronIntegralIMPL(unsigned long id);
+        OneElectronIntegralIMPL(unsigned long id)
+            : ModuleBase(id)
+        { }
 
-        OneElectronIntegralIMPL(PyObject * self, unsigned long id);
+        OneElectronIntegralIMPL(PyObject * self, unsigned long id)
+            : ModuleBase(self, id)
+        { }
 
-        virtual void SetBases(const datastore::UIDPointer<basisset::BasisSet> & bs1,
-                              const datastore::UIDPointer<basisset::BasisSet> & bs2);
+
+        /*! \brief Set the basis sets for the integrals
+         * 
+         * \param [in] ncenter The number of centers for the integrals (ie, 3-center, 2-center)
+         */
+        void SetBases(const datastore::UIDPointer<basisset::BasisSet> & bs1,
+                      const datastore::UIDPointer<basisset::BasisSet> & bs2)
+        {
+            return ModuleBase::CallFunction(&OneElectronIntegralIMPL::SetBases_, bs1, bs2);
+        }
 
 
         //! \todo don't know about passing outbuf to python
-        virtual long Calculate(int shell1, int shell2, double * outbuf);
+        long Calculate(int deriv, int shell1, int shell2, double * outbuf)
+        {
+            return ModuleBase::CallFunction(&OneElectronIntegralIMPL::Calculate_, std::move(deriv), 
+                                                                                  std::move(shell1),
+                                                                                  std::move(shell2),
+                                                                                  std::move(outbuf));
+        }
+
+
+
+        /////////////////////////////////////////
+        // To be implemented by derived classes
+        /////////////////////////////////////////
+        //! \copydoc SetBases
+        virtual void SetBases_(const datastore::UIDPointer<basisset::BasisSet> & bs1,
+                               const datastore::UIDPointer<basisset::BasisSet> & bs2)
+        {
+            ModuleBase::CallPyMethod<void>("SetBases_", bs1, bs2);
+        }
+
+
+        //! \copydoc Calculate
+        virtual long Calculate_(int deriv, int shell1, int shell2, double * outbuf)
+        {
+            return ModuleBase::CallPyMethod<long>("Calculate_", deriv, shell1, shell2, outbuf);
+        }
+        
 
     private:
-        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter);
+        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
+        {
+            return ModuleBase::MoveToPyObjectHelper_<OneElectronIntegralIMPL>(deleter, this);
+        }
 
 };
 
