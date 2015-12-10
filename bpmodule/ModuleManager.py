@@ -64,21 +64,14 @@ class ModuleManager(modulelocator.ModuleLocator):
             CheckSupermodule(spath)
 
         except Exception as e:
-            raise exception.GeneralException(
-                                    "Unable to load supermodule {}".format(supermodule),
-                                    [
-                                      ("Exception", str(e))
-                                    ]
-                                   ) from None
+            raise exception.GeneralException("Unable to load supermodule",
+                                             "supermodule", supermodule,
+                                             "exception", str(e)) from None
 
         if not name in m.minfo:
-            raise exception.GeneralException(
-                                     "Supermodule doesn't have module!",
-                                    [
-                                      ("Supermodule", supermodule),
-                                      ("Name", name)
-                                    ]
-                                   )
+            raise exception.GeneralException("Supermodule doesn't have module!",
+                                             "supermodule", supermodule,
+                                             "name", name)
 
 
         minfo = m.minfo[name]

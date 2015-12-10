@@ -249,5 +249,5 @@ def CheckSupermodule(supermodule):
     if allok:
         output.Debug(indent1 + "Supermodule {} looks ok to me!\n".format(supermodule))
     else:
-        raise GeneralException("Problem in initial check of a supermodule", [ ( "supermodule", supermodule) ])
+        raise GeneralException("Problem in initial check of a supermodule", "supermodule", supermodule)
 
