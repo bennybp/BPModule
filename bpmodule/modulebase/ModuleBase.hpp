@@ -157,95 +157,14 @@ class ModuleBase
 
 
 
-
-        //////////////////////////////////////////
-        // Caching
-        //////////////////////////////////////////
-
-        //! \todo Catch exceptions and rethrow via Throw(). May need a variation of throw() (ReThrow()?) that takes a GeneralException
-
-        /*! \brief Does the cache have some data?
-         * 
-         * \copydetails bpmodule::datastore::CalcData::HasKey 
-         */ 
-        bool CacheHas(const std::string & key) const
-        {
-            return cache_->HasKey(key);
-        }
-
-
-
-        /*! \brief Get data from the cache
+        /*! \brief Get the cache object for this module
          *
-         * \copydetails bpmodule::datastore::CalcData::GetRef 
-         */ 
-        template<typename T>
-        const T & CacheGetRef(const std::string & key) const
-        {
-            return cache_->GetRef<T>(key);
-        }
-
-
-        /*! \brief Get data from the cache (as a copy)
-         * 
-         * \copydetails bpmodule::datastore::CalcData::GetCopy 
-         */ 
-        template<typename T>
-        T CacheGetCopy(const std::string & key) const
-        {
-            return cache_->GetCopy<T>(key);
-        }
-
-
-        /*! \brief Set data in the cache
-         * 
-         * \copydetails bpmodule::datastore::CalcData::Set 
-         */ 
-        template<typename T>
-        void CacheSet(const std::string & key, const T & value) const
-        {
-            return cache_->Set(key, value);
-        }
-
-        /*! \brief Move data into the cache
-         * 
-         * \copydetails bpmodule::datastore::CalcData::Take 
-         */ 
-        template<typename T>
-        void CacheTake(const std::string & key, T && value) const
-        {
-            return cache_->Take(key, std::move(value));
-        }
-       
-
-        /*! \brief Erase data from the cache
-         * 
-         * \copydetails bpmodule::datastore::CalcData::Erase 
+         * \throw std::logic_error if there is a severe developer error
          */
-        void CacheErase(const std::string & key)
-        {
-            cache_->Erase(key);
-        }
+        datastore::CalcData & Cache(void) const noexcept;
 
 
-        /*! \brief Get data from the cache (copy to python object)
-         *  
-         * \copydetails bpmodule::datastore::CalcData::GetCopyPy 
-         */
-        boost::python::object CacheGetCopyPy(const std::string & key) const
-        {
-            return cache_->GetCopyPy(key);
-        }
-        
-        /*! \brief Set data from a python object
-         *  
-         * \copydetails bpmodule::datastore::CalcData::GetCopyPy 
-         */
-        boost::python::object CacheSetPy(const std::string & key) const
-        {
-            return cache_->GetCopyPy(key);
-        }
-        
+
 
         ///////////////////////////////
         // Exceptions
