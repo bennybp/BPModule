@@ -140,11 +140,11 @@ void ModuleInfo::Print(void) const
     output::Output("     Description: %1%\n", description);
 
     output::Output("         Authors: %1%\n", (authors.size() ? authors[0] : ""));
-    for(size_t i = 0; i < authors.size(); i++)
+    for(size_t i = 1; i < authors.size(); i++)
         output::Output("                  %1%\n", authors[i]);
 
     output::Output("      References: %1%\n", (refs.size() ? refs[0] : ""));
-    for(size_t i = 0; i < refs.size(); i++)
+    for(size_t i = 1; i < refs.size(); i++)
         output::Output("                  %1%\n", refs[i]);
 
     output::Output("         Options: %1%\n", options.Size());
