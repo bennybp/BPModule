@@ -36,17 +36,17 @@ public:
     UIDPointer & operator=(const UIDPointer & rhs) = default;
     UIDPointer & operator=(UIDPointer && rhs) = default;
 
-    operator bool(void) const
+    operator bool(void) const noexcept
     {
         return Valid();
     }
 
-    bool Valid(void) const
+    bool Valid(void) const noexcept
     {
         return bool(data_);
     }
 
-    size_t UID(void) const
+    size_t UID(void) const noexcept
     {
          return uid_;
     }
@@ -67,7 +67,7 @@ public:
 
 
     //! \todo noexcept?
-    const T & operator*(void)
+    const T & operator*(void) const
     {
         return *data_;
     }
@@ -79,12 +79,16 @@ public:
     }
 
     //! \todo noexcept?
-    const T * operator->(void)
+    const T * operator->(void) const
     {
         return data_.get();
     }
 
 
+    bool operator==(const UIDPointer<T> & rhs)
+    {
+        return uid_ == rhs.uid_ && data_ == rhs.data_;
+    }
 
 private:
     size_t uid_;
