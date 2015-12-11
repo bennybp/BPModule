@@ -3,7 +3,8 @@
 
 #include <array>
 #include "TensorSettings.hpp"
-//#include "Shape.hpp"
+#include "Shape.hpp"
+#include "View.hpp"
 
 namespace TensorWrap {
 
@@ -12,7 +13,7 @@ namespace TensorWrap {
  *  Terminology.  Tensor terms vary depending on whom you talk to.  I will
  *  refer to the number of indices as the "rank" of the tensor, i.e. a
  *  scalar is a rank 0 tensor, a vector is a rank 1, and a matrix is a rank
- *  2.  Each index has a maximum value, the set of these values will be
+ *  2 tensor.  Each index has a maximum value, the set of these values will be
  *  called the shape of the tensor,
  *  i.e. a scalar has the empty set, \f$\lbrace\emptyset\rbrace\f$,
  *  as a shape, a vector of length \f$m\f$ has a shape:
@@ -44,44 +45,99 @@ namespace TensorWrap {
  *  \endcode
  *  As you can see this means you need to know how the data is laid out in
  *  memory, which quite frankly, if you are using this class you don't know
- *  how it is laid out...
+ *  how it is laid out as it may vary...
  *
  *  The reality is the only time you should be accessing
  *  a tensor element-wise is when you are filling it.  The offset notation
  *  is good for initializing a tensor with a single value, but we
  *  provide the "Fill" fxn for that purpose (tensors default
  *  to zero).  For more complicated fill patterns use coordinate notation,
- *  which is accessed via this class's iterator
+ *  which is accessed via this class's iterator, here's an example that
+ *  initializes each element to the sum of its coordinate indices:
+ *  \code
+ *  //10 by 10 matrix of doubles
+ *  Tensor<2> A(10,10);
+ *
+ *  //Get A's iterators
+ *  Tensor<2>::iterator Aij=A.begin(),AijEnd=A.end();
+ *
+ *  //Loop over the elements and fill Aij with the sum of its
+ *  //coordinate indices
+ *  for(;Aij!=AijEnd;++Aij){
+ *     //Aij.Index()[0] is i and Aij.Index()[1] is j
+ *     *Aij=Aij.Index()[0]+Aij.Index()[1];
+ *  }
+ *  \endcode
  *
  *  The general philosophy of this class is that you should never have to
- *  get the raw-data pointer out, nor should you ever have to introduce logic
- *  into your codes like: "if tensor is non-zero".  This class is
+ *  get the raw-data pointer out (nor do we let you) nor should you ever have
+ *  to introduce logic into your codes like: "if tensor is non-zero".
+ *  This class is
  *  intelligent and is designed to recognize optimizations, such as
  *  multiplying by zero, all by itself.  Running with this example when you
  *  declare a tensor's shape initially, that tensor is a zero tensor.
- *  Internally, this is modeled with a null pointer to the data, hence
- *  multiplying the zero tensor by any other appropriately sized tensor,
+ *  This is handled with meta data, not by actually filling the tensor with
+ *  zeros hence multiplying the zero tensor by any other appropriately sized tensor,
  *  will return another zero tensor almost immediately, as it amounts to
- *  checking for a null pointer and then establishing the final zero
- *  tensor's shape (a few integer arithmetic operations).  We exploit
- *  this in designing our tensors.
+ *  a few metadata operations.  We exploit this in many places.
  *
- *  \todo It's unclear to me at this moment whether this actually works
+ *  \todo It's unclear to me at this moment whether this actually is the case
+ *
  *
  *  Before filling your tensor you should establish its shape.  There
- *  are a few ways to do this.  At construction you may pass
- *  an std::array<size_t,Rank> to the tensor, where element \f$i\f$ is
- *  the length of the \f$i\f$-th index.  Alternatively, you may pass each
- *  length to the constructor like:
+ *  are a few ways to do this and I recommend you consult the SetShape()
+ *  function's documentation for the full lowdown.
+ *
+ *  Let's now talk about how to build a labeled tensor.
+ *  For sake of argument
+ *  assume we are building the MO coefficients, which we presently take to be
+ *  a rank 2 tensor that is number of atomic spin orbitals,  by number of
+ *  molecular spin orbitals.  Furthermore assume that we have sorted both
+ *  types of spin orbitals so that the alpha orbitals come before the
+ *  beta orbitals.  Finally, assume that the molecular spin orbitals are
+ *  then further subdivided into occupied and virtual.  Our final tensor
+ *  looks like this:
+ *  \f[
+ *    C=\left(\begin{array}{cccc}
+ *     C_{oa} &  C_{va}& 0 &0\\
+ *     0 &  0 & C_{ob} &C_{vb}
+ *  \end{array}\right)
+ *  \f]
+ *
+ *  We can declare C like:
  *  \code
- *  //Builds a 10 by 10 by 10 rank 3 tensor
- *  Tensor<double,3> A(10,10,10);
+ *  //Need to specify where the block boundaries are along each rank
+ *  tensor<double,2> C({{nbf,nbf},{na,nva,nb,nvb}});
+ *  C.SetView(0,{"a","b"});
+ *  C.SetView(1,{"a","b","o","v"},{2,2});
+ *
+ *  //alpha density in AO basis
+ *  AORho_a["i,j"]=C("a","a","o")["i,k"]*C("a","a","o")["j,k"];
+ *
+ *  //total density in AO basis
+ *  AORho["i,j"]=C("","","o")["i,k"]*C("","","o")["j,k"];
  *  \endcode
- *  The tensor may also be default constructed and then you may use
- *  either filling option at a later point by invoking the SetShape()
- *  member function.  SetShape() should not be invoked if the default
- *  constructor has not been used.  Also note that any attempts at
- *  setting a shape for a scalar will be ignored.
+ *
+ *  In this example, the first index is the spin of the AO, the second
+ *  is the spin of the MO, the third is the MO occupation, the fourth is
+ *  the particular spin AO, and the fifth is the particular spin MO of
+ *  the given occupation.  Again, under the hood the zero contractions
+ *  will not actually be done so laying our tensor out in this format
+ *  incurs only a very small overhead amounting to checking if a block is
+ *  zero before contracting.  If for some reason the atomic orbitals had
+ *  different forms for alpha and beta this layout would allow us to take
+ *  that into consideration without modifying the code.
+ *
+ *  In the above code we introduced two partitions along the first dimension,
+ *  and four along the second; this leads to 8 blocks.  For the second
+ *  dimension we laid our blocks out so that the occupation ran faster
+ *  than the spin, this means we can think of our blocks in the second
+ *  dimension as being a two by two matrix with spin on the rows and
+ *  occupation on the columns.  Before you can do any permutations or
+ *  manipulations using the view, you need to tell the class
+ *  where the blocks started.
+ *
+ *
  *
  *  For some applications it is convenient to be able to construct a
  *  larger tensor from smaller tensors.  For example consider the
@@ -96,8 +152,7 @@ namespace TensorWrap {
  *  \end{array}\right)
  *  \f]
  *  This is known as the direct sum of W1 and W2.
- *  This is performed by the +=()
- *  operator.  Note:
+ *  This is performed by the + operator.  Note:
  *  \code
  *  Tensor<double,3> A(10,10,10);
  *  Tensor<double,3> B(10,10,10);
@@ -105,10 +160,49 @@ namespace TensorWrap {
  *  //Normal "element-wise" tensor addition
  *  A["i,j,k"]+=B["i,j,k"];
  *  //Direct sum
- *  A+=B;
+ *  Tensor<double,3> C;
+ *  C+=A;
+ *  C+=B;
+ *
+ *  //Also ok:
+ *  C=A+B;
+ *
+ *  //If we wanted to direct sum more than two tensors, we continue
+ *  //summing using the += operator (C=A+B+A now)
+ *  C+=A;
  *  \endcode
- *  The + operator is also defined for direct summation, if one wishes to
- *  preserve the input tensors.
+ *
+ *  At this point we expand on the direct summation a bit.  Given
+ *  two tensors, \f$A\f$ and \f$B\f$ with ranks \f$a\f$ and \f$b\f$
+ *  respectively, the direct summation is only defined if \f$a=b\equiv R\f$.
+ *  Letting the length of the \f$i\f$-th dimension of \f$A\f$ be \f$a_i\f$
+ *  and that of \f$B\f$ be \f$b_i\f$.  The resulting tensor, \f$C\f$ is
+ *  of the same rank and its \f$i\f$-th dimension is \f$c_i=a_i+b_i\f$.
+ *  Letting \f$C(i_1,i_2,\ldots,i_R)\f$ be the element of \f$C\f$ with
+ *  indicies \f$i_1,i_2,\ldots,i_R\f$, and similarly for \f$A\f$ and
+ *  \f$B\f$, we have:
+ *  \f[C(i_1,i_2,\ldots,i_R)=\left\lbrace
+ *  \begin{array}{ll}
+ *  A(i_1,i_2,\ldots,i_r) &i_n\le a_n\ \forall n\\
+ *  B(i_1-a_1,i_2-a_2,\ldots,i_r-a_n) &0\le i_n-a_n \le b_n\ \forall n\\
+ *  0 & otherwise
+ *  \end{array}
+ *  \right.
+ *  \f]
+ *  Schematically, this means \f$C\f$ looks like:
+ *   *  \f[
+ *  C=\left(\begin{array}{cc}
+ *      A &  0\\
+ *      0 & B
+ *  \end{array}\right)
+ *  \f]
+ *
+ *  In quantum chemistry, we usually want to build C, but be able to
+ *  refer to its blocks still.  Internally, we accomplish this by thinking
+ *  indices allow us to choose the block we are in, e.g. C(0,1) is the
+ *  upper right zero matrix.
+ *
+ *
  *
  *  The direct sum combined with the fact that tensors default to zero
  *  tensors leads to a quick way to build a tensor, if you know the
@@ -124,8 +218,7 @@ namespace TensorWrap {
  *  may want to refer to the first two indices based on which
  *  monomer they stem from, "W1" or "W2".  We can do this via:
  *  \code
- *  //Syntax is rank we are mapping to, then values, in the order
- *  //we want
+ *  //Syntax is rank we are mapping to, then values, in the order we want
  *  W12.MapIndices(0,{"W1","W2"});
  *  W12.MapIndices(1,{"W1","W2"});
  *  \endcode
@@ -173,88 +266,192 @@ namespace TensorWrap {
  *         is set in TensorSettings.hpp file based on which tensor backend
  *         the user has selected.
  */
-template <typename T, size_t Rank, typename Impl_t=TImpl<T, Rank> >
+template <size_t Rank, typename T=double, typename Impl_t=TImpl<T, Rank> >
 class Tensor {
    private:
       ///For my sanity and internal use only
       typedef typename Impl_t::TensorBase_t TBase_t;
       typedef typename Impl_t::IndexedTensor_t ITensor_t;
-      typedef Tensor<T, Rank, Impl_t> My_t;
+      typedef Tensor<Rank, T, Impl_t> My_t;
+      template <typename T>
+      using IL=std::initializer_list<T>;
    public:
 
       ///The iterator types
       typedef typename Impl_t::iterator iterator;
       //typedef Impl_t::const_iterator const_iterator;
 
-      ///Convenient typedef of the Shape object
+      ///Convenient typedef of the shape input object
       typedef std::array<size_t, Rank> Shape_t;
 
-      ///Makes a tensor which requires a shape to work
-      Tensor() :
-            ActualTensor_(nullptr) {
-      }
+      ///Except for the default constructor, all constructors call SetShape
+      ///so see its documentation for how to construct a tensor
+      ///@{
+      ///Makes a tensor which will not work until a shape is set
+      Tensor()=default;
 
-      ///Frees Impl_
-      ~Tensor() {
-         if (ActualTensor_!=nullptr) delete ActualTensor_;
-      }
+      ///Makes a tensor given the length of each rank in an std::array
+      Tensor(const Shape_t& Shape){SetShape(Shape);}
 
-      ///Makes a tensor given a shape
-      Tensor(const Shape_t& Shape) :
-            Shape_(Shape), ActualTensor_(Impl_t::Make(Shape_)) {
-      }
+      ///Makes a tensor given the length of each rank as arguments
+      template <typename... Args>
+      Tensor(Args... args){SetShape(args...);}
 
-      template <typename ... Args>
-      Tensor(Args ... args) :
-            Shape_(Shape_t({args...})), ActualTensor_(Impl_t::Make(Shape_)) {
-      }
 
-      ///How you specify the contraction pattern.
-      ///(Don't worry about the signature...)
+      /** \brief Makes a tensor with the partitions of the given lengths
+       *
+
+       *
+       */
+      Tensor(const IL<IL<size_t> >& Idx){SetShape(Idx);}
+      ///@}
+      ///All memory is under garbage collection
+      ~Tensor()=default;
+
+
+
+      /** How you specify the contraction pattern.
+      * (Don't worry about the signature and don't try to save the
+      * result to anything other than a tensor object...)
+      */
       ITensor_t operator[](const char* string) {
-         if (ActualTensor_==nullptr)      //Shape better be set now
-            ActualTensor_=Impl_t::Make(Shape_);
+         assert(ActualTensor_);
          return Impl_t::DeRef(string, *ActualTensor_);
       }
 
       /*! \brief Retrieves an element by coordinate index
        *
-       *
+       *  \param[in] args strings that map to your blocks
        */
       ///@{
-      template <typename ... Args>
-      Tensor<T, Rank-sizeof...(Args),Impl_t> operator()(Args... args) {
-         return this->operator()(
-               std::array<size_t,sizeof...(Args)>( {args...}));
-      }
-
-      template<size_t SRank>
-      Tensor<T,Rank-SRank,Impl_t> operator()(
-            const std::array<size_t,SRank>& Index) {
-         Impl_t::Get(Index,*ActualTensor_);
+      template<typename...Args>
+      My_t operator()(Args... args) {
+         std::set<size_t> Blocks=View_(args...);
+         My_t NewT(Shape_.SubShape(Blocks));
+         NewT.ActualTensor_=std::shared_ptr<TBase_t>(
+         Impl_t::Get(Blocks,Shape_,*ActualTensor_));
+         return NewT;
       }
       ///@}
 
-      ///Initial direct sum
-      Tensor<My_t,Rank+2,TImpl<T,Rank+2> >& operator+(const My_t& Other) {
-
+      ///Returns direct sum
+      My_t& operator+(const My_t& Other)const{
+         return (My_t(*this))+=Other;
       }
 
-      ///Repeated direct sum
-      My_t& operator+=(const Tensor<T,Rank-2,TImpl<T,Rank-2> >& Other) {
+      ///Direct sum into this tensor, return *this
+      My_t& operator+=(const My_t& Other) {
+         //Now we have the right shape
+         this->Shape_+=Other.Shape_;
+
+         //Copy data (if it exists)
+         //std::shared_ptr<TBase_t> Temp=ActualTensor_;
+         //ActualTensor_=std::shared_ptr<TBase_t>(Impl_t::Make(Shape_));
+
+         std::cout<<Shape_<<std::endl;
          return *this;
       }
 
+      /** \brief Sets the shape of the tensor, destroys any shape that
+       *   existed and updates view accordingly
+       *
+       *   These calls are provided as a convenience to you the user
+       *   so that you can default construct a tensor and then
+       *   set its shape later.  They really are only intended to
+       *   be called once on a given Tensor object.  If you did
+       *   not use the default constructor you shouldn't need to
+       *   call these functions.
+       *
+       *   There are quite a few acceptable syntaxes for these functions
+       *   provided to hopefully make the process of creating a tensor
+       *   as easy as possible.  For all examples we assume that
+       *   you have a rank \f$R\f$ tensor, where the \f$i\f$-th
+       *   dimension is of length \f$r_i\f$.
+       *
+       *   1. You may simply present each \f$r_i\f$ value
+       *   \code
+       *   Tensor<3> T;
+       *   T.SetShape(r1,r2,r3);
+       *
+       *   //Or in one step
+       *   Tensor<3> T2(r1,r2,r3);
+       *   \endcode
+       *
+       *   2. You may present an std::array of each value:
+       *   \code
+       *   Tensor<3> T;
+       *
+       *   //This is also accessible via Tensor<3>::Shape_t
+       *   std::array<size_t,3> Shape({r1,r2,r3});
+       *
+       *   //i.e. this also works
+       *   Tensor<3>::Shape_t Shape2({r1,r2,r3});
+       *   T.SetShape(Shape);//or Shape2
+       *
+       *   //Or in one step
+       *   Tensor<3> T2(Shape2);//or Shape
+       *   \endcode
+       *
+       *   3. Finally, the most complicated form, which is best used when
+       *   you want to create blocks within your tensor. In this case,
+       *   you should have \f$R\f$ initializer lists within an outer
+       *   initializer list.  Each of the inner initializer lists should
+       *   contain the lengths of the partitions, in the order you
+       *   want them e.g. for \f$R=2\f$ the form is:
+       *   \code
+       *   //Makes a 6 by 19 matrix composed of 6 blocks arranged 2 by 3
+       *   //Block 1 is [0,2) by [0,3), Block 2 is [0,2) by [3,4)
+       *   //Block 3 is [0,2) by [4,19),Block 4 is [2,4) by [0,3)
+       *   //Block 5 is [2,4) by [3,4), Block 6 is [2,4) by [4,19)
+       *   Tensor<2> A({{2,4},{3,1,15}});
+       *   \endcode
+       *
+       *   The tensor built by this would look like:
+       *   \f[
+       *   A=\left(\begin{array}{ccc}
+       *     1 &  2 & 3\\
+       *     4 &  5 & 6
+       *  \end{array}\right)
+       *  \f]
+       *
+       *  If you want to label the blocks for your convenience see the
+       *  SetView function.
+       */
+      ///@{
+      ///Variadic wrapper, calls other SetShape
+      template<typename...Args>
+      void SetShape(Args...args){SetShape(Shape_t({args...}));}
+
+      ///Sets the layout, conveys that info to the backend, and initializes
+      ///the view
+      template<typename T2>
+      void SetShape(const T2& AShape){
+         Shape_=Shape<Rank>(AShape);
+         ActualTensor_.reset(Impl_t::Make(Shape_));
+         View_=View<Rank>(Shape_);
+      }
+      ///@}
+
+      ///Allows user mapping of dimension i
+      ///@{
+      ///Wrapper for an initializer list of names, but no layout.  Must name
+      ///all partitions
+      void SetView(size_t i,const IL<std::string>& Names){
+         assert(Names.size()==(Shape_[i].size()-1));
+         SetView(i,Names,{Names.size()});
+      }
+
+      ///Main SetView function
+      void SetView(size_t i,const IL<std::string>& Names,
+            const IL<size_t>& Layout){
+         View_.ChangeView(i,std::vector<std::string>({Names}),
+               std::vector<size_t>({Layout}));
+      }
+      ///@}
+
+
       ///Fills this tensor with a value (technically only the local block)
       void Fill(const T& value) {Impl_t::Fill(value,*ActualTensor_);}
-
-      ///Sets the shape of the tensor
-      ///@{
-      void SetShape(const Shape_t& Shape) {Shape_.Fill(Shape);}
-
-      template<typename... Args>
-      void SetShape(Args... args) {Shape_.Fill(Shape_t( {args...}));}
-      ///@}
 
       /*! \brief begin/end iterators for looping over the data
        *
@@ -293,22 +490,26 @@ class Tensor {
       //const_iterator end()const{return Impl_t::end(*ActualTensor_);}
       ///@}
 
+      ///Prints this tensor to an ostream via the backend
       std::ostream& operator<<(std::ostream& os)const {
          return Impl_t::PrintOut(os,*ActualTensor_);
       }
 
       private:
-      ///The shape of our current tensor
-      Shape Shape_;
+         ///The shape of our current tensor
+         Shape<Rank> Shape_;
 
-      ///The actual tensor
-      TBase_t* ActualTensor_;
+         ///The view of our current tensor
+         View<Rank> View_;
+
+         ///The actual tensor
+         std::shared_ptr<TBase_t> ActualTensor_;
 
    };
 
-///Specialization to a scalar
+///Specialization to a scalar, ignores backend
 template <typename T, typename T2>
-class Tensor<T, 0, T2> {
+class Tensor<0, T, T2> {
    private:
       ///For my sanity and internal use only
       typedef std::array<T, 1> TensorBase_t;
@@ -320,116 +521,68 @@ class Tensor<T, 0, T2> {
 
       typedef std::array<size_t, 0> Shape_t;
 
-      ///Makes a tensor which requires a shape to work
-      Tensor() {
-      }
+      ///Makes a scalar, no need to SetShape
+      Tensor()=default;
 
       ///No memory to free up
-      ~Tensor() {
-      }
+      ~Tensor()=default;
 
       ///Shape is ignored
-      Tensor(const Shape_t&) {
-      }
+      Tensor(const Shape_t&){}
 
       ///Shape is ignored
       template <typename ... Args>
-      Tensor(Args...) {
-      }
+      Tensor(Args...) {}
 
       ///How you specify the contraction pattern.
       ///(Don't worry about the signature...)
-      T operator[](const char*) {
-         return ActualTensor_[0];
-      }
+      T operator[](const char*) {return ActualTensor_[0];}
 
       ///How you retrieve an element, args are ignored
       template <typename ... Args>
-      T operator()(Args...) const {
-         return ActualTensor_[0];
-      }
+      T operator()(Args...) const {return ActualTensor_[0];}
 
       ///Casts the current tensor to the type it is
-      operator T() {
-         return ActualTensor_[0];
-      }
+      operator T() {return ActualTensor_[0];}
 
       ///Direct product (which is just scaling for a scalar)
       template <typename T2>
-      T2 operator*(T2& Other) const {
-         return (*this)(0)*Other;
-      }
+      T2 operator*(T2& Other) const {return (*this)(0)*Other;}
 
-      ///Fills this tensor with a value (technically only the local block)
-      void Fill(const T& value) {
-         ActualTensor_[0]=value;
-      }
+      ///Sets this scalar
+      void Fill(const T& value) {ActualTensor_[0]=value;}
 
-      ///Sets the shape of the tensor
+      ///Sets the shape of the scalar (does nothing)
       ///@{
-      void SetShape(const Shape_t&) {
-      }
+      void SetShape(const Shape_t&) {}
 
       template <typename ... Args>
-      void SetShape(Args...) {
-      }
+      void SetShape(Args...) {}
       ///@}
 
-      /*! \brief begin/end iterators for looping over the data
-       *
-       *  This iterator should really only be used to fill the tensor.
-       *
-       *  In general the data in the tensor will be stored in a pattern that
-       *  is unbeknownst to you.  That is you won't know where it resides or
-       *  even which elements are next to each other in RAM or on disk.  The
-       *  point of this class is to serve as the liaison to you so that you
-       *  can fill in the tensor.  When you are given an instance of this
-       *  class you will use it like:
-       *  \code
-       *  //Make a 10 by 10 matrix
-       *  Tensor<double,2> T(10,10);
-       *
-       *  //Get an iterator to it's elements
-       *  T::iterator Itr=T.begin(),ItrEnd=T.end();
-       *
-       *  //Buffer to hold the current index
-       *  std::array<size_t,2> Idx
-       *
-       *  //Loop over the blocks contained in the iterator
-       *  while(Itr!=ItrEnd){
-       *    Idx=Itr.Index();
-       *Itr=value(Idx);//Fills in element i,j
-       *    ++Itr;
-       *  }
-       *  \endcode
-       *
-       *  \todo Implement const_iterator
-       */
       ///@{
-      iterator begin() {
-         return ActualTensor_.begin();
-      }
+      iterator begin() {return ActualTensor_.begin();}
+
       //const_iterator begin()const{return Impl_t::begin(*ActualTensor_);}
-      iterator end() {
-         return ActualTensor_.end();
-      }
+      iterator end() {return ActualTensor_.end();}
       //const_iterator end()const{return Impl_t::end(*ActualTensor_);}
       ///@}
 
+      ///Allows printing
       std::ostream& operator<<(std::ostream& os) const {
          return os<<ActualTensor_[0];
       }
 
    private:
-      ///The actual tensor
+      ///The actual tensor, array provides iterators
       std::array<T, 1> ActualTensor_;
 };
 
 }       //End namespace TensorWrap
 
-template <typename T, size_t Rank, typename Impl_t>
+template <size_t Rank, typename T, typename Impl_t>
 inline std::ostream& operator<<(std::ostream& os,
-      const TensorWrap::Tensor<T, Rank, Impl_t>& Ten) {
+      const TensorWrap::Tensor<Rank, T, Impl_t>& Ten) {
    Ten<<os;
    return os;
 }

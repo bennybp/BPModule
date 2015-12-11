@@ -25,7 +25,7 @@ if(${TENSOR_BACKEND} STREQUAL TA)
    ExternalProject_Add(${TENSOR_BACKEND}
       PREFIX "${TBE_SRC}"
       GIT_REPOSITORY https://github.com/ValeevGroup/tiledarray.git
-      GIT_TAG 3450d49211521f43892ad5aabdfeaf345f247c20
+      GIT_TAG d95748bc96393995345e95db4cd120c5d7387764
       UPDATE_COMMAND ""
       CMAKE_COMMAND ${CMAKE_COMMAND}
       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${TBE_SRC}
@@ -67,6 +67,6 @@ set(TensorHeaders Shape.hpp
 )
 
 add_executable(TLTest Main.cc)
-
-target_link_libraries(TLTest ${TBE_LIBRARY_FILES} ${INTEL_TBB} ${BLAS})
+target_link_libraries(TLTest ${TBE_LIBRARY_FILES} 
+                             ${INTEL_TBB} ${BLAS})
 add_dependencies(TLTest ${TENSOR_BACKEND})
