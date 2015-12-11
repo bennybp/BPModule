@@ -31,6 +31,9 @@ class BasisSet
 
         GaussianShell Shell(int i) const;
 
+        int MaxNPrim(void) const;
+        int MaxAM(void) const;
+
 
         // iterate over shells
         const_iterator begin(void) const;
