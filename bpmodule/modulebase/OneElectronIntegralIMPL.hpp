@@ -43,10 +43,10 @@ class OneElectronIntegralIMPL : public ModuleBase
         //! \todo don't know about passing outbuf to python
         long Calculate(int deriv, int shell1, int shell2, double * outbuf)
         {
-            return ModuleBase::CallFunction(&OneElectronIntegralIMPL::Calculate_, std::move(deriv), 
-                                                                                  std::move(shell1),
-                                                                                  std::move(shell2),
-                                                                                  std::move(outbuf));
+            return ModuleBase::CallFunction(&OneElectronIntegralIMPL::Calculate_, deriv, 
+                                                                                  shell1,
+                                                                                  shell2,
+                                                                                  outbuf);
         }
 
 

@@ -170,21 +170,23 @@ class ModuleBase
          *
          * \tparam R Return type
          * \tparam P Derived class type
-         * \tparam args Arguments to forward
+         * \tparam Targs1 Arguments types for the function
+         * \tparam Targs2 Arguments types actually passed in
          *
          * \param [in] func Pointer to member function of class P and returning R
          * \param [in] args Arguments to forward
          */
-        template<typename R, typename P, typename ... Targs>
-        R CallFunction( R(P::*func)(Targs...), Targs &&... args)
+        template<typename R, typename P, typename ... Targs1, typename ... Targs2>
+        R CallFunction( R(P::*func)(Targs1...), Targs2 &&... args)
         {
             //////////////////////////////////////////////////////////////////
             // So you think you like pointers and templates?
             //////////////////////////////////////////////////////////////////
             try {
+                static_assert(std::is_base_of<ModuleBase, P>::value, "Cannot call function of unrelated class");
 
-                P * ptr = dynamic_cast<P *>(this);                    // cast this to type P
-                return ((*ptr).*func)(std::forward<Targs>(args)...);  // call the function
+                P * ptr = dynamic_cast<P *>(this);                     // cast this to type P
+                return ((*ptr).*func)(std::forward<Targs1>(args)...);  // call the function
             }
             catch(bpmodule::exception::GeneralException & ex)
             {
@@ -206,15 +208,15 @@ class ModuleBase
 
         /*! \brief Call a python method
          * 
-         * No need to handle exceptions since this should be called from within CallFunction
          */
         template<typename R, typename ... An>
-        R CallPyMethod(const char * fname, const An &... args)
+        R CallPyMethod(const char * fname, An &&... args)
         {
+            // No need to handle exceptions since this should be called from within CallFunction
             if (!IsPythonModule())
                 throw exception::GeneralException("Attempting to call a virtual function in a C++ module that is missing from the derived class");
 
-            return bpmodule::python_helper::CallPyFuncAttr<R>(pyselfobj_, fname, args...);
+            return bpmodule::python_helper::CallPyFuncAttr<R>(pyselfobj_, fname, std::forward<An>(args)...);
         }
 
 

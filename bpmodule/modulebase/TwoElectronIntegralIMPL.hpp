@@ -39,19 +39,19 @@ class TwoElectronIntegralIMPL : public ModuleBase
                       const datastore::UIDPointer<basisset::BasisSet> & bs3,
                       const datastore::UIDPointer<basisset::BasisSet> & bs4)
         {
-            return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::SetBases_, std::move(ncenter), bs1, bs2, bs3, bs4);
+            return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::SetBases_, ncenter, bs1, bs2, bs3, bs4);
         }
 
 
         //! \todo don't know about passing outbuf to python
         long Calculate(int deriv, int shell1, int shell2, int shell3, int shell4, double * outbuf)
         {
-            return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::Calculate_, std::move(deriv), 
-                                                                                  std::move(shell1),
-                                                                                  std::move(shell2),
-                                                                                  std::move(shell3),
-                                                                                  std::move(shell4),
-                                                                                  std::move(outbuf));
+            return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::Calculate_, deriv, 
+                                                                                  shell1,
+                                                                                  shell2,
+                                                                                  shell3,
+                                                                                  shell4,
+                                                                                  outbuf);
         }
 
 
