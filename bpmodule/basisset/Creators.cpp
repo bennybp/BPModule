@@ -70,11 +70,11 @@ BasisMap ReadBasisFile(const std::string & path)
                 {
                     getline(f, line);
                     std::stringstream ss3(line);
-                    double alpha, coef;
-                    ss3 >> alpha >> coef;
+                    double alpha, coef, coef2;
+                    ss3 >> alpha >> coef >> coef2;
 
                     gs_s.AddPrimitive(alpha, coef);
-                    gs_p.AddPrimitive(alpha, coef);
+                    gs_p.AddPrimitive(alpha, coef2);
                 }
 
                 gsv.push_back(gs_s);

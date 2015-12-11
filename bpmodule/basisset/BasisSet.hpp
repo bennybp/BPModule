@@ -34,6 +34,8 @@ class BasisSet
         int MaxNPrim(void) const;
         int MaxAM(void) const;
 
+        //! \todo make a printer class?
+        void Print(void) const;
 
         // iterate over shells
         const_iterator begin(void) const;

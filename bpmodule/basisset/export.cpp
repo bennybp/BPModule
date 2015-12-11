@@ -47,6 +47,7 @@ BOOST_PYTHON_MODULE(basisset)
 
 
     class_<BasisSet>("BasisSet", init<>())
+    .def("Print", &BasisSet::Print)
     .def("AddShell", &BasisSet::AddShell)
     .def("NShell", &BasisSet::NShell)
     .def("Shell", &BasisSet::Shell)
