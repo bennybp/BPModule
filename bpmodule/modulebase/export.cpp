@@ -79,6 +79,18 @@ BOOST_PYTHON_MODULE(modulebase)
 
 
     /////////////////////////
+    // One electron integral builder
+    /////////////////////////
+    register_ptr_to_python<boost::shared_ptr<OneElectronIntegral>>();
+
+    //! \todo Don't know about from Calculate to python
+    class_<OneElectronIntegral, bases<ModuleBase>, boost::noncopyable>("OneElectronIntegral", init<PyObject *, unsigned long>())
+    .def("SetBases", &OneElectronIntegral::SetBases)
+    .def("Calculate", &OneElectronIntegral::Calculate)
+    ;
+
+
+    /////////////////////////
     // Two electron integral implementation
     /////////////////////////
     register_ptr_to_python<boost::shared_ptr<TwoElectronIntegralIMPL>>();
@@ -86,6 +98,17 @@ BOOST_PYTHON_MODULE(modulebase)
     class_<TwoElectronIntegralIMPL, bases<ModuleBase>, boost::noncopyable>("TwoElectronIntegralIMPL", init<PyObject *, unsigned long>())
     .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
     .def("Calculate", &TwoElectronIntegralIMPL::Calculate)
+    ;
+
+
+    /////////////////////////
+    // Two electron integral builder
+    /////////////////////////
+    register_ptr_to_python<boost::shared_ptr<TwoElectronIntegral>>();
+
+    class_<TwoElectronIntegral, bases<ModuleBase>, boost::noncopyable>("TwoElectronIntegral", init<PyObject *, unsigned long>())
+    .def("SetBases", &TwoElectronIntegral::SetBases)
+    .def("Calculate", &TwoElectronIntegral::Calculate)
     ;
 
 }
