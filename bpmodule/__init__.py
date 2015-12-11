@@ -14,13 +14,13 @@ sys.setdlopenflags(os.RTLD_LAZY | os.RTLD_GLOBAL)
 
 # Standalone (don't depend on other core modules)
 from . import exception
-from . import mangle
 
 
 # TODO - can we get some order that will work with RTLD_NOW?
 # Probably not - there are circular dependencies
 # (modulelocator and modulebase, for example)
 from . import python_helper
+from . import mangle
 from . import util
 from . import output
 from . import options

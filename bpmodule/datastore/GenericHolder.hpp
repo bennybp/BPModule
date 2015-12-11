@@ -89,7 +89,7 @@ class GenericHolder : public GenericBase
 
 
         ////////////////////////////////////////
-        // Virtual functions from PropBase
+        // Virtual functions from GenericBase
         ////////////////////////////////////////
         virtual const char * Type(void) const noexcept
         {
@@ -101,18 +101,18 @@ class GenericHolder : public GenericBase
             return typeid(T);
         }
 
-
+        
         virtual std::string DemangledType(void) const
         {
-            return mangle::DemangleCppType<T>();
+            return mangle::DemangleCppOrPyType(obj);
         }
-
 
 
     private:
         //! The actual data
         T obj;
 };
+
 
 
 } //closing namespace detail

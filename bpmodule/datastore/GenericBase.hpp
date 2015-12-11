@@ -57,7 +57,10 @@ class GenericBase
 
         /*! \brief Returns a string representing the demangled type of the stored object
          *
-         * \return A string representing the type (obtained via typeid().name(), but demangled)
+         * For a C++ object, will return the demangled C++ type. For a python
+         * object, will return its class string.
+         *
+         * \return A string representing the type
          */
         virtual std::string DemangledType(void) const = 0;
 

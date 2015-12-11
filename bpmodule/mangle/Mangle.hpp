@@ -10,6 +10,7 @@
 #include <string>
 #include <typeinfo>
 
+#include "bpmodule/python_helper/Types.hpp"
 
 namespace bpmodule {
 namespace mangle {
@@ -36,12 +37,43 @@ std::string DemangleCppType(const T & t)
 /*! \brief Demangle the type of an object
  *
  * \tparam The type to demangle
+ *
+ * For a c++ type, same as DemangleCppType.
+ * For a python object, will return the class name
+ */
+template<typename T>
+typename std::enable_if<!std::is_base_of<boost::python::object, T>::value, std::string>::type
+DemangleCppOrPyType(const T & t)
+{
+    return DemangleCpp(typeid(t).name());
+}
+
+
+
+template<typename T>
+typename std::enable_if<std::is_base_of<boost::python::api::object, T>::value, std::string>::type
+DemangleCppOrPyType(const T & t)
+{
+    return python_helper::GetPyClass(t);
+}
+
+
+
+
+
+/*! \brief Demangle the type of an object
+ *
+ * \tparam The type to demangle
  */
 template<typename T>
 std::string DemangleCppType(void)
 {
     return DemangleCpp(typeid(T).name());
 }
+
+
+
+
 
 
 } // close namespace mangle
