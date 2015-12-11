@@ -9,6 +9,8 @@ set(BPMODULE_MODULEBASE_HEADERS
             Test_Base.hpp
             OneElectronIntegralIMPL.hpp
             TwoElectronIntegralIMPL.hpp
+            OneElectronIntegral.hpp
+            TwoElectronIntegral.hpp
    )
 
 
