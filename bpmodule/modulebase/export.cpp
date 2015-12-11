@@ -97,7 +97,7 @@ BOOST_PYTHON_MODULE(modulebase)
 
     class_<TwoElectronIntegralIMPL, bases<ModuleBase>, boost::noncopyable>("TwoElectronIntegralIMPL", init<PyObject *, unsigned long>())
     .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
-    .def("Calculate", &TwoElectronIntegralIMPL::Calculate)
+    .def("Calculate", &TwoElectronIntegralIMPL::CalculatePy)
     ;
 
 

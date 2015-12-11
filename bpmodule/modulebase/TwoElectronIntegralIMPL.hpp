@@ -55,6 +55,21 @@ class TwoElectronIntegralIMPL : public ModuleBase
         }
 
 
+        //! \todo mostly for testing?
+        boost::python::object CalculatePy(int deriv, int shell1, int shell2, int shell3, int shell4)
+        {
+            static std::vector<double> out(30000); // 1st derivative of ffff?
+            long r = ModuleBase::CallFunction(&TwoElectronIntegralIMPL::Calculate_, deriv, 
+                                                                                    shell1,
+                                                                                    shell2,
+                                                                                    shell3,
+                                                                                    shell4,
+                                                                                    out.data());
+
+            return python_helper::ConvertToPy(std::vector<double>(out.begin(), out.begin()+r));
+        }
+
+
 
         /////////////////////////////////////////
         // To be implemented by derived classes
