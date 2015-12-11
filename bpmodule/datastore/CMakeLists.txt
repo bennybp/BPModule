@@ -1,7 +1,6 @@
 set(BPMODULE_DATASTORE_FILES
             UIDPointer.cpp
             Wavefunction.cpp
-            GenericHolder.cpp
             export.cpp
    )
   

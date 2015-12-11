@@ -10,8 +10,6 @@
 
 #include <memory>
 
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
-
 namespace bpmodule {
 namespace datastore {
 namespace detail {
@@ -81,17 +79,6 @@ class GenericBase
         {
             return typeid(U) == TypeInfo();
         }
-
-
-        ///////////////////////////////////
-        // Python functions
-        ///////////////////////////////////
-        /*! \brief Return a copy of the data as a boost::python object
-         *
-         * \throw bpmodule::exception::PythonConvertException if the
-         *        data could not be converted
-         */ 
-        virtual boost::python::object GetPy(void) const = 0;
 
 };
 

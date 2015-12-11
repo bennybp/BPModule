@@ -163,10 +163,6 @@ class PropertyMap
 
 
 
-    protected:
-        /////////////////////////////////////////////////
-        // to be exposed selectively by derived classes
-        /////////////////////////////////////////////////
 
         /*! \brief Return a const reference to the underlying data
          *
@@ -302,49 +298,9 @@ class PropertyMap
 
 
 
-        ///////////////////////////////////
-        // Python functions
-        ///////////////////////////////////
-
-        /*! \copydoc GetCopy
-         *
-         * Returns the data as a python object. 
-         *
-         * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
-         */
-        boost::python::object GetCopyPy(const KEYTYPE & key) const
-        {
-            // may throw
-            return GetOrThrow_(key).value->GetPy();
-        }
-
-
-        /*! \copydoc Set
-         *
-         * Copies the internal python data to a C++ type.
-         *
-         * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
-         */
-        void SetPy(const KEYTYPE & key, const boost::python::object & value)
-        {
-            // catch errors from conversions in GenericHolderFactory
-            try {
-                Set_(key, detail::GenericHolderFactory(value));
-            }
-            catch(exception::DataStoreException & ex)
-            {
-                // append key info if GenericHolderFactory throws
-                ex.AppendInfo("mapkey", key);
-                throw;
-            }
-        }
-
-
 
 
     private:
-
-
         ////////////////////////////////
         // Actual storage of the data //
         ////////////////////////////////

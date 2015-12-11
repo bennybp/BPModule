@@ -61,23 +61,24 @@ BOOST_PYTHON_MODULE(datastore)
      * GetRef() is not exported to python. This is because python does not enforce
      * const semantics, which could lead to behavior where the underlying data
      * is changed. This goes against the "immutability" of the PropertyMap and CalcData.
-     * Python, unfortunately, would have to work with copies.
      */
-    /////////////////////////
+    ////////////////////////////////////////
     // CalcData
-    /////////////////////////
+    // Can just store boost::python::object
+    ////////////////////////////////////////
     class_<CalcData>("CalcData", init<>())
     .def(init<const CalcData &>())
     .def("Size", &CalcData::Size)
     .def("GetKeys", &CalcData::GetKeys)
     .def("HasKey", &CalcData::HasKey)
-    .def("GetCopy", &CalcData::GetCopyPy)
-    .def("Set", &CalcData::SetPy)
     .def("Erase", &CalcData::Erase)
     .def("GetType", &CalcData::GetType)
     .def("GetDemangledType", &CalcData::GetDemangledType)
+    .def("GetCopy", static_cast<boost::python::object(CalcData::*)(const std::string &) const>(&CalcData::GetCopy))
+    .def("GetRef", static_cast<const boost::python::object &(CalcData::*)(const std::string &) const>(&CalcData::GetRef), return_internal_reference<>()) // copy it?
+    .def("Set", static_cast<void(CalcData::*)(const std::string &, const boost::python::object &)>(&CalcData::Set))
     .def("SetRef", static_cast<void(CalcData::*)(const CalcData &, const std::string &, const std::string &)>(&CalcData::SetRef))
-    .def("SetRef", static_cast<void(CalcData::*)(const CalcData &, const std::string &)>(&CalcData::SetRef));
+    ;
 }
 
 

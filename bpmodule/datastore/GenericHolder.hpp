@@ -8,11 +8,8 @@
 #ifndef _GUARD_GENERICHOLDER_HPP_
 #define _GUARD_GENERICHOLDER_HPP_
 
+#include "bpmodule/mangle/Mangle.hpp"
 #include "bpmodule/datastore/GenericBase.hpp"
-
-
-//! \todo I hate including python stuff here...
-#include "bpmodule/python_helper/Convert.hpp"
 
 
 namespace bpmodule {
@@ -112,32 +109,10 @@ class GenericHolder : public GenericBase
 
 
 
-        ///////////////////////////////////////
-        // Python-related functions
-        ///////////////////////////////////////
-        virtual boost::python::object GetPy(void) const
-        {
-            return python_helper::ConvertToPy(obj);
-        }
-
-
     private:
         //! The actual data
         T obj;
 };
-
-
-
-/*! \brief Create a detail::GenericBasePtr from python object
- *
- * This copies the data from the object.
- * 
- * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
- *
- * \param [in] obj A python object containing data to copy
- */ 
-GenericBasePtr GenericHolderFactory(const boost::python::object & obj);
-
 
 
 } //closing namespace detail
