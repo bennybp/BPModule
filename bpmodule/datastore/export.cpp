@@ -28,11 +28,12 @@ namespace export_python {
 
 template<typename T>
 static void
-RegisterUIDPointer(void)
+RegisterUIDPointer(const char * name)
 {
-    std::string pyname = std::string("UIDPointer_") + typeid(T).name();
+    std::string pyname = std::string("UIDPointer_") + name;
 
-    class_<UIDPointer<T>>(pyname.c_str(), no_init) //! \todo python init for UIDPointer?
+    class_<UIDPointer<T>>(pyname.c_str(), init<>())
+    .def(init<const T &>())
     .def("Valid", &UIDPointer<T>::Valid)
     .def("UID", &UIDPointer<T>::UID)
     .def("Set", &UIDPointer<T>::Set)
@@ -42,9 +43,9 @@ RegisterUIDPointer(void)
 
 BOOST_PYTHON_MODULE(datastore)
 {
-    RegisterUIDPointer<BasisSet>();
-    RegisterUIDPointer<Molecule>();
-    RegisterUIDPointer<DistMatrixD>();
+    RegisterUIDPointer<BasisSet>("BasisSet");
+    RegisterUIDPointer<Molecule>("Molecule");
+    RegisterUIDPointer<DistMatrixD>("DistMatrixD");
 
     /* Similar to CalcData, python will have to work with copies
      */
