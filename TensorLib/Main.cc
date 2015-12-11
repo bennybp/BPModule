@@ -75,6 +75,7 @@ int main(int argc, char** argv){
      a.fill_local(3.0);
      b.fill_local(2.0);
 
+
      // Print the content of input tensors, a and b.
      /*if(world.rank() == 0) {
        std::cout << "a = \n" << a << "\n";
@@ -89,10 +90,10 @@ int main(int argc, char** argv){
      // if(world->rank() == 0)
      std::cout << "c = \n" << c << "\n";
 
-     Tensor<double,3> A(16,16,16),B(16,16,16);
-     Tensor<double,2> C(16,16),D(16,16);
+     Tensor<3> A(16,16,16),B(16,16,16);
+     Tensor<2> C(16,16),D(16,16);
 
-     Tensor<double,3>::iterator EI=A.begin(),EEnd=A.end();
+     Tensor<3>::iterator EI=A.begin(),EEnd=A.end();
      for(;EI!=EEnd;++EI)*EI=3.0;
 
      B.Fill(2.0);
@@ -100,7 +101,40 @@ int main(int argc, char** argv){
      C["i,k"]=A["i,j,l"]*B["j,l,k"];
      std::cout<<C;
 
-     Tensor<double,0> T;
+     size_t nbf=10,na=2,nb=3,nva=8,nvb=7;
+
+     Tensor<2> Cs({{nbf,nbf},{na,nva,nb,nvb}});
+     Tensor<2>::iterator CsI=Cs.begin(),CsIEnd=Cs.end();
+     for(;CsI!=CsIEnd;++CsI){
+        const std::array<size_t,2>& Idx=CsI.Index();
+        size_t i=(Idx[0]<nbf?0:1);
+        size_t j=0;
+        if(Idx[1]>=na&&Idx[1]<nva+na)j=1;
+        else if(Idx[1]>=nva+na&&Idx[1]<nb+na+nva)j=2;
+        else if(Idx[1]>=nb+na+nva)j=3;
+        *CsI=i*4+j;
+     }
+     Cs.SetView(0,{"a","b"});
+     Cs.SetView(1,{"a","b","o","v"},{2,2});
+
+     std::cout<<Cs("a","a","o");
+     Tensor<2> R(nbf,nbf);
+     R["i,j"]=Cs("a","a","v")["i,k"]*Cs("a","a","v")["j,k"];
+     std::cout<<R<<std::endl;
+     std::cout<<Cs("b","b","v")<<std::endl;
+     std::cout<<Cs("","","")<<std::endl;
+     std::cout<<Cs("a")<<std::endl;
+     std::cout<<Cs("b")<<std::endl;
+     std::cout<<Cs("","a")<<std::endl;
+     std::cout<<Cs("","b")<<std::endl;
+     std::cout<<Cs("","","o")<<std::endl;
+     std::cout<<Cs("","","v")<<std::endl;
+     std::cout<<Cs("a","","o")<<std::endl;
+     std::cout<<Cs("b","","o")<<std::endl;
+     std::cout<<Cs("a","","v")<<std::endl;
+     std::cout<<Cs("b","","v")<<std::endl;
+
+     Tensor<0> T;
      T.Fill(2.0);
 
      D["i,k"]=(double)T*C["i,k"];

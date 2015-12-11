@@ -11,6 +11,11 @@ namespace TensorWrap{
  *
  * This is a glorified struct of typedefs basically
  *
+ * \todo When slicing and dicing I update my shapes, TA keeps
+ * the original shape, i.e. if we carve out the region that is
+ * [4,8) by [2,6) our result is 3 rows by 3 columns.  I remap this
+ * to [0,4) by [0,4), but TA still shows [4,8) by [2,6).
+ *
  */
 template<typename Data_t,size_t Rank>
 class TAImpl{
@@ -24,7 +29,7 @@ class TAImpl{
          IndexedTensor_t;
 
       ///Wraps the constructor
-      static TensorBase_t* Make(const Shape& ShapeIn){
+      static TensorBase_t* Make(const Shape<Rank>& ShapeIn){
          return new TensorBase_t(*world,MakeRanges(ShapeIn));
       }
 
@@ -39,7 +44,6 @@ class TAImpl{
          return ATensor(string);
       }
 
-
       ///Prints the tensor out
       static std::ostream& PrintOut(std::ostream& os,
                                     const TensorBase_t& ATensor){
@@ -47,16 +51,22 @@ class TAImpl{
          return os;
       }
 
-      ///Returns the element with the given coordinate index
-      template<size_t Rank2>
-      static TensorBase_t* Get(const std::array<size_t,Rank2>& Idx,
-            TensorBase_t& ATensor){
-
-         //TARng_t Range=MakeRanges(ATensor.range().upbound(),
-          //                        ATensor.range().lobound(),Rank2)
-         //TensorBase_t::value_type ATensor.get(Idx);
-
+      ///Given a set of offsets fills a tensor
+      template<size_t Rank>
+      static TensorBase_t*
+         Get(const std::set<size_t>& Idx,
+             const Shape<Rank>& OldShape,
+             TensorBase_t& ATensor){
+         Shape<Rank> NewShape=OldShape.SubShape(Idx);
+         TensorBase_t* NewT=Make(NewShape);
+         std::set<size_t>::const_iterator BI=Idx.begin(),BEnd=Idx.end();
+         for(size_t counter=0;BI!=BEnd;++BI,++counter)
+            NewT->set(counter,ATensor.find(*BI));
+         return NewT;
       }
+
+      ///
+
    private:
 
       ///A typedef of TA's one-dimensional range object
@@ -91,11 +101,9 @@ class TAImpl{
        *   \f]
        *   where \f$L_i\f$ is the length of rank i.
        */
-      template<typename T2>
-      static TARng_t MakeRanges(const T2& ShapeIn){
-         std::cout<<ShapeIn<<std::endl;
+      static TARng_t MakeRanges(const Shape<Rank>& ShapeIn){
          std::vector<TARng1_t> Range;
-         for(size_t r=0;r<ShapeIn.size();++r)
+         for(size_t r=0;r<Rank;++r)
             Range.push_back(TARng1_t(ShapeIn[r].cbegin(),ShapeIn[r].cend()));
          return TARng_t(Range.begin(),Range.end());
       }
@@ -122,6 +130,8 @@ class TAImpl{
                      Tile_=Parent_.trange().make_tile_range(TileI_.ordinal());
                      Start_=Tile_.range().lobound();
                      Finish_=Tile_.range().upbound();
+                     for(size_t i=0;i<Start_.size();++i)
+                        Index_[i]=Start_[i];
                   }
                }
                return *this;
@@ -153,16 +163,28 @@ class TAImpl{
                Parent_(Tensor),
                TileI_(!AtEnd?Tensor.begin():Tensor.end()),
                TileEnd_(Tensor.end()),
-               Tile_(Tensor.begin()!=Tensor.end()?
-                     Tensor.trange().make_tile_range(Tensor.begin().ordinal()):
-                     TensorBase_t::value_type()),
+               //Tensor.trange() returns the object holding the tensor's
+               //tile range, which is of type TensorImpl<Policy>::trange_type
+               //TileI_.ordinal() returns the tile's index
+               Tile_(!AtEnd?
+                     Tensor.trange().make_tile_range(TileI_.ordinal()):
+                     typename TensorBase_t::value_type()),
                Start_(Tile_.range().lobound()),
                Finish_(Tile_.range().upbound()),
                Index_({}){
+               for(size_t i=0;i<Start_.size();++i)
+                  Index_[i]=Start_[i];
+
 
             }
             TensorBase_t& Parent_;
+            /** \brief An iterator over the tiles in the parent tensor
+             *
+             *  Internal to TA, this maps to impl_type::iterator,
+             *  which maps to ArrayIterator<ArrayImpl_,reference>
+             */
             typename TensorBase_t::iterator TileI_;
+            ///An iterator at the last tile in parent tensor
             typename TensorBase_t::const_iterator TileEnd_;
             typename TensorBase_t::value_type Tile_;
             std::vector<size_t> Start_,Finish_;
