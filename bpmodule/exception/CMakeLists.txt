@@ -15,6 +15,7 @@ set(BPMODULE_EXCEPTION_HEADERS
             DataStoreException.hpp
             MoleculeException.hpp
             BasisSetException.hpp
+            NotYetImplementedException.hpp
    )
 
 

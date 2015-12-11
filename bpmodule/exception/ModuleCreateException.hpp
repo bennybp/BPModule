@@ -30,6 +30,7 @@ class ModuleCreateException : public GeneralException
             : GeneralException(whatstr, "name", name)
         { }
 
+
         /*! \brief Constructor
          *
          * \param [in] whatstr Brief description of the error
