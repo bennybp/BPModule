@@ -11,6 +11,7 @@
 
 #include "bpmodule/basisset/BasisSet.hpp"
 #include "bpmodule/basisset/Creators.hpp"
+#include "bpmodule/datastore/RegisterUIDPointer.hpp"
 
 
 using namespace boost::python;
@@ -23,6 +24,9 @@ namespace export_python {
 
 BOOST_PYTHON_MODULE(basisset)
 {
+    datastore::RegisterUIDPointer<BasisSet>("BasisSet");
+
+
     class_<GaussianBasisShell>("GaussianBasisShell", init<int, bool>())
     .def("AM", &GaussianShell::AM)
     .def("NPrim", &GaussianShell::NPrim)

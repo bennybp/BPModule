@@ -25,9 +25,9 @@ from . import util
 from . import output
 from . import options
 from . import parallel
+from . import datastore
 from . import math
 from . import tensor
-from . import datastore
 from . import modulebase
 from . import modulelocator
 from . import molecule

@@ -6,11 +6,11 @@
 
 #include <boost/python/module.hpp>
 #include <boost/python/class.hpp>
+#include <boost/python/def.hpp>
 #include <boost/python/return_internal_reference.hpp>
 
+#include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/datastore/CalcData.hpp"
-#include "bpmodule/basisset/BasisSet.hpp"
-#include "bpmodule/molecule/Molecule.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 
 
@@ -26,29 +26,9 @@ namespace bpmodule {
 namespace datastore {
 namespace export_python {
 
-template<typename T>
-static void
-RegisterUIDPointer(const char * name)
-{
-    std::string pyname = std::string("UIDPointer_") + name;
-
-    class_<UIDPointer<T>>(pyname.c_str(), init<>())
-    .def(init<const T &>())
-    .def("Valid", &UIDPointer<T>::Valid)
-    .def("UID", &UIDPointer<T>::UID)
-    .def("Set", &UIDPointer<T>::Set)
-    .def("Get", &UIDPointer<T>::Get, return_internal_reference<>())
-    ;
-}
 
 BOOST_PYTHON_MODULE(datastore)
 {
-    RegisterUIDPointer<BasisSet>("BasisSet");
-    RegisterUIDPointer<Molecule>("Molecule");
-    RegisterUIDPointer<DistMatrixD>("DistMatrixD");
-
-    /* Similar to CalcData, python will have to work with copies
-     */
     class_<Wavefunction>("Wavefunction", no_init) //! \todo python init for wfn?
     .def("UniqueString", &Wavefunction::UniqueString)
     .def_readwrite("basis", &Wavefunction::basis)
@@ -57,6 +37,8 @@ BOOST_PYTHON_MODULE(datastore)
     .def_readwrite("epsilon", &Wavefunction::epsilon)
     ;
   
+
+    def("MakeUIDPointer", MakeUIDPointerPy);
 
     /*
      * GetRef() is not exported to python. This is because python does not enforce
@@ -80,6 +62,7 @@ BOOST_PYTHON_MODULE(datastore)
     .def("Set", static_cast<void(CalcData::*)(const std::string &, const boost::python::object &)>(&CalcData::Set))
     .def("SetRef", static_cast<void(CalcData::*)(const CalcData &, const std::string &, const std::string &)>(&CalcData::SetRef))
     ;
+
 }
 
 

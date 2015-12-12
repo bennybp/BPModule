@@ -14,6 +14,8 @@
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/molecule/AtomicInfo.hpp"
 #include "bpmodule/molecule/Molecule.hpp"
+#include "bpmodule/datastore/RegisterUIDPointer.hpp"
+
 
 using namespace boost::python;
 using bpmodule::python_helper::CppToPyExport;
@@ -44,6 +46,9 @@ void Molecule_AddAtomWrapper(Molecule & mol, int Z, const boost::python::list & 
 
 BOOST_PYTHON_MODULE(molecule)
 {
+    datastore::RegisterUIDPointer<Molecule>("Molecule");
+
+
     class_<IsotopeData>("IsotopeData", no_init)
     .def_readonly("isonum", &IsotopeData::isonum)
     .def_readonly("mass", &IsotopeData::mass)

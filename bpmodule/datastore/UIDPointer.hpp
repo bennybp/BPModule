@@ -96,6 +96,15 @@ private:
 };
 
 
+/*! \brief Helps create a UIDPointer
+ */
+template<typename T>
+UIDPointer<T> MakeUIDPointer(const T & t)
+{
+    return UIDPointer<T>(t);
+}
+
+
 
 } // close namespace datastore
 } // close namespace bpmodule

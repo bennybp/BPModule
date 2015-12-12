@@ -1,11 +1,13 @@
 set(BPMODULE_DATASTORE_FILES
             UIDPointer.cpp
+            RegisterUIDPointer.cpp
             Wavefunction.cpp
             export.cpp
    )
   
 set(BPMODULE_DATASTORE_HEADERS
             UIDPointer.hpp
+            RegisterUIDPointer.hpp
             Wavefunction.hpp
             GraphNodeData.hpp
             CalcData.hpp
