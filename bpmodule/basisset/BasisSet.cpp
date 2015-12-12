@@ -60,9 +60,21 @@ int BasisSet::NCartesian(void) const
                            [](int sum, const GaussianShell & sh) { return sum + sh.NCartesian(); } );
 }
 
+int BasisSet::NFunctions(void) const
+{
+    return std::accumulate(this->begin(), this->end(), 0,
+                           [](int sum, const GaussianShell & sh) { return sum + sh.NFunctions(); } );
+}
+
 int BasisSet::MaxNCartesian(void) const
 {
     return NCARTESIAN(MaxAM());
+}
+
+int BasisSet::MaxNFunctions(void) const
+{
+    return std::max_element(this->begin(), this->end(), 
+                    [](const GaussianShell & lhs, const GaussianShell & rhs) { return lhs.NFunctions() < rhs.NFunctions(); })->NFunctions();
 }
 
 BasisSet::const_iterator BasisSet::begin(void) const

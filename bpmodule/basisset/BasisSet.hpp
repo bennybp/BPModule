@@ -33,10 +33,12 @@ class BasisSet
 
         int NPrim(void) const;
         int NCartesian(void) const;
+        int NFunctions(void) const;
 
         int MaxNPrim(void) const;
         int MaxAM(void) const;
         int MaxNCartesian(void) const;
+        int MaxNFunctions(void) const;
 
         //! \todo make a printer class?
         void Print(void) const;
