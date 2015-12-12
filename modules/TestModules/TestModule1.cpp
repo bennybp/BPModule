@@ -31,7 +31,7 @@ void TestModule1::RunTest_(void)
     Output("    Wavefunction: %1%\n", Wfn().UniqueString());
     Output("   Cache entries: %1%\n", Cache().Size());
     for(const auto & it : Cache().GetKeys())
-        Output("                  > %1%  (%2%)\n", it, Cache().GetDemangledType(it));
+        Output("                  > %1%\n", it);
 
     Output("   double_opt_def:    %1%\n", Options().Get<double>("double_opt_def"));
     Output("      int_opt_def:    %1%\n", Options().Get<int>("int_opt_def"));

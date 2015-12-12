@@ -7,10 +7,11 @@
 #include <boost/python/module.hpp>
 #include <boost/python/class.hpp>
 #include <boost/python/def.hpp>
+#include <boost/python/overloads.hpp>
 #include <boost/python/return_internal_reference.hpp>
 
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
-#include "bpmodule/datastore/CalcData.hpp"
+#include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 
 
@@ -27,6 +28,20 @@ namespace datastore {
 namespace export_python {
 
 
+// These macros generate some compiler warnings
+PRAGMA_WARNING_PUSH
+PRAGMA_WARNING_IGNORE_UNUSED_LOCAL_TYPEDEFS
+PRAGMA_WARNING_IGNORE_SHADOW
+
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CacheData_HasKeyPy_Overloads, HasKeyPy, 1, 3)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CacheData_GetCopyPy_Overloads, GetCopyPy, 1, 3)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CacheData_GetRefPy_Overloads, GetRefPy, 1, 3)
+BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CacheData_Set_Overloads, Set, 2, 3)
+
+PRAGMA_WARNING_POP
+
+
+
 BOOST_PYTHON_MODULE(datastore)
 {
     class_<Wavefunction>("Wavefunction", no_init) //! \todo python init for wfn?
@@ -41,10 +56,6 @@ BOOST_PYTHON_MODULE(datastore)
     def("MakeUIDPointer", MakeUIDPointerPy);
 
     /*
-     * GetRef() is not exported to python. This is because python does not enforce
-     * const semantics, which could lead to behavior where the underlying data
-     * is changed. This goes against the "immutability" of the PropertyMap and CalcData.
-     */
     ////////////////////////////////////////
     // CalcData
     // Can just store boost::python::object
@@ -61,6 +72,23 @@ BOOST_PYTHON_MODULE(datastore)
     .def("GetRef", static_cast<const boost::python::object &(CalcData::*)(const std::string &) const>(&CalcData::GetRef), return_internal_reference<>()) // copy it?
     .def("Set", static_cast<void(CalcData::*)(const std::string &, const boost::python::object &)>(&CalcData::Set))
     .def("SetRef", static_cast<void(CalcData::*)(const CalcData &, const std::string &, const std::string &)>(&CalcData::SetRef))
+    ;
+    */
+
+    
+    ////////////////////////////////////////
+    // CacheData
+    // Can just store boost::python::object
+    ////////////////////////////////////////
+    class_<CacheData>("CacheData", no_init)
+    .def("CountKey", &CacheData::CountKey)
+    .def("Size", &CacheData::Size)
+    .def("GetKeys", &CacheData::GetKeys)
+    .def("Erase", &CacheData::Erase)
+    .def("HasKey", &CacheData::HasKeyPy, CacheData_HasKeyPy_Overloads())
+    .def("GetCopy", &CacheData::GetCopyPy, CacheData_GetCopyPy_Overloads())
+    .def("GetRef", &CacheData::GetRefPy, return_internal_reference<>(), CacheData_GetRefPy_Overloads())
+    .def("Set", static_cast<void(CacheData::*)(const std::string &, const boost::python::object &, const options::OptionMap &)>(&CacheData::Set), CacheData_Set_Overloads())
     ;
 
 }

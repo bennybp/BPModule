@@ -159,7 +159,7 @@ class ModuleBase
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        datastore::CalcData & Cache(void) const noexcept;
+        datastore::CacheData & Cache(void) const noexcept;
 
 
 
@@ -277,7 +277,7 @@ class ModuleBase
         datastore::GraphNode * graphnode_;
 
         //! My cache
-        datastore::CalcData * cache_;
+        datastore::CacheData * cache_;
 
 
         ////////////////////
@@ -310,7 +310,7 @@ class ModuleBase
 
         /*! \brief Set the cache object to use
          */
-        void SetCache_(datastore::CalcData * cache) noexcept;
+        void SetCache_(datastore::CacheData * cache) noexcept;
 
 
         /*! \brief Get all module information stored on the graph

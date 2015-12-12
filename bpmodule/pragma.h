@@ -23,6 +23,7 @@ extern "C" {
     #define PRAGMA_WARNING_IGNORE_SHADOW                       _Pragma("warning(disable:1599)")
     #define PRAGMA_WARNING_IGNORE_EXTRA_SEMICOLON              // does not have warning for intel
     #define PRAGMA_WARNING_IGNORE_REDECLARED_INLINE            _Pragma("warning(disable:522)")
+    #define PRAGMA_WARNING_IGNORE_UNUSED_LOCAL_TYPEDEFS        //! \todo add me
 
 #elif defined(__GNUC__) || defined(__GNUG__)
 
@@ -40,6 +41,7 @@ extern "C" {
     #define PRAGMA_WARNING_IGNORE_SHADOW                       _Pragma("GCC diagnostic ignored \"-Wshadow\"")
     #define PRAGMA_WARNING_IGNORE_EXTRA_SEMICOLON              _Pragma("GCC diagnostic ignored \"-Wpedantic\"")
     #define PRAGMA_WARNING_IGNORE_REDECLARED_INLINE            // does not have warning for GCC
+    #define PRAGMA_WARNING_IGNORE_UNUSED_LOCAL_TYPEDEFS        _Pragma("GCC diagnostic ignored \"-Wunused-local-typedefs\"")
 
 #endif
 

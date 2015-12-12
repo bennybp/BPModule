@@ -12,7 +12,7 @@
 #include <atomic>
 
 #include "bpmodule/datastore/GraphNodeData.hpp"
-#include "bpmodule/datastore/CalcData.hpp"
+#include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/modulelocator/ScopedModule.hpp"
 #include "bpmodule/exception/ModuleCreateException.hpp"
 #include "bpmodule/exception/ModuleLocatorException.hpp"
@@ -273,7 +273,7 @@ class ModuleLocator
          *
          * \todo is this enough to guarantee uniqueness?
          */
-        std::unordered_map<std::string, datastore::CalcData> cachemap_;
+        std::unordered_map<std::string, datastore::CacheData> cachemap_;
 
 
         /*! \brief Obtain a module or throw exception

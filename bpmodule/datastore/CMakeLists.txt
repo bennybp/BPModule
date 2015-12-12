@@ -10,8 +10,7 @@ set(BPMODULE_DATASTORE_HEADERS
             RegisterUIDPointer.hpp
             Wavefunction.hpp
             GraphNodeData.hpp
-            CalcData.hpp
-            PropertyMap.hpp
+            CacheData.hpp
             GenericHolder.hpp
             GenericBase.hpp
    )

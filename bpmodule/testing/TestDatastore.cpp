@@ -6,9 +6,9 @@
 
 #include "bpmodule/testing/TestingBase.hpp"
 #include "bpmodule/testing/TestDatastore.hpp"
-#include "bpmodule/datastore/CalcData.hpp"
+#include "bpmodule/datastore/CacheData.hpp"
 
-using bpmodule::datastore::CalcData;
+using bpmodule::datastore::CacheData;
 
 namespace bpmodule {
 namespace testing {

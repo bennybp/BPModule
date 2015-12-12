@@ -15,7 +15,7 @@ using bpmodule::modulelocator::ModuleInfo;
 using bpmodule::datastore::Wavefunction;
 using bpmodule::datastore::GraphNodeData;
 using bpmodule::datastore::GraphNode;
-using bpmodule::datastore::CalcData;
+using bpmodule::datastore::CacheData;
 using bpmodule::exception::GeneralException;
 
 
@@ -144,7 +144,7 @@ boost::python::object ModuleBase::CreateChildModulePy(const std::string & key) c
     return mlocator_->GetModulePy(key, id_);
 }
 
-CalcData & ModuleBase::Cache(void) const noexcept
+CacheData & ModuleBase::Cache(void) const noexcept
 {
     if(cache_ == nullptr)
         throw std::logic_error("Developer error - cache_ is null for a module!");
@@ -167,7 +167,7 @@ void ModuleBase::SetGraphNode_(datastore::GraphNode * node) noexcept
     graphnode_ = node;
 }
 
-void ModuleBase::SetCache_(datastore::CalcData * cache) noexcept
+void ModuleBase::SetCache_(datastore::CacheData * cache) noexcept
 {
     cache_ = cache;
 }
