@@ -13,7 +13,7 @@
 #include "bpmodule/exception/ModuleLocatorException.hpp"
 
 
-using bpmodule::options::OptionMap;
+using bpmodule::datastore::OptionMap;
 using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::exception::GeneralException;
 using bpmodule::exception::ModuleLocatorException;

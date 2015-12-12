@@ -18,7 +18,7 @@
 
 using bpmodule::modulelocator::ModuleLocator;
 using bpmodule::modulelocator::ModuleInfo;
-using bpmodule::options::OptionMap;
+using bpmodule::datastore::OptionMap;
 
 using namespace boost::python;
 

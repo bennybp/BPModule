@@ -5,10 +5,10 @@
  */
 
 
-#include "bpmodule/options/OptionBase.hpp"
+#include "bpmodule/datastore/OptionBase.hpp"
 
 namespace bpmodule {
-namespace options {
+namespace datastore {
 namespace detail {
 
 
@@ -59,5 +59,5 @@ bool OptionBase::HasIssues(void) const
 
 
 } //closing namespace detail
-} //closing namespace options
+} //closing namespace datastore
 } //closing namespace bpmodule

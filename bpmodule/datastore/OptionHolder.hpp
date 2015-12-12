@@ -10,11 +10,11 @@
 
 #include <functional>
 
-#include "bpmodule/options/OptionBase.hpp"
+#include "bpmodule/datastore/OptionBase.hpp"
 
 
 namespace bpmodule {
-namespace options {
+namespace datastore {
 namespace detail {
 
 
@@ -173,7 +173,7 @@ OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::
 
 
 } //closing namespace detail
-} //closing namespace options
+} //closing namespace datastore
 } //closing namespace bpmodule
 
 

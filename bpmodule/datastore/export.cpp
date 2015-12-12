@@ -9,10 +9,13 @@
 #include <boost/python/def.hpp>
 #include <boost/python/overloads.hpp>
 #include <boost/python/return_internal_reference.hpp>
+#include <boost/python/copy_const_reference.hpp>
+#include <boost/python/dict.hpp>
 
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
+#include "bpmodule/datastore/OptionMap.hpp"
 
 
 
@@ -44,6 +47,35 @@ PRAGMA_WARNING_POP
 
 BOOST_PYTHON_MODULE(datastore)
 {
+    /////////////////////////
+    // OptionMap
+    /////////////////////////
+    // OptionMap always returns copies, so this should be safe
+    class_<OptionMap>("OptionMap", init<const std::string &, const boost::python::dict &, const boost::python::object &>())
+    .def("MaxInt", &OptionMap::MaxInt)
+    .def("MinInt", &OptionMap::MinInt)
+    .def("MaxFloat", &OptionMap::MaxFloat)
+    .def("MinFloat", &OptionMap::MinFloat)
+    .def("Get", &OptionMap::GetPy)
+    .def("Has", &OptionMap::Has)
+    .def("HasKey", &OptionMap::HasKey)
+    .def("Size", &OptionMap::Size)
+    .def("ResetToDefault", &OptionMap::ResetToDefault)
+    .def("AllReqSet", &OptionMap::AllReqSet)
+    .def("Print", &OptionMap::Print)
+    .def("Change", &OptionMap::ChangePy)
+    .def("ChangeDict", &OptionMap::ChangePyDict)
+    .def("LockValid", &OptionMap::LockValid)
+    .def("Validate", &OptionMap::Validate)
+    .def("ModuleKey", &OptionMap::ModuleKey, return_value_policy<copy_const_reference>())
+    .def("Compare", &OptionMap::Compare)
+    .def("CompareSelect", &OptionMap::CompareSelectPy)
+    .def("HasIssues", &OptionMap::HasIssues);
+
+
+    ///////////////////////
+    // Wavefunction
+    ///////////////////////
     class_<Wavefunction>("Wavefunction", no_init) //! \todo python init for wfn?
     .def("UniqueString", &Wavefunction::UniqueString)
     .def_readwrite("basis", &Wavefunction::basis)
@@ -54,6 +86,8 @@ BOOST_PYTHON_MODULE(datastore)
   
 
     def("MakeUIDPointer", MakeUIDPointerPy);
+
+
 
     /*
     ////////////////////////////////////////
@@ -88,7 +122,7 @@ BOOST_PYTHON_MODULE(datastore)
     .def("HasKey", &CacheData::HasKeyPy, CacheData_HasKeyPy_Overloads())
     .def("GetCopy", &CacheData::GetCopyPy, CacheData_GetCopyPy_Overloads())
     .def("GetRef", &CacheData::GetRefPy, return_internal_reference<>(), CacheData_GetRefPy_Overloads())
-    .def("Set", static_cast<void(CacheData::*)(const std::string &, const boost::python::object &, const options::OptionMap &)>(&CacheData::Set), CacheData_Set_Overloads())
+    .def("Set", static_cast<void(CacheData::*)(const std::string &, const boost::python::object &, const OptionMap &)>(&CacheData::Set), CacheData_Set_Overloads())
     ;
 
 }

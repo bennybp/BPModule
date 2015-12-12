@@ -102,14 +102,14 @@ class ModuleBase
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        options::OptionMap & Options(void);
+        datastore::OptionMap & Options(void);
 
 
         /*! \brief Get the OptionMap object for this module
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        const options::OptionMap & Options(void) const;
+        const datastore::OptionMap & Options(void) const;
 
         /*! \brief Print the information for this module
          *

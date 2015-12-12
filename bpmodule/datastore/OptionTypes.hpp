@@ -14,7 +14,7 @@
 #include "bpmodule/math/Cast.hpp"
 
 namespace bpmodule {
-namespace options {
+namespace datastore {
 namespace detail {
 
 
@@ -297,7 +297,7 @@ struct OptionConvert<std::vector<T>, false>
 
 
 } // close namespace detail
-} // close namespace options
+} // close namespace datastore
 } // close namespace bpmodule
 
 #endif

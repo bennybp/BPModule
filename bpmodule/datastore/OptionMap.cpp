@@ -8,7 +8,7 @@
 #include "bpmodule/python_helper/Call.hpp"
 
 
-#include "bpmodule/options/OptionMap.hpp"
+#include "bpmodule/datastore/OptionMap.hpp"
 #include "bpmodule/output/Output.hpp"
 
 
@@ -18,7 +18,7 @@ using namespace bpmodule::output;
 
 
 namespace bpmodule {
-namespace options {
+namespace datastore {
 
 
 
@@ -418,6 +418,6 @@ void OptionMap::Print(void) const
 
 
 
-} // close namespace options
+} // close namespace datastore
 } // close namespace bpmodule
 

@@ -23,7 +23,6 @@ from . import python_helper
 from . import mangle
 from . import util
 from . import output
-from . import options
 from . import parallel
 from . import datastore
 from . import math

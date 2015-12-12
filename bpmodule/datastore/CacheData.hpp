@@ -13,7 +13,7 @@
 #include "bpmodule/exception/DataStoreException.hpp"
 #include "bpmodule/datastore/GenericHolder.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
-#include "bpmodule/options/OptionMap.hpp"
+#include "bpmodule/datastore/OptionMap.hpp"
 //! \todo split out python stuff?
 
 
@@ -46,7 +46,7 @@ class CacheData
          * \return True if the key exists, false otherwise
          */
         bool HasKey(const std::string & key,
-                    const options::OptionMap & opt = options::OptionMap(),
+                    const OptionMap & opt = OptionMap(),
                     const std::vector<std::string> & sigopt = std::vector<std::string>()) const
         {
             auto range = cmap_.equal_range(key);
@@ -58,7 +58,7 @@ class CacheData
 
 
         bool HasKeyPy(const std::string & key,
-                      const options::OptionMap & opt = options::OptionMap(),
+                      const OptionMap & opt = OptionMap(),
                       const boost::python::list & sigopt = boost::python::list()) const
         {
             return HasKey(key, opt, python_helper::ConvertToCpp<std::vector<std::string>>(sigopt));
@@ -109,7 +109,7 @@ class CacheData
          */
         template<typename T>
         const T & GetRef(const std::string & key,
-                         const options::OptionMap & opt = options::OptionMap(),
+                         const OptionMap & opt = OptionMap(),
                          const std::vector<std::string> & sigopt = std::vector<std::string>()) const
         {
             const detail::GenericHolder<T> * ph = GetOrThrow_Cast_<T>(key, opt, sigopt);
@@ -118,7 +118,7 @@ class CacheData
 
 
         const boost::python::object & GetRefPy(const std::string & key,
-                                               const options::OptionMap & opt = options::OptionMap(),
+                                               const OptionMap & opt = OptionMap(),
                                                const boost::python::list & sigopt = boost::python::list()) const
         {
             return GetRef<boost::python::object>(key, opt,
@@ -138,7 +138,7 @@ class CacheData
          * \return A copy of the data
          */
         template<typename T>
-        T GetCopy(const std::string & key, const options::OptionMap & opt,
+        T GetCopy(const std::string & key, const OptionMap & opt,
                   const std::vector<std::string> & sigopt) const
         {
             return GetRef<T>(key, opt, sigopt);
@@ -147,7 +147,7 @@ class CacheData
 
 
         boost::python::object GetCopyPy(const std::string & key,
-                                        const options::OptionMap & opt = options::OptionMap(),
+                                        const OptionMap & opt = OptionMap(),
                                         const boost::python::list & sigopt = boost::python::list()) const
         {
             return GetRef<boost::python::object>(key, opt,
@@ -170,7 +170,7 @@ class CacheData
          */
         template<typename T>
         void Set(const std::string & key, const T & value,
-                 const options::OptionMap & opt = options::OptionMap())
+                 const OptionMap & opt = OptionMap())
         {
             Set_(key, detail::GenericBasePtr(new detail::GenericHolder<T>(value)), opt);
         }
@@ -183,7 +183,7 @@ class CacheData
          */
         template<typename T>
         void Take(const std::string & key, T && value,
-                  const options::OptionMap & opt = options::OptionMap())
+                  const OptionMap & opt = OptionMap())
         {
             Set_(key, detail::GenericBasePtr(new detail::GenericHolder<T>(value)), opt);
         }
@@ -221,7 +221,7 @@ class CacheData
         struct CacheDataEntry
         {
             detail::GenericBasePtr value;      //! The stored data
-            options::OptionMap options;        //! Options used for the data
+            OptionMap options;        //! Options used for the data
         };
 
 
@@ -246,7 +246,7 @@ class CacheData
          * \return CacheDataEntry containing the data for the given key
          */ 
         CacheDataEntry & GetOrThrow_(const std::string & key,
-                                     const options::OptionMap & opt,
+                                     const OptionMap & opt,
                                      const std::vector<std::string> & sigopt)
         {
             if(cmap_.count(key))
@@ -278,7 +278,7 @@ class CacheData
 
         //! \copydoc GetOrThrow_
         const CacheDataEntry & GetOrThrow_(const std::string & key,
-                                           const options::OptionMap & opt,
+                                           const OptionMap & opt,
                                            const std::vector<std::string> & sigopt) const
         {
             if(cmap_.count(key))
@@ -319,7 +319,7 @@ class CacheData
          */ 
         template<typename T>
         const detail::GenericHolder<T> * GetOrThrow_Cast_(const std::string & key,
-                                                          const options::OptionMap & opt,
+                                                          const OptionMap & opt,
                                                           const std::vector<std::string> & sigopt) const
         {
             const CacheDataEntry & pme = GetOrThrow_(key, opt, sigopt);
@@ -342,7 +342,7 @@ class CacheData
          * \param [in] key Key of the data to set
          * \param [in] value Pointer to the data to set
          */ 
-        void Set_(const std::string & key, detail::GenericBasePtr && value, const options::OptionMap & opt)
+        void Set_(const std::string & key, detail::GenericBasePtr && value, const OptionMap & opt)
         {
             // emplace has strong exception guarantee
             cmap_.emplace(key, CacheDataEntry{value, opt});

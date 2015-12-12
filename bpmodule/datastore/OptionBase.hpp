@@ -16,7 +16,7 @@
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 namespace bpmodule {
-namespace options {
+namespace datastore {
 namespace detail {
 
 
@@ -296,7 +296,7 @@ class OptionBase
 
 
 } //closing namespace detail
-} //closing namespace options
+} //closing namespace datastore
 } //closing namespace bpmodule
 
 #endif

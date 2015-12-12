@@ -10,14 +10,14 @@
 
 #include <map>
 
-#include "bpmodule/options/OptionTypes.hpp"
-#include "bpmodule/options/OptionHolder.hpp"
+#include "bpmodule/datastore/OptionTypes.hpp"
+#include "bpmodule/datastore/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/util/StringUtil.hpp"
 
 
 namespace bpmodule {
-namespace options {
+namespace datastore {
 
 
 //! Holds top-level issues with an OptionMap
@@ -504,7 +504,7 @@ class OptionMap
 
 
 
-} // close namespace options
+} // close namespace datastore
 } // close namespace bpmodule
 
 

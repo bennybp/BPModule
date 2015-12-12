@@ -71,12 +71,12 @@ std::string ModuleBase::Version(void) const
 }
 
 
-const options::OptionMap & ModuleBase::Options(void) const
+const datastore::OptionMap & ModuleBase::Options(void) const
 {
     return MInfo_().options;
 }
 
-options::OptionMap & ModuleBase::Options(void)
+datastore::OptionMap & ModuleBase::Options(void)
 {
     return MInfo_().options;
 }
