@@ -42,6 +42,8 @@ BOOST_PYTHON_MODULE(options)
     .def("LockValid", &OptionMap::LockValid)
     .def("Validate", &OptionMap::Validate)
     .def("ModuleKey", &OptionMap::ModuleKey, return_value_policy<copy_const_reference>())
+    .def("Compare", &OptionMap::Compare)
+    .def("CompareSelect", &OptionMap::CompareSelectPy)
     .def("HasIssues", &OptionMap::HasIssues);
 }
 

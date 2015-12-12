@@ -57,6 +57,7 @@ bool OptionBase::HasIssues(void) const
 }
 
 
+
 } //closing namespace detail
 } //closing namespace options
 } //closing namespace bpmodule

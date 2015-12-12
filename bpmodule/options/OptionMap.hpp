@@ -289,6 +289,19 @@ class OptionMap
 
 
 
+        /*! \brief Compare two OptionMap
+         * 
+         * Checks that all keys exist in both maps and that
+         * all values match. It doesn't matter where the value
+         * comes from (default or user-supplied), just that
+         * the value obtained from Get() match
+         */
+        bool Compare(const OptionMap & rhs) const; 
+
+        /*! \brief Compare two OptionMap, but only with some keys
+         */
+        bool CompareSelect(const OptionMap & rhs, const std::vector<std::string> & selection) const;
+
 
         /////////////////////////////
         // Python-related functions
@@ -349,6 +362,9 @@ class OptionMap
 
 
 
+        /*! \brief Compare two OptionMap, but only with some keys
+         */
+        bool CompareSelectPy(const OptionMap & rhs, const boost::python::list & selection) const;
 
 
         //////////////////////////////////////////

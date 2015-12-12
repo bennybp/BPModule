@@ -134,7 +134,7 @@ class OptionHolder : public OptionBase
 
         virtual OptionIssues GetIssues(void) const;
 
-
+        virtual bool Compare(const OptionBase & rhs) const;
 
         /////////////////////////////////////////
         // Python-related functions

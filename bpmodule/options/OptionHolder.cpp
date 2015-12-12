@@ -197,6 +197,28 @@ void OptionHolder<T>::ResetToDefault(void) noexcept
 
 
 template<typename T>
+bool OptionHolder<T>::Compare(const OptionBase & rhs) const
+{
+    const OptionHolder<T> * op = dynamic_cast<const OptionHolder<T> *>(&rhs);
+
+    if(op == nullptr)
+        return false;
+
+    PRAGMA_WARNING_PUSH
+    PRAGMA_WARNING_IGNORE_FP_EQUALITY
+
+    if(this->HasValue() && op->HasValue())
+        return (this->Get() == op->Get());
+    else if( (!this->HasValue()) && (!op->HasValue()))
+        return true; // neither have a value, so that's ok
+    else
+        return false; // one has a value, the other doesn't
+
+    PRAGMA_WARNING_POP
+}
+
+
+template<typename T>
 void OptionHolder<T>::Print(void) const
 {
     // call the free function

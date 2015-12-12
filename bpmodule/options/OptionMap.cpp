@@ -206,6 +206,45 @@ bool OptionMap::HasIssues(void) const
 }
 
 
+bool OptionMap::Compare(const OptionMap & rhs) const
+{
+    //! \todo easier way?
+    std::vector<std::string> keys1, keys2;
+    for(const auto & it : opmap_)
+        keys1.push_back(it.first);
+    for(const auto & it : rhs.opmap_)
+        keys2.push_back(it.first);
+    if(keys1 != keys2)
+        return false;
+
+    for(const auto & it : opmap_)
+        if(!(rhs.opmap_.at(it.first)->Compare(*it.second)))
+            return false;
+
+    return true;
+}
+
+
+bool OptionMap::CompareSelect(const OptionMap & rhs, const std::vector<std::string> & selection) const
+{
+    //! \todo easier way?
+    //! \todo Too strict or not strict enough? What if one doesn't have it but the other doesn't have a value?
+    for(const auto & it : selection)
+    {
+        // if one has it but not the other
+        if(HasKey(it) != rhs.HasKey(it))
+            return false;
+
+        // if they both have it
+        if(HasKey(it) && rhs.HasKey(it))
+            if(opmap_.at(it)->Compare(*rhs.opmap_.at(it)) == false)
+                return false;
+
+        // if neither have it that's ok?
+    }
+
+    return true;
+}
 
 
 
@@ -344,6 +383,11 @@ boost::python::object OptionMap::GetPy(const std::string & key) const
 }
 
 
+bool OptionMap::CompareSelectPy(const OptionMap & rhs, const boost::python::list & selection) const
+{
+    //! \todo exceptions
+    return CompareSelect(rhs, ConvertToCpp<std::vector<std::string>>(selection));
+}
 
 
 

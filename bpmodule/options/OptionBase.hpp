@@ -139,6 +139,7 @@ class OptionBase
         virtual void ResetToDefault(void) noexcept = 0;
 
 
+
         /*! \brief Get any issues for this option
          *
          * Checks to see if it is set (if required), and calls the validator.
@@ -154,12 +155,9 @@ class OptionBase
 
 
 
-        /*! \brief Test if this option has issues
-         *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
-         *        with the validation function
+        /*! \brief Compare with another OptionBase object
          */
-        bool HasIssues(void) const;
+        virtual bool Compare(const OptionBase & rhs) const = 0; 
 
 
 
@@ -255,6 +253,15 @@ class OptionBase
          * \exnothrow
          */
         const std::string & Help(void) const noexcept;
+
+
+
+        /*! \brief Test if this option has issues
+         *
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with the validation function
+         */
+        bool HasIssues(void) const;
 
 
     protected:
