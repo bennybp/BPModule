@@ -6,7 +6,7 @@ namespace bpmodule {
 namespace exception {
 
 PRAGMA_WARNING_PUSH
-PRAGMA_WARNING_IGORE_UNUSED_PARAMETERS
+PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS
 
 /*! \brief Asserts that a condition is true, throwing an exception if it is not
  *
@@ -23,7 +23,7 @@ void Assert(bool condition, const std::string & description, Targs &&... args)
     #endif
 }
 
-PRAGMA_WARNING_IGORE_UNUSED_POP
+PRAGMA_WARNING_POP
 
 
 } // close namespace exception
