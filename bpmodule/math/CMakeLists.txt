@@ -4,6 +4,7 @@ set(BPMODULE_MATH_FILES
    )
   
 set(BPMODULE_MATH_HEADERS
+            MinMax.hpp
             Cast.hpp
             ExactCast.hpp
             Factorial.hpp
