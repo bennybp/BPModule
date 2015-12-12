@@ -89,8 +89,8 @@ BOOST_PYTHON_MODULE(modulebase)
     class_<OneElectronIntegral, bases<ModuleBase>, boost::noncopyable>("OneElectronIntegral", init<PyObject *, unsigned long>())
     .def("SetBases", &OneElectronIntegral::SetBases)
     .def("Calculate", &OneElectronIntegral::Calculate)
-    .def("GetIntegralCount", &OneElectronIntegralIMPL::GetIntegralCount)
-    .def("GetBuf", &OneElectronIntegralIMPL::GetBufPy)
+    .def("GetIntegralCount", &OneElectronIntegral::GetIntegralCount)
+    .def("GetBuf", &OneElectronIntegral::GetBufPy)
     ;
 
 
