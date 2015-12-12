@@ -40,13 +40,28 @@ class OneElectronIntegralIMPL : public ModuleBase
         }
 
 
-        //! \todo don't know about passing outbuf to python
-        long Calculate(int deriv, int shell1, int shell2, double * outbuf)
+        long Calculate(int deriv, int shell1, int shell2)
         {
             return ModuleBase::CallFunction(&OneElectronIntegralIMPL::Calculate_, deriv, 
                                                                                   shell1,
-                                                                                  shell2,
-                                                                                  outbuf);
+                                                                                  shell2);
+        }
+
+        const double * GetBuf(void)
+        {
+            return ModuleBase::CallFunction(&OneElectronIntegralIMPL::GetBuf_);
+        }
+
+
+        long GetIntegralCount(void)
+        {
+            return ModuleBase::CallFunction(&OneElectronIntegralIMPL::GetIntegralCount_);
+        }
+
+
+        boost::python::object GetBufPy(void)
+        {
+            return python_helper::ConvertToPy(GetBuf(), GetIntegralCount());  
         }
 
 
@@ -63,11 +78,21 @@ class OneElectronIntegralIMPL : public ModuleBase
 
 
         //! \copydoc Calculate
-        virtual long Calculate_(int deriv, int shell1, int shell2, double * outbuf)
+        virtual long Calculate_(int deriv, int shell1, int shell2)
         {
-            return ModuleBase::CallPyMethod<long>("Calculate_", deriv, shell1, shell2, outbuf);
+            return ModuleBase::CallPyMethod<long>("Calculate_", deriv, shell1, shell2);
         }
         
+        virtual const double * GetBuf_(void)
+        {
+            return ModuleBase::CallPyMethod<const double *>("GetBuf_");
+        }
+
+
+        virtual long GetIntegralCount_(void)
+        {
+            return ModuleBase::CallPyMethod<long>("GetIntegralCount_");
+        }
 
     private:
         virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)

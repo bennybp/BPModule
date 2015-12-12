@@ -75,6 +75,8 @@ BOOST_PYTHON_MODULE(modulebase)
     class_<OneElectronIntegralIMPL, bases<ModuleBase>, boost::noncopyable>("OneElectronIntegralIMPL", init<PyObject *, unsigned long>())
     .def("SetBases", &OneElectronIntegralIMPL::SetBases)
     .def("Calculate", &OneElectronIntegralIMPL::Calculate)
+    .def("GetIntegralCount", &OneElectronIntegralIMPL::GetIntegralCount)
+    .def("GetBuf", &OneElectronIntegralIMPL::GetBufPy)
     ;
 
 
@@ -87,6 +89,8 @@ BOOST_PYTHON_MODULE(modulebase)
     class_<OneElectronIntegral, bases<ModuleBase>, boost::noncopyable>("OneElectronIntegral", init<PyObject *, unsigned long>())
     .def("SetBases", &OneElectronIntegral::SetBases)
     .def("Calculate", &OneElectronIntegral::Calculate)
+    .def("GetIntegralCount", &OneElectronIntegralIMPL::GetIntegralCount)
+    .def("GetBuf", &OneElectronIntegralIMPL::GetBufPy)
     ;
 
 
@@ -97,7 +101,9 @@ BOOST_PYTHON_MODULE(modulebase)
 
     class_<TwoElectronIntegralIMPL, bases<ModuleBase>, boost::noncopyable>("TwoElectronIntegralIMPL", init<PyObject *, unsigned long>())
     .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
-    .def("Calculate", &TwoElectronIntegralIMPL::CalculatePy)
+    .def("Calculate", &TwoElectronIntegralIMPL::Calculate)
+    .def("GetIntegralCount", &TwoElectronIntegralIMPL::GetIntegralCount)
+    .def("GetBuf", &TwoElectronIntegralIMPL::GetBufPy)
     ;
 
 
@@ -109,6 +115,8 @@ BOOST_PYTHON_MODULE(modulebase)
     class_<TwoElectronIntegral, bases<ModuleBase>, boost::noncopyable>("TwoElectronIntegral", init<PyObject *, unsigned long>())
     .def("SetBases", &TwoElectronIntegral::SetBases)
     .def("Calculate", &TwoElectronIntegral::Calculate)
+    .def("GetIntegralCount", &TwoElectronIntegral::GetIntegralCount)
+    .def("GetBuf", &TwoElectronIntegral::GetBufPy)
     ;
 
 }

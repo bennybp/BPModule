@@ -14,7 +14,7 @@
 namespace bpmodule {
 namespace modulebase {
 
-/*! \brief Two-electron integral implementation new module
+/*! \brief Two-electron integral implementation
  *
  */
 class TwoElectronIntegralIMPL : public ModuleBase
@@ -43,30 +43,31 @@ class TwoElectronIntegralIMPL : public ModuleBase
         }
 
 
-        //! \todo don't know about passing outbuf to python
-        long Calculate(int deriv, int shell1, int shell2, int shell3, int shell4, double * outbuf)
+        long Calculate(int deriv, int shell1, int shell2, int shell3, int shell4)
         {
             return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::Calculate_, deriv, 
                                                                                   shell1,
                                                                                   shell2,
                                                                                   shell3,
-                                                                                  shell4,
-                                                                                  outbuf);
+                                                                                  shell4);
         }
 
 
-        //! \todo mostly for testing?
-        boost::python::object CalculatePy(int deriv, int shell1, int shell2, int shell3, int shell4)
+        const double * GetBuf(void)
         {
-            static std::vector<double> out(30000); // 1st derivative of ffff?
-            long r = ModuleBase::CallFunction(&TwoElectronIntegralIMPL::Calculate_, deriv, 
-                                                                                    shell1,
-                                                                                    shell2,
-                                                                                    shell3,
-                                                                                    shell4,
-                                                                                    out.data());
+            return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::GetBuf_);
+        }
 
-            return python_helper::ConvertToPy(std::vector<double>(out.begin(), out.begin()+r));
+
+        long GetIntegralCount(void)
+        {
+            return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::GetIntegralCount_);
+        }
+
+
+        boost::python::object GetBufPy(void)
+        {
+            return python_helper::ConvertToPy(GetBuf(), GetIntegralCount());  
         }
 
 
@@ -86,9 +87,21 @@ class TwoElectronIntegralIMPL : public ModuleBase
 
 
         //! \copydoc Calculate
-        virtual long Calculate_(int deriv, int shell1, int shell2, int shell3, int shell4, double * outbuf)
+        virtual long Calculate_(int deriv, int shell1, int shell2, int shell3, int shell4)
         {
-            return ModuleBase::CallPyMethod<long>("Calculate_", deriv, shell1, shell2, shell3, shell4, outbuf);
+            return ModuleBase::CallPyMethod<long>("Calculate_", deriv, shell1, shell2, shell3, shell4);
+        }
+
+
+        virtual const double * GetBuf_(void)
+        {
+            return ModuleBase::CallPyMethod<const double *>("GetBuf_");
+        }
+
+
+        virtual long GetIntegralCount_(void)
+        {
+            return ModuleBase::CallPyMethod<long>("GetIntegralCount_");
         }
         
 
