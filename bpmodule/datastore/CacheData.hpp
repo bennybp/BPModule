@@ -117,6 +117,7 @@ class CacheData
         }
 
 
+        //! \todo Does returning a reference to a python object make sense?
         const boost::python::object & GetRefPy(const std::string & key,
                                                const OptionMap & opt = OptionMap(),
                                                const boost::python::list & sigopt = boost::python::list()) const
