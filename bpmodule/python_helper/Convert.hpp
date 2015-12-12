@@ -368,6 +368,27 @@ boost::python::object ConvertToPy(const T & obj)
 
 
 
+/*! \brief Convert a plain array of C++ objects to a boost::python::object
+ *
+ * \throw exception::PythonConvertException if the
+ *        data could not be converted
+ *
+ * \tparam T The C++ type to convert from
+ *
+ * \param [in] obj An array of objects
+ * \param [in] n Length of the array
+ * \return Converted data as a boost::python::object
+ */
+template<typename T>
+boost::python::object ConvertToPy(const T * const obj, size_t n)
+{
+    boost::python::list lst;
+    for(size_t i = 0; i < n; i++)
+        lst.append(PyConverter<T>::ConvertToPy(obj[i]));
+    return lst;
+}
+
+
 
 
 /*! \brief Use to create to_python converters
