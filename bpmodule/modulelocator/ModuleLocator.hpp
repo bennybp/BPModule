@@ -163,8 +163,8 @@ class ModuleLocator
 
                 throw exception::ModuleCreateException("Bad cast for module", mi.path,
                                                        key, mi.name, 
-                                                       "fromtype", mangle::DemangleCppType(mod.first),
-                                                       "totype", mangle::DemangleCppType<T *>());
+                                                       "fromtype", util::DemangleCppType(mod.first),
+                                                       "totype", util::DemangleCppType<T *>());
             }
 
             ScopedModule<T> ret(dptr, mod.second); // construction shouldn't throw?

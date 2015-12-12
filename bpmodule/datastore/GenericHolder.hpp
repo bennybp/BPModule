@@ -8,7 +8,7 @@
 #ifndef _GUARD_GENERICHOLDER_HPP_
 #define _GUARD_GENERICHOLDER_HPP_
 
-#include "bpmodule/mangle/Mangle.hpp"
+#include "bpmodule/util/Mangle.hpp"
 #include "bpmodule/datastore/GenericBase.hpp"
 
 
@@ -104,7 +104,7 @@ class GenericHolder : public GenericBase
         
         virtual std::string DemangledType(void) const
         {
-            return mangle::DemangleCppOrPyType(obj);
+            return util::DemangleCppOrPyType(obj);
         }
 
 

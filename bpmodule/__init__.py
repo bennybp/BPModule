@@ -20,7 +20,6 @@ from . import exception
 # Probably not - there are circular dependencies
 # (modulelocator and modulebase, for example)
 from . import python_helper
-from . import mangle
 from . import util
 from . import output
 from . import parallel

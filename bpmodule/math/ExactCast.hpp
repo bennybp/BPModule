@@ -5,7 +5,7 @@
 
 #include "bpmodule/pragma.h"
 #include "bpmodule/exception/MathException.hpp"
-#include "bpmodule/mangle/Mangle.hpp"
+#include "bpmodule/util/Mangle.hpp"
 
 
 
@@ -63,13 +63,13 @@ struct ExactCast
                     if(s > tmax)
                         throw exception::MathException("Error in numeric_cast",
                                                        "desc", "source value overflows target type",
-                                                       "ifrom", mangle::DemangleCppType<Source>(),
-                                                       "ito", mangle::DemangleCppType<Target>());
+                                                       "ifrom", util::DemangleCppType<Source>(),
+                                                       "ito", util::DemangleCppType<Target>());
                     else if(s < tmin)
                         throw exception::MathException("Error in numeric_cast",
                                                        "desc", "source value underflows target type",
-                                                       "ifrom", mangle::DemangleCppType<Source>(),
-                                                       "ito", mangle::DemangleCppType<Target>());
+                                                       "ifrom", util::DemangleCppType<Source>(),
+                                                       "ito", util::DemangleCppType<Target>());
 
                     else // safe!
                         return static_cast<Target>(s);
@@ -81,8 +81,8 @@ struct ExactCast
                 if(s < 0)
                     throw exception::MathException("Error in numeric_cast",
                                                    "desc", "source value underflows target type",
-                                                   "ifrom", mangle::DemangleCppType<Source>(),
-                                                   "ito", mangle::DemangleCppType<Target>());
+                                                   "ifrom", util::DemangleCppType<Source>(),
+                                                   "ito", util::DemangleCppType<Target>());
 
                 
                 // going from smaller to larger type - ok (since s >= 0)
@@ -96,8 +96,8 @@ struct ExactCast
                     if(s > tmax)
                         throw exception::MathException("Error in numeric_cast",
                                                        "desc", "source value overflows target type",
-                                                       "ifrom", mangle::DemangleCppType<Source>(),
-                                                       "ito", mangle::DemangleCppType<Target>());
+                                                       "ifrom", util::DemangleCppType<Source>(),
+                                                       "ito", util::DemangleCppType<Target>());
 
                     else // safe!
                         return static_cast<Target>(s);
@@ -118,8 +118,8 @@ struct ExactCast
                     if(s > tmax)
                         throw exception::MathException("Error in numeric_cast",
                                                        "desc", "source value overflows target type",
-                                                       "ifrom", mangle::DemangleCppType<Source>(),
-                                                       "ito", mangle::DemangleCppType<Target>());
+                                                       "ifrom", util::DemangleCppType<Source>(),
+                                                       "ito", util::DemangleCppType<Target>());
 
                     else // safe!
                         return static_cast<Target>(s);
@@ -147,8 +147,8 @@ struct ExactCast
             else
                 throw exception::MathException("Error in numeric_cast",
                                                "desc", "Floating point conversion results in loss of precision",
-                                               "fpfrom", mangle::DemangleCppType<Source>(),
-                                               "fpto", mangle::DemangleCppType<Target>());
+                                               "fpfrom", util::DemangleCppType<Source>(),
+                                               "fpto", util::DemangleCppType<Target>());
             PRAGMA_WARNING_POP
         }
 

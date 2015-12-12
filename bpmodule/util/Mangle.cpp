@@ -6,10 +6,10 @@
 
 
 #include <cxxabi.h>
-#include "bpmodule/mangle/Mangle.hpp"
+#include "bpmodule/util/Mangle.hpp"
 
 namespace bpmodule {
-namespace mangle {
+namespace util {
 
 
 std::string DemangleCpp(const char * typestr)
@@ -34,5 +34,5 @@ std::string DemangleCpp(const char * typestr)
 }
 
 
-} // close namespace mangle
+} // close namespace util
 } // close namespace bpmodule

@@ -150,7 +150,7 @@ const char * OptionHolder<T>::Type(void) const noexcept
 template<typename T>
 std::string OptionHolder<T>::DemangledType(void) const
 {
-    return mangle::DemangleCppType<T>();
+    return util::DemangleCppType<T>();
 }
 
 

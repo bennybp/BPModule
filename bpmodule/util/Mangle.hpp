@@ -13,7 +13,7 @@
 #include "bpmodule/python_helper/Types.hpp"
 
 namespace bpmodule {
-namespace mangle {
+namespace util {
 
 
 /*! \brief Demangle a type string for a C++ object into something human-readable
@@ -76,7 +76,7 @@ std::string DemangleCppType(void)
 
 
 
-} // close namespace mangle
+} // close namespace util
 } // close namespace bpmodule
 
 #endif

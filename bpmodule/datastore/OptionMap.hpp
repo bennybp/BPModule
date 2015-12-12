@@ -465,7 +465,7 @@ class OptionMap
             if(oh == nullptr)
                 throw exception::OptionException("Bad cast", key,
                                                  "fromtype", ptr->DemangledType(),
-                                                 "totype", mangle::DemangleCppType<T>());
+                                                 "totype", util::DemangleCppType<T>());
 
             return oh;
         }
@@ -482,7 +482,7 @@ class OptionMap
             if(oh == nullptr)
                 throw exception::OptionException("Bad cast", key,
                                                  "fromtype", ptr->DemangledType(),
-                                                 "totype", mangle::DemangleCppType<T>());
+                                                 "totype", util::DemangleCppType<T>());
 
             return oh;
         }
