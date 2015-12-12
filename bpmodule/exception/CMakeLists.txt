@@ -4,6 +4,7 @@ set(BPMODULE_EXCEPTION_FILES
    )
 
 set(BPMODULE_EXCEPTION_HEADERS
+            Assert.hpp
             GeneralException.hpp
             MathException.hpp
             PythonConvertException.hpp
