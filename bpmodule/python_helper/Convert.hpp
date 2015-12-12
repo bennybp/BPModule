@@ -382,9 +382,25 @@ boost::python::object ConvertToPy(const T & obj)
 template<typename T>
 boost::python::object ConvertToPy(const T * const obj, size_t n)
 {
+    // this is not implemented in the same way as the others
+    // since we should never convert from a python list to 
+    // a plain array
     boost::python::list lst;
+
     for(size_t i = 0; i < n; i++)
-        lst.append(PyConverter<T>::ConvertToPy(obj[i]));
+    {
+        try 
+        {
+            lst.append(PyConverter<T>::ConvertToPy(obj[i]));
+        }
+        catch(exception::PythonConvertException & ex)
+        {
+            ex.AppendInfo("arrayfrom", mangle::DemangleCppType<T *>(),
+                          "element", i);
+            throw;
+        }
+    }
+
     return lst;
 }
 
