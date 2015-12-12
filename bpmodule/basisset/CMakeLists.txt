@@ -6,6 +6,7 @@ set(BPMODULE_BASISSET_FILES
    )
 
 set(BPMODULE_BASISSET_HEADERS
+            NCartesian.hpp
             GaussianShell.hpp
             BasisSet.hpp
             AMConvert.hpp

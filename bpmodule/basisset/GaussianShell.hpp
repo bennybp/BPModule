@@ -2,6 +2,7 @@
 #define _GUARD_GAUSSIANSHELL_HPP_
 
 #include <array>
+#include "bpmodule/basisset/NCartesian.hpp"
 
 namespace bpmodule {
 namespace basisset {
@@ -40,8 +41,8 @@ class GaussianBasisShell
         int AM(void) const noexcept { return am_; }
 
         int NPrim(void) const noexcept { return static_cast<int>(alphas_.size()); }
-        int NCartesian(void) const noexcept { return (((am_+1)*(am_+2)) >> 1); }
-        int NSpherical(void) const noexcept { return (2*am_+1); }
+        int NCartesian(void) const noexcept { return NCARTESIAN(am_); }
+        int NSpherical(void) const noexcept { return NSPHERICAL(am_); }
         int NFunctions(void) const noexcept { return (cart_ ? NCartesian() : NSpherical()); } 
 
         bool IsCartesian(void) const noexcept { return cart_; }

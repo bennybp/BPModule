@@ -31,8 +31,12 @@ class BasisSet
 
         GaussianShell Shell(int i) const;
 
+        int NPrim(void) const;
+        int NCartesian(void) const;
+
         int MaxNPrim(void) const;
         int MaxAM(void) const;
+        int MaxNCartesian(void) const;
 
         //! \todo make a printer class?
         void Print(void) const;

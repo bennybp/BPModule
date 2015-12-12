@@ -1,7 +1,8 @@
 #include <algorithm>
 
-#include "bpmodule/output/Output.hpp"
 #include "bpmodule/basisset/BasisSet.hpp"
+#include "bpmodule/basisset/NCartesian.hpp"
+#include "bpmodule/output/Output.hpp"
 #include "bpmodule/exception/BasisSetException.hpp"
 
 
@@ -35,6 +36,12 @@ GaussianShell BasisSet::Shell(int i) const
                                            "index", i, "nshells", shells_.size());
 }
 
+int BasisSet::NPrim(void) const
+{
+    return std::accumulate(this->begin(), this->end(), 0,
+                           [](int sum, const GaussianShell & sh) { return sum + sh.NPrim(); } );
+}
+
 int BasisSet::MaxNPrim(void) const
 {
     return std::max_element(this->begin(), this->end(), 
@@ -45,6 +52,17 @@ int BasisSet::MaxAM(void) const
 {
     return std::max_element(this->begin(), this->end(), 
                     [](const GaussianShell & lhs, const GaussianShell & rhs) { return lhs.AM() < rhs.AM(); })->AM();
+}
+
+int BasisSet::NCartesian(void) const
+{
+    return std::accumulate(this->begin(), this->end(), 0,
+                           [](int sum, const GaussianShell & sh) { return sum + sh.NCartesian(); } );
+}
+
+int BasisSet::MaxNCartesian(void) const
+{
+    return NCARTESIAN(MaxAM());
 }
 
 BasisSet::const_iterator BasisSet::begin(void) const
@@ -63,6 +81,9 @@ void BasisSet::Print(void) const
     int nshell = NShell();
 
     output::Output("Basis set with %1% shells\n", nshell);
+    output::Output("NCart = %1% , MaxAM = %2%\n", NCartesian(), MaxAM());
+    output::Output("MaxNCart = %1% , MaxNPrim = %2%\n", MaxNCartesian(), MaxNPrim());
+
     for(int i = 0; i < nshell; i++)
     {
         const auto shell = Shell(i);
