@@ -4,15 +4,8 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include <boost/python/module.hpp>
-#include <boost/python/def.hpp>
-#include <boost/python/list.hpp>
 
 #include "bpmodule/output/Output.hpp"
-
-
-using namespace boost::python;
-
 
 
 namespace bpmodule {
@@ -25,7 +18,7 @@ namespace export_python {
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap_Output(const std::string & fmt, const boost::python::list & args)
+void Output_Wrap_Output(const std::string & fmt, const pybind11::list & args)
 {
     OutputPy_(output::GetOut(), detail::OutputType::Output, fmt, args);
 }
@@ -37,7 +30,7 @@ void Output_Wrap_Output(const std::string & fmt, const boost::python::list & arg
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap_Success(const std::string & fmt, const boost::python::list & args)
+void Output_Wrap_Success(const std::string & fmt, const pybind11::list & args)
 {
     OutputPy_(output::GetOut(), detail::OutputType::Success, fmt, args);
 }
@@ -49,7 +42,7 @@ void Output_Wrap_Success(const std::string & fmt, const boost::python::list & ar
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap_Changed(const std::string & fmt, const boost::python::list & args)
+void Output_Wrap_Changed(const std::string & fmt, const pybind11::list & args)
 {
     OutputPy_(output::GetOut(), detail::OutputType::Changed, fmt, args);
 }
@@ -61,7 +54,7 @@ void Output_Wrap_Changed(const std::string & fmt, const boost::python::list & ar
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap_Warning(const std::string & fmt, const boost::python::list & args)
+void Output_Wrap_Warning(const std::string & fmt, const pybind11::list & args)
 {
     OutputPy_(output::GetOut(), detail::OutputType::Warning, fmt, args);
 }
@@ -73,7 +66,7 @@ void Output_Wrap_Warning(const std::string & fmt, const boost::python::list & ar
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap_Error(const std::string & fmt, const boost::python::list & args)
+void Output_Wrap_Error(const std::string & fmt, const pybind11::list & args)
 {
     OutputPy_(output::GetOut(), detail::OutputType::Error, fmt, args);
 }
@@ -85,7 +78,7 @@ void Output_Wrap_Error(const std::string & fmt, const boost::python::list & args
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap_Debug(const std::string & fmt, const boost::python::list & args)
+void Output_Wrap_Debug(const std::string & fmt, const pybind11::list & args)
 {
     OutputPy_(output::GetOut(), detail::OutputType::Debug, fmt, args);
 }
@@ -96,23 +89,27 @@ void Output_Wrap_Debug(const std::string & fmt, const boost::python::list & args
 // Main boost python part
 ////////////////////////////
 
-BOOST_PYTHON_MODULE(output)
+PYBIND11_PLUGIN(output)
 {
-    def("SetOut_Stdout", SetOut_Stdout);
-    def("SetOut_Stderr", SetOut_Stderr);
-    def("SetOut_File", SetOut_File);
-    def("SetColor", SetColor);
-    def("SetDebug", SetDebug);
-    def("Valid", Valid);
-    def("Flush", Flush);
+    pybind11::module m("output", "Output functionality");
+
+    m.def("SetOut_Stdout", SetOut_Stdout);
+    m.def("SetOut_Stderr", SetOut_Stderr);
+    m.def("SetOut_File", SetOut_File);
+    m.def("SetColor", SetColor);
+    m.def("SetDebug", SetDebug);
+    m.def("Valid", Valid);
+    m.def("Flush", Flush);
 
     // printing to output
-    def("Output_", Output_Wrap_Output);
-    def("Success_", Output_Wrap_Success);
-    def("Warning_", Output_Wrap_Warning);
-    def("Error_", Output_Wrap_Error);
-    def("Changed_", Output_Wrap_Changed);
-    def("Debug_", Output_Wrap_Debug);
+    m.def("Output_", Output_Wrap_Output);
+    m.def("Success_", Output_Wrap_Success);
+    m.def("Warning_", Output_Wrap_Warning);
+    m.def("Error_", Output_Wrap_Error);
+    m.def("Changed_", Output_Wrap_Changed);
+    m.def("Debug_", Output_Wrap_Debug);
+
+    return m.ptr();
 }
 
 

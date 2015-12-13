@@ -34,6 +34,7 @@ macro(ADD_SUPERMODULE MODULE_NAME
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_PATH}")          # When building the core, in-source tree
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_PATH}/external/pybind11/include")          # When building the core, in-source tree
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_PATH}/include")  # Out-of-source module build
+      list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_PATH}/external")  # Out-of-source module build
 
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${Boost_INCLUDE_DIRS}")
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${PYTHON_INCLUDE_DIRS}")

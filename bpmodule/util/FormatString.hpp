@@ -13,7 +13,8 @@
 #include <string>
 
 #include <boost/format.hpp>
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
+
+#include "bpmodule/python_helper/Pybind11.hpp" //! \todo fwd declare?
 #include "bpmodule/exception/GeneralException.hpp"
 
 
@@ -129,7 +130,7 @@ namespace export_python {
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-std::string FormatStringPy(const std::string & fmt, const boost::python::list & args);
+std::string FormatStringPy(const std::string & fmt, pybind11::list args);
 
 } // close namespace export_python
 

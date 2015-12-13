@@ -8,8 +8,8 @@
 #ifndef _GUARD_CMDLINE_HPP_
 #define _GUARD_CMDLINE_HPP_
 
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
-
+#include <vector>
+#include <string>
 
 namespace bpmodule {
 namespace util {
@@ -25,7 +25,7 @@ char *** GetArgv(void);
 
 /*! Stores the command line (from python) for later use
  */
-void SetCmdline(const boost::python::list & argv);
+void SetCmdline(const std::vector<std::string> & argv);
 
 
 /*! Frees memory associated with the stored command line

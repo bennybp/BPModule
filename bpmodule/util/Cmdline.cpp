@@ -4,8 +4,10 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "bpmodule/python_helper/Convert.hpp"
+
+#include <cstring>
 #include "bpmodule/util/Cmdline.hpp"
+#include "bpmodule/exception/GeneralException.hpp"
 
 namespace {
   int argc_;
@@ -33,21 +35,21 @@ char *** GetArgv(void)
     return &argv_;
 }
 
-void SetCmdline(const boost::python::list & argv)
+void SetCmdline(const std::vector<std::string> & argv)
 {
     if(set_)
         ClearCmdline();
 
-    argc_ = boost::python::extract<int>(argv.attr("__len__")());
+    argc_ = static_cast<int>(argv.size());
 
     // copy argv
     // argv[argc] should always be NULL
     // see http://www.open-mpi.org/community/lists/users/2013/11/22955.php
     argv_ = new char*[argc_+1];
 
-    for(int i = 0; i < argc_; i++)
+    for(size_t i = 0; i < argv.size(); i++)
     {
-        std::string arg = python_helper::ConvertToCpp<std::string>(argv[i]);
+        const std::string & arg = argv[i];
         size_t len = arg.size();
         argv_[i] = new char[len+1];
         strncpy(argv_[i], arg.c_str(), len+1);

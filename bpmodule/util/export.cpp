@@ -4,14 +4,8 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include <boost/python/module.hpp>
-#include <boost/python/def.hpp>
-#include <boost/python/list.hpp>
-
 #include "bpmodule/util/FormatString.hpp"
 #include "bpmodule/util/Cmdline.hpp"
-
-using namespace boost::python;
 
 
 //! \todo export the rest?
@@ -26,18 +20,22 @@ namespace export_python {
 // Main boost python part
 ////////////////////////////
 
-BOOST_PYTHON_MODULE(util)
+PYBIND11_PLUGIN(util)
 {
+    pybind11::module m("util", "Miscellaneous utilities");
+
     // format string
-    def("FormatString_", FormatStringPy);
+    m.def("FormatString_", FormatStringPy);
 
     // command line
-    def("SetCmdline", SetCmdline);
-    def("ClearCmdline", ClearCmdline);
+    m.def("SetCmdline", SetCmdline);
+    m.def("ClearCmdline", ClearCmdline);
+
+    return m.ptr();
 }
 
 
 } // close namespace export_python
-} // close namespace utilt
+} // close namespace util
 } // close namespace bpmodule
 

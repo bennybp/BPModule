@@ -6,11 +6,9 @@
 
 #include <boost/python/long.hpp>
 
+#include "bpmodule/python_helper/Types.hpp"
 #include "bpmodule/util/FormatString.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
 
-
-using namespace boost::python;
 
 
 
@@ -26,18 +24,22 @@ namespace util {
 namespace export_python {
 
 
-std::string FormatStringPy(const std::string & fmt, const boost::python::list & args)
+//! \todo pybind11 is missing begin() const
+std::string FormatStringPy(const std::string & fmt, pybind11::list args)
 {
     try {
 
         boost::format bfmt(fmt);
 
-        int len = boost::python::extract<int>(args.attr("__len__")());
-
-        for(int i = 0; i < len; i++)
+        for(auto it : args)
         {
-            python_helper::PythonType pytype = python_helper::DeterminePyType(args[i]);
 
+            //! \todo should split types like before
+            python_helper::PythonType pytype = python_helper::DeterminePyType2(it);
+            pybind11::object str = it.attr("__str__");
+            return str.call().cast<std::string>();
+
+            /*
             switch(pytype)
             {
                 case python_helper::PythonType::Int:
@@ -68,9 +70,10 @@ std::string FormatStringPy(const std::string & fmt, const boost::python::list & 
                 }
                 default: //! \todo Throw exception when printing unknown python object?
                 {   
-                    bfmt % static_cast<std::string>(extract<std::string>(args[i].attr("__str__")()));
+                    bfmt % static_cast<std::string>(args[i].attr("__str__").call().cast<std::string>());
                 }
             }
+            */
         }
 
         //! \todo can I just convert boost::format to a string?
@@ -82,7 +85,7 @@ std::string FormatStringPy(const std::string & fmt, const boost::python::list & 
     {
         throw exception::GeneralException("Error in formatting a string or stream from python",
                                           "bfmterr", ex.what(),
-                                          "fmt", fmt, "nargs", len);
+                                          "fmt", fmt, "nargs", args.size());
     }
 }
 

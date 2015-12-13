@@ -9,6 +9,8 @@
 #define _GUARD_TYPES_HPP_
 
 #include <string>
+
+#include "bpmodule/python_helper/Pybind11.hpp"
 #include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 
@@ -52,11 +54,13 @@ const char * PythonTypeToStr(PythonType pytype);
 /*! \brief Determine the type of a boost python object
  */
 PythonType DeterminePyType(const boost::python::object & obj);
+PythonType DeterminePyType2(pybind11::object obj);
 
 
 /*! \brief Get the class of a python object as a string
  */
 std::string GetPyClass(const boost::python::object & obj);
+std::string GetPyClass2(boost::python::object obj);
 
 
 /*! \brief Check if a python object has a given attribute

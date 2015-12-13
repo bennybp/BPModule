@@ -5,6 +5,7 @@ set(BPMODULE_PYTHON_HELPER_FILES
    )
 
 set(BPMODULE_PYTHON_HELPER_HEADERS
+            Pybind11.hpp
             BoostPython_fwd.hpp
             Types.hpp
             Convert.hpp

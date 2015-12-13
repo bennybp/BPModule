@@ -70,6 +70,14 @@ std::string GetPyClass(const boost::python::object & obj)
     return boost::python::extract<std::string>(obj.attr("__class__").attr("__name__"));
 }
 
+std::string GetPyClass2(pybind11::object obj)
+{
+    //! \todo should ever throw?
+    pybind11::object cls = obj.attr("__class__");
+    pybind11::object name = cls.attr("__name__");
+    return name.cast<std::string>();
+}
+
 
 PythonType DeterminePyType(const boost::python::object & obj)
 {
@@ -99,6 +107,56 @@ PythonType DeterminePyType(const boost::python::object & obj)
             for(int i = 1; i < length; i++)
             {
                 std::string cltmp = GetPyClass(lst[i]);
+                if(cl2 != cltmp)
+                    return PythonType::ListHetero;
+            }
+
+            if(cl2 == "bool")      return PythonType::ListBool;
+            if(cl2 == "int")       return PythonType::ListInt;
+            if(cl2 == "float")     return PythonType::ListFloat;
+            if(cl2 == "str")       return PythonType::ListString;
+            if(cl2 == "NoneType")  return PythonType::ListEmpty;
+
+            return PythonType::ListUnknown;
+        }
+    }
+    catch(...)
+    {
+        return PythonType::Unknown;
+    }
+
+    return PythonType::Unknown;
+}
+
+
+PythonType DeterminePyType2(pybind11::object obj)
+{
+    try {
+        std::string cl = GetPyClass2(obj);
+
+        if(cl == "bool")      return PythonType::Bool;
+        if(cl == "int")       return PythonType::Int;
+        if(cl == "float")     return PythonType::Float;
+        if(cl == "str")       return PythonType::String;
+        if(cl == "tuple")     return PythonType::Tuple;
+        if(cl == "dict")      return PythonType::Dict;
+        if(cl == "NoneType")  return PythonType::None;
+
+        if(cl == "list")
+        {
+            pybind11::list lst = obj.cast<pybind11::list>();
+
+            size_t length = lst.size();
+            if(length == 0)
+                return PythonType::ListEmpty;
+
+            // get type of first element
+            std::string cl2 = GetPyClass2(lst[0]);
+
+            // check if this is a homogeneous container
+            for(size_t i = 1; i < length; i++)
+            {
+                std::string cltmp = GetPyClass2(lst[i]);
                 if(cl2 != cltmp)
                     return PythonType::ListHetero;
             }
