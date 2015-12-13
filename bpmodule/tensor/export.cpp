@@ -13,9 +13,9 @@ namespace bpmodule {
 namespace tensor {
 namespace export_python {
 
-PYBIND11_PLUGIN(parallel)
+PYBIND11_PLUGIN(tensor)
 {
-    pybind11::module m("parallel", "Parallelization stuff");
+    pybind11::module m("tensor", "Matrix and Tensor classes");
 
     m.def("Init", Init);
     m.def("Finalize", Finalize);
