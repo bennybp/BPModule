@@ -60,7 +60,7 @@ PythonType DeterminePyType2(pybind11::object obj);
 /*! \brief Get the class of a python object as a string
  */
 std::string GetPyClass(const boost::python::object & obj);
-std::string GetPyClass2(boost::python::object obj);
+std::string GetPyClass2(pybind11::object obj);
 
 
 /*! \brief Check if a python object has a given attribute

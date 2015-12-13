@@ -4,10 +4,9 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include <boost/python/long.hpp>
-
 #include "bpmodule/python_helper/Types.hpp"
 #include "bpmodule/util/FormatString.hpp"
+#include "bpmodule/python_helper/Convert.hpp"
 
 
 
@@ -34,46 +33,43 @@ std::string FormatStringPy(const std::string & fmt, pybind11::list args)
         for(auto it : args)
         {
 
-            //! \todo should split types like before
             python_helper::PythonType pytype = python_helper::DeterminePyType2(it);
-            pybind11::object str = it.attr("__str__");
-            return str.call().cast<std::string>();
 
-            /*
             switch(pytype)
             {
                 case python_helper::PythonType::Int:
                 {
                     // make this safe for large signed and unsigned numbers
                     //! \todo Not much we can do if l < min() though...
-                    boost::python::long_ l = extract<boost::python::long_>(args[i]);
+                    pybind11::int_ l = python_helper::ConvertToCpp2<pybind11::int_>(it);
                     if(l > std::numeric_limits<intmax_t>::max())
-                        bfmt % python_helper::ConvertToCpp<uintmax_t>(l);
+                        bfmt % python_helper::ConvertToCpp2<uintmax_t>(l);
                     else
-                        bfmt % python_helper::ConvertToCpp<intmax_t>(l);
+                        bfmt % python_helper::ConvertToCpp2<intmax_t>(l);
                     break;
                 }
                 case python_helper::PythonType::Bool:
                 {   
-                    bfmt % python_helper::ConvertToCpp<bool>(args[i]);
+                    bfmt % python_helper::ConvertToCpp2<bool>(it);
                     break;
                 }
                 case python_helper::PythonType::Float:
                 {   
-                    bfmt % python_helper::ConvertToCpp<long double>(args[i]);
+                    bfmt % python_helper::ConvertToCpp2<long double>(it);
                     break;
                 }
                 case python_helper::PythonType::String:
                 {   
-                    bfmt % python_helper::ConvertToCpp<std::string>(args[i]);
+                    bfmt % python_helper::ConvertToCpp2<std::string>(it);
                     break;
                 }
                 default: //! \todo Throw exception when printing unknown python object?
                 {   
-                    bfmt % static_cast<std::string>(args[i].attr("__str__").call().cast<std::string>());
+                    pybind11::object ob = it.attr("__str__");
+                    pybind11::object s = ob.call();
+                    bfmt % python_helper::ConvertToCpp2<std::string>(s);
                 }
             }
-            */
         }
 
         //! \todo can I just convert boost::format to a string?

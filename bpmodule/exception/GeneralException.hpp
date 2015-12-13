@@ -39,9 +39,7 @@ class GeneralException : public std::exception
          *
          * \param [in] whatstr Some descriptive string
          */
-        GeneralException(const std::string & whatstr)
-            : whatstr_(whatstr)
-        { }
+        GeneralException(const std::string & whatstr);
 
 
 
@@ -52,7 +50,7 @@ class GeneralException : public std::exception
          */
         template<typename... Targs>
         GeneralException(const std::string & whatstr, const Targs& ... exinfo)
-            : whatstr_(whatstr)
+            : GeneralException(whatstr)
         {
             // check that there is an even number of exinfo
             static_assert( (sizeof...(exinfo) % 2) == 0,
@@ -198,6 +196,9 @@ class GeneralException : public std::exception
 
         //! The "what" string
         std::string whatstr_;
+
+        //! The full, formatted exception string
+        std::string fullstr_;
 
         //! All additional information
         ExceptionInfo exinfo_;

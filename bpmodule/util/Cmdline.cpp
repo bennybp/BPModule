@@ -4,10 +4,11 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-
+#include "bpmodule/output/Output.hpp"
 #include <cstring>
 #include "bpmodule/util/Cmdline.hpp"
 #include "bpmodule/exception/GeneralException.hpp"
+#include "bpmodule/python_helper/Convert.hpp"
 
 namespace {
   int argc_;
@@ -35,21 +36,25 @@ char *** GetArgv(void)
     return &argv_;
 }
 
-void SetCmdline(const std::vector<std::string> & argv)
+void SetCmdline(pybind11::object argv)
 {
     if(set_)
         ClearCmdline();
 
-    argc_ = static_cast<int>(argv.size());
+    auto vargv = python_helper::ConvertToCpp2<std::vector<std::string>>(argv);
+    argc_ = static_cast<int>(vargv.size());
+    bpmodule::output::Debug("Command line has %1% args\n", argc_);
+    for(const auto & it : vargv)
+        bpmodule::output::Debug("   %1%\n", it);
 
     // copy argv
     // argv[argc] should always be NULL
     // see http://www.open-mpi.org/community/lists/users/2013/11/22955.php
     argv_ = new char*[argc_+1];
 
-    for(size_t i = 0; i < argv.size(); i++)
+    for(size_t i = 0; i < vargv.size(); i++)
     {
-        const std::string & arg = argv[i];
+        const std::string & arg = vargv[i];
         size_t len = arg.size();
         argv_[i] = new char[len+1];
         strncpy(argv_[i], arg.c_str(), len+1);

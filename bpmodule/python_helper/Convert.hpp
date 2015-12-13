@@ -8,10 +8,12 @@
 #ifndef _GUARD_CONVERT_HPP_
 #define _GUARD_CONVERT_HPP_
 
+
 #include <boost/python/list.hpp>  // includes object
 #include <boost/python/extract.hpp>
 
-#include "bpmodule/pragma.h"
+#include "bpmodule/python_helper/Pybind11.hpp"
+#include "bpmodule/python_helper/Pybind11_stl.hpp"
 #include "bpmodule/python_helper/Types.hpp"
 #include "bpmodule/python_helper/Errors.hpp"
 #include "bpmodule/exception/PythonConvertException.hpp"
@@ -364,6 +366,54 @@ boost::python::object ConvertToPy(const T & obj)
 {
     // will throw if there is an issue
     return PyConverter<T>::ConvertToPy(obj);
+}
+
+
+/*! \brief Convert a python::object to a C++ type
+ *
+ * \throw exception::PythonConvertException if the
+ *        data could not be converted
+ *
+ * \tparam T The C++ type to convert to
+ *
+ * \param [in] obj The object to convert
+ * \return Converted data as type \p T
+ */
+template<typename T>
+T ConvertToCpp2(pybind11::object obj)
+{
+    // will throw if there is an issue
+    //! \todo exception handling
+    try {
+    return obj.cast<T>();
+    }
+    catch(const pybind11::cast_error & ex)
+    {
+        throw exception::PythonConvertException("Cannot convert from python to C++: Conversion failed",
+                                                GetPyClass2(obj), util::DemangleCppType<T>(),
+                                                "what", ex.what());
+    }
+}
+
+
+
+
+/*! \brief Convert a C++ object to a python::object
+ *
+ * \throw exception::PythonConvertException if the
+ *        data could not be converted
+ *
+ * \tparam T The C++ type to convert from
+ *
+ * \param [in] obj The object to convert
+ * \return Converted data as a boost::python::object
+ */
+template<typename T>
+pybind11::object ConvertToPy2(const T & obj)
+{
+    // will throw if there is an issue
+    //! \todo exception handling
+    return pybind11::object(obj);
 }
 
 

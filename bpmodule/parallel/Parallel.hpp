@@ -8,8 +8,6 @@
 #ifndef _GUARD_PARALLEL_HPP_
 #define _GUARD_PARALLEL_HPP_
 
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
-
 
 //! \todo We need to store multiple communicators, etc
 
