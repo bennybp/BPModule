@@ -14,6 +14,7 @@
 #include "bpmodule/datastore/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/util/StringUtil.hpp"
+#include "bpmodule/python_helper/Pybind11.hpp"
 
 
 namespace bpmodule {
@@ -319,11 +320,11 @@ class OptionMap
          *  \param [in] wholevalidfunc Pointer to a function to validate the whole options object
          *  \param [in] modulekey The module key that these options belong to
          */
-        OptionMap(const std::string & modulekey, const boost::python::dict & opt, const boost::python::object & wholevalidfunc);
+        OptionMap(const std::string & modulekey, pybind11::dict opt, pybind11::object wholevalidfunc);
 
 
 
-        /*! \brief Change an option by passing a boost::python object
+        /*! \brief Change an option by passing a python object
          *
          * \throw bpmodule::exception::OptionException if there is
          *        a problem with the option (nonexistant key, validation, conversion, etc)
@@ -333,7 +334,7 @@ class OptionMap
          *
          * \exstrong
          */
-        void ChangePy(const std::string & key, const boost::python::object & obj);
+        void ChangePy(const std::string & key, pybind11::object obj);
 
 
 
@@ -349,7 +350,7 @@ class OptionMap
          *
          * \exstrong
          */
-        void ChangePyDict(const boost::python::dict & opt);
+        void ChangePyDict(pybind11::dict opt);
 
 
 
@@ -358,13 +359,13 @@ class OptionMap
          * \throw bpmodule::exception::OptionException if there is
          *        a problem with the option (nonexistant key, validation, conversion, etc)
          */
-        boost::python::object GetPy(const std::string & key) const;
+        pybind11::object GetPy(const std::string & key) const;
 
 
 
         /*! \brief Compare two OptionMap, but only with some keys
          */
-        bool CompareSelectPy(const OptionMap & rhs, const boost::python::list & selection) const;
+        bool CompareSelectPy(const OptionMap & rhs, pybind11::list selection) const;
 
 
         //////////////////////////////////////////

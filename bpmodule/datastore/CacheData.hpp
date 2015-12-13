@@ -14,6 +14,7 @@
 #include "bpmodule/datastore/GenericHolder.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/datastore/OptionMap.hpp"
+
 //! \todo split out python stuff?
 
 
@@ -59,9 +60,9 @@ class CacheData
 
         bool HasKeyPy(const std::string & key,
                       const OptionMap & opt = OptionMap(),
-                      const boost::python::list & sigopt = boost::python::list()) const
+                      pybind11::list sigopt = pybind11::list()) const
         {
-            return HasKey(key, opt, python_helper::ConvertToCpp<std::vector<std::string>>(sigopt));
+            return HasKey(key, opt, python_helper::ConvertToCpp2<std::vector<std::string>>(sigopt));
         }
 
 
@@ -117,13 +118,12 @@ class CacheData
         }
 
 
-        //! \todo Does returning a reference to a python object make sense?
-        const boost::python::object & GetRefPy(const std::string & key,
-                                               const OptionMap & opt = OptionMap(),
-                                               const boost::python::list & sigopt = boost::python::list()) const
+        pybind11::object GetRefPy(const std::string & key,
+                                  const OptionMap & opt = OptionMap(),
+                                  pybind11::list sigopt = pybind11::list()) const
         {
-            return GetRef<boost::python::object>(key, opt,
-                                                 python_helper::ConvertToCpp<std::vector<std::string>>(sigopt));
+            return GetRef<pybind11::object>(key, opt,
+                                            python_helper::ConvertToCpp2<std::vector<std::string>>(sigopt));
         }
 
 
@@ -147,12 +147,12 @@ class CacheData
 
 
 
-        boost::python::object GetCopyPy(const std::string & key,
-                                        const OptionMap & opt = OptionMap(),
-                                        const boost::python::list & sigopt = boost::python::list()) const
+        pybind11::object GetCopyPy(const std::string & key,
+                                   const OptionMap & opt = OptionMap(),
+                                   pybind11::list sigopt = pybind11::list()) const
         {
-            return GetRef<boost::python::object>(key, opt,
-                                                 python_helper::ConvertToCpp<std::vector<std::string>>(sigopt));
+            return GetRef<pybind11::object>(key, opt,
+                                            python_helper::ConvertToCpp2<std::vector<std::string>>(sigopt));
         }
 
 
@@ -174,6 +174,14 @@ class CacheData
                  const OptionMap & opt = OptionMap())
         {
             Set_(key, detail::GenericBasePtr(new detail::GenericHolder<T>(value)), opt);
+        }
+
+
+
+        void SetPy(const std::string & key, pybind11::object value,
+                   const OptionMap & opt = OptionMap())
+        {
+            Set(key, value, opt);
         }
 
 

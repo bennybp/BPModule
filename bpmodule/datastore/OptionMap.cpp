@@ -4,12 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include <boost/python/dict.hpp>
 #include "bpmodule/python_helper/Call.hpp"
 
 
 #include "bpmodule/datastore/OptionMap.hpp"
 #include "bpmodule/output/Output.hpp"
+#include "bpmodule/exception/OptionException.hpp"
 
 
 using namespace bpmodule::python_helper;
@@ -255,10 +255,10 @@ bool OptionMap::CompareSelect(const OptionMap & rhs, const std::vector<std::stri
  * \throw bpmodule::exception::PythonCallException if there is a problem calling
  *        the python function or if the return type can't be converted
  */
-static WholeOptionMapIssues WholeOptValidateWrapper(const boost::python::object & func, const OptionMap & val)
+static WholeOptionMapIssues WholeOptValidateWrapper(pybind11::object func, const OptionMap & val)
 {
     try {
-        return CallPyFunc<std::vector<std::string>>(func, val);
+        return CallPyFunc2<std::vector<std::string>>(func, val);
     }
     catch(PythonCallException & ex)
     {
@@ -274,23 +274,17 @@ static WholeOptionMapIssues WholeOptValidateWrapper(const boost::python::object 
 //////////////////////////////
 // Python functions
 //////////////////////////////
-OptionMap::OptionMap(const std::string & modulekey, const boost::python::dict & opt, const boost::python::object & wholevalidfunc)
+OptionMap::OptionMap(const std::string & modulekey, pybind11::dict opt, pybind11::object wholevalidfunc)
     : modulekey_(modulekey), expert_(false), lockvalid_(false)
 {
-    boost::python::list keys = opt.keys();
-
-    // shouldn't throw, should it?
-    int keylen = boost::python::extract<int>(keys.attr("__len__")());
-
-    for(int i = 0; i < keylen; i++)
+    for(auto it : opt)
     {
-        if(DeterminePyType(keys[i]) != python_helper::PythonType::String)
+        if(DeterminePyType2(it.first) != python_helper::PythonType::String)
             throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
-                                  "element", i,
-                                  "pytype", GetPyClass(keys[i]));
+                                  "pytype", GetPyClass2(it.first));
 
 
-        std::string key = ConvertToCpp<std::string>(keys[i]);
+        std::string key = ConvertToCpp2<std::string>(it.first);
 
         // convert to lowercase
         util::ToLower(key);
@@ -299,21 +293,21 @@ OptionMap::OptionMap(const std::string & modulekey, const boost::python::dict & 
         // should this ever happen? Keys should be unique in a
         // python dict
         if(opmap_.count(key))
-            throw OptionException("Duplicate key on construction", key,
-                                   "element", i);
+            throw OptionException("Duplicate key on construction", key);
 
         // this will throw needed exceptions
-        opmap_.emplace(key, detail::OptionHolderFactory(key, opt[key]));
+        opmap_.emplace(key, detail::OptionHolderFactory(key, it.second));
     }
 
     // add whole validator (if it exists)
-    if(DeterminePyType(wholevalidfunc) != python_helper::PythonType::None)
+    if(DeterminePyType2(wholevalidfunc) != python_helper::PythonType::None)
     {
         // Don't forget that the method is part of a class
         // so 1 argument is "self"
-        if(!python_helper::HasCallableAttr(wholevalidfunc, "Validate", 2))
+        //! \todo Reimplement the version of HasCallableAttr with number of arguments
+        if(!python_helper::HasCallableAttr2(wholevalidfunc, "Validate"))
             throw OptionException("Whole options validator does not have a callable Validate() method taking one argument", "(none)",
-                                  "pytype", GetPyClass(wholevalidfunc));
+                                  "pytype", GetPyClass2(wholevalidfunc));
 
         wholevalid_ = std::bind(WholeOptValidateWrapper, wholevalidfunc, std::placeholders::_1);
     }
@@ -322,7 +316,7 @@ OptionMap::OptionMap(const std::string & modulekey, const boost::python::dict & 
 
 
 
-void OptionMap::ChangePy(const std::string & key, const boost::python::object & obj)
+void OptionMap::ChangePy(const std::string & key, pybind11::object obj)
 {
     detail::OptionBase * ptr = GetOrThrow_(key);
     ptr->ChangePy(obj);
@@ -333,12 +327,9 @@ void OptionMap::ChangePy(const std::string & key, const boost::python::object & 
 
 
 
-void OptionMap::ChangePyDict(const boost::python::dict & opt)
+void OptionMap::ChangePyDict(pybind11::dict opt)
 {
     using std::swap;
-
-    boost::python::list keys = opt.keys();
-    int keylen = boost::python::extract<int>(keys.attr("__len__")());
 
     // for strong exception guarantee:
     // copy the current object, modify that, then swap
@@ -347,25 +338,24 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
     // unlock for the moment. Some intermediate states may not be valid
     tmp.LockValid(false);
 
-    for(int i = 0; i < keylen; i++)
+    for(auto it : opt)
     {
-        if(DeterminePyType(keys[i]) != python_helper::PythonType::String)
+        if(DeterminePyType2(it.first) != python_helper::PythonType::String)
             throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
-                                  "element", i,
-                                  "pytype", GetPyClass(keys[i]));
+                                  "pytype", GetPyClass2(it.first));
 
 
-        std::string key = ConvertToCpp<std::string>(keys[i]);
+        std::string key = ConvertToCpp2<std::string>(it.first);
 
         // convert to lowercase
         util::ToLower(key);
 
 
         if(!tmp.HasKey(key))
-            throw OptionException("Python dictionary has a key that I do not", key, "element", i);
+            throw OptionException("Python dictionary has a key that I do not", key);
 
         // may throw
-        tmp.ChangePy(key, opt[key]);
+        tmp.ChangePy(key, it.second);
     }
 
     // set the validity lock to whatever it is in this OptionMap
@@ -377,16 +367,16 @@ void OptionMap::ChangePyDict(const boost::python::dict & opt)
 
 
 
-boost::python::object OptionMap::GetPy(const std::string & key) const
+pybind11::object OptionMap::GetPy(const std::string & key) const
 {
     return GetOrThrow_(key)->GetPy();
 }
 
 
-bool OptionMap::CompareSelectPy(const OptionMap & rhs, const boost::python::list & selection) const
+bool OptionMap::CompareSelectPy(const OptionMap & rhs, pybind11::list selection) const
 {
     //! \todo exceptions
-    return CompareSelect(rhs, ConvertToCpp<std::vector<std::string>>(selection));
+    return CompareSelect(rhs, ConvertToCpp2<std::vector<std::string>>(selection));
 }
 
 

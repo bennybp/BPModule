@@ -21,7 +21,7 @@ PYBIND11_PLUGIN(basisset)
 {
     pybind11::module m("basisset", "Basis set");
 
-    //datastore::RegisterUIDPointer<BasisSet>("BasisSet");
+    datastore::RegisterUIDPointer<BasisSet>(m, "BasisSet");
 
     pybind11::class_<GaussianBasisShell> gbs(m, "GaussianBasisShell");
     gbs.def(pybind11::init<int, bool>())

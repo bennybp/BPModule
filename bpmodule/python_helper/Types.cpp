@@ -184,18 +184,19 @@ bool HasAttr(const boost::python::object & obj, const std::string & attr)
     return PyObject_HasAttrString(obj.ptr(), attr.c_str());
 }
 
+bool HasAttr2(pybind11::object obj, const std::string & attr)
+{
+    return PyObject_HasAttrString(obj.ptr(), attr.c_str());
+}
+
 bool IsCallable(const boost::python::object & obj)
 {
     return PyCallable_Check(obj.ptr());
 }
 
-bool IsCallable(const boost::python::object & obj, int narg)
+bool IsCallable2(pybind11::object obj)
 {
-    if(!IsCallable(obj))
-        return false;
-
-    int n = ConvertToCpp<int>(obj.attr("__code__").attr("co_argcount"));
-    return (narg == n);
+    return PyCallable_Check(obj.ptr());
 }
 
 bool HasCallableAttr(const boost::python::object & obj, const std::string & attr)
@@ -203,9 +204,9 @@ bool HasCallableAttr(const boost::python::object & obj, const std::string & attr
     return HasAttr(obj, attr) && IsCallable(obj.attr(attr.c_str()));
 }
 
-bool HasCallableAttr(const boost::python::object & obj, const std::string & attr, int narg)
+bool HasCallableAttr2(pybind11::object obj, const std::string & attr)
 {
-    return HasAttr(obj, attr) && IsCallable(obj.attr(attr.c_str()), narg);
+    return HasAttr2(obj, attr) && IsCallable2(obj.attr(attr.c_str()));
 }
 
 

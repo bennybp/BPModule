@@ -413,7 +413,7 @@ pybind11::object ConvertToPy2(const T & obj)
 {
     // will throw if there is an issue
     //! \todo exception handling
-    return pybind11::object(obj);
+    return pybind11::cast(obj);
 }
 
 

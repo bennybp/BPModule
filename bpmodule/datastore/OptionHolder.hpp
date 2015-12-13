@@ -11,7 +11,7 @@
 #include <functional>
 
 #include "bpmodule/datastore/OptionBase.hpp"
-
+#include "bpmodule/python_helper/Pybind11.hpp"
 
 namespace bpmodule {
 namespace datastore {
@@ -139,9 +139,9 @@ class OptionHolder : public OptionBase
         /////////////////////////////////////////
         // Python-related functions
         /////////////////////////////////////////
-        virtual boost::python::object GetPy(void) const;
+        virtual pybind11::object GetPy(void) const;
 
-        virtual void ChangePy(const boost::python::object & obj);
+        virtual void ChangePy(pybind11::object obj);
 
 
     private:
@@ -159,7 +159,7 @@ class OptionHolder : public OptionBase
 
 
 
-/*! \brief Create an OptionHolder from a boost python object
+/*! \brief Create an OptionHolder from a python object
  *
  * \throw bpmodule::exception::OptionException
  *        If there is a problem with the option (validation or python conversion problems)
@@ -167,7 +167,7 @@ class OptionHolder : public OptionBase
  * \throw bpmodule::exception::PythonCallException
  *        If there is a problem calling the validation function (in validating the default)
  */
-OptionBasePtr OptionHolderFactory(const std::string & key, const boost::python::object & obj);
+OptionBasePtr OptionHolderFactory(const std::string & key, pybind11::object obj);
 
 
 

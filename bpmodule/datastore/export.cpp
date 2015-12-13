@@ -4,14 +4,6 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include <boost/python/module.hpp>
-#include <boost/python/class.hpp>
-#include <boost/python/def.hpp>
-#include <boost/python/overloads.hpp>
-#include <boost/python/return_internal_reference.hpp>
-#include <boost/python/copy_const_reference.hpp>
-#include <boost/python/dict.hpp>
-
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
@@ -19,7 +11,6 @@
 
 
 
-using namespace boost::python;
 using bpmodule::basisset::BasisSet;
 using bpmodule::molecule::Molecule;
 using bpmodule::datastore::Wavefunction;
@@ -31,27 +22,17 @@ namespace datastore {
 namespace export_python {
 
 
-// These macros generate some compiler warnings
-PRAGMA_WARNING_PUSH
-PRAGMA_WARNING_IGNORE_UNUSED_LOCAL_TYPEDEFS
-PRAGMA_WARNING_IGNORE_SHADOW
 
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CacheData_HasKeyPy_Overloads, HasKeyPy, 1, 3)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CacheData_GetCopyPy_Overloads, GetCopyPy, 1, 3)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CacheData_GetRefPy_Overloads, GetRefPy, 1, 3)
-BOOST_PYTHON_MEMBER_FUNCTION_OVERLOADS(CacheData_Set_Overloads, Set, 2, 3)
-
-PRAGMA_WARNING_POP
-
-
-
-BOOST_PYTHON_MODULE(datastore)
+PYBIND11_PLUGIN(datastore)
 {
+    pybind11::module m("datastore", "Data storage classes");
+
     /////////////////////////
     // OptionMap
     /////////////////////////
     // OptionMap always returns copies, so this should be safe
-    class_<OptionMap>("OptionMap", init<const std::string &, const boost::python::dict &, const boost::python::object &>())
+    pybind11::class_<OptionMap>(m, "OptionMap")
+    .def(pybind11::init<const std::string &, pybind11::dict, pybind11::object>())
     .def("MaxInt", &OptionMap::MaxInt)
     .def("MinInt", &OptionMap::MinInt)
     .def("MaxFloat", &OptionMap::MaxFloat)
@@ -67,7 +48,7 @@ BOOST_PYTHON_MODULE(datastore)
     .def("ChangeDict", &OptionMap::ChangePyDict)
     .def("LockValid", &OptionMap::LockValid)
     .def("Validate", &OptionMap::Validate)
-    .def("ModuleKey", &OptionMap::ModuleKey, return_value_policy<copy_const_reference>())
+    .def("ModuleKey", &OptionMap::ModuleKey, pybind11::return_value_policy::copy)
     .def("Compare", &OptionMap::Compare)
     .def("CompareSelect", &OptionMap::CompareSelectPy)
     .def("HasIssues", &OptionMap::HasIssues);
@@ -76,7 +57,7 @@ BOOST_PYTHON_MODULE(datastore)
     ///////////////////////
     // Wavefunction
     ///////////////////////
-    class_<Wavefunction>("Wavefunction", no_init) //! \todo python init for wfn?
+    pybind11::class_<Wavefunction>(m, "Wavefunction") //! \todo python init for wfn?
     .def("UniqueString", &Wavefunction::UniqueString)
     .def_readwrite("basis", &Wavefunction::basis)
     .def_readwrite("molecule", &Wavefunction::molecule)
@@ -85,46 +66,51 @@ BOOST_PYTHON_MODULE(datastore)
     ;
   
 
-    def("MakeUIDPointer", MakeUIDPointerPy);
+    m.def("MakeUIDPointer", MakeUIDPointerPy);
 
 
 
-    /*
-    ////////////////////////////////////////
-    // CalcData
-    // Can just store boost::python::object
-    ////////////////////////////////////////
-    class_<CalcData>("CalcData", init<>())
-    .def(init<const CalcData &>())
-    .def("Size", &CalcData::Size)
-    .def("GetKeys", &CalcData::GetKeys)
-    .def("HasKey", &CalcData::HasKey)
-    .def("Erase", &CalcData::Erase)
-    .def("GetType", &CalcData::GetType)
-    .def("GetDemangledType", &CalcData::GetDemangledType)
-    .def("GetCopy", static_cast<boost::python::object(CalcData::*)(const std::string &) const>(&CalcData::GetCopy))
-    .def("GetRef", static_cast<const boost::python::object &(CalcData::*)(const std::string &) const>(&CalcData::GetRef), return_internal_reference<>()) // copy it?
-    .def("Set", static_cast<void(CalcData::*)(const std::string &, const boost::python::object &)>(&CalcData::Set))
-    .def("SetRef", static_cast<void(CalcData::*)(const CalcData &, const std::string &, const std::string &)>(&CalcData::SetRef))
-    ;
-    */
-
-    
     ////////////////////////////////////////
     // CacheData
-    // Can just store boost::python::object
+    // Can just store python object
+    // //! \todo GetCopy and GetRef are equivalent for python
     ////////////////////////////////////////
-    class_<CacheData>("CacheData", no_init)
+    pybind11::class_<CacheData>(m, "CacheData")
     .def("CountKey", &CacheData::CountKey)
     .def("Size", &CacheData::Size)
     .def("GetKeys", &CacheData::GetKeys)
     .def("Erase", &CacheData::Erase)
-    .def("HasKey", &CacheData::HasKeyPy, CacheData_HasKeyPy_Overloads())
-    .def("GetCopy", &CacheData::GetCopyPy, CacheData_GetCopyPy_Overloads())
-    .def("GetRef", &CacheData::GetRefPy, return_internal_reference<>(), CacheData_GetRefPy_Overloads())
-    .def("Set", static_cast<void(CacheData::*)(const std::string &, const boost::python::object &, const OptionMap &)>(&CacheData::Set), CacheData_Set_Overloads())
+    .def("HasKey", &CacheData::HasKeyPy)
+    .def("GetCopy", &CacheData::GetCopyPy, pybind11::return_value_policy::copy)
+    .def("GetRef", &CacheData::GetRefPy, pybind11::return_value_policy::reference_internal)
+    .def("Set", &CacheData::SetPy, pybind11::return_value_policy::reference_internal)
     ;
+    /*
+    .def("HasKey", &CacheData::HasKeyPy,
+                   "See if the cache has some data",
+                   pybind11::arg("key"),
+                   pybind11::arg("opt") = OptionMap(),
+                   pybind11::arg("sigopt") = pybind11::list())
+    .def("GetCopy", &CacheData::GetCopyPy,
+                   "Get a copy of the data", pybind11::return_value_policy::copy,
+                   pybind11::arg("key"),
+                   pybind11::arg("opt") = OptionMap(),
+                   pybind11::arg("sigopt") = pybind11::list())
+                   
+    .def("GetRef", &CacheData::GetRefPy, 
+                   "Get reference", pybind11::return_value_policy::reference_internal,
+                   pybind11::arg("key"),
+                   pybind11::arg("opt") = OptionMap(),
+                   pybind11::arg("sigopt") = pybind11::list())
+    .def("Set", static_cast<void(CacheData::*)(const std::string &, const pybind11::object &, const OptionMap &)>(&CacheData::Set),
+                "Set data",
+                pybind11::arg("key"), 
+                pybind11::arg("obj"),
+                pybind11::arg("opt") = OptionMap())
+    ;
+    */
 
+    return m.ptr();
 }
 
 

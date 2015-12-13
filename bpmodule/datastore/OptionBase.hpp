@@ -13,7 +13,8 @@
 #include <vector>
 #include <typeinfo>
 
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
+#include "bpmodule/python_helper/Pybind11.hpp"
+#include "bpmodule/python_helper/Types.hpp"
 
 namespace bpmodule {
 namespace datastore {
@@ -171,24 +172,24 @@ class OptionBase
         /////////////////////////////////////////
         // Python-related functions
         /////////////////////////////////////////
-        /*! \brief Return a copy of the value as a boost::python object
+        /*! \brief Return a copy of the value as a python object
          *
          * \throw bpmodule::exception::OptionException
          *        If the value does not exist or cannot
          *        be converted to a python object
          */
-        virtual boost::python::object GetPy(void) const = 0;
+        virtual pybind11::object GetPy(void) const = 0;
 
 
 
-        /*! \brief Change the value via a boost python object
+        /*! \brief Change the value via a python object
          *
          * \throw bpmodule::exception::OptionException
          *        if there is a problem with the python conversion
          *
          *  \exstrong
          */
-        virtual void ChangePy(const boost::python::object & obj) = 0;
+        virtual void ChangePy(pybind11::object obj) = 0;
 
 
 

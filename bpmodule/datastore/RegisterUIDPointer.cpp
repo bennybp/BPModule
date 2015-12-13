@@ -8,7 +8,7 @@ using namespace bpmodule::exception;
 
 
 namespace {
-    std::unordered_map<std::string, std::function<boost::python::object(const boost::python::object)>> creators_;
+    std::unordered_map<std::string, std::function<pybind11::object(pybind11::object)>> creators_;
 }
 
 
@@ -19,7 +19,7 @@ namespace detail {
 
 
 
-void AddCreator_(const char * classname, std::function<boost::python::object(const boost::python::object)> func)
+void AddCreator_(const char * classname, std::function<pybind11::object(pybind11::object)> func)
 {
     //! \todo - emplace? Throw if already registered?
     creators_[classname] = func;
@@ -31,9 +31,9 @@ void AddCreator_(const char * classname, std::function<boost::python::object(con
 
 
 
-boost::python::object MakeUIDPointerPy(const boost::python::object & obj)
+pybind11::object MakeUIDPointerPy(pybind11::object obj)
 {
-    const std::string cn = python_helper::GetPyClass(obj);
+    const std::string cn = python_helper::GetPyClass2(obj);
     if(!creators_.count(cn))
         throw PythonConvertException("No handler to create a UIDPointer", cn, "UIDPointer");
 

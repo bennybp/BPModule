@@ -39,7 +39,7 @@ PYBIND11_PLUGIN(molecule)
 {
     pybind11::module m("molecule", "Molecular system specification");
 
-    //datastore::RegisterUIDPointer<Molecule>("Molecule");
+    datastore::RegisterUIDPointer<Molecule>(m, "Molecule");
 
 
     pybind11::class_<IsotopeData>(m, "IsotopeData")

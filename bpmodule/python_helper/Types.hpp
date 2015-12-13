@@ -66,26 +66,22 @@ std::string GetPyClass2(pybind11::object obj);
 /*! \brief Check if a python object has a given attribute
  */
 bool HasAttr(const boost::python::object & obj, const std::string & attr);
+bool HasAttr2(pybind11::object obj, const std::string & attr);
 
 
 /*! \brief Check if a python object is callable
  */ 
 bool IsCallable(const boost::python::object & obj);
+bool IsCallable2(pybind11::object obj);
 
-
-/*! \brief Check if a python object is callable taking the given number of arguments
- */ 
-bool IsCallable(const boost::python::object & obj, int narg);
 
 
 /*! \brief Check if a python object has a given callable attribute
  */
 bool HasCallableAttr(const boost::python::object & obj, const std::string & attr);
+bool HasCallableAttr2(pybind11::object obj, const std::string & attr);
 
 
-/*! \brief Check if a python object has a given callable attribute taking the given number of arguments
- */
-bool HasCallableAttr(const boost::python::object & obj, const std::string & attr, int narg);
 
 
 
