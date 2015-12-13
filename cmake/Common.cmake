@@ -2,7 +2,6 @@
 # Paths and options for
 # external dependencies
 ############################
-set(BPMODULE_MPI FALSE CACHE BOOL "Use MPI")
 set(BPMODULE_LIBEL_PATH "/usr" CACHE PATH "Path to LibElemental. Should contain include, lib subdirectories")
 
 
