@@ -24,7 +24,7 @@ class OneElectronIntegralIMPL : public ModuleBase
             : ModuleBase(id)
         { }
 
-        OneElectronIntegralIMPL(PyObject * self, unsigned long id)
+        OneElectronIntegralIMPL(pybind11::object self, unsigned long id)
             : ModuleBase(self, id)
         { }
 
@@ -59,7 +59,7 @@ class OneElectronIntegralIMPL : public ModuleBase
         }
 
 
-        boost::python::object GetBufPy(void)
+        pybind11::object GetBufPy(void)
         {
             return python_helper::ConvertToPy(GetBuf(), GetIntegralCount());  
         }
@@ -95,7 +95,7 @@ class OneElectronIntegralIMPL : public ModuleBase
         }
 
     private:
-        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
+        virtual pybind11::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
         {
             return ModuleBase::MoveToPyObjectHelper_<OneElectronIntegralIMPL>(deleter, this);
         }

@@ -4,8 +4,6 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include <boost/python/extract.hpp>
-
 #include "bpmodule/modulelocator/PyModuleLoader.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"
@@ -34,12 +32,12 @@ PyModuleLoader::~PyModuleLoader()
 
 
 
-ModuleBase * PyModuleLoader::GeneratorWrapper_(boost::python::object fn,
+ModuleBase * PyModuleLoader::GeneratorWrapper_(pybind11::object fn,
                                                const std::string & name,
                                                unsigned long id)
 {
-    boost::python::object newobj = python_helper::CallPyFunc<boost::python::object>(fn, name, id);
-    ModuleBase * ptr = boost::python::extract<ModuleBase *>(newobj); // may throw
+    pybind11::object newobj = python_helper::CallPyFunc2<pybind11::object>(fn, name, id);
+    ModuleBase * ptr = newobj.cast<ModuleBase *>(); // may throw
     BASE::CopyObject(id, newobj); // strong exception guarantee
     return ptr;
 }
@@ -47,16 +45,17 @@ ModuleBase * PyModuleLoader::GeneratorWrapper_(boost::python::object fn,
 
 
 void PyModuleLoader::LoadPyModule(const std::string & key,
-                                  boost::python::object func,
-                                  const boost::python::dict & minfo)
+                                  pybind11::object func,
+                                  pybind11::dict minfo)
 {
     // convert moduleinfo
     ModuleInfo mi(minfo);
 
     // check if callable
     // 2 arguments - name, id
-    if(!python_helper::IsCallable(func, 2))
-        throw ModuleLoadException("Cannot load module: Object not callable with four arguments",
+    //! \todo nargs
+    if(!python_helper::IsCallable2(func))
+        throw ModuleLoadException("Cannot load module: Object not callable",
                                    mi.path, key, mi.name);
 
     ModuleLocator::ModuleGeneratorFunc cfunc = std::bind(&PyModuleLoader::GeneratorWrapper_, this,

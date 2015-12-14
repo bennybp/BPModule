@@ -21,7 +21,7 @@ namespace testing {
 
 /*! \brief An class not exported to python
  *
- * Used to test failure of ConvertToPy
+ * Used to test failure of ConvertToPy2
  */
 template<typename T>
 struct FailObject
@@ -39,9 +39,9 @@ struct FailObject
  * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
-int TestConvertToCpp(const boost::python::object & obj)
+int TestConvertToCpp2(pybind11::object obj)
 {
-    return TestFunc(bpmodule::python_helper::ConvertToCpp<T>, obj);
+    return TestFunc(bpmodule::python_helper::ConvertToCpp2<T>, obj);
 }
 
 
@@ -53,9 +53,9 @@ int TestConvertToCpp(const boost::python::object & obj)
  * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
-int TestConvertToPy(const T & obj)
+int TestConvertToPy2(const T & obj)
 {
-    return TestFunc(bpmodule::python_helper::ConvertToPy<T>, obj);
+    return TestFunc(bpmodule::python_helper::ConvertToPy2<T>, obj);
 }
 
 
@@ -67,17 +67,17 @@ int TestConvertToPy(const T & obj)
  * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
-void PyCppPy(const boost::python::object & obj)
+void PyCppPy(pybind11::object obj)
 {
-    T t = python_helper::ConvertToCpp<T>(obj);
-    boost::python::object obj2 = python_helper::ConvertToPy<T>(t);
+    T t = python_helper::ConvertToCpp2<T>(obj);
+    pybind11::object obj2 = python_helper::ConvertToPy2<T>(t);
 }
 
 
 
 /*! \brief A single Python-to-C++-to-python round trip conversion that fails
  *
- * This should fail due to the object being passwd to ConvertToPy not
+ * This should fail due to the object being passwd to ConvertToPy2 not
  * being exported to python
  *
  * \tparam T C++ type to use
@@ -86,11 +86,11 @@ void PyCppPy(const boost::python::object & obj)
  * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
-void PyCppPy_Fail(const boost::python::object & obj)
+void PyCppPy_Fail(pybind11::object obj)
 {
-    T t = python_helper::ConvertToCpp<T>(obj);
+    T t = python_helper::ConvertToCpp2<T>(obj);
     FailObject<T> fo{t};
-    boost::python::object obj2 = python_helper::ConvertToPy<FailObject<T>>(fo);
+    pybind11::object obj2 = python_helper::ConvertToPy2<FailObject<T>>(fo);
 }
 
 
@@ -102,7 +102,7 @@ void PyCppPy_Fail(const boost::python::object & obj)
  * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
-int TestPyCppPy(const boost::python::object & obj)
+int TestPyCppPy(pybind11::object obj)
 {
     return TestFunc(PyCppPy<T>, obj);
 }
@@ -117,7 +117,7 @@ int TestPyCppPy(const boost::python::object & obj)
  * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
-int TestPyCppPy_Fail(const boost::python::object & obj)
+int TestPyCppPy_Fail(pybind11::object obj)
 {
     return TestFunc(PyCppPy_Fail<T>, obj);
 }

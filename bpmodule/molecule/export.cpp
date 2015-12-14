@@ -20,10 +20,6 @@ namespace molecule {
 namespace export_python {
 
 
-// Ditto for atom XYZ
-std::array<double, 3> AtomXYZ_(const Atom & a) { return a.xyz; }
-
-
 
 // Molecule::AddAtom wrapper
 void Molecule_AddAtomWrapper(Molecule & mol, int Z, pybind11::tuple xyz)

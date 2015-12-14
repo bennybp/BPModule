@@ -64,7 +64,7 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
          * \param [in] key The key for this module
          * \param [in] minfo The module information, including the path and name
          */
-        void LoadSO(const std::string & key, const boost::python::dict & minfo);
+        void LoadSO(const std::string & key, pybind11::dict minfo);
 
 
 

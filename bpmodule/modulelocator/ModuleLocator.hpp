@@ -115,7 +115,7 @@ class ModuleLocator
          * \param [in] key A module key
          * \param [in] opt Options to set
          */
-        void SetOptions(const std::string & key, const boost::python::dict & opt);
+        void SetOptions(const std::string & key, pybind11::dict opt);
 
 
 
@@ -184,9 +184,9 @@ class ModuleLocator
          * \exbasic
          * \todo make strong?
          *
-         * \return The module wrapped in a boost::python object
+         * \return The module wrapped in a python object
          */
-        boost::python::object GetModulePy(const std::string & key, unsigned long parentid);
+        pybind11::object GetModulePy(const std::string & key, unsigned long parentid);
 
 
 

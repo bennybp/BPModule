@@ -44,7 +44,7 @@ struct ModuleInfo
      * \throw bpmodule::exception::ModuleLocatorException if conversion fails
      *        or the python dictionary is missing a required field
      */
-    ModuleInfo(const boost::python::dict & dictionary);
+    ModuleInfo(pybind11::dict dictionary);
 
 
     /*! \brief Print out this info

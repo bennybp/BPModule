@@ -8,11 +8,8 @@
 #ifndef _GUARD_PYMODULELOADER_HPP_
 #define _GUARD_PYMODULELOADER_HPP_
 
-#include <boost/python/object.hpp>
-
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 #include "bpmodule/modulelocator/ModuleLoaderBase.hpp"
-
+#include "bpmodule/python_helper/Pybind11.hpp"
 
 namespace bpmodule {
 namespace modulelocator {
@@ -23,7 +20,7 @@ namespace modulelocator {
  * This class is the ultimate owner of all created
  * python module objects, which it stores via ModuleLoaderBase.
  */
-class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
+class PyModuleLoader : public ModuleLoaderBase<pybind11::object>
 {
     public:
 
@@ -65,13 +62,13 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
          * \param [in] minfo The module information, including the path and name
          */
         void LoadPyModule(const std::string & key,
-                          boost::python::object func,
-                          const boost::python::dict & minfo);
+                          pybind11::object func,
+                          pybind11::dict minfo);
 
 
     private:
         //! This object's base class
-        typedef ModuleLoaderBase<boost::python::object> BASE;
+        typedef ModuleLoaderBase<pybind11::object> BASE;
 
 
 
@@ -84,7 +81,7 @@ class PyModuleLoader : public ModuleLoaderBase<boost::python::object>
          * \param [in] id Unique ID for the created module
          * \return Pointer to a new object derived from ModuleBase
          */
-        modulebase::ModuleBase * GeneratorWrapper_(boost::python::object fn,
+        modulebase::ModuleBase * GeneratorWrapper_(pybind11::object fn,
                                                    const std::string & name,
                                                    unsigned long id);
 

@@ -24,7 +24,7 @@ class TwoElectronIntegralIMPL : public ModuleBase
             : ModuleBase(id)
         { }
 
-        TwoElectronIntegralIMPL(PyObject * self, unsigned long id)
+        TwoElectronIntegralIMPL(pybind11::object self, unsigned long id)
             : ModuleBase(self, id)
         { }
 
@@ -65,7 +65,7 @@ class TwoElectronIntegralIMPL : public ModuleBase
         }
 
 
-        boost::python::object GetBufPy(void)
+        pybind11::object GetBufPy(void)
         {
             return python_helper::ConvertToPy(GetBuf(), GetIntegralCount());  
         }
@@ -106,7 +106,7 @@ class TwoElectronIntegralIMPL : public ModuleBase
         
 
     private:
-        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
+        virtual pybind11::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
         {
             return ModuleBase::MoveToPyObjectHelper_<TwoElectronIntegralIMPL>(deleter, this);
         }

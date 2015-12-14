@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
+#include "bpmodule/python_helper/Pybind11.hpp"
 
 
 
@@ -25,7 +25,7 @@ namespace testing {
  *
  * \return 0 if the test succeeds, 1 if it fails
  */
-int TestModuleInfo_Construct(const boost::python::dict & mi);
+int TestModuleInfo_Construct(pybind11::dict mi);
 
 
 

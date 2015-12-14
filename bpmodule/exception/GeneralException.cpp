@@ -8,7 +8,6 @@
 #include <sstream>
 
 #include "bpmodule/exception/GeneralException.hpp"
-#include "bpmodule/output/Output.hpp"
 
 namespace bpmodule {
 namespace exception {
@@ -86,7 +85,6 @@ void GeneralException::AppendInfo(const std::string & key, const std::string & v
     }
 
     fullstr_ += escaped;
-    bpmodule::output::Debug("fullstr now %1%\n", fullstr_);
     
 }
 

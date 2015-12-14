@@ -11,13 +11,6 @@
 #include <memory>
 
 // forward declarations
-namespace boost
-{
-template<typename T>
-class shared_ptr;
-}
-
-
 namespace bpmodule {
 
 namespace modulebase {

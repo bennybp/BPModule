@@ -5,7 +5,6 @@
  */
 
 
-#include <boost/python/dict.hpp>
 #include "bpmodule/python_helper/Convert.hpp"
 
 #include "bpmodule/modulelocator/ModuleInfo.hpp"
@@ -14,12 +13,22 @@
 
 
 using bpmodule::datastore::OptionMap;
-using bpmodule::python_helper::ConvertToCpp;
+using bpmodule::python_helper::ConvertToCpp2;
 using bpmodule::exception::GeneralException;
 using bpmodule::exception::ModuleLocatorException;
 
 namespace bpmodule {
 namespace modulelocator {
+
+
+//! \todo Becuase pybind11 doesn't have a has_key or similar
+static bool DictHasKey_(pybind11::dict dictionary, const std::string & key)
+{
+    for(auto it : dictionary)
+        if(ConvertToCpp2<std::string>(it.first) == key)
+            return true;
+    return false;
+}
 
 
 /*! \brief Converts types for ModuleInfo
@@ -36,9 +45,9 @@ namespace modulelocator {
  * \param [in] key The key in the dictionary
  */
 template<typename T>
-static T DictConvertHelper(const boost::python::dict & dictionary, const char * key)
+static T DictConvertHelper(pybind11::dict dictionary, const char * key)
 {
-    if(!dictionary.has_key(key))
+    if(!DictHasKey_(dictionary, key))
         throw ModuleLocatorException("Python dictionary is missing key",
                                    "location", "ModuleInfo",
                                    "dictkey", key,
@@ -47,7 +56,7 @@ static T DictConvertHelper(const boost::python::dict & dictionary, const char * 
 
     try {
         // may throw PythonConvertException
-        return ConvertToCpp<T>(dictionary[key]);
+        return ConvertToCpp2<T>(dictionary[key]);
     }
     catch(const GeneralException & ex)
     {
@@ -71,16 +80,16 @@ static T DictConvertHelper(const boost::python::dict & dictionary, const char * 
  * \param [in] key The key in the dictionary that contains a python list
  */
 template<typename T>
-static std::vector<T> DictConvertHelperVec(const boost::python::dict & dictionary, const char * key)
+static std::vector<T> DictConvertHelperVec(pybind11::dict dictionary, const char * key)
 {
     // will make sure it can convert to list
     // and will append key to exception
-    boost::python::list lst = DictConvertHelper<boost::python::list>(dictionary, key);
+    pybind11::list lst = DictConvertHelper<pybind11::list>(dictionary, key);
 
 
     // Actually convert the vector
     try {
-        return ConvertToCpp<std::vector<T>>(lst);
+        return ConvertToCpp2<std::vector<T>>(lst);
     }
     catch(const GeneralException & ex)
     {
@@ -92,7 +101,7 @@ static std::vector<T> DictConvertHelperVec(const boost::python::dict & dictionar
 
 
 
-ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
+ModuleInfo::ModuleInfo(pybind11::dict dictionary)
 {
     try {
         key         = DictConvertHelper<std::string>(dictionary, "key");
@@ -107,14 +116,14 @@ ModuleInfo::ModuleInfo(const boost::python::dict & dictionary)
 
 
         // 'None' is ok for whole options validator
-        boost::python::object wholeoptvalid;
-        if(dictionary.has_key("wholeoptvalidator"))
+        pybind11::object wholeoptvalid;
+        if(DictHasKey_(dictionary, "wholeoptvalidator"))
             wholeoptvalid = dictionary["wholeoptvalidator"];
 
-        options     = OptionMap(key, DictConvertHelper<boost::python::dict>(dictionary, "options"), wholeoptvalid);
+        options     = OptionMap(key, DictConvertHelper<pybind11::dict>(dictionary, "options"), wholeoptvalid);
 
         // soname is optional
-        if(dictionary.has_key("soname"))
+        if(DictHasKey_(dictionary, "soname"))
             soname = DictConvertHelper<std::string>(dictionary, "soname");
     }
     catch(const GeneralException & ex)

@@ -9,8 +9,8 @@
 #define _GUARD_MODULEBASE_HPP_
 
 #include <string>
-#include <boost/shared_ptr.hpp> //! \todo May be able to use std::shared_ptr instead with some workarounds
 
+#include "bpmodule/python_helper/Pybind11.hpp"
 #include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/python_helper/Call.hpp"
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
@@ -32,7 +32,9 @@ class OptionMap;
 // for friend
 namespace modulebase {
 namespace export_python {
-void init_module_modulebase(void);
+extern "C" {
+PyObject * PyInit_modulebase(void);
+}
 }
 }
 
@@ -56,10 +58,6 @@ class ModuleBase
         /*! \brief Constructor
          */
         ModuleBase(unsigned long id);
-
-        /*! \brief Constructor for python
-         */
-        ModuleBase(PyObject * self, unsigned long id);
 
 
         virtual ~ModuleBase();
@@ -118,11 +116,6 @@ class ModuleBase
         void Print(void) const;
 
 
-        /*! \brief See if this module is a python module
-         */
-        bool IsPythonModule(void) const noexcept;
-
-
         /*! \brief Return a pointer to my node on the graph
          *
          * \throw std::logic_error if there is a severe developer error
@@ -143,8 +136,10 @@ class ModuleBase
          * This is needed to allow protected members to be
          * accessed to derived classes written in python
          * (alternative is a wrapper class, which is messy in our case)
+         *
+         * //! \todo we now have wrapper classes, but we would have to forward for all classes
          */
-        friend void export_python::init_module_modulebase(void);
+        friend PyObject * export_python::PyInit_modulebase(void);
 
 
         /*! \brief Get the internal ModuleLocator that is in charge of this module
@@ -206,19 +201,6 @@ class ModuleBase
         }
 
 
-        /*! \brief Call a python method
-         * 
-         */
-        template<typename R, typename ... An>
-        R CallPyMethod(const char * fname, An &&... args)
-        {
-            // No need to handle exceptions since this should be called from within CallFunction
-            if (!IsPythonModule())
-                throw exception::GeneralException("Attempting to call a virtual function in a C++ module that is missing from the derived class");
-
-            return bpmodule::python_helper::CallPyFuncAttr<R>(pyselfobj_, fname, std::forward<An>(args)...);
-        }
-
 
         /*! \brief Get the wavefunction for this graph node
          *
@@ -241,26 +223,21 @@ class ModuleBase
          *
          * Python version 
          */ 
-        boost::python::object CreateChildModulePy(const std::string & key) const;
+        pybind11::object CreateChildModulePy(const std::string & key) const;
 
 
 
         template<typename T>
         static
-        boost::python::object MoveToPyObjectHelper_(std::function<void(modulebase::ModuleBase *)> deleter, T * obj)
+        pybind11::object MoveToPyObjectHelper_(std::function<void(modulebase::ModuleBase *)> deleter, T * obj)
         {
-            boost::shared_ptr<T> me(obj, deleter);
-            return boost::python::object(me);
+            std::shared_ptr<T> me(obj, deleter);
+            return pybind11::cast(me);
         }
 
 
 
     private:
-        // python self pointer
-        // Only used if this is a python module. Otherwise it is null
-        PyObject * pyself_;
-        boost::python::object pyselfobj_;
-
         // allow ModuleLocator to set up the pointers
         // and to call MoveToPyObject_, etc
         friend class modulelocator::ModuleLocator;
@@ -328,7 +305,7 @@ class ModuleBase
 
 
 
-        /*! \brief Create a boost::python::object that manages this
+        /*! \brief Create a python object that manages this
          *
          * This object will now be managed by the python object.
          *
@@ -340,7 +317,7 @@ class ModuleBase
          *
          * \todo exception documentation/wrapping
          */
-        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter) = 0;
+        virtual pybind11::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter) = 0;
 };
 
 

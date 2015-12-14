@@ -4,8 +4,6 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include <boost/python/dict.hpp>
-
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
@@ -72,7 +70,7 @@ void ModuleLocator::InsertModule(const std::string & key, ModuleGeneratorFunc fu
 }
 
 
-void ModuleLocator::SetOptions(const std::string & key, const boost::python::dict & opt)
+void ModuleLocator::SetOptions(const std::string & key, pybind11::dict opt)
 {
     GetOrThrow_(key).mi.options.ChangePyDict(opt);
 }
@@ -278,7 +276,7 @@ ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
 ////////////////////
 // Python
 ////////////////////
-boost::python::object ModuleLocator::GetModulePy(const std::string & key, unsigned long parentid)
+pybind11::object ModuleLocator::GetModulePy(const std::string & key, unsigned long parentid)
 {
     auto mod = CreateModule_(key, parentid);
     return mod.first->MoveToPyObject_(mod.second);

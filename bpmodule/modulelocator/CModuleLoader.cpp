@@ -7,8 +7,6 @@
 
 #include <dlfcn.h>
 
-#include <boost/python/dict.hpp>
-
 #include "bpmodule/modulelocator/CModuleLoader.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
@@ -58,7 +56,7 @@ ModuleBase * CModuleLoader::GeneratorWrapper_(GeneratorFunc fn,
 
 
 
-void CModuleLoader::LoadSO(const std::string & key, const boost::python::dict & minfo)
+void CModuleLoader::LoadSO(const std::string & key, pybind11::dict minfo)
 {
     // may throw
     ModuleInfo mi(minfo);

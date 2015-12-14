@@ -25,10 +25,6 @@ class Test_Base : public ModuleBase
             : ModuleBase(id)
         { }
 
-        Test_Base(PyObject * self, unsigned long id)
-            : ModuleBase(self, id)
-        { }
-
 
         /*! \brief Just test some functionality
          */
@@ -77,50 +73,76 @@ class Test_Base : public ModuleBase
          * 
          * \note To be implemented by derived classes
          */ 
-        virtual void RunTest_(void)
-        {
-            return ModuleBase::CallPyMethod<void>("RunTest_");
-        }
+        virtual void RunTest_(void) = 0;
 
 
         /*! \copydoc CallRunTest
          * 
          * \note To be implemented by derived classes
          */ 
-        virtual void CallRunTest_(const std::string & other)
-        {
-            return ModuleBase::CallPyMethod<void>("CallRunTest_", other);
-        }
+        virtual void CallRunTest_(const std::string & other) = 0;
 
 
         /*! \copydoc TestThrow
          * 
          * \note To be implemented by derived classes
          */ 
-        virtual void TestThrow_(void)
-        {
-            return ModuleBase::CallPyMethod<void>("TestThrow_");
-        }
+        virtual void TestThrow_(void) = 0;
 
 
         /*! \copydoc CallThrow
          * 
          * \note To be implemented by derived classes
          */ 
-        virtual void CallThrow_(const std::string & other)
-        {
-            return ModuleBase::CallPyMethod<void>("CallThrow_", other);
-        }
+        virtual void CallThrow_(const std::string & other) = 0;
 
 
 
     private:
-        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
+        virtual pybind11::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
         {
             return ModuleBase::MoveToPyObjectHelper_<Test_Base>(deleter, this);
         }
 
 };
+
+
+
+
+class Test_Base_Py : public Test_Base
+{
+    public:
+        using Test_Base::Test_Base;
+
+    
+        virtual void RunTest_(void)
+        {
+            PYBIND11_OVERLOAD_PURE(void, Test_Base, RunTest_);
+        }
+
+
+
+        virtual void CallRunTest_(const std::string & other)
+        {
+            PYBIND11_OVERLOAD_PURE(void, Test_Base, CallRunTest_, other);
+        }
+
+
+
+        virtual void TestThrow_(void)
+        {
+            PYBIND11_OVERLOAD_PURE(void, Test_Base, TestThrow_); 
+        }
+
+
+
+        virtual void CallThrow_(const std::string & other)
+        {
+            PYBIND11_OVERLOAD_PURE(void, Test_Base, CallThrow_, other);
+        }
+
+};
+
 
 } // close namespace modulebase
 } // close namespace bpmodule

@@ -29,8 +29,8 @@ void AddCreator_(const char * classname, std::function<pybind11::object(pybind11
 template<typename T>
 pybind11::object CreateUIDPointer_(pybind11::object obj)
 {
-    T cobj = python_helper::ConvertToCpp<T>(obj);
-    return pybind11::object(UIDPointer<T>(cobj));
+    T cobj = python_helper::ConvertToCpp2<T>(obj);
+    return pybind11::cast(UIDPointer<T>(cobj));
 }
 
 

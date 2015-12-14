@@ -8,7 +8,7 @@
 #ifndef _GUARD_CONVERT_HPP_
 #define _GUARD_CONVERT_HPP_
 
-
+#include "bpmodule/output/Output.hpp"
 #include <boost/python/list.hpp>  // includes object
 #include <boost/python/extract.hpp>
 
@@ -367,6 +367,8 @@ boost::python::object ConvertToPy(const T & obj)
     // will throw if there is an issue
     return PyConverter<T>::ConvertToPy(obj);
 }
+    
+
 
 
 /*! \brief Convert a python::object to a C++ type
@@ -382,6 +384,36 @@ boost::python::object ConvertToPy(const T & obj)
 template<typename T>
 T ConvertToCpp2(pybind11::object obj)
 {
+    PythonType objtype = DeterminePyType2(obj);
+
+    bool allowed = true;
+
+    // allow conversions from one pybind object to another
+    if(!std::is_base_of<pybind11::handle, T>::value)
+    {
+        // don't promote bool to anything else
+        if(!std::is_same<T, bool>::value && objtype == PythonType::Bool)
+            allowed = false;
+
+        // don't promote anything to bool
+        if(std::is_same<T, bool>::value && objtype != PythonType::Bool)
+            allowed = false;
+
+        // don't promote integer to floating point (or anything else)
+        if(!std::is_integral<T>::value && objtype == PythonType::Int)
+            allowed = false;
+
+        // also don't promote floating point to integral types
+        // (shouldn't be possible from boost::python::extract, but make sure)
+        if(!std::is_floating_point<T>::value && objtype == PythonType::Float)
+            allowed = false;
+    }
+
+    if(!allowed)
+        throw exception::PythonConvertException("Cannot convert from python to C++: Type check failed",
+                                                GetPyClass2(obj), util::DemangleCppType<T>());
+
+
     // will throw if there is an issue
     //! \todo exception handling
     try {

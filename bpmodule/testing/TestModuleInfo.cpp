@@ -4,8 +4,6 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include <boost/python/dict.hpp>
-
 #include "bpmodule/testing/TestingBase.hpp"
 #include "bpmodule/testing/TestModuleInfo.hpp"
 #include "bpmodule/modulelocator/ModuleInfo.hpp"
@@ -17,7 +15,7 @@ namespace bpmodule {
 namespace testing {
 
 
-int TestModuleInfo_Construct(const boost::python::dict & mi)
+int TestModuleInfo_Construct(pybind11::dict mi)
 {
     return TestConstruct<ModuleInfo>(mi);
 }

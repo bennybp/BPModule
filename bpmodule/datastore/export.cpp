@@ -10,6 +10,22 @@
 #include "bpmodule/datastore/OptionMap.hpp"
 
 
+//! \todo pybind11 needs this for the default arguments
+PRAGMA_WARNING_PUSH
+PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS
+namespace pybind11 {
+namespace detail {
+
+    template<>
+    std::string to_string(const bpmodule::datastore::OptionMap & opt)
+    {
+        return "OptionMap()";
+    }
+}
+}
+PRAGMA_WARNING_POP
+
+
 
 using bpmodule::basisset::BasisSet;
 using bpmodule::molecule::Molecule;
@@ -20,6 +36,7 @@ using bpmodule::tensor::DistMatrixD;
 namespace bpmodule {
 namespace datastore {
 namespace export_python {
+
 
 
 
@@ -81,11 +98,6 @@ PYBIND11_PLUGIN(datastore)
     .def("GetKeys", &CacheData::GetKeys)
     .def("Erase", &CacheData::Erase)
     .def("HasKey", &CacheData::HasKeyPy)
-    .def("GetCopy", &CacheData::GetCopyPy, pybind11::return_value_policy::copy)
-    .def("GetRef", &CacheData::GetRefPy, pybind11::return_value_policy::reference_internal)
-    .def("Set", &CacheData::SetPy, pybind11::return_value_policy::reference_internal)
-    ;
-    /*
     .def("HasKey", &CacheData::HasKeyPy,
                    "See if the cache has some data",
                    pybind11::arg("key"),
@@ -96,19 +108,17 @@ PYBIND11_PLUGIN(datastore)
                    pybind11::arg("key"),
                    pybind11::arg("opt") = OptionMap(),
                    pybind11::arg("sigopt") = pybind11::list())
-                   
     .def("GetRef", &CacheData::GetRefPy, 
                    "Get reference", pybind11::return_value_policy::reference_internal,
                    pybind11::arg("key"),
                    pybind11::arg("opt") = OptionMap(),
                    pybind11::arg("sigopt") = pybind11::list())
-    .def("Set", static_cast<void(CacheData::*)(const std::string &, const pybind11::object &, const OptionMap &)>(&CacheData::Set),
+    .def("Set", &CacheData::SetPy, 
                 "Set data",
                 pybind11::arg("key"), 
                 pybind11::arg("obj"),
                 pybind11::arg("opt") = OptionMap())
     ;
-    */
 
     return m.ptr();
 }

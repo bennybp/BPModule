@@ -24,17 +24,10 @@ namespace modulebase {
 
 
 ModuleBase::ModuleBase(unsigned long id)
-    : pyself_(nullptr), id_(id), mlocator_(nullptr), graphnode_(nullptr)
+    : id_(id), mlocator_(nullptr), graphnode_(nullptr)
 {
     output::Debug("Constructed module [%1%]\n", id);
 }
-
-ModuleBase::ModuleBase(PyObject * self, unsigned long id)
-    : pyself_(self), pyselfobj_(boost::python::handle<>(self)), id_(id), mlocator_(nullptr), graphnode_(nullptr)
-{
-    output::Debug("Constructed python module [%1%]\n", id);
-}
-
 
 
 ModuleBase::~ModuleBase()
@@ -87,12 +80,6 @@ void ModuleBase::Print(void) const
     MInfo_().Print();
 }
 
-bool ModuleBase::IsPythonModule(void) const noexcept
-{
-    return (pyself_ != nullptr);
-}
-
-
 const GraphNode * ModuleBase::MyNode(void) const
 {
     if(mlocator_ == nullptr)
@@ -139,7 +126,7 @@ Wavefunction & ModuleBase::Wfn(void)
     return GraphData().wfn;
 }
 
-boost::python::object ModuleBase::CreateChildModulePy(const std::string & key) const
+pybind11::object ModuleBase::CreateChildModulePy(const std::string & key) const
 {
     return mlocator_->GetModulePy(key, id_);
 }
