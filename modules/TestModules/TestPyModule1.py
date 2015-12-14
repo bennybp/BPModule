@@ -2,7 +2,7 @@ import bpmodule as bp
 
 class TestPyModule1(bp.modulebase.Test_Base):
   def __init__(self, myid):
-    super(TestPyModule1, self).__init__(self, myid)
+    super(TestPyModule1, self).__init__(myid)
 
 
   def RunTest_(self):

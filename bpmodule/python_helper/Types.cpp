@@ -132,6 +132,9 @@ PythonType DeterminePyType(const boost::python::object & obj)
 PythonType DeterminePyType2(pybind11::object obj)
 {
     try {
+        if(obj.ptr() == nullptr)
+            return PythonType::None;
+
         std::string cl = GetPyClass2(obj);
 
         if(cl == "bool")      return PythonType::Bool;

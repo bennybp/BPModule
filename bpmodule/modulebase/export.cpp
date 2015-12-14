@@ -15,9 +15,15 @@ using bpmodule::modulelocator::ModuleInfo;
 using bpmodule::datastore::OptionMap;
 
 
+
 namespace bpmodule {
 namespace modulebase {
 namespace export_python {
+
+
+template<typename T>
+using ModuleBasePtr = std::shared_ptr<T>;
+
 
 PYBIND11_PLUGIN(modulebase)
 {
@@ -26,10 +32,8 @@ PYBIND11_PLUGIN(modulebase)
     ///////////////////////
     // Module Base classes
     ///////////////////////
-    //register_ptr_to_python<boost::shared_ptr<ModuleBase>>();
-
     // CallFunc doesn't need to be exported 
-    pybind11::class_<ModuleBase> mbase(m, "ModuleBase");
+    pybind11::class_<ModuleBase, ModuleBasePtr<ModuleBase>> mbase(m, "ModuleBase");
     mbase.def("ID", &ModuleBase::ID)
          .def("Key", &ModuleBase::Key)
          .def("Name", &ModuleBase::Name)
@@ -46,9 +50,7 @@ PYBIND11_PLUGIN(modulebase)
     /////////////////////////
     // Test class
     /////////////////////////
-    //register_ptr_to_python<boost::shared_ptr<Test_Base>>();
-
-    pybind11::class_<Test_Base_Py> testbase(m, "Test_Base", mbase);
+    pybind11::class_<Test_Base_Py, ModuleBasePtr<Test_Base>> testbase(m, "Test_Base", mbase);
     testbase.alias<Test_Base>()
             .def(pybind11::init<unsigned long>())
             .def("RunTest", &Test_Base::RunTest)

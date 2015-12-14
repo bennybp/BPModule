@@ -51,7 +51,7 @@ namespace modulebase {
  * This class is in charge of doing some common things (ie, storing options). All
  * modules will ultimately derive from this.
  */
-class ModuleBase
+class ModuleBase : public std::enable_shared_from_this<ModuleBase>
 {
     public:
 

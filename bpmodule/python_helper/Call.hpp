@@ -98,9 +98,14 @@ Ret CallPyFunc2(pybind11::object & obj, Targs... Fargs)
     try {
         ret = obj.call(Fargs...);
     }
+    catch(const pybind11::error_already_set & ex)
+    {
+        throw bpmodule::exception::PythonCallException("Error calling python function", "(none)",
+                                                       "what", ex.what());
+    }
     catch(...)
     {
-        throw exception::GeneralException("TODO"); //detail::GetPyException();
+        throw exception::GeneralException("TODO");
     }
 
     try {
