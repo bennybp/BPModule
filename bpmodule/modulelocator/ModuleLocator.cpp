@@ -42,31 +42,20 @@ ModuleLocator::ModuleLocator()
 
 ModuleLocator::~ModuleLocator()
 {
-    // it is the responsiblility of the various
-    // loaders to be responsible for deleting all
-    // the objects. The deletion functors aren't
-    // called here since this should be destructed
-    // after all the loaders
-    //
-    // Deleting after the loader had been destructed
-    // probably wouldn't be a good idea, since the object
-    // wouldn't exist anymore...
-    //
     //! \todo Check if maps are empty?
 }
 
 
 
-void ModuleLocator::InsertModule(const std::string & key, ModuleGeneratorFunc func,
-                               ModuleRemoverFunc dfunc, const ModuleInfo & minfo)
+void ModuleLocator::InsertModule(const std::string & key, const ModuleCreatorFunc & mc, const ModuleInfo & mi)
 {
     // add to store
     // but throw if key already exists
     if(store_.count(key))
         throw ModuleLoadException("Cannot insert module: duplicate key",
-                                  minfo.path, key, minfo.name);
+                                  mi.path, key, mi.name);
 
-    store_.emplace(key, StoreEntry{minfo, func, dfunc});
+    store_.emplace(key, StoreEntry{mi, mc});
 }
 
 
@@ -145,41 +134,6 @@ void ModuleLocator::TestAll(void)
 }
 
 
-void ModuleLocator::DeleteObject_(ModuleBase * mb)
-{
-    DeleteObject_(mb->ID());
-}
-
-void ModuleLocator::DeleteObject_(unsigned long id)
-{
-    if(removemap_.count(id))
-    {
-        ModuleRemoverFunc dfunc = removemap_.at(id);
-
-        // Throwing from destructor is bad
-        bool destructorthrew = false;
-
-        try {
-            dfunc(id);
-        }
-        catch(...)
-        {
-            destructorthrew = true;
-        }
-
-        removemap_.erase(id);
-        //graphnodes_.erase(id);
-
-        if(destructorthrew)
-            throw exception::ModuleLocatorException("Destructor for a module threw an exception",
-                                                    "moduleid", id,
-                                                    "name", graphnodes_.at(id).data.minfo.name,
-                                                    "key", graphnodes_.at(id).data.minfo.key);
-
-    }
-}
-
-
 void ModuleLocator::ClearCache(void)
 {
     cachemap_.clear();
@@ -211,16 +165,16 @@ ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & key)
 /////////////////////////////////////////
 // Module Creation
 /////////////////////////////////////////
-std::pair<modulebase::ModuleBase *, ModuleLocator::DeleterFunc>
+std::unique_ptr<detail::ModuleIMPLHolder>
 ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
 {
     // obtain the creator
     const StoreEntry & se = GetOrThrow_(key);
 
     // create
-    modulebase::ModuleBase * mbptr = nullptr;
+    detail::ModuleIMPLHolder * mbptr;
     try {
-      mbptr = se.func(se.mi.name, curid_);
+      mbptr = se.mc(curid_);
     }
     catch(const exception::GeneralException & gex)
     {
@@ -235,7 +189,11 @@ ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
                                                se.mi.path,
                                                se.mi.key,
                                                se.mi.name);
-    
+
+    // wrap in a unique_ptr
+    std::unique_ptr<detail::ModuleIMPLHolder> umbptr(mbptr);
+   
+ 
     // add the moduleinfo to the graph
     //! \todo replace with actual graph
     if(parentid != 0)
@@ -251,25 +209,20 @@ ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
     }
 
     // set the info
-    mbptr->SetMLocator_(this);
-    mbptr->SetGraphNode_(&(graphnodes_.at(curid_)));
+    ModuleBase * p = umbptr->CppPtr();
+
+    p->SetMLocator_(this);
+    p->SetGraphNode_(&(graphnodes_.at(curid_)));
 
     // get this modules cache
     // no need to use .at() -- we need it created if it doesn't exist already
-    std::string mbstr = mbptr->Name() + "_v" + mbptr->Version();
-    mbptr->SetCache_(&(cachemap_[mbstr]));
-
-    // make the deleter function the DeleteObject_() of this ModuleLocator object
-    DeleterFunc dfunc = std::bind(static_cast<void(ModuleLocator::*)(modulebase::ModuleBase *)>(&ModuleLocator::DeleteObject_),
-                                  this,
-                                  std::placeholders::_1);
-
-    removemap_.emplace(curid_, se.dfunc);
+    std::string mbstr = p->Name() + "_v" + p->Version();
+    p->SetCache_(&(cachemap_[mbstr]));
 
     // next id
     curid_++;
 
-    return {mbptr, dfunc};
+    return std::move(umbptr);
 }
 
 
@@ -278,8 +231,8 @@ ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
 ////////////////////
 pybind11::object ModuleLocator::GetModulePy(const std::string & key, unsigned long parentid)
 {
-    auto mod = CreateModule_(key, parentid);
-    return mod.first->MoveToPyObject_(mod.second);
+    auto umbptr = CreateModule_(key, parentid);
+    return pybind11::cast(PyModulePtr(std::move(umbptr)));
 }
 
 

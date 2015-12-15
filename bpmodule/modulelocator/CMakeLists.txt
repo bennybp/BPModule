@@ -3,16 +3,16 @@ set(BPMODULE_MODULELOCATOR_FILES
             export.cpp
             ModuleInfo.cpp
             ModuleLocator.cpp
-            PyModuleLoader.cpp
             export.cpp
    )
 
 set(BPMODULE_MODULELOCATOR_HEADERS
-            ScopedModule.hpp
             CModuleLoader.hpp
             ModuleInfo.hpp
             ModuleLocator.hpp
-            PyModuleLoader.hpp
+            ModulePtr.hpp
+            ModuleIMPLHolder.hpp
+            CreateFunctions.hpp
    )
 
 

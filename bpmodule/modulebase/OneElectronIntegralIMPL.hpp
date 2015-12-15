@@ -94,11 +94,6 @@ class OneElectronIntegralIMPL : public ModuleBase
             return ModuleBase::CallPyMethod<long>("GetIntegralCount_");
         }
 
-    private:
-        virtual pybind11::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
-        {
-            return ModuleBase::MoveToPyObjectHelper_<OneElectronIntegralIMPL>(deleter, this);
-        }
 
 };
 

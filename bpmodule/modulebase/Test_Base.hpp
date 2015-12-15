@@ -97,13 +97,6 @@ class Test_Base : public ModuleBase
         virtual void CallThrow_(const std::string & other) = 0;
 
 
-
-    private:
-        virtual pybind11::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
-        {
-            return ModuleBase::MoveToPyObjectHelper_<Test_Base>(deleter, this);
-        }
-
 };
 
 

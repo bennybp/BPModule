@@ -8,19 +8,22 @@
 #ifndef _GUARD_CMODULELOADER_HPP_
 #define _GUARD_CMODULELOADER_HPP_
 
-#include "bpmodule/modulelocator/ModuleLoaderBase.hpp"
+#include "bpmodule/python_helper/Pybind11.hpp"
+#include "bpmodule/modulelocator/CreatorFunctions.hpp"
 
 
 namespace bpmodule {
 namespace modulelocator {
 
 
+// forward declaration
+class ModuleLocator;
+
+
+
 /*! \brief Loads C/C++ modules
- *
- * This class is the ultimate owner of all created
- * C/C++ module objects, which it stores via ModuleLoaderBase (as smart pointers)
  */
-class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::ModuleBase> >
+class CModuleLoader
 {
     public:
 
@@ -67,31 +70,17 @@ class CModuleLoader : public ModuleLoaderBase< std::unique_ptr<modulebase::Modul
         void LoadSO(const std::string & key, pybind11::dict minfo);
 
 
-
     private:
-        //! This object's base class
-        typedef ModuleLoaderBase< std::unique_ptr<modulebase::ModuleBase> > BASE;
-
-        //! Pointer to a generator function in an SO file
-        typedef modulebase::ModuleBase *(*GeneratorFunc)(const std::string &, unsigned long);
+        ModuleLocator * mlt_;
 
 
         //! Stores handles to to open SO files
         std::unordered_map<std::string, void *> handles_;
 
 
-        /*! \brief Wraps the function pointer in an SO file
-         *
-         * \exstrong
-         *
-         * \param [in] fn Creation function pointer in SO file
-         * \param [in] name Name of the module to create
-         * \param [in] id Unique ID for the created module
-         * \return Pointer to a new object derived from ModuleBase
-         */
-        modulebase::ModuleBase * GeneratorWrapper_(GeneratorFunc fn,
-                                                   const std::string & name,
-                                                   unsigned long id);
+        //! Stores all the creators in an SO file
+        std::unordered_map<std::string, CreatorFunctions> creators_;
+
 };
 
 } // close namespace modulelocator

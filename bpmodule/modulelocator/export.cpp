@@ -7,7 +7,6 @@
 // Various components
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/modulelocator/CModuleLoader.hpp"
-#include "bpmodule/modulelocator/PyModuleLoader.hpp"
 
 
 using bpmodule::modulebase::ModuleBase;
@@ -64,9 +63,11 @@ PYBIND11_PLUGIN(modulelocator)
     .def(pybind11::init<ModuleLocator *>())
     .def("LoadSO", static_cast<void(CModuleLoader::*)(const std::string &, pybind11::dict)>(&CModuleLoader::LoadSO));
 
+/*
     pybind11::class_<PyModuleLoader>(m, "PyModuleLoader")
     .def(pybind11::init<ModuleLocator *>())
     .def("LoadPyModule", static_cast<void(PyModuleLoader::*)(const std::string &, pybind11::object, pybind11::dict)>(&PyModuleLoader::LoadPyModule));
+*/
 
     return m.ptr();
 }

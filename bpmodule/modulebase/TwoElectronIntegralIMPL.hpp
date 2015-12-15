@@ -106,10 +106,6 @@ class TwoElectronIntegralIMPL : public ModuleBase
         
 
     private:
-        virtual pybind11::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
-        {
-            return ModuleBase::MoveToPyObjectHelper_<TwoElectronIntegralIMPL>(deleter, this);
-        }
 
 };
 

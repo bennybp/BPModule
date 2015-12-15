@@ -104,13 +104,6 @@ class TwoElectronIntegral : public ModuleBase
             return ModuleBase::CallPyMethod<long>("GetIntegralCount_");
         }
         
-
-    private:
-        virtual pybind11::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
-        {
-            return ModuleBase::MoveToPyObjectHelper_<TwoElectronIntegral>(deleter, this);
-        }
-
 };
 
 } // close namespace modulebase

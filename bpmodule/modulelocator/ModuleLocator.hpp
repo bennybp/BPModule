@@ -13,9 +13,10 @@
 
 #include "bpmodule/datastore/GraphNodeData.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
-#include "bpmodule/modulelocator/ScopedModule.hpp"
 #include "bpmodule/exception/ModuleCreateException.hpp"
 #include "bpmodule/exception/ModuleLocatorException.hpp"
+#include "bpmodule/modulelocator/CreatorFunctions.hpp"
+#include "bpmodule/modulelocator/ModulePtr.hpp"
 
 
 // forward declarations
@@ -150,12 +151,16 @@ class ModuleLocator
          * \return A ScopedModule for an object of the requested type
          */
         template<typename T>
-        ScopedModule<T> GetModule(const std::string & key, unsigned long parentid)
+        ModulePtr<T> GetModule(const std::string & key, unsigned long parentid)
         {
             // may throw
-            // CreateModule_ returns a pointer/deleter pair
-            auto mod = CreateModule_(key, parentid);
+            std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(key, parentid);
 
+            // create the ModulePtr type
+            ModulePtr<T> mod(std::move(umbptr));
+
+
+            /*
             T * dptr = dynamic_cast<T *>(mod.first);
             if(dptr == nullptr)
             {
@@ -168,8 +173,9 @@ class ModuleLocator
             }
 
             ScopedModule<T> ret(dptr, mod.second); // construction shouldn't throw?
+            */
 
-            return ret;
+            return mod;
         }
 
 
@@ -205,18 +211,6 @@ class ModuleLocator
         friend class CModuleLoader;
         friend class PyModuleLoader;
 
-        //! A function that generates a module derived from ModuleBase
-        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long)> ModuleGeneratorFunc;
-
-
-        //! A function that deletes a module (by id)
-        typedef std::function<void(unsigned long)> ModuleRemoverFunc;
-
-
-        //! A deleter function to pass to smart pointers
-        typedef std::function<void(modulebase::ModuleBase *)> DeleterFunc;
-
-
 
         /*! \brief Adds/inserts a module creator to the database
          *
@@ -228,10 +222,9 @@ class ModuleLocator
          * \param [in] key A module key
          * \param [in] func A function that generates the module
          * \param [in] dfunc A function that deletes the module
-         * \param [in] minfo Information about the module
+         * \param [in] mi Information about the module
          */
-        void InsertModule(const std::string & key, ModuleGeneratorFunc func,
-                          ModuleRemoverFunc dfunc, const ModuleInfo & minfo);
+        void InsertModule(const std::string & key, const ModuleCreatorFunc & mc, const ModuleInfo & mi);
 
 
     private:
@@ -241,19 +234,13 @@ class ModuleLocator
         struct StoreEntry
         {
             ModuleInfo mi;             //!< Information for this module
-            ModuleGeneratorFunc func;  //!< Function that creates a class from this module
-            ModuleRemoverFunc dfunc;   //!< Function that deletes a class from this module
+            ModuleCreatorFunc mc;
         };
 
 
         /*! \brief Actual storage object - maps keys to creation functions
          */
         std::unordered_map<std::string, StoreEntry> store_;
-
-
-        /*! \brief Map for storing object removal information
-         */
-        std::unordered_map<unsigned long, ModuleRemoverFunc> removemap_;
 
 
         /*! \brief Map for storing created module information
@@ -313,38 +300,8 @@ class ModuleLocator
          * \note The calling function is responsible for managing the pointer
          *
          */
-        std::pair<modulebase::ModuleBase *, DeleterFunc>
+        std::unique_ptr<detail::ModuleIMPLHolder>
         CreateModule_(const std::string & key, unsigned long parentid);
-
-
-        /*! \brief Removes a created module object from storage
-         *
-         * This actually deletes the object, and removes references
-         * to it in various places.
-         *
-         * If the id doesn't exist, nothing will happen.
-         *
-         * \exsafe If an exception is thrown, the module instance is still
-         *         removed from this database.
-         *
-         * \param [in] mb Pointer to the module to remove
-         */
-        void DeleteObject_(modulebase::ModuleBase * mb);
-
-
-        /*! \brief Removes a created module object from storage
-         *
-         * This actually deletes the object, and removes references
-         * to it in various places.
-         *
-         * If the id doesn't exist, nothing will happen.
-         *
-         * \exsafe If an exception is thrown, the module instance is still
-         *         removed from this database.
-         *
-         * \param [in] id ID of the module to remove
-         */
-        void DeleteObject_(unsigned long id);
 
 };
 

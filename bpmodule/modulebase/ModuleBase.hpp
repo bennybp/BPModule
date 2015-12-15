@@ -212,7 +212,7 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
         /*! \brief Create a module that is a child of this one
          */ 
         template<typename T>
-        modulelocator::ScopedModule<T> CreateChildModule(const std::string & key) const
+        modulelocator::ModulePtr<T> CreateChildModule(const std::string & key) const
         {
             return mlocator_->GetModule<T>(key, id_);
         }
@@ -227,19 +227,9 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
 
 
 
-        template<typename T>
-        static
-        pybind11::object MoveToPyObjectHelper_(std::function<void(modulebase::ModuleBase *)> deleter, T * obj)
-        {
-            std::shared_ptr<T> me(obj, deleter);
-            return pybind11::cast(me);
-        }
-
-
 
     private:
         // allow ModuleLocator to set up the pointers
-        // and to call MoveToPyObject_, etc
         friend class modulelocator::ModuleLocator;
 
 
@@ -303,21 +293,6 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
          */
         const datastore::GraphNodeData & GraphData(void) const;
 
-
-
-        /*! \brief Create a python object that manages this
-         *
-         * This object will now be managed by the python object.
-         *
-         * \warning Internal use only. Really should only be accessed via the ModuleLocator. 
-         *
-         * \warning Do not call more than once on an object, and do not call on
-         *          one not created via new. The python object will
-         *          manage this as if it were a smart pointer.
-         *
-         * \todo exception documentation/wrapping
-         */
-        virtual pybind11::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter) = 0;
 };
 
 
