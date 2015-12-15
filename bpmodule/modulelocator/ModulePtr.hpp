@@ -26,9 +26,9 @@ class ModulePtr
 
         ~ModulePtr() = default;
 
-        T & operator->() const { return *ptr_; }
+        T * operator->() const { return ptr_; }
 
-        T * operator*() const { return ptr_; }
+        T & operator*() const { return *ptr_; }
 
 
     private:

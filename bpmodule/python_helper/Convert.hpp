@@ -9,8 +9,6 @@
 #define _GUARD_CONVERT_HPP_
 
 #include "bpmodule/output/Output.hpp"
-#include <boost/python/list.hpp>  // includes object
-#include <boost/python/extract.hpp>
 
 #include "bpmodule/python_helper/Pybind11.hpp"
 #include "bpmodule/python_helper/Pybind11_stl.hpp"
@@ -25,7 +23,7 @@ namespace python_helper {
 
 
 
-
+#if 0
 /*! \brief Family of structs to convert python types to and from C++ types
  *
  * \tparam T C++ type to convert
@@ -330,7 +328,6 @@ struct PyConverter<std::array<T, N>>
 
 
 
-
 /*! \brief Convert a boost::python::object to a C++ type
  *
  * \throw exception::PythonConvertException if the
@@ -369,6 +366,7 @@ boost::python::object ConvertToPy(const T & obj)
 }
     
 
+#endif
 
 
 /*! \brief Convert a python::object to a C++ type
@@ -449,7 +447,7 @@ pybind11::object ConvertToPy2(const T & obj)
 }
 
 
-
+#if 0
 /*! \brief Convert a plain array of C++ objects to a boost::python::object
  *
  * \throw exception::PythonConvertException if the
@@ -508,6 +506,8 @@ struct CppToPyExport
         return boost::python::incref(ConvertToPy(v).ptr());
     }  
 };
+
+#endif
 
 } // close namespace python_helper
 } // close namespace bpmodule

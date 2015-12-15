@@ -5,9 +5,6 @@
  */
 
 
-#include <boost/python/list.hpp>  // includes object
-#include <boost/python/extract.hpp>
-
 #include "bpmodule/python_helper/Types.hpp"
 #include "bpmodule/python_helper/Convert.hpp"
 
@@ -64,68 +61,12 @@ const char * PythonTypeToStr(PythonType pytype)
 }
 
 
-std::string GetPyClass(const boost::python::object & obj)
-{
-    //! \todo should ever throw?
-    return boost::python::extract<std::string>(obj.attr("__class__").attr("__name__"));
-}
-
 std::string GetPyClass2(pybind11::object obj)
 {
     //! \todo should ever throw?
     pybind11::object cls = obj.attr("__class__");
     pybind11::object name = cls.attr("__name__");
     return name.cast<std::string>();
-}
-
-
-PythonType DeterminePyType(const boost::python::object & obj)
-{
-    try {
-        std::string cl = GetPyClass(obj);
-
-        if(cl == "bool")      return PythonType::Bool;
-        if(cl == "int")       return PythonType::Int;
-        if(cl == "float")     return PythonType::Float;
-        if(cl == "str")       return PythonType::String;
-        if(cl == "tuple")     return PythonType::Tuple;
-        if(cl == "dict")      return PythonType::Dict;
-        if(cl == "NoneType")  return PythonType::None;
-
-        if(cl == "list")
-        {
-            boost::python::list lst = boost::python::extract<boost::python::list>(obj);
-
-            int length = boost::python::extract<int>(lst.attr("__len__")());
-            if(length <= 0)
-                return PythonType::ListEmpty;
-
-            // get type of first element
-            std::string cl2 = GetPyClass(lst[0]);
-
-            // check if this is a homogeneous container
-            for(int i = 1; i < length; i++)
-            {
-                std::string cltmp = GetPyClass(lst[i]);
-                if(cl2 != cltmp)
-                    return PythonType::ListHetero;
-            }
-
-            if(cl2 == "bool")      return PythonType::ListBool;
-            if(cl2 == "int")       return PythonType::ListInt;
-            if(cl2 == "float")     return PythonType::ListFloat;
-            if(cl2 == "str")       return PythonType::ListString;
-            if(cl2 == "NoneType")  return PythonType::ListEmpty;
-
-            return PythonType::ListUnknown;
-        }
-    }
-    catch(...)
-    {
-        return PythonType::Unknown;
-    }
-
-    return PythonType::Unknown;
 }
 
 
@@ -182,29 +123,14 @@ PythonType DeterminePyType2(pybind11::object obj)
 }
 
 
-bool HasAttr(const boost::python::object & obj, const std::string & attr)
-{
-    return PyObject_HasAttrString(obj.ptr(), attr.c_str());
-}
-
 bool HasAttr2(pybind11::object obj, const std::string & attr)
 {
     return PyObject_HasAttrString(obj.ptr(), attr.c_str());
 }
 
-bool IsCallable(const boost::python::object & obj)
-{
-    return PyCallable_Check(obj.ptr());
-}
-
 bool IsCallable2(pybind11::object obj)
 {
     return PyCallable_Check(obj.ptr());
-}
-
-bool HasCallableAttr(const boost::python::object & obj, const std::string & attr)
-{
-    return HasAttr(obj, attr) && IsCallable(obj.attr(attr.c_str()));
 }
 
 bool HasCallableAttr2(pybind11::object obj, const std::string & attr)

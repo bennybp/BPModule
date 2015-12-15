@@ -6,15 +6,6 @@
 
 #include "bpmodule/pragma.h"
 
-// Ignore swich missing default case
-PRAGMA_WARNING_PUSH
-PRAGMA_WARNING_IGNORE_SWITCH_MISSING_DEFAULT
-#include <Python.h>  // directly from python headers, not boost
-PRAGMA_WARNING_POP
-
-#include <boost/python/object.hpp>
-#include <boost/python/extract.hpp>
-
 #include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/python_helper/Errors.hpp"
 #include "bpmodule/python_helper/Types.hpp"
@@ -28,6 +19,7 @@ namespace python_helper {
 namespace detail {
 
 
+/*
 GeneralException GetPyException(void)
 {
     try {
@@ -64,7 +56,7 @@ GeneralException GetPyException(void)
         return GeneralException("DEVELOPER ERROR: EXCEPTION THROWN IN GETTING PYTHON EXCEPTION");
     }
 }
-
+*/
 
 } // close namespace detail
 } // close namespace python_helper

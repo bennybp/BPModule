@@ -32,9 +32,9 @@ string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 
 
 ############################
-# Find boost (with python3)
+# Find boost headers
 ############################
-find_package(Boost COMPONENTS python3 REQUIRED)
+find_package(Boost REQUIRED)
 
 ############################
 # Find Python libraries

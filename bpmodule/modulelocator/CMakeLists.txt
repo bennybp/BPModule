@@ -12,7 +12,7 @@ set(BPMODULE_MODULELOCATOR_HEADERS
             ModuleLocator.hpp
             ModulePtr.hpp
             ModuleIMPLHolder.hpp
-            CreateFunctions.hpp
+            CreatorFunctions.hpp
    )
 
 

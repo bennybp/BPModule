@@ -12,7 +12,6 @@
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/output/Output.hpp"
 
-using bpmodule::python_helper::CppToPyExport;
 using bpmodule::python_helper::ConvertToCpp2;
 
 namespace bpmodule {
