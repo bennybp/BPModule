@@ -13,7 +13,7 @@
 
 
 using bpmodule::datastore::OptionMap;
-using bpmodule::python_helper::ConvertToCpp2;
+using bpmodule::python_helper::ConvertToCpp;
 using bpmodule::exception::GeneralException;
 using bpmodule::exception::ModuleLocatorException;
 
@@ -25,7 +25,7 @@ namespace modulelocator {
 static bool DictHasKey_(pybind11::dict dictionary, const std::string & key)
 {
     for(auto it : dictionary)
-        if(ConvertToCpp2<std::string>(it.first) == key)
+        if(ConvertToCpp<std::string>(it.first) == key)
             return true;
     return false;
 }
@@ -56,7 +56,7 @@ static T DictConvertHelper(pybind11::dict dictionary, const char * key)
 
     try {
         // may throw PythonConvertException
-        return ConvertToCpp2<T>(dictionary[key]);
+        return ConvertToCpp<T>(dictionary[key]);
     }
     catch(const GeneralException & ex)
     {
@@ -89,7 +89,7 @@ static std::vector<T> DictConvertHelperVec(pybind11::dict dictionary, const char
 
     // Actually convert the vector
     try {
-        return ConvertToCpp2<std::vector<T>>(lst);
+        return ConvertToCpp<std::vector<T>>(lst);
     }
     catch(const GeneralException & ex)
     {

@@ -245,7 +245,7 @@ template<typename T>
 pybind11::object OptionHolder<T>::GetPy(void) const
 {
     try {
-        return ConvertToPy2(Get());
+        return ConvertToPy(Get());
     }
     catch(exception::GeneralException & ex)
     {
@@ -260,7 +260,7 @@ void OptionHolder<T>::ChangePy(pybind11::object obj)
     T val;
 
     try {
-        val = ConvertToCpp2<T>(obj);
+        val = ConvertToCpp<T>(obj);
     }
     catch(exception::GeneralException & ex)
     {
@@ -448,10 +448,10 @@ template<typename T>
 static OptionIssues ValidateWrapper(pybind11::object func, const OptionHolder<T> & val)
 {
     // should never really throw...
-    pybind11::object obj = ConvertToPy2(val.Get());
+    pybind11::object obj = ConvertToPy(val.Get());
 
     try {
-        return CallPyFunc2<std::vector<std::string>>(func, obj);
+        return CallPyFunc<std::vector<std::string>>(func, obj);
     }
     catch(PythonCallException & ex)
     {
@@ -471,13 +471,13 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, pybind11::tuple
 
 
     // The python type of the 'default' element of the tuple
-    PythonType ptype_default = DeterminePyType2(tup[1]);
+    PythonType ptype_default = DeterminePyType(tup[1]);
 
     // If a default value was given, try to convert it
     if(ptype_default != PythonType::None)
     {
         try {
-            def = new T(ConvertToCpp2<T>(tup[1]));
+            def = new T(ConvertToCpp<T>(tup[1]));
         }
         catch(const PythonConvertException & ex)
         {
@@ -488,40 +488,40 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, pybind11::tuple
 
     // Already checked
     /*
-    PythonType ptype_type = DeterminePyType2(tup[0]);
+    PythonType ptype_type = DeterminePyType(tup[0]);
     if(ptype_type != PythonType::String)
-        throw OptionException("\"Type\" element of tuple is not a bool", key, "type", GetPyClass2(tup[0]));
+        throw OptionException("\"Type\" element of tuple is not a bool", key, "type", GetPyClass(tup[0]));
     */
 
-    if(DeterminePyType2(tup[2]) != PythonType::Bool)
-        throw OptionException("\"Required\" element of tuple is not a bool", key, "type", GetPyClass2(tup[2]));
+    if(DeterminePyType(tup[2]) != PythonType::Bool)
+        throw OptionException("\"Required\" element of tuple is not a bool", key, "type", GetPyClass(tup[2]));
 
     // default, for help = None
     std::string help = "(no help)";
 
     // get if it is a string, throw if it's not a string or None
-    if(DeterminePyType2(tup[4]) == PythonType::String)
-        help = ConvertToCpp2<std::string>(tup[4]);
-    else if(DeterminePyType2(tup[4]) != PythonType::None)
-        throw OptionException("\"Help\" element of tuple is not a string (or None)", key, "type", GetPyClass2(tup[4]));
+    if(DeterminePyType(tup[4]) == PythonType::String)
+        help = ConvertToCpp<std::string>(tup[4]);
+    else if(DeterminePyType(tup[4]) != PythonType::None)
+        throw OptionException("\"Help\" element of tuple is not a string (or None)", key, "type", GetPyClass(tup[4]));
 
     // get the 'required' element and the type
-    bool req = ConvertToCpp2<bool>(tup[2]);
-    PythonType pytype = StrToPythonType(ConvertToCpp2<std::string>(tup[0]));
+    bool req = ConvertToCpp<bool>(tup[2]);
+    PythonType pytype = StrToPythonType(ConvertToCpp<std::string>(tup[0]));
 
 
     // Check if validator is given. If not, use an empty function object
     typename OptionHolder<T>::ValidatorFunc validator;
 
-    if(DeterminePyType2(tup[3]) != PythonType::None)
+    if(DeterminePyType(tup[3]) != PythonType::None)
     {
         // check for method
         // Don't forget that the method is part of a class
         // so 1 argument is "self"
         //! \todo reimplement HasCallableAttr with number of args
-        if(!HasCallableAttr2(tup[3], "Validate"))
+        if(!HasCallableAttr(tup[3], "Validate"))
             throw OptionException("Validator does not have a callable Validate() method taking one argument", key,
-                                  "type", GetPyClass2(tup[3]));
+                                  "type", GetPyClass(tup[3]));
 
         // Set up the validator with wrapper
         pybind11::object valfunc = tup[3];
@@ -538,12 +538,12 @@ static OptionBasePtr CreateOptionHolder(const std::string & key, pybind11::tuple
 
 OptionBasePtr OptionHolderFactory(const std::string & key, pybind11::object obj)
 {
-    PythonType ptype = DeterminePyType2(obj);
+    PythonType ptype = DeterminePyType(obj);
     if(ptype != PythonType::Tuple)
-        throw OptionException("Object for option is not a tuple", key, "pythontype", GetPyClass2(obj));
+        throw OptionException("Object for option is not a tuple", key, "pythontype", GetPyClass(obj));
 
 
-    pybind11::tuple tup = ConvertToCpp2<pybind11::tuple>(obj);
+    pybind11::tuple tup = ConvertToCpp<pybind11::tuple>(obj);
 
 
     int length = static_cast<int>(tup.size());
@@ -551,11 +551,11 @@ OptionBasePtr OptionHolderFactory(const std::string & key, pybind11::object obj)
         throw OptionException("Python options tuple does not have 5 elements", key, "length", length);
 
 
-    if(DeterminePyType2(tup[0]) != PythonType::String)
-        throw OptionException("\"Type\" element of tuple is not a string", key, "type", GetPyClass2(tup[0]));
+    if(DeterminePyType(tup[0]) != PythonType::String)
+        throw OptionException("\"Type\" element of tuple is not a string", key, "type", GetPyClass(tup[0]));
 
 
-    std::string type = ConvertToCpp2<std::string>(tup[0]);
+    std::string type = ConvertToCpp<std::string>(tup[0]);
 
 
     switch(StrToPythonType(type))

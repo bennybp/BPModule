@@ -23,13 +23,13 @@ namespace python_helper {
  * Wraps exceptions in bmodule exceptions
  */
 template<typename Ret, typename... Targs>
-Ret CallPyFunc2(pybind11::object & obj, Targs... Fargs)
+Ret CallPyFunc(pybind11::object & obj, Targs... Fargs)
 {
     int nargs = static_cast<int>(sizeof...(Fargs));
 
     // don't check for nargs, since this may be a class method
     // and Fargs... doesn't include self
-    if(!IsCallable2(obj))  
+    if(!IsCallable(obj))  
         throw exception::PythonCallException("Object is not callable!", "(none)",
                                              "nargs", nargs);
 
@@ -49,7 +49,7 @@ Ret CallPyFunc2(pybind11::object & obj, Targs... Fargs)
     }
 
     try {
-        return ConvertToCpp2<Ret>(ret);
+        return ConvertToCpp<Ret>(ret);
     }
     catch(const bpmodule::exception::PythonConvertException & ex)
     {
@@ -68,17 +68,17 @@ Ret CallPyFunc2(pybind11::object & obj, Targs... Fargs)
  * Wraps exceptions in bmodule exceptions
  */
 template<typename Ret, typename... Targs>
-Ret CallPyFuncAttr2(pybind11::object obj, const char * fname, Targs... Fargs)
+Ret CallPyFuncAttr(pybind11::object obj, const char * fname, Targs... Fargs)
 {
 
     int nargs = static_cast<int>(sizeof...(Fargs));
 
-    if(!HasCallableAttr2(obj, fname))
+    if(!HasCallableAttr(obj, fname))
         throw exception::PythonCallException("Object does not have callable attribute!", "(none)",
                                              "function", fname,
                                              "nargs", nargs);
 
-    return CallPyFunc2<Ret>(obj.attr(fname), Fargs...); 
+    return CallPyFunc<Ret>(obj.attr(fname), Fargs...); 
 }
 
 

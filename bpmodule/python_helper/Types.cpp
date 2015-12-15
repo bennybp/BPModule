@@ -61,7 +61,7 @@ const char * PythonTypeToStr(PythonType pytype)
 }
 
 
-std::string GetPyClass2(pybind11::object obj)
+std::string GetPyClass(pybind11::object obj)
 {
     //! \todo should ever throw?
     pybind11::object cls = obj.attr("__class__");
@@ -70,13 +70,13 @@ std::string GetPyClass2(pybind11::object obj)
 }
 
 
-PythonType DeterminePyType2(pybind11::object obj)
+PythonType DeterminePyType(pybind11::object obj)
 {
     try {
         if(obj.ptr() == nullptr)
             return PythonType::None;
 
-        std::string cl = GetPyClass2(obj);
+        std::string cl = GetPyClass(obj);
 
         if(cl == "bool")      return PythonType::Bool;
         if(cl == "int")       return PythonType::Int;
@@ -95,12 +95,12 @@ PythonType DeterminePyType2(pybind11::object obj)
                 return PythonType::ListEmpty;
 
             // get type of first element
-            std::string cl2 = GetPyClass2(lst[0]);
+            std::string cl2 = GetPyClass(lst[0]);
 
             // check if this is a homogeneous container
             for(size_t i = 1; i < length; i++)
             {
-                std::string cltmp = GetPyClass2(lst[i]);
+                std::string cltmp = GetPyClass(lst[i]);
                 if(cl2 != cltmp)
                     return PythonType::ListHetero;
             }
@@ -123,19 +123,19 @@ PythonType DeterminePyType2(pybind11::object obj)
 }
 
 
-bool HasAttr2(pybind11::object obj, const std::string & attr)
+bool HasAttr(pybind11::object obj, const std::string & attr)
 {
     return PyObject_HasAttrString(obj.ptr(), attr.c_str());
 }
 
-bool IsCallable2(pybind11::object obj)
+bool IsCallable(pybind11::object obj)
 {
     return PyCallable_Check(obj.ptr());
 }
 
-bool HasCallableAttr2(pybind11::object obj, const std::string & attr)
+bool HasCallableAttr(pybind11::object obj, const std::string & attr)
 {
-    return HasAttr2(obj, attr) && IsCallable2(obj.attr(attr.c_str()));
+    return HasAttr(obj, attr) && IsCallable(obj.attr(attr.c_str()));
 }
 
 

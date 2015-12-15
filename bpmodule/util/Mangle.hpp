@@ -54,7 +54,7 @@ template<typename T>
 typename std::enable_if<std::is_base_of<pybind11::object, T>::value, std::string>::type
 DemangleCppOrPyType(const T & t)
 {
-    return python_helper::GetPyClass2(t);
+    return python_helper::GetPyClass(t);
 }
 
 

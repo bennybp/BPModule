@@ -33,7 +33,7 @@ void AddCreator_(const char * classname, std::function<pybind11::object(pybind11
 
 pybind11::object MakeUIDPointerPy(pybind11::object obj)
 {
-    const std::string cn = python_helper::GetPyClass2(obj);
+    const std::string cn = python_helper::GetPyClass(obj);
     if(!creators_.count(cn))
         throw PythonConvertException("No handler to create a UIDPointer", cn, "UIDPointer");
 

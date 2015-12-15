@@ -33,7 +33,7 @@ std::string FormatStringPy(const std::string & fmt, pybind11::list args)
         for(auto it : args)
         {
 
-            python_helper::PythonType pytype = python_helper::DeterminePyType2(it);
+            python_helper::PythonType pytype = python_helper::DeterminePyType(it);
 
             switch(pytype)
             {
@@ -41,33 +41,33 @@ std::string FormatStringPy(const std::string & fmt, pybind11::list args)
                 {
                     // make this safe for large signed and unsigned numbers
                     //! \todo Not much we can do if l < min() though...
-                    pybind11::int_ l = python_helper::ConvertToCpp2<pybind11::int_>(it);
+                    pybind11::int_ l = python_helper::ConvertToCpp<pybind11::int_>(it);
                     if(l > std::numeric_limits<intmax_t>::max())
-                        bfmt % python_helper::ConvertToCpp2<uintmax_t>(l);
+                        bfmt % python_helper::ConvertToCpp<uintmax_t>(l);
                     else
-                        bfmt % python_helper::ConvertToCpp2<intmax_t>(l);
+                        bfmt % python_helper::ConvertToCpp<intmax_t>(l);
                     break;
                 }
                 case python_helper::PythonType::Bool:
                 {   
-                    bfmt % python_helper::ConvertToCpp2<bool>(it);
+                    bfmt % python_helper::ConvertToCpp<bool>(it);
                     break;
                 }
                 case python_helper::PythonType::Float:
                 {   
-                    bfmt % python_helper::ConvertToCpp2<long double>(it);
+                    bfmt % python_helper::ConvertToCpp<long double>(it);
                     break;
                 }
                 case python_helper::PythonType::String:
                 {   
-                    bfmt % python_helper::ConvertToCpp2<std::string>(it);
+                    bfmt % python_helper::ConvertToCpp<std::string>(it);
                     break;
                 }
                 default: //! \todo Throw exception when printing unknown python object?
                 {   
                     pybind11::object ob = it.attr("__str__");
                     pybind11::object s = ob.call();
-                    bfmt % python_helper::ConvertToCpp2<std::string>(s);
+                    bfmt % python_helper::ConvertToCpp<std::string>(s);
                 }
             }
         }

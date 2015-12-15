@@ -12,7 +12,7 @@
 #include "bpmodule/python_helper/Convert.hpp"
 #include "bpmodule/output/Output.hpp"
 
-using bpmodule::python_helper::ConvertToCpp2;
+using bpmodule::python_helper::ConvertToCpp;
 
 namespace bpmodule {
 namespace molecule {
@@ -25,7 +25,7 @@ void Molecule_AddAtomWrapper(Molecule & mol, int Z, pybind11::tuple xyz)
 {
     //! \todo check for length
     //! \todo pybind11 doesn't convert to std::array?
-    auto tmp = ConvertToCpp2<std::array<double, 3>>(xyz);
+    auto tmp = ConvertToCpp<std::array<double, 3>>(xyz);
     return mol.AddAtom(Z, {tmp[0], tmp[1], tmp[2]});
 }
 

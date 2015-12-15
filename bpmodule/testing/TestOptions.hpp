@@ -30,7 +30,7 @@ template<typename T>
 void TestOptionMap_Change(datastore::OptionMap & opt, const std::string & key, pybind11::object value)
 {
     // ignore return value
-    const T tmp = python_helper::ConvertToCpp2<T>(value);
+    const T tmp = python_helper::ConvertToCpp<T>(value);
     opt.Change<T>(key, tmp);
 }
 

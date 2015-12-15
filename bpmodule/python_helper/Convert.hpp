@@ -380,9 +380,9 @@ boost::python::object ConvertToPy(const T & obj)
  * \return Converted data as type \p T
  */
 template<typename T>
-T ConvertToCpp2(pybind11::object obj)
+T ConvertToCpp(pybind11::object obj)
 {
-    PythonType objtype = DeterminePyType2(obj);
+    PythonType objtype = DeterminePyType(obj);
 
     bool allowed = true;
 
@@ -409,7 +409,7 @@ T ConvertToCpp2(pybind11::object obj)
 
     if(!allowed)
         throw exception::PythonConvertException("Cannot convert from python to C++: Type check failed",
-                                                GetPyClass2(obj), util::DemangleCppType<T>());
+                                                GetPyClass(obj), util::DemangleCppType<T>());
 
 
     // will throw if there is an issue
@@ -420,7 +420,7 @@ T ConvertToCpp2(pybind11::object obj)
     catch(const pybind11::cast_error & ex)
     {
         throw exception::PythonConvertException("Cannot convert from python to C++: Conversion failed",
-                                                GetPyClass2(obj), util::DemangleCppType<T>(),
+                                                GetPyClass(obj), util::DemangleCppType<T>(),
                                                 "what", ex.what());
     }
 }
@@ -439,7 +439,7 @@ T ConvertToCpp2(pybind11::object obj)
  * \return Converted data as a boost::python::object
  */
 template<typename T>
-pybind11::object ConvertToPy2(const T & obj)
+pybind11::object ConvertToPy(const T & obj)
 {
     // will throw if there is an issue
     //! \todo exception handling

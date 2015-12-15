@@ -53,28 +53,28 @@ const char * PythonTypeToStr(PythonType pytype);
 
 /*! \brief Determine the type of a boost python object
  */
-PythonType DeterminePyType2(pybind11::object obj);
+PythonType DeterminePyType(pybind11::object obj);
 
 
 /*! \brief Get the class of a python object as a string
  */
-std::string GetPyClass2(pybind11::object obj);
+std::string GetPyClass(pybind11::object obj);
 
 
 /*! \brief Check if a python object has a given attribute
  */
-bool HasAttr2(pybind11::object obj, const std::string & attr);
+bool HasAttr(pybind11::object obj, const std::string & attr);
 
 
 /*! \brief Check if a python object is callable
  */ 
-bool IsCallable2(pybind11::object obj);
+bool IsCallable(pybind11::object obj);
 
 
 
 /*! \brief Check if a python object has a given callable attribute
  */
-bool HasCallableAttr2(pybind11::object obj, const std::string & attr);
+bool HasCallableAttr(pybind11::object obj, const std::string & attr);
 
 
 

@@ -258,7 +258,7 @@ bool OptionMap::CompareSelect(const OptionMap & rhs, const std::vector<std::stri
 static WholeOptionMapIssues WholeOptValidateWrapper(pybind11::object func, const OptionMap & val)
 {
     try {
-        return CallPyFunc2<std::vector<std::string>>(func, val);
+        return CallPyFunc<std::vector<std::string>>(func, val);
     }
     catch(PythonCallException & ex)
     {
@@ -279,12 +279,12 @@ OptionMap::OptionMap(const std::string & modulekey, pybind11::dict opt, pybind11
 {
     for(auto it : opt)
     {
-        if(DeterminePyType2(it.first) != python_helper::PythonType::String)
+        if(DeterminePyType(it.first) != python_helper::PythonType::String)
             throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
-                                  "pytype", GetPyClass2(it.first));
+                                  "pytype", GetPyClass(it.first));
 
 
-        std::string key = ConvertToCpp2<std::string>(it.first);
+        std::string key = ConvertToCpp<std::string>(it.first);
 
         // convert to lowercase
         util::ToLower(key);
@@ -300,14 +300,14 @@ OptionMap::OptionMap(const std::string & modulekey, pybind11::dict opt, pybind11
     }
 
     // add whole validator (if it exists)
-    if(DeterminePyType2(wholevalidfunc) != python_helper::PythonType::None)
+    if(DeterminePyType(wholevalidfunc) != python_helper::PythonType::None)
     {
         // Don't forget that the method is part of a class
         // so 1 argument is "self"
         //! \todo Reimplement the version of HasCallableAttr with number of arguments
-        if(!python_helper::HasCallableAttr2(wholevalidfunc, "Validate"))
+        if(!python_helper::HasCallableAttr(wholevalidfunc, "Validate"))
             throw OptionException("Whole options validator does not have a callable Validate() method taking one argument", "(none)",
-                                  "pytype", GetPyClass2(wholevalidfunc));
+                                  "pytype", GetPyClass(wholevalidfunc));
 
         wholevalid_ = std::bind(WholeOptValidateWrapper, wholevalidfunc, std::placeholders::_1);
     }
@@ -340,12 +340,12 @@ void OptionMap::ChangePyDict(pybind11::dict opt)
 
     for(auto it : opt)
     {
-        if(DeterminePyType2(it.first) != python_helper::PythonType::String)
+        if(DeterminePyType(it.first) != python_helper::PythonType::String)
             throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
-                                  "pytype", GetPyClass2(it.first));
+                                  "pytype", GetPyClass(it.first));
 
 
-        std::string key = ConvertToCpp2<std::string>(it.first);
+        std::string key = ConvertToCpp<std::string>(it.first);
 
         // convert to lowercase
         util::ToLower(key);
@@ -376,7 +376,7 @@ pybind11::object OptionMap::GetPy(const std::string & key) const
 bool OptionMap::CompareSelectPy(const OptionMap & rhs, pybind11::list selection) const
 {
     //! \todo exceptions
-    return CompareSelect(rhs, ConvertToCpp2<std::vector<std::string>>(selection));
+    return CompareSelect(rhs, ConvertToCpp<std::vector<std::string>>(selection));
 }
 
 
