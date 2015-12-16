@@ -8,8 +8,6 @@
 #ifndef _GUARD_CONVERT_HPP_
 #define _GUARD_CONVERT_HPP_
 
-#include "bpmodule/output/Output.hpp"
-
 #include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/python/Pybind11_stl.hpp"
 #include "bpmodule/python/Types.hpp"

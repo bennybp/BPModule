@@ -87,6 +87,11 @@ bool Equal(pybind11::object lhs, pybind11::object rhs);
 pybind11::object DeepCopy(const pybind11::object & rhs);
 
 
+/*! \brief Return a string representation
+ */
+std::string String(pybind11::object & obj);
+
+
 } // close namespace python
 } // close namespace bpmodule
 

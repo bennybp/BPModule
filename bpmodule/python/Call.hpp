@@ -24,7 +24,7 @@ namespace python {
  * \param [in] obj The python object to call
  */
 template<typename Ret, typename... Targs>
-Ret CallPyFunc(pybind11::object & obj, Targs... Fargs)
+Ret CallPyFunc(pybind11::object obj, Targs... Fargs)
 {
     using bpmodule::exception::PythonCallException;
     using bpmodule::exception::PythonConvertException;
@@ -93,7 +93,7 @@ Ret CallPyFuncAttr(pybind11::object obj, const char * attribute, Targs... Fargs)
                                   "function", attribute,
                                   "nargs", nargs);
 
-    return CallPyFunc<Ret>(obj.attr(attribute), Fargs...); 
+    return CallPyFunc<Ret>(static_cast<pybind11::object>(obj.attr(attribute)), Fargs...); 
 }
 
 

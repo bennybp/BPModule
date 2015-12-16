@@ -6,9 +6,9 @@
 
 #include <stdexcept>
 
-#include "bpmodule/python/Types.hpp"
 #include "bpmodule/python/Pybind11.hpp"
-
+#include "bpmodule/python/Types.hpp"
+#include "bpmodule/python/Call.hpp"
 
 namespace bpmodule {
 namespace python {
@@ -163,6 +163,11 @@ pybind11::object DeepCopy(const pybind11::object & rhs)
     return ret;
 }
 
+
+std::string String(pybind11::object obj)
+{
+    return CallPyFuncAttr<std::string>(obj, "__str__");
+}
 
 
 } // close namespace python
