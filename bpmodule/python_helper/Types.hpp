@@ -11,7 +11,6 @@
 #include <string>
 
 #include "bpmodule/python_helper/Pybind11.hpp"
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 
 namespace bpmodule {
@@ -51,7 +50,7 @@ PythonType StrToPythonType(const std::string & str);
 const char * PythonTypeToStr(PythonType pytype);
 
 
-/*! \brief Determine the type of a boost python object
+/*! \brief Determine the type of a python object
  */
 PythonType DeterminePyType(pybind11::object obj);
 
@@ -69,7 +68,6 @@ bool HasAttr(pybind11::object obj, const std::string & attr);
 /*! \brief Check if a python object is callable
  */ 
 bool IsCallable(pybind11::object obj);
-
 
 
 /*! \brief Check if a python object has a given callable attribute

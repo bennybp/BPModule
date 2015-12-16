@@ -54,6 +54,13 @@ PYBIND11_PLUGIN(basisset)
     .def("AddShell", &BasisSet::AddShell)
     .def("NShell", &BasisSet::NShell)
     .def("Shell", &BasisSet::Shell)
+    .def("NPrim", &BasisSet::NPrim)
+    .def("NCartesian", &BasisSet::NCartesian)
+    .def("NFunctions", &BasisSet::NFunctions)
+    .def("MaxNPrim", &BasisSet::MaxNPrim)
+    .def("MaxAM", &BasisSet::MaxAM)
+    .def("MaxNCartesian", &BasisSet::MaxNCartesian)
+    .def("MaxNFunctions", &BasisSet::MaxNFunctions)
     ;
 
 
