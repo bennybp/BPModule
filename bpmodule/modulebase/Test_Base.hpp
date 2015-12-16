@@ -21,6 +21,9 @@ namespace modulebase {
 class Test_Base : public ModuleBase
 {
     public:
+        typedef Test_Base BaseType;
+
+
         Test_Base(unsigned long id)
             : ModuleBase(id)
         { }

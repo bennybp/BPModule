@@ -7,6 +7,7 @@ set(BPMODULE_PYTHON_HELPER_FILES
 set(BPMODULE_PYTHON_HELPER_HEADERS
             Pybind11.hpp
             Pybind11_stl.hpp
+            Pybind11_functional.hpp
             Types.hpp
             Convert.hpp
             Errors.hpp

@@ -30,7 +30,7 @@ class CreatorFunctions
         template<typename T>
         void AddCppCreator(const std::string & name)
         {
-            ModuleCreatorFunc cc = std::bind(&CreatorFunctions::CppConstructorWrapper<T>, this, std::placeholders::_1);
+            ModuleCreatorFunc cc = std::bind(&CreatorFunctions::CppConstructorWrapper<T>, std::placeholders::_1);
             creators_.emplace(name, cc);
         }
 
@@ -39,7 +39,7 @@ class CreatorFunctions
          */ 
         void AddPyCreator(const std::string & name, pybind11::object cls)
         {
-            ModuleCreatorFunc m = std::bind(&CreatorFunctions::PyConstructorWrapper, this, cls, std::placeholders::_1);
+            ModuleCreatorFunc m = std::bind(&CreatorFunctions::PyConstructorWrapper, cls, std::placeholders::_1);
             creators_.emplace(name, m);
         }
 
@@ -64,20 +64,24 @@ class CreatorFunctions
         /*! \brief Wrap construction of a C++ object
          */ 
         template<typename T>
+        static
         detail::ModuleIMPLHolder *
         CppConstructorWrapper(unsigned long i)
         {
-            return new detail::CppModuleIMPLHolder<typename T::BaseType>(new T(i));
+            std::unique_ptr<typename T::BaseType> p(new T(i));
+            return new detail::CppModuleIMPLHolder<typename T::BaseType>(std::move(p));
         }
 
 
         /*! \brief Wrap construction of a python object
          */ 
+        static
         detail::ModuleIMPLHolder *
         PyConstructorWrapper(pybind11::object cls, unsigned long i)
         {
             pybind11::object o = cls.call(i);
-            return new detail::PyModuleIMPLHolder(cls.call(i));
+            detail::ModuleIMPLHolder * ret = new detail::PyModuleIMPLHolder(o);
+            return ret;
         }
 };
 

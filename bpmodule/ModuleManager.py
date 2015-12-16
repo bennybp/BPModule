@@ -22,12 +22,13 @@ class ModuleManager(modulelocator.ModuleLocator):
 
         #################################################
         # WARNING WARNING WARNING
-        # Clearing the cache MUST be done BEFORE unloading
+        # Clearing the cache and store MUST be done BEFORE unloading
         # the modules or else deleting elements will cause a segfault.
         # The GenericHolder is a template, so the code for
         # the destructors exists in the modules
         #################################################
         super(ModuleManager, self).ClearCache()
+        super(ModuleManager, self).ClearStore()
 
         output.Output("Deleting python modules\n")
         del self.pml

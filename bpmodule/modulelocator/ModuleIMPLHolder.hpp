@@ -33,10 +33,10 @@ class ModuleIMPLHolder
 
 // T should hold pointer to base type, but no further
 template<typename T>
-class CppModuleIMPLHolder
+class CppModuleIMPLHolder : public ModuleIMPLHolder
 {
     public:
-        CppModuleIMPLHolder(std::unique_ptr<T> && mod) : mod_(mod) { }
+        CppModuleIMPLHolder(std::unique_ptr<T> && mod) : mod_(std::move(mod)) { }
 
         virtual modulebase::ModuleBase * CppPtr(void)
         {

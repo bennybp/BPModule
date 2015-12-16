@@ -47,8 +47,10 @@ ModuleLocator::~ModuleLocator()
 
 
 
-void ModuleLocator::InsertModule(const std::string & key, const ModuleCreatorFunc & mc, const ModuleInfo & mi)
+void ModuleLocator::InsertModule(const std::string & key, const CreatorFunctions & cf, const ModuleInfo & mi)
 {
+    auto mc = cf.GetCreator(mi.name);
+
     // add to store
     // but throw if key already exists
     if(store_.count(key))
@@ -137,6 +139,11 @@ void ModuleLocator::TestAll(void)
 void ModuleLocator::ClearCache(void)
 {
     cachemap_.clear();
+}
+
+void ModuleLocator::ClearStore(void)
+{
+    store_.clear();
 }
 
 

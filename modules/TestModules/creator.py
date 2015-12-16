@@ -1,26 +1,18 @@
 from . import TestPyModule1
 from . import TestOptions
+from bpmodule.modulelocator import CreatorFunctions
 
-def CreateModule(name, myid):
-    if name == "TestPyModule1":
-      return TestPyModule1.TestPyModule1(myid)
-    elif name == "TestOptions":
-      return TestOptions.TestOptions(myid)
-    elif name == "TestOptions_int":
-      return TestOptions.TestOptions(myid)
-    elif name == "TestOptions_float":
-      return TestOptions.TestOptions(myid)
-    elif name == "TestOptions_bool":
-      return TestOptions.TestOptions(myid)
-    elif name == "TestOptions_str":
-      return TestOptions.TestOptions(myid)
-    elif name == "TestOptions_listint":
-      return TestOptions.TestOptions(myid)
-    elif name == "TestOptions_listfloat":
-      return TestOptions.TestOptions(myid)
-    elif name == "TestOptions_listbool":
-      return TestOptions.TestOptions(myid)
-    elif name == "TestOptions_liststr":
-      return TestOptions.TestOptions(myid)
-    else:
-      raise RuntimeError("TODO - FIXME")
+
+def CreateModule():
+    cf = CreatorFunctions()
+    cf.AddPyCreator("TestPyModule1", TestPyModule1.TestPyModule1)
+    cf.AddPyCreator("TestOptions", TestOptions.TestOptions)
+    cf.AddPyCreator("TestOptions_int", TestOptions.TestOptions)
+    cf.AddPyCreator("TestOptions_float", TestOptions.TestOptions)
+    cf.AddPyCreator("TestOptions_bool", TestOptions.TestOptions)
+    cf.AddPyCreator("TestOptions_str", TestOptions.TestOptions)
+    cf.AddPyCreator("TestOptions_listint", TestOptions.TestOptions)
+    cf.AddPyCreator("TestOptions_listfloat", TestOptions.TestOptions)
+    cf.AddPyCreator("TestOptions_listbool", TestOptions.TestOptions)
+    cf.AddPyCreator("TestOptions_liststr", TestOptions.TestOptions)
+    return cf

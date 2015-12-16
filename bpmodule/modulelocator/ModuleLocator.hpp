@@ -198,19 +198,19 @@ class ModuleLocator
 
 
         /*! \brief Clears all entries in the cache and performs some cleanup
+         * 
+         * Must be run before unloading SOs
          */
         void ClearCache(void);
 
+        /*! \brief Clears all entries in the module store
+         *
+         * Must be run before unloading SOs
+         */
+        void ClearStore(void);
 
 
-
-    protected:
-        template<typename T>
-        friend class ModuleLoaderBase;
-
-        friend class CModuleLoader;
-        friend class PyModuleLoader;
-
+        //! \todo move to protected, make export a friend
 
         /*! \brief Adds/inserts a module creator to the database
          *
@@ -224,7 +224,19 @@ class ModuleLocator
          * \param [in] dfunc A function that deletes the module
          * \param [in] mi Information about the module
          */
-        void InsertModule(const std::string & key, const ModuleCreatorFunc & mc, const ModuleInfo & mi);
+        void InsertModule(const std::string & key, const CreatorFunctions & cf, const ModuleInfo & mi);
+
+
+
+
+    protected:
+        template<typename T>
+        friend class ModuleLoaderBase;
+
+        friend class CModuleLoader;
+        friend class PyModuleLoader;
+
+
 
 
     private:

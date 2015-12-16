@@ -12,7 +12,7 @@ class ModulePtr
     public:
         // takes ownership
         ModulePtr(std::unique_ptr<detail::ModuleIMPLHolder> && holder)
-                : holder_(std::move(holder))
+                : holder_(holder.release())
         {
             //! \todo check dynamic cast
             ptr_ = dynamic_cast<T *>(holder_->CppPtr());
@@ -53,8 +53,11 @@ class PyModulePtr
 
         // these are not const since the copy constructor
         // and operator= for pybind11::object are not const
-        PyModulePtr(PyModulePtr & rhs) = default;
-        PyModulePtr & operator=(PyModulePtr & rhs) = default;
+        PyModulePtr(const PyModulePtr & rhs) = default;
+
+        //! \todo bug in pybind11? must take non-const because obj_::operator= takes non const
+        
+        //PyModulePtr & operator=(const PyModulePtr & rhs) = default;
 
         ~PyModulePtr() = default;
 

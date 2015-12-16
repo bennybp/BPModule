@@ -22,4 +22,4 @@ ADD_SUPERMODULE(modulelocator
            ""
            "")
 
-INSTALL_COREMODULE(modulelocator "${BPMODULE_MODULELOCATOR_HEADERS}" "")
+INSTALL_COREMODULE(modulelocator "${BPMODULE_MODULELOCATOR_HEADERS}" "PyModuleLoader.py")

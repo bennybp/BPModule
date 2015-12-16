@@ -27,6 +27,9 @@ CModuleLoader::CModuleLoader(ModuleLocator * mlt)
 
 CModuleLoader::~CModuleLoader()
 {
+    // delete creator functions
+    creators_.clear();
+
     // close all the handles
     for(auto it : handles_)
     {
@@ -91,7 +94,7 @@ void CModuleLoader::LoadSO(const std::string & key, pybind11::dict minfo)
     }
 
 
-    mlt_->InsertModule(key, cf.GetCreator(key), mi); // strong exception guarantee
+    mlt_->InsertModule(key, cf, mi); // strong exception guarantee
 }
 
 
