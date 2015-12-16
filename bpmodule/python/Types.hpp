@@ -82,6 +82,11 @@ bool HasCallableAttr(pybind11::object obj, const std::string & attr);
 bool Equal(pybind11::object lhs, pybind11::object rhs);
 
 
+/*! \brief Deep copy a python object
+ */
+pybind11::object DeepCopy(const pybind11::object & rhs);
+
+
 } // close namespace python
 } // close namespace bpmodule
 

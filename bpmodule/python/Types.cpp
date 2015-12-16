@@ -149,6 +149,19 @@ bool Equal(pybind11::object lhs, pybind11::object rhs)
 }
 
 
+pybind11::object DeepCopy(const pybind11::object & rhs)
+{
+    // get deep copy from the python lib
+    pybind11::object dc = pybind11::module::import("copy").attr("deepcopy");
+
+    // call it
+    pybind11::object ret = dc.call(rhs);
+
+    return ret;
+}
+
+
+
 } // close namespace python
 } // close namespace bpmodule
 
