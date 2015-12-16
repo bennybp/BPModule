@@ -112,7 +112,7 @@ pybind11::object ConvertToPy(const T & obj)
  *
  * \param [in] obj An array of objects
  * \param [in] n Length of the array
- * \return Converted data as a boost python::object
+ * \return Converted data as a python object
  */
 template<typename T>
 pybind11::object ConvertToPy(const T * const obj, size_t n)
