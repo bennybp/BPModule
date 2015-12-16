@@ -9,6 +9,7 @@
 #define _GUARD_ERRORS_HPP_
 
 
+// forward declaration
 namespace bpmodule {
 namespace exception {
 class GeneralException;
@@ -21,9 +22,12 @@ namespace python {
 namespace detail {
 
 
-/*! \brief Get the current python exception description as a string
+/*! \brief Get the current python exception and convert to a GeneralException
+ *
+ * Can handle some bpmodule-derived exception classes
  */
 bpmodule::exception::GeneralException GetPyException(void);
+
 
 
 } // close namespace detail

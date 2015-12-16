@@ -27,10 +27,9 @@ class PythonCallException : public GeneralException
          */
         template<typename... Targs>
         PythonCallException(const std::string & whatstr,
-                            std::string pyex,
                             const Targs&... exinfo)
 
-            : GeneralException(whatstr, "pyex", pyex, exinfo...)
+            : GeneralException(whatstr, exinfo...)
         { }
 
 
@@ -44,9 +43,8 @@ class PythonCallException : public GeneralException
          */
         template<typename... Targs>
         PythonCallException(const GeneralException & gex,
-                            std::string pyex,
                             const Targs&... exinfo)
-            : GeneralException(gex, "pyex", pyex, exinfo...)
+            : GeneralException(gex, exinfo...)
         { }
 
         PythonCallException()                                            = delete;

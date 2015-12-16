@@ -4,9 +4,10 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+#include <stdexcept>
 
 #include "bpmodule/python/Types.hpp"
-#include "bpmodule/python/Convert.hpp"
+#include "bpmodule/python/Pybind11.hpp"
 
 
 namespace bpmodule {

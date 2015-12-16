@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include "bpmodule/python/Pybind11.hpp"
+#include "bpmodule/python/Pybind11_fwd.hpp"
 
 
 namespace bpmodule {

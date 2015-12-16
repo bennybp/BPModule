@@ -9,7 +9,6 @@
 #define _GUARD_CALL_HPP_
 
 #include "bpmodule/exception/PythonCallException.hpp"
-#include "bpmodule/python/Types.hpp"
 #include "bpmodule/python/Errors.hpp"
 #include "bpmodule/python/Convert.hpp"
 
@@ -20,42 +19,51 @@ namespace python {
 
 /*! \brief Calls a python object
  *
- * Wraps exceptions in bmodule exceptions
+ * \throw bpmodule::exception::PythonCallException if there is an error (including conversion error)
+ *
+ * \param [in] obj The python object to call
  */
 template<typename Ret, typename... Targs>
 Ret CallPyFunc(pybind11::object & obj, Targs... Fargs)
 {
+    using bpmodule::exception::PythonCallException;
+    using bpmodule::exception::PythonConvertException;
+
+
     int nargs = static_cast<int>(sizeof...(Fargs));
 
     // don't check for nargs, since this may be a class method
     // and Fargs... doesn't include self
     if(!IsCallable(obj))  
-        throw exception::PythonCallException("Object is not callable!", "(none)",
-                                             "nargs", nargs);
+        throw PythonCallException("Object is not callable!", "nargs", nargs);
 
     pybind11::object ret;
+
 
     try {
         ret = obj.call(Fargs...);
     }
-    catch(const pybind11::error_already_set & ex)
+    catch(const std::exception & ex)
     {
-        throw bpmodule::exception::PythonCallException("Error calling python function", "(none)",
-                                                       "what", ex.what());
+        throw PythonCallException(detail::GetPyException(),
+                                  "when", "Error calling python function",
+                                  "what", ex.what());
     }
     catch(...)
     {
-        throw exception::GeneralException("TODO");
+        throw PythonCallException("Caught unknown exception when calling a python function");
     }
+
+
 
     try {
         return ConvertToCpp<Ret>(ret);
     }
-    catch(const bpmodule::exception::PythonConvertException & ex)
+    catch(const PythonConvertException & ex)
     {
         // change to a PythonCallException
-        throw bpmodule::exception::PythonCallException(ex, "(none)",
-                                                       "desc", "Unable to convert return value from python function");
+        throw PythonCallException(ex,
+                                  "desc", "Unable to convert return value from python function");
     }
 }
 
@@ -63,22 +71,29 @@ Ret CallPyFunc(pybind11::object & obj, Targs... Fargs)
 
 
 
-/*! \brief Calls a function that is part of a python object
+/*! \brief Calls a function that is an attribute a python object
  *
- * Wraps exceptions in bmodule exceptions
+ * \throw bpmodule::exception::PythonCallException if there is an error, including
+ *        if the object does not have the given attribute or if there is a conversion
+ *        error
+ *
+ * \param [in] obj The object with the attribute
+ * \param [in] attribute The attribute to call
  */
 template<typename Ret, typename... Targs>
-Ret CallPyFuncAttr(pybind11::object obj, const char * fname, Targs... Fargs)
+Ret CallPyFuncAttr(pybind11::object obj, const char * attribute, Targs... Fargs)
 {
+    using bpmodule::exception::PythonCallException;
+
 
     int nargs = static_cast<int>(sizeof...(Fargs));
 
-    if(!HasCallableAttr(obj, fname))
-        throw exception::PythonCallException("Object does not have callable attribute!", "(none)",
-                                             "function", fname,
-                                             "nargs", nargs);
+    if(!HasCallableAttr(obj, attribute))
+        throw PythonCallException("Object does not have callable attribute!",
+                                  "function", attribute,
+                                  "nargs", nargs);
 
-    return CallPyFunc<Ret>(obj.attr(fname), Fargs...); 
+    return CallPyFunc<Ret>(obj.attr(attribute), Fargs...); 
 }
 
 
