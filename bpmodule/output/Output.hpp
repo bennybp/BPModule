@@ -11,18 +11,11 @@
 #include <iostream>
 
 #include "bpmodule/util/FormatString.hpp"
-#include "bpmodule/python/Pybind11.hpp"
 
 
-//! \todo Handle exceptions better? Yes, catch Boost exceptions, print error, and then continue? Update doc and don't forget about FormatStr
 
 namespace bpmodule {
 namespace output {
-
-
-
-
-
 
 
 
@@ -322,8 +315,8 @@ namespace export_python {
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void OutputPy_(std::ostream & os, detail::OutputType type,
-               const std::string & fmt, const pybind11::list & args);
+void Output(std::ostream & os, detail::OutputType type,
+            const std::string & fmt, const std::vector<std::string> & args);
 
 } // close namespace export_python
 

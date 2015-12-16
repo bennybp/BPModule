@@ -180,18 +180,6 @@ void Output_(std::ostream & out, OutputType type, const std::string & str)
 
 
 
-namespace export_python {
-
-//////////////////////////
-// PYTHON FUNCTIONS
-//////////////////////////
-void OutputPy_(std::ostream & os, detail::OutputType type, const std::string & fmt, const pybind11::list & args)
-{
-    detail::Output_(os, type, util::export_python::FormatStringPy(fmt, args));
-}
-
-} // close namespace export_python
-
 
 } // close namespace output
 } // close namespace bpmodule

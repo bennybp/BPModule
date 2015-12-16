@@ -6,11 +6,20 @@
 
 
 #include "bpmodule/output/Output.hpp"
+#include "bpmodule/python/Pybind11.hpp"
+#include "bpmodule/python/Pybind11_stl.hpp"
 
 
 namespace bpmodule {
 namespace output {
 namespace export_python {
+
+/*! \brief Print from a vector of strings (converted from python)
+ */
+void OutputPy_(std::ostream & os, detail::OutputType type, const std::string & fmt, const std::vector<std::string> & args)
+{
+    detail::Output_(os, type, util::FormatString(fmt, args));
+}
 
 
 /*! \brief Wrap general output for use from python
@@ -18,7 +27,7 @@ namespace export_python {
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap_Output(const std::string & fmt, const pybind11::list & args)
+void Output_Wrap_Output(const std::string & fmt, const std::vector<std::string> & args)
 {
     OutputPy_(output::GetOut(), detail::OutputType::Output, fmt, args);
 }
@@ -30,7 +39,7 @@ void Output_Wrap_Output(const std::string & fmt, const pybind11::list & args)
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap_Success(const std::string & fmt, const pybind11::list & args)
+void Output_Wrap_Success(const std::string & fmt, const std::vector<std::string> & args)
 {
     OutputPy_(output::GetOut(), detail::OutputType::Success, fmt, args);
 }
@@ -42,7 +51,7 @@ void Output_Wrap_Success(const std::string & fmt, const pybind11::list & args)
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap_Changed(const std::string & fmt, const pybind11::list & args)
+void Output_Wrap_Changed(const std::string & fmt, const std::vector<std::string> & args)
 {
     OutputPy_(output::GetOut(), detail::OutputType::Changed, fmt, args);
 }
@@ -54,7 +63,7 @@ void Output_Wrap_Changed(const std::string & fmt, const pybind11::list & args)
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap_Warning(const std::string & fmt, const pybind11::list & args)
+void Output_Wrap_Warning(const std::string & fmt, const std::vector<std::string> & args)
 {
     OutputPy_(output::GetOut(), detail::OutputType::Warning, fmt, args);
 }
@@ -66,7 +75,7 @@ void Output_Wrap_Warning(const std::string & fmt, const pybind11::list & args)
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap_Error(const std::string & fmt, const pybind11::list & args)
+void Output_Wrap_Error(const std::string & fmt, const std::vector<std::string> & args)
 {
     OutputPy_(output::GetOut(), detail::OutputType::Error, fmt, args);
 }
@@ -78,7 +87,7 @@ void Output_Wrap_Error(const std::string & fmt, const pybind11::list & args)
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void Output_Wrap_Debug(const std::string & fmt, const pybind11::list & args)
+void Output_Wrap_Debug(const std::string & fmt, const std::vector<std::string> & args)
 {
     OutputPy_(output::GetOut(), detail::OutputType::Debug, fmt, args);
 }

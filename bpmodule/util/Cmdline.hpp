@@ -11,7 +11,6 @@
 #include <vector>
 #include <string>
 
-#include "bpmodule/python/Pybind11.hpp"
 
 namespace bpmodule {
 namespace util {
@@ -27,7 +26,7 @@ char *** GetArgv(void);
 
 /*! Stores the command line (from python) for later use
  */
-void SetCmdline(pybind11::object argv);
+void SetCmdline(const std::vector<std::string> & argv);
 
 
 /*! Frees memory associated with the stored command line

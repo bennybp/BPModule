@@ -7,7 +7,6 @@
 #ifndef _GUARD_MANGLE_HPP_
 #define _GUARD_MANGLE_HPP_
 
-#include <string>
 #include <typeinfo>
 
 #include "bpmodule/python/Types.hpp"
@@ -56,9 +55,6 @@ DemangleCppOrPyType(const T & t)
 {
     return python::GetPyClass(t);
 }
-
-
-
 
 
 /*! \brief Demangle the type of an object

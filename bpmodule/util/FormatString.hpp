@@ -14,7 +14,6 @@
 
 #include <boost/format.hpp>
 
-#include "bpmodule/python/Pybind11.hpp" //! \todo fwd declare?
 #include "bpmodule/exception/GeneralException.hpp"
 
 
@@ -117,22 +116,14 @@ std::string FormatString(const std::string & fmt, const Targs&... Fargs)
 
 
 
-
-
-namespace export_python {
-
-/*! \brief Create a format string from python
+/*! \brief Create a format string using a vector of strings
  *
  * \throw bpmodule::exception::GeneralException for malformed inputs, etc
- * 
- * \throw bpmodule::exception::PythonConvertException for some rare conversion problems
- *
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-std::string FormatStringPy(const std::string & fmt, pybind11::list args);
+std::string FormatString(const std::string & fmt, const std::vector<std::string> & args);
 
-} // close namespace export_python
 
 
 

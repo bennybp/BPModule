@@ -5,7 +5,9 @@ from .util import *
 
 def FormatStr(s, *args):
     if(len(args)) > 0:
-      return FormatString_(s, list(args))
+      # Should automatically convert to vector of strings
+      # or error if an arg can't be converted to a string
+      return FormatString_(s, [ str(x) for x in list(args) ])
     else:
       return FormatString_(s, [])
 
