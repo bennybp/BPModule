@@ -3,7 +3,6 @@ set(BPMODULE_DATASTORE_FILES
             RegisterUIDPointer.cpp
             Wavefunction.cpp
             OptionHolder.cpp
-            OptionBase.cpp
             OptionMap.cpp
             export.cpp
    )
@@ -16,9 +15,7 @@ set(BPMODULE_DATASTORE_HEADERS
             CacheData.hpp
             GenericHolder.hpp
             GenericBase.hpp
-            OptionTypes.hpp
             OptionMap.hpp
-            OptionBase.hpp
             OptionHolder.hpp
    )
 

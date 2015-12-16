@@ -10,11 +10,9 @@
 
 #include <map>
 
-#include "bpmodule/datastore/OptionTypes.hpp"
 #include "bpmodule/datastore/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/util/StringUtil.hpp"
-#include "bpmodule/python/Pybind11.hpp"
 
 
 namespace bpmodule {
@@ -28,8 +26,8 @@ typedef std::vector<std::string> WholeOptionMapIssues;
 //! Holds all issues related to an OptionMap
 struct OptionMapIssues
 {
-    WholeOptionMapIssues toplevel;                          //!< Issues with the map itself
-    std::map<std::string, detail::OptionIssues> optissues;  //!< Issues with any individual options
+    WholeOptionMapIssues toplevel;                  //!< Issues with the map itself
+    std::map<std::string, OptionIssues> optissues;  //!< Issues with any individual options
 };
 
 
@@ -50,14 +48,14 @@ class OptionMap
 
         /*! \brief Copy construct
         *
-        * Deep copies (clones) all the stored options
+        * Deep copies all the stored options
         */
-        OptionMap(const OptionMap & rhs);
+        OptionMap(const OptionMap & rhs) = default;
 
 
         /*! \brief Assignment
         *
-        * Deep copies (clones) all the stored options
+        * Deep copies all the stored options
         */
         OptionMap & operator=(const OptionMap & rhs);
 
@@ -205,27 +203,6 @@ class OptionMap
 
 
 
-        /*! \brief Check if the map has a key with a given type
-         *
-         *  Does not check for validity or if the stored value
-         *  can be successfully converted (ie, overflow)
-         */
-        template<typename T>
-        bool HasType(const std::string & key) const
-        {
-            typedef typename detail::OptionConvert<T>::stored_type stored_type;
-
-            CheckType_<T>();
-
-            if(!HasKey(key))
-                return false;
-
-            return GetOrThrow_(key)->IsType<stored_type>();
-        }
-
-
-
-
         /*! \brief Obtain the value for an option
          *
          * Will attempt some safe conversions between integer types
@@ -239,14 +216,9 @@ class OptionMap
         template<typename T>
         T Get(const std::string & key) const
         {
-            typedef typename detail::OptionConvert<T>::stored_type stored_type;
-
             CheckType_<T>();
-
-            stored_type val = GetOrThrow_Cast_<stored_type>(key)->Get();
-
             try {
-                return detail::OptionConvert<T>::ConvertFromStored(val);
+                return GetOrThrow_(key).Get<T>();
             }
             catch(const exception::GeneralException & ex)
             {
@@ -271,21 +243,16 @@ class OptionMap
         template<typename T>
         void Change(const std::string & key, const T & value)
         {
-            typedef typename detail::OptionConvert<T>::stored_type stored_type;
-
             CheckType_<T>();
-            stored_type convval;
 
             try {
-                 convval = detail::OptionConvert<T>::ConvertToStored(value);
+                 GetOrThrow_(key).Change(value);
             }
             catch(const exception::GeneralException & ex)
             {
                 // convert to an OptionException and add the key
                 throw exception::OptionException(ex, key);
             }
-
-            GetOrThrow_Cast_<stored_type>(key)->Change(convval);
         }
 
 
@@ -299,109 +266,19 @@ class OptionMap
          */
         bool Compare(const OptionMap & rhs) const; 
 
+
         /*! \brief Compare two OptionMap, but only with some keys
          */
         bool CompareSelect(const OptionMap & rhs, const std::vector<std::string> & selection) const;
 
 
-        /////////////////////////////
-        // Python-related functions
-        /////////////////////////////
-        /*! \brief Construct options from a python dictionary
-         *
-         * \throw bpmodule::exception::OptionException if there is
-         *        a problem with the option (validation, conversion, etc)
-         *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
-         *        with the validation itself.
-         *
-         *  \param [in] opt A dictionary with the options
-         *  \param [in] modulekey The module key of the the module that has these options
-         *  \param [in] wholevalidfunc Pointer to a function to validate the whole options object
-         *  \param [in] modulekey The module key that these options belong to
-         */
-        OptionMap(const std::string & modulekey, pybind11::dict opt, pybind11::object wholevalidfunc);
+
+        void AddOption(const std::string & key, const pybind11::object & def,
+                       OptionHolder::ValidatorFunc validator,
+                       bool required, const std::string & pytype, const std::string & help);
 
 
 
-        /*! \brief Change an option by passing a python object
-         *
-         * \throw bpmodule::exception::OptionException if there is
-         *        a problem with the option (nonexistant key, validation, conversion, etc)
-         *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
-         *        with the validation itself.
-         *
-         * \exstrong
-         */
-        void ChangePy(const std::string & key, pybind11::object obj);
-
-
-
-        /*! \brief Change options via python dictionary
-         *
-         * Dictionary is simple string key -> value mapping.
-         *
-         * \throw bpmodule::exception::OptionException if there is
-         *        a problem with the option (nonexistant key, validation, conversion, etc)
-         *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
-         *        with the validation itself.
-         *
-         * \exstrong
-         */
-        void ChangePyDict(pybind11::dict opt);
-
-
-
-        /*! \brief Return the option's value as a python object
-         *
-         * \throw bpmodule::exception::OptionException if there is
-         *        a problem with the option (nonexistant key, validation, conversion, etc)
-         */
-        pybind11::object GetPy(const std::string & key) const;
-
-
-
-        /*! \brief Compare two OptionMap, but only with some keys
-         */
-        bool CompareSelectPy(const OptionMap & rhs, pybind11::list selection) const;
-
-
-        //////////////////////////////////////////
-        // these aren't static constexpr
-        // since the are to be called from python
-        //////////////////////////////////////////
-        /*! \brief Return the maximum value for an integer that can be stored in this OptionMap
-         */
-        detail::OptionInt MaxInt(void) const
-        {
-            return std::numeric_limits<detail::OptionInt>::max();
-        }
-
-
-        /*! \brief Return the minimum value for an integer that can be stored in this OptionMap
-         */
-        detail::OptionInt MinInt(void) const
-        {
-            return std::numeric_limits<detail::OptionInt>::lowest();
-        }
-
-
-        /*! \brief Return the maximum value for an floating point that can be stored in this OptionMap
-         */
-        detail::OptionFloat MaxFloat(void) const
-        {
-            return std::numeric_limits<detail::OptionFloat>::max();
-        }
-
-
-        /*! \brief Return the minimum value for a floating point that can be stored in this OptionMap
-         */
-        detail::OptionFloat MinFloat(void) const
-        {
-            return std::numeric_limits<detail::OptionFloat>::lowest();
-        }
 
 
     private:
@@ -420,7 +297,7 @@ class OptionMap
         bool lockvalid_;
 
         //! Holds the options
-        std::map<std::string, detail::OptionBasePtr, util::CaseInsensitiveCompare> opmap_;
+        std::map<std::string, OptionHolder, util::CaseInsensitiveCompare> opmap_;
 
 
         //!< Validates the whole options container
@@ -432,61 +309,20 @@ class OptionMap
 
 
 
-        /*! \brief Get an pointer to OptionBase or throw if the key doesn't exist
+        /*! \brief Get an OptionHolder or throw if the key doesn't exist
          *
          * \note Key should already have been transformed to lowercase
          *
          * \throw bpmodule::exception::OptionException
          *        if a key doesn't exist
          */
-        detail::OptionBase * GetOrThrow_(const std::string & key);
+        const OptionHolder & GetOrThrow_(const std::string & key) const;
 
 
-
-        //! \copydoc GetOrThrow_
-        const detail::OptionBase * GetOrThrow_(const std::string & key) const;
-
-
-
-
-        /*! \brief Get a pointer to OptionBase and cast it to an appropriate OptionHolder
-         *
-         * \note Key should already have been transformed to lowercase
-         *
-         * \throw bpmodule::exception::OptionException
-         *        if a key doesn't exist or cannot
-         *        be cast to the desired type
+         /* \copydoc GetOrThrow_
          */
-        template<typename T>
-        const detail::OptionHolder<T> * GetOrThrow_Cast_(const std::string & key) const
-        {
-            CheckType_<T>();
-            const detail::OptionBase * ptr = GetOrThrow_(key);
-            const detail::OptionHolder<T> * oh = dynamic_cast<const detail::OptionHolder<T> *>(ptr);
-            if(oh == nullptr)
-                throw exception::OptionException("Bad cast", key,
-                                                 "fromtype", ptr->DemangledType(),
-                                                 "totype", util::DemangleCppType<T>());
+        OptionHolder & GetOrThrow_(const std::string & key);
 
-            return oh;
-        }
-
-
-        /*! \copydoc GetOrThrow_Cast_
-         */
-        template<typename T>
-        detail::OptionHolder<T> * GetOrThrow_Cast_(const std::string & key)
-        {
-            CheckType_<T>();
-            detail::OptionBase * ptr = GetOrThrow_(key);
-            detail::OptionHolder<T> * oh = dynamic_cast<detail::OptionHolder<T> *>(ptr);
-            if(oh == nullptr)
-                throw exception::OptionException("Bad cast", key,
-                                                 "fromtype", ptr->DemangledType(),
-                                                 "totype", util::DemangleCppType<T>());
-
-            return oh;
-        }
 
 
 
@@ -497,8 +333,7 @@ class OptionMap
         template<typename T>
         static void CheckType_(void) noexcept
         {
-            static_assert( detail::IsValidType<T>::value,
-                           "Invalid type for an option given to OptionMap");
+            //! \todo check types
         }
 
 };

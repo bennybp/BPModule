@@ -26,16 +26,6 @@ namespace datastore {
 // Member functions
 ////////////////////////////////////////////////
 
-OptionMap::OptionMap(const OptionMap & rhs)
-    : modulekey_(rhs.modulekey_),
-      expert_(rhs.expert_),
-      lockvalid_(rhs.lockvalid_),
-      wholevalid_(rhs.wholevalid_)
-{
-    for(const auto & it : rhs.opmap_)
-        opmap_.emplace(it.first, it.second->Clone());
-}
-
 
 OptionMap & OptionMap::operator=(const OptionMap & rhs)
 {
@@ -60,7 +50,7 @@ bool OptionMap::Has(const std::string & key) const
 {
     if(opmap_.count(key) == 0)
         return false;
-    return opmap_.at(key)->HasValue();
+    return opmap_.at(key).HasValue();
 }
 
 
@@ -79,14 +69,14 @@ size_t OptionMap::Size(void) const noexcept
 
 bool OptionMap::IsDefault(const std::string & key) const
 {
-    return GetOrThrow_(key)->IsDefault();
+    return GetOrThrow_(key).IsDefault();
 }
 
 
 
 void OptionMap::ResetToDefault(const std::string & key)
 {
-    GetOrThrow_(key)->ResetToDefault();
+    GetOrThrow_(key).ResetToDefault();
 }
 
 
@@ -94,7 +84,7 @@ void OptionMap::ResetToDefault(const std::string & key)
 bool OptionMap::AllReqSet(void) const noexcept
 {
     for(const auto & it : opmap_)
-        if(!it.second->IsSetIfRequired())
+        if(!it.second.IsSetIfRequired())
             return false;
     return true;
 }
@@ -156,26 +146,25 @@ std::vector<std::string> OptionMap::AllMissingReq(void) const
 {
     std::vector<std::string> req;
     for(const auto & it : opmap_)
-        if(!it.second->IsSetIfRequired())
+        if(!it.second.IsSetIfRequired())
             req.push_back(it.first);
 
     return req;
 }
 
 
-detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key)
+const OptionHolder & OptionMap::GetOrThrow_(const std::string & key) const
 {
     if(opmap_.count(key))
-        return opmap_.at(key).get();
+        return opmap_.at(key);
     else
         throw OptionException("Key not found", key);
 }
 
-
-const detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
+OptionHolder & OptionMap::GetOrThrow_(const std::string & key)
 {
     if(opmap_.count(key))
-        return opmap_.at(key).get();
+        return opmap_.at(key);
     else
         throw OptionException("Key not found", key);
 }
@@ -190,7 +179,7 @@ OptionMapIssues OptionMap::GetIssues(void) const
 
     for(const auto & it : opmap_)
     {
-        detail::OptionIssues oi = it.second->GetIssues();
+        OptionIssues oi = it.second.GetIssues();
         if(oi.size())
             omi.optissues.emplace(it.first, oi);
     }
@@ -202,7 +191,7 @@ OptionMapIssues OptionMap::GetIssues(void) const
 bool OptionMap::HasIssues(void) const
 {
     OptionMapIssues omi = GetIssues();
-    return (omi.toplevel.size() == 0 && omi.optissues.size() == 0);
+    return (omi.toplevel.size() && omi.optissues.size());
 }
 
 
@@ -218,7 +207,7 @@ bool OptionMap::Compare(const OptionMap & rhs) const
         return false;
 
     for(const auto & it : opmap_)
-        if(!(rhs.opmap_.at(it.first)->Compare(*it.second)))
+        if(!(rhs.opmap_.at(it.first).Compare(it.second)))
             return false;
 
     return true;
@@ -237,7 +226,7 @@ bool OptionMap::CompareSelect(const OptionMap & rhs, const std::vector<std::stri
 
         // if they both have it
         if(HasKey(it) && rhs.HasKey(it))
-            if(opmap_.at(it)->Compare(*rhs.opmap_.at(it)) == false)
+            if(opmap_.at(it).Compare(rhs.opmap_.at(it)) == false)
                 return false;
 
         // if neither have it that's ok?
@@ -247,136 +236,14 @@ bool OptionMap::CompareSelect(const OptionMap & rhs, const std::vector<std::stri
 }
 
 
-
-/*! \brief Wrap a python function that validates the entire OptionMap
- *
- * Calls python callable function \p func with \p val as the only argument
- *
- * \throw bpmodule::exception::PythonCallException if there is a problem calling
- *        the python function or if the return type can't be converted
- */
-static WholeOptionMapIssues WholeOptValidateWrapper(pybind11::object func, const OptionMap & val)
+void OptionMap::AddOption(const std::string & key, const pybind11::object & def,
+                          OptionHolder::ValidatorFunc validator,
+                          bool required, const std::string & pytype, const std::string & help)
 {
-    try {
-        return CallPyFunc<std::vector<std::string>>(func, val);
-    }
-    catch(PythonCallException & ex)
-    {
-        ex.AppendInfo("when", "while Calling validator function for an option map", "modulekey", val.ModuleKey());
-        throw;
-    }
-}
+    if(HasKey(key))
+        throw OptionException("Attempting to add duplicate key", key, "module", modulekey_);
 
-
-
-
-
-//////////////////////////////
-// Python functions
-//////////////////////////////
-OptionMap::OptionMap(const std::string & modulekey, pybind11::dict opt, pybind11::object wholevalidfunc)
-    : modulekey_(modulekey), expert_(false), lockvalid_(false)
-{
-    for(auto it : opt)
-    {
-        if(DeterminePyType(it.first) != python::PythonType::String)
-            throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
-                                  "pytype", GetPyClass(it.first));
-
-
-        std::string key = ConvertToCpp<std::string>(it.first);
-
-        // convert to lowercase
-        util::ToLower(key);
-
-
-        // should this ever happen? Keys should be unique in a
-        // python dict
-        if(opmap_.count(key))
-            throw OptionException("Duplicate key on construction", key);
-
-        // this will throw needed exceptions
-        opmap_.emplace(key, detail::OptionHolderFactory(key, it.second));
-    }
-
-    // add whole validator (if it exists)
-    if(DeterminePyType(wholevalidfunc) != python::PythonType::None)
-    {
-        // Don't forget that the method is part of a class
-        // so 1 argument is "self"
-        //! \todo Reimplement the version of HasCallableAttr with number of arguments
-        if(!python::HasCallableAttr(wholevalidfunc, "Validate"))
-            throw OptionException("Whole options validator does not have a callable Validate() method taking one argument", "(none)",
-                                  "pytype", GetPyClass(wholevalidfunc));
-
-        wholevalid_ = std::bind(WholeOptValidateWrapper, wholevalidfunc, std::placeholders::_1);
-    }
-
-}
-
-
-
-void OptionMap::ChangePy(const std::string & key, pybind11::object obj)
-{
-    detail::OptionBase * ptr = GetOrThrow_(key);
-    ptr->ChangePy(obj);
-
-    if(lockvalid_)
-        Validate();
-}
-
-
-
-void OptionMap::ChangePyDict(pybind11::dict opt)
-{
-    using std::swap;
-
-    // for strong exception guarantee:
-    // copy the current object, modify that, then swap
-    OptionMap tmp(*this);
-
-    // unlock for the moment. Some intermediate states may not be valid
-    tmp.LockValid(false);
-
-    for(auto it : opt)
-    {
-        if(DeterminePyType(it.first) != python::PythonType::String)
-            throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
-                                  "pytype", GetPyClass(it.first));
-
-
-        std::string key = ConvertToCpp<std::string>(it.first);
-
-        // convert to lowercase
-        util::ToLower(key);
-
-
-        if(!tmp.HasKey(key))
-            throw OptionException("Python dictionary has a key that I do not", key);
-
-        // may throw
-        tmp.ChangePy(key, it.second);
-    }
-
-    // set the validity lock to whatever it is in this OptionMap
-    // (also, will validate if needed)
-    tmp.LockValid(lockvalid_);
-
-    swap(*this, tmp);
-}
-
-
-
-pybind11::object OptionMap::GetPy(const std::string & key) const
-{
-    return GetOrThrow_(key)->GetPy();
-}
-
-
-bool OptionMap::CompareSelectPy(const OptionMap & rhs, pybind11::list selection) const
-{
-    //! \todo exceptions
-    return CompareSelect(rhs, ConvertToCpp<std::vector<std::string>>(selection));
+    opmap_.emplace(key, OptionHolder(key, def, validator, required, pytype, help));
 }
 
 
@@ -397,7 +264,7 @@ void OptionMap::Print(void) const
         Output("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", s20, s20, s20, s20, s10, s20);
 
         for(const auto & it : opmap_)
-            it.second->Print();
+            it.second.Print();
     }
     Output("\n");
 }
