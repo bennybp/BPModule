@@ -75,7 +75,11 @@ bool IsCallable(pybind11::object obj);
 bool HasCallableAttr(pybind11::object obj, const std::string & attr);
 
 
-
+/*! \brief Compares two python objects
+ *
+ * \todo - pybind11 might implement this someday into the object class
+ */
+bool Equal(pybind11::object lhs, pybind11::object rhs);
 
 
 } // close namespace python

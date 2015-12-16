@@ -140,6 +140,15 @@ bool HasCallableAttr(pybind11::object obj, const std::string & attr)
 }
 
 
+bool Equal(pybind11::object lhs, pybind11::object rhs)
+{
+    //! \todo check for error - res = -1
+    int res = PyObject_RichCompareBool(lhs.ptr(), rhs.ptr(), Py_EQ);
+    return (res == 1);
+        
+}
+
+
 } // close namespace python
 } // close namespace bpmodule
 
