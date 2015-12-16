@@ -151,6 +151,9 @@ bool Equal(pybind11::object lhs, pybind11::object rhs)
 
 pybind11::object DeepCopy(const pybind11::object & rhs)
 {
+    if(rhs.ptr() == nullptr)
+        return pybind11::object();
+
     // get deep copy from the python lib
     pybind11::object dc = pybind11::module::import("copy").attr("deepcopy");
 
