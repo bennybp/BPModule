@@ -11,7 +11,7 @@
 #include <iostream>
 
 #include "bpmodule/util/FormatString.hpp"
-#include "bpmodule/python_helper/Pybind11.hpp"
+#include "bpmodule/python/Pybind11.hpp"
 
 
 //! \todo Handle exceptions better? Yes, catch Boost exceptions, print error, and then continue? Update doc and don't forget about FormatStr

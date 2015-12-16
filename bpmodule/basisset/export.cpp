@@ -5,7 +5,7 @@
  */ 
 
 
-#include "bpmodule/python_helper/Pybind11.hpp"
+#include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/basisset/BasisSet.hpp"
 #include "bpmodule/basisset/Creators.hpp"
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"

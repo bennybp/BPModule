@@ -4,9 +4,9 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "bpmodule/python_helper/Types.hpp"
+#include "bpmodule/python/Types.hpp"
 #include "bpmodule/util/FormatString.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Convert.hpp"
 
 
 
@@ -33,41 +33,41 @@ std::string FormatStringPy(const std::string & fmt, pybind11::list args)
         for(auto it : args)
         {
 
-            python_helper::PythonType pytype = python_helper::DeterminePyType(it);
+            python::PythonType pytype = python::DeterminePyType(it);
 
             switch(pytype)
             {
-                case python_helper::PythonType::Int:
+                case python::PythonType::Int:
                 {
                     // make this safe for large signed and unsigned numbers
                     //! \todo Not much we can do if l < min() though...
-                    pybind11::int_ l = python_helper::ConvertToCpp<pybind11::int_>(it);
+                    pybind11::int_ l = python::ConvertToCpp<pybind11::int_>(it);
                     if(l > std::numeric_limits<intmax_t>::max())
-                        bfmt % python_helper::ConvertToCpp<uintmax_t>(l);
+                        bfmt % python::ConvertToCpp<uintmax_t>(l);
                     else
-                        bfmt % python_helper::ConvertToCpp<intmax_t>(l);
+                        bfmt % python::ConvertToCpp<intmax_t>(l);
                     break;
                 }
-                case python_helper::PythonType::Bool:
+                case python::PythonType::Bool:
                 {   
-                    bfmt % python_helper::ConvertToCpp<bool>(it);
+                    bfmt % python::ConvertToCpp<bool>(it);
                     break;
                 }
-                case python_helper::PythonType::Float:
+                case python::PythonType::Float:
                 {   
-                    bfmt % python_helper::ConvertToCpp<long double>(it);
+                    bfmt % python::ConvertToCpp<long double>(it);
                     break;
                 }
-                case python_helper::PythonType::String:
+                case python::PythonType::String:
                 {   
-                    bfmt % python_helper::ConvertToCpp<std::string>(it);
+                    bfmt % python::ConvertToCpp<std::string>(it);
                     break;
                 }
                 default: //! \todo Throw exception when printing unknown python object?
                 {   
                     pybind11::object ob = it.attr("__str__");
                     pybind11::object s = ob.call();
-                    bfmt % python_helper::ConvertToCpp<std::string>(s);
+                    bfmt % python::ConvertToCpp<std::string>(s);
                 }
             }
         }

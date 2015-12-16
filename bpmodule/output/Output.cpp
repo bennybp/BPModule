@@ -11,8 +11,8 @@
 
 
 #include "bpmodule/output/Output.hpp"
-//#include "bpmodule/python_helper/Convert.hpp"
-#include "bpmodule/python_helper/Pybind11.hpp"
+//#include "bpmodule/python/Convert.hpp"
+#include "bpmodule/python/Pybind11.hpp"
 
 
 namespace {

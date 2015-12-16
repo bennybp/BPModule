@@ -10,7 +10,7 @@
 #include <string>
 #include <typeinfo>
 
-#include "bpmodule/python_helper/Types.hpp"
+#include "bpmodule/python/Types.hpp"
 
 namespace bpmodule {
 namespace util {
@@ -54,7 +54,7 @@ template<typename T>
 typename std::enable_if<std::is_base_of<pybind11::object, T>::value, std::string>::type
 DemangleCppOrPyType(const T & t)
 {
-    return python_helper::GetPyClass(t);
+    return python::GetPyClass(t);
 }
 
 

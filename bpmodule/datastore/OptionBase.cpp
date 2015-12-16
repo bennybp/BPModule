@@ -14,7 +14,7 @@ namespace detail {
 
 OptionBase::OptionBase(const std::string & key,
            bool required,
-           python_helper::PythonType pytype,
+           python::PythonType pytype,
            const std::string & help)
     : key_(key), required_(required),
       pytype_(pytype), help_(help)
@@ -39,7 +39,7 @@ bool OptionBase::IsSetIfRequired(void) const noexcept
 }
 
 
-python_helper::PythonType OptionBase::PyType(void) const noexcept
+python::PythonType OptionBase::PyType(void) const noexcept
 {
     return pytype_;
 }

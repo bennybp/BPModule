@@ -61,7 +61,7 @@ class OneElectronIntegralIMPL : public ModuleBase
 
         pybind11::object GetBufPy(void)
         {
-            return python_helper::ConvertToPy(GetBuf(), GetIntegralCount());  
+            return python::ConvertToPy(GetBuf(), GetIntegralCount());  
         }
 
 

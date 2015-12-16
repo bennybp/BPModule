@@ -7,15 +7,15 @@
 #include "bpmodule/pragma.h"
 
 #include "bpmodule/exception/GeneralException.hpp"
-#include "bpmodule/python_helper/Errors.hpp"
-#include "bpmodule/python_helper/Types.hpp"
+#include "bpmodule/python/Errors.hpp"
+#include "bpmodule/python/Types.hpp"
 
 
 using bpmodule::exception::GeneralException;
 
 
 namespace bpmodule {
-namespace python_helper {
+namespace python {
 namespace detail {
 
 
@@ -59,5 +59,5 @@ GeneralException GetPyException(void)
 */
 
 } // close namespace detail
-} // close namespace python_helper
+} // close namespace python
 } // close namespace bpmodule

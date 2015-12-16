@@ -13,8 +13,8 @@
 #include <vector>
 #include <typeinfo>
 
-#include "bpmodule/python_helper/Pybind11.hpp"
-#include "bpmodule/python_helper/Types.hpp"
+#include "bpmodule/python/Pybind11.hpp"
+#include "bpmodule/python/Types.hpp"
 
 namespace bpmodule {
 namespace datastore {
@@ -53,7 +53,7 @@ class OptionBase
          */
         OptionBase(const std::string & key,
                    bool required,
-                   python_helper::PythonType pytype,
+                   python::PythonType pytype,
                    const std::string & help);
 
         virtual ~OptionBase() noexcept                  = default;
@@ -245,7 +245,7 @@ class OptionBase
          *
          * \exnothrow
          */
-        python_helper::PythonType PyType(void) const noexcept;
+        python::PythonType PyType(void) const noexcept;
 
 
 
@@ -282,7 +282,7 @@ class OptionBase
         const bool required_;
 
         //! The python type of this option
-        const python_helper::PythonType pytype_;
+        const python::PythonType pytype_;
 
         //! The help string for this option
         const std::string help_;

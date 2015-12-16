@@ -9,13 +9,13 @@
 #define _GUARD_CALL_HPP_
 
 #include "bpmodule/exception/PythonCallException.hpp"
-#include "bpmodule/python_helper/Types.hpp"
-#include "bpmodule/python_helper/Errors.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Types.hpp"
+#include "bpmodule/python/Errors.hpp"
+#include "bpmodule/python/Convert.hpp"
 
 
 namespace bpmodule {
-namespace python_helper {
+namespace python {
 
 
 /*! \brief Calls a python object
@@ -84,7 +84,7 @@ Ret CallPyFuncAttr(pybind11::object obj, const char * fname, Targs... Fargs)
 
 
 
-} // close namespace python_helper
+} // close namespace python
 } // close namespace bpmodule
 
 #endif

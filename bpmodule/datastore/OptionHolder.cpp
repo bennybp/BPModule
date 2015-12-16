@@ -5,7 +5,7 @@
  */
 
 
-#include "bpmodule/python_helper/Call.hpp"
+#include "bpmodule/python/Call.hpp"
 
 
 #include "bpmodule/datastore/OptionHolder.hpp"
@@ -13,7 +13,7 @@
 #include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/output/Output.hpp"
 
-using namespace bpmodule::python_helper;
+using namespace bpmodule::python;
 using namespace bpmodule::exception;
 using namespace bpmodule::util;
 

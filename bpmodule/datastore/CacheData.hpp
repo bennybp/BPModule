@@ -12,7 +12,7 @@
 
 #include "bpmodule/exception/DataStoreException.hpp"
 #include "bpmodule/datastore/GenericHolder.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Convert.hpp"
 #include "bpmodule/datastore/OptionMap.hpp"
 
 //! \todo split out python stuff?
@@ -62,7 +62,7 @@ class CacheData
                       const OptionMap & opt = OptionMap(),
                       pybind11::list sigopt = pybind11::list()) const
         {
-            return HasKey(key, opt, python_helper::ConvertToCpp<std::vector<std::string>>(sigopt));
+            return HasKey(key, opt, python::ConvertToCpp<std::vector<std::string>>(sigopt));
         }
 
 
@@ -123,7 +123,7 @@ class CacheData
                                   pybind11::list sigopt = pybind11::list()) const
         {
             return GetRef<pybind11::object>(key, opt,
-                                            python_helper::ConvertToCpp<std::vector<std::string>>(sigopt));
+                                            python::ConvertToCpp<std::vector<std::string>>(sigopt));
         }
 
 
@@ -152,7 +152,7 @@ class CacheData
                                    pybind11::list sigopt = pybind11::list()) const
         {
             return GetRef<pybind11::object>(key, opt,
-                                            python_helper::ConvertToCpp<std::vector<std::string>>(sigopt));
+                                            python::ConvertToCpp<std::vector<std::string>>(sigopt));
         }
 
 

@@ -6,7 +6,7 @@
 
 
 #include "bpmodule/parallel/Parallel.hpp"
-#include "bpmodule/python_helper/Pybind11.hpp"
+#include "bpmodule/python/Pybind11.hpp"
 
 namespace bpmodule {
 namespace parallel {

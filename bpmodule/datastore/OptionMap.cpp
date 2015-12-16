@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/python_helper/Call.hpp"
+#include "bpmodule/python/Call.hpp"
 
 
 #include "bpmodule/datastore/OptionMap.hpp"
@@ -12,7 +12,7 @@
 #include "bpmodule/exception/OptionException.hpp"
 
 
-using namespace bpmodule::python_helper;
+using namespace bpmodule::python;
 using namespace bpmodule::exception;
 using namespace bpmodule::output;
 
@@ -279,7 +279,7 @@ OptionMap::OptionMap(const std::string & modulekey, pybind11::dict opt, pybind11
 {
     for(auto it : opt)
     {
-        if(DeterminePyType(it.first) != python_helper::PythonType::String)
+        if(DeterminePyType(it.first) != python::PythonType::String)
             throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
                                   "pytype", GetPyClass(it.first));
 
@@ -300,12 +300,12 @@ OptionMap::OptionMap(const std::string & modulekey, pybind11::dict opt, pybind11
     }
 
     // add whole validator (if it exists)
-    if(DeterminePyType(wholevalidfunc) != python_helper::PythonType::None)
+    if(DeterminePyType(wholevalidfunc) != python::PythonType::None)
     {
         // Don't forget that the method is part of a class
         // so 1 argument is "self"
         //! \todo Reimplement the version of HasCallableAttr with number of arguments
-        if(!python_helper::HasCallableAttr(wholevalidfunc, "Validate"))
+        if(!python::HasCallableAttr(wholevalidfunc, "Validate"))
             throw OptionException("Whole options validator does not have a callable Validate() method taking one argument", "(none)",
                                   "pytype", GetPyClass(wholevalidfunc));
 
@@ -340,7 +340,7 @@ void OptionMap::ChangePyDict(pybind11::dict opt)
 
     for(auto it : opt)
     {
-        if(DeterminePyType(it.first) != python_helper::PythonType::String)
+        if(DeterminePyType(it.first) != python::PythonType::String)
             throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
                                   "pytype", GetPyClass(it.first));
 

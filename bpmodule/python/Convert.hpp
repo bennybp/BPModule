@@ -10,16 +10,16 @@
 
 #include "bpmodule/output/Output.hpp"
 
-#include "bpmodule/python_helper/Pybind11.hpp"
-#include "bpmodule/python_helper/Pybind11_stl.hpp"
-#include "bpmodule/python_helper/Types.hpp"
-#include "bpmodule/python_helper/Errors.hpp"
+#include "bpmodule/python/Pybind11.hpp"
+#include "bpmodule/python/Pybind11_stl.hpp"
+#include "bpmodule/python/Types.hpp"
+#include "bpmodule/python/Errors.hpp"
 #include "bpmodule/exception/PythonConvertException.hpp"
 #include "bpmodule/util/Mangle.hpp"
 
 
 namespace bpmodule {
-namespace python_helper {
+namespace python {
 
 
 
@@ -509,7 +509,7 @@ struct CppToPyExport
 
 #endif
 
-} // close namespace python_helper
+} // close namespace python
 } // close namespace bpmodule
 
 #endif

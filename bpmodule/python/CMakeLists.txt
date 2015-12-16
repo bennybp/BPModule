@@ -15,10 +15,10 @@ set(BPMODULE_PYTHON_HELPER_HEADERS
    )
 
 
-ADD_SUPERMODULE(python_helper
+ADD_SUPERMODULE(python
            "${BPMODULE_PYTHON_HELPER_FILES}"
            ""
            ""
            "")
 
-INSTALL_COREMODULE(python_helper "${BPMODULE_PYTHON_HELPER_HEADERS}" "")
+INSTALL_COREMODULE(python "${BPMODULE_PYTHON_HELPER_HEADERS}" "")

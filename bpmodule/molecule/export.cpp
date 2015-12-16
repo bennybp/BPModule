@@ -5,14 +5,14 @@
  */ 
 
 
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Convert.hpp"
 #include "bpmodule/molecule/AtomicInfo.hpp"
 #include "bpmodule/molecule/Molecule.hpp"
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Convert.hpp"
 #include "bpmodule/output/Output.hpp"
 
-using bpmodule::python_helper::ConvertToCpp;
+using bpmodule::python::ConvertToCpp;
 
 namespace bpmodule {
 namespace molecule {

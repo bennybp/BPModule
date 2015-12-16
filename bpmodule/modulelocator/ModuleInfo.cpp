@@ -5,7 +5,7 @@
  */
 
 
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Convert.hpp"
 
 #include "bpmodule/modulelocator/ModuleInfo.hpp"
 #include "bpmodule/output/Output.hpp"
@@ -13,7 +13,7 @@
 
 
 using bpmodule::datastore::OptionMap;
-using bpmodule::python_helper::ConvertToCpp;
+using bpmodule::python::ConvertToCpp;
 using bpmodule::exception::GeneralException;
 using bpmodule::exception::ModuleLocatorException;
 

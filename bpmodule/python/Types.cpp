@@ -5,12 +5,12 @@
  */
 
 
-#include "bpmodule/python_helper/Types.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Types.hpp"
+#include "bpmodule/python/Convert.hpp"
 
 
 namespace bpmodule {
-namespace python_helper {
+namespace python {
 
 
 
@@ -139,6 +139,6 @@ bool HasCallableAttr(pybind11::object obj, const std::string & attr)
 }
 
 
-} // close namespace python_helper
+} // close namespace python
 } // close namespace bpmodule
 

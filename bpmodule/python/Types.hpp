@@ -10,11 +10,11 @@
 
 #include <string>
 
-#include "bpmodule/python_helper/Pybind11.hpp"
+#include "bpmodule/python/Pybind11.hpp"
 
 
 namespace bpmodule {
-namespace python_helper {
+namespace python {
 
 
 //! Types defined in python that are available in BPModule
@@ -78,7 +78,7 @@ bool HasCallableAttr(pybind11::object obj, const std::string & attr);
 
 
 
-} // close namespace python_helper
+} // close namespace python
 } // close namespace bpmodule
 
 #endif

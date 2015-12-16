@@ -8,7 +8,7 @@
 #include <cstring>
 #include "bpmodule/util/Cmdline.hpp"
 #include "bpmodule/exception/GeneralException.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Convert.hpp"
 
 namespace {
   int argc_;
@@ -41,7 +41,7 @@ void SetCmdline(pybind11::object argv)
     if(set_)
         ClearCmdline();
 
-    auto vargv = python_helper::ConvertToCpp<std::vector<std::string>>(argv);
+    auto vargv = python::ConvertToCpp<std::vector<std::string>>(argv);
     argc_ = static_cast<int>(vargv.size());
     bpmodule::output::Debug("Command line has %1% args\n", argc_);
     for(const auto & it : vargv)

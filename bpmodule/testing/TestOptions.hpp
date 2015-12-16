@@ -11,7 +11,7 @@
 #include <string>
 
 #include "bpmodule/datastore/OptionMap.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Convert.hpp"
 
 
 namespace bpmodule {
@@ -30,7 +30,7 @@ template<typename T>
 void TestOptionMap_Change(datastore::OptionMap & opt, const std::string & key, pybind11::object value)
 {
     // ignore return value
-    const T tmp = python_helper::ConvertToCpp<T>(value);
+    const T tmp = python::ConvertToCpp<T>(value);
     opt.Change<T>(key, tmp);
 }
 

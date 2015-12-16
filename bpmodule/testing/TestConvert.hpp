@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Convert.hpp"
 #include "bpmodule/testing/TestingBase.hpp"
 
 
@@ -41,7 +41,7 @@ struct FailObject
 template<typename T>
 int TestConvertToCpp(pybind11::object obj)
 {
-    return TestFunc(bpmodule::python_helper::ConvertToCpp<T>, obj);
+    return TestFunc(bpmodule::python::ConvertToCpp<T>, obj);
 }
 
 
@@ -55,7 +55,7 @@ int TestConvertToCpp(pybind11::object obj)
 template<typename T>
 int TestConvertToPy(const T & obj)
 {
-    return TestFunc(bpmodule::python_helper::ConvertToPy<T>, obj);
+    return TestFunc(bpmodule::python::ConvertToPy<T>, obj);
 }
 
 
@@ -69,8 +69,8 @@ int TestConvertToPy(const T & obj)
 template<typename T>
 void PyCppPy(pybind11::object obj)
 {
-    T t = python_helper::ConvertToCpp<T>(obj);
-    pybind11::object obj2 = python_helper::ConvertToPy<T>(t);
+    T t = python::ConvertToCpp<T>(obj);
+    pybind11::object obj2 = python::ConvertToPy<T>(t);
 }
 
 
@@ -88,9 +88,9 @@ void PyCppPy(pybind11::object obj)
 template<typename T>
 void PyCppPy_Fail(pybind11::object obj)
 {
-    T t = python_helper::ConvertToCpp<T>(obj);
+    T t = python::ConvertToCpp<T>(obj);
     FailObject<T> fo{t};
-    pybind11::object obj2 = python_helper::ConvertToPy<FailObject<T>>(fo);
+    pybind11::object obj2 = python::ConvertToPy<FailObject<T>>(fo);
 }
 
 

@@ -14,7 +14,7 @@
 #include "bpmodule/datastore/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/util/StringUtil.hpp"
-#include "bpmodule/python_helper/Pybind11.hpp"
+#include "bpmodule/python/Pybind11.hpp"
 
 
 namespace bpmodule {

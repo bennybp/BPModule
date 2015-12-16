@@ -2,7 +2,7 @@
 #define _GUARD_REGISTERUIDPOINTER_HPP_
 
 #include <functional>
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Convert.hpp"
 #include "bpmodule/datastore/UIDPointer.hpp"
 
 
@@ -29,7 +29,7 @@ void AddCreator_(const char * classname, std::function<pybind11::object(pybind11
 template<typename T>
 pybind11::object CreateUIDPointer_(pybind11::object obj)
 {
-    T cobj = python_helper::ConvertToCpp<T>(obj);
+    T cobj = python::ConvertToCpp<T>(obj);
     return pybind11::cast(UIDPointer<T>(cobj));
 }
 

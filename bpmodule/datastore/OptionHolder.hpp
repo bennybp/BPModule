@@ -11,7 +11,7 @@
 #include <functional>
 
 #include "bpmodule/datastore/OptionBase.hpp"
-#include "bpmodule/python_helper/Pybind11.hpp"
+#include "bpmodule/python/Pybind11.hpp"
 
 namespace bpmodule {
 namespace datastore {
@@ -57,7 +57,7 @@ class OptionHolder : public OptionBase
          */
         OptionHolder(const std::string & key, T * def,
                      ValidatorFunc validator, bool required,
-                     python_helper::PythonType pytype,
+                     python::PythonType pytype,
                      const std::string & help);
 
 

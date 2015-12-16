@@ -17,7 +17,7 @@ class GeneralException;
 
 
 namespace bpmodule {
-namespace python_helper {
+namespace python {
 namespace detail {
 
 
@@ -27,7 +27,7 @@ bpmodule::exception::GeneralException GetPyException(void);
 
 
 } // close namespace detail
-} // close namespace python_helper
+} // close namespace python
 } // close namespace bpmodule
 
 #endif

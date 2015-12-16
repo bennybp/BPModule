@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/python_helper/Pybind11_functional.hpp"
+#include "bpmodule/python/Pybind11_functional.hpp"
 
 // Various components
 #include "bpmodule/modulebase/ModuleBase.hpp"

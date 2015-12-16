@@ -14,7 +14,7 @@
 
 #include <boost/format.hpp>
 
-#include "bpmodule/python_helper/Pybind11.hpp" //! \todo fwd declare?
+#include "bpmodule/python/Pybind11.hpp" //! \todo fwd declare?
 #include "bpmodule/exception/GeneralException.hpp"
 
 

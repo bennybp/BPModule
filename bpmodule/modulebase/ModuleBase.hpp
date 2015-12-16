@@ -10,9 +10,9 @@
 
 #include <string>
 
-#include "bpmodule/python_helper/Pybind11.hpp"
+#include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/exception/GeneralException.hpp"
-#include "bpmodule/python_helper/Call.hpp"
+#include "bpmodule/python/Call.hpp"
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
 
 
