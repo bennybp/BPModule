@@ -1,5 +1,4 @@
 set(BPMODULE_TESTING_FILES
-            TestModuleInfo.cpp
             TestDatastore.cpp
             TestOptions.cpp
             export.cpp
@@ -10,7 +9,6 @@ set(BPMODULE_TESTING_HEADERS
             TestConvert.hpp
             TestDatastore.hpp
             TestOptions.hpp
-            TestModuleInfo.hpp
    )
   
 

@@ -26,18 +26,18 @@ PYBIND11_PLUGIN(modulelocator)
     // ModuleInfo
     //////////////////////
     pybind11::class_<ModuleInfo>(m, "ModuleInfo")
-    .def(pybind11::init<pybind11::dict>())
+    .def(pybind11::init<>())
     .def("Print", &ModuleInfo::Print)
-    .def_readonly("key", &ModuleInfo::key)
-    .def_readonly("name", &ModuleInfo::name)
-    .def_readonly("type", &ModuleInfo::type)
-    .def_readonly("path", &ModuleInfo::path)
-    .def_readonly("soname", &ModuleInfo::soname)
-    .def_readonly("version", &ModuleInfo::version)
-    .def_readonly("description", &ModuleInfo::description)
-    .def_readonly("authors", &ModuleInfo::authors)
-    .def_readonly("refs", &ModuleInfo::refs)
-    .def_readonly("options", &ModuleInfo::options)
+    .def_readwrite("key", &ModuleInfo::key)
+    .def_readwrite("name", &ModuleInfo::name)
+    .def_readwrite("type", &ModuleInfo::type)
+    .def_readwrite("path", &ModuleInfo::path)
+    .def_readwrite("soname", &ModuleInfo::soname)
+    .def_readwrite("version", &ModuleInfo::version)
+    .def_readwrite("description", &ModuleInfo::description)
+    .def_readwrite("authors", &ModuleInfo::authors)
+    .def_readwrite("refs", &ModuleInfo::refs)
+    .def_readwrite("options", &ModuleInfo::options)
     ;
      
 
@@ -54,17 +54,18 @@ PYBIND11_PLUGIN(modulelocator)
     .def("KeyInfo", &ModuleLocator::KeyInfo)
     .def("PrintInfo", &ModuleLocator::PrintInfo)
     .def("Has", &ModuleLocator::Has)
-    .def("SetOptions", static_cast<void(ModuleLocator::*)(const std::string &, pybind11::dict)>(&ModuleLocator::SetOptions))
     .def("TestAll", &ModuleLocator::TestAll)
     .def("ClearCache", &ModuleLocator::ClearCache)
     .def("ClearStore", &ModuleLocator::ClearStore)
     .def("GetModule", &ModuleLocator::GetModulePy)
+    .def("ChangeOption", static_cast<void(ModuleLocator::*)(const std::string &, const std::string &, const pybind11::object &)>(&ModuleLocator::ChangeOption))
     ;
 
 
     pybind11::class_<CModuleLoader>(m, "CModuleLoader")
     .def(pybind11::init<ModuleLocator *>())
-    .def("LoadSO", static_cast<void(CModuleLoader::*)(const std::string &, pybind11::dict)>(&CModuleLoader::LoadSO));
+    .def("LoadSO", &CModuleLoader::LoadSO)
+    ;
 
 
     ////////////////////////////////

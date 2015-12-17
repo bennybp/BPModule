@@ -10,6 +10,7 @@
 #include "bpmodule/modulelocator/CModuleLoader.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
+#include "bpmodule/modulelocator/ModuleInfo.hpp"
 #include "bpmodule/exception/ModuleLoadException.hpp"
 
 using bpmodule::modulebase::ModuleBase;
@@ -41,7 +42,7 @@ CModuleLoader::~CModuleLoader()
 
 
 
-void CModuleLoader::LoadSO(const std::string & key, pybind11::dict minfo)
+void CModuleLoader::LoadSO(const std::string & key, const ModuleInfo & minfo)
 {
     // function in the so file
     typedef CreatorFunctions (*GeneratorFunc)(void);

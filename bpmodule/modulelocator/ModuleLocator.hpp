@@ -98,25 +98,6 @@ class ModuleLocator
 
 
 
-        /*! \brief Set the options for a module (python version)
-         *
-         * The dictionary has strings for keys and arbitrary data types for
-         * the values
-         *
-         * \throw bpmodule::exception::ModuleLocatorException
-         *        if the key doesn't exist in the database
-         *
-         * \throw bpmodule::exception::OptionException
-         *        if there is a problem converting the options
-         *        or if it is invalid
-         *
-         * \exstrong
-         *
-         *
-         * \param [in] key A module key
-         * \param [in] opt Options to set
-         */
-        void SetOptions(const std::string & key, pybind11::dict opt);
 
 
 
@@ -226,6 +207,15 @@ class ModuleLocator
          */
         void InsertModule(const std::string & key, const CreatorFunctions & cf, const ModuleInfo & mi);
 
+
+
+        /*! \brief Change an option for a module
+         */
+        template<typename T>        
+        void ChangeOption(const std::string & key, const std::string & optkey, const T & value)
+        {
+            GetOrThrow_(key).mi.options.Change(optkey, value);
+        }
 
 
 

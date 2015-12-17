@@ -9,11 +9,10 @@ class PyModuleLoader:
 
     # TODO - store those already loaded?
   
-  def LoadPyModule(self, key, func, minfo):
+  def LoadPyModule(self, key, func, cppminfo):
     creators = func()
 
-    if not creators.HasCreator(minfo["name"]):
-      raise GeneralException("Error - this module cannot create this key", "name", minfo["name"])
+    if not creators.HasCreator(cppminfo.name):
+      raise GeneralException("Error - this module cannot create this key", "name", cppminfo.name)
 
-    pyminfo = ModuleInfo(minfo)
-    self.mlt.InsertModule(key, creators, pyminfo)
+    self.mlt.InsertModule(key, creators, cppminfo)

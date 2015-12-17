@@ -274,7 +274,7 @@ class OptionMap
 
 
         void AddOption(const std::string & key, const pybind11::object & def,
-                       OptionHolder::ValidatorFunc validator,
+                       const pybind11::object & validator,
                        bool required, const std::string & pytype, const std::string & help);
 
 

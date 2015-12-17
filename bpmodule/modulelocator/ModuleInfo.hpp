@@ -31,22 +31,6 @@ struct ModuleInfo
     datastore::OptionMap options;        //!< Options for the module
 
 
-    ModuleInfo(void)                               = default;
-    ModuleInfo(const ModuleInfo & rhs)             = default;
-    ModuleInfo(ModuleInfo && rhs)                  = default;
-
-    ModuleInfo & operator=(const ModuleInfo & rhs) = default;
-    ~ModuleInfo(void)                              = default;
-
-
-    /*! \brief Construct from a python dictionary
-     *
-     * \throw bpmodule::exception::ModuleLocatorException if conversion fails
-     *        or the python dictionary is missing a required field
-     */
-    ModuleInfo(pybind11::dict dictionary);
-
-
     /*! \brief Print out this info
     */
     void Print(void) const;

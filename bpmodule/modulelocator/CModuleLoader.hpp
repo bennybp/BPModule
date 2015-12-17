@@ -18,7 +18,7 @@ namespace modulelocator {
 
 // forward declaration
 class ModuleLocator;
-
+struct ModuleInfo;
 
 
 /*! \brief Loads C/C++ modules
@@ -67,7 +67,7 @@ class CModuleLoader
          * \param [in] key The key for this module
          * \param [in] minfo The module information, including the path and name
          */
-        void LoadSO(const std::string & key, pybind11::dict minfo);
+        void LoadSO(const std::string & key, const ModuleInfo & minfo);
 
 
     private:

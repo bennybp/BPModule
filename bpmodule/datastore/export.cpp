@@ -4,6 +4,9 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
+#include "bpmodule/python/Pybind11_functional.hpp"
+#include "bpmodule/python/Pybind11_stl.hpp"
+
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
@@ -56,6 +59,7 @@ PYBIND11_PLUGIN(datastore)
     .def("ResetToDefault", &OptionMap::ResetToDefault)
     .def("AllReqSet", &OptionMap::AllReqSet)
     .def("Print", &OptionMap::Print)
+    .def("AddOption", &OptionMap::AddOption)
     .def("Change", static_cast<void(OptionMap::*)(const std::string &, const pybind11::object &)>(&OptionMap::Change))
     .def("Get", static_cast<pybind11::object(OptionMap::*)(const std::string &) const>(&OptionMap::Get))
     .def("LockValid", &OptionMap::LockValid)

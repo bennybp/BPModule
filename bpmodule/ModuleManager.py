@@ -2,7 +2,7 @@ import sys
 import os
 import importlib
 
-from . import modulelocator, output, exception, CheckSupermodule
+from . import modulelocator, datastore, output, exception, CheckSupermodule
 
 
 
@@ -92,18 +92,36 @@ class ModuleManager(modulelocator.ModuleLocator):
         output.Output("\n")
         output.Output("Loading module %1% v%2%\n", name, minfo["version"])
 
-        # Copy the key and name to the dict
-        minfo["key"] = key
-        minfo["name"] = name
+        # Create a c++ moduleinfo
+        cppminfo = modulelocator.ModuleInfo()
+        cppminfo.key = key
+        cppminfo.name = name
+        cppminfo.path = path
+        cppminfo.type = minfo["type"]
 
-        # set the path
-        minfo["path"] = path
+        if "soname" in minfo:
+            cppminfo.soname = minfo["soname"]
+
+        cppminfo.version = minfo["version"]
+        cppminfo.description = minfo["description"]
+        cppminfo.authors = minfo["authors"]
+        cppminfo.refs = minfo["refs"]
 
 
+        # Create the options
+        for optkey,opt in minfo["options"].items():
+            if opt[3] == None:
+                validator = datastore.DummyValidator
+            else:
+                validator = opt[3]
+            cppminfo.options.AddOption(optkey, opt[1], validator, opt[2], opt[0], opt[4])
+        
+
+        # actually load
         if minfo["type"] == "c_module":
-            self.cml.LoadSO(key, minfo)
+            self.cml.LoadSO(key, cppminfo)
         elif minfo["type"] == "python_module":  # TODO - check for CreateModule
-            self.pml.LoadPyModule(key, m.CreateModule, minfo)
+            self.pml.LoadPyModule(key, m.CreateModule, cppminfo)
         output.Debug("Done importing module %1% from %2%\n", key, supermodule)
         output.Output("\n")
 

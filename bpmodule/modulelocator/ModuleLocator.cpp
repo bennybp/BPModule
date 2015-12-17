@@ -61,12 +61,6 @@ void ModuleLocator::InsertModule(const std::string & key, const CreatorFunctions
 }
 
 
-void ModuleLocator::SetOptions(const std::string & key, pybind11::dict opt)
-{
-    GetOrThrow_(key).mi.options.ChangePyDict(opt);
-}
-
-
 size_t ModuleLocator::Size(void) const noexcept
 {
     return store_.size();

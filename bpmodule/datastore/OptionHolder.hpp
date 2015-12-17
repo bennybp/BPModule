@@ -29,7 +29,7 @@ class OptionHolder
 {
     public:
         //! A function that can validate an object of type T
-        typedef std::function<OptionIssues (const OptionHolder &)> ValidatorFunc;
+        typedef std::function<OptionIssues (pybind11::object)> ValidatorFunc;
 
 
         /*! \brief Constructs via pointers
@@ -55,7 +55,7 @@ class OptionHolder
          *
          */
         OptionHolder(const std::string & key, const pybind11::object & def,
-                     ValidatorFunc validator, bool required,
+                     const pybind11::object & validator, bool required,
                      const std::string & pytype,
                      const std::string & help);
 

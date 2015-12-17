@@ -7,22 +7,44 @@
 
 
 #include "bpmodule/datastore/OptionHolder.hpp"
-#include "bpmodule/python/Types.hpp"
+#include "bpmodule/python/Call.hpp"
 
 
 namespace bpmodule {
 namespace datastore {
 
 
+static OptionIssues ValidatorWrapper_(pybind11::object valobj, const std::string & key, pybind11::object val)
+{
+    try {
+        return python::CallPyFuncAttr<OptionIssues>(valobj, "Validate", val);
+    }
+    catch(const bpmodule::exception::GeneralException & ex)
+    {
+        throw bpmodule::exception::OptionException(ex, key, "when", "Attempting to validate an option");
+    }
+}
+
+
+
+
 
 OptionHolder::OptionHolder(const std::string & key, const pybind11::object & def,
-             ValidatorFunc validator, bool required,
-             const std::string & pytype,
-             const std::string & help)
+                           const pybind11::object & validator, bool required,
+                           const std::string & pytype,
+                           const std::string & help)
     : key_(key), required_(required),
       pytype_(pytype), help_(help),
-      value_(pybind11::object()), default_(python::DeepCopy(def)), validator_(validator) 
+      value_(pybind11::object()), default_(python::DeepCopy(def))
 {
+    // check for None types
+    // and set as a null pointer
+    if(python::DeterminePyType(default_) == python::PythonType::None)
+        default_ = pybind11::object(); // make a null ptr
+
+    
+    if(python::DeterminePyType(validator) != python::PythonType::None)
+        validator_ = std::bind(&ValidatorWrapper_, validator, key_, std::placeholders::_1);
 }
 
 
@@ -96,8 +118,8 @@ OptionIssues OptionHolder::GetIssues(void) const
 {
     if(!IsSetIfRequired())
         return OptionIssues{"Option is not set, but is required"};
-    else if(validator_)
-        return validator_(*this);
+    else if(validator_ && HasValue())
+        return validator_(Get<pybind11::object>());
     else
         return OptionIssues();
 }
