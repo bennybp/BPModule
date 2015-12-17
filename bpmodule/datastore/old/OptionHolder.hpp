@@ -10,27 +10,26 @@
 
 #include <functional>
 
-#include "bpmodule/datastore/OptionBase.hpp"
-#include "bpmodule/python/Pybind11.hpp"
+#include "bpmodule/python/Pybind11_functional.hpp"
+#include "bpmodule/exception/OptionException.hpp"
+#include "bpmodule/python/Convert.hpp"
+
 
 namespace bpmodule {
 namespace datastore {
-namespace detail {
 
+
+typedef std::vector<std::string> OptionIssues;
 
 
 /*! \brief Holds the value and default for an option
  *
- * \note This is a template class, but definitions are in the
- *       cpp file. This class is then defined for the
- *       allowed option types.
  */
-template<typename T>
-class OptionHolder : public OptionBase
+class OptionHolder
 {
     public:
         //! A function that can validate an object of type T
-        typedef std::function<OptionIssues (const OptionHolder<T> &)> ValidatorFunc;
+        typedef std::function<OptionIssues (pybind11::object)> ValidatorFunc;
 
 
         /*! \brief Constructs via pointers
@@ -55,27 +54,19 @@ class OptionHolder : public OptionBase
          * \param [in] help A help string for this option
          *
          */
-        OptionHolder(const std::string & key, T * def,
-                     ValidatorFunc validator, bool required,
-                     python::PythonType pytype,
+        OptionHolder(const std::string & key, const pybind11::object & def,
+                     const pybind11::object & validator, bool required,
+                     const std::string & pytype,
                      const std::string & help);
 
 
-
-        /*! \brief Copy constructor
-         *
-         * Data will be deep copied
-         */
         OptionHolder(const OptionHolder & oph);
 
-
-
-
         OptionHolder(void)                                  = delete;
-        OptionHolder(OptionHolder && oph)                   = delete;
+        OptionHolder(OptionHolder && oph)                   = default;
         OptionHolder & operator=(const OptionHolder & oph)  = delete;
-        OptionHolder & operator=(OptionHolder && oph)       = delete;
-        virtual ~OptionHolder()                             = default;
+        OptionHolder & operator=(OptionHolder && oph)       = default;
+        ~OptionHolder()                                     = default;
 
 
 
@@ -85,7 +76,11 @@ class OptionHolder : public OptionBase
          *
          * \exstrong
          */
-        void Change(const T & value);
+        template<typename T>
+        void Change(const T & value)
+        {
+            value_ = std::unique_ptr<pybind11::object>(new pybind11::object(python::ConvertToPy(value)));
+        }
 
 
 
@@ -96,8 +91,16 @@ class OptionHolder : public OptionBase
          * \throw bpmodule::exception::OptionException
          *        If the option does not have a value or a default
          */
-        const T & Get(void) const;
-
+        template<typename T>
+        T Get(void) const
+        {
+            if(value_)
+                return python::ConvertToCpp<T>(*value_);
+            else if(default_)
+                return python::ConvertToCpp<T>(*default_);
+            else
+                throw exception::OptionException("Option does not have a value", Key());
+        }
 
 
 
@@ -106,73 +109,136 @@ class OptionHolder : public OptionBase
          * \throw bpmodule::exception::OptionException
          *        If the option does not have a default
          */
-        const T & GetDefault(void) const;
+        template<typename T>
+        T GetDefault(void) const
+        {
+            if(default_)
+                return python::ConvertToCpp<T>(*default_);
+            else
+                throw exception::OptionException("Option does not have a default", Key());
+        }
 
 
 
-        ////////////////////////////////////////
-        // Virtual functions from OptionBase
-        ////////////////////////////////////////
+        /*! \brief Get the python type of this option
+         *
+         * \exnothrow
+         */
+        const std::string & PyType(void) const noexcept;
 
-        virtual OptionBasePtr Clone(void) const;
 
-        virtual const char * Type(void) const noexcept;
 
-        const std::type_info & TypeInfo(void) const noexcept;
+        /*! \brief \todo
+         */
+        bool HasValue(void) const noexcept;
 
-        virtual std::string DemangledType(void) const;
 
-        virtual bool HasValue(void) const noexcept;
 
-        virtual bool HasDefault(void) const noexcept;
+        /*! \brief \todo
+         */
+        bool HasDefault(void) const noexcept;
 
-        virtual bool IsDefault(void) const;
 
-        virtual void ResetToDefault(void) noexcept;
+        /*! \brief \todo
+         */
+        bool IsDefault(void) const;
 
-        virtual void Print(void) const;
 
-        virtual OptionIssues GetIssues(void) const;
 
-        virtual bool Compare(const OptionBase & rhs) const;
+        /*! \brief \todo
+         */
+        void ResetToDefault(void);
 
-        /////////////////////////////////////////
-        // Python-related functions
-        /////////////////////////////////////////
-        virtual pybind11::object GetPy(void) const;
 
-        virtual void ChangePy(pybind11::object obj);
+
+        /*! \brief Get the help string for this option
+         *
+         * \exnothrow
+         */
+        const std::string & Help(void) const noexcept;
+
+
+
+        /*! \brief Test if this option has issues
+         *
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with the validation function
+         */
+        bool HasIssues(void) const;
+
+
+
+        /*! \brief \todo
+         */
+        void Print(void) const;
+
+
+
+        /*! \brief \todo
+         */
+        OptionIssues GetIssues(void) const;
+
+
+
+        /*! \brief \todo
+         */
+        bool Compare(const OptionHolder & rhs) const;
+
+
+
+        /*! \brief Return the key of this option
+         *
+         * \exnothrow
+         */
+        const std::string & Key(void) const noexcept;
+
+
+
+        /*! \brief Check if this options is required
+         *
+         * \exnothrow
+         */
+        bool IsRequired(void) const noexcept;
+
+
+
+        /*! \brief Check to see if this object is set if required
+         *
+         * \return True if there is a value or a default, or if this
+         *         option is not required
+         */
+        bool IsSetIfRequired(void) const;
+
 
 
     private:
+        //! The key of this option
+        const std::string key_;
+
+        //! Is this option required
+        const bool required_;
+
+        //! The python type of this option
+        const std::string pytype_;
+
+        //! The help string for this option
+        const std::string help_;
+
         //! A set value for the option
-        std::unique_ptr<T> value_;
+        std::unique_ptr<pybind11::object> value_;
 
         //! The default for the option
-        std::unique_ptr<T> default_;
+        std::unique_ptr<pybind11::object> default_;
 
         //! Validation function object
         ValidatorFunc validator_;
+
 };
 
 
 
 
 
-/*! \brief Create an OptionHolder from a python object
- *
- * \throw bpmodule::exception::OptionException
- *        If there is a problem with the option (validation or python conversion problems)
- *
- * \throw bpmodule::exception::PythonCallException
- *        If there is a problem calling the validation function (in validating the default)
- */
-OptionBasePtr OptionHolderFactory(const std::string & key, pybind11::object obj);
-
-
-
-
-} //closing namespace detail
 } //closing namespace datastore
 } //closing namespace bpmodule
 

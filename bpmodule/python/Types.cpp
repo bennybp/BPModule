@@ -7,7 +7,6 @@
 #include <stdexcept>
 
 #include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/python/Types.hpp"
 #include "bpmodule/python/Call.hpp"
 
 using bpmodule::exception::Assert;

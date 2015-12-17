@@ -3,6 +3,7 @@ set(BPMODULE_DATASTORE_FILES
             RegisterUIDPointer.cpp
             Wavefunction.cpp
             OptionHolder.cpp
+            OptionBase.cpp
             OptionMap.cpp
             export.cpp
    )
@@ -17,6 +18,8 @@ set(BPMODULE_DATASTORE_HEADERS
             GenericBase.hpp
             OptionMap.hpp
             OptionHolder.hpp
+            OptionBase.hpp
+            OptionTypes.hpp
    )
 
 
@@ -26,4 +29,4 @@ ADD_SUPERMODULE(datastore
            ""
            "")
 
-INSTALL_COREMODULE(datastore "${BPMODULE_DATASTORE_HEADERS}" "optionvalidate.py")
+INSTALL_COREMODULE(datastore "${BPMODULE_DATASTORE_HEADERS}" "optionvalidate.py;OptionHolderHelper.py")

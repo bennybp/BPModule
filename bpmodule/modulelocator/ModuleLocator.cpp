@@ -235,6 +235,11 @@ pybind11::object ModuleLocator::GetModulePy(const std::string & key, unsigned lo
     auto umbptr = CreateModule_(key, parentid);
     return pybind11::cast(PyModulePtr(std::move(umbptr)));
 }
+        
+void ModuleLocator::ChangeOptionPy(const std::string & key, const std::string & optkey, pybind11::object value)
+{
+    GetOrThrow_(key).mi.options.ChangePy(optkey, value);
+}
 
 
 } // close namespace modulelocator

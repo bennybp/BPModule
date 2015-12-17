@@ -2,7 +2,7 @@ import sys
 import os
 import importlib
 
-from . import modulelocator, output, exception, CheckSupermodule
+from . import modulelocator, output, exception, datastore, CheckSupermodule
 
 
 
@@ -74,6 +74,9 @@ class ModuleManager(modulelocator.ModuleLocator):
             # check options, etc
             CheckSupermodule(spath)
 
+        except exception.GeneralException as e:
+            raise e
+
         except Exception as e:
             raise exception.GeneralException("Unable to load supermodule",
                                              "supermodule", supermodule,
@@ -110,7 +113,9 @@ class ModuleManager(modulelocator.ModuleLocator):
 
         # Create the options
         for optkey,opt in minfo["options"].items():
-            cppminfo.options.AddOption(optkey, opt[1], opt[3], opt[2], opt[0], opt[4])
+            oph = datastore.MakeOptionHolder(optkey, opt[0], opt[2], opt[3], opt[4], opt[1])
+            print(oph)
+            cppminfo.options.AddOption(oph)
         
 
         # actually load

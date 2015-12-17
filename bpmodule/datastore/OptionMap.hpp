@@ -10,6 +10,7 @@
 
 #include <map>
 
+#include "bpmodule/datastore/OptionTypes.hpp"
 #include "bpmodule/datastore/OptionHolder.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/util/StringUtil.hpp"
@@ -50,7 +51,7 @@ class OptionMap
         *
         * Deep copies all the stored options
         */
-        OptionMap(const OptionMap & rhs) = default;
+        OptionMap(const OptionMap & rhs);
 
 
         /*! \brief Assignment
@@ -216,9 +217,14 @@ class OptionMap
         template<typename T>
         T Get(const std::string & key) const
         {
+            typedef typename OptionConvert<T>::stored_type stored_type;
+
             CheckType_<T>();
+
+            stored_type val = GetOrThrow_Cast_<stored_type>(key)->Get();
+
             try {
-                return GetOrThrow_(key).Get<T>();
+                return OptionConvert<T>::ConvertFromStored(val);
             }
             catch(const exception::GeneralException & ex)
             {
@@ -243,16 +249,21 @@ class OptionMap
         template<typename T>
         void Change(const std::string & key, const T & value)
         {
+            typedef typename OptionConvert<T>::stored_type stored_type;
+
             CheckType_<T>();
+            stored_type convval;
 
             try {
-                 GetOrThrow_(key).Change(value);
+                 convval = OptionConvert<T>::ConvertToStored(value);
             }
             catch(const exception::GeneralException & ex)
             {
                 // convert to an OptionException and add the key
                 throw exception::OptionException(ex, key);
             }
+
+            GetOrThrow_Cast_<stored_type>(key)->Change(convval);
         }
 
 
@@ -273,11 +284,34 @@ class OptionMap
 
 
 
-        void AddOption(const std::string & key, const pybind11::object & def,
-                       const pybind11::object & validator,
-                       bool required, const std::string & pytype, const std::string & help);
+        void AddOption(const OptionBase & opt);
 
 
+
+
+        /////////////////////////////
+        // Python
+        /////////////////////////////
+        /*! \brief Change an option by passing a boost::python object
+         *
+         * \throw bpmodule::exception::OptionException if there is
+         *        a problem with the option (nonexistant key, validation, conversion, etc)
+         *
+         * \throw bpmodule::exception::PythonCallException if there is a problem
+         *        with the validation itself.
+         *
+         * \exstrong
+         */
+        void ChangePy(const std::string & key, pybind11::object obj);
+
+
+
+        /*! \brief Return the option's value as a python object
+         *
+         * \throw bpmodule::exception::OptionException if there is
+         *        a problem with the option (nonexistant key, validation, conversion, etc)
+         */
+        pybind11::object GetPy(const std::string & key) const;
 
 
 
@@ -297,7 +331,7 @@ class OptionMap
         bool lockvalid_;
 
         //! Holds the options
-        std::map<std::string, OptionHolder, util::CaseInsensitiveCompare> opmap_;
+        std::map<std::string, std::unique_ptr<OptionBase>, util::CaseInsensitiveCompare> opmap_;
 
 
         //!< Validates the whole options container
@@ -309,20 +343,59 @@ class OptionMap
 
 
 
-        /*! \brief Get an OptionHolder or throw if the key doesn't exist
+        /*! \brief Get an OptionBase or throw if the key doesn't exist
          *
          * \note Key should already have been transformed to lowercase
          *
          * \throw bpmodule::exception::OptionException
          *        if a key doesn't exist
          */
-        const OptionHolder & GetOrThrow_(const std::string & key) const;
+        const OptionBase * GetOrThrow_(const std::string & key) const;
 
 
          /* \copydoc GetOrThrow_
          */
-        OptionHolder & GetOrThrow_(const std::string & key);
+        OptionBase * GetOrThrow_(const std::string & key);
 
+
+        /*! \brief Get a pointer to OptionBase and cast it to an appropriate OptionBase
+         *
+         * \note Key should already have been transformed to lowercase
+         *
+         * \throw bpmodule::exception::OptionException
+         *        if a key doesn't exist or cannot
+         *        be cast to the desired type
+         */
+        template<typename T>
+        const OptionHolder<T> * GetOrThrow_Cast_(const std::string & key) const
+        {
+            CheckType_<T>();
+            const OptionBase * ptr = GetOrThrow_(key);
+            const OptionHolder<T> * oh = dynamic_cast<const OptionHolder<T> *>(ptr);
+            if(oh == nullptr)
+                throw exception::OptionException("Bad cast", key,
+                                                 "fromtype", ptr->DemangledType(),
+                                                 "totype", util::DemangleCppType<T>());
+
+            return oh;
+        }
+
+
+        /*! \copydoc GetOrThrow_Cast_
+         */
+        template<typename T>
+        OptionHolder<T> * GetOrThrow_Cast_(const std::string & key)
+        {
+            CheckType_<T>();
+            OptionBase * ptr = GetOrThrow_(key);
+            OptionHolder<T> * oh = dynamic_cast<OptionHolder<T> *>(ptr);
+            if(oh == nullptr)
+                throw exception::OptionException("Bad cast", key,
+                                                 "fromtype", ptr->DemangledType(),
+                                                 "totype", util::DemangleCppType<T>());
+
+            return oh;
+        }
 
 
 
@@ -333,9 +406,9 @@ class OptionMap
         template<typename T>
         static void CheckType_(void) noexcept
         {
-            //! \todo check types
+            static_assert( IsValidType<T>::value,
+                           "Invalid type for an option given to OptionMap");
         }
-
 };
 
 

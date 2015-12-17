@@ -188,10 +188,6 @@ class GeneralException : public std::exception
         const char * what(void) const noexcept;
 
 
-        /*! \brief Print out all details in a nice format
-         */
-        std::string ExceptionString(void) const;
-
     private:
 
         //! The "what" string

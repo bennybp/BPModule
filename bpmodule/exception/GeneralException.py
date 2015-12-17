@@ -12,11 +12,11 @@ class GeneralException(Exception):
     if len(lst) % 2: # if isn't even
       lst.append("DEVELOPER ERROR. I WAS NOT PASSED AN EVEN NUMBER")
     plist = [ lst[i:i+2] for i in range(0, len(lst), 2) ]
-    
+
     for i in plist:
         self.gex.AppendInfo(str(i[0]), str(i[1]))
 
 
   def __str__(self):
-    return self.gex.ExceptionString()
+    return self.gex.what()
 

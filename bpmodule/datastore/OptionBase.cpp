@@ -9,15 +9,13 @@
 
 namespace bpmodule {
 namespace datastore {
-namespace detail {
 
 
 OptionBase::OptionBase(const std::string & key,
-           bool required,
-           python::PythonType pytype,
-           const std::string & help)
-    : key_(key), required_(required),
-      pytype_(pytype), help_(help)
+                       python::PythonType pytype,
+                       bool required,
+                       const std::string & help)
+    : key_(key), pytype_(pytype), required_(required), help_(help)
 { }
 
 const std::string & OptionBase::Key(void) const noexcept
@@ -58,6 +56,5 @@ bool OptionBase::HasIssues(void) const
 
 
 
-} //closing namespace detail
 } //closing namespace datastore
 } //closing namespace bpmodule

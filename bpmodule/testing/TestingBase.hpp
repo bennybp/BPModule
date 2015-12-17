@@ -40,7 +40,7 @@ int TestFunc(T func, Targs... Fargs)
     }
     catch(const exception::GeneralException & ex)
     {
-        Debug(ex.ExceptionString());
+        Debug(ex.what());
         return 1;
     }
     catch(std::exception & ex)
@@ -83,7 +83,7 @@ int TestBoolFunc(T func, Targs... Fargs)
     }
     catch(const exception::GeneralException & ex)
     {
-        Debug(ex.ExceptionString());
+        Debug(ex.what());
         return 1;
         
     }
@@ -121,7 +121,7 @@ int TestConstruct(Targs... Fargs)
     }
     catch(const exception::GeneralException & ex)
     {
-        Debug(ex.ExceptionString());
+        Debug(ex.what());
         return 1;
         
     }

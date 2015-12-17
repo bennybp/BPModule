@@ -27,13 +27,13 @@ public:
     UIDPointer(const T & obj)
         : uid_(detail::curid_++), data_(std::make_shared<const T>(obj))
     {
-        pyobj_ = std::make_shared<const pybind11::object>(python::WrapInPy(data_.get()));
+        pyobj_ = std::make_shared<const pybind11::object>(python::ConvertToPy(data_.get(), pybind11::return_value_policy::reference));
     }
 
     UIDPointer(T && obj)
         : uid_(detail::curid_++), data_(std::make_shared<const T>(obj))
     { 
-        pyobj_ = std::make_shared<const pybind11::object>(python::WrapInPy(data_.get()));
+        pyobj_ = std::make_shared<const pybind11::object>(python::ConvertToPy(data_.get(), pybind11::return_value_policy::reference));
     }
 
 
@@ -63,7 +63,7 @@ public:
     {
         uid_ = detail::curid_++;
         data_ = std::make_shared<T>(obj);
-        pyobj_ = std::make_shared<const pybind11::object>(python::WrapInPy(data_.get()));
+        pyobj_ = std::make_shared<const pybind11::object>(python::ConvertToPy(data_.get(), pybind11::return_value_policy::reference));
     }
 
 
@@ -71,7 +71,7 @@ public:
     {
         uid_ = detail::curid_++;
         data_ = std::make_shared<const T>(obj);
-        pyobj_ = std::make_shared<const pybind11::object>(python::WrapInPy(data_.get()));
+        pyobj_ = std::make_shared<const pybind11::object>(python::ConvertToPy(data_.get(), pybind11::return_value_policy::reference));
     }
 
 

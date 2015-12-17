@@ -26,6 +26,11 @@ namespace datastore {
 // Member functions
 ////////////////////////////////////////////////
 
+OptionMap::OptionMap(const OptionMap & rhs)
+{
+    for(const auto & it : rhs.opmap_)
+        opmap_.emplace(it.first, it.second->Clone());
+}
 
 OptionMap & OptionMap::operator=(const OptionMap & rhs)
 {
@@ -50,7 +55,7 @@ bool OptionMap::Has(const std::string & key) const
 {
     if(opmap_.count(key) == 0)
         return false;
-    return opmap_.at(key).HasValue();
+    return opmap_.at(key)->HasValue();
 }
 
 
@@ -69,14 +74,14 @@ size_t OptionMap::Size(void) const noexcept
 
 bool OptionMap::IsDefault(const std::string & key) const
 {
-    return GetOrThrow_(key).IsDefault();
+    return GetOrThrow_(key)->IsDefault();
 }
 
 
 
 void OptionMap::ResetToDefault(const std::string & key)
 {
-    GetOrThrow_(key).ResetToDefault();
+    GetOrThrow_(key)->ResetToDefault();
 }
 
 
@@ -84,7 +89,7 @@ void OptionMap::ResetToDefault(const std::string & key)
 bool OptionMap::AllReqSet(void) const noexcept
 {
     for(const auto & it : opmap_)
-        if(!it.second.IsSetIfRequired())
+        if(!it.second->IsSetIfRequired())
             return false;
     return true;
 }
@@ -146,25 +151,25 @@ std::vector<std::string> OptionMap::AllMissingReq(void) const
 {
     std::vector<std::string> req;
     for(const auto & it : opmap_)
-        if(!it.second.IsSetIfRequired())
+        if(!it.second->IsSetIfRequired())
             req.push_back(it.first);
 
     return req;
 }
 
 
-const OptionHolder & OptionMap::GetOrThrow_(const std::string & key) const
+const OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
 {
     if(opmap_.count(key))
-        return opmap_.at(key);
+        return opmap_.at(key).get();
     else
         throw OptionException("Key not found", key);
 }
 
-OptionHolder & OptionMap::GetOrThrow_(const std::string & key)
+OptionBase * OptionMap::GetOrThrow_(const std::string & key)
 {
     if(opmap_.count(key))
-        return opmap_.at(key);
+        return opmap_.at(key).get();
     else
         throw OptionException("Key not found", key);
 }
@@ -179,7 +184,7 @@ OptionMapIssues OptionMap::GetIssues(void) const
 
     for(const auto & it : opmap_)
     {
-        OptionIssues oi = it.second.GetIssues();
+        OptionIssues oi = it.second->GetIssues();
         if(oi.size())
             omi.optissues.emplace(it.first, oi);
     }
@@ -207,7 +212,7 @@ bool OptionMap::Compare(const OptionMap & rhs) const
         return false;
 
     for(const auto & it : opmap_)
-        if(!(rhs.opmap_.at(it.first).Compare(it.second)))
+        if(!(rhs.opmap_.at(it.first)->Compare(*(it.second))))
             return false;
 
     return true;
@@ -226,7 +231,7 @@ bool OptionMap::CompareSelect(const OptionMap & rhs, const std::vector<std::stri
 
         // if they both have it
         if(HasKey(it) && rhs.HasKey(it))
-            if(opmap_.at(it).Compare(rhs.opmap_.at(it)) == false)
+            if(opmap_.at(it)->Compare(*(rhs.opmap_.at(it))) == false)
                 return false;
 
         // if neither have it that's ok?
@@ -236,17 +241,34 @@ bool OptionMap::CompareSelect(const OptionMap & rhs, const std::vector<std::stri
 }
 
 
-void OptionMap::AddOption(const std::string & key, const pybind11::object & def,
-                          const pybind11::object & validator,
-                          bool required, const std::string & pytype, const std::string & help)
+void OptionMap::AddOption(const OptionBase & opt)
 {
     //! \todo insert sanity check for pytype / actual type mapping
-    if(HasKey(key))
-        throw OptionException("Attempting to add duplicate key", key, "module", modulekey_);
+    if(HasKey(opt.Key()))
+        throw OptionException("Attempting to add duplicate key", opt.Key(), "module", modulekey_);
 
-    opmap_.emplace(key, OptionHolder(key, def, validator, required, pytype, help));
+    opmap_.emplace(opt.Key(), opt.Clone());
 }
 
+
+
+//////////////////////
+// Python
+//////////////////////
+pybind11::object OptionMap::GetPy(const std::string & key) const
+{
+    return GetOrThrow_(key)->GetPy();
+}
+
+
+void OptionMap::ChangePy(const std::string & key, pybind11::object obj)
+{
+    OptionBase * ptr = GetOrThrow_(key);
+    ptr->ChangePy(obj);
+
+    if(lockvalid_)
+        Validate();
+}
 
 
 
@@ -265,7 +287,7 @@ void OptionMap::Print(void) const
         Output("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", s20, s20, s20, s20, s10, s20);
 
         for(const auto & it : opmap_)
-            it.second.Print();
+            it.second->Print();
     }
     Output("\n");
 }

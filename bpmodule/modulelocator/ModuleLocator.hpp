@@ -219,6 +219,11 @@ class ModuleLocator
 
 
 
+        /*! \brief Change an option via python
+         */
+        void ChangeOptionPy(const std::string & key, const std::string & optkey, pybind11::object value);
+
+
     protected:
         template<typename T>
         friend class ModuleLoaderBase;

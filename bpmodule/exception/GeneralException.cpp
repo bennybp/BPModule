@@ -96,53 +96,5 @@ const char * GeneralException::what(void) const noexcept
 
 
 
-std::string GeneralException::ExceptionString(void) const
-{
-    // This is made to explicitly NOT depend on other core modules
-    // so it duplicates some minor stuff (formatting, line, etc)
-    ExceptionInfo exinfo = GetInfo();
-    std::stringstream ss;
-    ss << "\n";
-    ss << std::string(80, '*') << "\n";
-    ss << "Exception thrown!\n";
-    ss << "what() = " << what() << "\n"; 
-    for(auto & it : exinfo)
-    {
-        if(it.second.size())
-        {
-            std::stringstream sstr(it.second);
-            std::string str;
-            std::getline(sstr, str);
-
-            auto oldw = ss.width(24);
-            ss << it.first;
-            ss.width(oldw);
-            ss << " : " << str << "\n";
-
-            while(std::getline(sstr, str).good())
-            {
-                oldw = ss.width(24);
-                ss << " ";
-                ss.width(oldw);
-                ss << "     " << str << "\n";
-            }
-        }
-    }
-
-    // escape the boost::format percent signs
-    std::string escaped;
-
-    for(const auto & it : ss.str())
-    {
-        if(it == '%')
-            escaped.append("%%");
-        else
-            escaped.push_back(it);
-    }
-
-    return escaped;
-}
-
-
 } // close namespace exception
 } // close namespace bpmodule

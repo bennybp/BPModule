@@ -5,3 +5,4 @@ from .datastore import *
 
 # Other files
 from .optionvalidate import *
+from .OptionHolderHelper import *

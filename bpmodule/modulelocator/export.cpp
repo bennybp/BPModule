@@ -58,7 +58,7 @@ PYBIND11_PLUGIN(modulelocator)
     .def("ClearCache", &ModuleLocator::ClearCache)
     .def("ClearStore", &ModuleLocator::ClearStore)
     .def("GetModule", &ModuleLocator::GetModulePy)
-    .def("ChangeOption", static_cast<void(ModuleLocator::*)(const std::string &, const std::string &, const pybind11::object &)>(&ModuleLocator::ChangeOption))
+    .def("ChangeOption", &ModuleLocator::ChangeOptionPy)
     ;
 
 

@@ -39,9 +39,6 @@ T ConvertToCpp(pybind11::object obj)
 
 
     //! \todo more restrictive?
-
-    // throws if there is an issue
-    //! \todo exception handling
     try {
         return obj.cast<T>();
     }
@@ -85,65 +82,18 @@ pybind11::object ConvertToCpp<pybind11::object>(pybind11::object obj)
  * \param [in] obj The python object to convert
  */
 template<typename T>
-pybind11::object ConvertToPy(const T & obj)
+pybind11::object ConvertToPy(const T & obj,
+                             pybind11::return_value_policy pol = pybind11::return_value_policy::copy)
 {
     using bpmodule::exception::PythonConvertException;
 
 
     // may NOT throw if there is an issue
     try {
-        pybind11::object pyobj = pybind11::cast(obj, pybind11::return_value_policy::copy);
+        pybind11::object pyobj = pybind11::cast(obj, pol);
 
-        //! \todo fix if this is fixed in pybind11
-        if(pyobj.ptr() == nullptr)
-        {
-            throw PythonConvertException(detail::GetPyException(),
-                                         util::DemangleCppType<T>(), "python object",
-                                         "info", "Resulting object pointer is null");
-        }
-        else
-            return pyobj;
-        
-    }
-    catch (const std::exception & ex)
-    {
-        throw PythonConvertException(ex.what(), 
-                                     util::DemangleCppType<T>(), "python object",
-                                     "info", "In converting from C++ to python object");
-    }
-    catch(...)
-    {
-        throw PythonConvertException("Caught unknown exception", 
-                                     util::DemangleCppType<T>(), "python object",
-                                     "info", "In converting from C++ to python object");
-    }
-}
-
-
-
-/*! \brief Wraps a C++ object in a python object
- *
- * Does not transfer ownership, but instead the object
- * will store a reference.
- *
- * \throw bpmodule::exception::PythonConvertException on error
- *
- * \tparam T The C++ type to convert from
- * \param [in] obj The python object to convert
- */
-template<typename T>
-pybind11::object WrapInPy(T * obj)
-{
-    //! \todo combine this with ConvertToPy. They are almost identical
-    using bpmodule::exception::PythonConvertException;
-
-
-    // may NOT throw if there is an issue
-    try {
-        pybind11::object pyobj = pybind11::cast(obj, pybind11::return_value_policy::reference);
-
-        //! \todo fix if this is fixed in pybind11
-        if(pyobj.ptr() == nullptr)
+        //! \todo fix if this pybind11 is changed to throw an exception
+        if(!pyobj)
         {
             throw PythonConvertException(detail::GetPyException(),
                                          util::DemangleCppType<T>(), "python object",

@@ -18,7 +18,6 @@
 
 namespace bpmodule {
 namespace datastore {
-namespace detail {
 
 
 // forward declare class
@@ -47,13 +46,13 @@ class OptionBase
         /*! \brief Constructor
          *
          * \param [in] key The key of this option
-         * \param [in] required True if this is a required option
          * \param [in] pytype The python type of this option
+         * \param [in] required True if this is a required option
          * \param [in] help A help string for this option
          */
         OptionBase(const std::string & key,
-                   bool required,
                    python::PythonType pytype,
+                   bool required,
                    const std::string & help);
 
         virtual ~OptionBase() noexcept                  = default;
@@ -278,11 +277,11 @@ class OptionBase
         //! The key of this option
         const std::string key_;
 
-        //! Is this option required
-        const bool required_;
-
         //! The python type of this option
         const python::PythonType pytype_;
+
+        //! Is this option required
+        const bool required_;
 
         //! The help string for this option
         const std::string help_;
@@ -296,7 +295,6 @@ class OptionBase
 
 
 
-} //closing namespace detail
 } //closing namespace datastore
 } //closing namespace bpmodule
 

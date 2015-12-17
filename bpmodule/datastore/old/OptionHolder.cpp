@@ -1,589 +1,196 @@
 /*! \file
  *
- * \brief Storage of generic data via (key, value) pair (source)
+ * \brief Storage of generic data (inner class)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
 
-#include "bpmodule/python/Call.hpp"
-
 
 #include "bpmodule/datastore/OptionHolder.hpp"
-#include "bpmodule/datastore/OptionTypes.hpp"
-#include "bpmodule/exception/OptionException.hpp"
+#include "bpmodule/python/Call.hpp"
+#include "bpmodule/util/FormatString.hpp"
 #include "bpmodule/output/Output.hpp"
 
-using namespace bpmodule::python;
-using namespace bpmodule::exception;
-using namespace bpmodule::util;
+
+using bpmodule::exception::OptionException;
 
 
 namespace bpmodule {
 namespace datastore {
-namespace detail {
 
 
-
-///////////////////////////////////////////////////
-// These are the allowed types of OptionHolder
-///////////////////////////////////////////////////
-template class OptionHolder<OptionInt>;
-template class OptionHolder<OptionFloat>;
-template class OptionHolder<bool>;
-template class OptionHolder<std::string>;
-template class OptionHolder<std::vector<OptionInt>>;
-template class OptionHolder<std::vector<OptionFloat>>;
-template class OptionHolder<std::vector<bool>>;
-template class OptionHolder<std::vector<std::string>>;
-
-
-
-
-
-
-///////////////////////////////////////////
-// Forward declarations of free functions
-///////////////////////////////////////////
-template<typename T>
-static void PrintOption_(const OptionHolder<T> & oph);
-template<typename T>
-static void PrintOption_(const OptionHolder<std::vector<T>> & oph);
-
-
-
-
-
-
-///////////////////////////////////////////////////
-// OptionHolder members
-///////////////////////////////////////////////////
-template<typename T>
-OptionHolder<T>::OptionHolder(const std::string & key, T * def,
-                              ValidatorFunc validator, bool required,
-                              PythonType pytype,
-                              const std::string & help)
-    : OptionBase(key, required, pytype, help),
-      default_(def),
-      validator_(validator)
+static OptionIssues ValidatorWrapper_(pybind11::object valobj, const std::string & key, pybind11::object val)
 {
-    // check the default using the validator
-    if(def != nullptr)
-    {
-        // check for a problem with the default value. This should be an exception
-        OptionIssues iss = GetIssues();
-        if(iss.size())
-            throw OptionException("Default value for this option does not pass validation", Key(), "issues", iss);
+    try {
+        return python::CallPyFuncAttr<OptionIssues>(valobj, "Validate", val);
     }
-
-    if(def != nullptr && required)
-        throw OptionException("Default value supplied for required option", Key());
+    catch(const bpmodule::exception::GeneralException & ex)
+    {
+        throw OptionException(ex, key, "when", "Attempting to validate an option");
+    }
 }
 
 
 
 
 
-template<typename T>
-OptionHolder<T>::OptionHolder(const OptionHolder & oph)
-    : OptionBase(oph),
-      validator_(oph.validator_)
+OptionHolder::OptionHolder(const std::string & key, const pybind11::object & def,
+                           const pybind11::object & validator, bool required,
+                           const std::string & pytype,
+                           const std::string & help)
+    : key_(key), required_(required),
+      pytype_(pytype), help_(help)
+{
+    // check for None types
+    // and set as a null pointer
+    if(python::DeterminePyType(def) != python::PythonType::None)
+        default_ = std::unique_ptr<pybind11::object>(new pybind11::object(def));
+
+    
+    if(python::DeterminePyType(validator) != python::PythonType::None)
+    {
+        if(!python::HasCallableAttr(validator, "Validate"))
+            throw OptionException("Given validator doesn't have a callable Validate function", key_);
+
+        validator_ = std::bind(&ValidatorWrapper_, validator, key_, std::placeholders::_1);
+    }
+}
+
+
+OptionHolder::OptionHolder(const OptionHolder & oph)
+    : key_(oph.key_), required_(oph.required_),
+      pytype_(oph.pytype_), help_(oph.help_),
+      validator_(oph.validator_) 
+    
 {
     if(oph.value_)
-        value_ = std::unique_ptr<T>(new T(*oph.value_));
+      value_ = std::unique_ptr<pybind11::object>(new pybind11::object(python::DeepCopy(*oph.value_)));
     if(oph.default_)
-        default_ = std::unique_ptr<T>(new T(*oph.default_));
+      default_ = std::unique_ptr<pybind11::object>(new pybind11::object(python::DeepCopy(*oph.default_)));
 }
 
 
-
-template<typename T>
-void OptionHolder<T>::Change(const T & value)
+const std::string & OptionHolder::PyType(void) const noexcept
 {
-    value_ = std::unique_ptr<T>(new T(value));
+    return pytype_;
 }
 
 
-
-template<typename T>
-const T & OptionHolder<T>::Get(void) const
+bool OptionHolder::HasValue(void) const noexcept
 {
-    if(value_)
-        return *value_;
-    else if(default_)
-        return *default_;
-    else
-        throw OptionException("Option does not have a value", Key());
+    return (bool)value_ || (bool)default_;
 }
 
 
-
-template<typename T>
-const T & OptionHolder<T>::GetDefault(void) const
+bool OptionHolder::HasDefault(void) const noexcept
 {
-    if(default_)
-        return *default_;
-    else
-        throw OptionException("Option does not have a default", Key());
+    return (bool)default_;
 }
 
 
-template<typename T>
-OptionBasePtr OptionHolder<T>::Clone(void) const
+bool OptionHolder::IsDefault(void) const
 {
-    return OptionBasePtr(new OptionHolder<T>(*this));
-}
-
-template<typename T>
-const std::type_info & OptionHolder<T>::TypeInfo(void) const noexcept
-{
-    return typeid(T);
-}
-
-template<typename T>
-const char * OptionHolder<T>::Type(void) const noexcept
-{
-    return typeid(T).name();
-}
-
-
-template<typename T>
-std::string OptionHolder<T>::DemangledType(void) const
-{
-    return util::DemangleCppType<T>();
-}
-
-
-template<typename T>
-bool OptionHolder<T>::HasValue(void) const noexcept
-{
-    return bool(value_) || bool(default_);
-}
-
-
-
-template<typename T>
-bool OptionHolder<T>::HasDefault(void) const noexcept
-{
-    return bool(default_);
-}
-
-
-
-template<typename T>
-bool OptionHolder<T>::IsDefault(void) const
-{
-    if(!value_ && default_)
+    if(!value_ && !default_)
         return true;
+    else if(!value_ && default_)
+        return true; 
     else
-    {
-        // ignore compiler warnings about floating point equality
-        PRAGMA_WARNING_PUSH
-        PRAGMA_WARNING_IGNORE_FP_EQUALITY
-
-        return value_ && default_ && (*value_ == *default_);
-
-        PRAGMA_WARNING_POP
-    }
+        return value_ && default_ && python::Equal(*value_, *default_);
 }
 
 
-
-template<typename T>
-void OptionHolder<T>::ResetToDefault(void) noexcept
+void OptionHolder::ResetToDefault(void)
 {
     value_.reset();
 }
 
 
-template<typename T>
-bool OptionHolder<T>::Compare(const OptionBase & rhs) const
+const std::string & OptionHolder::Help(void) const noexcept
 {
-    const OptionHolder<T> * op = dynamic_cast<const OptionHolder<T> *>(&rhs);
-
-    if(op == nullptr)
-        return false;
-
-    PRAGMA_WARNING_PUSH
-    PRAGMA_WARNING_IGNORE_FP_EQUALITY
-
-    if(this->HasValue() && op->HasValue())
-        return (this->Get() == op->Get());
-    else if( (!this->HasValue()) && (!op->HasValue()))
-        return true; // neither have a value, so that's ok
-    else
-        return false; // one has a value, the other doesn't
-
-    PRAGMA_WARNING_POP
+    return help_;
 }
 
 
-template<typename T>
-void OptionHolder<T>::Print(void) const
+bool OptionHolder::HasIssues(void) const
 {
-    // call the free function
-    PrintOption_(*this);
+    return GetIssues().size();
 }
 
 
-template<typename T>
-OptionIssues OptionHolder<T>::GetIssues(void) const
+OptionIssues OptionHolder::GetIssues(void) const
 {
     if(!IsSetIfRequired())
         return OptionIssues{"Option is not set, but is required"};
-    else if(validator_)
-        return validator_(*this);
+    else if(validator_ && HasValue())
+        return validator_(Get<pybind11::object>());
     else
         return OptionIssues();
 }
 
 
-
-/////////////////////////////////////////
-// Python-related functions
-/////////////////////////////////////////
-template<typename T>
-pybind11::object OptionHolder<T>::GetPy(void) const
+bool OptionHolder::Compare(const OptionHolder & rhs) const
 {
-    try {
-        return ConvertToPy(Get());
-    }
-    catch(exception::GeneralException & ex)
-    {
-        throw OptionException(ex, Key(), "valuetype", DemangledType());
-    }
-}
-
-
-template<typename T>
-void OptionHolder<T>::ChangePy(pybind11::object obj)
-{
-    T val;
-
-    try {
-        val = ConvertToCpp<T>(obj);
-    }
-    catch(exception::GeneralException & ex)
-    {
-        throw OptionException(ex, Key(), "valuetype", DemangledType());
-    }
-
-    Change(val);
+    if(!HasValue() && !rhs.HasValue())
+        return true;
+    else if(HasValue() != rhs.HasValue())
+        return false;
+    else // they must both have a vlaue
+        return python::Equal(Get<pybind11::object>(), rhs.Get<pybind11::object>());
 }
 
 
 
-
-/////////////////////////////////////////
-// Printing functions (free functions)
-/////////////////////////////////////////
-
-//////////////////
-// Helpers
-//////////////////
-
-/*! \brief Converts an option value to a string
- *
- * \todo Printing of floating point values
- */
-static std::string OptToString_(pybind11::object & opt)
+const std::string & OptionHolder::Key(void) const noexcept
 {
-    return FormatString("%1%", opt);
+    return key_;
 }
 
 
-/*! \brief Converts an option value to a string
- *
- * Overload for a bool type
- */
-static std::string OptToString_(const bool & opt)
+
+bool OptionHolder::IsRequired(void) const noexcept
 {
-    return (opt ? "True" : "False");
+    return required_;
 }
 
 
-/*! \brief Prints a line corresponding to an option
- *
- * Will print its key, type, etc. If there is a problem
- * with the option, the Error() output is used. If the
- * option is not the default, the Changed() output is used.
- */
-template<typename T>
-static void PrintOption_(const OptionHolder<T> & oph)
+
+bool OptionHolder::IsSetIfRequired(void) const
 {
+    return HasValue() || HasDefault() || !IsRequired();
+}
+
+
+////////////////////////////////
+// PRINTING
+////////////////////////////////
+void OptionHolder::Print(void) const
+{
+    using util::FormatString;
+
+    std::string valstr = HasValue() ? python::String(Get<pybind11::object>()) : "(none)";
+    std::string defstr = HasDefault() ? python::String(GetDefault<pybind11::object>()) : "(none)";
     std::string optline = FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
-                                       oph.Key(),                                                         // name/key
-                                       PythonTypeToStr(oph.PyType()),                                     // type
-                                       (oph.HasValue() ? OptToString_(oph.Get()) : "(none)"),             // value
-                                       (oph.HasDefault() ? OptToString_(oph.GetDefault()) : "(none)"),    // default
-                                       (oph.IsRequired() ? "True" : "False"),                             // required
-                                       oph.Help());                                                       // help/description
+                                       Key(),                              // name/key
+                                       (PyType()),                         // type
+                                       valstr,                                 // value
+                                       defstr,                                 // default
+                                       (IsRequired() ? "True" : "False"),  // required
+                                       Help());                            // help/description
 
 
-    if(oph.HasIssues())
+    if(HasIssues())
         output::Error(optline);
 
-    else if(!oph.IsDefault())
+    else if(!IsDefault())
         output::Changed(optline);
     else
         output::Output(optline);
-}
-
-
-
-/*! \brief Prints a line corresponding to an option
- *
- * Overload for a vector type
- *
- * Will print its key, type, etc. If there is a problem
- * with the option, the Error() output is used. If the
- * option is not the default, the Changed() output is used.
- */
-template<typename T>
-static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
-{
-    size_t nrows = 0;
-
-    std::string valstr, defstr;
-
-    if(oph.HasValue())
-    {
-        auto valuevec = oph.Get();
-        nrows = valuevec.size();
-
-        if(valuevec.size() == 0)
-            valstr = "(empty)";
-        else
-            valstr = OptToString_(valuevec[0]);
-    }
-    else
-        valstr = "(none)";
-
-
-    if(oph.HasDefault())
-    {
-        auto defvec = oph.GetDefault();
-        nrows = std::max(nrows, defvec.size());
-
-        if(defvec.size() == 0)
-            defstr = "(empty)";
-        else
-            defstr = OptToString_(defvec[0]);
-    }
-    else
-        defstr = "(none)";
-
-
-
-
-    std::vector<std::string> optlines;
-    optlines.push_back(FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
-                                    oph.Key(),                                                         // name/key
-                                    PythonTypeToStr(oph.PyType()),                                     // type
-                                    valstr,                                                            // value
-                                    defstr,                                                            // default
-                                    (oph.IsRequired() ? "True" : "False"),                             // required
-                                    oph.Help()));                                                      // help/description
-
-
-    // start at 1 since we did the first separately
-    for(size_t i = 1; i < nrows; i++)
-    {
-        if(oph.HasValue())
-        {
-            auto valuevec = oph.Get();
-            if(valuevec.size() > i)
-                valstr = OptToString_(valuevec[i]);
-        }
-
-
-        if(oph.HasDefault())
-        {
-            auto defvec = oph.GetDefault();
-            if(defvec.size() > i)
-                defstr = OptToString_(defvec[i]);
-        }
-
-        optlines.push_back(FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
-                                        "",              // name/key
-                                        "",              // type
-                                        valstr,          // value
-                                        defstr,          // default
-                                        "",              // required
-                                        ""));            // help/description
-
-    }
-
-    for(const auto & it : optlines)
-    {
-        if(!oph.IsSetIfRequired())
-            output::Error(it);
-        else if(!oph.IsDefault())
-            output::Changed(it);
-        else
-            output::Output(it);
-    }
-
 
 }
 
 
 
+} //closing namespace datastore
+} //closing namespace bpmodule
 
-
-
-////////////////////////////////////////////////////////
-// CreateOptionHolder & helper functions
-////////////////////////////////////////////////////////
-
-/*! \brief A wrapper around a python validation function
- *
- * Will call the python function \p func and give it \p val as its only argument
- *
- * \throw bpmodule::exception::PythonCallException if there is a problem calling
- *        the python function or if the return type can't be converted
- *
- */
-template<typename T>
-static OptionIssues ValidateWrapper(pybind11::object func, const OptionHolder<T> & val)
-{
-    // should never really throw...
-    pybind11::object obj = ConvertToPy(val.Get());
-
-    try {
-        return CallPyFunc<std::vector<std::string>>(func, obj);
-    }
-    catch(PythonCallException & ex)
-    {
-        ex.AppendInfo("when", "while Calling validator function for an option", "optionkey", val.Key());
-        throw;
-    }
-}
-
-
-
-/*! \brief Helps create an OptionHolder from a python tuple
- */
-template<typename T>
-static OptionBasePtr CreateOptionHolder(const std::string & key, pybind11::tuple tup)
-{
-    T * def = nullptr;
-
-
-    // The python type of the 'default' element of the tuple
-    PythonType ptype_default = DeterminePyType(tup[1]);
-
-    // If a default value was given, try to convert it
-    if(ptype_default != PythonType::None)
-    {
-        try {
-            def = new T(ConvertToCpp<T>(tup[1]));
-        }
-        catch(const PythonConvertException & ex)
-        {
-            throw OptionException(ex, key, "desc", "Default could not be converted");
-        }
-
-    }
-
-    // Already checked
-    /*
-    PythonType ptype_type = DeterminePyType(tup[0]);
-    if(ptype_type != PythonType::String)
-        throw OptionException("\"Type\" element of tuple is not a bool", key, "type", GetPyClass(tup[0]));
-    */
-
-    if(DeterminePyType(tup[2]) != PythonType::Bool)
-        throw OptionException("\"Required\" element of tuple is not a bool", key, "type", GetPyClass(tup[2]));
-
-    // default, for help = None
-    std::string help = "(no help)";
-
-    // get if it is a string, throw if it's not a string or None
-    if(DeterminePyType(tup[4]) == PythonType::String)
-        help = ConvertToCpp<std::string>(tup[4]);
-    else if(DeterminePyType(tup[4]) != PythonType::None)
-        throw OptionException("\"Help\" element of tuple is not a string (or None)", key, "type", GetPyClass(tup[4]));
-
-    // get the 'required' element and the type
-    bool req = ConvertToCpp<bool>(tup[2]);
-    PythonType pytype = StrToPythonType(ConvertToCpp<std::string>(tup[0]));
-
-
-    // Check if validator is given. If not, use an empty function object
-    typename OptionHolder<T>::ValidatorFunc validator;
-
-    if(DeterminePyType(tup[3]) != PythonType::None)
-    {
-        // check for method
-        // Don't forget that the method is part of a class
-        // so 1 argument is "self"
-        //! \todo reimplement HasCallableAttr with number of args
-        if(!HasCallableAttr(tup[3], "Validate"))
-            throw OptionException("Validator does not have a callable Validate() method taking one argument", key,
-                                  "type", GetPyClass(tup[3]));
-
-        // Set up the validator with wrapper
-        pybind11::object valfunc = tup[3];
-        validator = std::bind(ValidateWrapper<T>, valfunc.attr("Validate"), std::placeholders::_1);
-    }
-
-
-    return OptionBasePtr(new OptionHolder<T>(key, def, validator, req, pytype, help));
-}
-
-
-
-
-
-OptionBasePtr OptionHolderFactory(const std::string & key, pybind11::object obj)
-{
-    PythonType ptype = DeterminePyType(obj);
-    if(ptype != PythonType::Tuple)
-        throw OptionException("Object for option is not a tuple", key, "pythontype", GetPyClass(obj));
-
-
-    pybind11::tuple tup = ConvertToCpp<pybind11::tuple>(obj);
-
-
-    int length = static_cast<int>(tup.size());
-    if(length != 5)
-        throw OptionException("Python options tuple does not have 5 elements", key, "length", length);
-
-
-    if(DeterminePyType(tup[0]) != PythonType::String)
-        throw OptionException("\"Type\" element of tuple is not a string", key, "type", GetPyClass(tup[0]));
-
-
-    std::string type = ConvertToCpp<std::string>(tup[0]);
-
-
-    switch(StrToPythonType(type))
-    {
-        case PythonType::Bool:
-            return CreateOptionHolder<bool>(key, tup);
-        case PythonType::Int:
-            return CreateOptionHolder<OptionInt>(key, tup);
-        case PythonType::Float:
-            return CreateOptionHolder<OptionFloat>(key, tup);
-        case PythonType::String:
-            return CreateOptionHolder<std::string>(key, tup);
-        case PythonType::ListBool:
-            return CreateOptionHolder<std::vector<bool>>(key, tup);
-        case PythonType::ListInt:
-            return CreateOptionHolder<std::vector<OptionInt>>(key, tup);
-        case PythonType::ListFloat:
-            return CreateOptionHolder<std::vector<OptionFloat>>(key, tup);
-        case PythonType::ListString:
-            return CreateOptionHolder<std::vector<std::string>>(key, tup);
-        default:
-            throw OptionException("Cannot convert python type to option", key, "type", type);
-    }
-}
-
-
-
-
-} // close namespace detail
-} // close namespace datastore
-} // close namespace bpmodule
 

@@ -41,11 +41,38 @@ namespace datastore {
 namespace export_python {
 
 
+template<typename T>
+static void RegisterOptionHolder(pybind11::module & m, const char * name, pybind11::class_<OptionBase> oh)
+{
+    const std::string pyname = std::string("OptionHolder_") + name;
+    pybind11::class_<OptionHolder<T>>(m, pyname.c_str(), oh)
+    .def(pybind11::init<const std::string &, python::PythonType, bool, pybind11::object, const std::string &>()) 
+    .def(pybind11::init<const std::string &, python::PythonType, bool, pybind11::object, const std::string &, const T &>()) 
+    ;
+}
+
 
 
 PYBIND11_PLUGIN(datastore)
 {
     pybind11::module m("datastore", "Data storage classes");
+
+
+    /////////////////////////
+    // OptionHolders
+    /////////////////////////
+    pybind11::class_<OptionBase> oh(m, "OptionBase");
+    
+
+    RegisterOptionHolder<OptionInt>(m, "int", oh);
+    RegisterOptionHolder<OptionFloat>(m, "float", oh);
+    RegisterOptionHolder<bool>(m, "bool", oh);
+    RegisterOptionHolder<std::string>(m, "str", oh);
+    RegisterOptionHolder<std::vector<OptionInt>>(m, "listint", oh);
+    RegisterOptionHolder<std::vector<OptionFloat>>(m, "listfloat", oh);
+    RegisterOptionHolder<std::vector<bool>>(m, "listbool", oh);
+    RegisterOptionHolder<std::vector<std::string>>(m, "liststr", oh);
+
 
     /////////////////////////
     // OptionMap
@@ -60,8 +87,8 @@ PYBIND11_PLUGIN(datastore)
     .def("AllReqSet", &OptionMap::AllReqSet)
     .def("Print", &OptionMap::Print)
     .def("AddOption", &OptionMap::AddOption)
-    .def("Change", static_cast<void(OptionMap::*)(const std::string &, const pybind11::object &)>(&OptionMap::Change))
-    .def("Get", static_cast<pybind11::object(OptionMap::*)(const std::string &) const>(&OptionMap::Get))
+    .def("Change", &OptionMap::ChangePy)
+    .def("Get", &OptionMap::GetPy)
     .def("LockValid", &OptionMap::LockValid)
     .def("Validate", &OptionMap::Validate)
     .def("ModuleKey", &OptionMap::ModuleKey, pybind11::return_value_policy::copy)

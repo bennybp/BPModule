@@ -21,7 +21,7 @@ PYBIND11_PLUGIN(exception)
     pybind11::class_<GeneralException>(m, "GeneralException")
     .def(pybind11::init<const std::string &>())
     .def("AppendInfo", static_cast<void(GeneralException::*)(const std::string &, const std::string &)>(&GeneralException::AppendInfo))
-    .def("ExceptionString", &GeneralException::ExceptionString)
+    .def("what", &GeneralException::what)
     ;
 
     return m.ptr();
