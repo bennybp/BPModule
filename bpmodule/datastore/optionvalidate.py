@@ -1,12 +1,3 @@
-class DummyValidator:
-    def __init__(self):
-        pass
-
-    def Validate(self, value):
-        return []
-
-
-
 class RangeCheck:
     def __init__(self, min, max, includemin = True, includemax = True):
         self.min = min

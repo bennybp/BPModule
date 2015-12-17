@@ -89,7 +89,7 @@ pybind11::object DeepCopy(const pybind11::object & rhs);
 
 /*! \brief Return a string representation
  */
-std::string String(pybind11::object & obj);
+std::string String(const pybind11::object & obj);
 
 
 } // close namespace python

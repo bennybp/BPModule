@@ -10,6 +10,9 @@
 #include "bpmodule/python/Types.hpp"
 #include "bpmodule/python/Call.hpp"
 
+using bpmodule::exception::Assert;
+using bpmodule::exception::GeneralException;
+
 namespace bpmodule {
 namespace python {
 
@@ -64,7 +67,8 @@ const char * PythonTypeToStr(PythonType pytype)
 
 std::string GetPyClass(pybind11::object obj)
 {
-    //! \todo should ever throw?
+    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+
     pybind11::object cls = obj.attr("__class__");
     pybind11::object name = cls.attr("__name__");
     return name.cast<std::string>();
@@ -73,10 +77,9 @@ std::string GetPyClass(pybind11::object obj)
 
 PythonType DeterminePyType(pybind11::object obj)
 {
-    try {
-        if(obj.ptr() == nullptr)
-            return PythonType::None;
+    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
 
+    try {
         std::string cl = GetPyClass(obj);
 
         if(cl == "bool")      return PythonType::Bool;
@@ -126,22 +129,28 @@ PythonType DeterminePyType(pybind11::object obj)
 
 bool HasAttr(pybind11::object obj, const std::string & attr)
 {
+    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
     return PyObject_HasAttrString(obj.ptr(), attr.c_str());
 }
 
 bool IsCallable(pybind11::object obj)
 {
+    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
     return PyCallable_Check(obj.ptr());
 }
 
 bool HasCallableAttr(pybind11::object obj, const std::string & attr)
 {
+    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
     return HasAttr(obj, attr) && IsCallable(obj.attr(attr.c_str()));
 }
 
 
 bool Equal(pybind11::object lhs, pybind11::object rhs)
 {
+    Assert<GeneralException>(lhs.ptr() != nullptr, "Python object pointer is null");
+    Assert<GeneralException>(rhs.ptr() != nullptr, "Python object pointer is null");
+
     //! \todo check for error - res = -1
     int res = PyObject_RichCompareBool(lhs.ptr(), rhs.ptr(), Py_EQ);
     return (res == 1);
@@ -151,8 +160,7 @@ bool Equal(pybind11::object lhs, pybind11::object rhs)
 
 pybind11::object DeepCopy(const pybind11::object & rhs)
 {
-    if(rhs.ptr() == nullptr)
-        return pybind11::object();
+    Assert<GeneralException>(rhs.ptr() != nullptr, "Python object pointer is null");
 
     // get deep copy from the python lib
     pybind11::object dc = pybind11::module::import("copy").attr("deepcopy");
@@ -164,9 +172,11 @@ pybind11::object DeepCopy(const pybind11::object & rhs)
 }
 
 
-std::string String(pybind11::object obj)
+std::string String(const pybind11::object & obj)
 {
-    return CallPyFuncAttr<std::string>(obj, "__str__");
+    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+
+    return ConvertToCpp<std::string>(const_cast<pybind11::object &>(obj).str());
 }
 
 

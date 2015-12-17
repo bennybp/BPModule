@@ -2,7 +2,7 @@ import sys
 import os
 import importlib
 
-from . import modulelocator, datastore, output, exception, CheckSupermodule
+from . import modulelocator, output, exception, CheckSupermodule
 
 
 
@@ -110,11 +110,7 @@ class ModuleManager(modulelocator.ModuleLocator):
 
         # Create the options
         for optkey,opt in minfo["options"].items():
-            if opt[3] == None:
-                validator = datastore.DummyValidator
-            else:
-                validator = opt[3]
-            cppminfo.options.AddOption(optkey, opt[1], validator, opt[2], opt[0], opt[4])
+            cppminfo.options.AddOption(optkey, opt[1], opt[3], opt[2], opt[0], opt[4])
         
 
         # actually load

@@ -74,6 +74,7 @@ PYBIND11_PLUGIN(datastore)
     // Wavefunction
     ///////////////////////
     pybind11::class_<Wavefunction>(m, "Wavefunction") //! \todo python init for wfn?
+    .def(pybind11::init<>())
     .def("UniqueString", &Wavefunction::UniqueString)
     .def_readwrite("basis", &Wavefunction::basis)
     .def_readwrite("molecule", &Wavefunction::molecule)

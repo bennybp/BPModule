@@ -28,7 +28,10 @@ Ret CallPyFunc(pybind11::object obj, Targs... Fargs)
 {
     using bpmodule::exception::PythonCallException;
     using bpmodule::exception::PythonConvertException;
+    using bpmodule::exception::GeneralException;
+    using bpmodule::exception::Assert;
 
+    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
 
     int nargs = static_cast<int>(sizeof...(Fargs));
 
@@ -84,7 +87,10 @@ template<typename Ret, typename... Targs>
 Ret CallPyFuncAttr(pybind11::object obj, const char * attribute, Targs... Fargs)
 {
     using bpmodule::exception::PythonCallException;
+    using bpmodule::exception::GeneralException;
+    using bpmodule::exception::Assert;
 
+    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
 
     int nargs = static_cast<int>(sizeof...(Fargs));
 

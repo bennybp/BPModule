@@ -22,7 +22,8 @@ def Run(mm):
       mm.LoadModule("TestModules",   "TestModule1",   "TESTMOD1")
       mm.LoadModule("TestModules",   "TestPyModule1", "TESTPYMOD1")
 
-      mm.SetOptions("TESTMOD1", { "double_opt_def": 1.111, "int_opt_def" : 55 })
+      mm.ChangeOption("TESTMOD1", "double_opt_def", 1.111)
+      mm.ChangeOption("TESTMOD1", "int_opt_def", 55 )
       mm.PrintInfo()
       mm.SanityCheck()
 

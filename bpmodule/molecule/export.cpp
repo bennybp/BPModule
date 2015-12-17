@@ -10,7 +10,6 @@
 #include "bpmodule/molecule/Molecule.hpp"
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/python/Convert.hpp"
-#include "bpmodule/output/Output.hpp"
 
 using bpmodule::python::ConvertToCpp;
 
@@ -18,16 +17,6 @@ namespace bpmodule {
 namespace molecule {
 namespace export_python {
 
-
-
-// Molecule::AddAtom wrapper
-void Molecule_AddAtomWrapper(Molecule & mol, int Z, pybind11::tuple xyz)
-{
-    //! \todo check for length
-    //! \todo pybind11 doesn't convert to std::array?
-    auto tmp = ConvertToCpp<std::array<double, 3>>(xyz);
-    return mol.AddAtom(Z, {tmp[0], tmp[1], tmp[2]});
-}
 
 
 PYBIND11_PLUGIN(molecule)
@@ -91,7 +80,7 @@ PYBIND11_PLUGIN(molecule)
     // Molecule class
     pybind11::class_<Molecule>(m, "Molecule")
     .def(pybind11::init<>())
-    .def("AddAtom", Molecule_AddAtomWrapper)
+    .def("AddAtom", &Molecule::AddAtom)
     .def("GetAtom", &Molecule::GetAtom)
     .def("NAtoms", &Molecule::NAtoms)
     ;

@@ -65,6 +65,7 @@ void RegisterUIDPointer(pybind11::module & m, const char * classname)
     .def("UID", &UIDPointer<T>::UID)
     .def("Set", &UIDPointer<T>::Set)
     .def("Get", &UIDPointer<T>::Get, pybind11::return_value_policy::reference_internal)
+    .def("__getattr__", &UIDPointer<T>::Py__getattr__)
     ;
 
     // add it to the factory

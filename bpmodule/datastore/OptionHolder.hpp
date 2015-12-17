@@ -79,7 +79,7 @@ class OptionHolder
         template<typename T>
         void Change(const T & value)
         {
-            value_ = python::ConvertToPy(value);
+            value_ = std::unique_ptr<pybind11::object>(new pybind11::object(python::ConvertToPy(value)));
         }
 
 
@@ -94,10 +94,10 @@ class OptionHolder
         template<typename T>
         T Get(void) const
         {
-            if(value_.ptr() != nullptr)
-                return python::ConvertToCpp<T>(value_);
-            else if(default_.ptr() != nullptr)
-                return python::ConvertToCpp<T>(default_);
+            if(value_)
+                return python::ConvertToCpp<T>(*value_);
+            else if(default_)
+                return python::ConvertToCpp<T>(*default_);
             else
                 throw exception::OptionException("Option does not have a value", Key());
         }
@@ -112,8 +112,8 @@ class OptionHolder
         template<typename T>
         T GetDefault(void) const
         {
-            if(default_.ptr() != nullptr)
-                return python::ConvertToCpp<T>(default_);
+            if(default_)
+                return python::ConvertToCpp<T>(*default_);
             else
                 throw exception::OptionException("Option does not have a default", Key());
         }
@@ -225,10 +225,10 @@ class OptionHolder
         const std::string help_;
 
         //! A set value for the option
-        pybind11::object value_;
+        std::unique_ptr<pybind11::object> value_;
 
         //! The default for the option
-        pybind11::object default_;
+        std::unique_ptr<pybind11::object> default_;
 
         //! Validation function object
         ValidatorFunc validator_;

@@ -240,6 +240,7 @@ void OptionMap::AddOption(const std::string & key, const pybind11::object & def,
                           const pybind11::object & validator,
                           bool required, const std::string & pytype, const std::string & help)
 {
+    //! \todo insert sanity check for pytype / actual type mapping
     if(HasKey(key))
         throw OptionException("Attempting to add duplicate key", key, "module", modulekey_);
 
