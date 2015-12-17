@@ -113,28 +113,28 @@ class Test_Base_Py : public Test_Base
     
         virtual void RunTest_(void)
         {
-            PYBIND11_OVERLOAD_PURE(void, Test_Base, RunTest_);
+            return CallPyOverride<void>("RunTest_");
         }
 
 
 
         virtual void CallRunTest_(const std::string & other)
         {
-            PYBIND11_OVERLOAD_PURE(void, Test_Base, CallRunTest_, other);
+            return CallPyOverride<void>("CallRunTest_", other);
         }
 
 
 
         virtual void TestThrow_(void)
         {
-            PYBIND11_OVERLOAD_PURE(void, Test_Base, TestThrow_); 
+            return CallPyOverride<void>("TestThrow_");
         }
 
 
 
         virtual void CallThrow_(const std::string & other)
         {
-            PYBIND11_OVERLOAD_PURE(void, Test_Base, CallThrow_, other);
+            return CallPyOverride<void>("CallThrow_", other);
         }
 
 };

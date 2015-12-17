@@ -10,10 +10,9 @@
 
 #include <string>
 
-#include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/exception/GeneralException.hpp"
-#include "bpmodule/python/Call.hpp"
+#include "bpmodule/exception/PythonCallException.hpp"
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
+#include "bpmodule/python/Call.hpp"
 
 
 // forward declarations
@@ -183,7 +182,7 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
                 P * ptr = dynamic_cast<P *>(this);                     // cast this to type P
                 return ((*ptr).*func)(std::forward<Targs1>(args)...);  // call the function
             }
-            catch(bpmodule::exception::GeneralException & ex)
+            catch(exception::GeneralException & ex)
             {
                 ex.AppendInfo("modulekey", Key());
                 ex.AppendInfo("modulename", Name());
@@ -192,12 +191,36 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
             }
             catch(std::exception & ex)
             {
-                throw bpmodule::exception::GeneralException("Caught std::exception", "what", ex.what());
+                throw exception::GeneralException("Caught std::exception", "what", ex.what());
             }
             catch(...)
             {
-                throw bpmodule::exception::GeneralException("Caught unknown exception. Get your debugger warmed up.");
+                throw exception::GeneralException("Caught unknown exception. Get your debugger warmed up.");
             }
+        }
+
+
+
+        /*! \brief Calls a python function that overrides a virtual function
+         */ 
+        template<typename R, typename ... Targs>
+        R CallPyOverride(const char * name, Targs &&... args)
+        {
+            pybind11::gil_scoped_acquire gil;
+            pybind11::function overload = pybind11::get_overload(this, name);
+            if(overload)
+            {
+                try {
+                    return python::CallPyFunc<R>(overload, std::forward<Targs>(args)...);
+                }
+                catch(exception::PythonCallException & ex)
+                {
+                    ex.AppendInfo("vfunc", name);
+                    throw;
+                }
+            }
+            else
+                throw exception::GeneralException("Cannot find overridden function", "vfunc", name);
         }
 
 

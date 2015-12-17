@@ -10,8 +10,6 @@
 
 #include "bpmodule/python/Pybind11.hpp"
 
-
-
 using bpmodule::exception::GeneralException;
 
 
