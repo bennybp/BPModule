@@ -4,42 +4,66 @@
 #include <vector>
 #include <set>
 
-#include "bpmodule/math/Cast.hpp"
+#include "bpmodule/math/ExactCast.hpp"
+
+
 
 namespace bpmodule {
 namespace math {
+namespace detail {
 
 
-/*! \brief Numeric cast for vector types
- */
 template<typename Target, typename Source>
-std::vector<Target> numeric_cast(const std::vector<Source> & s)
+struct ExactCast<std::vector<Target>, std::vector<Source>>
 {
-    std::vector<Target> v;
-    v.reserve(s.size());
-    for(const auto & it : s)
-        v.push_back(numeric_cast<Target>(it));
-    return v;
-}
+    static std::vector<Target> Cast(const std::vector<Source> & s)
+    {
+        std::vector<Target> r;
+        r.reserve(s.size());
+        for(const auto & it : s)
+            r.push_back(ExactCast<Target, Source>::Cast(it));
+        return r;
+    }
+};
+
+
+template<typename Source>
+struct ExactCast<std::vector<Source>, std::vector<Source>>
+{
+    static std::vector<Source> Cast(const std::vector<Source> & s)
+    {
+        return s;
+    }
+};
 
 
 
-/*! \brief Numeric cast for set types
- */
+
 template<typename Target, typename Source>
-std::set<Target> numeric_cast(const std::set<Source> & s)
+struct ExactCast<std::set<Target>, std::set<Source>>
 {
-    std::set<Target> v;
-    for(const auto & it : s)
-        v.insert(numeric_cast<Target>(it));
-    return v;
-}
+    static std::set<Target> Cast(const std::set<Source> & s)
+    {
+        std::set<Target> r;
+        for(const auto & it : s)
+            r.insert(ExactCast<Target, Source>::Cast(it));
+        return r;
+    }
+};
+
+
+template<typename Source>
+struct ExactCast<std::set<Source>, std::set<Source>>
+{
+    static std::set<Source> Cast(const std::set<Source> & s)
+    {
+        return s;
+    }
+};
 
 
 
-
-
-
+} // close namespace detail
 } // close namespace math
 } // close namespace bpmodule
 
