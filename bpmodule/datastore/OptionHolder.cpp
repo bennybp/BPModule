@@ -250,12 +250,6 @@ bool OptionHolder<OPTTYPE>::Compare(const OptionBase & rhs) const
 
 
 template<OptionType OPTTYPE>
-void OptionHolder<OPTTYPE>::Print(void) const
-{
-}
-
-
-template<OptionType OPTTYPE>
 OptionIssues OptionHolder<OPTTYPE>::GetIssues(void) const
 {
     if(!IsSetIfRequired())
@@ -310,24 +304,23 @@ void OptionHolder<OPTTYPE>::ChangePy(pybind11::object obj)
 //////////////////
 // Helpers
 //////////////////
-#if 0
 /*! \brief Converts an option value to a string
  *
  * \todo Printing of floating point values
  */
-template<OptionType OPTTYPE>
-static std::string OptToString_(const T & opt)
+template<typename T>
+static std::vector<std::string> OptToString_(const T & opt)
 {
-    return std::to_string(opt);
+    return {FormatString("%|1$-12.8|", opt)};
 }
 
 /*! \brief Converts an option value to a string
  *
  * \todo Printing of floating point values
  */
-static std::string OptToString_(const std::string & opt)
+static std::vector<std::string> OptToString_(const std::string & opt)
 {
-    return opt;
+    return {opt};
 }
 
 
@@ -335,11 +328,43 @@ static std::string OptToString_(const std::string & opt)
  *
  * Overload for a bool type
  */
-static std::string OptToString_(const bool & opt)
+static std::vector<std::string> OptToString_(const bool & opt)
 {
-    return (opt ? "True" : "False");
+    return {(opt ? "True" : "False")};
 }
 
+
+
+template<typename T>
+static std::vector<std::string> OptToString_(const std::vector<T> & opt)
+{
+    if(opt.size() == 0)
+        return {"(empty)"};
+
+    std::vector<std::string> r;
+    for(const auto & it : opt)
+    {
+        std::vector<std::string> tmp = OptToString_(it);
+        r.insert(r.end(), tmp.begin(), tmp.end());
+    }
+    return r;
+}
+
+
+template<typename T>
+static std::vector<std::string> OptToString_(const std::set<T> & opt)
+{
+    if(opt.size() == 0)
+        return {"(empty)"};
+
+    std::vector<std::string> r;
+    for(const auto & it : opt)
+    {
+        std::vector<std::string> tmp = OptToString_(it);
+        r.insert(r.end(), tmp.begin(), tmp.end());
+    }
+    return r;
+}
 
 /*! \brief Prints a line corresponding to an option
  *
@@ -348,124 +373,50 @@ static std::string OptToString_(const bool & opt)
  * option is not the default, the Changed() output is used.
  */
 template<OptionType OPTTYPE>
-static void PrintOption_(const OptionHolder<OPTTYPE> & oph)
+void OptionHolder<OPTTYPE>::Print(void) const
 {
-    std::string optline = FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
-                                       oph.Key(),                                                         // name/key
-                                       oph.Type(),                                     // type
-                                       (oph.HasValue() ? OptToString_(oph.Get()) : "(none)"),             // value
-                                       (oph.HasDefault() ? OptToString_(oph.GetDefault()) : "(none)"),    // default
-                                       (oph.IsRequired() ? "True" : "False"),                             // required
-                                       oph.Help());                                                       // help/description
+    std::vector<std::string> val = {"(none)"};
+    std::vector<std::string> def = {"(none)"};
 
+    if(default_)
+        def = OptToString_(*default_);
+    if(value_)
+        val = OptToString_(*value_);
+    else if(default_)
+        val = def;
 
-    if(oph.HasIssues())
-        output::Error(optline);
+    // pad out
+    size_t m = std::max(val.size(), def.size());
+    val.resize(m);
+    def.resize(m);
 
-    else if(!oph.IsDefault())
-        output::Changed(optline);
-    else
-        output::Output(optline);
-}
+    std::string req = (IsRequired() ? "True" : "False");
 
-
-
-/*! \brief Prints a line corresponding to an option
- *
- * Overload for a vector type
- *
- * Will print its key, type, etc. If there is a problem
- * with the option, the Error() output is used. If the
- * option is not the default, the Changed() output is used.
- */
-template<OptionType OPTTYPE>
-static void PrintOption_(const OptionHolder<std::vector<T>> & oph)
-{
-    size_t nrows = 0;
-
-    std::string valstr, defstr;
-
-    if(oph.HasValue())
-    {
-        auto valuevec = oph.Get();
-        nrows = valuevec.size();
-
-        if(valuevec.size() == 0)
-            valstr = "(empty)";
-        else
-            valstr = OptToString_(valuevec[0]);
-    }
-    else
-        valstr = "(none)";
-
-
-    if(oph.HasDefault())
-    {
-        auto defvec = oph.GetDefault();
-        nrows = std::max(nrows, defvec.size());
-
-        if(defvec.size() == 0)
-            defstr = "(empty)";
-        else
-            defstr = OptToString_(defvec[0]);
-    }
-    else
-        defstr = "(none)";
-
-
-
-
+    // print the first line
     std::vector<std::string> optlines;
     optlines.push_back(FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
-                                    oph.Key(),                                                         // name/key
-                                    oph.Type(),                                     // type
-                                    valstr,                                                            // value
-                                    defstr,                                                            // default
-                                    (oph.IsRequired() ? "True" : "False"),                             // required
-                                    oph.Help()));                                                      // help/description
+                                    Key(), Type(), val[0], def[0], req,  Help()));
 
 
-    // start at 1 since we did the first separately
-    for(size_t i = 1; i < nrows; i++)
+    // now other lines
+    for(size_t i = 1; i < m; i++)
     {
-        if(oph.HasValue())
-        {
-            auto valuevec = oph.Get();
-            if(valuevec.size() > i)
-                valstr = OptToString_(valuevec[i]);
-        }
-
-
-        if(oph.HasDefault())
-        {
-            auto defvec = oph.GetDefault();
-            if(defvec.size() > i)
-                defstr = OptToString_(defvec[i]);
-        }
-
         optlines.push_back(FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
-                                        "",              // name/key
-                                        "",              // type
-                                        valstr,          // value
-                                        defstr,          // default
-                                        "",              // required
-                                        ""));            // help/description
-
+                                        "", "", val[i], def[i], "", ""));
     }
-
+   
+    // now print 
     for(const auto & it : optlines)
     {
-        if(!oph.IsSetIfRequired())
+        if(!IsSetIfRequired())
             output::Error(it);
-        else if(!oph.IsDefault())
+        else if(!IsDefault())
             output::Changed(it);
         else
             output::Output(it);
     }
-
-
 }
-#endif
+
 
 
 } // close namespace datastore
