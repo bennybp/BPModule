@@ -24,10 +24,6 @@ class TwoElectronIntegralIMPL : public ModuleBase
             : ModuleBase(id)
         { }
 
-        TwoElectronIntegralIMPL(pybind11::object self, unsigned long id)
-            : ModuleBase(self, id)
-        { }
-
 
         /*! \brief Set the basis sets for the integrals
          * 
@@ -80,32 +76,54 @@ class TwoElectronIntegralIMPL : public ModuleBase
                                const datastore::UIDPointer<basisset::BasisSet> & bs1,
                                const datastore::UIDPointer<basisset::BasisSet> & bs2,
                                const datastore::UIDPointer<basisset::BasisSet> & bs3,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs4)
-        {
-            ModuleBase::CallPyMethod<void>("SetBases_", ncenter, bs1, bs2, bs3, bs4);
-        }
+                               const datastore::UIDPointer<basisset::BasisSet> & bs4) = 0;
 
 
         //! \copydoc Calculate
+        virtual long Calculate_(int deriv, int shell1, int shell2, int shell3, int shell4) = 0;
+
+
+        virtual const double * GetBuf_(void) = 0;
+
+
+        virtual long GetIntegralCount_(void) = 0;
+        
+};
+
+
+class TwoElectronIntegralIMPL_Py : public TwoElectronIntegralIMPL
+{
+    public:
+        using TwoElectronIntegralIMPL::TwoElectronIntegralIMPL;
+
+    
+        virtual void SetBases_(int ncenter,
+                               const datastore::UIDPointer<basisset::BasisSet> & bs1,
+                               const datastore::UIDPointer<basisset::BasisSet> & bs2,
+                               const datastore::UIDPointer<basisset::BasisSet> & bs3,
+                               const datastore::UIDPointer<basisset::BasisSet> & bs4)
+
+        {
+            return CallPyOverride<void>("SetBases_", ncenter, bs1, bs2, bs3, bs4);
+        }
+
+
         virtual long Calculate_(int deriv, int shell1, int shell2, int shell3, int shell4)
         {
-            return ModuleBase::CallPyMethod<long>("Calculate_", deriv, shell1, shell2, shell3, shell4);
+            return CallPyOverride<long>("Calculate_", deriv, shell1, shell2, shell3, shell4);
         }
 
 
         virtual const double * GetBuf_(void)
         {
-            return ModuleBase::CallPyMethod<const double *>("GetBuf_");
+            return CallPyOverride<double *>("GetBuf_");
         }
 
 
         virtual long GetIntegralCount_(void)
         {
-            return ModuleBase::CallPyMethod<long>("GetIntegralCount_");
+            return CallPyOverride<long>("GetIntegralCount_");
         }
-        
-
-    private:
 
 };
 

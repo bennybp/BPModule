@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief One-electron integral implementation (header)
+ * \brief Two-electron integral implementation (header)
  * \author Ben Pritchard (ben@bennyp.org)
  */ 
 
@@ -14,7 +14,7 @@
 namespace bpmodule {
 namespace modulebase {
 
-/*! \brief One-electron integral implementation
+/*! \brief Two-electron integral implementation
  *
  */
 class OneElectronIntegralIMPL : public ModuleBase
@@ -22,10 +22,6 @@ class OneElectronIntegralIMPL : public ModuleBase
     public:
         OneElectronIntegralIMPL(unsigned long id)
             : ModuleBase(id)
-        { }
-
-        OneElectronIntegralIMPL(pybind11::object self, unsigned long id)
-            : ModuleBase(self, id)
         { }
 
 
@@ -46,6 +42,7 @@ class OneElectronIntegralIMPL : public ModuleBase
                                                                                   shell1,
                                                                                   shell2);
         }
+
 
         const double * GetBuf(void)
         {
@@ -71,29 +68,51 @@ class OneElectronIntegralIMPL : public ModuleBase
         /////////////////////////////////////////
         //! \copydoc SetBases
         virtual void SetBases_(const datastore::UIDPointer<basisset::BasisSet> & bs1,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs2)
-        {
-            ModuleBase::CallPyMethod<void>("SetBases_", bs1, bs2);
-        }
+                               const datastore::UIDPointer<basisset::BasisSet> & bs2) = 0;
 
 
         //! \copydoc Calculate
+        virtual long Calculate_(int deriv, int shell1, int shell2) = 0;
+
+
+        virtual const double * GetBuf_(void) = 0;
+
+
+        virtual long GetIntegralCount_(void) = 0;
+        
+};
+
+
+class OneElectronIntegralIMPL_Py : public OneElectronIntegralIMPL
+{
+    public:
+        using OneElectronIntegralIMPL::OneElectronIntegralIMPL;
+
+    
+        virtual void SetBases_(const datastore::UIDPointer<basisset::BasisSet> & bs1,
+                               const datastore::UIDPointer<basisset::BasisSet> & bs2)
+
+        {
+            return CallPyOverride<void>("SetBases_", bs1, bs2);
+        }
+
+
         virtual long Calculate_(int deriv, int shell1, int shell2)
         {
-            return ModuleBase::CallPyMethod<long>("Calculate_", deriv, shell1, shell2);
+            return CallPyOverride<long>("Calculate_", deriv, shell1, shell2);
         }
-        
+
+
         virtual const double * GetBuf_(void)
         {
-            return ModuleBase::CallPyMethod<const double *>("GetBuf_");
+            return CallPyOverride<double *>("GetBuf_");
         }
 
 
         virtual long GetIntegralCount_(void)
         {
-            return ModuleBase::CallPyMethod<long>("GetIntegralCount_");
+            return CallPyOverride<long>("GetIntegralCount_");
         }
-
 
 };
 

@@ -60,21 +60,20 @@ PYBIND11_PLUGIN(modulebase)
             ;
 
 
-/*
     /////////////////////////
     // One electron integral implementation
     /////////////////////////
-    register_ptr_to_python<boost::shared_ptr<OneElectronIntegralIMPL>>();
-
     //! \todo Don't know about from Calculate to python
-    class_<OneElectronIntegralIMPL, bases<ModuleBase>, boost::noncopyable>("OneElectronIntegralIMPL", init<PyObject *, unsigned long>())
-    .def("SetBases", &OneElectronIntegralIMPL::SetBases)
-    .def("Calculate", &OneElectronIntegralIMPL::Calculate)
-    .def("GetIntegralCount", &OneElectronIntegralIMPL::GetIntegralCount)
-    .def("GetBuf", &OneElectronIntegralIMPL::GetBufPy)
-    ;
+    pybind11::class_<OneElectronIntegralIMPL_Py, ModuleBasePtr<OneElectronIntegralIMPL>> oneelimpl(m, "OneElectronIntegralIMPL", mbase);
+    oneelimpl.alias<OneElectronIntegralIMPL>()
+            .def(pybind11::init<unsigned long>())
+            .def("SetBases", &OneElectronIntegralIMPL::SetBases)
+            .def("Calculate", &OneElectronIntegralIMPL::Calculate)
+            .def("GetIntegralCount", &OneElectronIntegralIMPL::GetIntegralCount)
+            .def("GetBuf", &OneElectronIntegralIMPL::GetBufPy)
+            ;
 
-
+/*
     /////////////////////////
     // One electron integral builder
     /////////////////////////
@@ -87,21 +86,21 @@ PYBIND11_PLUGIN(modulebase)
     .def("GetIntegralCount", &OneElectronIntegral::GetIntegralCount)
     .def("GetBuf", &OneElectronIntegral::GetBufPy)
     ;
-
+*/
 
     /////////////////////////
     // Two electron integral implementation
     /////////////////////////
-    register_ptr_to_python<boost::shared_ptr<TwoElectronIntegralIMPL>>();
+    pybind11::class_<TwoElectronIntegralIMPL_Py, ModuleBasePtr<TwoElectronIntegralIMPL>> twoelimpl(m, "TwoElectronIntegralIMPL", mbase);
+    twoelimpl.alias<TwoElectronIntegralIMPL>()
+            .def(pybind11::init<unsigned long>())
+            .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
+            .def("Calculate", &TwoElectronIntegralIMPL::Calculate)
+            .def("GetIntegralCount", &TwoElectronIntegralIMPL::GetIntegralCount)
+            .def("GetBuf", &TwoElectronIntegralIMPL::GetBufPy)
+            ;
 
-    class_<TwoElectronIntegralIMPL, bases<ModuleBase>, boost::noncopyable>("TwoElectronIntegralIMPL", init<PyObject *, unsigned long>())
-    .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
-    .def("Calculate", &TwoElectronIntegralIMPL::Calculate)
-    .def("GetIntegralCount", &TwoElectronIntegralIMPL::GetIntegralCount)
-    .def("GetBuf", &TwoElectronIntegralIMPL::GetBufPy)
-    ;
-
-
+/*
     /////////////////////////
     // Two electron integral builder
     /////////////////////////
