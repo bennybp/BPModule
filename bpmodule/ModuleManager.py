@@ -114,7 +114,6 @@ class ModuleManager(modulelocator.ModuleLocator):
         # Create the options
         for optkey,opt in minfo["options"].items():
             oph = datastore.MakeOptionHolder(optkey, opt[0], opt[2], opt[3], opt[4], opt[1])
-            print(oph)
             cppminfo.options.AddOption(oph)
         
 
