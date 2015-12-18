@@ -59,7 +59,7 @@ template<OptionType OPTTYPE>
 static OptionIssues ValidatorWrapper_(pybind11::object valobj, const std::string & key, const OptionHolder<OPTTYPE> & value)
 {
     try {
-        if(!valobj || python::DeterminePyType(valobj) == python::PythonType::None)
+        if(!valobj || python::IsNone(valobj))
             return {};
         return python::CallPyFuncAttr<OptionIssues>(valobj, "Validate", value.GetPy());
     }

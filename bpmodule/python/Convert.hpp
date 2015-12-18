@@ -57,22 +57,6 @@ T ConvertToCpp(pybind11::object obj)
 }
 
 
-/*! \brief Convert a python object to a C++ object
- *
- * Specialization for converting to another python
- * object. Will do a deep copy
- *
- * \param [in] obj The python object to convert
- */
-template<>
-inline
-pybind11::object ConvertToCpp<pybind11::object>(pybind11::object obj)
-{
-    return DeepCopy(obj);
-}
-
-
-
 
 /*! \brief Convert a C++ object to a python object
  *
