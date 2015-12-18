@@ -300,7 +300,6 @@ class Tensor {
 
       /** \brief Makes a tensor with the partitions of the given lengths
        *
-
        *
        */
       Tensor(const IL<IL<size_t> >& Idx){SetShape(Idx);}
@@ -493,6 +492,10 @@ class Tensor {
       ///Prints this tensor to an ostream via the backend
       std::ostream& operator<<(std::ostream& os)const {
          return Impl_t::PrintOut(os,*ActualTensor_);
+      }
+
+      void Temp(){
+         ActualTensor_->make_replicated();
       }
 
       private:
