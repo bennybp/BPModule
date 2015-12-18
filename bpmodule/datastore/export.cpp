@@ -41,13 +41,15 @@ namespace datastore {
 namespace export_python {
 
 
-template<typename T>
-static void RegisterOptionHolder(pybind11::module & m, const char * name, pybind11::class_<OptionBase> oh)
+template<OptionType OPTTYPE>
+static void RegisterOptionHolder(pybind11::module & m, pybind11::class_<OptionBase> ohbase)
 {
-    const std::string pyname = std::string("OptionHolder_") + name;
-    pybind11::class_<OptionHolder<T>>(m, pyname.c_str(), oh)
-    .def(pybind11::init<const std::string &, python::PythonType, bool, pybind11::object, const std::string &>()) 
-    .def(pybind11::init<const std::string &, python::PythonType, bool, pybind11::object, const std::string &, const T &>()) 
+    const char * otname = OptionTypeToString(OPTTYPE);
+
+    const std::string pyname = std::string("OptionHolder_") + otname;
+    pybind11::class_<OptionHolder<OPTTYPE>>(m, pyname.c_str(), ohbase)
+    .def(pybind11::init<const std::string &, bool, pybind11::object, const std::string &>()) 
+    .def(pybind11::init<const std::string &, bool, pybind11::object, const std::string &, const pybind11::object &>()) 
     ;
 }
 
@@ -58,20 +60,42 @@ PYBIND11_PLUGIN(datastore)
     pybind11::module m("datastore", "Data storage classes");
 
 
+    //////////////////
+    // OptionTypes
+    //////////////////
+    pybind11::enum_<OptionType>(m, "OptionType")
+    .value("Int", OptionType::Int)
+    .value("Float", OptionType::Float)
+    .value("Bool", OptionType::Bool)
+    .value("String", OptionType::String)
+    .value("ListInt", OptionType::ListInt)
+    .value("ListFloat", OptionType::ListFloat)
+    .value("ListBool", OptionType::ListBool)
+    .value("ListString", OptionType::ListString)
+    .value("SetInt", OptionType::SetInt)
+    .value("SetFloat", OptionType::SetFloat)
+    .value("SetBool", OptionType::SetBool)
+    .value("SetString", OptionType::SetString)
+    ;
+
     /////////////////////////
     // OptionHolders
     /////////////////////////
-    pybind11::class_<OptionBase> oh(m, "OptionBase");
+    pybind11::class_<OptionBase> ohbase(m, "OptionBase");
     
 
-    RegisterOptionHolder<OptionInt>(m, "int", oh);
-    RegisterOptionHolder<OptionFloat>(m, "float", oh);
-    RegisterOptionHolder<bool>(m, "bool", oh);
-    RegisterOptionHolder<std::string>(m, "str", oh);
-    RegisterOptionHolder<std::vector<OptionInt>>(m, "listint", oh);
-    RegisterOptionHolder<std::vector<OptionFloat>>(m, "listfloat", oh);
-    RegisterOptionHolder<std::vector<bool>>(m, "listbool", oh);
-    RegisterOptionHolder<std::vector<std::string>>(m, "liststr", oh);
+    RegisterOptionHolder<OptionType::Int>(m, ohbase);
+    RegisterOptionHolder<OptionType::Float>(m, ohbase);
+    RegisterOptionHolder<OptionType::Bool>(m, ohbase);
+    RegisterOptionHolder<OptionType::String>(m, ohbase);
+    RegisterOptionHolder<OptionType::ListInt>(m, ohbase);
+    RegisterOptionHolder<OptionType::ListFloat>(m, ohbase);
+    RegisterOptionHolder<OptionType::ListBool>(m, ohbase);
+    RegisterOptionHolder<OptionType::ListString>(m, ohbase);
+    RegisterOptionHolder<OptionType::SetInt>(m, ohbase);
+    RegisterOptionHolder<OptionType::SetFloat>(m, ohbase);
+    RegisterOptionHolder<OptionType::SetBool>(m, ohbase);
+    RegisterOptionHolder<OptionType::SetString>(m, ohbase);
 
 
     /////////////////////////

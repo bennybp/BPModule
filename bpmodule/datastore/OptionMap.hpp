@@ -217,14 +217,15 @@ class OptionMap
         template<typename T>
         T Get(const std::string & key) const
         {
-            typedef typename OptionConvert<T>::stored_type stored_type;
+            static constexpr OptionType opt_type = OptionTypeMap<T>::opt_type;
+            typedef typename OptionTypeInfo<opt_type>::stored_type stored_type;
 
             CheckType_<T>();
 
-            stored_type val = GetOrThrow_Cast_<stored_type>(key)->Get();
+            stored_type val = GetOrThrow_Cast_<opt_type>(key)->Get();
 
             try {
-                return OptionConvert<T>::ConvertFromStored(val);
+                return OptionCast<T,stored_type>::Cast(val);
             }
             catch(const exception::GeneralException & ex)
             {
@@ -249,13 +250,15 @@ class OptionMap
         template<typename T>
         void Change(const std::string & key, const T & value)
         {
-            typedef typename OptionConvert<T>::stored_type stored_type;
+            static constexpr OptionType opt_type = OptionTypeMap<T>::opt_type;
+            typedef typename OptionTypeInfo<opt_type>::stored_type stored_type;
 
             CheckType_<T>();
+
             stored_type convval;
 
             try {
-                 convval = OptionConvert<T>::ConvertToStored(value);
+                 convval = OptionCast<stored_type, T>::Cast(value);
             }
             catch(const exception::GeneralException & ex)
             {
@@ -263,7 +266,7 @@ class OptionMap
                 throw exception::OptionException(ex, key);
             }
 
-            GetOrThrow_Cast_<stored_type>(key)->Change(convval);
+            GetOrThrow_Cast_<opt_type>(key)->Change(convval);
         }
 
 
@@ -366,16 +369,15 @@ class OptionMap
          *        if a key doesn't exist or cannot
          *        be cast to the desired type
          */
-        template<typename T>
-        const OptionHolder<T> * GetOrThrow_Cast_(const std::string & key) const
+        template<OptionType OPTTYPE>
+        const OptionHolder<OPTTYPE> * GetOrThrow_Cast_(const std::string & key) const
         {
-            CheckType_<T>();
             const OptionBase * ptr = GetOrThrow_(key);
-            const OptionHolder<T> * oh = dynamic_cast<const OptionHolder<T> *>(ptr);
+            const OptionHolder<OPTTYPE> * oh = dynamic_cast<const OptionHolder<OPTTYPE> *>(ptr);
             if(oh == nullptr)
-                throw exception::OptionException("Bad cast", key,
-                                                 "fromtype", ptr->DemangledType(),
-                                                 "totype", util::DemangleCppType<T>());
+                throw exception::OptionException("Bad option cast", key,
+                                                 "fromtype", ptr->Type(),
+                                                 "totype", OptionTypeToString(OPTTYPE)); 
 
             return oh;
         }
@@ -383,16 +385,15 @@ class OptionMap
 
         /*! \copydoc GetOrThrow_Cast_
          */
-        template<typename T>
-        OptionHolder<T> * GetOrThrow_Cast_(const std::string & key)
+        template<OptionType OPTTYPE>
+        OptionHolder<OPTTYPE> * GetOrThrow_Cast_(const std::string & key)
         {
-            CheckType_<T>();
             OptionBase * ptr = GetOrThrow_(key);
-            OptionHolder<T> * oh = dynamic_cast<OptionHolder<T> *>(ptr);
+            OptionHolder<OPTTYPE> * oh = dynamic_cast<OptionHolder<OPTTYPE> *>(ptr);
             if(oh == nullptr)
-                throw exception::OptionException("Bad cast", key,
-                                                 "fromtype", ptr->DemangledType(),
-                                                 "totype", util::DemangleCppType<T>());
+                throw exception::OptionException("Bad option cast", key,
+                                                 "fromtype", ptr->Type(),
+                                                 "totype", OptionTypeToString(OPTTYPE)); 
 
             return oh;
         }
@@ -406,7 +407,7 @@ class OptionMap
         template<typename T>
         static void CheckType_(void) noexcept
         {
-            static_assert( IsValidType<T>::value,
+            static_assert( OptionTypeMap<T>::valid,
                            "Invalid type for an option given to OptionMap");
         }
 };

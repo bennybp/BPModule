@@ -72,7 +72,7 @@ class ModuleManager(modulelocator.ModuleLocator):
             spath = os.path.dirname(m.__file__)
 
             # check options, etc
-            CheckSupermodule(spath)
+            #CheckSupermodule(spath)
 
         except exception.GeneralException as e:
             raise e

@@ -12,10 +12,9 @@ namespace datastore {
 
 
 OptionBase::OptionBase(const std::string & key,
-                       python::PythonType pytype,
                        bool required,
                        const std::string & help)
-    : key_(key), pytype_(pytype), required_(required), help_(help)
+    : key_(key), required_(required), help_(help)
 { }
 
 const std::string & OptionBase::Key(void) const noexcept
@@ -30,16 +29,9 @@ bool OptionBase::IsRequired(void) const noexcept
 }
 
 
-
 bool OptionBase::IsSetIfRequired(void) const noexcept
 {
     return HasValue() || HasDefault() || !IsRequired();
-}
-
-
-python::PythonType OptionBase::PyType(void) const noexcept
-{
-    return pytype_;
 }
 
 

@@ -29,4 +29,4 @@ ADD_SUPERMODULE(datastore
            ""
            "")
 
-INSTALL_COREMODULE(datastore "${BPMODULE_DATASTORE_HEADERS}" "optionvalidate.py;OptionHolderHelper.py")
+INSTALL_COREMODULE(datastore "${BPMODULE_DATASTORE_HEADERS}" "OptionValidators.py;OptionHolderHelper.py")

@@ -12,6 +12,7 @@
 
 #include "bpmodule/datastore/OptionBase.hpp"
 #include "bpmodule/python/Pybind11.hpp"
+#include "bpmodule/datastore/OptionTypes.hpp"
 
 namespace bpmodule {
 namespace datastore {
@@ -24,12 +25,16 @@ namespace datastore {
  *       cpp file. This class is then defined for the
  *       allowed option types.
  */
-template<typename T>
+template<OptionType OPTTYPE>
 class OptionHolder : public OptionBase
 {
     public:
-        //! A function that can validate an object of type T
-        typedef std::function<OptionIssues (const OptionHolder<T> &)> ValidatorFunc;
+        //! The type I'm storing
+        typedef typename OptionTypeInfo<OPTTYPE>::stored_type stored_type;
+
+
+        //! A function that can validate me
+        typedef std::function<OptionIssues (const OptionHolder<OPTTYPE> &)> ValidatorFunc;
 
 
         /*! \brief Constructs without a default
@@ -49,17 +54,20 @@ class OptionHolder : public OptionBase
          * \param [in] key The key of this option
          * \param [in] validator A validator function for this object
          * \param [in] required True if this option is required
-         * \param [in] pytype The python type of this option
          * \param [in] help A help string for this option
          *
          */
-        OptionHolder(const std::string & key, python::PythonType pytype,
+        OptionHolder(const std::string & key,
                      bool required, pybind11::object validator,
                      const std::string & help);
 
-        OptionHolder(const std::string & key, python::PythonType pytype,
+        OptionHolder(const std::string & key,
                      bool required, pybind11::object validator,
-                     const std::string & help, const T & def);
+                     const std::string & help, const stored_type & def);
+
+        OptionHolder(const std::string & key,
+                     bool required, pybind11::object validator,
+                     const std::string & help, const pybind11::object & def);
 
 
 
@@ -86,7 +94,7 @@ class OptionHolder : public OptionBase
          *
          * \exstrong
          */
-        void Change(const T & value);
+        void Change(const stored_type & value);
 
 
 
@@ -97,7 +105,7 @@ class OptionHolder : public OptionBase
          * \throw bpmodule::exception::OptionException
          *        If the option does not have a value or a default
          */
-        const T & Get(void) const;
+        const stored_type & Get(void) const;
 
 
 
@@ -107,7 +115,7 @@ class OptionHolder : public OptionBase
          * \throw bpmodule::exception::OptionException
          *        If the option does not have a default
          */
-        const T & GetDefault(void) const;
+        const stored_type & GetDefault(void) const;
 
 
 
@@ -118,10 +126,6 @@ class OptionHolder : public OptionBase
         virtual OptionBasePtr Clone(void) const;
 
         virtual const char * Type(void) const noexcept;
-
-        const std::type_info & TypeInfo(void) const noexcept;
-
-        virtual std::string DemangledType(void) const;
 
         virtual bool HasValue(void) const noexcept;
 
@@ -146,15 +150,16 @@ class OptionHolder : public OptionBase
 
 
     private:
-        OptionHolder(const std::string & key, python::PythonType pytype,
+        // used in constructor delegation
+        OptionHolder(const std::string & key,
                      bool required, pybind11::object validator,
-                     const std::string & help, T * def);
+                     const std::string & help, stored_type * def);
 
         //! A set value for the option
-        std::unique_ptr<T> value_;
+        std::unique_ptr<stored_type> value_;
 
         //! The default for the option
-        std::unique_ptr<T> default_;
+        std::unique_ptr<stored_type> default_;
 
         //! Validation function object
         ValidatorFunc validator_;

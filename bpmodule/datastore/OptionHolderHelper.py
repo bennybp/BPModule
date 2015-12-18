@@ -1,30 +1,33 @@
 from . import *
-from bpmodule.python import PythonType
 from bpmodule.exception import GeneralException
 
 
-makermap = { PythonType.Int         : OptionHolder_int,
-             PythonType.Bool        : OptionHolder_bool,
-             PythonType.Float       : OptionHolder_float,
-             PythonType.String      : OptionHolder_str,
-             PythonType.ListInt     : OptionHolder_int,
-             PythonType.ListBool    : OptionHolder_bool,
-             PythonType.ListFloat   : OptionHolder_float,
-             PythonType.ListString  : OptionHolder_str,
+makermap = { OptionType.Int         : OptionHolder_Int,
+             OptionType.Bool        : OptionHolder_Bool,
+             OptionType.Float       : OptionHolder_Float,
+             OptionType.String      : OptionHolder_String,
+             OptionType.ListInt     : OptionHolder_ListInt,
+             OptionType.ListBool    : OptionHolder_ListBool,
+             OptionType.ListFloat   : OptionHolder_ListFloat,
+             OptionType.ListString  : OptionHolder_ListString,
+             OptionType.SetInt      : OptionHolder_SetInt,
+             OptionType.SetBool     : OptionHolder_SetBool,
+             OptionType.SetFloat    : OptionHolder_SetFloat,
+             OptionType.SetString   : OptionHolder_SetString,
            }
 
 
 
-def MakeOptionHolder(key, pytype, required, validator, help, default):
-    if not pytype in makermap:
+def MakeOptionHolder(key, opttype, required, validator, help, default):
+    if not opttype in makermap:
         raise GeneralException("Invalid python type for an option",
-                               "type", str(pytype),
+                               "type", str(opttype),
                                "key", key)
 
     if default == None:
-        return makermap[pytype](key, pytype, required, validator, help)
+        return makermap[opttype](key, required, validator, help)
     else:
-        return makermap[pytype](key, pytype, required, validator, help, default)
+        return makermap[opttype](key, required, validator, help, default)
 
 
 

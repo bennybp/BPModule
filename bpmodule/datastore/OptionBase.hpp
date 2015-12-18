@@ -14,7 +14,6 @@
 #include <typeinfo>
 
 #include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/python/Types.hpp"
 
 namespace bpmodule {
 namespace datastore {
@@ -46,12 +45,10 @@ class OptionBase
         /*! \brief Constructor
          *
          * \param [in] key The key of this option
-         * \param [in] pytype The python type of this option
          * \param [in] required True if this is a required option
          * \param [in] help A help string for this option
          */
         OptionBase(const std::string & key,
-                   python::PythonType pytype,
                    bool required,
                    const std::string & help);
 
@@ -71,34 +68,6 @@ class OptionBase
         /*! \brief Create a clone of this object
          */
         virtual OptionBasePtr Clone(void) const = 0;
-
-
-
-        /*! \brief Returns a string representing the type of the stored option
-         *
-         * \exnothrow
-         *
-         * \return A string representing the type (obtained via typeid().name())
-         */
-        virtual const char * Type(void) const noexcept = 0;
-
-
-
-        /*! \brief Returns the std::type_info for the stored option
-         *
-         * \exnothrow
-         *
-         * \return A std::type_info structure representing the stored type
-         */
-        virtual const std::type_info & TypeInfo(void) const noexcept = 0;
-
-
-
-        /*! \brief Returns a string representing the demangled type of the stored option
-         *
-         * \return A string representing the type (obtained via typeid().name(), but demangled)
-         */
-        virtual std::string DemangledType(void) const = 0;
 
 
 
@@ -158,6 +127,13 @@ class OptionBase
         /*! \brief Compare with another OptionBase object
          */
         virtual bool Compare(const OptionBase & rhs) const = 0; 
+
+
+        /*! \brief Get the type of this option as a string
+         *
+         * \exnothrow
+         */
+        virtual const char * Type(void) const noexcept = 0;
 
 
 
@@ -224,29 +200,6 @@ class OptionBase
 
 
 
-        /*! \brief Determines if the contained type matches a given type
-         *
-         * \exnothrow
-         *
-         * \tparam U The type to compare to
-         *
-         * \return True if the contained object is of type U, false otherwise
-         */
-        template<typename U>
-        bool IsType(void) const noexcept
-        {
-           return typeid(U) == TypeInfo();
-        }
-
-
-
-        /*! \brief Get the python type of this option
-         *
-         * \exnothrow
-         */
-        python::PythonType PyType(void) const noexcept;
-
-
 
         /*! \brief Get the help string for this option
          *
@@ -276,9 +229,6 @@ class OptionBase
     private:
         //! The key of this option
         const std::string key_;
-
-        //! The python type of this option
-        const python::PythonType pytype_;
 
         //! Is this option required
         const bool required_;
