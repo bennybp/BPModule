@@ -20,6 +20,8 @@ namespace modulebase {
 class TwoElectronIntegralIMPL : public ModuleBase
 {
     public:
+        typedef TwoElectronIntegralIMPL BaseType;
+
         TwoElectronIntegralIMPL(unsigned long id)
             : ModuleBase(id)
         { }
