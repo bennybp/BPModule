@@ -103,6 +103,34 @@ int main(int argc, char** argv){
 
      size_t nbf=10,na=2,nb=3,nva=8,nvb=7;
 
+     ///int main(int argc, char** argv){
+     //TiledArray::World& world=madness::initialize(argc,argv);
+     std::array<size_t,3> Boundaries({0,4,8});
+
+     typedef TiledArray::TiledRange1 Range1_t;
+     typedef TiledArray::TiledRange Range_t;
+     typedef TiledArray::Array<double,2> Matrix;
+
+     std::vector<Range1_t>
+        LargeRange(2,Range1_t(Boundaries.begin(),Boundaries.end())),
+        SmallRange(2,Range1_t(Boundaries.begin(),Boundaries.end()-1));
+
+     Matrix Large(*world,Range_t(LargeRange.begin(),LargeRange.end())),
+            Small;
+
+
+     //Fill each block with its ordinal number
+     Matrix::iterator LI=Large.begin(),LIEnd=Large.end();
+     for(size_t i=0;i<4;++i)
+        if(Large.is_local(i))
+           Large.set(i,Matrix::value_type(Large.trange().make_tile_range(i),i));
+        Small("a,b")=Large("a,b").block({0,1},{1,2});
+
+     if(world->rank()==0) std::cout<<"Large"<<std::endl;
+     std::cout<<Large;
+     if(world->rank()==0)std::cout<<std::endl<<"Small"<<std::endl;
+     std::cout<<Small;
+
      Tensor<2> Cs({{nbf,nbf},{na,nva,nb,nvb}});
      Tensor<2>::iterator CsI=Cs.begin(),CsIEnd=Cs.end();
      for(;CsI!=CsIEnd;++CsI){
@@ -114,10 +142,12 @@ int main(int argc, char** argv){
         else if(Idx[1]>=nb+na+nva)j=3;
         *CsI=i*4+j;
      }
+
      Cs.SetView(0,{"a","b"});
      Cs.SetView(1,{"a","b","o","v"},{2,2});
 
-     std::cout<<Cs("a","a","o");
+     std::cout<<Cs<<std::endl;
+     //std::cout<<Cs("a","a","o");
      Tensor<2> R(nbf,nbf);
      R["i,j"]=Cs("a","a","v")["i,k"]*Cs("a","a","v")["j,k"];
      std::cout<<R<<std::endl;

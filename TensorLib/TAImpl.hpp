@@ -47,6 +47,17 @@ class TAImpl{
       ///Prints the tensor out
       static std::ostream& PrintOut(std::ostream& os,
                                     const TensorBase_t& ATensor){
+         /* This maps to TA's operator<<() on line 614 of array.h.
+          * The first thing this does is grabs the number of tiles
+          * in the tensor.  Next it loops over all of the tiles in that
+          * tensor, and if they are not zero, retrieves them via the
+          * function find(x) where x is the tile number.  Find checks
+          * to ensure the index is in range, and then calls
+          * ArrayImpl::get(x), which then calls DistributedStorage::get(x).
+          * This then immediately returns a future if the tile is local, or
+          * it gets the tile if it's remote.
+          *
+          */
          os<<ATensor;
          return os;
       }
@@ -59,13 +70,14 @@ class TAImpl{
              TensorBase_t& ATensor){
          Shape<Rank> NewShape=OldShape.SubShape(Idx);
          TensorBase_t* NewT=Make(NewShape);
-         std::set<size_t>::const_iterator BI=Idx.begin(),BEnd=Idx.end();
-         for(size_t counter=0;BI!=BEnd;++BI,++counter)
-            NewT->set(counter,ATensor.find(*BI));
+         //Need random access to set
+         std::vector<size_t> IdxRdm(Idx.begin(),Idx.end());
+         typename TensorBase_t::iterator TI(NewT->begin()),TIend(NewT->end());
+         //TI is an iterator to the local tiles I need to fill
+         for(;TI!=TIend;++TI)
+            *TI=ATensor.find(IdxRdm[TI.ordinal()]);
          return NewT;
       }
-
-      ///
 
    private:
 
@@ -124,13 +136,13 @@ class TAImpl{
                   }
                }
                if(!Changed){
-                  *TileI_=Tile_;
-                  ++TileI_;
-                  if(TileI_!=Parent_.end()){
-                     Tile_=Parent_.trange().make_tile_range(TileI_.ordinal());
+                  *(*TileI_)=Tile_;
+                  ++(*TileI_);
+                  if((*TileI_)!=Parent_.end()){
+                     Tile_=Tile_t(Parent_.trange().make_tile_range(TileI_->ordinal()));
                      Start_=Tile_.range().lobound();
                      Finish_=Tile_.range().upbound();
-                     for(size_t i=0;i<Start_.size();++i)
+                     for(size_t i=0;i<Rank;++i)
                         Index_[i]=Start_[i];
                   }
                }
@@ -147,7 +159,7 @@ class TAImpl{
 
             ///True if iterators equal each other (defer's to TA's iterators)
             bool operator==(const TAItr& other){
-               return (TileI_==other.TileI_); //&& (Index_==other.Index_);
+               return ((*TileI_)==(*other.TileI_)); //&& (Index_==other.Index_);
             }
 
             ///Returns true if two iterators are different Negates operator==()
@@ -158,22 +170,39 @@ class TAImpl{
                return os;
             }
          private:
+            typedef typename TensorBase_t::iterator Itr_t;
+            typedef typename TensorBase_t::const_iterator cItr_t;
+            typedef typename TensorBase_t::value_type Tile_t;
+            static Itr_t* GetBegin(TensorBase_t& Tensor){
+               return new Itr_t(Tensor.begin());
+            }
+
+            static Itr_t* GetEnd(TensorBase_t& Tensor){
+               return new Itr_t(Tensor.end());
+            }
+
+            static Tile_t MakeTile(TensorBase_t& Tensor,
+                                   std::shared_ptr<Itr_t> TileI,bool AtEnd){
+               if(AtEnd||(*TileI)==Tensor.end())return Tile_t();
+               return Tile_t(Tensor.trange().make_tile_range(
+                     TileI->ordinal()));
+            }
+
             friend TAImpl<Data_t,Rank>;
             TAItr(TensorBase_t& Tensor,bool AtEnd):
                Parent_(Tensor),
-               TileI_(!AtEnd?Tensor.begin():Tensor.end()),
-               TileEnd_(Tensor.end()),
+               TileI_(!AtEnd?GetBegin(Tensor):GetEnd(Tensor)),
+               TileEnd_(GetEnd(Tensor)),
                //Tensor.trange() returns the object holding the tensor's
                //tile range, which is of type TensorImpl<Policy>::trange_type
                //TileI_.ordinal() returns the tile's index
-               Tile_(!AtEnd?
-                     Tensor.trange().make_tile_range(TileI_.ordinal()):
-                     typename TensorBase_t::value_type()),
+               Tile_(MakeTile(Tensor,TileI_,AtEnd)),
                Start_(Tile_.range().lobound()),
                Finish_(Tile_.range().upbound()),
                Index_({}){
-               for(size_t i=0;i<Start_.size();++i)
+               for(size_t i=0;i<Rank&&Start_.size()==Rank;++i)
                   Index_[i]=Start_[i];
+               std::cout<<"Iterator made\n";
 
 
             }
@@ -183,10 +212,10 @@ class TAImpl{
              *  Internal to TA, this maps to impl_type::iterator,
              *  which maps to ArrayIterator<ArrayImpl_,reference>
              */
-            typename TensorBase_t::iterator TileI_;
+            std::shared_ptr<Itr_t> TileI_;
             ///An iterator at the last tile in parent tensor
-            typename TensorBase_t::const_iterator TileEnd_;
-            typename TensorBase_t::value_type Tile_;
+            std::shared_ptr<Itr_t> TileEnd_;
+            Tile_t Tile_;
             std::vector<size_t> Start_,Finish_;
             std::array<size_t,Rank> Index_;
       };
