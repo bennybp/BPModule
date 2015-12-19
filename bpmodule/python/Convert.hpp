@@ -27,7 +27,7 @@ bool ValidConvert(pybind11::object obj)
 {
     //! \todo Won't catch elements in lists, etc. Would have to override in pybind11?
     std::string cls = GetPyClass(obj);
-    if(std::is_integral<T>::value && cls != "int")
+    if(std::is_integral<T>::value && !std::is_same<bool,T>::value && cls != "int")
         return false;
     if(std::is_floating_point<T>::value && cls != "float")
         return false;
