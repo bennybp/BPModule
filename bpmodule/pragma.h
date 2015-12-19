@@ -21,9 +21,12 @@ extern "C" {
     #define PRAGMA_WARNING_IGNORE_POINTLESS_COMPARISON_UINT_0  _Pragma("warning(disable:186)")
     #define PRAGMA_WARNING_IGNORE_STATEMENT_UNREACHABLE        _Pragma("warning(disable:111)")
     #define PRAGMA_WARNING_IGNORE_SHADOW                       _Pragma("warning(disable:1599)")
+    #define PRAGMA_WARNING_IGNORE_SHADOW_MEMBER                _Pragma("warning(disable:3280)")
     #define PRAGMA_WARNING_IGNORE_EXTRA_SEMICOLON              // does not have warning for intel
     #define PRAGMA_WARNING_IGNORE_REDECLARED_INLINE            _Pragma("warning(disable:522)")
     #define PRAGMA_WARNING_IGNORE_UNUSED_LOCAL_TYPEDEFS        //! \todo add me
+    #define PRAGMA_WARNING_IGNORE_GCC_PRAGMA                   _Pragma("warning(disable:2282")
+    #define PRAGMA_WARNING_IGNORE_NONVIRTUAL_DTOR              _Pragma("warning(disable:444")
 
 #elif defined(__GNUC__) || defined(__GNUG__)
 
@@ -39,10 +42,12 @@ extern "C" {
     #define PRAGMA_WARNING_IGNORE_POINTLESS_COMPARISON_UINT_0  _Pragma("GCC diagnostic ignored \"-Wtype-limits\"")
     #define PRAGMA_WARNING_IGNORE_STATEMENT_UNREACHABLE        //! \todo Is this a warning in GCC?
     #define PRAGMA_WARNING_IGNORE_SHADOW                       _Pragma("GCC diagnostic ignored \"-Wshadow\"")
+    #define PRAGMA_WARNING_IGNORE_SHADOW_MEMBER                //! \todo doesn't seem to warn in GCC, or may be a part of -Wshadow 
     #define PRAGMA_WARNING_IGNORE_EXTRA_SEMICOLON              _Pragma("GCC diagnostic ignored \"-Wpedantic\"")
     #define PRAGMA_WARNING_IGNORE_REDECLARED_INLINE            // does not have warning for GCC
     #define PRAGMA_WARNING_IGNORE_UNUSED_LOCAL_TYPEDEFS        _Pragma("GCC diagnostic ignored \"-Wunused-local-typedefs\"")
-
+    #define PRAGMA_WARNING_IGNORE_GCC_PRAGMA                   // uh... not a warning in gcc
+    #define PRAGMA_WARNING_IGNORE_NONVIRTUAL_DTOR              // Doesn't seem to warn in GCC
 #endif
 
 
