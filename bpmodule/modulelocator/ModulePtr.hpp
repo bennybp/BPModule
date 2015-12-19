@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief A smart pointer to a module (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
+
 #ifndef _GUARD_MODULEPTR_HPP_
 #define _GUARD_MODULEPTR_HPP_
 
@@ -6,28 +13,42 @@
 namespace bpmodule {
 namespace modulelocator {
 
+/*! \brief A smart pointer containing a module
+ */
 template<typename T>
 class ModulePtr
 {
     public:
-        // takes ownership
+        /*! \brief Constructor from an IMPL holder
+         * 
+         * Takes ownership of \p holder
+         */
         ModulePtr(std::unique_ptr<detail::ModuleIMPLHolder> && holder)
                 : holder_(holder.release())
         {
-            //! \todo check dynamic cast
+            using namespace bpmodule::exception;
+
+
             ptr_ = dynamic_cast<T *>(holder_->CppPtr());
+            Assert<GeneralException>(ptr_ != nullptr, "ModulePtr not given a holder of the right type");
         }
+
 
         ModulePtr(ModulePtr && rhs) = default;
         ModulePtr & operator=(ModulePtr && rhs) = default;
 
+        // no copy construction or assignment
         ModulePtr(const ModulePtr & rhs) = delete;
         ModulePtr & operator=(const ModulePtr & rhs) = delete;
 
         ~ModulePtr() = default;
 
+        /*! \brief Dereference the object
+         */ 
         T * operator->() const { return ptr_; }
 
+        /*! \brief Dereference the object
+         */ 
         T & operator*() const { return *ptr_; }
 
 
@@ -62,6 +83,12 @@ class PyModulePtr
         ~PyModulePtr() = default;
 
 
+        /*! \brief Used by python for smart pointer semantics
+         * 
+         * See \ref python_smart_pointer
+         *
+         * \note May raise a python exception if the sepcified method doesn't exist
+         */
         pybind11::object Py__getattr__(const std::string & name)
         {
             return obj_.attr(name.c_str());

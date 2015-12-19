@@ -4,9 +4,6 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include <stdexcept>
-
-#include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/python/Call.hpp"
 
 using bpmodule::exception::Assert;

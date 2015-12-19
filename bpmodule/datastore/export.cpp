@@ -61,6 +61,13 @@ PYBIND11_PLUGIN(datastore)
 
 
     //////////////////
+    // UIDPointer
+    //////////////////
+    m.def("MakeUIDPointer", MakeUIDPointerPy);
+
+
+
+    //////////////////
     // OptionTypes
     //////////////////
     pybind11::enum_<OptionType>(m, "OptionType")
@@ -78,12 +85,12 @@ PYBIND11_PLUGIN(datastore)
     .value("SetString", OptionType::SetString)
     ;
 
+
     /////////////////////////
     // OptionHolders
     /////////////////////////
     pybind11::class_<OptionBase> ohbase(m, "OptionBase");
     
-
     RegisterOptionHolder<OptionType::Int>(m, ohbase);
     RegisterOptionHolder<OptionType::Float>(m, ohbase);
     RegisterOptionHolder<OptionType::Bool>(m, ohbase);
@@ -101,7 +108,7 @@ PYBIND11_PLUGIN(datastore)
     /////////////////////////
     // OptionMap
     /////////////////////////
-    // OptionMap always returns copies, so this should be safe
+    // OptionMap always returns copies
     pybind11::class_<OptionMap>(m, "OptionMap")
     .def(pybind11::init<>())
     .def("Has", &OptionMap::Has)
@@ -133,9 +140,6 @@ PYBIND11_PLUGIN(datastore)
     .def_readwrite("epsilon", &Wavefunction::epsilon)
     ;
   
-
-    m.def("MakeUIDPointer", MakeUIDPointerPy);
-
 
 
     ////////////////////////////////////////

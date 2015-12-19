@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Storage of generic data (base class) (header)
+ * \brief Storage of options data (base class) (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
@@ -11,9 +11,8 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <typeinfo>
 
-#include "bpmodule/python/Pybind11.hpp"
+#include "bpmodule/python/Pybind11_fwd.hpp"
 
 namespace bpmodule {
 namespace datastore {
@@ -164,7 +163,7 @@ class OptionBase
          *
          *  \exstrong
          */
-        virtual void ChangePy(pybind11::object obj) = 0;
+        virtual void ChangePy(const pybind11::object & obj) = 0;
 
 
 

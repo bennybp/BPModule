@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Registers a UIDPoitner to python (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
+
 #include <string>
 #include <unordered_map>
 
@@ -31,7 +38,7 @@ void AddCreator_(const char * classname, std::function<pybind11::object(pybind11
 
 
 
-pybind11::object MakeUIDPointerPy(pybind11::object obj)
+pybind11::object MakeUIDPointerPy(const pybind11::object & obj)
 {
     const std::string cn = python::GetPyClass(obj);
     if(!creators_.count(cn))

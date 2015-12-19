@@ -1,11 +1,18 @@
+/*! \file
+ *
+ * \brief Implementations for module smart pointers (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
+
 #ifndef _GUARD_MODULEIMPLHOLDER_HPP_
 #define _GUARD_MODULEIMPLHOLDER_HPP_
 
 #include <memory>
 
-#include "bpmodule/python/Pybind11.hpp"
+#include "bpmodule/python/Convert.hpp"
 #include "bpmodule/exception/GeneralException.hpp"
-
+#include "bpmodule/exception/Assert.hpp"
 
 namespace bpmodule {
 namespace modulebase {
@@ -14,43 +21,86 @@ class ModuleBase;
 }
 
 
+
 namespace bpmodule {
 namespace modulelocator {
 namespace detail {
 
 
-
+/*! \brief Storage of a module for use in ModulePtr
+ *
+ * Objects of this class (and derived classes)
+ * are responsible for ownership
+ * of the module data themselves, including deletion.
+ *
+ * Not copy or move constructable or assignable
+ */
 class ModuleIMPLHolder
 {
     public:
+        ModuleIMPLHolder() = default;
         virtual ~ModuleIMPLHolder() = default;
 
-        virtual modulebase::ModuleBase * CppPtr(void) = 0;
-        virtual pybind11::object PythonObject(void) = 0;
+        ModuleIMPLHolder(const ModuleIMPLHolder & rhs) = delete;
+        ModuleIMPLHolder & operator=(const ModuleIMPLHolder & rhs) = delete;
+        ModuleIMPLHolder(ModuleIMPLHolder && rhs) = delete;
+        ModuleIMPLHolder & operator=(ModuleIMPLHolder && rhs) = delete;
+
+        /*! \brief Return a C++ pointer to the module
+         */ 
+        virtual modulebase::ModuleBase * CppPtr(void) const = 0;
+
+        /*! \brief Return a python object representing the module
+         */ 
+        virtual pybind11::object PythonObject(void) const = 0;
+
+        template<typename T>
+        bool IsType(void) const
+        {
+            using namespace bpmodule::exception;
+            Assert<GeneralException>(CppPtr() != nullptr, "Null pointer in ModuleIMPLHolder");
+
+            T * ptr = dynamic_cast<T *>(CppPtr());
+
+            return(ptr != nullptr);
+        }
+
 };
 
 
 
-// T should hold pointer to base type, but no further
+
+/*! \brief IMPL holder for C++ modules
+ * 
+ * \tparam T The base module type (not the actual type)
+ */
 template<typename T>
 class CppModuleIMPLHolder : public ModuleIMPLHolder
 {
     public:
+        /*! \brief Construct by reference to unique pointer
+         * 
+         * Takes ownership of the data in the unique_ptr
+         */
         CppModuleIMPLHolder(std::unique_ptr<T> && mod) : mod_(std::move(mod)) { }
 
-        virtual modulebase::ModuleBase * CppPtr(void)
+
+        virtual modulebase::ModuleBase * CppPtr(void) const
         {
+            using namespace bpmodule::exception;
+            Assert<GeneralException>((bool)mod_, "Null pointer in CppModuleIMPLHolder");
             return mod_.get(); 
         }
 
-        virtual pybind11::object PythonObject(void)
-        {
-            T * ptr = dynamic_cast<typename T::BaseType *>(mod_.get());
-            pybind11::object o = pybind11::cast(ptr, pybind11::return_value_policy::reference);
 
-            //! \todo replace with exception if pybind11 does
-            if(o.ptr() == nullptr)
-                throw exception::GeneralException("Unable to cast to python object: got a null ptr");
+        virtual pybind11::object PythonObject(void) const
+        {
+            using namespace bpmodule::exception;
+            Assert<GeneralException>((bool)mod_, "Null pointer in CppModuleIMPLHolder");
+            T * ptr = mod_.get();
+            pybind11::object o = python::ConvertToPy(ptr, pybind11::return_value_policy::reference);
+
+            Assert<GeneralException>(o, "Null python object in CppModuleIMPLHolder");
 
             return o;
         } 
@@ -66,13 +116,25 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
 class PyModuleIMPLHolder : public ModuleIMPLHolder
 {
     public:
-        //! \todo make this a move constructor?
-        PyModuleIMPLHolder(pybind11::object mod) : mod_(mod) { }
+        /*! \brief Construct by copying a python object
+         */ 
+        PyModuleIMPLHolder(pybind11::object mod)
+            : mod_(mod)
+        { 
+            using namespace bpmodule::exception;
 
-        //! \todo checking? Exceptions or mod_.ptr() == nullptr
-        virtual modulebase::ModuleBase * CppPtr(void) { return mod_.cast<modulebase::ModuleBase *>(); }
+            Assert<GeneralException>(mod_, "PyModuleIMPLHolder given a null object");
+        }
 
-        virtual pybind11::object PythonObject(void) { return mod_; }
+        virtual modulebase::ModuleBase * CppPtr(void) const
+        {
+            return python::ConvertToCpp<modulebase::ModuleBase *>(mod_);
+        }
+
+        virtual pybind11::object PythonObject(void) const
+        {
+            return mod_; 
+        }
 
     private:
         pybind11::object mod_;

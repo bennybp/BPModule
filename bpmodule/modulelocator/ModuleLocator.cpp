@@ -173,9 +173,9 @@ ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
     const StoreEntry & se = GetOrThrow_(key);
 
     // create
-    detail::ModuleIMPLHolder * mbptr;
+    std::unique_ptr<detail::ModuleIMPLHolder> umbptr;
     try {
-      mbptr = se.mc(curid_);
+      umbptr = std::unique_ptr<detail::ModuleIMPLHolder>(se.mc(curid_));
     }
     catch(const exception::GeneralException & gex)
     {
@@ -185,15 +185,12 @@ ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
                                                se.mi.name);
     }
 
-    if(mbptr == nullptr)
+    if(!umbptr)
         throw exception::ModuleCreateException("Create function returned a null pointer",
                                                se.mi.path,
                                                se.mi.key,
                                                se.mi.name);
 
-    // wrap in a unique_ptr
-    std::unique_ptr<detail::ModuleIMPLHolder> umbptr(mbptr);
-   
  
     // add the moduleinfo to the graph
     //! \todo replace with actual graph
@@ -232,7 +229,7 @@ ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
 ////////////////////
 pybind11::object ModuleLocator::GetModulePy(const std::string & key, unsigned long parentid)
 {
-    auto umbptr = CreateModule_(key, parentid);
+    std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(key, parentid);
     return pybind11::cast(PyModulePtr(std::move(umbptr)));
 }
         

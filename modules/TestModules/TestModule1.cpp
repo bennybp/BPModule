@@ -1,7 +1,6 @@
 #include <bpmodule/output/Output.hpp>
 #include <bpmodule/modulelocator/ModuleLocator.hpp>
 #include <bpmodule/exception/GeneralException.hpp>
-
 #include "TestModule1.hpp"
 
 

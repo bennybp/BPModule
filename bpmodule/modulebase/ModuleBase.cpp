@@ -23,10 +23,10 @@ namespace bpmodule {
 namespace modulebase {
 
 
-ModuleBase::ModuleBase(unsigned long id)
-    : id_(id), mlocator_(nullptr), graphnode_(nullptr)
+ModuleBase::ModuleBase(unsigned long id, const char * modtype)
+    : id_(id), modtype_(modtype), mlocator_(nullptr), graphnode_(nullptr)
 {
-    output::Debug("Constructed module [%1%]\n", id);
+    output::Debug("Constructed %1% module [%2%]\n", modtype, id);
 }
 
 
@@ -63,6 +63,11 @@ std::string ModuleBase::Version(void) const
     return MInfo_().version;
 }
 
+
+std::string ModuleBase::ModuleType(void) const
+{
+    return modtype_;
+}
 
 const datastore::OptionMap & ModuleBase::Options(void) const
 {

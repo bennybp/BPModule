@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Registers a UIDPoitner to python (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
+
 #ifndef _GUARD_REGISTERUIDPOINTER_HPP_
 #define _GUARD_REGISTERUIDPOINTER_HPP_
 
@@ -10,19 +17,16 @@
 namespace bpmodule {
 namespace datastore {
 
+
 namespace detail {
-
-
-
 
 /*! \brief Adds the type to the python registry
  *
- * in the cpp file
+ * 
  */
-void AddCreator_(const char * classname, std::function<pybind11::object(pybind11::object)> func);
+void AddCreator_(const char * classname,
+                 std::function<pybind11::object(pybind11::object)> func);
 
-
- 
 
 /*! \brief A helper that creates UIDPointer from the specified type
  */
@@ -34,16 +38,15 @@ pybind11::object CreateUIDPointer_(pybind11::object obj)
 }
 
 
-
 } // close namespace detail
 
 
 
 /*! \brief creates a python object containing a UID pointer
  *
- * The type held within the object must have been registered first
+ * The type held within \p obj must have been registered first
  */
-pybind11::object MakeUIDPointerPy(pybind11::object obj);
+pybind11::object MakeUIDPointerPy(const pybind11::object & obj);
 
 
 

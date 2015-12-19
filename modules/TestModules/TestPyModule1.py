@@ -38,7 +38,7 @@ class TestPyModule1(bp.modulebase.Test_Base):
   def CallRunTest_(self, s):
     bp.output.Output("+++ In TestPyModule1: CallRunTest with %1%\n", s)
 
-    tb = self.MLocator().CreateChildModule(s)
+    tb = self.CreateChildModule(s)
     bp.output.Output("  + Obtained scoped module ID %1%\n", tb.ID())
     tb.RunTest()
     bp.output.Output("  + Finished with scoped module %1%. Deleting automatically\n", tb.ID())
@@ -53,7 +53,7 @@ class TestPyModule1(bp.modulebase.Test_Base):
   def CallThrow_(self, s):
     bp.output.Output("+++ In TestPyModule1: CallRunTest with %1%\n", s)
 
-    tb = self.MLocator().CreateChildModule(s)
+    tb = self.CreateChildModule(s)
     bp.output.Output("  + Obtained scoped module ID %1%\n", tb.ID())
     tb.TestThrow()
 

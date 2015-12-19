@@ -9,9 +9,7 @@
 #define _GUARD_CALL_HPP_
 
 #include "bpmodule/exception/PythonCallException.hpp"
-#include "bpmodule/python/Errors.hpp"
 #include "bpmodule/python/Convert.hpp"
-
 
 namespace bpmodule {
 namespace python {
@@ -48,8 +46,7 @@ Ret CallPyFunc(pybind11::object obj, Targs... Fargs)
     }
     catch(const std::exception & ex)
     {
-        throw PythonCallException(detail::GetPyException(),
-                                  "when", "In a python function");
+        throw PythonCallException(detail::GetPyException(), "from", "Within a python function");
     }
     catch(...)
     {

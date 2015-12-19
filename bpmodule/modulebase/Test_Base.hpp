@@ -25,7 +25,7 @@ class Test_Base : public ModuleBase
 
 
         Test_Base(unsigned long id)
-            : ModuleBase(id)
+            : ModuleBase(id, "Test_Base")
         { }
 
 

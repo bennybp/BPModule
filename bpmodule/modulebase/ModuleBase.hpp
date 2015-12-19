@@ -12,6 +12,7 @@
 
 #include "bpmodule/exception/PythonCallException.hpp"
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
+#include "bpmodule/util/FormatString.hpp"
 #include "bpmodule/python/Call.hpp"
 
 
@@ -56,7 +57,7 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
 
         /*! \brief Constructor
          */
-        ModuleBase(unsigned long id);
+        ModuleBase(unsigned long id, const char * modtype);
 
 
         virtual ~ModuleBase();
@@ -93,6 +94,14 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
          * \throw std::logic_error if there is a severe developer error
          */
         std::string Version(void) const;
+
+
+        /*! \brief Get the module type
+         * 
+         * ie, Test_Base, TwoElectronIntegralIMPL, etc
+         */
+        std::string ModuleType(void) const;
+
 
 
         /*! \brief Get the OptionMap object for this module
@@ -184,9 +193,8 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
             }
             catch(exception::GeneralException & ex)
             {
-                ex.AppendInfo("modulekey", Key());
-                ex.AppendInfo("modulename", Name());
-                ex.AppendInfo("moduleversion", Version());
+                std::string s = util::FormatString("[%1%] (%2%) %3% v%4%", ID(), Key(), Name(), Version());
+                ex.AppendInfo("from", s);
                 throw;
             }
             catch(std::exception & ex)
@@ -215,7 +223,7 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
                 }
                 catch(exception::PythonCallException & ex)
                 {
-                    ex.AppendInfo("vfunc", name);
+                    //ex.AppendInfo("vfunc", name);
                     throw;
                 }
             }
@@ -259,6 +267,11 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
 
         //! The unique ID of this module
         const unsigned long id_;
+
+
+        //! The type of module this is
+        const char * modtype_;
+
 
         //! The ModuleLocator in charge of this module
         modulelocator::ModuleLocator * mlocator_;

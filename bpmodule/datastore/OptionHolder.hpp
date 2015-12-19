@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Storage of generic data (inner class)
+ * \brief Storage of options data (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
@@ -11,7 +11,6 @@
 #include <functional>
 
 #include "bpmodule/datastore/OptionBase.hpp"
-#include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/datastore/OptionTypes.hpp"
 
 namespace bpmodule {
@@ -58,15 +57,15 @@ class OptionHolder : public OptionBase
          *
          */
         OptionHolder(const std::string & key,
-                     bool required, pybind11::object validator,
+                     bool required, const pybind11::object & validator,
                      const std::string & help);
 
         OptionHolder(const std::string & key,
-                     bool required, pybind11::object validator,
+                     bool required, const pybind11::object & validator,
                      const std::string & help, const stored_type & def);
 
         OptionHolder(const std::string & key,
-                     bool required, pybind11::object validator,
+                     bool required, const pybind11::object & validator,
                      const std::string & help, const pybind11::object & def);
 
 
@@ -146,13 +145,13 @@ class OptionHolder : public OptionBase
         /////////////////////////////////////////
         virtual pybind11::object GetPy(void) const;
 
-        virtual void ChangePy(pybind11::object obj);
+        virtual void ChangePy(const pybind11::object & obj);
 
 
     private:
         // used in constructor delegation
         OptionHolder(const std::string & key,
-                     bool required, pybind11::object validator,
+                     bool required, const pybind11::object & validator,
                      const std::string & help, stored_type * def);
 
         //! A set value for the option

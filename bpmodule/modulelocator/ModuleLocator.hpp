@@ -22,17 +22,12 @@
 // forward declarations
 namespace bpmodule {
 
-namespace modulebase {
-class ModuleBase;
-}
-
 namespace modulelocator {
 
 template<typename T>
 class ModuleLoaderBase;
 
 class CModuleLoader;
-class PyModuleLoader;
 }
 }
 // end forward declarations
@@ -137,24 +132,13 @@ class ModuleLocator
             // may throw
             std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(key, parentid);
 
+            if(!umbptr->IsType<T>())
+                throw exception::GeneralException("Module of this key is not of the right type",
+                                                  "key", key,
+                                                  "expected", util::DemangleCppType<T>());
+
             // create the ModulePtr type
             ModulePtr<T> mod(std::move(umbptr));
-
-
-            /*
-            T * dptr = dynamic_cast<T *>(mod.first);
-            if(dptr == nullptr)
-            {
-                ModuleInfo mi = store_.at(key).mi;
-
-                throw exception::ModuleCreateException("Bad cast for module", mi.path,
-                                                       key, mi.name, 
-                                                       "fromtype", util::DemangleCppType(mod.first),
-                                                       "totype", util::DemangleCppType<T *>());
-            }
-
-            ScopedModule<T> ret(dptr, mod.second); // construction shouldn't throw?
-            */
 
             return mod;
         }
@@ -229,7 +213,6 @@ class ModuleLocator
         friend class ModuleLoaderBase;
 
         friend class CModuleLoader;
-        friend class PyModuleLoader;
 
 
 

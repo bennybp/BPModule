@@ -1,14 +1,12 @@
 /*! \file
  *
- * \brief Storage of generic data via (key, value) pair (source)
+ * \brief Storage of options data (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
 
-#include "bpmodule/python/Call.hpp"
-#include "bpmodule/python/Pybind11_stl.hpp"
 #include "bpmodule/datastore/OptionHolder.hpp"
-#include "bpmodule/datastore/OptionTypes.hpp"
+#include "bpmodule/python/Call.hpp"
 #include "bpmodule/exception/OptionException.hpp"
 #include "bpmodule/output/Output.hpp"
 
@@ -79,7 +77,7 @@ static OptionIssues ValidatorWrapper_(pybind11::object valobj, const std::string
 ///////////////////////////////////////////////////
 template<OptionType OPTTYPE>
 OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
-                              bool required, pybind11::object validator,
+                              bool required, const pybind11::object & validator,
                               const std::string & help,
                               typename OptionHolder<OPTTYPE>::stored_type * def)
     : OptionBase(key, required, help), default_(def)
@@ -90,7 +88,7 @@ OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
 
 template<OptionType OPTTYPE>
 OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
-                              bool required, pybind11::object validator,
+                              bool required, const pybind11::object & validator,
                               const std::string & help)
     : OptionHolder(key, required, validator, help, nullptr)
 {
@@ -100,7 +98,7 @@ OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
 
 template<OptionType OPTTYPE>
 OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
-                              bool required, pybind11::object validator,
+                              bool required, const pybind11::object & validator,
                               const std::string & help,
                               const typename OptionHolder<OPTTYPE>::stored_type & def)
     : OptionHolder(key, required, validator, help, new stored_type(def))
@@ -117,7 +115,7 @@ OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
 
 template<OptionType OPTTYPE>
 OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
-                              bool required, pybind11::object validator,
+                              bool required, const pybind11::object & validator,
                               const std::string & help,
                               const pybind11::object & def)
     : OptionHolder(key, required, validator, help, python::ConvertToCpp<stored_type>(def))
@@ -279,7 +277,7 @@ pybind11::object OptionHolder<OPTTYPE>::GetPy(void) const
 
 
 template<OptionType OPTTYPE>
-void OptionHolder<OPTTYPE>::ChangePy(pybind11::object obj)
+void OptionHolder<OPTTYPE>::ChangePy(const pybind11::object & obj)
 {
     stored_type val;
 

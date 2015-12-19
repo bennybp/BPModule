@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Storage of generic data (base class) (source)
+ * \brief Storage of options data (base class) (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
