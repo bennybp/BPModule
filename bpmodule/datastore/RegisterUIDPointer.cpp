@@ -9,7 +9,7 @@
 #include <unordered_map>
 
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
-#include "bpmodule/exception/PythonConvertException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 using namespace bpmodule::exception;
 

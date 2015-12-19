@@ -8,7 +8,7 @@
 #ifndef _GUARD_CALL_HPP_
 #define _GUARD_CALL_HPP_
 
-#include "bpmodule/exception/PythonCallException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/python/Convert.hpp"
 
 namespace bpmodule {
@@ -46,7 +46,8 @@ Ret CallPyFunc(pybind11::object obj, Targs... Fargs)
     }
     catch(const std::exception & ex)
     {
-        throw PythonCallException(detail::GetPyException(), "from", "Within a python function");
+        std::string what = detail::GetPyException();
+        throw PythonCallException(what, "from", "within a python function");
     }
     catch(...)
     {
@@ -58,9 +59,8 @@ Ret CallPyFunc(pybind11::object obj, Targs... Fargs)
     try {
         return ConvertToCpp<Ret>(ret);
     }
-    catch(const PythonConvertException & ex)
+    catch(const std::exception & ex)
     {
-        // change to a PythonCallException
         throw PythonCallException(ex,
                                   "desc", "Unable to convert return value from python function");
     }
@@ -91,7 +91,7 @@ Ret CallPyFuncAttr(pybind11::object obj, const char * attribute, Targs... Fargs)
     int nargs = static_cast<int>(sizeof...(Fargs));
 
     if(!HasCallableAttr(obj, attribute))
-        throw PythonCallException("Object does not have callable attribute!",
+        throw PythonCallException("Python object does not have callable attribute!",
                                   "function", attribute,
                                   "nargs", nargs);
 

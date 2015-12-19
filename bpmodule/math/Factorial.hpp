@@ -2,7 +2,7 @@
 #define _GUARD_FACTORIAL_HPP_
 
 #include "bpmodule/math/Factorial_LUT.hpp"
-#include "bpmodule/exception/MathException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 
 namespace bpmodule {

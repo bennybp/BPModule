@@ -32,19 +32,35 @@ def Run(mm):
       b2 = mm.GetModule("TESTPYMOD1", 0)
 
       try:
-        b1.TestThrow()
+        b1.CallThrow("TestModule1")
+        bp.output.Output("\n")
+      except Exception as e:
+        bp.output.Warning(str(e))
+        bp.output.Output("\n\n")
+
+      try:
+        b1.CallThrow("TestPyModule1")
         bp.output.Output("\n")
       except Exception as e:
         bp.output.Warning(str(e))
         bp.output.Output("\n\n")
    
+    
       try:
-        b2.TestThrow()
+        b2.CallThrow("TestModule1")
         bp.output.Output("\n")
       except Exception as e:
         bp.output.Warning(str(e))
         bp.output.Output("\n\n")
-    
+
+      try:
+        b2.CallThrow("TestPyModule1")
+        bp.output.Output("\n")
+      except Exception as e:
+        bp.output.Warning(str(e))
+        bp.output.Output("\n\n")
+
+
       bp.output.Output("\nDone testing\n")
 
 

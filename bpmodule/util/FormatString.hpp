@@ -14,7 +14,7 @@
 
 #include <boost/format.hpp>
 
-#include "bpmodule/exception/GeneralException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 
 namespace bpmodule {

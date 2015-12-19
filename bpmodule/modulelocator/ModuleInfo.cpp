@@ -5,17 +5,9 @@
  */
 
 
-#include "bpmodule/python/Convert.hpp"
-
 #include "bpmodule/modulelocator/ModuleInfo.hpp"
 #include "bpmodule/output/Output.hpp"
-#include "bpmodule/exception/ModuleLocatorException.hpp"
 
-
-using bpmodule::datastore::OptionMap;
-using bpmodule::python::ConvertToCpp;
-using bpmodule::exception::GeneralException;
-using bpmodule::exception::ModuleLocatorException;
 
 namespace bpmodule {
 namespace modulelocator {

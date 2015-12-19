@@ -12,7 +12,6 @@
 
 #include <vector>
 #include <string>
-#include <utility>
 #include <sstream>
 
 
@@ -21,28 +20,20 @@ namespace exception {
 
 /*! \brief A base exception for BPModule
  *
- * Besides the "what" string, all information is stored as
- * a vector of string pairs.
+ * Basically, this is a string with some fancy formatting.
+ * There is one line (basically an overall description)
+ * followed by pairs of information. This is all available
+ * via the what() member.
  *
- * It is derived from std::exception so that some information
- * (the what string) is available from that interface. Details
- * require catching the GeneralException though.
+ * Pairs of information can be appended to the string via
+ * AppendInfo().
+ *
+ * When constructed from another std::exception, the what() string
+ * of that is copied first.
  */
 class GeneralException : public std::exception
 {
     public:
-        typedef std::pair<std::string, std::string> ExceptionInfoPair;
-        typedef std::vector<ExceptionInfoPair> ExceptionInfo;
-
-
-        /*! \brief Constructor
-         *
-         * \param [in] whatstr Some descriptive string
-         */
-        GeneralException(const std::string & whatstr);
-
-
-
         /*! \brief Constructor
          *
          * \param [in] whatstr Some descriptive string
@@ -50,9 +41,8 @@ class GeneralException : public std::exception
          */
         template<typename... Targs>
         GeneralException(const std::string & whatstr, const Targs& ... exinfo)
-            : GeneralException(whatstr)
+            : whatstr_(whatstr)
         {
-            // check that there is an even number of exinfo
             static_assert( (sizeof...(exinfo) % 2) == 0,
                            "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
             AppendInfo(exinfo...);
@@ -67,13 +57,9 @@ class GeneralException : public std::exception
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>
-        GeneralException(const GeneralException & gex, const Targs&... exinfo)
-            : GeneralException(gex)
+        GeneralException(const std::exception & ex, const Targs&... exinfo)
+            : GeneralException(ex.what(), exinfo...)
         {
-            // check that there is an even number of exinfo
-            static_assert( (sizeof...(exinfo) % 2) == 0,
-                           "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
-            AppendInfo(exinfo...);
         }
 
 
@@ -84,19 +70,6 @@ class GeneralException : public std::exception
         GeneralException & operator=(GeneralException && rhs)      = default;
         GeneralException & operator=(const GeneralException & rhs) = default;
         virtual ~GeneralException()                                = default;
-
-
-        /*! \brief Get all the additional information
-         */
-        const ExceptionInfo & GetInfo(void) const noexcept;
-
-
-
-        /*! \brief Get some specific additional information
-         *
-         * If the field doesn't exist, a string "(field not found)" is returned instead.
-         */
-        const char * GetField(const std::string & field) const noexcept;
 
 
         /*! \brief Add information to this exception object
@@ -149,6 +122,8 @@ class GeneralException : public std::exception
         void AppendInfo(const std::string & key, const T & value,
                         const Targs&... exinfo)
         {
+            static_assert( (sizeof...(exinfo) % 2) == 0,
+                           "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
             AppendInfo(key, value);
             AppendInfo(exinfo...);
         }
@@ -183,7 +158,7 @@ class GeneralException : public std::exception
         }
 
 
-        /*! \brief Print out the "what" string
+        /*! \brief Return all the information as a string
          */
         const char * what(void) const noexcept;
 
@@ -192,13 +167,123 @@ class GeneralException : public std::exception
 
         //! The "what" string
         std::string whatstr_;
-
-        //! The full, formatted exception string
-        std::string fullstr_;
-
-        //! All additional information
-        ExceptionInfo exinfo_;
 };
+
+
+
+/*! \brief An exception thrown if something is called that
+ *         hasn't been implemented yet
+ */
+class NotYetImplementedException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
+
+
+/*! \brief An exception thrown when there is a problem with a
+ *         basis set or basis functions
+ */
+class BasisSetException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
+
+
+/*! \brief An exception thrown when there is a problem with
+ *         data storage classes
+ */
+class DataStoreException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
+
+
+/*! \brief An exception thrown when there is a problem with
+ *         some math operations
+ */
+class MathException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
+
+
+/*! \brief An exception thrown when there is a problem with
+ *         creating/instantiating a module
+ */
+class ModuleCreateException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
+
+/*! \brief An exception thrown when there is a problem with
+ *         the module locator
+ */
+class ModuleLocatorException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
+
+/*! \brief An exception thrown when there is a problem with
+ *         loading/inserting a module
+ */
+class ModuleLoadException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
+
+/*! \brief An exception thrown when there is a problem with
+ *         molecule operations
+ */
+class MoleculeException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
+
+/*! \brief An exception thrown when there is a problem with
+ *         options
+ */
+class OptionException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
+
+/*! \brief An exception thrown when there is a problem with
+ *         calling a python function from C++
+ */
+class PythonCallException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
+
+/*! \brief An exception thrown when there is a problem with
+ *         converting to and from python data types
+ */
+class PythonConvertException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
 
 
 } // close namespace exception

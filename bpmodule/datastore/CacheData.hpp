@@ -10,7 +10,7 @@
 
 #include <map>
 
-#include "bpmodule/exception/DataStoreException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/datastore/GenericHolder.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/datastore/OptionMap.hpp"
@@ -275,12 +275,10 @@ class CacheData
                     }
                 }
 
-                throw exception::DataStoreException("Key with these options not found", key,
-                                                    "location", "CacheData");
+                throw exception::DataStoreException("Key with these options not found in CacheData", "key", key);
             }
             else
-                throw exception::DataStoreException("Key not found", key,
-                                                    "location", "CacheData");
+                throw exception::DataStoreException("Key not found in CacheData", "key", key);
         }
 
 
@@ -307,12 +305,10 @@ class CacheData
                     }
                 }
 
-                throw exception::DataStoreException("Key with these options not found", key,
-                                                    "location", "CacheData");
+                throw exception::DataStoreException("Key with these options not found in CacheData", "key", key);
             }
             else
-                throw exception::DataStoreException("Key not found", key,
-                                                    "location", "CacheData");
+                throw exception::DataStoreException("Key not found in CacheData", "key", key);
         }
 
 
@@ -334,8 +330,7 @@ class CacheData
             const CacheDataEntry & pme = GetOrThrow_(key, opt, sigopt);
             const detail::GenericHolder<T> * ph = dynamic_cast<const detail::GenericHolder<T> *>(pme.value.get());
             if(ph == nullptr)
-                throw exception::DataStoreException("Bad cast", key,
-                                                    "location", "CacheData",
+                throw exception::DataStoreException("Bad cast in CacheData", "key", key,
                                                     "fromtype", pme.value->Type(),
                                                     "totype", typeid(T).name()); 
 

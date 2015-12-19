@@ -12,7 +12,7 @@
 
 #include "bpmodule/datastore/OptionTypes.hpp"
 #include "bpmodule/datastore/OptionHolder.hpp"
-#include "bpmodule/exception/OptionException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/util/StringUtil.hpp"
 
 
@@ -43,6 +43,8 @@ class OptionMap
 {
     public:
         OptionMap(void) = default;
+
+        OptionMap(const std::string & modulekey);
 
         ~OptionMap(void) = default;
 
@@ -227,10 +229,9 @@ class OptionMap
             try {
                 return OptionCast<T,stored_type>::Cast(val);
             }
-            catch(const exception::GeneralException & ex)
+            catch(const std::exception & ex)
             {
-                // convert to an OptionException and add the key
-                throw exception::OptionException(ex, key);
+                throw exception::OptionException(ex, "optionkey", key, "modulekey", modulekey_);
             }
         }
 
@@ -260,10 +261,10 @@ class OptionMap
             try {
                  convval = OptionCast<stored_type, T>::Cast(value);
             }
-            catch(const exception::GeneralException & ex)
+            catch(const std::exception & ex)
             {
                 // convert to an OptionException and add the key
-                throw exception::OptionException(ex, key);
+                throw exception::OptionException(ex, "optionkey", key, "modulekey", modulekey_);
             }
 
             GetOrThrow_Cast_<opt_type>(key)->Change(convval);
@@ -375,7 +376,8 @@ class OptionMap
             const OptionBase * ptr = GetOrThrow_(key);
             const OptionHolder<OPTTYPE> * oh = dynamic_cast<const OptionHolder<OPTTYPE> *>(ptr);
             if(oh == nullptr)
-                throw exception::OptionException("Bad option cast", key,
+                throw exception::OptionException("Bad option cast", "optionkey", key,
+                                                 "modulekey", modulekey_,
                                                  "fromtype", ptr->Type(),
                                                  "totype", OptionTypeToString(OPTTYPE)); 
 
@@ -391,7 +393,8 @@ class OptionMap
             OptionBase * ptr = GetOrThrow_(key);
             OptionHolder<OPTTYPE> * oh = dynamic_cast<OptionHolder<OPTTYPE> *>(ptr);
             if(oh == nullptr)
-                throw exception::OptionException("Bad option cast", key,
+                throw exception::OptionException("Bad option cast", "optionkey", key,
+                                                 "modulekey", modulekey_,
                                                  "fromtype", ptr->Type(),
                                                  "totype", OptionTypeToString(OPTTYPE)); 
 

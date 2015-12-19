@@ -46,6 +46,7 @@ class TestPyModule1(bp.modulebase.Test_Base):
     bp.output.Output("+++Done\n");
 
   def TestThrow_(self):
+    bp.output.Warning("+++ In TestPyModule1: Throwing an exception!\n");
     raise bp.exception.GeneralException("Here in py", "Key", "Some Data")
     #self.Throw("This is a test exception from python")
 

@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include "bpmodule/exception/PythonCallException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
 #include "bpmodule/util/FormatString.hpp"
 #include "bpmodule/python/Call.hpp"
@@ -199,11 +199,15 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
             }
             catch(std::exception & ex)
             {
-                throw exception::GeneralException("Caught std::exception", "what", ex.what());
+                std::string s = util::FormatString("[%1%] (%2%) %3% v%4%", ID(), Key(), Name(), Version());
+                throw exception::GeneralException(ex, "what", ex.what(),
+                                                  "from", s);
             }
             catch(...)
             {
-                throw exception::GeneralException("Caught unknown exception. Get your debugger warmed up.");
+                std::string s = util::FormatString("[%1%] (%2%) %3% v%4%", ID(), Key(), Name(), Version());
+                throw exception::GeneralException("Caught unknown exception. Get your debugger warmed up.",
+                                                  "from", s);
             }
         }
 

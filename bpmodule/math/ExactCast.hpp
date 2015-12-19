@@ -4,7 +4,7 @@
 #include <limits>
 
 #include "bpmodule/pragma.h"
-#include "bpmodule/exception/MathException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/util/Mangle.hpp"
 
 

@@ -7,7 +7,7 @@
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/exception/ModuleLoadException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 
 //////////////////////////////////////////////
@@ -55,7 +55,7 @@ void ModuleLocator::InsertModule(const std::string & key, const CreatorFunctions
     // but throw if key already exists
     if(store_.count(key))
         throw ModuleLoadException("Cannot insert module: duplicate key",
-                                  mi.path, key, mi.name);
+                                  "modulepath", mi.path, "modulekey", key, "modulename", mi.name);
 
     store_.emplace(key, StoreEntry{mi, mc});
 }
@@ -118,11 +118,10 @@ void ModuleLocator::TestAll(void)
         try {
             GetModule<ModuleBase>(it.first, 0);
         }
-        catch(GeneralException & ex)
+        catch(std::exception & ex)
         {
             output::Error("Error - module %1% [key %2%]\" failed test loading!\n", it.second.mi.name, it.first);
-            ex.AppendInfo("location", "TestAll");
-            throw;
+            throw GeneralException(ex, "location", "TestAll");
         }
 
         output::Debug("Test of %1% OK\n", it.first);
@@ -146,9 +145,7 @@ const ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string &
     if(Has(key))
         return store_.at(key);
     else
-        throw ModuleLocatorException("Missing module key",
-                                   "location", "ModuleLocator",
-                                   "modulekey", key);
+        throw ModuleLocatorException("Missing module key in ModuleLocator", "modulekey", key);
 }
 
 
@@ -157,9 +154,7 @@ ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & key)
     if(Has(key))
         return store_.at(key);
     else
-        throw ModuleLocatorException("Missing module key",
-                                   "location", "ModuleLocator",
-                                   "modulekey", key);
+        throw ModuleLocatorException("Missing module key in ModuleLocator", "modulekey", key);
 }
 
 
@@ -177,19 +172,19 @@ ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
     try {
       umbptr = std::unique_ptr<detail::ModuleIMPLHolder>(se.mc(curid_));
     }
-    catch(const exception::GeneralException & gex)
+    catch(const std::exception & ex)
     {
-        throw exception::ModuleCreateException(gex,
-                                               se.mi.path,
-                                               se.mi.key,
-                                               se.mi.name);
+        throw exception::ModuleCreateException(ex,
+                                               "path", se.mi.path,
+                                               "modulekey", se.mi.key,
+                                               "modulename", se.mi.name);
     }
 
     if(!umbptr)
-        throw exception::ModuleCreateException("Create function returned a null pointer",
-                                               se.mi.path,
-                                               se.mi.key,
-                                               se.mi.name);
+        throw exception::ModuleCreateException("Module function returned a null pointer",
+                                               "path", se.mi.path,
+                                               "modulekey", se.mi.key,
+                                               "modulename", se.mi.name);
 
  
     // add the moduleinfo to the graph

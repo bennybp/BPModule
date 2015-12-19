@@ -13,8 +13,7 @@
 
 #include "bpmodule/datastore/GraphNodeData.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
-#include "bpmodule/exception/ModuleCreateException.hpp"
-#include "bpmodule/exception/ModuleLocatorException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/modulelocator/CreatorFunctions.hpp"
 #include "bpmodule/modulelocator/ModulePtr.hpp"
 
@@ -133,9 +132,9 @@ class ModuleLocator
             std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(key, parentid);
 
             if(!umbptr->IsType<T>())
-                throw exception::GeneralException("Module of this key is not of the right type",
-                                                  "key", key,
-                                                  "expected", util::DemangleCppType<T>());
+                throw exception::ModuleCreateException("Module of this key is not of the right type",
+                                                       "modulekey", key,
+                                                       "expectedtype", util::DemangleCppType<T>());
 
             // create the ModulePtr type
             ModulePtr<T> mod(std::move(umbptr));

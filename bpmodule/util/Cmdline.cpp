@@ -7,7 +7,7 @@
 #include "bpmodule/output/Output.hpp"
 #include <cstring>
 #include "bpmodule/util/Cmdline.hpp"
-#include "bpmodule/exception/GeneralException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 namespace {
   int argc_;

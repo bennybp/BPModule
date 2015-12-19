@@ -4,10 +4,9 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/exception/GeneralException.hpp"
 #include "bpmodule/python/Errors.hpp"
 #include "bpmodule/python/Types.hpp"
-
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/python/Pybind11.hpp"
 
 using bpmodule::exception::GeneralException;
@@ -18,7 +17,7 @@ namespace python {
 namespace detail {
 
 
-GeneralException GetPyException(void)
+std::string GetPyException(void)
 {
     try {
         //! \todo Get traceback info?
@@ -36,20 +35,21 @@ GeneralException GetPyException(void)
             std::string extype = GetPyClass(value_obj);
 
             //! \todo runtime error
+            //! \todo check for stuff deriving from std::exception
 
             if(extype == "str")  // type error, etc
                 return value_obj.cast<std::string>();
             else if(extype == "GeneralException") // python version of GeneralException
-                return static_cast<pybind11::object>(value_obj.attr("gex")).cast<GeneralException>();
+                return static_cast<pybind11::object>(value_obj.attr("gex")).cast<GeneralException>().what();
             else
-                return GeneralException("Unknown python exception type", "type", GetPyClass(value_obj));
+                return std::string("Unknown python exception type: ") + GetPyClass(value_obj);
         }
         else
-            return GeneralException("(no error?)");
+            return "(no python error)";
     }
     catch(...)
     {
-        return GeneralException("DEVELOPER ERROR: EXCEPTION THROWN IN GETTING PYTHON EXCEPTION");
+        return "DEVELOPER ERROR: EXCEPTION THROWN IN GETTING PYTHON EXCEPTION";
     }
 }
 

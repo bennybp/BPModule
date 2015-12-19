@@ -1,22 +1,11 @@
 set(BPMODULE_EXCEPTION_FILES
-            GeneralException.cpp
+            Exceptions.cpp
             export.cpp
    )
 
 set(BPMODULE_EXCEPTION_HEADERS
             Assert.hpp
-            GeneralException.hpp
-            MathException.hpp
-            PythonConvertException.hpp
-            PythonCallException.hpp
-            OptionException.hpp
-            ModuleLoadException.hpp
-            ModuleCreateException.hpp
-            ModuleLocatorException.hpp
-            DataStoreException.hpp
-            MoleculeException.hpp
-            BasisSetException.hpp
-            NotYetImplementedException.hpp
+            Exceptions.hpp
    )
 
 
@@ -27,4 +16,4 @@ ADD_SUPERMODULE(exception
            "")
 
 
-INSTALL_COREMODULE(exception "${BPMODULE_EXCEPTION_HEADERS}" "GeneralException.py")
+INSTALL_COREMODULE(exception "${BPMODULE_EXCEPTION_HEADERS}" "Exceptions.py")

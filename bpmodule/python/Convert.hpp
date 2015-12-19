@@ -11,7 +11,7 @@
 #include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/python/Pybind11_stl.hpp"
 #include "bpmodule/python/Errors.hpp"
-#include "bpmodule/exception/PythonConvertException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/exception/Assert.hpp"
 #include "bpmodule/util/Mangle.hpp"
 
@@ -56,7 +56,7 @@ T ConvertToCpp(pybind11::object obj)
 
     if(!ValidConvert<T>(obj))
         throw PythonConvertException("Cannot convert from python to C++: Incompatible types",
-                                     GetPyClass(obj), util::DemangleCppType<T>());
+                                     "fromtype", GetPyClass(obj), "totype", util::DemangleCppType<T>());
 
 
     try {
@@ -65,13 +65,13 @@ T ConvertToCpp(pybind11::object obj)
     catch(const std::exception & ex)
     {
         throw PythonConvertException("Cannot convert from python to C++: Conversion failed",
-                                     GetPyClass(obj), util::DemangleCppType<T>(),
+                                     "fromtype", GetPyClass(obj), "totype", util::DemangleCppType<T>(),
                                      "what", ex.what());
     }
     catch(...)
     {
         throw PythonConvertException("Cannot convert from python to C++: Conversion failed",
-                                     GetPyClass(obj), util::DemangleCppType<T>(),
+                                     "fromtype", GetPyClass(obj), "totype", util::DemangleCppType<T>(),
                                      "what", "unknown exception type");
     }
 }
@@ -100,7 +100,8 @@ pybind11::object ConvertToPy(const T & obj,
         if(!pyobj)
         {
             throw PythonConvertException(detail::GetPyException(),
-                                         util::DemangleCppType<T>(), "python object",
+                                         "when", "in converting from C++ to python",
+                                         "fromtype", util::DemangleCppType<T>(),
                                          "info", "Resulting object pointer is null");
         }
         else
@@ -110,14 +111,13 @@ pybind11::object ConvertToPy(const T & obj,
     catch (const std::exception & ex)
     {
         throw PythonConvertException(ex.what(), 
-                                     util::DemangleCppType<T>(), "python object",
-                                     "info", "In converting from C++ to python object");
+                                     "fromtype", util::DemangleCppType<T>(),
+                                     "when", "in converting from C++ to python");
     }
     catch(...)
     {
-        throw PythonConvertException("Caught unknown exception", 
-                                     util::DemangleCppType<T>(), "python object",
-                                     "info", "In converting from C++ to python object");
+        throw PythonConvertException("Caught unknown exception in converting from C++ to python object", 
+                                     "from type", util::DemangleCppType<T>());
     }
 }
 

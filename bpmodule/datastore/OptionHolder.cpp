@@ -7,7 +7,7 @@
 
 #include "bpmodule/datastore/OptionHolder.hpp"
 #include "bpmodule/python/Call.hpp"
-#include "bpmodule/exception/OptionException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/output/Output.hpp"
 
 using namespace bpmodule::python;
@@ -61,9 +61,9 @@ static OptionIssues ValidatorWrapper_(pybind11::object valobj, const std::string
             return {};
         return python::CallPyFuncAttr<OptionIssues>(valobj, "Validate", value.GetPy());
     }
-    catch(const bpmodule::exception::GeneralException & ex)
+    catch(const std::exception & ex)
     {
-        throw OptionException(ex, key, "when", "Attempting to validate an option");
+        throw OptionException(ex, "optionkey", key, "when", "Attempting to validate an option");
     }
 }
 
@@ -104,12 +104,13 @@ OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
     : OptionHolder(key, required, validator, help, new stored_type(def))
 {
     if(required)
-        throw OptionException("Default value supplied for required option", Key());
+        throw OptionException("Default value supplied for required option", "optionkey", Key());
 
     // check the default using the validator
     OptionIssues iss = GetIssues();
     if(iss.size())
-        throw OptionException("Default value for this option does not pass validation", Key(), "issues", iss);
+        throw OptionException("Default value for this option does not pass validation",
+                              "optionkey", Key(), "issues", iss);
 }
 
 
@@ -154,7 +155,7 @@ OptionHolder<OPTTYPE>::Get(void) const
     else if(default_)
         return *default_;
     else
-        throw OptionException("Option does not have a value", Key());
+        throw OptionException("Option does not have a value", "optionkey", Key());
 }
 
 
@@ -166,7 +167,7 @@ OptionHolder<OPTTYPE>::GetDefault(void) const
     if(default_)
         return *default_;
     else
-        throw OptionException("Option does not have a default", Key());
+        throw OptionException("Option does not have a default", "optionkey", Key());
 }
 
 
@@ -269,9 +270,9 @@ pybind11::object OptionHolder<OPTTYPE>::GetPy(void) const
     try {
         return ConvertToPy(Get());
     }
-    catch(exception::GeneralException & ex)
+    catch(std::exception & ex)
     {
-        throw OptionException(ex, Key());
+        throw OptionException(ex, "optionkey", Key());
     }
 }
 
@@ -284,9 +285,9 @@ void OptionHolder<OPTTYPE>::ChangePy(const pybind11::object & obj)
     try {
         val = ConvertToCpp<stored_type>(obj);
     }
-    catch(exception::GeneralException & ex)
+    catch(std::exception & ex)
     {
-        throw OptionException(ex, Key());
+        throw OptionException(ex, "optionkey", Key());
     }
 
     Change(val);

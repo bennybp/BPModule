@@ -8,14 +8,7 @@
 #ifndef _GUARD_ERRORS_HPP_
 #define _GUARD_ERRORS_HPP_
 
-
-// forward declaration
-namespace bpmodule {
-namespace exception {
-class GeneralException;
-}
-}
-
+#include <string>
 
 namespace bpmodule {
 namespace python {
@@ -26,7 +19,7 @@ namespace detail {
  *
  * Can handle some bpmodule-derived exception classes
  */
-bpmodule::exception::GeneralException GetPyException(void);
+std::string GetPyException(void);
 
 
 

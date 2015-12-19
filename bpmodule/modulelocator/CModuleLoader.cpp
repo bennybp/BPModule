@@ -11,7 +11,7 @@
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/modulelocator/ModuleInfo.hpp"
-#include "bpmodule/exception/ModuleLoadException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
@@ -73,7 +73,8 @@ void CModuleLoader::LoadSO(const std::string & key, const ModuleInfo & minfo)
         // open the module
         if(!handle)
             throw ModuleLoadException("Cannot open SO file",
-                                      sopath, key, mi.name, "dlerror", std::string(dlerror()));
+                                      "path", sopath, "modulekey", key,
+                                      "modulename", mi.name, "dlerror", std::string(dlerror()));
 
         // get the pointer to the GeneratorModule function
         GeneratorFunc fn = reinterpret_cast<GeneratorFunc>(dlsym(handle, "CreateModule"));
@@ -81,7 +82,8 @@ void CModuleLoader::LoadSO(const std::string & key, const ModuleInfo & minfo)
         {
             dlclose(handle);
             throw ModuleLoadException("Cannot find function in SO file",
-                                        sopath, key, mi.name, "dlerror", error);
+                                      "path", sopath, "modulekey", key,
+                                      "modulename", mi.name, "dlerror", error);
         }
 
         output::Success("Successfully opened %1%\n", sopath);

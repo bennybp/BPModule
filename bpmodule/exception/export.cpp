@@ -5,7 +5,7 @@
  */
 
 #include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/exception/GeneralException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 using namespace bpmodule::exception;
 

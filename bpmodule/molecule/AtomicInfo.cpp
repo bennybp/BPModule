@@ -2,7 +2,7 @@
 
 #include "bpmodule/molecule/AtomicInfo.hpp"
 #include "bpmodule/molecule/AtomicInfo_LUT.hpp"
-#include "bpmodule/exception/MoleculeException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 namespace bpmodule {
 namespace molecule {

@@ -11,8 +11,7 @@
 #include <memory>
 
 #include "bpmodule/python/Convert.hpp"
-#include "bpmodule/exception/GeneralException.hpp"
-#include "bpmodule/exception/Assert.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 namespace bpmodule {
 namespace modulebase {

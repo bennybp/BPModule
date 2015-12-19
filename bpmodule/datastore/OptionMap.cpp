@@ -9,7 +9,7 @@
 
 #include "bpmodule/datastore/OptionMap.hpp"
 #include "bpmodule/output/Output.hpp"
-#include "bpmodule/exception/OptionException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 
 using namespace bpmodule::python;
@@ -26,7 +26,13 @@ namespace datastore {
 // Member functions
 ////////////////////////////////////////////////
 
+OptionMap::OptionMap(const std::string & modulekey)
+    : modulekey_(modulekey)
+{ }
+
+
 OptionMap::OptionMap(const OptionMap & rhs)
+    : modulekey_(rhs.modulekey_)
 {
     for(const auto & it : rhs.opmap_)
         opmap_.emplace(it.first, it.second->Clone());
@@ -142,7 +148,8 @@ void OptionMap::Validate(void) const
         if(expert_)
             output::Warning("Expert mode is set for the OptionMap. You're on you're own\n");
         else
-            throw exception::GeneralException("OptionMap is in an invalid state. See above for errors");
+            throw exception::OptionException("OptionMap is in an invalid state. See above for errors",
+                                              "modulekey", modulekey_);
     }
 }
 
@@ -163,7 +170,7 @@ const OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
     if(opmap_.count(key))
         return opmap_.at(key).get();
     else
-        throw OptionException("Key not found", key);
+        throw OptionException("Option key not found", "optionkey", key, "modulekey", modulekey_);
 }
 
 OptionBase * OptionMap::GetOrThrow_(const std::string & key)
@@ -171,7 +178,7 @@ OptionBase * OptionMap::GetOrThrow_(const std::string & key)
     if(opmap_.count(key))
         return opmap_.at(key).get();
     else
-        throw OptionException("Key not found", key);
+        throw OptionException("Option key not found", "optionkey", key, "modulekey", modulekey_);
 }
 
 
@@ -245,7 +252,8 @@ void OptionMap::AddOption(const OptionBase & opt)
 {
     //! \todo insert sanity check for pytype / actual type mapping
     if(HasKey(opt.Key()))
-        throw OptionException("Attempting to add duplicate key", opt.Key(), "module", modulekey_);
+        throw OptionException("Attempting to add duplicate option key",
+                              "optionkey", opt.Key(), "modulekey", modulekey_);
 
     opmap_.emplace(opt.Key(), opt.Clone());
 }
