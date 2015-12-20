@@ -28,6 +28,7 @@ class ModulePtr
         {
             using namespace bpmodule::exception;
 
+            Assert<GeneralException>((bool)holder_, "ModulePtr given a null pointer");
 
             ptr_ = dynamic_cast<T *>(holder_->CppPtr());
             Assert<GeneralException>(ptr_ != nullptr, "ModulePtr not given a holder of the right type");
@@ -66,19 +67,17 @@ class PyModulePtr
         PyModulePtr(std::unique_ptr<detail::ModuleIMPLHolder> && holder)
                   : holder_(holder.release()), obj_(holder_->PythonObject())
         {
-            //! \todo check for null ptr 
+            using namespace bpmodule::exception;
+            Assert<GeneralException>((bool)holder_, "PyModulePtr given a null pointer");
+            Assert<GeneralException>((bool)obj_, "PyModulePtr could not convert to python object");
         }
 
         PyModulePtr(PyModulePtr && rhs) = default;
         PyModulePtr & operator=(PyModulePtr && rhs) = default;
+        PyModulePtr & operator=(const PyModulePtr & rhs) = delete;
 
-        // these are not const since the copy constructor
-        // and operator= for pybind11::object are not const
+        // This must be copyable to be used from python
         PyModulePtr(const PyModulePtr & rhs) = default;
-
-        //! \todo bug in pybind11? must take non-const because obj_::operator= takes non const
-        
-        //PyModulePtr & operator=(const PyModulePtr & rhs) = default;
 
         ~PyModulePtr() = default;
 

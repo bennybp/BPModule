@@ -1,7 +1,6 @@
 set(BPMODULE_DATASTORE_FILES
             UIDPointer.cpp
             RegisterUIDPointer.cpp
-            Wavefunction.cpp
             OptionHolder.cpp
             OptionBase.cpp
             OptionMap.cpp

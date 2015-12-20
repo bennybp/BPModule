@@ -42,7 +42,6 @@ ModuleLocator::ModuleLocator()
 
 ModuleLocator::~ModuleLocator()
 {
-    //! \todo Check if maps are empty?
 }
 
 

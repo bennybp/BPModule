@@ -19,7 +19,6 @@ namespace bpmodule {
 namespace datastore {
 
 
-//! \todo Move to hpp file, then use extern template. Move conversion of arguments to here rather than OptionMap
 
 ///////////////////////////////////////////////////
 // These are the allowed types of OptionHolder
@@ -304,8 +303,6 @@ void OptionHolder<OPTTYPE>::ChangePy(const pybind11::object & obj)
 // Helpers
 //////////////////
 /*! \brief Converts an option value to a string
- *
- * \todo Printing of floating point values
  */
 template<typename T>
 static std::vector<std::string> OptToString_(const T & opt)
@@ -314,8 +311,6 @@ static std::vector<std::string> OptToString_(const T & opt)
 }
 
 /*! \brief Converts an option value to a string
- *
- * \todo Printing of floating point values
  */
 static std::vector<std::string> OptToString_(const std::string & opt)
 {

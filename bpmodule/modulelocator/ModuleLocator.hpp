@@ -18,6 +18,20 @@
 #include "bpmodule/modulelocator/ModulePtr.hpp"
 
 
+// forward declarations
+namespace bpmodule {
+namespace modulelocator {
+class CppModuleLoader;
+
+namespace export_python {
+extern "C" PyObject * PyInit_modulelocator(void);
+}
+}
+}
+// end forward declarations
+
+
+
 namespace bpmodule {
 namespace modulelocator {
 
@@ -158,19 +172,6 @@ class ModuleLocator
         void ClearStore(void);
 
 
-        //! \todo move to protected, make export a friend
-
-        /*! \brief Adds/inserts a module creator to the database
-         *
-         * \throw bpmodule::exception::ModuleLoaderException if the key
-         *        already exists in the database
-         *
-         * \param [in] modulekey A module key
-         * \param [in] func A function that generates the module
-         * \param [in] dfunc A function that deletes the module
-         * \param [in] mi Information about the module
-         */
-        void InsertModule(const ModuleCreationFuncs & cf, const ModuleInfo & mi);
 
 
 
@@ -188,6 +189,23 @@ class ModuleLocator
          */
         void ChangeOptionPy(const std::string & modulekey, const std::string & optkey, pybind11::object value);
 
+
+
+    protected:
+        friend class CppModuleLoader;
+        friend PyObject * export_python::PyInit_modulelocator(void);
+
+        /*! \brief Adds/inserts a module creator to the database
+         *
+         * \throw bpmodule::exception::ModuleLoaderException if the key
+         *        already exists in the database
+         *
+         * \param [in] modulekey A module key
+         * \param [in] func A function that generates the module
+         * \param [in] dfunc A function that deletes the module
+         * \param [in] mi Information about the module
+         */
+        void InsertModule(const ModuleCreationFuncs & cf, const ModuleInfo & mi);
 
 
     private:

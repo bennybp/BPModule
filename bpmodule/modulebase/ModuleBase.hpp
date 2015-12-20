@@ -32,13 +32,11 @@ class OptionMap;
 // for friend
 namespace modulebase {
 namespace export_python {
-extern "C" {
-PyObject * PyInit_modulebase(void);
+extern "C"  PyObject * PyInit_modulebase(void);
 }
 }
 }
 
-}
 // end forward declarations
 
 
@@ -140,12 +138,10 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
 
 
     protected:
-        /* This is the function created by BOOST_PYTHON_MODULE
+        /* This is the function created by the python module exports
          * This is needed to allow protected members to be
          * accessed to derived classes written in python
-         * (alternative is a wrapper class, which is messy in our case)
-         *
-         * //! \todo we now have wrapper classes, but we would have to forward for all classes
+         * (alternative is to forward for all wrapper classes, which can be tedious
          */
         friend PyObject * export_python::PyInit_modulebase(void);
 

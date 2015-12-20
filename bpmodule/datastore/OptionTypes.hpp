@@ -21,7 +21,6 @@ namespace datastore {
 ////////////////////////////////////////////////
 // Storage types for integral and floating point
 ////////////////////////////////////////////////
-//! \todo Arbitrary precision math lib?
 
 //! Integer options are stored as this type
 typedef intmax_t OptionInt;

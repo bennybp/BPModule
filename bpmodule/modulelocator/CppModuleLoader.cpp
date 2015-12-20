@@ -11,8 +11,9 @@
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
+#include "bpmodule/exception/Assert.hpp"
 
-using bpmodule::exception::ModuleLoadException;
+using namespace bpmodule::exception;
 
 
 namespace bpmodule {
@@ -58,7 +59,7 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
     // if so, reuse that handle
     if(handles_.count(sopath) > 0)
     {
-        //! \todo exceptions
+        Assert<GeneralException>(creators_.count(sopath) > 0, "Creators does not have something for an already-loaded SO file");
         cf = creators_.at(sopath);
     }
     else
@@ -68,6 +69,7 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
 
         output::Debug("Looking to open so file: %1%\n", sopath);
         handle = dlopen(sopath.c_str(), RTLD_NOW | RTLD_GLOBAL);
+
         // open the module
         if(!handle)
             throw ModuleLoadException("Cannot open SO file",

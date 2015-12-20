@@ -28,8 +28,8 @@ namespace detail {
 
 void AddCreator_(const char * classname, std::function<pybind11::object(pybind11::object)> func)
 {
-    //! \todo - emplace? Throw if already registered?
-    creators_[classname] = func;
+    // will not overwrite if existing
+    creators_.emplace(classname, func);
 }
  
 

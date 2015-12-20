@@ -55,7 +55,10 @@ class ModuleCreationFuncs
 
         Func GetCreator(const std::string & modulename) const
         {
-            //! \todo exceptions
+            if(!HasCreator(modulename))
+                throw exception::GeneralException("I don't have a creator for this module",
+                                       "modulename", modulename);
+
             return creators_.at(modulename);
         }
 
