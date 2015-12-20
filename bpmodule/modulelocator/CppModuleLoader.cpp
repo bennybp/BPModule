@@ -9,11 +9,9 @@
 
 #include "bpmodule/modulelocator/CppModuleLoader.hpp"
 #include "bpmodule/output/Output.hpp"
-#include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/modulelocator/ModuleInfo.hpp"
+#include "bpmodule/modulelocator/ModuleLocator.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 
-using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
 
 
@@ -42,10 +40,10 @@ CppModuleLoader::~CppModuleLoader()
 
 
 
-void CppModuleLoader::LoadSO(const std::string & key, const ModuleInfo & minfo)
+void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
 {
     // function in the so file
-    typedef CreatorFunctions (*GeneratorFunc)(void);
+    typedef ModuleCreationFuncs (*GeneratorFunc)(void);
 
 
     // may throw
@@ -54,7 +52,7 @@ void CppModuleLoader::LoadSO(const std::string & key, const ModuleInfo & minfo)
     // trailing slash on path should have been added by python scripts
     std::string sopath = mi.path + mi.soname;
 
-    CreatorFunctions cf;
+    ModuleCreationFuncs cf;
 
     // see if the module is loaded
     // if so, reuse that handle
@@ -73,7 +71,7 @@ void CppModuleLoader::LoadSO(const std::string & key, const ModuleInfo & minfo)
         // open the module
         if(!handle)
             throw ModuleLoadException("Cannot open SO file",
-                                      "path", sopath, "modulekey", key,
+                                      "path", sopath, "modulekey", mi.key,
                                       "modulename", mi.name, "dlerror", std::string(dlerror()));
 
         // get the pointer to the GeneratorModule function
@@ -82,7 +80,7 @@ void CppModuleLoader::LoadSO(const std::string & key, const ModuleInfo & minfo)
         {
             dlclose(handle);
             throw ModuleLoadException("Cannot find function in SO file",
-                                      "path", sopath, "modulekey", key,
+                                      "path", sopath, "modulekey", mi.key,
                                       "modulename", mi.name, "dlerror", error);
         }
 
@@ -97,7 +95,7 @@ void CppModuleLoader::LoadSO(const std::string & key, const ModuleInfo & minfo)
     }
 
 
-    mlt_->InsertModule(key, cf, mi); // strong exception guarantee
+    mlt_->InsertModule(cf, mi); // strong exception guarantee
 }
 
 

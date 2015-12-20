@@ -13,6 +13,8 @@
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 
+// Split into hpp and cpp files so we don't have to
+// include ModuleBase.hpp here
 namespace bpmodule {
 namespace modulebase {
 class ModuleBase;
@@ -117,23 +119,11 @@ class PyModuleIMPLHolder : public ModuleIMPLHolder
     public:
         /*! \brief Construct by copying a python object
          */ 
-        PyModuleIMPLHolder(pybind11::object mod)
-            : mod_(mod)
-        { 
-            using namespace bpmodule::exception;
+        PyModuleIMPLHolder(pybind11::object mod);
 
-            Assert<GeneralException>(mod_, "PyModuleIMPLHolder given a null object");
-        }
+        virtual modulebase::ModuleBase * CppPtr(void) const;
 
-        virtual modulebase::ModuleBase * CppPtr(void) const
-        {
-            return python::ConvertToCpp<modulebase::ModuleBase *>(mod_);
-        }
-
-        virtual pybind11::object PythonObject(void) const
-        {
-            return mod_; 
-        }
+        virtual pybind11::object PythonObject(void) const;
 
     private:
         pybind11::object mod_;

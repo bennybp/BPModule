@@ -50,8 +50,8 @@ PYBIND11_PLUGIN(modulelocator)
     .def(pybind11::init<>())
     .def("InsertModule", &ModuleLocator::InsertModule)
     .def("Size", &ModuleLocator::Size)
-    .def("GetKeys", &ModuleLocator::GetKeys)
-    .def("KeyInfo", &ModuleLocator::KeyInfo)
+    .def("GetModuleKeys", &ModuleLocator::GetModuleKeys)
+    .def("ModuleKeyInfo", &ModuleLocator::ModuleKeyInfo)
     .def("PrintInfo", &ModuleLocator::PrintInfo)
     .def("Has", &ModuleLocator::Has)
     .def("TestAll", &ModuleLocator::TestAll)
@@ -80,11 +80,11 @@ PYBIND11_PLUGIN(modulelocator)
     ///////////////////////////////
     // Creation functions
     ///////////////////////////////
-    pybind11::class_<CreatorFunctions>(m, "CreatorFunctions")
+    pybind11::class_<ModuleCreationFuncs>(m, "ModuleCreationFuncs")
     .def(pybind11::init<>())
-    .def("AddPyCreator", &CreatorFunctions::AddPyCreator)
-    .def("HasCreator", &CreatorFunctions::HasCreator)
-    .def("GetCreator", &CreatorFunctions::GetCreator)
+    .def("AddPyCreator", &ModuleCreationFuncs::AddPyCreator)
+    .def("HasCreator", &ModuleCreationFuncs::HasCreator)
+    .def("GetCreator", &ModuleCreationFuncs::GetCreator)
     ;
 
     return m.ptr();

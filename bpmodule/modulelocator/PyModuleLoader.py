@@ -6,13 +6,12 @@ from bpmodule.exception import GeneralException
 class PyModuleLoader:
   def __init__(self, mlt):
     self.mlt = mlt
+    self.loaded = {}
 
-    # TODO - store those already loaded?
-  
-  def LoadPyModule(self, key, func, cppminfo):
+  def LoadPyModule(self, func, cppminfo):
     creators = func()
 
     if not creators.HasCreator(cppminfo.name):
       raise GeneralException("Error - this module cannot create this key", "name", cppminfo.name)
 
-    self.mlt.InsertModule(key, creators, cppminfo)
+    self.mlt.InsertModule(creators, cppminfo)

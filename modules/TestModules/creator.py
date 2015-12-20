@@ -1,10 +1,10 @@
 from . import TestPyModule1
 from . import TestOptions
-from bpmodule.modulelocator import CreatorFunctions
+from bpmodule.modulelocator import ModuleCreationFuncs
 
 
 def CreateModule():
-    cf = CreatorFunctions()
+    cf = ModuleCreationFuncs()
     cf.AddPyCreator("TestPyModule1", TestPyModule1.TestPyModule1)
     cf.AddPyCreator("TestOptions", TestOptions.TestOptions)
     cf.AddPyCreator("TestOptions_int", TestOptions.TestOptions)

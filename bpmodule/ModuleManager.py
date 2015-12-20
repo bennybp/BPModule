@@ -50,8 +50,8 @@ class ModuleManager(modulelocator.ModuleLocator):
         self.paths.append(path)
 
 
-    def LoadModule(self, supermodule, name, key):
-        output.Output("Importing %1% module from supermodule %2% for key %3%\n", name, supermodule, key)
+    def LoadModule(self, supermodule, modulename, modulekey):
+        output.Output("Importing %1% module from supermodule %2% under key %3%\n", modulename, supermodule, modulekey)
 
         try:
             # update the paths
@@ -82,23 +82,23 @@ class ModuleManager(modulelocator.ModuleLocator):
                                              "supermodule", supermodule,
                                              "exception", str(e)) from None
 
-        if not name in m.minfo:
+        if not modulename in m.minfo:
             raise exception.GeneralException("Supermodule doesn't have module!",
                                              "supermodule", supermodule,
-                                             "name", name)
+                                             "modulename", modulename)
 
 
-        minfo = m.minfo[name]
+        minfo = m.minfo[modulename]
 
         path = os.path.dirname(m.__file__) + "/"
 
         output.Output("\n")
-        output.Output("Loading module %1% v%2%\n", name, minfo["version"])
+        output.Output("Loading module %1% v%2%\n", modulename, minfo["version"])
 
         # Create a c++ moduleinfo
         cppminfo = modulelocator.ModuleInfo()
-        cppminfo.key = key
-        cppminfo.name = name
+        cppminfo.key = modulekey
+        cppminfo.name = modulename
         cppminfo.path = path
         cppminfo.type = minfo["type"]
 
@@ -119,13 +119,17 @@ class ModuleManager(modulelocator.ModuleLocator):
 
         # actually load
         if minfo["type"] == "c_module":
-            self.cml.LoadSO(key, cppminfo)
-        elif minfo["type"] == "python_module":  # TODO - check for CreateModule
-            self.pml.LoadPyModule(key, m.CreateModule, cppminfo)
-        output.Debug("Done importing module %1% from %2%\n", key, supermodule)
+            self.cml.LoadSO(cppminfo)
+        elif minfo["type"] == "python_module":
+            if not hasattr(m, "CreateModule"):
+                raise exception.GeneralException("Python supermodule doesn't have a CreateModule function",
+                                                 "supermodule", supermodule)
+
+            self.pml.LoadPyModule(m.CreateModule, cppminfo)
+        output.Debug("Done importing module %1% from %2%\n", modulekey, supermodule)
         output.Output("\n")
 
-        self.modmap[key] = minfo;
+        self.modmap[modulekey] = minfo;
 
 
 

@@ -9,7 +9,7 @@
 #define BPMODULE_GUARD_MODULELOCATOR__CPPMODULELOADER_HPP_
 
 #include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/modulelocator/CreatorFunctions.hpp"
+#include "bpmodule/modulelocator/ModuleCreationFuncs.hpp"
 
 
 namespace bpmodule {
@@ -54,7 +54,7 @@ class CppModuleLoader
          * into the database. If the SO file has already been opened, it will reuse the
          * existing handle.
          *
-         * The key must be unique. An exception is thrown if the key already exists.
+         * The key in the \minfo parameter must be unique. An exception is thrown if the key already exists.
          *
          * \throw bpmodule::exception::ModuleLoadException if there is a problem loading
          *        the module (duplicate key, function doesn't exist, etc)
@@ -67,7 +67,7 @@ class CppModuleLoader
          * \param [in] key The key for this module
          * \param [in] minfo The module information, including the path and name
          */
-        void LoadSO(const std::string & key, const ModuleInfo & minfo);
+        void LoadSO(const ModuleInfo & minfo);
 
 
     private:
@@ -79,7 +79,7 @@ class CppModuleLoader
 
 
         //! Stores all the creators in an SO file
-        std::unordered_map<std::string, CreatorFunctions> creators_;
+        std::unordered_map<std::string, ModuleCreationFuncs> creators_;
 
 };
 

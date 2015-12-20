@@ -14,26 +14,12 @@
 #include "bpmodule/datastore/GraphNodeData.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/modulelocator/CreatorFunctions.hpp"
+#include "bpmodule/modulelocator/ModuleCreationFuncs.hpp"
 #include "bpmodule/modulelocator/ModulePtr.hpp"
 
 
-// forward declarations
-namespace bpmodule {
-
-namespace modulelocator {
-
-template<typename T>
-class ModuleLoaderBase;
-
-class CppModuleLoader;
-}
-}
-// end forward declarations
-
 namespace bpmodule {
 namespace modulelocator {
-
 
 
 
@@ -64,17 +50,17 @@ class ModuleLocator
 
         /*! \brief Returns the keys for all modules in the database
          */
-        std::vector<std::string> GetKeys(void) const;
+        std::vector<std::string> GetModuleKeys(void) const;
 
 
-        /*! \brief Returns the information about a module with a given key
+        /*! \brief Returns the information about a module with a given module key
          *
          * \throw bpmodule::exception::ModuleLocatorException
-         *        if the key doesn't exist in the database
+         *        if the module key doesn't exist in the database
          *
-         * \param [in] key A module key
+         * \param [in] modulekey A module key
          */
-        ModuleInfo KeyInfo(const std::string & key) const;
+        ModuleInfo ModuleKeyInfo(const std::string & modulekeykey) const;
 
 
         
@@ -83,15 +69,12 @@ class ModuleLocator
         void PrintInfo(void) const;
 
 
-        /*! \brief Returns true if a module with the given key exists in the database
+        /*! \brief Returns true if a module with the given module key exists in the database
          *
-         * \param [in] key A module key
+         * \param [in] modulekey A module key
          * \return True if the key exists in the map, false if it doesn't
          */
-        bool Has(const std::string & key) const;
-
-
-
+        bool Has(const std::string & modulekey) const;
 
 
 
@@ -121,19 +104,19 @@ class ModuleLocator
          * \exbasic
          * \todo make strong?
          *
-         * \param [in] key A module key
+         * \param [in] modulekey A module key
          *
          * \return A ScopedModule for an object of the requested type
          */
         template<typename T>
-        ModulePtr<T> GetModule(const std::string & key, unsigned long parentid)
+        ModulePtr<T> GetModule(const std::string & modulekey, unsigned long parentid)
         {
             // may throw
-            std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(key, parentid);
+            std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(modulekey, parentid);
 
             if(!umbptr->IsType<T>())
-                throw exception::ModuleCreateException("Module of this key is not of the right type",
-                                                       "modulekey", key,
+                throw exception::ModuleCreateException("Module for this key is not of the right type",
+                                                       "modulekey", modulekey,
                                                        "expectedtype", util::DemangleCppType<T>());
 
             // create the ModulePtr type
@@ -156,7 +139,7 @@ class ModuleLocator
          *
          * \return The module wrapped in a python object
          */
-        pybind11::object GetModulePy(const std::string & key, unsigned long parentid);
+        pybind11::object GetModulePy(const std::string & modulekey, unsigned long parentid);
 
 
 
@@ -166,6 +149,7 @@ class ModuleLocator
          * Must be run before unloading SOs
          */
         void ClearCache(void);
+
 
         /*! \brief Clears all entries in the module store
          *
@@ -181,38 +165,28 @@ class ModuleLocator
          * \throw bpmodule::exception::ModuleLoaderException if the key
          *        already exists in the database
          *
-         * \exstrong
-         *
-         * \param [in] key A module key
+         * \param [in] modulekey A module key
          * \param [in] func A function that generates the module
          * \param [in] dfunc A function that deletes the module
          * \param [in] mi Information about the module
          */
-        void InsertModule(const std::string & key, const CreatorFunctions & cf, const ModuleInfo & mi);
+        void InsertModule(const ModuleCreationFuncs & cf, const ModuleInfo & mi);
 
 
 
         /*! \brief Change an option for a module
          */
         template<typename T>        
-        void ChangeOption(const std::string & key, const std::string & optkey, const T & value)
+        void ChangeOption(const std::string & modulekey, const std::string & optkey, const T & value)
         {
-            GetOrThrow_(key).mi.options.Change(optkey, value);
+            GetOrThrow_(modulekey).mi.options.Change(optkey, value);
         }
 
 
 
         /*! \brief Change an option via python
          */
-        void ChangeOptionPy(const std::string & key, const std::string & optkey, pybind11::object value);
-
-
-    protected:
-        template<typename T>
-        friend class ModuleLoaderBase;
-
-        friend class CppModuleLoader;
-
+        void ChangeOptionPy(const std::string & modulekey, const std::string & optkey, pybind11::object value);
 
 
 
@@ -223,11 +197,11 @@ class ModuleLocator
         struct StoreEntry
         {
             ModuleInfo mi;             //!< Information for this module
-            ModuleCreatorFunc mc;
+            ModuleCreationFuncs::Func mc; //!< Function to create this module
         };
 
 
-        /*! \brief Actual storage object - maps keys to creation functions
+        /*! \brief Actual storage object - maps module keys to creation functions
          */
         std::unordered_map<std::string, StoreEntry> store_;
 
@@ -246,8 +220,6 @@ class ModuleLocator
         /*! \brief Map of cache data
          *
          * The key is a combination of the module name and version
-         *
-         * \todo is this enough to guarantee uniqueness?
          */
         std::unordered_map<std::string, datastore::CacheData> cachemap_;
 
@@ -257,20 +229,15 @@ class ModuleLocator
          * \throw bpmodule::exception::ModuleLocatorException
          *        if the key doesn't exist
          *
-         * \param [in] key A module key
+         * \param [in] modulekey A module key
          */
-        const StoreEntry & GetOrThrow_(const std::string & key) const;
+        const StoreEntry & GetOrThrow_(const std::string & modulekey) const;
 
 
 
-        /*! \brief Obtain a module or throw exception
-         *
-         * \throw bpmodule::exception::ModuleLocatorException
-         *        if the key doesn't exist
-         *
-         * \param [in] key A module key
+        /*! \copydoc GetOrThrow_
          */
-        StoreEntry & GetOrThrow_(const std::string & key);
+        StoreEntry & GetOrThrow_(const std::string & modulekey);
 
 
         /*! \brief Create a module and its deleter functor
@@ -290,7 +257,7 @@ class ModuleLocator
          *
          */
         std::unique_ptr<detail::ModuleIMPLHolder>
-        CreateModule_(const std::string & key, unsigned long parentid);
+        CreateModule_(const std::string & modulekey, unsigned long parentid);
 
 };
 

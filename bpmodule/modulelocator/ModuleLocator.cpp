@@ -47,17 +47,17 @@ ModuleLocator::~ModuleLocator()
 
 
 
-void ModuleLocator::InsertModule(const std::string & key, const CreatorFunctions & cf, const ModuleInfo & mi)
+void ModuleLocator::InsertModule(const ModuleCreationFuncs & cf, const ModuleInfo & mi)
 {
     auto mc = cf.GetCreator(mi.name);
 
     // add to store
     // but throw if key already exists
-    if(store_.count(key))
+    if(store_.count(mi.key))
         throw ModuleLoadException("Cannot insert module: duplicate key",
-                                  "modulepath", mi.path, "modulekey", key, "modulename", mi.name);
+                                  "modulepath", mi.path, "modulekey", mi.key, "modulename", mi.name);
 
-    store_.emplace(key, StoreEntry{mi, mc});
+    store_.emplace(mi.key, StoreEntry{mi, mc});
 }
 
 
@@ -67,7 +67,7 @@ size_t ModuleLocator::Size(void) const noexcept
 }
 
 
-std::vector<std::string> ModuleLocator::GetKeys(void) const
+std::vector<std::string> ModuleLocator::GetModuleKeys(void) const
 {
     std::vector<std::string> vec;
     vec.reserve(store_.size());
@@ -78,16 +78,16 @@ std::vector<std::string> ModuleLocator::GetKeys(void) const
 
 
 
-bool ModuleLocator::Has(const std::string & key) const
+bool ModuleLocator::Has(const std::string & modulekey) const
 {
-    return store_.count(key);
+    return store_.count(modulekey);
 }
 
 
 
-ModuleInfo ModuleLocator::KeyInfo(const std::string & key) const
+ModuleInfo ModuleLocator::ModuleKeyInfo(const std::string & modulekey) const
 {
-    return GetOrThrow_(key).mi;
+    return GetOrThrow_(modulekey).mi;
 }
 
 
@@ -140,21 +140,21 @@ void ModuleLocator::ClearStore(void)
 }
 
 
-const ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & key) const
+const ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & modulekey) const
 {
-    if(Has(key))
-        return store_.at(key);
+    if(Has(modulekey))
+        return store_.at(modulekey);
     else
-        throw ModuleLocatorException("Missing module key in ModuleLocator", "modulekey", key);
+        throw ModuleLocatorException("Missing module key in ModuleLocator", "modulekey", modulekey);
 }
 
 
-ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & key)
+ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & modulekey)
 {
-    if(Has(key))
-        return store_.at(key);
+    if(Has(modulekey))
+        return store_.at(modulekey);
     else
-        throw ModuleLocatorException("Missing module key in ModuleLocator", "modulekey", key);
+        throw ModuleLocatorException("Missing module key in ModuleLocator", "modulekey", modulekey);
 }
 
 
@@ -162,10 +162,10 @@ ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & key)
 // Module Creation
 /////////////////////////////////////////
 std::unique_ptr<detail::ModuleIMPLHolder>
-ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
+ModuleLocator::CreateModule_(const std::string & modulekey, unsigned long parentid)
 {
     // obtain the creator
-    const StoreEntry & se = GetOrThrow_(key);
+    const StoreEntry & se = GetOrThrow_(modulekey);
 
     // create
     std::unique_ptr<detail::ModuleIMPLHolder> umbptr;
@@ -222,15 +222,16 @@ ModuleLocator::CreateModule_(const std::string & key, unsigned long parentid)
 ////////////////////
 // Python
 ////////////////////
-pybind11::object ModuleLocator::GetModulePy(const std::string & key, unsigned long parentid)
+pybind11::object ModuleLocator::GetModulePy(const std::string & modulekey,
+                                            unsigned long parentid)
 {
-    std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(key, parentid);
+    std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(modulekey, parentid);
     return pybind11::cast(PyModulePtr(std::move(umbptr)));
 }
         
-void ModuleLocator::ChangeOptionPy(const std::string & key, const std::string & optkey, pybind11::object value)
+void ModuleLocator::ChangeOptionPy(const std::string & modulekey, const std::string & optkey, pybind11::object value)
 {
-    GetOrThrow_(key).mi.options.ChangePy(optkey, value);
+    GetOrThrow_(modulekey).mi.options.ChangePy(optkey, value);
 }
 
 

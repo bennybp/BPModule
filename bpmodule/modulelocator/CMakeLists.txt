@@ -1,6 +1,6 @@
 set(BPMODULE_MODULELOCATOR_FILES
             CppModuleLoader.cpp
-            export.cpp
+            ModuleIMPLHolder.cpp
             ModuleInfo.cpp
             ModuleLocator.cpp
             export.cpp
@@ -12,7 +12,7 @@ set(BPMODULE_MODULELOCATOR_HEADERS
             ModuleLocator.hpp
             ModulePtr.hpp
             ModuleIMPLHolder.hpp
-            CreatorFunctions.hpp
+            ModuleCreationFuncs.hpp
    )
 
 

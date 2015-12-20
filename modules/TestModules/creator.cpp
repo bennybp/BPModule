@@ -1,14 +1,14 @@
 #include "TestModule1.hpp"
 #include "TestExtLib.hpp"
 
-using bpmodule::modulelocator::CreatorFunctions;
+using bpmodule::modulelocator::ModuleCreationFuncs;
 
 
 extern "C" {
 
-CreatorFunctions CreateModule(void)
+ModuleCreationFuncs CreateModule(void)
 {
-    CreatorFunctions cf;
+    ModuleCreationFuncs cf;
     cf.AddCppCreator<TestModule1>("TestModule1");
     cf.AddCppCreator<TestExtLib>("TestExtLib");
     return cf;
