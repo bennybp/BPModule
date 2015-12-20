@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(BPModule CXX)
-enable_language(C) # for find_package(LAPACK)
+enable_language(C)
 
 
 #################################
@@ -17,6 +17,7 @@ include("cmake/Tensor.cmake")
 #################################
 # Add the various subdirectories
 #################################
+add_subdirectory(memwatch)
 add_subdirectory(bpmodule)
 
 
