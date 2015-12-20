@@ -1,5 +1,5 @@
-#ifndef _GUARD_CREATORS_HPP_
-#define _GUARD_CREATORS_HPP_
+#ifndef BPMODULE_GUARD_BASISSET__CREATORS_HPP_
+#define BPMODULE_GUARD_BASISSET__CREATORS_HPP_
 
 #include <map>
 #include <vector>

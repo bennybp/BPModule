@@ -1,5 +1,5 @@
-#ifndef _GUARD_CAST_HPP_
-#define _GUARD_CAST_HPP_
+#ifndef BPMODULE_GUARD_MATH__CAST_HPP_
+#define BPMODULE_GUARD_MATH__CAST_HPP_
 
 #include "bpmodule/math/ExactCast.hpp"
 

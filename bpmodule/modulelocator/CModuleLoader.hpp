@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GUARD_CMODULELOADER_HPP_
-#define _GUARD_CMODULELOADER_HPP_
+#ifndef BPMODULE_GUARD_MODULELOCATOR__CMODULELOADER_HPP_
+#define BPMODULE_GUARD_MODULELOCATOR__CMODULELOADER_HPP_
 
 #include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/modulelocator/CreatorFunctions.hpp"

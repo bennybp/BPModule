@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GUARD_OPTIONBASE_HPP_
-#define _GUARD_OPTIONBASE_HPP_
+#ifndef BPMODULE_GUARD_DATASTORE__OPTIONBASE_HPP_
+#define BPMODULE_GUARD_DATASTORE__OPTIONBASE_HPP_
 
 #include <memory>
 #include <string>

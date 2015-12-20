@@ -1,5 +1,5 @@
-#ifndef _GUARD_ATOMICINFO_HPP_
-#define _GUARD_ATOMICINFO_HPP_
+#ifndef BPMODULE_GUARD_MOLECULE__ATOMICINFO_HPP_
+#define BPMODULE_GUARD_MOLECULE__ATOMICINFO_HPP_
 
 #include <vector>
 #include <string>

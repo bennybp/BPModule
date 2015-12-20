@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_OUTPUT_HPP_
-#define _GUARD_OUTPUT_HPP_
+#ifndef BPMODULE_GUARD_OUTPUT__OUTPUT_HPP_
+#define BPMODULE_GUARD_OUTPUT__OUTPUT_HPP_
 
 #include <iostream>
 

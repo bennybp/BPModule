@@ -4,8 +4,8 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef _GUARD_MANGLE_HPP_
-#define _GUARD_MANGLE_HPP_
+#ifndef BPMODULE_GUARD_UTIL__MANGLE_HPP_
+#define BPMODULE_GUARD_UTIL__MANGLE_HPP_
 
 #include <typeinfo>
 

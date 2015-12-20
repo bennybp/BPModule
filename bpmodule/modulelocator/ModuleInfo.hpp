@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GUARD_MODULEINFO_HPP_
-#define _GUARD_MODULEINFO_HPP_
+#ifndef BPMODULE_GUARD_MODULELOCATOR__MODULEINFO_HPP_
+#define BPMODULE_GUARD_MODULELOCATOR__MODULEINFO_HPP_
 
 
 #include "bpmodule/datastore/OptionMap.hpp"

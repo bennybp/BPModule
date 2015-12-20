@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GUARD_MODULEPTR_HPP_
-#define _GUARD_MODULEPTR_HPP_
+#ifndef BPMODULE_GUARD_MODULELOCATOR__MODULEPTR_HPP_
+#define BPMODULE_GUARD_MODULELOCATOR__MODULEPTR_HPP_
 
 #include "bpmodule/modulelocator/ModuleIMPLHolder.hpp"
 

@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GUARD_REGISTERUIDPOINTER_HPP_
-#define _GUARD_REGISTERUIDPOINTER_HPP_
+#ifndef BPMODULE_GUARD_DATASTORE__REGISTERUIDPOINTER_HPP_
+#define BPMODULE_GUARD_DATASTORE__REGISTERUIDPOINTER_HPP_
 
 #include <functional>
 #include "bpmodule/python/Convert.hpp"

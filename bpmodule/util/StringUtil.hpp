@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_STRINGUTIL_HPP_
-#define _GUARD_STRINGUTIL_HPP_
+#ifndef BPMODULE_GUARD_UTIL__STRINGUTIL_HPP_
+#define BPMODULE_GUARD_UTIL__STRINGUTIL_HPP_
 
 #include <vector>
 #include <string>

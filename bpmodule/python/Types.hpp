@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GUARD_TYPES_HPP_
-#define _GUARD_TYPES_HPP_
+#ifndef BPMODULE_GUARD_PYTHON__TYPES_HPP_
+#define BPMODULE_GUARD_PYTHON__TYPES_HPP_
 
 #include <string>
 

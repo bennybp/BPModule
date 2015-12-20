@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_CMDLINE_HPP_
-#define _GUARD_CMDLINE_HPP_
+#ifndef BPMODULE_GUARD_UTIL__CMDLINE_HPP_
+#define BPMODULE_GUARD_UTIL__CMDLINE_HPP_
 
 #include <vector>
 #include <string>

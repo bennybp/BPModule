@@ -15,8 +15,8 @@ CREATED: 2015-10-31 22:40:13.092915
 **************************************************************/
 
 
-#ifndef _GUARD_FACTORIAL_LUT_HPP_
-#define _GUARD_FACTORIAL_LUT_HPP_
+#ifndef BPMODULE_GUARD_MATH__FACTORIAL_LUT_HPP_
+#define BPMODULE_GUARD_MATH__FACTORIAL_LUT_HPP_
 
 
 #include <cstdint>

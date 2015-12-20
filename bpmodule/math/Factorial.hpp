@@ -1,5 +1,5 @@
-#ifndef _GUARD_FACTORIAL_HPP_
-#define _GUARD_FACTORIAL_HPP_
+#ifndef BPMODULE_GUARD_MATH__FACTORIAL_HPP_
+#define BPMODULE_GUARD_MATH__FACTORIAL_HPP_
 
 #include "bpmodule/math/Factorial_LUT.hpp"
 #include "bpmodule/exception/Exceptions.hpp"

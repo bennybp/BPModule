@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GUARD_CONVERT_HPP_
-#define _GUARD_CONVERT_HPP_
+#ifndef BPMODULE_GUARD_PYTHON__CONVERT_HPP_
+#define BPMODULE_GUARD_PYTHON__CONVERT_HPP_
 
 #include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/python/Pybind11_stl.hpp"

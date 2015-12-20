@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_GENERICHOLDER_HPP_
-#define _GUARD_GENERICHOLDER_HPP_
+#ifndef BPMODULE_GUARD_DATASTORE__GENERICHOLDER_HPP_
+#define BPMODULE_GUARD_DATASTORE__GENERICHOLDER_HPP_
 
 #include "bpmodule/util/Mangle.hpp"
 #include "bpmodule/datastore/GenericBase.hpp"

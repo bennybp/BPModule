@@ -1,5 +1,5 @@
-#ifndef _GUARD_PYBIND11_HPP_
-#define _GUARD_PYBIND11_HPP_
+#ifndef BPMODULE_GUARD_PYTHON__PYBIND11_HPP_
+#define BPMODULE_GUARD_PYTHON__PYBIND11_HPP_
 
 #include "bpmodule/pragma.h"
 

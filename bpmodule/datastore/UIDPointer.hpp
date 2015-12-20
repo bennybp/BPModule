@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GUARD_UIDPOINTER_HPP_
-#define _GUARD_UIDPOINTER_HPP_
+#ifndef BPMODULE_GUARD_DATASTORE__UIDPOINTER_HPP_
+#define BPMODULE_GUARD_DATASTORE__UIDPOINTER_HPP_
 
 #include <memory>
 #include <atomic>

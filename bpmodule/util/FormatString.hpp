@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_FORMATSTRING_HPP_
-#define _GUARD_FORMATSTRING_HPP_
+#ifndef BPMODULE_GUARD_UTIL__FORMATSTRING_HPP_
+#define BPMODULE_GUARD_UTIL__FORMATSTRING_HPP_
 
 #include <iostream>
 #include <sstream>

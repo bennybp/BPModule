@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_PARALLEL_HPP_
-#define _GUARD_PARALLEL_HPP_
+#ifndef BPMODULE_GUARD_PARALLEL__PARALLEL_HPP_
+#define BPMODULE_GUARD_PARALLEL__PARALLEL_HPP_
 
 
 //! \todo We need to store multiple communicators, etc

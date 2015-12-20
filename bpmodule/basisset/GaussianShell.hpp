@@ -1,5 +1,5 @@
-#ifndef _GUARD_GAUSSIANSHELL_HPP_
-#define _GUARD_GAUSSIANSHELL_HPP_
+#ifndef BPMODULE_GUARD_BASISSET__GAUSSIANSHELL_HPP_
+#define BPMODULE_GUARD_BASISSET__GAUSSIANSHELL_HPP_
 
 #include <array>
 #include "bpmodule/basisset/NCartesian.hpp"

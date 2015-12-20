@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_TEST_BASE_HPP_
-#define _GUARD_TEST_BASE_HPP_
+#ifndef BPMODULE_GUARD_MODULEBASE__TEST_BASE_HPP_
+#define BPMODULE_GUARD_MODULEBASE__TEST_BASE_HPP_
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
 

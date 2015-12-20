@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GUARD_ERRORS_HPP_
-#define _GUARD_ERRORS_HPP_
+#ifndef BPMODULE_GUARD_PYTHON__ERRORS_HPP_
+#define BPMODULE_GUARD_PYTHON__ERRORS_HPP_
 
 #include <string>
 

@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GUARD_CALL_HPP_
-#define _GUARD_CALL_HPP_
+#ifndef BPMODULE_GUARD_PYTHON__CALL_HPP_
+#define BPMODULE_GUARD_PYTHON__CALL_HPP_
 
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/python/Convert.hpp"
