@@ -11,7 +11,7 @@ class ModuleManager(modulelocator.ModuleLocator):
         super(ModuleManager, self).__init__()
 
         # Main module store and module loaders
-        self.cml = modulelocator.CModuleLoader(self)
+        self.cml = modulelocator.CppModuleLoader(self)
         self.pml = modulelocator.PyModuleLoader(self) 
         self.modmap = {}
 

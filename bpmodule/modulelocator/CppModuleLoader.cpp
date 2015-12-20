@@ -7,7 +7,7 @@
 
 #include <dlfcn.h>
 
-#include "bpmodule/modulelocator/CModuleLoader.hpp"
+#include "bpmodule/modulelocator/CppModuleLoader.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/modulelocator/ModuleInfo.hpp"
@@ -20,13 +20,13 @@ using bpmodule::exception::ModuleLoadException;
 namespace bpmodule {
 namespace modulelocator {
 
-CModuleLoader::CModuleLoader(ModuleLocator * mlt)
+CppModuleLoader::CppModuleLoader(ModuleLocator * mlt)
     : mlt_(mlt)
 { }
 
 
 
-CModuleLoader::~CModuleLoader()
+CppModuleLoader::~CppModuleLoader()
 {
     // delete creator functions
     creators_.clear();
@@ -42,7 +42,7 @@ CModuleLoader::~CModuleLoader()
 
 
 
-void CModuleLoader::LoadSO(const std::string & key, const ModuleInfo & minfo)
+void CppModuleLoader::LoadSO(const std::string & key, const ModuleInfo & minfo)
 {
     // function in the so file
     typedef CreatorFunctions (*GeneratorFunc)(void);

@@ -1,5 +1,5 @@
 set(BPMODULE_MODULELOCATOR_FILES
-            CModuleLoader.cpp
+            CppModuleLoader.cpp
             export.cpp
             ModuleInfo.cpp
             ModuleLocator.cpp
@@ -7,7 +7,7 @@ set(BPMODULE_MODULELOCATOR_FILES
    )
 
 set(BPMODULE_MODULELOCATOR_HEADERS
-            CModuleLoader.hpp
+            CppModuleLoader.hpp
             ModuleInfo.hpp
             ModuleLocator.hpp
             ModulePtr.hpp

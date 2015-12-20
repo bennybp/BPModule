@@ -26,7 +26,7 @@ namespace modulelocator {
 template<typename T>
 class ModuleLoaderBase;
 
-class CModuleLoader;
+class CppModuleLoader;
 }
 }
 // end forward declarations
@@ -211,7 +211,7 @@ class ModuleLocator
         template<typename T>
         friend class ModuleLoaderBase;
 
-        friend class CModuleLoader;
+        friend class CppModuleLoader;
 
 
 

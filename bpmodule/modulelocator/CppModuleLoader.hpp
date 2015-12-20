@@ -5,8 +5,8 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULELOCATOR__CMODULELOADER_HPP_
-#define BPMODULE_GUARD_MODULELOCATOR__CMODULELOADER_HPP_
+#ifndef BPMODULE_GUARD_MODULELOCATOR__CPPMODULELOADER_HPP_
+#define BPMODULE_GUARD_MODULELOCATOR__CPPMODULELOADER_HPP_
 
 #include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/modulelocator/CreatorFunctions.hpp"
@@ -23,25 +23,25 @@ struct ModuleInfo;
 
 /*! \brief Loads C/C++ modules
  */
-class CModuleLoader
+class CppModuleLoader
 {
     public:
 
         /*! \copydoc ModuleLoaderBase::ModuleLoaderBase
          */
-        CModuleLoader(ModuleLocator * mlt);
+        CppModuleLoader(ModuleLocator * mlt);
 
 
         /*! Destructor
          *
          * Deletes all objects and closes all SO file handles
          */
-        ~CModuleLoader();
+        ~CppModuleLoader();
 
-        CModuleLoader(const CModuleLoader & rhs)             = delete;
-        CModuleLoader(CModuleLoader && rhs)                  = delete;
-        CModuleLoader & operator=(const CModuleLoader & rhs) = delete;
-        CModuleLoader & operator=(CModuleLoader && rhs)      = delete;
+        CppModuleLoader(const CppModuleLoader & rhs)             = delete;
+        CppModuleLoader(CppModuleLoader && rhs)                  = delete;
+        CppModuleLoader & operator=(const CppModuleLoader & rhs) = delete;
+        CppModuleLoader & operator=(CppModuleLoader && rhs)      = delete;
 
 
 
