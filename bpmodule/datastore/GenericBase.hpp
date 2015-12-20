@@ -86,13 +86,6 @@ class GenericBase
 };
 
 
-//! A pointer to a generic object
-typedef std::shared_ptr<GenericBase> GenericBasePtr;
-
-
-
-
-
 
 
 } //closing namespace detail

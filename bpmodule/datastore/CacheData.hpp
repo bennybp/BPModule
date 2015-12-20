@@ -30,9 +30,9 @@ class CacheData
         virtual ~CacheData(void) = default;
 
 
-        CacheData(const CacheData & rhs)             = default;
+        CacheData(const CacheData & rhs)             = delete;
         CacheData(CacheData && rhs)                  = default;
-        CacheData & operator=(const CacheData & rhs) = default;
+        CacheData & operator=(const CacheData & rhs) = delete;
         CacheData & operator=(CacheData && rhs)      = default;
 
         size_t CountKey(const std::string & key) const
@@ -173,7 +173,7 @@ class CacheData
         void Set(const std::string & key, const T & value,
                  const OptionMap & opt = OptionMap())
         {
-            Set_(key, detail::GenericBasePtr(new detail::GenericHolder<T>(value)), opt);
+            Set_(key, std::unique_ptr<detail::GenericHolder<T>>(new detail::GenericHolder<T>(value)), opt);
         }
 
 
@@ -194,7 +194,7 @@ class CacheData
         void Take(const std::string & key, T && value,
                   const OptionMap & opt = OptionMap())
         {
-            Set_(key, detail::GenericBasePtr(new detail::GenericHolder<T>(value)), opt);
+            Set_(key, new detail::GenericHolder<T>(value), opt);
         }
 
 
@@ -229,7 +229,7 @@ class CacheData
          */
         struct CacheDataEntry
         {
-            detail::GenericBasePtr value;      //! The stored data
+            std::unique_ptr<detail::GenericBase> value;      //! The stored data
             OptionMap options;        //! Options used for the data
         };
 
@@ -339,17 +339,17 @@ class CacheData
 
 
 
-        /*! \brief Sets the data for a given key via a GenericBasePtr
+        /*! \brief Sets the data for a given key via a pointer
          * 
          * \exstrong
          *
          * \param [in] key Key of the data to set
          * \param [in] value Pointer to the data to set
          */ 
-        void Set_(const std::string & key, detail::GenericBasePtr && value, const OptionMap & opt)
+        void Set_(const std::string & key, std::unique_ptr<detail::GenericBase> && value, const OptionMap & opt)
         {
             // emplace has strong exception guarantee
-            cmap_.emplace(key, CacheDataEntry{value, opt});
+            cmap_.emplace(key, CacheDataEntry{std::move(value), opt});
         }
 
 
