@@ -6,7 +6,7 @@ using bpmodule::modulelocator::ModuleCreationFuncs;
 
 extern "C" {
 
-ModuleCreationFuncs CreateModule(void)
+ModuleCreationFuncs InsertSupermodule(void)
 {
     ModuleCreationFuncs cf;
     cf.AddCppCreator<TestModule1>("TestModule1");

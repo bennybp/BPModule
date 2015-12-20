@@ -3,7 +3,7 @@ from . import TestOptions
 from bpmodule.modulelocator import ModuleCreationFuncs
 
 
-def CreateModule():
+def InsertSupermodule():
     cf = ModuleCreationFuncs()
     cf.AddPyCreator("TestPyModule1", TestPyModule1.TestPyModule1)
     cf.AddPyCreator("TestOptions", TestOptions.TestOptions)

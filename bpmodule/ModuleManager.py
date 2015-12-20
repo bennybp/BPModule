@@ -121,11 +121,11 @@ class ModuleManager(modulelocator.ModuleLocator):
         if minfo["type"] == "c_module":
             self.cml.LoadSO(cppminfo)
         elif minfo["type"] == "python_module":
-            if not hasattr(m, "CreateModule"):
-                raise exception.GeneralException("Python supermodule doesn't have a CreateModule function",
+            if not hasattr(m, "InsertSupermodule"):
+                raise exception.GeneralException("Python supermodule doesn't have a InsertSupermodule function",
                                                  "supermodule", supermodule)
 
-            self.pml.LoadPyModule(m.CreateModule, cppminfo)
+            self.pml.LoadPyModule(m.InsertSupermodule, cppminfo)
         output.Debug("Done importing module %1% from %2%\n", modulekey, supermodule)
         output.Output("\n")
 

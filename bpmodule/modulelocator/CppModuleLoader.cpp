@@ -77,7 +77,7 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
                                       "modulename", mi.name, "dlerror", std::string(dlerror()));
 
         // get the pointer to the GeneratorModule function
-        GeneratorFunc fn = reinterpret_cast<GeneratorFunc>(dlsym(handle, "CreateModule"));
+        GeneratorFunc fn = reinterpret_cast<GeneratorFunc>(dlsym(handle, "InsertSupermodule"));
         if((error = dlerror()) != NULL)
         {
             dlclose(handle);
