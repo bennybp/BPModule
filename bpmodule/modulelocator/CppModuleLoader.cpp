@@ -27,6 +27,9 @@ CppModuleLoader::CppModuleLoader(ModuleLocator * mlt)
 
 CppModuleLoader::~CppModuleLoader()
 {
+    // Finalization function in the so file
+    typedef void (*FinalizeFunc)(void);
+
     // delete creator functions
     creators_.clear();
 
@@ -34,6 +37,19 @@ CppModuleLoader::~CppModuleLoader()
     for(auto it : handles_)
     {
         output::Output("Closing %1%\n", it.first);
+        FinalizeFunc ffn = reinterpret_cast<FinalizeFunc>(dlsym(it.second, "ModuleFinalize"));
+
+        // it's ok if it doesn't exist
+        char const * error;
+        if((error = dlerror()) != NULL)
+            output::Debug("SO file doesn't have finalization function. Skipping\n");
+        else
+        {
+            output::Debug("Running finalization function\n");
+            ffn();
+        }
+
+        // close the so
         dlclose(it.second);
     }
     handles_.clear();
@@ -43,7 +59,10 @@ CppModuleLoader::~CppModuleLoader()
 
 void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
 {
-    // function in the so file
+    // Initializing/Finalizing the so file
+    typedef void (*InitializeFunc)(void);
+    
+    // Function for creating modules
     typedef ModuleCreationFuncs (*GeneratorFunc)(void);
 
 
@@ -76,7 +95,20 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
                                       "path", sopath, "modulekey", mi.key,
                                       "modulename", mi.name, "dlerror", std::string(dlerror()));
 
-        // get the pointer to the GeneratorModule function
+        // 1.) Initialize the supermodule if the function exists
+        InitializeFunc ifn = reinterpret_cast<InitializeFunc>(dlsym(handle, "ModuleInit"));
+        // it's ok if it doesn't exist
+        if((error = dlerror()) != NULL)
+            output::Debug("SO file doesn't have initialization function. Skipping\n");
+        else
+        {
+            output::Debug("Running initialization function\n");
+            ifn();
+        }
+        
+
+
+        // 2.) Module creator generation
         GeneratorFunc fn = reinterpret_cast<GeneratorFunc>(dlsym(handle, "InsertSupermodule"));
         if((error = dlerror()) != NULL)
         {
