@@ -12,6 +12,7 @@
 #include <atomic>
 
 #include "bpmodule/python/Convert.hpp"
+#include "bpmodule/output/Output.hpp"
 
 
 namespace bpmodule {
@@ -194,8 +195,8 @@ public:
      */
     pybind11::object Py__getattr__(const std::string & name)
     {
-        if(!Valid())
-            throw exception::GeneralException("Attempt to dereference null UIDPointer", "type", util::DemangleCppType<T>());
+        if(!pyobj_)
+            throw exception::GeneralException("Attempt to dereference nonexisting python object in UIDPointer", "type", util::DemangleCppType<T>());
 
         pybind11::object * noconst = const_cast<pybind11::object *>(pyobj_.get());
         return noconst->attr(name.c_str());
@@ -209,8 +210,14 @@ private:
 
     void MakePyObj_(void)
     {
+        try {
         pyobj_ = std::make_shared<const pybind11::object>(python::ConvertToPy(data_.get(), 
                                                           pybind11::return_value_policy::reference));
+        }
+        catch(exception::PythonConvertException & ex)
+        {
+            output::Debug("Object can't be converted to python object: %1% -- don't use from python!\n", util::DemangleCppType<T>());
+        }
     }
 };
 

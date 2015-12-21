@@ -42,7 +42,7 @@ pybind11::object MakeUIDPointerPy(const pybind11::object & obj)
 {
     const std::string cn = python::GetPyClass(obj);
     if(!creators_.count(cn))
-        throw PythonConvertException("No handler to create a UIDPointer", cn, "UIDPointer");
+        throw PythonConvertException("No handler to create a UIDPointer", "pyclass", cn);
 
     return creators_.at(cn)(obj);
 }
