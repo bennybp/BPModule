@@ -31,10 +31,10 @@ class ModuleManager(modulelocator.ModuleLocator):
         super(ModuleManager, self).ClearStore()
 
         output.Output("Deleting python modules\n")
+        self.pml.CloseAll()
         del self.pml
 
-        output.Output("Deleting C modules\n")
-        output.Output("Closing C handles\n")
+        output.Output("Deleting C++ modules & closing handles\n")
         del self.cml
 
 
@@ -121,11 +121,7 @@ class ModuleManager(modulelocator.ModuleLocator):
         if minfo["type"] == "c_module":
             self.cml.LoadSO(cppminfo)
         elif minfo["type"] == "python_module":
-            if not hasattr(m, "InsertSupermodule"):
-                raise exception.GeneralException("Python supermodule doesn't have a InsertSupermodule function",
-                                                 "supermodule", supermodule)
-
-            self.pml.LoadPyModule(m.InsertSupermodule, cppminfo)
+            self.pml.LoadPyModule(m, cppminfo)
         output.Debug("Done importing module %1% from %2%\n", modulekey, supermodule)
         output.Output("\n")
 

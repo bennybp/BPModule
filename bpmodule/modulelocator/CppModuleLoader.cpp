@@ -37,15 +37,15 @@ CppModuleLoader::~CppModuleLoader()
     for(auto it : handles_)
     {
         output::Output("Closing %1%\n", it.first);
-        FinalizeFunc ffn = reinterpret_cast<FinalizeFunc>(dlsym(it.second, "ModuleFinalize"));
+        FinalizeFunc ffn = reinterpret_cast<FinalizeFunc>(dlsym(it.second, "FinalizeSupermodule"));
 
         // it's ok if it doesn't exist
         char const * error;
         if((error = dlerror()) != NULL)
-            output::Debug("SO file doesn't have finalization function. Skipping\n");
+            output::Debug("SO file %1% doesn't have finalization function. Skipping\n", it.first);
         else
         {
-            output::Debug("Running finalization function\n");
+            output::Debug("Running finalization function in %1%\n", it.first);
             ffn();
         }
 
@@ -83,6 +83,9 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
     }
     else
     {
+        // first time loading this so file. Load it, get the
+        // creators and run the initialization functions
+
         void * handle;
         char const * error; // for dlerror
 
@@ -96,13 +99,13 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
                                       "modulename", mi.name, "dlerror", std::string(dlerror()));
 
         // 1.) Initialize the supermodule if the function exists
-        InitializeFunc ifn = reinterpret_cast<InitializeFunc>(dlsym(handle, "ModuleInit"));
+        InitializeFunc ifn = reinterpret_cast<InitializeFunc>(dlsym(handle, "InitializeSupermodule"));
         // it's ok if it doesn't exist
         if((error = dlerror()) != NULL)
-            output::Debug("SO file doesn't have initialization function. Skipping\n");
+            output::Debug("SO file %1% doesn't have initialization function. Skipping\n", sopath);
         else
         {
-            output::Debug("Running initialization function\n");
+            output::Debug("Running initialization function in %1%\n", sopath);
             ifn();
         }
         
