@@ -5,13 +5,12 @@
  */ 
 
 
-#ifndef _GUARD_TESTINGBASE_HPP_
-#define _GUARD_TESTINGBASE_HPP_
+#ifndef BPMODULE_GUARD_TESTING__TESTINGBASE_HPP_
+#define BPMODULE_GUARD_TESTING__TESTINGBASE_HPP_
 
 #include <functional>
 
 #include "bpmodule/output/Output.hpp"
-#include "bpmodule/exception/GeneralException.hpp"
 
 
 using bpmodule::output::Output;
@@ -37,11 +36,6 @@ int TestFunc(T func, Targs... Fargs)
 {
     try {
        func(Fargs...); 
-    }
-    catch(const exception::GeneralException & ex)
-    {
-        Debug(ex.ExceptionString());
-        return 1;
     }
     catch(std::exception & ex)
     {
@@ -81,12 +75,6 @@ int TestBoolFunc(T func, Targs... Fargs)
         else
             return 1;
     }
-    catch(const exception::GeneralException & ex)
-    {
-        Debug(ex.ExceptionString());
-        return 1;
-        
-    }
     catch(std::exception & ex)
     {
         Debug(ex.what());
@@ -118,12 +106,6 @@ int TestConstruct(Targs... Fargs)
 {
     try {
        T obj(Fargs...); 
-    }
-    catch(const exception::GeneralException & ex)
-    {
-        Debug(ex.ExceptionString());
-        return 1;
-        
     }
     catch(std::exception & ex)
     {

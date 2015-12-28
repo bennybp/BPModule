@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_TWOELECTRONINTEGRAL_HPP_
-#define _GUARD_TWOELECTRONINTEGRAL_HPP_
+#ifndef BPMODULE_GUARD_MODULEBASE__TWOELECTRONINTEGRAL_HPP_
+#define BPMODULE_GUARD_MODULEBASE__TWOELECTRONINTEGRAL_HPP_
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
 
@@ -24,7 +24,7 @@ class TwoElectronIntegral : public ModuleBase
             : ModuleBase(id)
         { }
 
-        TwoElectronIntegral(PyObject * self, unsigned long id)
+        TwoElectronIntegral(pybind11::object self, unsigned long id)
             : ModuleBase(self, id)
         { }
 
@@ -65,9 +65,9 @@ class TwoElectronIntegral : public ModuleBase
         }
 
 
-        boost::python::object GetBufPy(void)
+        pybind11::object GetBufPy(void)
         {
-            return python_helper::ConvertToPy(GetBuf(), GetIntegralCount());  
+            return python::ConvertToPy(GetBuf(), GetIntegralCount());  
         }
 
 
@@ -104,13 +104,6 @@ class TwoElectronIntegral : public ModuleBase
             return ModuleBase::CallPyMethod<long>("GetIntegralCount_");
         }
         
-
-    private:
-        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
-        {
-            return ModuleBase::MoveToPyObjectHelper_<TwoElectronIntegral>(deleter, this);
-        }
-
 };
 
 } // close namespace modulebase

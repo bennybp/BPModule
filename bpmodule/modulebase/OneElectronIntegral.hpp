@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_ONEELECTRONINTEGRAL_HPP_
-#define _GUARD_ONEELECTRONINTEGRAL_HPP_
+#ifndef BPMODULE_GUARD_MODULEBASE__ONEELECTRONINTEGRAL_HPP_
+#define BPMODULE_GUARD_MODULEBASE__ONEELECTRONINTEGRAL_HPP_
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
 
@@ -24,7 +24,7 @@ class OneElectronIntegral : public ModuleBase
             : ModuleBase(id)
         { }
 
-        OneElectronIntegral(PyObject * self, unsigned long id)
+        OneElectronIntegral(pybind11::object self, unsigned long id)
             : ModuleBase(self, id)
         { }
 
@@ -59,9 +59,9 @@ class OneElectronIntegral : public ModuleBase
         }
 
 
-        boost::python::object GetBufPy(void)
+        pybind11::object GetBufPy(void)
         {
-            return python_helper::ConvertToPy(GetBuf(), GetIntegralCount());  
+            return python::ConvertToPy(GetBuf(), GetIntegralCount());  
         }
 
 
@@ -94,11 +94,6 @@ class OneElectronIntegral : public ModuleBase
             return ModuleBase::CallPyMethod<long>("GetIntegralCount_");
         }
 
-    private:
-        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
-        {
-            return ModuleBase::MoveToPyObjectHelper_<OneElectronIntegral>(deleter, this);
-        }
 
 };
 

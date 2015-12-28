@@ -5,40 +5,35 @@
  */
 
 
-#ifndef _GUARD_MODULELOCATOR_HPP_
-#define _GUARD_MODULELOCATOR_HPP_
+#ifndef BPMODULE_GUARD_MODULELOCATOR__MODULELOCATOR_HPP_
+#define BPMODULE_GUARD_MODULELOCATOR__MODULELOCATOR_HPP_
 
 #include <unordered_map>
 #include <atomic>
 
 #include "bpmodule/datastore/GraphNodeData.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
-#include "bpmodule/modulelocator/ScopedModule.hpp"
-#include "bpmodule/exception/ModuleCreateException.hpp"
-#include "bpmodule/exception/ModuleLocatorException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
+#include "bpmodule/modulelocator/ModuleCreationFuncs.hpp"
+#include "bpmodule/modulelocator/ModulePtr.hpp"
 
 
 // forward declarations
 namespace bpmodule {
-
-namespace modulebase {
-class ModuleBase;
-}
-
 namespace modulelocator {
+class CppModuleLoader;
 
-template<typename T>
-class ModuleLoaderBase;
-
-class CModuleLoader;
-class PyModuleLoader;
+namespace export_python {
+extern "C" PyObject * PyInit_modulelocator(void);
+}
 }
 }
 // end forward declarations
 
+
+
 namespace bpmodule {
 namespace modulelocator {
-
 
 
 
@@ -69,17 +64,17 @@ class ModuleLocator
 
         /*! \brief Returns the keys for all modules in the database
          */
-        std::vector<std::string> GetKeys(void) const;
+        std::vector<std::string> GetModuleKeys(void) const;
 
 
-        /*! \brief Returns the information about a module with a given key
+        /*! \brief Returns the information about a module with a given module key
          *
          * \throw bpmodule::exception::ModuleLocatorException
-         *        if the key doesn't exist in the database
+         *        if the module key doesn't exist in the database
          *
-         * \param [in] key A module key
+         * \param [in] modulekey A module key
          */
-        ModuleInfo KeyInfo(const std::string & key) const;
+        ModuleInfo ModuleKeyInfo(const std::string & modulekeykey) const;
 
 
         
@@ -88,34 +83,12 @@ class ModuleLocator
         void PrintInfo(void) const;
 
 
-        /*! \brief Returns true if a module with the given key exists in the database
+        /*! \brief Returns true if a module with the given module key exists in the database
          *
-         * \param [in] key A module key
+         * \param [in] modulekey A module key
          * \return True if the key exists in the map, false if it doesn't
          */
-        bool Has(const std::string & key) const;
-
-
-
-        /*! \brief Set the options for a module (python version)
-         *
-         * The dictionary has strings for keys and arbitrary data types for
-         * the values
-         *
-         * \throw bpmodule::exception::ModuleLocatorException
-         *        if the key doesn't exist in the database
-         *
-         * \throw bpmodule::exception::OptionException
-         *        if there is a problem converting the options
-         *        or if it is invalid
-         *
-         * \exstrong
-         *
-         *
-         * \param [in] key A module key
-         * \param [in] opt Options to set
-         */
-        void SetOptions(const std::string & key, const boost::python::dict & opt);
+        bool Has(const std::string & modulekey) const;
 
 
 
@@ -145,31 +118,25 @@ class ModuleLocator
          * \exbasic
          * \todo make strong?
          *
-         * \param [in] key A module key
+         * \param [in] modulekey A module key
          *
          * \return A ScopedModule for an object of the requested type
          */
         template<typename T>
-        ScopedModule<T> GetModule(const std::string & key, unsigned long parentid)
+        ModulePtr<T> GetModule(const std::string & modulekey, unsigned long parentid)
         {
             // may throw
-            // CreateModule_ returns a pointer/deleter pair
-            auto mod = CreateModule_(key, parentid);
+            std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(modulekey, parentid);
 
-            T * dptr = dynamic_cast<T *>(mod.first);
-            if(dptr == nullptr)
-            {
-                ModuleInfo mi = store_.at(key).mi;
+            if(!umbptr->IsType<T>())
+                throw exception::ModuleCreateException("Module for this key is not of the right type",
+                                                       "modulekey", modulekey,
+                                                       "expectedtype", util::DemangleCppType<T>());
 
-                throw exception::ModuleCreateException("Bad cast for module", mi.path,
-                                                       key, mi.name, 
-                                                       "fromtype", util::DemangleCppType(mod.first),
-                                                       "totype", util::DemangleCppType<T *>());
-            }
+            // create the ModulePtr type
+            ModulePtr<T> mod(std::move(umbptr));
 
-            ScopedModule<T> ret(dptr, mod.second); // construction shouldn't throw?
-
-            return ret;
+            return mod;
         }
 
 
@@ -184,54 +151,61 @@ class ModuleLocator
          * \exbasic
          * \todo make strong?
          *
-         * \return The module wrapped in a boost::python object
+         * \return The module wrapped in a python object
          */
-        boost::python::object GetModulePy(const std::string & key, unsigned long parentid);
+        pybind11::object GetModulePy(const std::string & modulekey, unsigned long parentid);
 
 
 
 
         /*! \brief Clears all entries in the cache and performs some cleanup
+         * 
+         * Must be run before unloading SOs
          */
         void ClearCache(void);
 
 
+        /*! \brief Clears all entries in the module store
+         *
+         * Must be run before unloading SOs
+         */
+        void ClearStore(void);
+
+
+
+
+
+        /*! \brief Change an option for a module
+         */
+        template<typename T>        
+        void ChangeOption(const std::string & modulekey, const std::string & optkey, const T & value)
+        {
+            GetOrThrow_(modulekey).mi.options.Change(optkey, value);
+        }
+
+
+
+        /*! \brief Change an option via python
+         */
+        void ChangeOptionPy(const std::string & modulekey, const std::string & optkey, pybind11::object value);
+
 
 
     protected:
-        template<typename T>
-        friend class ModuleLoaderBase;
-
-        friend class CModuleLoader;
-        friend class PyModuleLoader;
-
-        //! A function that generates a module derived from ModuleBase
-        typedef std::function<modulebase::ModuleBase *(const std::string &, unsigned long)> ModuleGeneratorFunc;
-
-
-        //! A function that deletes a module (by id)
-        typedef std::function<void(unsigned long)> ModuleRemoverFunc;
-
-
-        //! A deleter function to pass to smart pointers
-        typedef std::function<void(modulebase::ModuleBase *)> DeleterFunc;
-
-
+        friend class CppModuleLoader;
+        friend PyObject * export_python::PyInit_modulelocator(void);
 
         /*! \brief Adds/inserts a module creator to the database
          *
          * \throw bpmodule::exception::ModuleLoaderException if the key
          *        already exists in the database
          *
-         * \exstrong
-         *
-         * \param [in] key A module key
+         * \param [in] modulekey A module key
          * \param [in] func A function that generates the module
          * \param [in] dfunc A function that deletes the module
-         * \param [in] minfo Information about the module
+         * \param [in] mi Information about the module
          */
-        void InsertModule(const std::string & key, ModuleGeneratorFunc func,
-                          ModuleRemoverFunc dfunc, const ModuleInfo & minfo);
+        void InsertModule(const ModuleCreationFuncs & cf, const ModuleInfo & mi);
 
 
     private:
@@ -241,19 +215,13 @@ class ModuleLocator
         struct StoreEntry
         {
             ModuleInfo mi;             //!< Information for this module
-            ModuleGeneratorFunc func;  //!< Function that creates a class from this module
-            ModuleRemoverFunc dfunc;   //!< Function that deletes a class from this module
+            ModuleCreationFuncs::Func mc; //!< Function to create this module
         };
 
 
-        /*! \brief Actual storage object - maps keys to creation functions
+        /*! \brief Actual storage object - maps module keys to creation functions
          */
         std::unordered_map<std::string, StoreEntry> store_;
-
-
-        /*! \brief Map for storing object removal information
-         */
-        std::unordered_map<unsigned long, ModuleRemoverFunc> removemap_;
 
 
         /*! \brief Map for storing created module information
@@ -270,8 +238,6 @@ class ModuleLocator
         /*! \brief Map of cache data
          *
          * The key is a combination of the module name and version
-         *
-         * \todo is this enough to guarantee uniqueness?
          */
         std::unordered_map<std::string, datastore::CacheData> cachemap_;
 
@@ -281,20 +247,15 @@ class ModuleLocator
          * \throw bpmodule::exception::ModuleLocatorException
          *        if the key doesn't exist
          *
-         * \param [in] key A module key
+         * \param [in] modulekey A module key
          */
-        const StoreEntry & GetOrThrow_(const std::string & key) const;
+        const StoreEntry & GetOrThrow_(const std::string & modulekey) const;
 
 
 
-        /*! \brief Obtain a module or throw exception
-         *
-         * \throw bpmodule::exception::ModuleLocatorException
-         *        if the key doesn't exist
-         *
-         * \param [in] key A module key
+        /*! \copydoc GetOrThrow_
          */
-        StoreEntry & GetOrThrow_(const std::string & key);
+        StoreEntry & GetOrThrow_(const std::string & modulekey);
 
 
         /*! \brief Create a module and its deleter functor
@@ -313,38 +274,8 @@ class ModuleLocator
          * \note The calling function is responsible for managing the pointer
          *
          */
-        std::pair<modulebase::ModuleBase *, DeleterFunc>
-        CreateModule_(const std::string & key, unsigned long parentid);
-
-
-        /*! \brief Removes a created module object from storage
-         *
-         * This actually deletes the object, and removes references
-         * to it in various places.
-         *
-         * If the id doesn't exist, nothing will happen.
-         *
-         * \exsafe If an exception is thrown, the module instance is still
-         *         removed from this database.
-         *
-         * \param [in] mb Pointer to the module to remove
-         */
-        void DeleteObject_(modulebase::ModuleBase * mb);
-
-
-        /*! \brief Removes a created module object from storage
-         *
-         * This actually deletes the object, and removes references
-         * to it in various places.
-         *
-         * If the id doesn't exist, nothing will happen.
-         *
-         * \exsafe If an exception is thrown, the module instance is still
-         *         removed from this database.
-         *
-         * \param [in] id ID of the module to remove
-         */
-        void DeleteObject_(unsigned long id);
+        std::unique_ptr<detail::ModuleIMPLHolder>
+        CreateModule_(const std::string & modulekey, unsigned long parentid);
 
 };
 

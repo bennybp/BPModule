@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_GENERICBASE_HPP_
-#define _GUARD_GENERICBASE_HPP_
+#ifndef BPMODULE_GUARD_DATASTORE__GENERICBASE_HPP_
+#define BPMODULE_GUARD_DATASTORE__GENERICBASE_HPP_
 
 #include <memory>
 
@@ -84,13 +84,6 @@ class GenericBase
         }
 
 };
-
-
-//! A pointer to a generic object
-typedef std::shared_ptr<GenericBase> GenericBasePtr;
-
-
-
 
 
 

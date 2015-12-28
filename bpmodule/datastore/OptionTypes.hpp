@@ -5,25 +5,22 @@
  */
 
 
-#ifndef _GUARD_OPTIONTYPES_HPP_
-#define _GUARD_OPTIONTYPES_HPP_
+#ifndef BPMODULE_GUARD_DATASTORE__OPTIONTYPES_HPP_
+#define BPMODULE_GUARD_DATASTORE__OPTIONTYPES_HPP_
 
 
 #include <cstdint>
 
 #include "bpmodule/math/Cast.hpp"
+#include "bpmodule/math/Cast_stl.hpp"
 
 namespace bpmodule {
 namespace datastore {
-namespace detail {
-
-
 
 
 ////////////////////////////////////////////////
 // Storage types for integral and floating point
 ////////////////////////////////////////////////
-//! \todo Arbitrary precision math lib?
 
 //! Integer options are stored as this type
 typedef intmax_t OptionInt;
@@ -34,269 +31,161 @@ typedef long double OptionFloat;
 
 
 
-
-
-///////////////////////////////////////////
-// Valid types for getting/setting options
-///////////////////////////////////////////
-
-/*! \brief Determines if a type is valid for an option
- *
- * The value static member will be true if type T is a valid type
- * for an option, Otherwise it will be false.
- */
-template<typename T>
-struct IsValidType
+////////////////////////////////////////////////
+// Available option types
+////////////////////////////////////////////////
+enum class OptionType
 {
-    // is_arithmetic includes bool
-    static constexpr bool value = (std::is_arithmetic<T>::value || std::is_same<T, std::string>::value);
-};
-
-
-/*! \brief Determines if a vector type is valid for an option
- *
- * The value static member will be true if a vector of type T is a valid
- * type for an option. Otherwise it will be false.
- */
-template<typename T>
-struct IsValidType<std::vector<T>>
-{
-    static constexpr bool value = IsValidType<T>::value;
+    Int, Float, Bool, String,
+    SetInt, SetFloat, SetBool, SetString,
+    ListInt, ListFloat, ListBool, ListString
 };
 
 
 
-
-
-/////////////////////////////////
-// Mapping of Valid types to their
-// corresponding stored types
-////////////////////////////////
-
-/*! \brief Determines the stored type for an option
- *
- * The stored_type typedef will represent the type actually
- * stored for a option given as type T
- *
- * The default is that the stored_type is the same as the given type
- */
-template<typename T, bool = std::is_integral<T>::value, bool = std::is_floating_point<T>::value>
-struct OptionStoreType
+inline const char * OptionTypeToString(OptionType ot)
 {
-    typedef T stored_type;
-};
-
-
-/*! \brief Determines the stored type for an integral option
- *
- * The store_type typedef represents the type stored for all
- * integral options
- */
-template<typename T>
-struct OptionStoreType<T, true, false>
-{
-    typedef OptionInt stored_type;
-};
-
-
-/*! \brief Determines the stored type for a floating point option
- *
- * The store_type typedef represents the type stored
- * for all floating point options
- */
-template<typename T>
-struct OptionStoreType<T, false, true>
-{
-    typedef OptionFloat stored_type;
-};
-
-
-/*! \brief Determines the stored type for a boolean option
- *
- * Bool is stored as bool. This
- * is required so that it isn't stored as an integral type
- * (since std::is_integral<bool>::value is true).
- */
-template<>
-struct OptionStoreType<bool>
-{
-    typedef bool stored_type;
-};
+    switch(ot)
+    {
+        case OptionType::Int:
+            return "Int";
+        case OptionType::Float:
+            return "Float";
+        case OptionType::Bool:
+            return "Bool";
+        case OptionType::String:
+            return "String";
+        case OptionType::ListInt:
+            return "ListInt";
+        case OptionType::ListFloat:
+            return "ListFloat";
+        case OptionType::ListBool:
+            return "ListBool";
+        case OptionType::ListString:
+            return "ListString";
+        case OptionType::SetInt:
+            return "SetInt";
+        case OptionType::SetFloat:
+            return "SetFloat";
+        case OptionType::SetBool:
+            return "SetBool";
+        case OptionType::SetString:
+            return "SetString";
+        default:
+            throw std::logic_error("Undefined OptionType");
+    }
+}
 
 
 
+///////////////////////////////////////
+// Information about an OptionType
+///////////////////////////////////////
+template<OptionType T> struct OptionTypeInfo { };
 
+#define MAKEOPTIONTYPE(OPTTYPE, STOREDTYPE) \
+        template<> struct OptionTypeInfo<OptionType::OPTTYPE> { \
+        typedef STOREDTYPE stored_type; };
+
+MAKEOPTIONTYPE(Int,         OptionInt)
+MAKEOPTIONTYPE(Float,       OptionFloat)
+MAKEOPTIONTYPE(Bool,        bool)
+MAKEOPTIONTYPE(String,      std::string)
+
+MAKEOPTIONTYPE(ListInt,     std::vector<OptionInt>)
+MAKEOPTIONTYPE(ListFloat,   std::vector<OptionFloat>)
+MAKEOPTIONTYPE(ListBool,    std::vector<bool>)
+MAKEOPTIONTYPE(ListString,  std::vector<std::string>)
+
+MAKEOPTIONTYPE(SetInt,      std::set<OptionInt>)
+MAKEOPTIONTYPE(SetFloat,    std::set<OptionFloat>)
+MAKEOPTIONTYPE(SetBool,     std::set<bool>)
+MAKEOPTIONTYPE(SetString,   std::set<std::string>)
+
+
+
+////////////////////////////////////////
+// Mapping of types to the option type
+// Kind of long. Could be replaced with some
+// tag dispatch, but this is probably easier
+// and not that many more lines
+////////////////////////////////////////
+template<typename T> struct OptionTypeMap { static constexpr bool valid = false; };
+
+#define MAPTOOPTIONTYPE(TYPE, OPTTYPE) \
+        template<> struct OptionTypeMap<TYPE> { \
+        static constexpr OptionType opt_type = OptionType::OPTTYPE; \
+        static constexpr bool valid = true; }; \
+        template<> struct OptionTypeMap<std::vector<TYPE>> { \
+        static constexpr OptionType opt_type = OptionType::List##OPTTYPE; \
+        static constexpr bool valid = true; }; \
+        template<> struct OptionTypeMap<std::set<TYPE>> { \
+        static constexpr OptionType opt_type = OptionType::Set##OPTTYPE; \
+        static constexpr bool valid = true; }; \
+
+
+MAPTOOPTIONTYPE(bool,                Bool)
+MAPTOOPTIONTYPE(unsigned char,       Int)
+MAPTOOPTIONTYPE(signed   char,       Int)
+MAPTOOPTIONTYPE(unsigned short,      Int)
+MAPTOOPTIONTYPE(signed   short,      Int)
+MAPTOOPTIONTYPE(unsigned int,        Int)
+MAPTOOPTIONTYPE(signed   int,        Int)
+MAPTOOPTIONTYPE(unsigned long,       Int)
+MAPTOOPTIONTYPE(signed   long,       Int)
+MAPTOOPTIONTYPE(unsigned long long,  Int)
+MAPTOOPTIONTYPE(signed   long long,  Int)
+MAPTOOPTIONTYPE(float,               Float)
+MAPTOOPTIONTYPE(double,              Float)
+MAPTOOPTIONTYPE(long double,         Float)
+MAPTOOPTIONTYPE(std::string,         String)
 
 
 
 
 /////////////////////////////
-// Structures for conversion
+// Conversion
 /////////////////////////////
 
 /*! \brief Converts an option value to/from its stored type
  *
  * Default struct is empty, therefore invalid for use
  */
-template<typename T, bool = std::is_arithmetic<T>::value>
-struct OptionConvert
+template<typename Target, typename Source>
+struct OptionCast
 {
+    // normally we just use numeric_cast
+    // will work for vector types, etc
+    static Target Cast(const Source & s)   {  return math::numeric_cast<Target, Source>(s);  }
 };
 
 
 
-
-////////////////////
-// Arithmetic types
-////////////////////
-/*! \brief Structure used for converting to/from stored option types
+/*! \brief Converts an option value to/from its stored type
  *
- * For arithmetic types. The conversions will use a safe numeric
- * cast that will check for integer overflows and underflows,
- * as well as make sure conversions involving floating point
- * types will not result in a loss of precision.
- *
- * \tparam T The type convert to/from the stored type.
+ * Override for string types
  */
-template<typename T>
-struct OptionConvert<T, true>
+template<>
+struct OptionCast<std::string, std::string>
 {
-    typedef T ret_type;
-    typedef typename OptionStoreType<T>::stored_type stored_type;
-
-    /*! \brief Convert from a stored type to a given type
-     *
-     * \throw bpmodule::exception::MathException if there
-     *        is a problem with the conversion/casting
-     *        (including overflows and underflows)
-     */
-    static ret_type ConvertFromStored(stored_type val)
-    {
-        return math::numeric_cast<ret_type>(val);
-    }
-
-
-    /*! \brief Convert from the given type to its stored type
-     *
-     * \throw bpmodule::exception::MathException if there
-     *        is a problem with the conversion/casting
-     *        (including overflows and underflows)
-     */
-    static stored_type ConvertToStored(ret_type val)
-    {
-        return math::numeric_cast<stored_type>(val);
-    }
+    static std::string Cast(const std::string & s)   {  return s; }
 };
 
-
-///////////////////////////
-// Non-arithmetic types
-// (no conversion)
-///////////////////////////
-/*! \brief Structure used for converting to/from stored option types
- *
- * For non-arithmetic types (no conversion is performed)
- */
-template<typename T>
-struct OptionConvert<T, false>
+template<>
+struct OptionCast<std::vector<std::string>, std::vector<std::string>>
 {
-    typedef T ret_type;
-    typedef T stored_type;
+    static std::vector<std::string> Cast(const std::vector<std::string> & s)   {  return s; }
+};
 
-    /*! \brief Convert from a stored type to a given type
-     */
-    static ret_type ConvertFromStored(stored_type val)
-    {
-        return val;
-    }
-
-    /*! \brief Convert from the given type to its stored type
-     */
-    static stored_type ConvertToStored(ret_type val)
-    {
-        return val;
-    }
+template<>
+struct OptionCast<std::set<std::string>, std::set<std::string>>
+{
+    static std::set<std::string> Cast(const std::set<std::string> & s)   {  return s; }
 };
 
 
 
 
-/////////////////////////////
-// Vector types
-/////////////////////////////
-/*! \brief Structure used for converting to/from stored option types
- *
- * For vector types. Will perform the same conversions as other
- * OptionConvert structures, but element-wise in the vector.
- */
-template<typename T>
-struct OptionConvert<std::vector<T>, false>
-{
-    typedef typename OptionConvert<T>::stored_type  inner_stored_type;
-    typedef          T                              inner_ret_type;
-
-    typedef typename std::vector<inner_stored_type> stored_type;
-    typedef std::vector<T>                          ret_type;
-
-
-    /*! \brief Convert from a stored type to a given type
-     *
-     * \throw bpmodule::exception::MathException if there
-     *        is a problem with the conversion/casting
-     *        (including overflows and underflows)
-     */
-    static ret_type ConvertFromStored(stored_type val)
-    {
-        ret_type ret;
-        ret.reserve(val.size());
-
-        for(auto it = val.begin(); it != val.end(); ++it)
-        {
-            try {
-                ret.push_back(OptionConvert<inner_ret_type>::ConvertFromStored(*it));
-            }
-            catch(exception::MathException & ex)  // catch overflow, etc
-            {
-                ex.AppendInfo("vectorelement", std::distance(val.begin(), it));
-                throw;
-            }
-        }
-
-        return ret;
-    }
-
-
-    /*! \brief Convert from the given type to its stored type
-     *
-     * \throw bpmodule::exception::MathException if there
-     *        is a problem with the conversion/casting
-     *        (including overflows and underflows)
-     */
-    static stored_type ConvertToStored(ret_type val)
-    {
-        stored_type st;
-        st.reserve(val.size());
-
-        for(auto it = val.begin(); it != val.end(); ++it)
-        {
-            try {
-                st.push_back(OptionConvert<inner_stored_type>::ConvertToStored(*it));
-            }
-            catch(exception::MathException & ex)  // catch overflow, etc
-            {
-                ex.AppendInfo("vectorelement", std::distance(val.begin(), it));
-                throw;
-            }
-        }
-
-        return st;
-    }
-};
-
-
-
-
-} // close namespace detail
 } // close namespace datastore
 } // close namespace bpmodule
 

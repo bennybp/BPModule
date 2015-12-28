@@ -1,5 +1,5 @@
-#ifndef _GUARD_NCARTESIAN_HPP_
-#define _GUARD_NCARTESIAN_HPP_
+#ifndef BPMODULE_GUARD_BASISSET__NCARTESIAN_HPP_
+#define BPMODULE_GUARD_BASISSET__NCARTESIAN_HPP_
 
 #include <array>
 #include <algorithm>

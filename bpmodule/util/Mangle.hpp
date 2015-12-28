@@ -4,13 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef _GUARD_MANGLE_HPP_
-#define _GUARD_MANGLE_HPP_
+#ifndef BPMODULE_GUARD_UTIL__MANGLE_HPP_
+#define BPMODULE_GUARD_UTIL__MANGLE_HPP_
 
-#include <string>
 #include <typeinfo>
 
-#include "bpmodule/python_helper/Types.hpp"
+#include "bpmodule/python/Types.hpp"
 
 namespace bpmodule {
 namespace util {
@@ -42,7 +41,7 @@ std::string DemangleCppType(const T & t)
  * For a python object, will return the class name
  */
 template<typename T>
-typename std::enable_if<!std::is_base_of<boost::python::object, T>::value, std::string>::type
+typename std::enable_if<!std::is_base_of<pybind11::object, T>::value, std::string>::type
 DemangleCppOrPyType(const T & t)
 {
     return DemangleCpp(typeid(t).name());
@@ -51,14 +50,11 @@ DemangleCppOrPyType(const T & t)
 
 
 template<typename T>
-typename std::enable_if<std::is_base_of<boost::python::api::object, T>::value, std::string>::type
+typename std::enable_if<std::is_base_of<pybind11::object, T>::value, std::string>::type
 DemangleCppOrPyType(const T & t)
 {
-    return python_helper::GetPyClass(t);
+    return python::GetPyClass(t);
 }
-
-
-
 
 
 /*! \brief Demangle the type of an object

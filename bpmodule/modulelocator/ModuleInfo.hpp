@@ -5,8 +5,8 @@
  */
 
 
-#ifndef _GUARD_MODULEINFO_HPP_
-#define _GUARD_MODULEINFO_HPP_
+#ifndef BPMODULE_GUARD_MODULELOCATOR__MODULEINFO_HPP_
+#define BPMODULE_GUARD_MODULELOCATOR__MODULEINFO_HPP_
 
 
 #include "bpmodule/datastore/OptionMap.hpp"
@@ -29,22 +29,6 @@ struct ModuleInfo
     std::vector<std::string> authors;  //!< Authors of the module
     std::vector<std::string> refs;     //!< References for the module (articles, web pages, etc)
     datastore::OptionMap options;        //!< Options for the module
-
-
-    ModuleInfo(void)                               = default;
-    ModuleInfo(const ModuleInfo & rhs)             = default;
-    ModuleInfo(ModuleInfo && rhs)                  = default;
-
-    ModuleInfo & operator=(const ModuleInfo & rhs) = default;
-    ~ModuleInfo(void)                              = default;
-
-
-    /*! \brief Construct from a python dictionary
-     *
-     * \throw bpmodule::exception::ModuleLocatorException if conversion fails
-     *        or the python dictionary is missing a required field
-     */
-    ModuleInfo(const boost::python::dict & dictionary);
 
 
     /*! \brief Print out this info

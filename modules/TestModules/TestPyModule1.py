@@ -2,7 +2,7 @@ import bpmodule as bp
 
 class TestPyModule1(bp.modulebase.Test_Base):
   def __init__(self, myid):
-    super(TestPyModule1, self).__init__(self, myid)
+    super(TestPyModule1, self).__init__(myid)
 
 
   def RunTest_(self):
@@ -38,7 +38,7 @@ class TestPyModule1(bp.modulebase.Test_Base):
   def CallRunTest_(self, s):
     bp.output.Output("+++ In TestPyModule1: CallRunTest with %1%\n", s)
 
-    tb = self.MLocator().CreateChildModule(s)
+    tb = self.CreateChildModule(s)
     bp.output.Output("  + Obtained scoped module ID %1%\n", tb.ID())
     tb.RunTest()
     bp.output.Output("  + Finished with scoped module %1%. Deleting automatically\n", tb.ID())
@@ -46,6 +46,7 @@ class TestPyModule1(bp.modulebase.Test_Base):
     bp.output.Output("+++Done\n");
 
   def TestThrow_(self):
+    bp.output.Warning("+++ In TestPyModule1: Throwing an exception!\n");
     raise bp.exception.GeneralException("Here in py", "Key", "Some Data")
     #self.Throw("This is a test exception from python")
 
@@ -53,7 +54,7 @@ class TestPyModule1(bp.modulebase.Test_Base):
   def CallThrow_(self, s):
     bp.output.Output("+++ In TestPyModule1: CallRunTest with %1%\n", s)
 
-    tb = self.MLocator().CreateChildModule(s)
+    tb = self.CreateChildModule(s)
     bp.output.Output("  + Obtained scoped module ID %1%\n", tb.ID())
     tb.TestThrow()
 

@@ -4,8 +4,8 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#ifndef _GUARD_WAVEFUNCTION_HPP_
-#define _GUARD_WAVEFUNCTION_HPP_
+#ifndef BPMODULE_GUARD_DATASTORE__WAVEFUNCTION_HPP_
+#define BPMODULE_GUARD_DATASTORE__WAVEFUNCTION_HPP_
 
 #include <memory>
 

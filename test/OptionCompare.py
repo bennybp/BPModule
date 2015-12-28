@@ -32,8 +32,8 @@ def Run():
 
 
         # Construct with some valid data
-        opm1 = bp.options.OptionMap("nomodule", opt1, None)
-        opm2 = bp.options.OptionMap("nomodule", opt2, None)
+        opm1 = bp.datastore.OptionMap("nomodule", opt1, None)
+        opm2 = bp.datastore.OptionMap("nomodule", opt2, None)
         s = "Testing equality"
         same = True
         tester.Test(s, True, bp.testing.PyTestBoolFunc, opm1.Compare, opm1)
@@ -46,8 +46,8 @@ def Run():
                  "test_opt2" : ( "str",   "SomeString",  False, None, "(no help)" ),
                }
 
-        opm1 = bp.options.OptionMap("nomodule", opt1, None)
-        opm2 = bp.options.OptionMap("nomodule", opt2, None)
+        opm1 = bp.datastore.OptionMap("nomodule", opt1, None)
+        opm2 = bp.datastore.OptionMap("nomodule", opt2, None)
         same = False
         tester.Test(s, True, bp.testing.PyTestBoolFunc, opm1.Compare, opm1)
         tester.Test(s, True, bp.testing.PyTestBoolFunc, opm2.Compare, opm2)

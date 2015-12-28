@@ -1,7 +1,5 @@
 #include <bpmodule/output/Output.hpp>
 #include <bpmodule/modulelocator/ModuleLocator.hpp>
-#include <bpmodule/exception/GeneralException.hpp>
-
 #include "TestModule1.hpp"
 
 
@@ -63,7 +61,7 @@ void TestModule1::CallRunTest_(const std::string & other)
 {
     Output("+++ In TestModule1: CallRunTest with %1%\n", other);
 
-    ScopedModule<Test_Base> tb2 = CreateChildModule<Test_Base>(other);
+    ModulePtr<Test_Base> tb2 = CreateChildModule<Test_Base>(other);
     Output("  + Obtained scoped module ID %1%\n", tb2->ID());
     tb2->RunTest();
     Output("  + Finished with scoped module %1%. Deleting automatically\n", tb2->ID());
@@ -87,7 +85,7 @@ void TestModule1::CallThrow_(const std::string & other)
 {
     Output("+++ In TestModule1: CallThrowTest with %1%\n", other);
 
-    ScopedModule<Test_Base> tb2 = CreateChildModule<Test_Base>(other);
+    ModulePtr<Test_Base> tb2 = CreateChildModule<Test_Base>(other);
     Output("  + Obtained scoped module ID %1%\n", tb2->ID());
     tb2->TestThrow();
 

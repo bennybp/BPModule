@@ -1,23 +1,21 @@
 /*! \file
  *
- * \brief Storage of generic data (base class) (header)
+ * \brief Storage of options data (base class) (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
 
-#ifndef _GUARD_OPTIONBASE_HPP_
-#define _GUARD_OPTIONBASE_HPP_
+#ifndef BPMODULE_GUARD_DATASTORE__OPTIONBASE_HPP_
+#define BPMODULE_GUARD_DATASTORE__OPTIONBASE_HPP_
 
 #include <memory>
 #include <string>
 #include <vector>
-#include <typeinfo>
 
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
+#include "bpmodule/python/Pybind11_fwd.hpp"
 
 namespace bpmodule {
 namespace datastore {
-namespace detail {
 
 
 // forward declare class
@@ -47,12 +45,10 @@ class OptionBase
          *
          * \param [in] key The key of this option
          * \param [in] required True if this is a required option
-         * \param [in] pytype The python type of this option
          * \param [in] help A help string for this option
          */
         OptionBase(const std::string & key,
                    bool required,
-                   python_helper::PythonType pytype,
                    const std::string & help);
 
         virtual ~OptionBase() noexcept                  = default;
@@ -71,34 +67,6 @@ class OptionBase
         /*! \brief Create a clone of this object
          */
         virtual OptionBasePtr Clone(void) const = 0;
-
-
-
-        /*! \brief Returns a string representing the type of the stored option
-         *
-         * \exnothrow
-         *
-         * \return A string representing the type (obtained via typeid().name())
-         */
-        virtual const char * Type(void) const noexcept = 0;
-
-
-
-        /*! \brief Returns the std::type_info for the stored option
-         *
-         * \exnothrow
-         *
-         * \return A std::type_info structure representing the stored type
-         */
-        virtual const std::type_info & TypeInfo(void) const noexcept = 0;
-
-
-
-        /*! \brief Returns a string representing the demangled type of the stored option
-         *
-         * \return A string representing the type (obtained via typeid().name(), but demangled)
-         */
-        virtual std::string DemangledType(void) const = 0;
 
 
 
@@ -160,6 +128,13 @@ class OptionBase
         virtual bool Compare(const OptionBase & rhs) const = 0; 
 
 
+        /*! \brief Get the type of this option as a string
+         *
+         * \exnothrow
+         */
+        virtual const char * Type(void) const noexcept = 0;
+
+
 
         /*! \brief Print out information about this option
          */
@@ -171,24 +146,24 @@ class OptionBase
         /////////////////////////////////////////
         // Python-related functions
         /////////////////////////////////////////
-        /*! \brief Return a copy of the value as a boost::python object
+        /*! \brief Return a copy of the value as a python object
          *
          * \throw bpmodule::exception::OptionException
          *        If the value does not exist or cannot
          *        be converted to a python object
          */
-        virtual boost::python::object GetPy(void) const = 0;
+        virtual pybind11::object GetPy(void) const = 0;
 
 
 
-        /*! \brief Change the value via a boost python object
+        /*! \brief Change the value via a python object
          *
          * \throw bpmodule::exception::OptionException
          *        if there is a problem with the python conversion
          *
          *  \exstrong
          */
-        virtual void ChangePy(const boost::python::object & obj) = 0;
+        virtual void ChangePy(const pybind11::object & obj) = 0;
 
 
 
@@ -224,29 +199,6 @@ class OptionBase
 
 
 
-        /*! \brief Determines if the contained type matches a given type
-         *
-         * \exnothrow
-         *
-         * \tparam U The type to compare to
-         *
-         * \return True if the contained object is of type U, false otherwise
-         */
-        template<typename U>
-        bool IsType(void) const noexcept
-        {
-           return typeid(U) == TypeInfo();
-        }
-
-
-
-        /*! \brief Get the python type of this option
-         *
-         * \exnothrow
-         */
-        python_helper::PythonType PyType(void) const noexcept;
-
-
 
         /*! \brief Get the help string for this option
          *
@@ -280,9 +232,6 @@ class OptionBase
         //! Is this option required
         const bool required_;
 
-        //! The python type of this option
-        const python_helper::PythonType pytype_;
-
         //! The help string for this option
         const std::string help_;
 
@@ -295,7 +244,6 @@ class OptionBase
 
 
 
-} //closing namespace detail
 } //closing namespace datastore
 } //closing namespace bpmodule
 

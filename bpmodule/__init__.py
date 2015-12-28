@@ -19,7 +19,7 @@ from . import exception
 # TODO - can we get some order that will work with RTLD_NOW?
 # Probably not - there are circular dependencies
 # (modulelocator and modulebase, for example)
-from . import python_helper
+from . import python
 from . import util
 from . import output
 from . import parallel

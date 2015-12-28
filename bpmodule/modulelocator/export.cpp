@@ -4,18 +4,13 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include <boost/python/module.hpp>
-#include <boost/python/class.hpp>
-#include <boost/python/dict.hpp>
+#include "bpmodule/python/Pybind11_functional.hpp"
 
 // Various components
 #include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/modulelocator/CModuleLoader.hpp"
-#include "bpmodule/modulelocator/PyModuleLoader.hpp"
-
+#include "bpmodule/modulelocator/CppModuleLoader.hpp"
 
 using bpmodule::modulebase::ModuleBase;
-using namespace boost::python;
 
 
 namespace bpmodule {
@@ -23,28 +18,26 @@ namespace modulelocator {
 namespace export_python {
 
 
-////////////////////////////
-// Main boost python part
-////////////////////////////
-
-BOOST_PYTHON_MODULE(modulelocator)
+PYBIND11_PLUGIN(modulelocator)
 {
+    pybind11::module m("modulelocator", "Module loading and location");
+
     //////////////////////
     // ModuleInfo
     //////////////////////
-    // for now, we won't allow initialization from python
-    class_<ModuleInfo>("ModuleInfo", no_init)
+    pybind11::class_<ModuleInfo>(m, "ModuleInfo")
+    .def(pybind11::init<>())
     .def("Print", &ModuleInfo::Print)
-    .def_readonly("key", &ModuleInfo::key)
-    .def_readonly("name", &ModuleInfo::name)
-    .def_readonly("type", &ModuleInfo::type)
-    .def_readonly("path", &ModuleInfo::path)
-    .def_readonly("soname", &ModuleInfo::soname)
-    .def_readonly("version", &ModuleInfo::version)
-    .def_readonly("description", &ModuleInfo::description)
-    .add_property("authors", make_getter(&ModuleInfo::authors, return_value_policy<return_by_value>()))
-    .add_property("refs", make_getter(&ModuleInfo::refs, return_value_policy<return_by_value>()))
-    .add_property("options", make_getter(&ModuleInfo::options, return_value_policy<return_by_value>()))
+    .def_readwrite("key", &ModuleInfo::key)
+    .def_readwrite("name", &ModuleInfo::name)
+    .def_readwrite("type", &ModuleInfo::type)
+    .def_readwrite("path", &ModuleInfo::path)
+    .def_readwrite("soname", &ModuleInfo::soname)
+    .def_readwrite("version", &ModuleInfo::version)
+    .def_readwrite("description", &ModuleInfo::description)
+    .def_readwrite("authors", &ModuleInfo::authors)
+    .def_readwrite("refs", &ModuleInfo::refs)
+    .def_readwrite("options", &ModuleInfo::options)
     ;
      
 
@@ -53,25 +46,48 @@ BOOST_PYTHON_MODULE(modulelocator)
     // Main ModuleLocator and
     // module loaders
     //////////////////////////
-    class_<ModuleLocator, boost::noncopyable>("ModuleLocator")
+    pybind11::class_<ModuleLocator>(m, "ModuleLocator")
+    .def(pybind11::init<>())
+    .def("InsertModule", &ModuleLocator::InsertModule)
     .def("Size", &ModuleLocator::Size)
-    .def("GetKeys", &ModuleLocator::GetKeys)
-    .def("KeyInfo", &ModuleLocator::KeyInfo)
+    .def("GetModuleKeys", &ModuleLocator::GetModuleKeys)
+    .def("ModuleKeyInfo", &ModuleLocator::ModuleKeyInfo)
     .def("PrintInfo", &ModuleLocator::PrintInfo)
     .def("Has", &ModuleLocator::Has)
-    .def("SetOptions", static_cast<void(ModuleLocator::*)(const std::string &, const boost::python::dict &)>(&ModuleLocator::SetOptions))
     .def("TestAll", &ModuleLocator::TestAll)
     .def("ClearCache", &ModuleLocator::ClearCache)
+    .def("ClearStore", &ModuleLocator::ClearStore)
     .def("GetModule", &ModuleLocator::GetModulePy)
+    .def("ChangeOption", &ModuleLocator::ChangeOptionPy)
     ;
 
 
-    class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleLocator *>())
-    .def("LoadSO", static_cast<void(CModuleLoader::*)(const std::string &, const boost::python::dict &)>(&CModuleLoader::LoadSO));
+    pybind11::class_<CppModuleLoader>(m, "CppModuleLoader")
+    .def(pybind11::init<ModuleLocator *>())
+    .def("LoadSO", &CppModuleLoader::LoadSO)
+    ;
 
-    class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleLocator *>())
-    .def("LoadPyModule", static_cast<void(PyModuleLoader::*)(const std::string &, boost::python::object, const boost::python::dict &)>(&PyModuleLoader::LoadPyModule));
 
+    ////////////////////////////////
+    // Pointers, etc
+    ////////////////////////////////
+    pybind11::class_<PyModulePtr>(m, "ModulePtr")
+    .def("__getattr__", &PyModulePtr::Py__getattr__)
+    ;
+
+
+
+    ///////////////////////////////
+    // Creation functions
+    ///////////////////////////////
+    pybind11::class_<ModuleCreationFuncs>(m, "ModuleCreationFuncs")
+    .def(pybind11::init<>())
+    .def("AddPyCreator", &ModuleCreationFuncs::AddPyCreator)
+    .def("HasCreator", &ModuleCreationFuncs::HasCreator)
+    .def("GetCreator", &ModuleCreationFuncs::GetCreator)
+    ;
+
+    return m.ptr();
 }
 
 

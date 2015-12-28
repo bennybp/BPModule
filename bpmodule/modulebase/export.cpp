@@ -5,12 +5,6 @@
  */ 
 
 
-#include <boost/python/module.hpp>
-#include <boost/python/class.hpp>
-#include <boost/python/copy_const_reference.hpp>
-#include <boost/python/return_internal_reference.hpp>
-#include <boost/python/register_ptr_to_python.hpp>
-
 #include "bpmodule/modulebase/All.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
@@ -20,8 +14,6 @@ using bpmodule::modulelocator::ModuleLocator;
 using bpmodule::modulelocator::ModuleInfo;
 using bpmodule::datastore::OptionMap;
 
-using namespace boost::python;
-
 
 
 namespace bpmodule {
@@ -29,57 +21,59 @@ namespace modulebase {
 namespace export_python {
 
 
-BOOST_PYTHON_MODULE(modulebase)
+template<typename T>
+using ModuleBasePtr = std::shared_ptr<T>;
+
+
+PYBIND11_PLUGIN(modulebase)
 {
+    pybind11::module m("modulebase", "Base classes for all modules");
+
     ///////////////////////
     // Module Base classes
     ///////////////////////
-    // python should never derive from ModuleBase, so a constructor should not be needed
-    register_ptr_to_python<boost::shared_ptr<ModuleBase>>();
-
     // CallFunc doesn't need to be exported 
-    class_<ModuleBase, boost::noncopyable>("ModuleBase", no_init)
-    .def("ID", &ModuleBase::ID)
-    .def("Key", &ModuleBase::Key)
-    .def("Name", &ModuleBase::Name)
-    .def("Version", &ModuleBase::Version)
-    .def("Print", &ModuleBase::Print)
-    .def("IsPythonModule", &ModuleBase::IsPythonModule)
-    .def("MLocator", static_cast<ModuleLocator &(ModuleBase::*)(void) const>(&ModuleBase::MLocator), return_internal_reference<>()) 
-    .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), return_internal_reference<>())
-    .def("Wfn", static_cast<datastore::Wavefunction &(ModuleBase::*)(void)>(&ModuleBase::Wfn), return_internal_reference<>())
-    .def("CreateChildModule", &ModuleBase::CreateChildModulePy)
-    .def("Cache", &ModuleBase::Cache, return_internal_reference<>())
-    ;
+    pybind11::class_<ModuleBase, ModuleBasePtr<ModuleBase>> mbase(m, "ModuleBase");
+    mbase.def("ID", &ModuleBase::ID)
+         .def("Key", &ModuleBase::Key)
+         .def("Name", &ModuleBase::Name)
+         .def("Version", &ModuleBase::Version)
+         .def("Print", &ModuleBase::Print)
+         .def("MLocator", static_cast<ModuleLocator &(ModuleBase::*)(void) const>(&ModuleBase::MLocator), pybind11::return_value_policy::reference_internal) 
+         .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), pybind11::return_value_policy::reference_internal)
+         .def("Wfn", static_cast<datastore::Wavefunction &(ModuleBase::*)(void)>(&ModuleBase::Wfn), pybind11::return_value_policy::reference_internal) 
+         .def("CreateChildModule", &ModuleBase::CreateChildModulePy)
+         .def("Cache", &ModuleBase::Cache, pybind11::return_value_policy::reference_internal)
+         ;
 
 
     /////////////////////////
     // Test class
     /////////////////////////
-    register_ptr_to_python<boost::shared_ptr<Test_Base>>();
-
-    class_<Test_Base, bases<ModuleBase>, boost::noncopyable>("Test_Base", init<PyObject *, unsigned long>())
-    .def("RunTest", &Test_Base::RunTest)
-    .def("CallRunTest", &Test_Base::CallRunTest)
-    .def("TestThrow", &Test_Base::TestThrow)
-    .def("CallThrow", &Test_Base::CallThrow)
-    ;
+    pybind11::class_<Test_Base_Py, ModuleBasePtr<Test_Base>> testbase(m, "Test_Base", mbase);
+    testbase.alias<Test_Base>()
+            .def(pybind11::init<unsigned long>())
+            .def("RunTest", &Test_Base::RunTest)
+            .def("CallRunTest", &Test_Base::CallRunTest)
+            .def("TestThrow", &Test_Base::TestThrow)
+            .def("CallThrow", &Test_Base::CallThrow)
+            ;
 
 
     /////////////////////////
     // One electron integral implementation
     /////////////////////////
-    register_ptr_to_python<boost::shared_ptr<OneElectronIntegralIMPL>>();
-
     //! \todo Don't know about from Calculate to python
-    class_<OneElectronIntegralIMPL, bases<ModuleBase>, boost::noncopyable>("OneElectronIntegralIMPL", init<PyObject *, unsigned long>())
-    .def("SetBases", &OneElectronIntegralIMPL::SetBases)
-    .def("Calculate", &OneElectronIntegralIMPL::Calculate)
-    .def("GetIntegralCount", &OneElectronIntegralIMPL::GetIntegralCount)
-    .def("GetBuf", &OneElectronIntegralIMPL::GetBufPy)
-    ;
+    pybind11::class_<OneElectronIntegralIMPL_Py, ModuleBasePtr<OneElectronIntegralIMPL>> oneelimpl(m, "OneElectronIntegralIMPL", mbase);
+    oneelimpl.alias<OneElectronIntegralIMPL>()
+            .def(pybind11::init<unsigned long>())
+            .def("SetBases", &OneElectronIntegralIMPL::SetBases)
+            .def("Calculate", &OneElectronIntegralIMPL::Calculate)
+            .def("GetIntegralCount", &OneElectronIntegralIMPL::GetIntegralCount)
+            .def("GetBuf", &OneElectronIntegralIMPL::GetBufPy)
+            ;
 
-
+/*
     /////////////////////////
     // One electron integral builder
     /////////////////////////
@@ -92,21 +86,21 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("GetIntegralCount", &OneElectronIntegral::GetIntegralCount)
     .def("GetBuf", &OneElectronIntegral::GetBufPy)
     ;
-
+*/
 
     /////////////////////////
     // Two electron integral implementation
     /////////////////////////
-    register_ptr_to_python<boost::shared_ptr<TwoElectronIntegralIMPL>>();
+    pybind11::class_<TwoElectronIntegralIMPL_Py, ModuleBasePtr<TwoElectronIntegralIMPL>> twoelimpl(m, "TwoElectronIntegralIMPL", mbase);
+    twoelimpl.alias<TwoElectronIntegralIMPL>()
+            .def(pybind11::init<unsigned long>())
+            .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
+            .def("Calculate", &TwoElectronIntegralIMPL::Calculate)
+            .def("GetIntegralCount", &TwoElectronIntegralIMPL::GetIntegralCount)
+            .def("GetBuf", &TwoElectronIntegralIMPL::GetBufPy)
+            ;
 
-    class_<TwoElectronIntegralIMPL, bases<ModuleBase>, boost::noncopyable>("TwoElectronIntegralIMPL", init<PyObject *, unsigned long>())
-    .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
-    .def("Calculate", &TwoElectronIntegralIMPL::Calculate)
-    .def("GetIntegralCount", &TwoElectronIntegralIMPL::GetIntegralCount)
-    .def("GetBuf", &TwoElectronIntegralIMPL::GetBufPy)
-    ;
-
-
+/*
     /////////////////////////
     // Two electron integral builder
     /////////////////////////
@@ -118,7 +112,9 @@ BOOST_PYTHON_MODULE(modulebase)
     .def("GetIntegralCount", &TwoElectronIntegral::GetIntegralCount)
     .def("GetBuf", &TwoElectronIntegral::GetBufPy)
     ;
+*/
 
+    return m.ptr();
 }
 
 

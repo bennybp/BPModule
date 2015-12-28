@@ -1,5 +1,5 @@
-#ifndef _GUARD_MINMAX_HPP_
-#define _GUARD_MINMAX_HPP_
+#ifndef BPMODULE_GUARD_MATH__MINMAX_HPP_
+#define BPMODULE_GUARD_MATH__MINMAX_HPP_
 
 #include <algorithm>
 

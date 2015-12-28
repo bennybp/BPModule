@@ -4,15 +4,15 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include <boost/python/dict.hpp>
-#include "bpmodule/python_helper/Call.hpp"
+#include "bpmodule/python/Call.hpp"
 
 
 #include "bpmodule/datastore/OptionMap.hpp"
 #include "bpmodule/output/Output.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 
-using namespace bpmodule::python_helper;
+using namespace bpmodule::python;
 using namespace bpmodule::exception;
 using namespace bpmodule::output;
 
@@ -26,16 +26,17 @@ namespace datastore {
 // Member functions
 ////////////////////////////////////////////////
 
+OptionMap::OptionMap(const std::string & modulekey)
+    : modulekey_(modulekey)
+{ }
+
+
 OptionMap::OptionMap(const OptionMap & rhs)
-    : modulekey_(rhs.modulekey_),
-      expert_(rhs.expert_),
-      lockvalid_(rhs.lockvalid_),
-      wholevalid_(rhs.wholevalid_)
+    : modulekey_(rhs.modulekey_)
 {
     for(const auto & it : rhs.opmap_)
         opmap_.emplace(it.first, it.second->Clone());
 }
-
 
 OptionMap & OptionMap::operator=(const OptionMap & rhs)
 {
@@ -147,7 +148,8 @@ void OptionMap::Validate(void) const
         if(expert_)
             output::Warning("Expert mode is set for the OptionMap. You're on you're own\n");
         else
-            throw exception::GeneralException("OptionMap is in an invalid state. See above for errors");
+            throw exception::OptionException("OptionMap is in an invalid state. See above for errors",
+                                              "modulekey", modulekey_);
     }
 }
 
@@ -163,21 +165,20 @@ std::vector<std::string> OptionMap::AllMissingReq(void) const
 }
 
 
-detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key)
+const OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
 {
     if(opmap_.count(key))
         return opmap_.at(key).get();
     else
-        throw OptionException("Key not found", key);
+        throw OptionException("Option key not found", "optionkey", key, "modulekey", modulekey_);
 }
 
-
-const detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
+OptionBase * OptionMap::GetOrThrow_(const std::string & key)
 {
     if(opmap_.count(key))
         return opmap_.at(key).get();
     else
-        throw OptionException("Key not found", key);
+        throw OptionException("Option key not found", "optionkey", key, "modulekey", modulekey_);
 }
 
 
@@ -190,7 +191,7 @@ OptionMapIssues OptionMap::GetIssues(void) const
 
     for(const auto & it : opmap_)
     {
-        detail::OptionIssues oi = it.second->GetIssues();
+        OptionIssues oi = it.second->GetIssues();
         if(oi.size())
             omi.optissues.emplace(it.first, oi);
     }
@@ -202,13 +203,12 @@ OptionMapIssues OptionMap::GetIssues(void) const
 bool OptionMap::HasIssues(void) const
 {
     OptionMapIssues omi = GetIssues();
-    return (omi.toplevel.size() == 0 && omi.optissues.size() == 0);
+    return (omi.toplevel.size() && omi.optissues.size());
 }
 
 
 bool OptionMap::Compare(const OptionMap & rhs) const
 {
-    //! \todo easier way?
     std::vector<std::string> keys1, keys2;
     for(const auto & it : opmap_)
         keys1.push_back(it.first);
@@ -218,7 +218,7 @@ bool OptionMap::Compare(const OptionMap & rhs) const
         return false;
 
     for(const auto & it : opmap_)
-        if(!(rhs.opmap_.at(it.first)->Compare(*it.second)))
+        if(!(rhs.opmap_.at(it.first)->Compare(*(it.second))))
             return false;
 
     return true;
@@ -227,7 +227,6 @@ bool OptionMap::Compare(const OptionMap & rhs) const
 
 bool OptionMap::CompareSelect(const OptionMap & rhs, const std::vector<std::string> & selection) const
 {
-    //! \todo easier way?
     //! \todo Too strict or not strict enough? What if one doesn't have it but the other doesn't have a value?
     for(const auto & it : selection)
     {
@@ -237,7 +236,7 @@ bool OptionMap::CompareSelect(const OptionMap & rhs, const std::vector<std::stri
 
         // if they both have it
         if(HasKey(it) && rhs.HasKey(it))
-            if(opmap_.at(it)->Compare(*rhs.opmap_.at(it)) == false)
+            if(opmap_.at(it)->Compare(*(rhs.opmap_.at(it))) == false)
                 return false;
 
         // if neither have it that's ok?
@@ -247,148 +246,35 @@ bool OptionMap::CompareSelect(const OptionMap & rhs, const std::vector<std::stri
 }
 
 
-
-/*! \brief Wrap a python function that validates the entire OptionMap
- *
- * Calls python callable function \p func with \p val as the only argument
- *
- * \throw bpmodule::exception::PythonCallException if there is a problem calling
- *        the python function or if the return type can't be converted
- */
-static WholeOptionMapIssues WholeOptValidateWrapper(const boost::python::object & func, const OptionMap & val)
+void OptionMap::AddOption(const OptionBase & opt)
 {
-    try {
-        return CallPyFunc<std::vector<std::string>>(func, val);
-    }
-    catch(PythonCallException & ex)
-    {
-        ex.AppendInfo("when", "while Calling validator function for an option map", "modulekey", val.ModuleKey());
-        throw;
-    }
+    //! \todo insert sanity check for pytype / actual type mapping
+    if(HasKey(opt.Key()))
+        throw OptionException("Attempting to add duplicate option key",
+                              "optionkey", opt.Key(), "modulekey", modulekey_);
+
+    opmap_.emplace(opt.Key(), opt.Clone());
 }
 
 
 
-
-
-//////////////////////////////
-// Python functions
-//////////////////////////////
-OptionMap::OptionMap(const std::string & modulekey, const boost::python::dict & opt, const boost::python::object & wholevalidfunc)
-    : modulekey_(modulekey), expert_(false), lockvalid_(false)
-{
-    boost::python::list keys = opt.keys();
-
-    // shouldn't throw, should it?
-    int keylen = boost::python::extract<int>(keys.attr("__len__")());
-
-    for(int i = 0; i < keylen; i++)
-    {
-        if(DeterminePyType(keys[i]) != python_helper::PythonType::String)
-            throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
-                                  "element", i,
-                                  "pytype", GetPyClass(keys[i]));
-
-
-        std::string key = ConvertToCpp<std::string>(keys[i]);
-
-        // convert to lowercase
-        util::ToLower(key);
-
-
-        // should this ever happen? Keys should be unique in a
-        // python dict
-        if(opmap_.count(key))
-            throw OptionException("Duplicate key on construction", key,
-                                   "element", i);
-
-        // this will throw needed exceptions
-        opmap_.emplace(key, detail::OptionHolderFactory(key, opt[key]));
-    }
-
-    // add whole validator (if it exists)
-    if(DeterminePyType(wholevalidfunc) != python_helper::PythonType::None)
-    {
-        // Don't forget that the method is part of a class
-        // so 1 argument is "self"
-        if(!python_helper::HasCallableAttr(wholevalidfunc, "Validate", 2))
-            throw OptionException("Whole options validator does not have a callable Validate() method taking one argument", "(none)",
-                                  "pytype", GetPyClass(wholevalidfunc));
-
-        wholevalid_ = std::bind(WholeOptValidateWrapper, wholevalidfunc, std::placeholders::_1);
-    }
-
-}
-
-
-
-void OptionMap::ChangePy(const std::string & key, const boost::python::object & obj)
-{
-    detail::OptionBase * ptr = GetOrThrow_(key);
-    ptr->ChangePy(obj);
-
-    if(lockvalid_)
-        Validate();
-}
-
-
-
-void OptionMap::ChangePyDict(const boost::python::dict & opt)
-{
-    using std::swap;
-
-    boost::python::list keys = opt.keys();
-    int keylen = boost::python::extract<int>(keys.attr("__len__")());
-
-    // for strong exception guarantee:
-    // copy the current object, modify that, then swap
-    OptionMap tmp(*this);
-
-    // unlock for the moment. Some intermediate states may not be valid
-    tmp.LockValid(false);
-
-    for(int i = 0; i < keylen; i++)
-    {
-        if(DeterminePyType(keys[i]) != python_helper::PythonType::String)
-            throw OptionException("Key in OptionMap dictionary is not a string", "(unknown)",
-                                  "element", i,
-                                  "pytype", GetPyClass(keys[i]));
-
-
-        std::string key = ConvertToCpp<std::string>(keys[i]);
-
-        // convert to lowercase
-        util::ToLower(key);
-
-
-        if(!tmp.HasKey(key))
-            throw OptionException("Python dictionary has a key that I do not", key, "element", i);
-
-        // may throw
-        tmp.ChangePy(key, opt[key]);
-    }
-
-    // set the validity lock to whatever it is in this OptionMap
-    // (also, will validate if needed)
-    tmp.LockValid(lockvalid_);
-
-    swap(*this, tmp);
-}
-
-
-
-boost::python::object OptionMap::GetPy(const std::string & key) const
+//////////////////////
+// Python
+//////////////////////
+pybind11::object OptionMap::GetPy(const std::string & key) const
 {
     return GetOrThrow_(key)->GetPy();
 }
 
 
-bool OptionMap::CompareSelectPy(const OptionMap & rhs, const boost::python::list & selection) const
+void OptionMap::ChangePy(const std::string & key, pybind11::object obj)
 {
-    //! \todo exceptions
-    return CompareSelect(rhs, ConvertToCpp<std::vector<std::string>>(selection));
-}
+    OptionBase * ptr = GetOrThrow_(key);
+    ptr->ChangePy(obj);
 
+    if(lockvalid_)
+        Validate();
+}
 
 
 

@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief A smart pointer that keeps a unique ID (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
+
 #include <atomic>
 #include <cstddef> // for size_t
 

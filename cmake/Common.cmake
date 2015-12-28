@@ -2,7 +2,6 @@
 # Paths and options for
 # external dependencies
 ############################
-set(BPMODULE_MPI FALSE CACHE BOOL "Use MPI")
 set(BPMODULE_LIBEL_PATH "/usr" CACHE PATH "Path to LibElemental. Should contain include, lib subdirectories")
 
 
@@ -33,9 +32,9 @@ string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 
 
 ############################
-# Find boost (with python3)
+# Find boost headers
 ############################
-find_package(Boost COMPONENTS python3 REQUIRED)
+find_package(Boost REQUIRED)
 
 ############################
 # Find Python libraries

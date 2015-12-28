@@ -1,5 +1,5 @@
-#ifndef _GUARD_ATOM_HPP_
-#define _GUARD_ATOM_HPP_
+#ifndef BPMODULE_GUARD_MOLECULE__ATOM_HPP_
+#define BPMODULE_GUARD_MOLECULE__ATOM_HPP_
 
 #include <array>
 

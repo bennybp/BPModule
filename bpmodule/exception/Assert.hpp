@@ -1,5 +1,5 @@
-#ifndef _GUARD_ASSERT_HPP_
-#define _GUARD_ASSERT_HPP_
+#ifndef BPMODULE_GUARD_EXCEPTION__ASSERT_HPP_
+#define BPMODULE_GUARD_EXCEPTION__ASSERT_HPP_
 
 
 namespace bpmodule {

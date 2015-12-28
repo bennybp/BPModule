@@ -1,45 +1,41 @@
-#ifndef _GUARD_REGISTERUIDPOINTER_HPP_
-#define _GUARD_REGISTERUIDPOINTER_HPP_
+/*! \file
+ *
+ * \brief Registers a UIDPoitner to python (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
+
+#ifndef BPMODULE_GUARD_DATASTORE__REGISTERUIDPOINTER_HPP_
+#define BPMODULE_GUARD_DATASTORE__REGISTERUIDPOINTER_HPP_
 
 #include <functional>
-#include <boost/python/object.hpp>
-#include <boost/python/class.hpp>
-#include <boost/python/return_internal_reference.hpp>
-
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Convert.hpp"
 #include "bpmodule/datastore/UIDPointer.hpp"
-
-
-using namespace boost::python;
 
 
 
 namespace bpmodule {
 namespace datastore {
 
+
 namespace detail {
-
-
-
 
 /*! \brief Adds the type to the python registry
  *
- * in the cpp file
+ * 
  */
-void AddCreator_(const char * classname, std::function<boost::python::object(const boost::python::object)> func);
+void AddCreator_(const char * classname,
+                 std::function<pybind11::object(pybind11::object)> func);
 
-
- 
 
 /*! \brief A helper that creates UIDPointer from the specified type
  */
 template<typename T>
-boost::python::object CreateUIDPointer_(const boost::python::object & obj)
+pybind11::object CreateUIDPointer_(pybind11::object obj)
 {
-    T cobj = python_helper::ConvertToCpp<T>(obj);
-    return boost::python::object(UIDPointer<T>(cobj));
+    T cobj = python::ConvertToCpp<T>(obj);
+    return pybind11::cast(UIDPointer<T>(cobj));
 }
-
 
 
 } // close namespace detail
@@ -48,9 +44,9 @@ boost::python::object CreateUIDPointer_(const boost::python::object & obj)
 
 /*! \brief creates a python object containing a UID pointer
  *
- * The type held within the object must have been registered first
+ * The type held within \p obj must have been registered first
  */
-boost::python::object MakeUIDPointerPy(const boost::python::object & obj);
+pybind11::object MakeUIDPointerPy(const pybind11::object & obj);
 
 
 
@@ -61,20 +57,22 @@ boost::python::object MakeUIDPointerPy(const boost::python::object & obj);
  * To be called from within a python export block
  */
 template<typename T>
-void RegisterUIDPointer(const char * classname)
+void RegisterUIDPointer(pybind11::module & m, const char * classname)
 {
     std::string pyname = std::string("UIDPointer_") + classname;
 
-    class_<UIDPointer<T>>(pyname.c_str(), init<>())
-    .def(init<const T &>())
+    pybind11::class_<UIDPointer<T>>(m, pyname.c_str())
+    .def(pybind11::init<>())
+    .def(pybind11::init<const T &>())
     .def("Valid", &UIDPointer<T>::Valid)
     .def("UID", &UIDPointer<T>::UID)
     .def("Set", &UIDPointer<T>::Set)
-    .def("Get", &UIDPointer<T>::Get, return_internal_reference<>())
+    .def("Get", &UIDPointer<T>::Get, pybind11::return_value_policy::reference_internal)
+    .def("__getattr__", &UIDPointer<T>::Py__getattr__)
     ;
 
     // add it to the factory
-    std::function<boost::python::object(const boost::python::object)> cfunc = std::bind(detail::CreateUIDPointer_<T>, std::placeholders::_1);
+    std::function<pybind11::object(pybind11::object)> cfunc = std::bind(detail::CreateUIDPointer_<T>, std::placeholders::_1);
     detail::AddCreator_(classname, cfunc);
 }
 

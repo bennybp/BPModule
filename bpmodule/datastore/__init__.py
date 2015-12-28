@@ -4,4 +4,5 @@ from .modinfo import *
 from .datastore import *
 
 # Other files
-from .optionvalidate import *
+from .OptionValidators import *
+from .OptionHolderHelper import *

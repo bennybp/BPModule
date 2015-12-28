@@ -5,24 +5,17 @@
  */ 
 
 
-#ifndef _GUARD_OUTPUT_HPP_
-#define _GUARD_OUTPUT_HPP_
+#ifndef BPMODULE_GUARD_OUTPUT__OUTPUT_HPP_
+#define BPMODULE_GUARD_OUTPUT__OUTPUT_HPP_
 
 #include <iostream>
 
 #include "bpmodule/util/FormatString.hpp"
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 
-//! \todo Handle exceptions better? Yes, catch Boost exceptions, print error, and then continue? Update doc and don't forget about FormatStr
 
 namespace bpmodule {
 namespace output {
-
-
-
-
-
 
 
 
@@ -315,15 +308,15 @@ namespace export_python {
 
 /*! \brief Wrap printing functions for use from python
  *
- * This function takes a boost::python list rather than the parameter pack
+ * This function takes a python list rather than the parameter pack
  *
  * \param [in] os Output stream to send the output to
  * \param [in] type The type of output
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-void OutputPy_(std::ostream & os, detail::OutputType type,
-               const std::string & fmt, const boost::python::list & args);
+void Output(std::ostream & os, detail::OutputType type,
+            const std::string & fmt, const std::vector<std::string> & args);
 
 } // close namespace export_python
 

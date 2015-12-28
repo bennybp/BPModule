@@ -9,10 +9,10 @@
 #include <memory>
 #include <cassert>
 
-#include <boost/python/list.hpp>
 
 #include "bpmodule/output/Output.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
+//#include "bpmodule/python/Convert.hpp"
+#include "bpmodule/python/Pybind11.hpp"
 
 
 namespace {
@@ -179,18 +179,6 @@ void Output_(std::ostream & out, OutputType type, const std::string & str)
 } // close namespace detail
 
 
-
-namespace export_python {
-
-//////////////////////////
-// PYTHON FUNCTIONS
-//////////////////////////
-void OutputPy_(std::ostream & os, detail::OutputType type, const std::string & fmt, const boost::python::list & args)
-{
-    detail::Output_(os, type, util::export_python::FormatStringPy(fmt, args));
-}
-
-} // close namespace export_python
 
 
 } // close namespace output

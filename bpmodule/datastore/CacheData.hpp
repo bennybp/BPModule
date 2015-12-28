@@ -5,15 +5,16 @@
  */ 
 
 
-#ifndef _GUARD_CACHEDATA_HPP_
-#define _GUARD_CACHEDATA_HPP_
+#ifndef BPMODULE_GUARD_DATASTORE__CACHEDATA_HPP_
+#define BPMODULE_GUARD_DATASTORE__CACHEDATA_HPP_
 
 #include <map>
 
-#include "bpmodule/exception/DataStoreException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/datastore/GenericHolder.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/python/Convert.hpp"
 #include "bpmodule/datastore/OptionMap.hpp"
+
 //! \todo split out python stuff?
 
 
@@ -29,9 +30,9 @@ class CacheData
         virtual ~CacheData(void) = default;
 
 
-        CacheData(const CacheData & rhs)             = default;
+        CacheData(const CacheData & rhs)             = delete;
         CacheData(CacheData && rhs)                  = default;
-        CacheData & operator=(const CacheData & rhs) = default;
+        CacheData & operator=(const CacheData & rhs) = delete;
         CacheData & operator=(CacheData && rhs)      = default;
 
         size_t CountKey(const std::string & key) const
@@ -59,9 +60,9 @@ class CacheData
 
         bool HasKeyPy(const std::string & key,
                       const OptionMap & opt = OptionMap(),
-                      const boost::python::list & sigopt = boost::python::list()) const
+                      pybind11::list sigopt = pybind11::list()) const
         {
-            return HasKey(key, opt, python_helper::ConvertToCpp<std::vector<std::string>>(sigopt));
+            return HasKey(key, opt, python::ConvertToCpp<std::vector<std::string>>(sigopt));
         }
 
 
@@ -117,13 +118,12 @@ class CacheData
         }
 
 
-        //! \todo Does returning a reference to a python object make sense?
-        const boost::python::object & GetRefPy(const std::string & key,
-                                               const OptionMap & opt = OptionMap(),
-                                               const boost::python::list & sigopt = boost::python::list()) const
+        pybind11::object GetRefPy(const std::string & key,
+                                  const OptionMap & opt = OptionMap(),
+                                  pybind11::list sigopt = pybind11::list()) const
         {
-            return GetRef<boost::python::object>(key, opt,
-                                                 python_helper::ConvertToCpp<std::vector<std::string>>(sigopt));
+            return GetRef<pybind11::object>(key, opt,
+                                            python::ConvertToCpp<std::vector<std::string>>(sigopt));
         }
 
 
@@ -147,12 +147,12 @@ class CacheData
 
 
 
-        boost::python::object GetCopyPy(const std::string & key,
-                                        const OptionMap & opt = OptionMap(),
-                                        const boost::python::list & sigopt = boost::python::list()) const
+        pybind11::object GetCopyPy(const std::string & key,
+                                   const OptionMap & opt = OptionMap(),
+                                   pybind11::list sigopt = pybind11::list()) const
         {
-            return GetRef<boost::python::object>(key, opt,
-                                                 python_helper::ConvertToCpp<std::vector<std::string>>(sigopt));
+            return GetRef<pybind11::object>(key, opt,
+                                            python::ConvertToCpp<std::vector<std::string>>(sigopt));
         }
 
 
@@ -173,7 +173,15 @@ class CacheData
         void Set(const std::string & key, const T & value,
                  const OptionMap & opt = OptionMap())
         {
-            Set_(key, detail::GenericBasePtr(new detail::GenericHolder<T>(value)), opt);
+            Set_(key, std::unique_ptr<detail::GenericHolder<T>>(new detail::GenericHolder<T>(value)), opt);
+        }
+
+
+
+        void SetPy(const std::string & key, pybind11::object value,
+                   const OptionMap & opt = OptionMap())
+        {
+            Set(key, value, opt);
         }
 
 
@@ -186,7 +194,7 @@ class CacheData
         void Take(const std::string & key, T && value,
                   const OptionMap & opt = OptionMap())
         {
-            Set_(key, detail::GenericBasePtr(new detail::GenericHolder<T>(value)), opt);
+            Set_(key, new detail::GenericHolder<T>(value), opt);
         }
 
 
@@ -221,7 +229,7 @@ class CacheData
          */
         struct CacheDataEntry
         {
-            detail::GenericBasePtr value;      //! The stored data
+            std::unique_ptr<detail::GenericBase> value;      //! The stored data
             OptionMap options;        //! Options used for the data
         };
 
@@ -267,12 +275,10 @@ class CacheData
                     }
                 }
 
-                throw exception::DataStoreException("Key with these options not found", key,
-                                                    "location", "CacheData");
+                throw exception::DataStoreException("Key with these options not found in CacheData", "key", key);
             }
             else
-                throw exception::DataStoreException("Key not found", key,
-                                                    "location", "CacheData");
+                throw exception::DataStoreException("Key not found in CacheData", "key", key);
         }
 
 
@@ -299,12 +305,10 @@ class CacheData
                     }
                 }
 
-                throw exception::DataStoreException("Key with these options not found", key,
-                                                    "location", "CacheData");
+                throw exception::DataStoreException("Key with these options not found in CacheData", "key", key);
             }
             else
-                throw exception::DataStoreException("Key not found", key,
-                                                    "location", "CacheData");
+                throw exception::DataStoreException("Key not found in CacheData", "key", key);
         }
 
 
@@ -326,8 +330,7 @@ class CacheData
             const CacheDataEntry & pme = GetOrThrow_(key, opt, sigopt);
             const detail::GenericHolder<T> * ph = dynamic_cast<const detail::GenericHolder<T> *>(pme.value.get());
             if(ph == nullptr)
-                throw exception::DataStoreException("Bad cast", key,
-                                                    "location", "CacheData",
+                throw exception::DataStoreException("Bad cast in CacheData", "key", key,
                                                     "fromtype", pme.value->Type(),
                                                     "totype", typeid(T).name()); 
 
@@ -336,17 +339,17 @@ class CacheData
 
 
 
-        /*! \brief Sets the data for a given key via a GenericBasePtr
+        /*! \brief Sets the data for a given key via a pointer
          * 
          * \exstrong
          *
          * \param [in] key Key of the data to set
          * \param [in] value Pointer to the data to set
          */ 
-        void Set_(const std::string & key, detail::GenericBasePtr && value, const OptionMap & opt)
+        void Set_(const std::string & key, std::unique_ptr<detail::GenericBase> && value, const OptionMap & opt)
         {
             // emplace has strong exception guarantee
-            cmap_.emplace(key, CacheDataEntry{value, opt});
+            cmap_.emplace(key, CacheDataEntry{std::move(value), opt});
         }
 
 

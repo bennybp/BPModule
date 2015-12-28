@@ -1,18 +1,18 @@
 set(BPMODULE_MODULELOCATOR_FILES
-            CModuleLoader.cpp
-            export.cpp
+            CppModuleLoader.cpp
+            ModuleIMPLHolder.cpp
             ModuleInfo.cpp
             ModuleLocator.cpp
-            PyModuleLoader.cpp
             export.cpp
    )
 
 set(BPMODULE_MODULELOCATOR_HEADERS
-            ScopedModule.hpp
-            CModuleLoader.hpp
+            CppModuleLoader.hpp
             ModuleInfo.hpp
             ModuleLocator.hpp
-            PyModuleLoader.hpp
+            ModulePtr.hpp
+            ModuleIMPLHolder.hpp
+            ModuleCreationFuncs.hpp
    )
 
 
@@ -22,4 +22,4 @@ ADD_SUPERMODULE(modulelocator
            ""
            "")
 
-INSTALL_COREMODULE(modulelocator "${BPMODULE_MODULELOCATOR_HEADERS}" "")
+INSTALL_COREMODULE(modulelocator "${BPMODULE_MODULELOCATOR_HEADERS}" "PyModuleLoader.py")

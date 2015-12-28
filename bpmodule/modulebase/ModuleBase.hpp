@@ -5,15 +5,15 @@
  */
 
 
-#ifndef _GUARD_MODULEBASE_HPP_
-#define _GUARD_MODULEBASE_HPP_
+#ifndef BPMODULE_GUARD_MODULEBASE__MODULEBASE_HPP_
+#define BPMODULE_GUARD_MODULEBASE__MODULEBASE_HPP_
 
 #include <string>
-#include <boost/shared_ptr.hpp> //! \todo May be able to use std::shared_ptr instead with some workarounds
 
-#include "bpmodule/exception/GeneralException.hpp"
-#include "bpmodule/python_helper/Call.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/modulelocator/ModuleLocator.hpp"
+#include "bpmodule/util/FormatString.hpp"
+#include "bpmodule/python/Call.hpp"
 
 
 // forward declarations
@@ -32,11 +32,11 @@ class OptionMap;
 // for friend
 namespace modulebase {
 namespace export_python {
-void init_module_modulebase(void);
+extern "C"  PyObject * PyInit_modulebase(void);
+}
 }
 }
 
-}
 // end forward declarations
 
 
@@ -49,17 +49,13 @@ namespace modulebase {
  * This class is in charge of doing some common things (ie, storing options). All
  * modules will ultimately derive from this.
  */
-class ModuleBase
+class ModuleBase : public std::enable_shared_from_this<ModuleBase>
 {
     public:
 
         /*! \brief Constructor
          */
-        ModuleBase(unsigned long id);
-
-        /*! \brief Constructor for python
-         */
-        ModuleBase(PyObject * self, unsigned long id);
+        ModuleBase(unsigned long id, const char * modtype);
 
 
         virtual ~ModuleBase();
@@ -98,6 +94,14 @@ class ModuleBase
         std::string Version(void) const;
 
 
+        /*! \brief Get the module type
+         * 
+         * ie, Test_Base, TwoElectronIntegralIMPL, etc
+         */
+        std::string ModuleType(void) const;
+
+
+
         /*! \brief Get the OptionMap object for this module
          *
          * \throw std::logic_error if there is a severe developer error
@@ -118,11 +122,6 @@ class ModuleBase
         void Print(void) const;
 
 
-        /*! \brief See if this module is a python module
-         */
-        bool IsPythonModule(void) const noexcept;
-
-
         /*! \brief Return a pointer to my node on the graph
          *
          * \throw std::logic_error if there is a severe developer error
@@ -139,12 +138,12 @@ class ModuleBase
 
 
     protected:
-        /* This is the function created by BOOST_PYTHON_MODULE
+        /* This is the function created by the python module exports
          * This is needed to allow protected members to be
          * accessed to derived classes written in python
-         * (alternative is a wrapper class, which is messy in our case)
+         * (alternative is to forward for all wrapper classes, which can be tedious
          */
-        friend void export_python::init_module_modulebase(void);
+        friend PyObject * export_python::PyInit_modulebase(void);
 
 
         /*! \brief Get the internal ModuleLocator that is in charge of this module
@@ -188,36 +187,50 @@ class ModuleBase
                 P * ptr = dynamic_cast<P *>(this);                     // cast this to type P
                 return ((*ptr).*func)(std::forward<Targs1>(args)...);  // call the function
             }
-            catch(bpmodule::exception::GeneralException & ex)
+            catch(exception::GeneralException & ex)
             {
-                ex.AppendInfo("modulekey", Key());
-                ex.AppendInfo("modulename", Name());
-                ex.AppendInfo("moduleversion", Version());
+                std::string s = util::FormatString("[%1%] (%2%) %3% v%4%", ID(), Key(), Name(), Version());
+                ex.AppendInfo("from", s);
                 throw;
             }
             catch(std::exception & ex)
             {
-                throw bpmodule::exception::GeneralException("Caught std::exception", "what", ex.what());
+                std::string s = util::FormatString("[%1%] (%2%) %3% v%4%", ID(), Key(), Name(), Version());
+                throw exception::GeneralException(ex, "what", ex.what(),
+                                                  "from", s);
             }
             catch(...)
             {
-                throw bpmodule::exception::GeneralException("Caught unknown exception. Get your debugger warmed up.");
+                std::string s = util::FormatString("[%1%] (%2%) %3% v%4%", ID(), Key(), Name(), Version());
+                throw exception::GeneralException("Caught unknown exception. Get your debugger warmed up.",
+                                                  "from", s);
             }
         }
 
 
-        /*! \brief Call a python method
-         * 
-         */
-        template<typename R, typename ... An>
-        R CallPyMethod(const char * fname, An &&... args)
-        {
-            // No need to handle exceptions since this should be called from within CallFunction
-            if (!IsPythonModule())
-                throw exception::GeneralException("Attempting to call a virtual function in a C++ module that is missing from the derived class");
 
-            return bpmodule::python_helper::CallPyFuncAttr<R>(pyselfobj_, fname, std::forward<An>(args)...);
+        /*! \brief Calls a python function that overrides a virtual function
+         */ 
+        template<typename R, typename ... Targs>
+        R CallPyOverride(const char * name, Targs &&... args)
+        {
+            pybind11::gil_scoped_acquire gil;
+            pybind11::function overload = pybind11::get_overload(this, name);
+            if(overload)
+            {
+                try {
+                    return python::CallPyFunc<R>(overload, std::forward<Targs>(args)...);
+                }
+                catch(exception::PythonCallException & ex)
+                {
+                    //ex.AppendInfo("vfunc", name);
+                    throw;
+                }
+            }
+            else
+                throw exception::GeneralException("Cannot find overridden function", "vfunc", name);
         }
+
 
 
         /*! \brief Get the wavefunction for this graph node
@@ -230,7 +243,7 @@ class ModuleBase
         /*! \brief Create a module that is a child of this one
          */ 
         template<typename T>
-        modulelocator::ScopedModule<T> CreateChildModule(const std::string & key) const
+        modulelocator::ModulePtr<T> CreateChildModule(const std::string & key) const
         {
             return mlocator_->GetModule<T>(key, id_);
         }
@@ -241,34 +254,24 @@ class ModuleBase
          *
          * Python version 
          */ 
-        boost::python::object CreateChildModulePy(const std::string & key) const;
+        pybind11::object CreateChildModulePy(const std::string & key) const;
 
-
-
-        template<typename T>
-        static
-        boost::python::object MoveToPyObjectHelper_(std::function<void(modulebase::ModuleBase *)> deleter, T * obj)
-        {
-            boost::shared_ptr<T> me(obj, deleter);
-            return boost::python::object(me);
-        }
 
 
 
     private:
-        // python self pointer
-        // Only used if this is a python module. Otherwise it is null
-        PyObject * pyself_;
-        boost::python::object pyselfobj_;
-
         // allow ModuleLocator to set up the pointers
-        // and to call MoveToPyObject_, etc
         friend class modulelocator::ModuleLocator;
 
 
 
         //! The unique ID of this module
         const unsigned long id_;
+
+
+        //! The type of module this is
+        const char * modtype_;
+
 
         //! The ModuleLocator in charge of this module
         modulelocator::ModuleLocator * mlocator_;
@@ -326,21 +329,6 @@ class ModuleBase
          */
         const datastore::GraphNodeData & GraphData(void) const;
 
-
-
-        /*! \brief Create a boost::python::object that manages this
-         *
-         * This object will now be managed by the python object.
-         *
-         * \warning Internal use only. Really should only be accessed via the ModuleLocator. 
-         *
-         * \warning Do not call more than once on an object, and do not call on
-         *          one not created via new. The python object will
-         *          manage this as if it were a smart pointer.
-         *
-         * \todo exception documentation/wrapping
-         */
-        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter) = 0;
 };
 
 

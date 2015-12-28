@@ -1,10 +1,10 @@
-#ifndef _GUARD_EXACTCAST_HPP_
-#define _GUARD_EXACTCAST_HPP_
+#ifndef BPMODULE_GUARD_MATH__EXACTCAST_HPP_
+#define BPMODULE_GUARD_MATH__EXACTCAST_HPP_
 
 #include <limits>
 
 #include "bpmodule/pragma.h"
-#include "bpmodule/exception/MathException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/util/Mangle.hpp"
 
 
@@ -26,7 +26,10 @@ struct ExactCast
     {
         static_assert(  ( std::is_integral<Source>::value && std::is_integral<Target>::value) ||
                         ( std::is_floating_point<Source>::value && std::is_floating_point<Target>::value),
-                        "Attempting to perform integer <-> floating point conversion using ExactCast structure.");
+                        "Attempting to perform integer <-> floating point conversion. Consider using round_cast");
+
+        static_assert(  ( std::is_arithmetic<Source>::value && std::is_arithmetic<Target>::value ),
+                        "Attempting to perform numeric cast on non-arithmetic types");
 
         // These are disabled function wide. Intel seems to
         // complain about stuff in branches that should

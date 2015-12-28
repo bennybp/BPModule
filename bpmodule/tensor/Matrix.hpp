@@ -1,5 +1,5 @@
-#ifndef _GUARD_MATRIX_HPP_
-#define _GUARD_MATRIX_HPP_
+#ifndef BPMODULE_GUARD_TENSOR__MATRIX_HPP_
+#define BPMODULE_GUARD_TENSOR__MATRIX_HPP_
 
 #include "bpmodule/pragma.h"
 

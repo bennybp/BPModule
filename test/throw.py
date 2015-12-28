@@ -22,6 +22,8 @@ def Run(mm):
       mm.LoadModule("TestModules",   "TestModule1",   "TESTMOD1")
       mm.LoadModule("TestModules",   "TestPyModule1", "TESTPYMOD1")
 
+      mm.ChangeOption("TESTMOD1", "double_opt_def", 1.111)
+      mm.ChangeOption("TESTMOD1", "int_opt_def", 55 )
       mm.PrintInfo()
       mm.SanityCheck()
 
@@ -34,12 +36,14 @@ def Run(mm):
         bp.output.Output("\n")
       except Exception as e:
         bp.output.Warning(str(e))
+        bp.output.Output("\n\n")
    
       try:
         b2.TestThrow()
         bp.output.Output("\n")
       except Exception as e:
         bp.output.Warning(str(e))
+        bp.output.Output("\n\n")
     
       bp.output.Output("\nDone testing\n")
 

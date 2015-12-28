@@ -1,4 +1,4 @@
-add_subdirectory(python_helper)
+add_subdirectory(python)
 add_subdirectory(output)
 add_subdirectory(util)
 add_subdirectory(exception)

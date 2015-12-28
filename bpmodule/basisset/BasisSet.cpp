@@ -3,7 +3,7 @@
 #include "bpmodule/basisset/BasisSet.hpp"
 #include "bpmodule/basisset/NCartesian.hpp"
 #include "bpmodule/output/Output.hpp"
-#include "bpmodule/exception/BasisSetException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 
 namespace bpmodule {

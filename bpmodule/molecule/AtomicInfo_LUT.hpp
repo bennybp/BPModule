@@ -15,8 +15,8 @@ CREATED: 2015-11-13 22:27:46.002584
 **************************************************************/
 
 
-#ifndef _GUARD_ATOMICINFO_LUT_HPP_
-#define _GUARD_ATOMICINFO_LUT_HPP_
+#ifndef BPMODULE_GUARD_MOLECULE__ATOMICINFO_LUT_HPP_
+#define BPMODULE_GUARD_MOLECULE__ATOMICINFO_LUT_HPP_
 
 
 #include <map>

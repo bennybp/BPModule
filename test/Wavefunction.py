@@ -30,6 +30,7 @@ def Run():
         bs = bp.basisset.SimpleCreator("/home/ben/programming/BPModule/install/basis/sto-3g.gbs", mol);
 
         wfn = bp.datastore.Wavefunction()
+        wfn.basis.Set(bs)
         bp.output.Output("Basis object: %1%\n", str(wfn.basis))
         bp.output.Output("NShell: %1%\n", wfn.basis.NShell())
 

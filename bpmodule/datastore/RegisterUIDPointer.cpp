@@ -1,14 +1,21 @@
+/*! \file
+ *
+ * \brief Registers a UIDPoitner to python (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
+
 #include <string>
 #include <unordered_map>
 
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
-#include "bpmodule/exception/PythonConvertException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 using namespace bpmodule::exception;
 
 
 namespace {
-    std::unordered_map<std::string, std::function<boost::python::object(const boost::python::object)>> creators_;
+    std::unordered_map<std::string, std::function<pybind11::object(pybind11::object)>> creators_;
 }
 
 
@@ -19,10 +26,10 @@ namespace detail {
 
 
 
-void AddCreator_(const char * classname, std::function<boost::python::object(const boost::python::object)> func)
+void AddCreator_(const char * classname, std::function<pybind11::object(pybind11::object)> func)
 {
-    //! \todo - emplace? Throw if already registered?
-    creators_[classname] = func;
+    // will not overwrite if existing
+    creators_.emplace(classname, func);
 }
  
 
@@ -31,11 +38,11 @@ void AddCreator_(const char * classname, std::function<boost::python::object(con
 
 
 
-boost::python::object MakeUIDPointerPy(const boost::python::object & obj)
+pybind11::object MakeUIDPointerPy(const pybind11::object & obj)
 {
-    const std::string cn = python_helper::GetPyClass(obj);
+    const std::string cn = python::GetPyClass(obj);
     if(!creators_.count(cn))
-        throw PythonConvertException("No handler to create a UIDPointer", cn, "UIDPointer");
+        throw PythonConvertException("No handler to create a UIDPointer", "pyclass", cn);
 
     return creators_.at(cn)(obj);
 }
