@@ -7,6 +7,7 @@
 #include "boost/graph/adjacency_list.hpp"
 #include "boost/graph/adjacency_matrix.hpp"
 #include "boost/graph/graph_utility.hpp"
+#include "boost/graph/graphviz.hpp"
 #include "FillMacro.h"
 #include "GraphItr.hpp"
 
@@ -514,7 +515,21 @@ template<typename U> class FindSubGraph;
 
        ///Prints graph out, assumes your nodes can be passed to std::ostream
        std::ostream& operator<<(std::ostream & os)const{
-         os<<"Graph contains: "<<NNodes()<<" nodes and "
+          class label_writer {
+          public:
+            label_writer(const Impl_t& _name) : name(_name) {}
+            void operator()(std::ostream& out, const Vertex_t& v) const {
+              out << "[label=\"" << name[v] << "\"]";
+            }
+            void operator()(std::ostream& out, const Arc_t&)const{
+               out<<"[label=\""<<'\0'<<"\"]";
+            }
+          private:
+            const Impl_t& name;
+          };
+
+          boost::write_graphviz(os,*this,label_writer(*this));
+          /*os<<"Graph contains: "<<NNodes()<<" nodes and "
                    <<NEdges()<<" edges."<<std::endl;
           NodeItr_t NI=NodeBegin(),NIEnd=NodeEnd();
           for(;NI!=NIEnd;++NI){
@@ -523,7 +538,7 @@ template<typename U> class FindSubGraph;
              typename std::vector<Node_t>::iterator NJ=temp.begin(),
                    NJEnd=temp.end();
              for(;NJ!=NJEnd;++NJ)os<<*NI<<" --> "<<*NJ<<std::endl;
-          }
+          }*/
           return os;
        }
 
@@ -554,8 +569,6 @@ inline std::ostream& operator<<(std::ostream& os,
       const Graph<Node_t,Edge_t,EdgeCon_t,NodeCon_t,Impl_t>& g){
       return g<<os;
  }
-
-
 
 
  ///A graph in which all nodes may be sources and sinks

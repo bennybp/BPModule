@@ -14,6 +14,7 @@ set(GraphHeaders ../AddEdgeWrapper.hpp
                  ../FillMacro.h
                  ../Graph.hpp
                  ../GraphItr.hpp
+                 ../FindSubGraph.hpp
 )
 
 add_executable(GraphTest main.cpp)
