@@ -5,7 +5,7 @@
   * MPI
   * OpenMP
   * Python3
-  * Boost (with python3 support)
+  * Boost (only headers are required)
   * GCC or Intel compiler with C++11 support
     * GCC recommended for now
 
