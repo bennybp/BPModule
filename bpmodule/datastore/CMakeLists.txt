@@ -11,7 +11,7 @@ set(BPMODULE_DATASTORE_HEADERS
             UIDPointer.hpp
             RegisterUIDPointer.hpp
             Wavefunction.hpp
-            GraphNodeData.hpp
+            ModuleGraph.hpp
             CacheData.hpp
             GenericHolder.hpp
             GenericBase.hpp

@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <atomic>
 
-#include "bpmodule/datastore/GraphNodeData.hpp"
+#include "bpmodule/datastore/ModuleGraph.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/modulelocator/ModuleCreationFuncs.hpp"
@@ -191,6 +191,11 @@ class ModuleLocator
 
 
 
+        /*! \brief Return the graph in DOT format
+         */ 
+        std::string DotGraph(void) const;
+
+
     protected:
         friend class CppModuleLoader;
         friend PyObject * export_python::PyInit_modulelocator(void);
@@ -226,9 +231,16 @@ class ModuleLocator
 
         /*! \brief Map for storing created module information
          *
-         * \todo will be replaced by a graph or tree
+         * \todo will be replaced by a pointer to the graph
          */
-        std::unordered_map<unsigned long, datastore::GraphNode> graphnodes_;
+        datastore::ModuleGraph mgraph_;
+
+
+        /*! \brief Map of module ID to graph nodes
+         *
+         * \todo replace with something?
+         */
+        std::map<unsigned long, datastore::ModuleGraphNode> mgraphmap_;
 
 
         //! The id to assign to the next created module

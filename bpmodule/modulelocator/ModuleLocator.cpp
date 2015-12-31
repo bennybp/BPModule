@@ -21,8 +21,8 @@ using bpmodule::tensor::DistMatrixD;
 //////////////////////////////////////////////
 
 
-using bpmodule::datastore::GraphNodeData;
-using bpmodule::datastore::GraphNode;
+using bpmodule::datastore::ModuleGraphNodeData;
+using bpmodule::datastore::ModuleGraphNode;
 using bpmodule::datastore::Wavefunction;
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
@@ -187,24 +187,28 @@ ModuleLocator::CreateModule_(const std::string & modulekey, unsigned long parent
 
  
     // add the moduleinfo to the graph
-    //! \todo replace with actual graph
+    //! \todo Assumes shared pointer, requires map, etc
     if(parentid != 0)
     {
-        GraphNode & parent = graphnodes_.at(parentid);
-        GraphNodeData gdata{parent.data.wfn, se.mi};
-        graphnodes_.emplace(curid_, GraphNode{gdata});
+        ModuleGraphNode parent = mgraphmap_.at(parentid);
+        ModuleGraphNode mine{new ModuleGraphNodeData{parent->wfn, se.mi}};
+        mgraph_.AddNode(mine);
+        mgraph_.AddEdge(std::make_tuple(mine, parent));
+        mgraphmap_.emplace(curid_, mine);
     }
     else
     {
-        GraphNodeData gdata{Wavefunction(), se.mi};
-        graphnodes_.emplace(curid_, GraphNode{gdata});
+        ModuleGraphNode mine{new ModuleGraphNodeData{Wavefunction(), se.mi}};
+        mgraph_.AddNode(mine);
+        mgraphmap_.emplace(curid_, mine);
     }
+
 
     // set the info
     ModuleBase * p = umbptr->CppPtr();
 
     p->SetMLocator_(this);
-    p->SetGraphNode_(&(graphnodes_.at(curid_)));
+    p->SetGraphNode_(&(mgraphmap_.at(curid_)));
 
     // get this modules cache
     // no need to use .at() -- we need it created if it doesn't exist already
@@ -215,6 +219,14 @@ ModuleLocator::CreateModule_(const std::string & modulekey, unsigned long parent
     curid_++;
 
     return std::move(umbptr);
+}
+
+
+std::string ModuleLocator::DotGraph(void) const
+{
+    std::stringstream ss;
+    ss << mgraph_;
+    return ss.str();
 }
 
 

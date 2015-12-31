@@ -9,8 +9,8 @@
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/graphviz.hpp>
 
-#include "datastore/graph/FillMacro.h"
-#include "datastore/graph/GraphItr.hpp"
+#include "bpmodule/datastore/graph/FillMacro.h"
+#include "bpmodule/datastore/graph/GraphItr.hpp"
 
 namespace bpmodule{
 namespace datastore {
@@ -418,7 +418,7 @@ template<typename U> class FindSubGraph;
        ///Removes NodeI (and all edges to it) all iterators are invalidated
        void RemoveNode(const Node_t& NodeI){
           boost::clear_vertex(NodeLookUp_.at(NodeI),*this);
-          boost::remove_vertex(NodeLookUp_.at(Node),*this);
+          boost::remove_vertex(NodeLookUp_.at(NodeI),*this);
        }
 
        ///Removes edge from NodeI to NodeJ

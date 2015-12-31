@@ -20,8 +20,6 @@
 namespace bpmodule {
 
 namespace datastore {
-struct GraphNodeData;
-struct GraphNode;
 struct Wavefunction;
 }
 
@@ -126,7 +124,7 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        const datastore::GraphNode * MyNode(void) const;
+        const datastore::ModuleGraphNode * MyNode(void) const;
 
 
         /*! \brief Get the wavefunction for this graph node
@@ -277,7 +275,7 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
         modulelocator::ModuleLocator * mlocator_;
 
         //! My graph node
-        datastore::GraphNode * graphnode_;
+        datastore::ModuleGraphNode * graphnode_;
 
         //! My cache
         datastore::CacheData * cache_;
@@ -306,9 +304,14 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
         void SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept;
 
 
-        /*! \brief Set the graph data pointer
+        /*! \brief Set the graph node pointer
          */
-        void SetGraphNode_(datastore::GraphNode * node) noexcept;
+        void SetGraphNode_(datastore::ModuleGraphNode * node) noexcept;
+
+
+        /*! \brief Get the graph node pointer
+         */
+        datastore::ModuleGraphNode * GetGraphNode_(void) const noexcept;
 
 
         /*! \brief Set the cache object to use
@@ -320,14 +323,14 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
          *
          * \throw std::logic_error if it hasn't been set
          */
-        datastore::GraphNodeData & GraphData(void);
+        datastore::ModuleGraphNodeData & GraphData(void);
 
 
         /*! \brief Get all module information stored on the graph
          *
          * \throw std::logic_error if it hasn't been set
          */
-        const datastore::GraphNodeData & GraphData(void) const;
+        const datastore::ModuleGraphNodeData & GraphData(void) const;
 
 };
 

@@ -5,29 +5,37 @@
  */
 
 
-#ifndef BPMODULE_GUARD_DATASTORE__GRAPHNODEDATA_HPP_
-#define BPMODULE_GUARD_DATASTORE__GRAPHNODEDATA_HPP_
+#ifndef BPMODULE_GUARD_DATASTORE__MODULEGRAPH_HPP_
+#define BPMODULE_GUARD_DATASTORE__MODULEGRAPH_HPP_
 
 #include <memory>
 
+#include "bpmodule/datastore/graph/Graph.hpp"
 #include "bpmodule/modulelocator/ModuleInfo.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
+
 
 
 namespace bpmodule {
 namespace datastore {
 
-struct GraphNodeData
+struct ModuleGraphNodeData
 {
     datastore::Wavefunction wfn;
     modulelocator::ModuleInfo minfo;
 };
 
-//! \todo Replace with actual graph node
-struct GraphNode
-{
-    GraphNodeData data;
-};
+//! \todo will unique_ptr work?
+typedef std::shared_ptr<ModuleGraphNodeData> ModuleGraphNode;
+
+
+//! \brief The graph containing module data
+typedef LibGraph::Graph<ModuleGraphNode> ModuleGraph;
+      
+
+
+
+
 
 
 } // close namespace modulelocator
