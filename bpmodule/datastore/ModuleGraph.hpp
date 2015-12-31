@@ -11,31 +11,21 @@
 #include <memory>
 
 #include "bpmodule/datastore/graph/Graph.hpp"
-#include "bpmodule/modulelocator/ModuleInfo.hpp"
-#include "bpmodule/datastore/Wavefunction.hpp"
+#include "bpmodule/datastore/ModuleGraphNode.hpp"
 
 
 
 namespace bpmodule {
 namespace datastore {
 
-struct ModuleGraphNodeData
-{
-    datastore::Wavefunction wfn;
-    modulelocator::ModuleInfo minfo;
-};
 
-//! \todo will unique_ptr work?
-typedef std::shared_ptr<ModuleGraphNodeData> ModuleGraphNode;
+/// instantiate once in the cpp file
+extern template class LibGraph::Graph<ModuleGraphNode>;
 
 
 //! \brief The graph containing module data
 typedef LibGraph::Graph<ModuleGraphNode> ModuleGraph;
       
-
-
-
-
 
 
 } // close namespace modulelocator

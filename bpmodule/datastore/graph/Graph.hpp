@@ -424,7 +424,7 @@ template<typename U> class FindSubGraph;
        ///Removes edge from NodeI to NodeJ
        void RemoveEdge(const Node_t& NodeI,const Node_t& NodeJ){
           boost::remove_edge(
-           boost::edge(NodeLookUp_.at(NodeI),NodeLookUp_at(NodeJ),*this),
+           boost::edge(NodeLookUp_.at(NodeI),NodeLookUp_.at(NodeJ),*this),
            *this);
        }
 

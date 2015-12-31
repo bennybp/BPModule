@@ -4,6 +4,7 @@ set(BPMODULE_DATASTORE_FILES
             OptionHolder.cpp
             OptionBase.cpp
             OptionMap.cpp
+            ModuleGraph.cpp
             export.cpp
    )
   
@@ -12,6 +13,7 @@ set(BPMODULE_DATASTORE_HEADERS
             RegisterUIDPointer.hpp
             Wavefunction.hpp
             ModuleGraph.hpp
+            ModuleGraphNode.hpp
             CacheData.hpp
             GenericHolder.hpp
             GenericBase.hpp
