@@ -1,8 +1,10 @@
-#ifndef GRAPH_DFS_HPP_
-#define GRAPH_DFS_HPP_
-#include "boost/graph/depth_first_search.hpp"
+#ifndef BPMODULE_GUARD_GRAPH__DFS_HPP_
+#define BPMODULE_GUARD_GRAPH__DFS_HPP_
+
+#include <boost/graph/depth_first_search.hpp>
 
 namespace bpmodule{
+namespace datastore {
 namespace LibGraph{
 
 template<typename Parent,typename Graph_t> class DFSBase;
@@ -213,6 +215,8 @@ class DFSBase:public boost::default_dfs_visitor{
       Parent& Parent_;
 };
 
-}}//End namespaces
+} // close namespace LibGraph
+} // close namespace datastore
+} // close namespace bpmodule
 
 #endif /* GRAPH_DFS_HPP_ */

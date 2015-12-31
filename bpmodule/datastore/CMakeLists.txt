@@ -19,6 +19,13 @@ set(BPMODULE_DATASTORE_HEADERS
             OptionHolder.hpp
             OptionBase.hpp
             OptionTypes.hpp
+
+            graph/BFS.hpp
+            graph/DFS.hpp
+            graph/FillMacro.h
+            graph/FindSubGraph.hpp
+            graph/Graph.hpp
+            graph/GraphItr.hpp
    )
 
 
