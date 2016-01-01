@@ -4,7 +4,7 @@ set(BPMODULE_DATASTORE_FILES
             OptionHolder.cpp
             OptionBase.cpp
             OptionMap.cpp
-            ModuleGraph.cpp
+            #ModuleGraph.cpp
             export.cpp
    )
   

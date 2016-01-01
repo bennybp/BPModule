@@ -20,7 +20,7 @@ namespace datastore {
 
 
 /// instantiate once in the cpp file
-extern template class LibGraph::Graph<ModuleGraphNode>;
+//extern template class LibGraph::Graph<ModuleGraphNode>;
 
 
 //! \brief The graph containing module data
