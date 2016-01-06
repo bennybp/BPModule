@@ -521,6 +521,7 @@ template<typename U> class FindSubGraph;
             void operator()(std::ostream& out, const Vertex_t& v) const {
               out << "[label=\"" << name[v] << "\"]";
             }
+            ///todo: Actually print edges
             void operator()(std::ostream& out, const Arc_t&)const{
                out<<"[label=\""<<'\0'<<"\"]";
             }
