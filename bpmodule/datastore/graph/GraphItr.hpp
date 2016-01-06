@@ -1,7 +1,8 @@
-#ifndef GRAPH_GRAPHITR_HPP_
-#define GRAPH_GRAPHITR_HPP_
+#ifndef BPMODULE_GUARD_GRAPH__GRAPHITR_HPP_
+#define BPMODULE_GUARD_GRAPH__GRAPHITR_HPP_
 
 namespace bpmodule{
+namespace datastore {
 namespace LibGraph{
 
    ///Wrapper around BGL's iterators
@@ -50,6 +51,8 @@ namespace LibGraph{
 
        };
 
-}}//End namespaces
+} // close namespace LibGraph
+} // close namespace datastore
+} // close namespace bpmodule
 
 #endif /* GRAPH_GRAPHITR_HPP_ */

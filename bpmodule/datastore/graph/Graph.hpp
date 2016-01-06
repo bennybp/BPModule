@@ -1,17 +1,19 @@
-#ifndef GRAPH_GRAPH_HPP_
-#define GRAPH_GRAPH_HPP_
+#ifndef BPMODULE_GUARD_GRAPH__GRAPH_HPP_
+#define BPMODULE_GUARD_GRAPH__GRAPH_HPP_
 
 #include <functional>
 #include <tuple>
-#include "boost/graph/graph_traits.hpp"
-#include "boost/graph/adjacency_list.hpp"
-#include "boost/graph/adjacency_matrix.hpp"
-#include "boost/graph/graph_utility.hpp"
-#include "boost/graph/graphviz.hpp"
-#include "FillMacro.h"
-#include "GraphItr.hpp"
+#include <boost/graph/graph_traits.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/adjacency_matrix.hpp>
+#include <boost/graph/graph_utility.hpp>
+#include <boost/graph/graphviz.hpp>
+
+#include "bpmodule/datastore/graph/FillMacro.h"
+#include "bpmodule/datastore/graph/GraphItr.hpp"
 
 namespace bpmodule{
+namespace datastore {
 namespace LibGraph{
 
 ///Forward declarations of algorithms
@@ -416,13 +418,13 @@ template<typename U> class FindSubGraph;
        ///Removes NodeI (and all edges to it) all iterators are invalidated
        void RemoveNode(const Node_t& NodeI){
           boost::clear_vertex(NodeLookUp_.at(NodeI),*this);
-          boost::remove_vertex(NodeLookUp_.at(Node),*this);
+          boost::remove_vertex(NodeLookUp_.at(NodeI),*this);
        }
 
        ///Removes edge from NodeI to NodeJ
        void RemoveEdge(const Node_t& NodeI,const Node_t& NodeJ){
           boost::remove_edge(
-           boost::edge(NodeLookUp_.at(NodeI),NodeLookUp_at(NodeJ),*this),
+           boost::edge(NodeLookUp_.at(NodeI),NodeLookUp_.at(NodeJ),*this),
            *this);
        }
 
@@ -598,7 +600,9 @@ inline std::ostream& operator<<(std::ostream& os,
  using DenseBiGraph=Graph<Node_t,Edge_t,EdgeCon_t,NodeCon_t,
        boost::adjacency_matrix<boost::bidirectionalS,NodeCon_t,EdgeCon_t> >;
 
-}}//End namespaces
+} // close namespace LibGraph
+} // close namespace datastore
+} // close namespace bpmodule
 
 
 #endif /* GRAPH_GRAPH_HPP_ */

@@ -1,13 +1,14 @@
-#ifndef GRAPH_FINDSUBGRAPH_HPP_
-#define GRAPH_FINDSUBGRAPH_HPP_
+#ifndef BPMODULE_GUARD_GRAPH__FINDSUBGRAPH_HPP_
+#define BPMODULE_GUARD_GRAPH__FINDSUBGRAPH_HPP_
 
 #include <map>
 #include <vector>
 #include <functional>
-#include "boost/graph/vf2_sub_graph_iso.hpp"
+#include <boost/graph/vf2_sub_graph_iso.hpp>
 
 
 namespace bpmodule{
+namespace datastore {
 namespace LibGraph{
 
 /** \brief Finds subgraphs of a graph
@@ -198,7 +199,9 @@ class FindSubGraph{
 
 };
 
-}}//End namespaces
+} // close namespace LibGraph
+} // close namespace datastore
+} // close namespace bpmodule
 
 
 #endif /* GRAPH_FINDSUBGRAPH_HPP_ */

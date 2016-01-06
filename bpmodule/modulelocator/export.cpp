@@ -59,6 +59,7 @@ PYBIND11_PLUGIN(modulelocator)
     .def("ClearStore", &ModuleLocator::ClearStore)
     .def("GetModule", &ModuleLocator::GetModulePy)
     .def("ChangeOption", &ModuleLocator::ChangeOptionPy)
+    .def("DotGraph", &ModuleLocator::DotGraph)
     ;
 
 

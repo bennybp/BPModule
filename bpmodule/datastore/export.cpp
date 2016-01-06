@@ -11,6 +11,7 @@
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/datastore/OptionMap.hpp"
+#include "bpmodule/datastore/ModuleGraph.hpp"
 
 
 //! \todo pybind11 needs this for the default arguments
@@ -52,6 +53,14 @@ static void RegisterOptionHolder(pybind11::module & m, pybind11::class_<OptionBa
     .def(pybind11::init<const std::string &, bool, pybind11::object, const std::string &, const pybind11::object &>()) 
     ;
 }
+
+std::string Graph_PrintDot_Wrap(const ModuleGraph & g)
+{
+    std::stringstream ss;
+    ss << g;
+    return ss.str();
+}
+
 
 
 
@@ -141,6 +150,13 @@ PYBIND11_PLUGIN(datastore)
     ;
   
 
+    ////////////////////////////////////////
+    // Graph
+    ////////////////////////////////////////
+    pybind11::class_<ModuleGraph>(m, "ModuleGraph")
+    .def("NNodes", &ModuleGraph::NNodes)
+    .def("NEdges", static_cast<size_t (ModuleGraph::*)(void) const>(&ModuleGraph::NEdges))
+    ;
 
     ////////////////////////////////////////
     // CacheData

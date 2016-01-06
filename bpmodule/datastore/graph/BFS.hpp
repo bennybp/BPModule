@@ -1,8 +1,10 @@
-#ifndef GRAPH_BFS_HPP_
-#define GRAPH_BFS_HPP_
-#include "boost/graph/breadth_first_search.hpp"
+#ifndef BPMODULE_GUARD_GRAPH__BFS_HPP_
+#define BPMODULE_GUARD_GRAPH__BFS_HPP_
+
+#include <boost/graph/breadth_first_search.hpp>
 
 namespace bpmodule{
+namespace datastore {
 namespace LibGraph{
 
 template<typename Parent,typename Graph_t> class BFSBase;
@@ -221,6 +223,8 @@ class BFSBase:public boost::default_bfs_visitor{
       Parent& Parent_;
 };
 
-}}//End namespaces
+} // close namespace LibGraph
+} // close namespace datastore
+} // close namespace bpmodule
 
 #endif /* GRAPH_BFS_HPP_ */

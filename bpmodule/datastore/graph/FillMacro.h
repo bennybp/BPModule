@@ -1,5 +1,5 @@
-#ifndef GRAPH_FILLMACRO_H_
-#define GRAPH_FILLMACRO_H_
+#ifndef BPMODULE_GUARD_GRAPH__FILLMACRO_H_
+#define BPMODULE_GUARD_GRAPH__FILLMACRO_H_
 
 #include <array>
 

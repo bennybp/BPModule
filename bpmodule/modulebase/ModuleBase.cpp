@@ -6,15 +6,14 @@
 
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/modulelocator/ModuleLocator.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/output/Output.hpp"
 
 using bpmodule::modulelocator::ModuleLocator;
 using bpmodule::modulelocator::ModuleInfo;
 using bpmodule::datastore::Wavefunction;
-using bpmodule::datastore::GraphNodeData;
-using bpmodule::datastore::GraphNode;
+using bpmodule::datastore::ModuleGraphNodeData;
+using bpmodule::datastore::ModuleGraphNode;
 using bpmodule::datastore::CacheData;
 using bpmodule::exception::GeneralException;
 
@@ -85,7 +84,7 @@ void ModuleBase::Print(void) const
     MInfo_().Print();
 }
 
-const GraphNode * ModuleBase::MyNode(void) const
+const ModuleGraphNode * ModuleBase::MyNode(void) const
 {
     if(mlocator_ == nullptr)
         throw std::logic_error("Developer error - graphnode is null for a module!");
@@ -105,20 +104,20 @@ ModuleLocator & ModuleBase::MLocator(void) const
     return *mlocator_;
 }
 
-const GraphNodeData & ModuleBase::GraphData(void) const
+const ModuleGraphNodeData & ModuleBase::GraphData(void) const
 {
     if(graphnode_ == nullptr)
         throw std::logic_error("Developer error - graphnode_ is null for a module!");
 
-    return graphnode_->data;
+    return *(*graphnode_);
 }
 
-GraphNodeData & ModuleBase::GraphData(void)
+ModuleGraphNodeData & ModuleBase::GraphData(void)
 {
     if(graphnode_ == nullptr)
         throw std::logic_error("Developer error - graphnode_ is null for a module!");
 
-    return graphnode_->data;
+    return *(*graphnode_);
 }
 
 const Wavefunction & ModuleBase::Wfn(void) const
@@ -154,9 +153,14 @@ void ModuleBase::SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept
     mlocator_ = mloc;
 }
 
-void ModuleBase::SetGraphNode_(datastore::GraphNode * node) noexcept
+void ModuleBase::SetGraphNode_(datastore::ModuleGraphNode * node) noexcept
 {
     graphnode_ = node;
+}
+
+datastore::ModuleGraphNode * ModuleBase::GetGraphNode_(void) const noexcept
+{
+    return graphnode_;
 }
 
 void ModuleBase::SetCache_(datastore::CacheData * cache) noexcept
