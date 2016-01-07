@@ -421,17 +421,16 @@ template<typename U> class FindSubGraph;
           boost::remove_vertex(NodeLookUp_.at(NodeI),*this);
        }
 
-       ///Removes edge from NodeI to NodeJ
+       ///Removes edge from NodeI to NodeJ iterators to edges are invalidated
        void RemoveEdge(const Node_t& NodeI,const Node_t& NodeJ){
           boost::remove_edge(
-           boost::edge(NodeLookUp_.at(NodeI),NodeLookUp_.at(NodeJ),*this),
+          boost::edge(NodeLookUp_.at(NodeI),NodeLookUp_.at(NodeJ),*this).first,
            *this);
        }
 
-       ///Removes the passed in edge
+       ///Removes the passed in edge, iterators to edges are invalidated
        void RemoveEdge(const Edge_t& Edge){
-          boost::remove_edge(
-                boost::edge(EdgeLookUp_[Edge],*this),*this);
+          boost::remove_edge(EdgeLookUp_[Edge],*this);
        }
 
 
@@ -478,12 +477,12 @@ template<typename U> class FindSubGraph;
 
        ///Returns an iterator to the first edge
        EdgeItr_t EdgeBegin()const{
-           return NodeItr_t(boost::edges(*this).first,*this);
+           return EdgeItr_t(boost::edges(*this).first,*this);
        }
 
        ///Returns an iterator just past the last edge
        EdgeItr_t EdgeEnd()const{
-           return NodeItr_t(boost::edges(*this).second,*this);
+           return EdgeItr_t(boost::edges(*this).second,*this);
        }
 
        ///Returns an std::vector of edges emanating from NodeI
@@ -500,7 +499,7 @@ template<typename U> class FindSubGraph;
        ///Returns an std::vector of edges ending in NodeI
        std::vector<Edge_t> InEdges(const Node_t& NodeI)const{
           std::vector<Edge_t> temp;
-          typedef typename Impl_t::out_edge_iterator Itr_t;
+          typedef typename Impl_t::in_edge_iterator Itr_t;
           std::pair<Itr_t,Itr_t> Its=
                 boost::in_edges(NodeLookUp_.at(NodeI),*this);
           for(;Its.first!=Its.second;++Its.first)
@@ -523,6 +522,7 @@ template<typename U> class FindSubGraph;
             void operator()(std::ostream& out, const Vertex_t& v) const {
               out << "[label=\"" << name[v] << "\"]";
             }
+            ///todo: Actually print edges
             void operator()(std::ostream& out, const Arc_t&)const{
                out<<"[label=\""<<'\0'<<"\"]";
             }
