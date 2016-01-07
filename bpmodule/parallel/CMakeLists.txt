@@ -3,10 +3,6 @@ set(BPMODULE_PARALLEL_FILES
             export.cpp
    )
   
-set(BPMODULE_PARALLEL_HEADERS
-            Parallel.hpp
-   )
-
 
 ADD_SUPERMODULE(parallel
            "${BPMODULE_PARALLEL_FILES}"
@@ -14,4 +10,4 @@ ADD_SUPERMODULE(parallel
            ""
            "")
 
-INSTALL_COREMODULE(parallel "${BPMODULE_PARALLEL_HEADERS}" "")
+INSTALL_COREMODULE(parallel)

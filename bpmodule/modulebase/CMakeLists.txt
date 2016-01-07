@@ -3,16 +3,6 @@ set(BPMODULE_MODULEBASE_FILES
             export.cpp
    )
 
-set(BPMODULE_MODULEBASE_HEADERS
-            All.hpp
-            ModuleBase.hpp
-            Test_Base.hpp
-            OneElectronIntegralIMPL.hpp
-            TwoElectronIntegralIMPL.hpp
-            OneElectronIntegral.hpp
-            TwoElectronIntegral.hpp
-   )
-
 
 ADD_SUPERMODULE(modulebase
            "${BPMODULE_MODULEBASE_FILES}"
@@ -20,5 +10,4 @@ ADD_SUPERMODULE(modulebase
            ""
            "")
 
-INSTALL_COREMODULE(modulebase "${BPMODULE_MODULEBASE_HEADERS}" "")
-
+INSTALL_COREMODULE(modulebase)

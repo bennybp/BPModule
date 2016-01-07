@@ -6,13 +6,6 @@ set(BPMODULE_MOLECULE_FILES
     export.cpp
    )
   
-set(BPMODULE_MOLECULE_HEADERS
-            AtomicInfo.hpp
-            AtomicInfo_LUT.hpp
-            Molecule.hpp
-            Atom.hpp
-   )
-
 
 ADD_SUPERMODULE(molecule
            "${BPMODULE_MOLECULE_FILES}"
@@ -20,5 +13,4 @@ ADD_SUPERMODULE(molecule
            ""
            "")
 
-INSTALL_COREMODULE(molecule "${BPMODULE_MOLECULE_HEADERS}" "")
-
+INSTALL_COREMODULE(molecule)

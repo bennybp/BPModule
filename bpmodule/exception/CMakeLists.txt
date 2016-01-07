@@ -3,11 +3,6 @@ set(BPMODULE_EXCEPTION_FILES
             export.cpp
    )
 
-set(BPMODULE_EXCEPTION_HEADERS
-            Assert.hpp
-            Exceptions.hpp
-   )
-
 
 ADD_SUPERMODULE(exception
            "${BPMODULE_EXCEPTION_FILES}"
@@ -16,4 +11,4 @@ ADD_SUPERMODULE(exception
            "")
 
 
-INSTALL_COREMODULE(exception "${BPMODULE_EXCEPTION_HEADERS}" "Exceptions.py")
+INSTALL_COREMODULE(exception)

@@ -20,9 +20,15 @@ set (TESTMODULES_PYFILES creator.py
                          TestPyModule1.py
     )
 
+
+
+
+
 ADD_SUPERMODULE(TestModules "${TESTMODULES_FILES}" "" "dynlib;staticlib" "")
 INSTALL_SUPERMODULE(TestModules "${TESTMODULES_PYFILES}")
+
 set_target_properties(TestModules PROPERTIES INSTALL_RPATH "${TestModules_INSTALL_PATH}")
 
 # install the dynamic library
-install(TARGETS dynlib LIBRARY DESTINATION modules/TestModules)
+install(TARGETS dynlib LIBRARY DESTINATION ${TestModules_INSTALL_PATH})
+

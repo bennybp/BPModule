@@ -4,12 +4,6 @@ set(BPMODULE_TENSOR_FILES
     export.cpp
    )
   
-set(BPMODULE_TENSOR_HEADERS
-            InitFinalize.hpp
-            Matrix.hpp
-            Tensor.hpp
-   )
-
 
 ADD_SUPERMODULE(tensor
            "${BPMODULE_TENSOR_FILES}"
@@ -17,4 +11,4 @@ ADD_SUPERMODULE(tensor
            ""
            "")
 
-INSTALL_COREMODULE(tensor "${BPMODULE_TENSOR_HEADERS}" "")
+INSTALL_COREMODULE(tensor)
