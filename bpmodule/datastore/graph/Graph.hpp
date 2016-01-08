@@ -400,7 +400,14 @@ template<typename U> class FindSubGraph;
        ///@{
        ///Constructors (only initializing nodes)
        ///@{
-       Graph()=default;
+
+       // A bug in GCC prevents this from being used in an
+       // explicitly-instantiated class. So we have to do it the old
+       // fashioned way...
+       // (bug: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=51629)
+       //Graph()=default;
+       Graph() { };
+
        DEFINE_FILL_FXNS(Node_t,FillNodes,Graph,)
        ///@}
 
