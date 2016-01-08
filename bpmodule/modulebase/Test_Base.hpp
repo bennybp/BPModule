@@ -110,6 +110,8 @@ class Test_Base_Py : public Test_Base
     public:
         using Test_Base::Test_Base;
 
+        MODULEBASE_FORWARD_PROTECTED_TO_PY
+
     
         virtual void RunTest_(void)
         {

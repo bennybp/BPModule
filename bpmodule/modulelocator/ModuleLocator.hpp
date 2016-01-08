@@ -18,19 +18,6 @@
 #include "bpmodule/modulelocator/ModulePtr.hpp"
 
 
-// forward declarations
-namespace bpmodule {
-namespace modulelocator {
-class CppModuleLoader;
-
-namespace export_python {
-extern "C" PyObject * PyInit_modulelocator(void);
-}
-}
-}
-// end forward declarations
-
-
 
 namespace bpmodule {
 namespace modulelocator {
@@ -196,9 +183,6 @@ class ModuleLocator
         std::string DotGraph(void) const;
 
 
-    protected:
-        friend class CppModuleLoader;
-        friend PyObject * export_python::PyInit_modulelocator(void);
 
         /*! \brief Adds/inserts a module creator to the database
          *

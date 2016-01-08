@@ -98,6 +98,7 @@ class TwoElectronIntegralIMPL_Py : public TwoElectronIntegralIMPL
     public:
         using TwoElectronIntegralIMPL::TwoElectronIntegralIMPL;
 
+        MODULEBASE_FORWARD_PROTECTED_TO_PY
     
         virtual void SetBases_(int ncenter,
                                const datastore::UIDPointer<basisset::BasisSet> & bs1,

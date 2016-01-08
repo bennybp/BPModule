@@ -27,19 +27,15 @@ namespace options {
 class OptionMap;
 }
 
-// for friend
-namespace modulebase {
-namespace export_python {
-extern "C"  PyObject * PyInit_modulebase(void);
-}
-}
-}
+} // close namespace bpmodule 
+
 
 // end forward declarations
 
 
 namespace bpmodule {
 namespace modulebase {
+
 
 
 /*! \brief A base class for modules
@@ -134,16 +130,25 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
         datastore::Wavefunction & Wfn(void);
 
 
+        /*! \brief Create a module that is a child of this one
+         */ 
+        template<typename T>
+        modulelocator::ModulePtr<T> CreateChildModule(const std::string & key) const
+        {
+            return mlocator_->GetModule<T>(key, id_);
+        }
+
+
+
+        /*! \brief Create a module that is a child of this one
+         *
+         * Python version 
+         */ 
+        pybind11::object CreateChildModulePy(const std::string & key) const;
+
+
 
     protected:
-        /* This is the function created by the python module exports
-         * This is needed to allow protected members to be
-         * accessed to derived classes written in python
-         * (alternative is to forward for all wrapper classes, which can be tedious
-         */
-        friend PyObject * export_python::PyInit_modulebase(void);
-
-
         /*! \brief Get the internal ModuleLocator that is in charge of this module
          *
          * \throw std::logic_error if it hasn't been set
@@ -238,21 +243,6 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
         const datastore::Wavefunction & Wfn(void) const;
 
 
-        /*! \brief Create a module that is a child of this one
-         */ 
-        template<typename T>
-        modulelocator::ModulePtr<T> CreateChildModule(const std::string & key) const
-        {
-            return mlocator_->GetModule<T>(key, id_);
-        }
-
-
-
-        /*! \brief Create a module that is a child of this one
-         *
-         * Python version 
-         */ 
-        pybind11::object CreateChildModulePy(const std::string & key) const;
 
 
 
@@ -333,6 +323,12 @@ class ModuleBase : public std::enable_shared_from_this<ModuleBase>
         const datastore::ModuleGraphNodeData & GraphData(void) const;
 
 };
+
+/*! \brief Forward some protected functions so that python
+ *         can access them
+ */
+#define MODULEBASE_FORWARD_PROTECTED_TO_PY \
+    using ModuleBase::Cache; 
 
 
 } // close namespace modulebase

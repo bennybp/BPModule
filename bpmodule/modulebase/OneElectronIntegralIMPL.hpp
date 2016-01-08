@@ -90,6 +90,7 @@ class OneElectronIntegralIMPL_Py : public OneElectronIntegralIMPL
     public:
         using OneElectronIntegralIMPL::OneElectronIntegralIMPL;
 
+        MODULEBASE_FORWARD_PROTECTED_TO_PY
     
         virtual void SetBases_(const datastore::UIDPointer<basisset::BasisSet> & bs1,
                                const datastore::UIDPointer<basisset::BasisSet> & bs2)
