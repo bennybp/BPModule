@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
-include("${BPMODULE_PATH}/cmake/Common.cmake")
-include("${BPMODULE_PATH}/cmake/Flags.cmake")
-include("${BPMODULE_PATH}/cmake/AddModule.cmake")
-include("${BPMODULE_PATH}/cmake/Install.cmake")
+include("${BPMODULE_PATH}/cmake/Module.cmake")
 
 # Create test libraries
 add_library(dynlib SHARED dynlib.cpp)

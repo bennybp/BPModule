@@ -8,7 +8,6 @@
 ###################################################
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-fPIC")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-std=c++11")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-w3")
 
@@ -32,7 +31,6 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd869")
 
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-fPIC")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-std=c++11")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-Wall;-Wextra;-pedantic")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-Wfloat-equal;-Wshadow")

@@ -12,19 +12,22 @@ add_subdirectory(molecule)
 add_subdirectory(basisset)
 add_subdirectory(testing)
 
-
-# Install headers and other files
-set(BPMODULE_TOP_HEADERS
-            pragma.h
+######################################
+# Make a header-only interface library
+######################################
+add_library(bpmodule_headers INTERFACE)
+target_include_directories(bpmodule_headers INTERFACE
+                           $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>
+                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>
 )
 
-set(BPMODULE_FILES
-            __init__.py
-            modinfo.py
-            modulecheck.py
-            ModuleManager.py
-   )
 
+# Add to the bpmodule export
+install(TARGETS bpmodule_headers EXPORT bpmodule)
 
-install(FILES ${BPMODULE_TOP_HEADERS} DESTINATION include/bpmodule)
-install(FILES ${BPMODULE_FILES} DESTINATION modules/bpmodule)
+# Install all python files (for all core modules)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION modules FILES_MATCHING PATTERN "*.py")
+
+# Install all headers (for all core modules)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION include FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION include FILES_MATCHING PATTERN "*.hpp")

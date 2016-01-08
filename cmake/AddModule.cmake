@@ -21,9 +21,9 @@ macro(ADD_SUPERMODULE MODULE_NAME
       # MPI
       list(APPEND ${MODULE_NAME}_CXX_FLAGS "${MPI_CXX_COMPILE_FLAGS}")
 
+      # Default flags for stuff
       list(APPEND ${MODULE_NAME}_CXX_FLAGS ${BPMODULE_CXX_STRICT_FLAGS})
-      string(REPLACE ";" " " ${MODULE_NAME}_CXX_FLAGS "${${MODULE_NAME}_CXX_FLAGS}")
-      set_target_properties(${MODULE_NAME} PROPERTIES COMPILE_FLAGS "${${MODULE_NAME}_CXX_FLAGS}")
+      target_compile_options(${MODULE_NAME} PRIVATE ${${MODULE_NAME}_CXX_FLAGS})
       #message(STATUS "${MODULE_NAME} cxx compile flags: ${${MODULE_NAME}_CXX_FLAGS}")
 
 
@@ -31,11 +31,6 @@ macro(ADD_SUPERMODULE MODULE_NAME
       #################
       # Includes
       #################
-      list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_PATH}")          # When building the core, in-source tree
-      list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_PATH}/external/pybind11/include")          # When building the core, in-source tree
-      list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_PATH}/include")  # Out-of-source module build
-      list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_PATH}/external")  # Out-of-source module build
-
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${Boost_INCLUDE_DIRS}")
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${PYTHON_INCLUDE_DIRS}")
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_LIBEL_PATH}/include")
@@ -45,7 +40,7 @@ macro(ADD_SUPERMODULE MODULE_NAME
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${BPMODULE_LIBEL_PATH}/include")
 
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES "${MODULE_CXX_INCLUDES}")
-      set_target_properties(${MODULE_NAME} PROPERTIES INCLUDE_DIRECTORIES "${${MODULE_NAME}_CXX_INCLUDES}")
+      target_include_directories(${MODULE_NAME} PRIVATE ${${MODULE_NAME}_CXX_INCLUDES})
       #message(STATUS "${MODULE_NAME} cxx includes: ${${MODULE_NAME}_CXX_INCLUDES}")
 
 
@@ -65,7 +60,14 @@ macro(ADD_SUPERMODULE MODULE_NAME
 
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${BPMODULE_LIBEL_PATH}/lib/libEl.a")
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS "${BPMODULE_LIBEL_PATH}/lib/libpmrrr.a")
-    
+   
+      # Link against pybind interface library (will also modify include paths) 
+      target_link_libraries(${MODULE_NAME} pybind)
+
+      # Link against main bpmodule header interface library (will also modify include paths) 
+      target_link_libraries(${MODULE_NAME} bpmodule_headers)
+
+      # Other linker stuff
       target_link_libraries(${MODULE_NAME} "${${MODULE_NAME}_CXX_LINK_FLAGS}")
       #message(STATUS "${MODULE_NAME} cxx link flags: ${${MODULE_NAME}_CXX_LINK_FLAGS}")
 
