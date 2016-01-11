@@ -1,3 +1,16 @@
+cmake_minimum_required(VERSION 3.0)
+
+
+#################################
+# Load macros
+#################################
+include("cmake/Flags.cmake")
+include("cmake/Python.cmake")
+include("cmake/Common.cmake")
+include("cmake/AddModule.cmake")
+include("cmake/Install.cmake")
+
+
 add_subdirectory(python)
 add_subdirectory(output)
 add_subdirectory(util)
@@ -12,18 +25,18 @@ add_subdirectory(molecule)
 add_subdirectory(basisset)
 add_subdirectory(testing)
 
+
 ######################################
 # Make a header-only interface library
 ######################################
-add_library(bpmodule_headers INTERFACE)
-target_include_directories(bpmodule_headers INTERFACE
-                           $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}>
-                           $<INSTALL_INTERFACE:${CMAKE_INSTALL_PREFIX}/include>
+add_library(bpmodule_core_interface INTERFACE)
+target_include_directories(bpmodule_core_interface INTERFACE
+                           $<INSTALL_INTERFACE:include>
 )
 
 
 # Add to the bpmodule export
-install(TARGETS bpmodule_headers EXPORT bpmodule)
+install(TARGETS bpmodule_core_interface EXPORT bpmodule)
 
 # Install all python files (for all core modules)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION modules FILES_MATCHING PATTERN "*.py")

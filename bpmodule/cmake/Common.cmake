@@ -36,11 +36,20 @@ string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 ############################
 find_package(Boost REQUIRED)
 
+
+
 ############################
-# Find Python libraries
+# Find memwatch
 ############################
-set(Python_ADDITIONAL_VERSIONS "3.3;3.4;3.5")
-find_package(PythonLibs REQUIRED)
+find_package(memwatch REQUIRED CONFIG)
+include(${memwatch_CONFIG})
+
+
+############################
+# Find pybind11
+############################
+find_package(pybind11 REQUIRED CONFIG)
+include(${pybind11_CONFIG})
 
 
 ############################
