@@ -1,3 +1,6 @@
 [submodule "external/pybind11"]
 	path = external/pybind11/pybind11-source
 	url = https://github.com/bennybp/pybind11.git
+[submodule "external/libelemental/libelemental-source"]
+	path = external/libelemental/libelemental-source
+	url = https://github.com/elemental/Elemental.git
