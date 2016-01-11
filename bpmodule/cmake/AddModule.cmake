@@ -34,11 +34,9 @@ macro(ADD_SUPERMODULE MODULE_NAME
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${CMAKE_SOURCE_DIR}/../) # TODO - HACK
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${Boost_INCLUDE_DIRS})
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${PYTHON_INCLUDE_DIRS})
-      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${BPMODULE_LIBEL_PATH}/include)
 
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${MPI_CXX_INCLUDE_PATH})
 
-      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${BPMODULE_LIBEL_PATH}/include)
 
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${MODULE_CXX_INCLUDES})
       target_include_directories(${MODULE_NAME} PRIVATE ${${MODULE_NAME}_CXX_INCLUDES})
@@ -59,14 +57,13 @@ macro(ADD_SUPERMODULE MODULE_NAME
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${MPI_CXX_LINK_FLAGS})
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${MPI_CXX_LIBRARIES})
 
-      list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${BPMODULE_LIBEL_PATH}/lib/libEl.a)
-      list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${BPMODULE_LIBEL_PATH}/lib/libpmrrr.a)
    
       # Libraries passed in
       target_link_libraries(${MODULE_NAME} ${${MODULE_NAME}_CXX_LINK_FLAGS})
 
       # Link against pybind interface library (will also modify include paths) 
       target_link_libraries(${MODULE_NAME} External::pybind11_interface)
+      target_link_libraries(${MODULE_NAME} External::libelemental_interface)
 
       #message(STATUS "${MODULE_NAME} cxx link flags: ${${MODULE_NAME}_CXX_LINK_FLAGS}")
 

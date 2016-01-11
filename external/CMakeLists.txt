@@ -25,8 +25,19 @@ ExternalProject_Add(pybind11_external
                     INSTALL_COMMAND make install DESTDIR=${CMAKE_BINARY_DIR}/stage
 )
 
+
+##################
+# Memwatch
+##################
+ExternalProject_Add(libelemental_external
+                    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libelemental
+                    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/libelemental -DDESTDIR=${CMAKE_BINARY_DIR}/stage
+                    INSTALL_COMMAND make install DESTDIR=${CMAKE_BINARY_DIR}/stage
+)
+
+
 #################################################
 # Install all external libraries in one command
 #################################################
-install(DIRECTORY ${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/ DESTINATION ${CMAKE_INSTALL_PREFIX} USE_SOURCE_PERMISSIONS)
+#install(DIRECTORY ${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/ DESTINATION ${CMAKE_INSTALL_PREFIX} USE_SOURCE_PERMISSIONS)
 

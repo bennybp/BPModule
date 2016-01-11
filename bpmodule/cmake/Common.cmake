@@ -2,7 +2,6 @@
 # Paths and options for
 # external dependencies
 ############################
-set(BPMODULE_LIBEL_PATH "/usr" CACHE PATH "Path to LibElemental. Should contain include, lib subdirectories")
 
 
 # Don't use anything (ie, lib) as a prefix to SO
@@ -50,6 +49,13 @@ include(${memwatch_CONFIG})
 ############################
 find_package(pybind11 REQUIRED CONFIG)
 include(${pybind11_CONFIG})
+
+
+############################
+# Find libelemental
+############################
+find_package(libelemental REQUIRED CONFIG)
+include(${libelemental_CONFIG})
 
 
 ############################

@@ -24,7 +24,10 @@ ExternalProject_Add(bpmodule_core
                                -DMPI_C_COMPILER=${MPI_C_COMPILER}
                     INSTALL_COMMAND make install DESTDIR=${CMAKE_BINARY_DIR}/stage
 )
-add_dependencies(bpmodule_core memwatch_external pybind11_external)
+add_dependencies(bpmodule_core memwatch_external
+                               pybind11_external
+                               libelemental_external
+                )
 
 
 #################################
