@@ -9,6 +9,6 @@ ADD_COREMODULE(tensor
            "${BPMODULE_TENSOR_FILES}"
            ""
            "${LIBELEMENTAL_LIBRARIES}"
-           "${LIBELEMENTAL_INCLUDE_DIR}")
+           "")
 
 INSTALL_COREMODULE(tensor)
