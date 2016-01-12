@@ -4,7 +4,7 @@ set(BPMODULE_MODULEBASE_FILES
    )
 
 
-ADD_SUPERMODULE(modulebase
+ADD_COREMODULE(modulebase
            "${BPMODULE_MODULEBASE_FILES}"
            ""
            ""

@@ -5,7 +5,7 @@ set(BPMODULE_TESTING_FILES
    )
 
 
-ADD_SUPERMODULE(testing
+ADD_COREMODULE(testing
            "${BPMODULE_TESTING_FILES}"
            ""
            ""

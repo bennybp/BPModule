@@ -4,7 +4,7 @@ set(BPMODULE_MATH_FILES
    )
   
 
-ADD_SUPERMODULE(math
+ADD_COREMODULE(math
            "${BPMODULE_MATH_FILES}"
            ""
            ""

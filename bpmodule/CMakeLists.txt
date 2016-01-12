@@ -4,10 +4,8 @@ cmake_minimum_required(VERSION 3.0)
 #################################
 # Load macros
 #################################
-include("cmake/Flags.cmake")
 include("cmake/Python.cmake")
-include("cmake/AddCoreModule.cmake")
-include("cmake/InstallCoreModule.cmake")
+include("cmake/CoreModule.cmake")
 
 
 ##########################

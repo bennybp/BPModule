@@ -5,7 +5,7 @@ set(BPMODULE_TENSOR_FILES
    )
   
 
-ADD_SUPERMODULE(tensor
+ADD_COREMODULE(tensor
            "${BPMODULE_TENSOR_FILES}"
            ""
            "${LIBELEMENTAL_LIBRARIES}"

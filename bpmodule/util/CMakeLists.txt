@@ -8,7 +8,7 @@ set(BPMODULE_UTIL_FILES
    )
 
 
-ADD_SUPERMODULE(util 
+ADD_COREMODULE(util 
            "${BPMODULE_UTIL_FILES}"
            ""
            "${MEMWATCH_LIBRARIES}"

@@ -5,7 +5,7 @@ set(BPMODULE_PYTHON_HELPER_FILES
    )
 
 
-ADD_SUPERMODULE(python
+ADD_COREMODULE(python
            "${BPMODULE_PYTHON_HELPER_FILES}"
            ""
            ""

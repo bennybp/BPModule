@@ -7,7 +7,7 @@ set(BPMODULE_MOLECULE_FILES
    )
   
 
-ADD_SUPERMODULE(molecule
+ADD_COREMODULE(molecule
            "${BPMODULE_MOLECULE_FILES}"
            ""
            ""

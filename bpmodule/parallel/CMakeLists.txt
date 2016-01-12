@@ -4,7 +4,7 @@ set(BPMODULE_PARALLEL_FILES
    )
   
 
-ADD_SUPERMODULE(parallel
+ADD_COREMODULE(parallel
            "${BPMODULE_PARALLEL_FILES}"
            ""
            ""

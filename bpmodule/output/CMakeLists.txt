@@ -4,7 +4,7 @@ set(BPMODULE_OUTPUT_FILES
    )
 
 
-ADD_SUPERMODULE(output 
+ADD_COREMODULE(output 
            "${BPMODULE_OUTPUT_FILES}"
            ""
            ""

@@ -9,7 +9,7 @@ set(BPMODULE_DATASTORE_FILES
    )
 
   
-ADD_SUPERMODULE(datastore
+ADD_COREMODULE(datastore
            "${BPMODULE_DATASTORE_FILES}"
            ""
            ""

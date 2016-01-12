@@ -6,7 +6,7 @@ set(BPMODULE_BASISSET_FILES
    )
 
 
-ADD_SUPERMODULE(basisset
+ADD_COREMODULE(basisset
            "${BPMODULE_BASISSET_FILES}"
            ""
            ""

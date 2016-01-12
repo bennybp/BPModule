@@ -4,7 +4,7 @@ set(BPMODULE_EXCEPTION_FILES
    )
 
 
-ADD_SUPERMODULE(exception
+ADD_COREMODULE(exception
            "${BPMODULE_EXCEPTION_FILES}"
            ""
            ""
