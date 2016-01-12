@@ -5,13 +5,7 @@
 
 find_path(LIBELEMENTAL_INCLUDE_DIR NAMES El.hpp)
 
-set(LIBELEMENTAL_INCLUDE_DIRS ${LIBELEMENTAL_INCLUDE_DIR})
-
-
-find_library(LIBELEMENTAL_LIBRARIES
-             PATHS ${LIBELEMENTAL_INCLUDE_DIRS}/../
-             NAME El
-             PATH_SUFFIXES lib) 
+find_library(LIBELEMENTAL_LIBRARIES NAMES El pmrrr)
 
 
 include(FindPackageHandleStandardArgs)

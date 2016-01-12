@@ -31,14 +31,20 @@ macro(ADD_SUPERMODULE MODULE_NAME
       #################
       # Includes
       #################
-      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${CMAKE_SOURCE_DIR}/../) # TODO - HACK
+      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${CMAKE_SOURCE_DIR}/../) # TODO - HACKY
+
+      # Passed in
+      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${MODULE_CXX_INCLUDES})
+
+      # Main dependencies
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${Boost_INCLUDE_DIRS})
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${PYTHON_INCLUDE_DIRS})
-
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${MPI_CXX_INCLUDE_PATH})
 
+      # External dependencies
+      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${PYBIND11_INCLUDE_DIR})
+      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${LIBELEMENTAL_INCLUDE_DIR})
 
-      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${MODULE_CXX_INCLUDES})
       target_include_directories(${MODULE_NAME} PRIVATE ${${MODULE_NAME}_CXX_INCLUDES})
       #message(STATUS "${MODULE_NAME} cxx includes: ${${MODULE_NAME}_CXX_INCLUDES}")
 
@@ -47,23 +53,20 @@ macro(ADD_SUPERMODULE MODULE_NAME
       #################
       # Linker flags
       #################
+      # Passed in
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${MODULE_CXX_LINK_FLAGS})
+
+      # Main dependencies
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${OpenMP_CXX_FLAGS})
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${Boost_LIBRARIES})
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${PYTHON_LIBRARIES})
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${BLAS_LIBRARIES})
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${LAPACK_LIBRARIES})
-
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${MPI_CXX_LINK_FLAGS})
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${MPI_CXX_LIBRARIES})
 
-   
-      # Libraries passed in
       target_link_libraries(${MODULE_NAME} ${${MODULE_NAME}_CXX_LINK_FLAGS})
 
-      # Link against pybind interface library (will also modify include paths) 
-      target_link_libraries(${MODULE_NAME} External::pybind11_interface)
-      target_link_libraries(${MODULE_NAME} External::libelemental_interface)
 
       #message(STATUS "${MODULE_NAME} cxx link flags: ${${MODULE_NAME}_CXX_LINK_FLAGS}")
 

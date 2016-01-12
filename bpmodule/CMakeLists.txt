@@ -6,9 +6,38 @@ cmake_minimum_required(VERSION 3.0)
 #################################
 include("cmake/Flags.cmake")
 include("cmake/Python.cmake")
-include("cmake/Common.cmake")
-include("cmake/AddModule.cmake")
-include("cmake/Install.cmake")
+include("cmake/AddCoreModule.cmake")
+include("cmake/InstallCoreModule.cmake")
+
+
+##########################
+# Dependencies
+##########################
+find_package(OpenMP REQUIRED)
+find_package(MPI REQUIRED)
+find_package(LAPACK REQUIRED)
+find_package(Boost REQUIRED)
+
+##########################
+# Dependencies in external
+##########################
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../external/cmake")
+list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/pybind11")
+list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/memwatch")
+list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/libelemental")
+find_package(pybind11 REQUIRED)
+find_package(memwatch REQUIRED)
+find_package(libelemental REQUIRED)
+
+
+# For some reason, this has a leading whitespace
+string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
+
+
+
+
+# Modules are created without a prefix
+set(CMAKE_SHARED_MODULE_PREFIX "")
 
 
 add_subdirectory(python)
@@ -29,14 +58,8 @@ add_subdirectory(testing)
 ######################################
 # Make a header-only interface library
 ######################################
-add_library(bpmodule_core_interface INTERFACE)
-target_include_directories(bpmodule_core_interface INTERFACE
-                           $<INSTALL_INTERFACE:include>
-)
-
-
-# Add to the bpmodule export
-install(TARGETS bpmodule_core_interface EXPORT bpmodule)
+# Install the config file
+install(FILES bpmoduleConfig.cmake DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 # Install all python files (for all core modules)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION modules FILES_MATCHING PATTERN "*.py")

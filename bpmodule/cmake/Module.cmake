@@ -4,9 +4,6 @@
 # to be used by bpmodule
 ########################################
 
-# This is the file created by install(export)
-include("${CMAKE_CURRENT_LIST_DIR}/bpmodule.cmake")
-
 # Others that are needed
 include("${CMAKE_CURRENT_LIST_DIR}/Common.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/Flags.cmake")

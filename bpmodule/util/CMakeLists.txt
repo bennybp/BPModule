@@ -11,8 +11,8 @@ set(BPMODULE_UTIL_FILES
 ADD_SUPERMODULE(util 
            "${BPMODULE_UTIL_FILES}"
            ""
-           "External::memwatch_interface"
-           "")
+           "${MEMWATCH_LIBRARIES}"
+           "${MEMWATCH_INCLUDE_DIR}")
 
 # TODO - HACK FOR NOW
 set_target_properties(util PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/external/memwatch/lib")
