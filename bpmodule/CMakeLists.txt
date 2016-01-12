@@ -59,7 +59,8 @@ add_subdirectory(testing)
 # Make a header-only interface library
 ######################################
 # Install the config file
-install(FILES bpmoduleConfig.cmake DESTINATION ${CMAKE_INSTALL_PREFIX})
+configure_file("bpmoduleConfig.cmake.in" "bpmoduleConfig.cmake" @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/bpmoduleConfig.cmake DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 # Install all python files (for all core modules)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION modules FILES_MATCHING PATTERN "*.py")

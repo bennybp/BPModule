@@ -1,5 +1,3 @@
-include(CMakeFindDependencyMacro)
-
 # Modules are created without a prefix
 set(CMAKE_SHARED_MODULE_PREFIX "")
 
@@ -13,19 +11,6 @@ list(APPEND CMAKE_PREFIX_PATH "${BPMODULE_EXTERNAL_DIR}/libelemental")
 # And the find macros
 list(APPEND CMAKE_MODULE_PATH "${BPMODULE_EXTERNAL_DIR}/cmake")
 
-# Find stuff
-set(Python_ADDITIONAL_VERSIONS "3.3;3.4;3.5;3.6")
-find_package(PythonLibs REQUIRED)
-string(REGEX REPLACE "^([0-9]+)\\.([0-9]+)\\.[0-9]+.*"
-                     "\\1.\\2"
-                     PYTHONLIBS_MAJORMINOR_VERSION_STRING
-                     "${PYTHONLIBS_VERSION_STRING}")
-
-
-find_package(OpenMP REQUIRED)
-find_package(MPI REQUIRED)
-find_package(LAPACK REQUIRED)
-find_package(Boost REQUIRED)
 
 # Find external projects
 find_package(memwatch REQUIRED)
@@ -37,6 +22,8 @@ add_library(bpmodule INTERFACE)
 
 # Required options
 target_compile_options(bpmodule INTERFACE "-std=c++11")
+target_compile_options(bpmodule INTERFACE @OpenMP_CXX_FLAGS@)
+
 
 #######################################
 # Add the various include directories
@@ -45,9 +32,9 @@ target_compile_options(bpmodule INTERFACE "-std=c++11")
 list(APPEND BPMODULE_CXX_INCLUDES ${CMAKE_CURRENT_LIST_DIR}/include)
 
 # Main dependencies
-list(APPEND BPMODULE_CXX_INCLUDES ${Boost_INCLUDE_DIRS})
-list(APPEND BPMODULE_CXX_INCLUDES ${PYTHON_INCLUDE_DIRS})
-list(APPEND BPMODULE_CXX_INCLUDES ${MPI_CXX_INCLUDE_PATH})
+list(APPEND BPMODULE_CXX_INCLUDES @Boost_INCLUDE_DIRS@)
+list(APPEND BPMODULE_CXX_INCLUDES @PYTHON_INCLUDE_DIRS@)
+list(APPEND BPMODULE_CXX_INCLUDES @MPI_CXX_INCLUDE_PATH@)
 
 # External dependencies
 list(APPEND BPMODULE_CXX_INCLUDES ${PYBIND11_INCLUDE_DIR})
@@ -62,7 +49,7 @@ target_include_directories(bpmodule INTERFACE ${BPMODULE_CXX_INCLUDES})
 #######################################
 
 # Sometimes this has a leading whitespace which CMake doesn't like
-string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
+#string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 
 # Main dependencies
 # Shouldn't really be needed?
@@ -71,7 +58,7 @@ string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 #list(APPEND BPMODULE_CXX_LINK_FLAGS ${PYTHON_LIBRARIES})
 #list(APPEND BPMODULE_CXX_LINK_FLAGS ${BLAS_LIBRARIES})
 #list(APPEND BPMODULE_CXX_LINK_FLAGS ${LAPACK_LIBRARIES})
-list(APPEND BPMODULE_CXX_LINK_FLAGS ${MPI_CXX_LINK_FLAGS})
+#list(APPEND BPMODULE_CXX_LINK_FLAGS ${MPI_CXX_LINK_FLAGS})
 #list(APPEND BPMODULE_CXX_LINK_FLAGS ${MPI_CXX_LIBRARIES})
 
 # External dependencies
@@ -79,5 +66,5 @@ list(APPEND BPMODULE_CXX_LINK_FLAGS ${MPI_CXX_LINK_FLAGS})
 #list(APPEND BPMODULE_CXX_LINK_FLAGS ${MEMWATCH_LIBRARIES})
 #list(APPEND BPMODULE_CXX_LINK_FLAGS ${LIBELEMENTAL_LIBRARIES})
 
-target_link_libraries(bpmodule INTERFACE ${BPMODULE_CXX_LINK_FLAGS})
+#target_link_libraries(bpmodule INTERFACE ${BPMODULE_CXX_LINK_FLAGS})
 
