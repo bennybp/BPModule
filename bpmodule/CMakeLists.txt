@@ -4,8 +4,14 @@ cmake_minimum_required(VERSION 3.0)
 #################################
 # Load macros
 #################################
-include("cmake/Python.cmake")
 include("cmake/CoreModule.cmake")
+
+
+##########################
+# Options to be passed in
+##########################
+set(BPMODULE_CORE_PYTHON_LIBRARIES "" CACHE STRING "Python libraries to link to")
+set(BPMODULE_CORE_PYTHON_INCLUDE_DIRS "" CACHE STRING "Include directories for python")
 
 
 ##########################
@@ -36,6 +42,8 @@ string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 # Modules are created without a prefix
 set(CMAKE_SHARED_MODULE_PREFIX "")
 
+message(STATUS "Going to use python libraries: ${BPMODULE_CORE_PYTHON_LIBRARIES}")
+message(STATUS "Going to use python include dirs: ${BPMODULE_CORE_PYTHON_INCLUDE_DIRS}")
 
 add_subdirectory(python)
 add_subdirectory(output)
