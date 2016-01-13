@@ -27,7 +27,6 @@ if(NOT libelemental_FOUND)
                                  -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                                  -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                                  -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
-                                 --debug-trycompile
                       CMAKE_CACHE_ARGS -DMATH_LIBS:STRING=${BPMODULE_MATH_LIBS}
                       INSTALL_COMMAND make install DESTDIR=${CMAKE_BINARY_DIR}/stage
                      )
