@@ -5,6 +5,29 @@ enable_language(C)
 
 include(ExternalProject)
 
+
+set(BPMODULE_MATH_LIBS "" CACHE STRING "Linker flags/libraries for math libraries")
+
+
+############################
+# Find some base libraries
+############################
+if(NOT BPMODULE_MATH_LIBS)
+  message(STATUS "BPMODULE_MATH_LIBS not specified. Trying to find some")
+  find_package(LAPACK REQUIRED)
+  message(STATUS "Using LAPACK: ${LAPACK_LINKER_FLAGS} ${LAPACK_LIBRARIES}")
+  message(STATUS "Using BLAS:   ${BLAS_LINKER_FLAGS} ${BLAS_LIBRARIES}")
+
+  list(APPEND BPMODULE_MATH_LIBS ${LAPACK_LINKER_FLAGS})
+  list(APPEND BPMODULE_MATH_LIBS ${LAPACK_LIBRARIES})
+  list(APPEND BPMODULE_MATH_LIBS ${BLAS_LINKER_FLAGS})
+  list(APPEND BPMODULE_MATH_LIBS ${BLAS_LIBRARIES})
+endif()
+
+
+message(STATUS "Using math libraries: ${BPMODULE_MATH_LIBS}")
+
+
 #################################
 # Add external projects
 #################################

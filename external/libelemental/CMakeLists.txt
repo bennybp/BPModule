@@ -20,13 +20,15 @@ if(NOT libelemental_FOUND)
                                  -DBUILD_METIS:Bool=Off
                                  -DINSTALL_PYTHON_PACKAGE:Bool=No
                                  -DBUILD_SHARED_LIBS:Bool=No
-                                 -DCMAKE_CXX_FLAGS="-fPIC"
+                                 -DCMAKE_CXX_FLAGS=-fPIC
                                  -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
                                  -DMPI_C_COMPILER=${MPI_C_COMPILER}
                                  -DMPI_Fortran_COMPILER=${MPI_Fortran_COMPILER}
                                  -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                                  -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                                  -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
+                                 --debug-trycompile
+                      CMAKE_CACHE_ARGS -DMATH_LIBS:STRING=${BPMODULE_MATH_LIBS}
                       INSTALL_COMMAND make install DESTDIR=${CMAKE_BINARY_DIR}/stage
                      )
 else()

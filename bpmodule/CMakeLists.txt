@@ -13,7 +13,6 @@ include("cmake/CoreModule.cmake")
 ##########################
 find_package(OpenMP REQUIRED)
 find_package(MPI REQUIRED)
-find_package(LAPACK REQUIRED)
 find_package(Boost REQUIRED)
 
 ##########################
