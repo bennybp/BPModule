@@ -7,10 +7,10 @@ set(BPMODULE_MOLECULE_FILES
    )
   
 
-ADD_COREMODULE(molecule
+ADD_COREMODULE(system
            "${BPMODULE_MOLECULE_FILES}"
            ""
            ""
            "")
 
-INSTALL_COREMODULE(molecule)
+INSTALL_COREMODULE(system)

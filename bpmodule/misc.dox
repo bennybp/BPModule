@@ -10,7 +10,7 @@
  *  \brief Classes and functions for the basis set and basis functions
  */
 
-/*! \namespace bpmodule::molecule
+/*! \namespace bpmodule::system
  *  \brief Classes and functions for the moleule and atoms
  */
 

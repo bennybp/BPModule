@@ -3,10 +3,10 @@
 
 #include <vector>
 
-#include "bpmodule/molecule/Atom.hpp"
+#include "bpmodule/system/Atom.hpp"
 
 namespace bpmodule {
-namespace molecule {
+namespace system {
 
 
 class Molecule
@@ -44,7 +44,7 @@ class Molecule
 
 
 
-} // close namespace molecule
+} // close namespace system
 } // close namespace bpmodule
 
 

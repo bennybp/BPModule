@@ -28,7 +28,7 @@ from . import math
 from . import tensor
 from . import modulebase
 from . import modulelocator
-from . import molecule
+from . import system
 from . import basisset
 
 from . import testing

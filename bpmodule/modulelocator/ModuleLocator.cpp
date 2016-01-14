@@ -13,9 +13,9 @@
 //////////////////////////////////////////////
 //! \todo can probably be removed when graph inheritance is done
 #include "bpmodule/basisset/BasisSet.hpp"
-#include "bpmodule/molecule/Molecule.hpp"
+#include "bpmodule/system/Molecule.hpp"
 #include "bpmodule/tensor/Matrix.hpp"
-using bpmodule::molecule::Molecule;
+using bpmodule::system::Molecule;
 using bpmodule::basisset::BasisSet;
 using bpmodule::tensor::DistMatrixD;
 //////////////////////////////////////////////

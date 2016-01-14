@@ -1,8 +1,8 @@
-#include "bpmodule/molecule/Molecule.hpp"
-#include "bpmodule/molecule/AtomicInfo.hpp"
+#include "bpmodule/system/Molecule.hpp"
+#include "bpmodule/system/AtomicInfo.hpp"
 
 namespace bpmodule {
-namespace molecule {
+namespace system {
 
 
 Molecule::Molecule(void)
@@ -45,6 +45,6 @@ Molecule::const_iterator Molecule::end(void) const
 
 
 
-} // close namespace molecule
+} // close namespace system
 } // close namespace bpmodule
 

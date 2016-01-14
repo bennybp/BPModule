@@ -55,7 +55,7 @@ add_subdirectory(tensor)
 add_subdirectory(datastore)
 add_subdirectory(modulebase)
 add_subdirectory(modulelocator)
-add_subdirectory(molecule)
+add_subdirectory(system)
 add_subdirectory(basisset)
 add_subdirectory(testing)
 
