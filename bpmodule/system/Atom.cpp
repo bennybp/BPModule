@@ -1,8 +1,8 @@
-#include "bpmodule/molecule/Atom.hpp"
-#include "bpmodule/molecule/AtomicInfo.hpp"
+#include "bpmodule/system/Atom.hpp"
+#include "bpmodule/system/AtomicInfo.hpp"
 
 namespace bpmodule {
-namespace molecule {
+namespace system {
 
 double Atom::Mass(void) const
 {
@@ -21,6 +21,6 @@ std::string Atom::Symbol(void) const
 }
 
 
-} // close namespace molecule
+} // close namespace system
 } // close namespace bpmodule
 

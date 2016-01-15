@@ -32,7 +32,7 @@ PRAGMA_WARNING_POP
 
 
 using bpmodule::basisset::BasisSet;
-using bpmodule::molecule::Molecule;
+using bpmodule::system::Molecule;
 using bpmodule::datastore::Wavefunction;
 using bpmodule::tensor::DistMatrixD;
 
@@ -144,7 +144,7 @@ PYBIND11_PLUGIN(datastore)
     .def(pybind11::init<>())
     .def("UniqueString", &Wavefunction::UniqueString)
     .def_readwrite("basis", &Wavefunction::basis)
-    .def_readwrite("molecule", &Wavefunction::molecule)
+    .def_readwrite("system", &Wavefunction::system)
     .def_readwrite("cmat", &Wavefunction::cmat)
     .def_readwrite("epsilon", &Wavefunction::epsilon)
     ;

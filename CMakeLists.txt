@@ -7,11 +7,16 @@ include(ExternalProject)
 
 
 set(BPMODULE_MATH_LIBS "" CACHE STRING "Linker flags/libraries for math libraries")
+#set(BPMODULE_PYTHON_VERSION "" CACHE STRING "Python version to use (example, 3.3)")
 
 
 ############################
 # Find some base libraries
 ############################
+
+#############
+# MATH
+#############
 if(NOT BPMODULE_MATH_LIBS)
   message(STATUS "BPMODULE_MATH_LIBS not specified. Trying to find some")
   find_package(LAPACK REQUIRED)
@@ -26,6 +31,15 @@ endif()
 
 
 message(STATUS "Using math libraries: ${BPMODULE_MATH_LIBS}")
+
+
+#############
+# PYTHON
+#############
+set(Python_ADDITIONAL_VERSIONS "3.3;3.4;3.5;3.6")
+find_package(PythonLibs "3.3" REQUIRED)
+message(STATUS "Python libs: ${PYTHON_LIBRARIES}")
+message(STATUS "Python inlcude: ${PYTHON_INCLUDE_DIRS}")
 
 
 #################################
@@ -45,11 +59,15 @@ ExternalProject_Add(bpmodule_core
                                -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/external
                                -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
                                -DMPI_C_COMPILER=${MPI_C_COMPILER}
+                    CMAKE_CACHE_ARGS -DBPMODULE_CORE_PYTHON_LIBRARIES:STRING=${PYTHON_LIBRARIES}
+                                     -DBPMODULE_CORE_PYTHON_INCLUDE_DIRS:STRING=${PYTHON_INCLUDE_DIRS}
+                                     -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
                     INSTALL_COMMAND make install DESTDIR=${CMAKE_BINARY_DIR}/stage
 )
 add_dependencies(bpmodule_core memwatch_external
                                pybind11_external
                                libelemental_external
+                               madness_external
                 )
 
 

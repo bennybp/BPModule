@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "bpmodule/basisset/BasisSet.hpp"
-#include "bpmodule/molecule/Molecule.hpp"
+#include "bpmodule/system/Molecule.hpp"
 
 namespace bpmodule {
 namespace basisset {
@@ -21,7 +21,7 @@ BasisMap ReadBasisFile(const std::string & path);
 
 
 
-BasisSet SimpleCreator(const std::string & basispath, const molecule::Molecule & mol);
+BasisSet SimpleCreator(const std::string & basispath, const system::Molecule & mol);
 
 
 

@@ -4,44 +4,41 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "bpmodule/parallel/Parallel.hpp"
+#include "bpmodule/parallel/InitFinalize.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/util/Cmdline.hpp"
 
-#include <mpi.h>
+#include <madness/world/world.h>
 
 namespace bpmodule {
 namespace parallel {
 
-void InitParallel(void)
+void Init(void)
 {
     output::Output("Calling MPI Init");
-    MPI_Init(util::GetArgc(), util::GetArgv());
+    madness::initialize(*(util::GetArgc()), *(util::GetArgv()));
     output::Output("Initialized Process %1% of %2%\n", GetProcID(), GetNProc());
 }
 
 
-void FinalizeParallel(void)
+void Finalize(void)
 {
     output::Output("Finalizing Process %1% of %2%\n", GetProcID(), GetNProc());
-
-    MPI_Finalize();
+    madness::finalize();
 }
 
 
 long GetProcID(void)
 {
-    int p;
-    MPI_Comm_rank(MPI_COMM_WORLD, &p);
-    return static_cast<long>(p);
+    madness::World & w = madness::World::get_default();
+    return static_cast<long>(w.rank());
 }
 
 
 long GetNProc(void)
 {
-    int s;
-    MPI_Comm_size(MPI_COMM_WORLD, &s);
-    return static_cast<long>(s);
+    madness::World & w = madness::World::get_default();
+    return static_cast<long>(w.nproc());
 }
 
 } // close namespace parallel

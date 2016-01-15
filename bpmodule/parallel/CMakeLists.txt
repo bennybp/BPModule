@@ -1,5 +1,5 @@
 set(BPMODULE_PARALLEL_FILES
-            Parallel.cpp
+            InitFinalize.cpp
             export.cpp
    )
   
@@ -7,7 +7,9 @@ set(BPMODULE_PARALLEL_FILES
 ADD_COREMODULE(parallel
            "${BPMODULE_PARALLEL_FILES}"
            ""
-           ""
+           "MADworld"
            "")
 
 INSTALL_COREMODULE(parallel)
+
+set_target_properties(parallel PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/external/madness/lib")

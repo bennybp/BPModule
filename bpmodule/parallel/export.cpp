@@ -5,7 +5,7 @@
  */ 
 
 
-#include "bpmodule/parallel/Parallel.hpp"
+#include "bpmodule/parallel/InitFinalize.hpp"
 #include "bpmodule/python/Pybind11.hpp"
 
 namespace bpmodule {
@@ -17,8 +17,8 @@ PYBIND11_PLUGIN(parallel)
     pybind11::module m("parallel", "Parallelization stuff");
 
     // Parallelization
-    m.def("InitParallel", InitParallel);
-    m.def("FinalizeParallel", FinalizeParallel);
+    m.def("Init", Init);
+    m.def("Finalize", Finalize);
 
     return m.ptr();
 }

@@ -6,7 +6,7 @@
 typedef std::array<double, 3> CoordType;
 
 namespace bpmodule {
-namespace molecule {
+namespace system {
 
 
 struct Atom
@@ -27,7 +27,7 @@ struct Atom
 };
 
 
-} // close namespace molecule
+} // close namespace system
 } // close namespace bpmodule
 
 #endif

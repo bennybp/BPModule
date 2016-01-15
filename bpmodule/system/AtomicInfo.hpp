@@ -5,7 +5,7 @@
 #include <string>
 
 namespace bpmodule {
-namespace molecule {
+namespace system {
 
 
 struct IsotopeData
@@ -175,7 +175,7 @@ std::string AtomicNameFromSym(const std::string & sym);
 
 
 
-} // closing namespace molecule
+} // closing namespace system
 } // closing namespace bpmodule
 
 

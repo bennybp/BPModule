@@ -246,7 +246,7 @@ class ModuleLoadException : public GeneralException
 
 
 /*! \brief An exception thrown when there is a problem with
- *         molecule operations
+ *         molecule/system operations
  */
 class MoleculeException : public GeneralException
 {

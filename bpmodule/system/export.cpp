@@ -1,27 +1,27 @@
 /*! \file
  *
- * \brief Python exports for the molecule library
+ * \brief Python exports for the system library
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
 
 #include "bpmodule/python/Convert.hpp"
-#include "bpmodule/molecule/AtomicInfo.hpp"
-#include "bpmodule/molecule/Molecule.hpp"
+#include "bpmodule/system/AtomicInfo.hpp"
+#include "bpmodule/system/Molecule.hpp"
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/python/Convert.hpp"
 
 using bpmodule::python::ConvertToCpp;
 
 namespace bpmodule {
-namespace molecule {
+namespace system {
 namespace export_python {
 
 
 
-PYBIND11_PLUGIN(molecule)
+PYBIND11_PLUGIN(system)
 {
-    pybind11::module m("molecule", "Molecular system specification");
+    pybind11::module m("system", "Molecular system specification");
 
     datastore::RegisterUIDPointer<Molecule>(m, "Molecule");
 
@@ -90,6 +90,6 @@ PYBIND11_PLUGIN(molecule)
 
 
 } // close namespace export_python
-} // close namespace molecule 
+} // close namespace system 
 } // close namespace bpmodule
 

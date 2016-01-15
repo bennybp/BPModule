@@ -7,3 +7,6 @@
 [submodule "external/tensor/tensor-source"]
 	path = external/tensor/tensor-source
 	url = git@github.com:ryanmrichard/Tensor.git
+[submodule "external/madness/madness-source"]
+	path = external/madness/madness-source
+	url = https://github.com/m-a-d-n-e-s-s/madness

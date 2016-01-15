@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_PARALLEL__PARALLEL_HPP_
-#define BPMODULE_GUARD_PARALLEL__PARALLEL_HPP_
+#ifndef BPMODULE_GUARD_PARALLEL__INITFINALIZE_HPP_
+#define BPMODULE_GUARD_PARALLEL__INITFINALIZE_HPP_
 
 
 //! \todo We need to store multiple communicators, etc
@@ -18,14 +18,14 @@ namespace parallel {
  *
  * This is meant to be called from python
  */
-void InitParallel(void);
+void Init(void);
 
 
 /*! \brief Finalize parallelization functionality
  *
  * This is meant to be called from python
  */
-void FinalizeParallel(void);
+void Finalize(void);
 
 
 /*! \brief Return the ID (rank) associated with this process

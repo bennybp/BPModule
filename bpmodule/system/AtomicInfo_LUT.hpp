@@ -20,13 +20,13 @@ CREATED: 2015-11-13 22:27:46.002584
 
 
 #include <map>
-#include "bpmodule/molecule/AtomicInfo.hpp"
+#include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/util/StringUtil.hpp"
 
 
 
 namespace bpmodule {
-namespace molecule {
+namespace system {
 namespace lut {
 
 
@@ -44,7 +44,7 @@ extern const std::map<int, AtomicData> atomic_Z_data_;
 
 
 } // closing namespace lut
-} // closing namespace molecule
+} // closing namespace system
 } // closing namespace bpmodule
 
 

@@ -1,11 +1,11 @@
 #include <algorithm>
 
-#include "bpmodule/molecule/AtomicInfo.hpp"
-#include "bpmodule/molecule/AtomicInfo_LUT.hpp"
+#include "bpmodule/system/AtomicInfo.hpp"
+#include "bpmodule/system/AtomicInfo_LUT.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 
 namespace bpmodule {
-namespace molecule {
+namespace system {
 
 // global LUT:
 // Maps Z to symbol
@@ -142,6 +142,6 @@ std::string AtomicNameFromSym(const std::string & sym)
 
 
 
-} // closing namespace molecule
+} // closing namespace system
 } // closing namespace bpmodule
 
