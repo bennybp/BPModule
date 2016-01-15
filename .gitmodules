@@ -4,3 +4,6 @@
 [submodule "external/libelemental/libelemental-source"]
 	path = external/libelemental/libelemental-source
 	url = https://github.com/elemental/Elemental.git
+[submodule "external/tensor/tensor-source"]
+	path = external/tensor/tensor-source
+	url = git@github.com:ryanmrichard/Tensor.git

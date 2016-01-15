@@ -7,6 +7,7 @@
 
 #include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/math/Factorial.hpp"
+#include "bpmodule/math/Locus.hpp"
 
 //! \todo Export exact casts? Or have the equivalent with python?
 
@@ -29,6 +30,14 @@ PYBIND11_PLUGIN(math)
     m.def("Double2nm1Factorial", Double2nm1Factorial); 
     m.def("Double2nm1FactorialF", Double2nm1FactorialF); 
     m.def("Double2nm1FactorialD", Double2nm1FactorialD); 
+
+    pybind11::class_<Point>(m,"Point")
+          .def(pybind11::init<double,double,double>())
+          .def("AddWeight",&Point::AddWeight)
+          .def("NWeights",&Point::NWeights)
+          .def("Weight",&Point::Weight)
+          .def("__getitem__",&Point::operator[])
+          .def("__str__",&Point::operator std::string());
 
     return m.ptr();
 }
