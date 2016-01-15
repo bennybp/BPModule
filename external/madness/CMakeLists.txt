@@ -1,12 +1,7 @@
-###############################
-# Detect and build MADNESS
-# if necessary
-###############################
-
 include(ExternalProject)
 
 # Find if it already exists? (it's not required yet)
-find_package(MADNESS CONFIG QUIET COMPONENTS world)
+find_package(MADNESS QUIET COMPONENTS world)
 
 
 # If not found, build it
@@ -28,11 +23,9 @@ if(NOT MADNESS_FOUND)
                                  -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
                       CMAKE_CACHE_ARGS -DLAPACK_LIBRARIES:STRING=${BPMODULE_MATH_LIBS}
                       BUILD_COMMAND ${CMAKE_COMMAND} --build . --target MADworld
-                      INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install-world install-config DESTDIR=${CMAKE_BINARY_DIR}/stage
+                      INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install-common install-world install-config DESTDIR=${CMAKE_BINARY_DIR}/stage
                      )
 else()
-  message(STATUS "Using existing MADNESS")
-
   # Add a dummy library for dependencies
   add_library(madness_external INTERFACE)
 endif()

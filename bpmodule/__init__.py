@@ -65,7 +65,7 @@ def Init(argv, out = "stdout", color = True, debug = False):
   util.SetCmdline(argv)
 
   # Initialize Parallel
-  parallel.InitParallel()
+  parallel.Init()
 
   # Initialize tensor
   tensor.Init()
@@ -86,7 +86,7 @@ def Finalize():
   tensor.Finalize()
 
   output.Output("Finalizing parallelization\n")
-  parallel.FinalizeParallel()
+  parallel.Finalize()
 
   util.ClearCmdline()
 

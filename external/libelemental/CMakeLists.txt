@@ -1,13 +1,7 @@
-###############################
-# Detect and build libelemental
-# if necessary
-###############################
-
 include(ExternalProject)
 
 # Find if it already exists? (it's not required yet)
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cmake")
-find_package(libelemental)
+find_package(libelemental QUIET)
 
 
 # If not found, build it
@@ -31,8 +25,6 @@ if(NOT LIBELEMENTAL_FOUND)
                       INSTALL_COMMAND make install DESTDIR=${CMAKE_BINARY_DIR}/stage
                      )
 else()
-  message(STATUS "Using existing libelemental")
-
   # Add a dummy library for dependencies
   add_library(libelemental_external INTERFACE)
 endif()

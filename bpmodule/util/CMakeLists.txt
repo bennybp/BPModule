@@ -14,7 +14,6 @@ ADD_COREMODULE(util
            "${MEMWATCH_LIBRARIES}"
            "${MEMWATCH_INCLUDE_DIR}")
 
-# TODO - HACK FOR NOW
 set_target_properties(util PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/external/memwatch/lib")
 
 INSTALL_COREMODULE(util)
