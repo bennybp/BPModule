@@ -101,7 +101,7 @@ class Point{
 
 ///Just prints the carts
 inline std::ostream& operator<<(std::ostream& os,const Point& p){
-      return os<<(std::string)p;
+      return os<<static_cast<std::string>(p);
 }
 
 ///A locus is a set of points
@@ -119,7 +119,7 @@ class Locus{
 
    public:
       ///Makes a Locus that contains memory for N points
-      Locus(size_t N=0);
+      explicit Locus(size_t N=0);
 
       ///Adds a point to the Locus
       void AddPoint(const Point& APoint);

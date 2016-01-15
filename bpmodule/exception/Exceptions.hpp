@@ -180,7 +180,13 @@ class NotYetImplementedException : public GeneralException
         using GeneralException::GeneralException;
 };
 
-
+/*! \brief An exception thrown if a value is out of range
+ */
+class ValueOutOfRange : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
 
 /*! \brief An exception thrown when there is a problem with a
  *         basis set or basis functions

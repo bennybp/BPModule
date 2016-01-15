@@ -13,11 +13,14 @@
 namespace bpmodule{
 namespace math{
 
-const WeightType WeightType::Weight("Weight");
-const WeightType WeightType::Z("Atomic Number");
-const WeightType WeightType::Mass("Mass");
-const WeightType WeightType::Charge("Charge");
-const WeightType WeightType::VDWR("van Der Waals Radius");
-const WeightType WeightType::CovR("Covalent Radius");
+//std::set<const util::Enumeration<WeightType>* >
+//   util::Enumeration<WeightType>::Enums_;
+
+const WeightType WeightType::Weight("WEIGHT");
+const WeightType WeightType::Z("ATOMIC NUMBER");
+const WeightType WeightType::Mass("MASS");
+const WeightType WeightType::Charge("CHARGE");
+const WeightType WeightType::VDWR("VAN DER WAALS RADIUS");
+const WeightType WeightType::CovR("COVALENT RADIUS");
 
 }}//End namespaces

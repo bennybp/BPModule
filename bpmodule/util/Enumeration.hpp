@@ -35,13 +35,17 @@ namespace util{
  *  };
  *  \endcode
  *
- *  Then in a sourcr file, MyEnums.cpp:
+ *  Then in a source file, MyEnums.cpp:
  *  \code
  *  #include "MyEnums.hpp"
+ *  std::set<const Enumeration<MyEnums>*> Enumeration<MyEnums>::Enums_;
  *  const MyEnums MyEnums::Value1("String to print for Value1's value");
  *  const MyEnums MyEnums::Value2("String to print for Value2's value");
  *  const MyEnums MyEnums::Value3("String to print for Value3's value");
  *  \endcode
+ *
+ *  The first line instantiates an std::set to hold all of the enums
+ *  where as the rest of the lines instantiate the actual enums.
  *
  *  Then in code where you want to use the enums:
  *  \code
@@ -80,6 +84,11 @@ class Enumeration{
       bool operator==(const MyType_t& Other)const{
          return (!operator<(Other)&&!operator>(Other));
       }
+      bool operator==(const std::string& other)const{
+         if(IsValid(other))
+            return (*this)==MyType_t(other);
+         return false;
+      }
       bool operator!=(const MyType_t& Other)const{return !((*this)==Other);}
       ///Returns the value held by this Enumeration
       const std::string& Value() const{return Value_;}
@@ -109,6 +118,13 @@ inline std::ostream& operator<<(std::ostream& os,const Enumeration<T>& Enum){
    return os<<(std::string)(Enum);
 }
 
+template<typename T>
+inline bool operator==(const std::string& lhs,const Enumeration<T>& rhs){
+   return rhs==lhs;
+}
+
+template<typename T>
+std::set<const Enumeration<T>* > Enumeration<T>::Enums_;
 
 }}//end namespaces
 

@@ -36,8 +36,8 @@ PYBIND11_PLUGIN(math)
           .def("AddWeight",&Point::AddWeight)
           .def("NWeights",&Point::NWeights)
           .def("Weight",&Point::Weight)
-          .def("__getitem__",&Point::operator[])
-          .def("__str__",&Point::operator std::string());
+          .def("__getitem__",&Point::operator[]);
+          //.def("__str__",&Point::operator std::string());
 
     return m.ptr();
 }
