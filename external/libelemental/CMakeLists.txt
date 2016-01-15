@@ -11,7 +11,7 @@ find_package(libelemental)
 
 
 # If not found, build it
-if(NOT libelemental_FOUND)
+if(NOT LIBELEMENTAL_FOUND)
   message(STATUS "We will build libelemental for you")
   ExternalProject_Add(libelemental_external
                       SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libelemental-source

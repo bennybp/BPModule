@@ -28,9 +28,11 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../external/cmake")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/pybind11")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/memwatch")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/libelemental")
+list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/madness")
 find_package(pybind11 REQUIRED)
 find_package(memwatch REQUIRED)
 find_package(libelemental REQUIRED)
+find_package(MADNESS REQUIRED CONFIG COMPONENTS world)
 
 
 # For some reason, this has a leading whitespace

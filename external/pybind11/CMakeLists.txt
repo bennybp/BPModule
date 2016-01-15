@@ -11,7 +11,7 @@ find_package(pybind11)
 
 
 # If not found, build it
-if(NOT pybind11_FOUND)
+if(NOT PYBIND11_FOUND)
   message(STATUS "We will build pybind11 for you")
   ExternalProject_Add(pybind11_external
                       SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pybind11-source
