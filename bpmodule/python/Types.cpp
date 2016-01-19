@@ -13,7 +13,7 @@ namespace bpmodule {
 namespace python {
 
 
-std::string GetPyClass(pybind11::object obj)
+std::string GetPyClass(const pybind11::object & obj)
 {
     Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
 
@@ -22,24 +22,24 @@ std::string GetPyClass(pybind11::object obj)
     return name.cast<std::string>();
 }
 
-bool IsNone(pybind11::object obj)
+bool IsNone(const pybind11::object & obj)
 {
     return GetPyClass(obj) == "NoneType";
 }
 
-bool HasAttr(pybind11::object obj, const std::string & attr)
+bool HasAttr(const pybind11::object & obj, const std::string & attr)
 {
     Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
     return PyObject_HasAttrString(obj.ptr(), attr.c_str());
 }
 
-bool IsCallable(pybind11::object obj)
+bool IsCallable(const pybind11::object & obj)
 {
     Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
     return PyCallable_Check(obj.ptr());
 }
 
-bool HasCallableAttr(pybind11::object obj, const std::string & attr)
+bool HasCallableAttr(const pybind11::object & obj, const std::string & attr)
 {
     Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
     return HasAttr(obj, attr) && IsCallable(obj.attr(attr.c_str()));

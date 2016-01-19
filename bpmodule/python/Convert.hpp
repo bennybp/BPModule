@@ -22,7 +22,7 @@ namespace python {
 /*! \brief Prevent some conversions
  */
 template<typename T>
-bool ValidConvert(pybind11::object obj)
+bool ValidConvert(const pybind11::object & obj)
 {
     //! \todo Won't catch elements in lists, etc. Would have to override in pybind11?
     std::string cls = GetPyClass(obj);
@@ -46,7 +46,7 @@ bool ValidConvert(pybind11::object obj)
  * \param [in] obj The python object to convert
  */
 template<typename T>
-T ConvertToCpp(pybind11::object obj)
+T ConvertToCpp(const pybind11::object & obj)
 {
     using bpmodule::exception::PythonConvertException;
     using bpmodule::exception::GeneralException;

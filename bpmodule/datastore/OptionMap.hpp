@@ -306,7 +306,7 @@ class OptionMap
          *
          * \exstrong
          */
-        void ChangePy(const std::string & key, pybind11::object obj);
+        void ChangePy(const std::string & key, const pybind11::object & obj);
 
 
 

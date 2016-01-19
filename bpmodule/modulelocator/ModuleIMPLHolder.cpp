@@ -14,7 +14,7 @@ namespace modulelocator {
 namespace detail {
 
 
-PyModuleIMPLHolder::PyModuleIMPLHolder(pybind11::object mod)
+PyModuleIMPLHolder::PyModuleIMPLHolder(const pybind11::object & mod)
     : mod_(mod)
 { 
     using namespace bpmodule::exception;

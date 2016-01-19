@@ -174,7 +174,7 @@ class ModuleLocator
 
         /*! \brief Change an option via python
          */
-        void ChangeOptionPy(const std::string & modulekey, const std::string & optkey, pybind11::object value);
+        void ChangeOptionPy(const std::string & modulekey, const std::string & optkey, const pybind11::object & value);
 
 
 

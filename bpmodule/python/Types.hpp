@@ -19,27 +19,27 @@ namespace python {
 
 /*! \brief Get the class of a python object as a string
  */
-std::string GetPyClass(pybind11::object obj);
+std::string GetPyClass(const pybind11::object & obj);
 
 
 /*! \brief Determine if an object is "None"
  */
-bool IsNone(pybind11::object obj);
+bool IsNone(const pybind11::object & obj);
 
 
 /*! \brief Check if a python object has a given attribute
  */
-bool HasAttr(pybind11::object obj, const std::string & attr);
+bool HasAttr(const pybind11::object & obj, const std::string & attr);
 
 
 /*! \brief Check if a python object is callable
  */ 
-bool IsCallable(pybind11::object obj);
+bool IsCallable(const pybind11::object & obj);
 
 
 /*! \brief Check if a python object has a given callable attribute
  */
-bool HasCallableAttr(pybind11::object obj, const std::string & attr);
+bool HasCallableAttr(const pybind11::object & obj, const std::string & attr);
 
 
 } // close namespace python

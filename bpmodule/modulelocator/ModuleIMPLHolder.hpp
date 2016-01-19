@@ -119,7 +119,7 @@ class PyModuleIMPLHolder : public ModuleIMPLHolder
     public:
         /*! \brief Construct by copying a python object
          */ 
-        PyModuleIMPLHolder(pybind11::object mod);
+        PyModuleIMPLHolder(const pybind11::object & mod);
 
         virtual modulebase::ModuleBase * CppPtr(void) const;
 
