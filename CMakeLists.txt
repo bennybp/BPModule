@@ -13,6 +13,7 @@ set(BPMODULE_MATH_LIBS "" CACHE STRING "Linker flags/libraries for math librarie
 ############################
 # Find some base libraries
 ############################
+find_package(MPI REQUIRED)
 
 #############
 # MATH
