@@ -40,7 +40,7 @@ class ModuleCreationFuncs
 
         /*! \brief Add a creator for a python module
          */ 
-        void AddPyCreator(const std::string & modulename, pybind11::object cls)
+        void AddPyCreator(const std::string & modulename, const pybind11::object & cls)
         {
             Func m = std::bind(&ModuleCreationFuncs::PyConstructorWrapper, cls, std::placeholders::_1);
             creators_.emplace(modulename, m);
@@ -83,7 +83,7 @@ class ModuleCreationFuncs
          */ 
         static
         detail::ModuleIMPLHolder *
-        PyConstructorWrapper(pybind11::object cls, unsigned long i)
+        PyConstructorWrapper(const pybind11::object & cls, unsigned long i)
         {
             pybind11::object o = cls.call(i);
             detail::ModuleIMPLHolder * ret = new detail::PyModuleIMPLHolder(o);

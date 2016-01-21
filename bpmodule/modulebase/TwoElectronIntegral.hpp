@@ -24,10 +24,6 @@ class TwoElectronIntegral : public ModuleBase
             : ModuleBase(id)
         { }
 
-        TwoElectronIntegral(pybind11::object self, unsigned long id)
-            : ModuleBase(self, id)
-        { }
-
 
         /*! \brief Set the basis sets for the integrals
          * 

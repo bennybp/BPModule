@@ -267,7 +267,7 @@ pybind11::object OptionMap::GetPy(const std::string & key) const
 }
 
 
-void OptionMap::ChangePy(const std::string & key, pybind11::object obj)
+void OptionMap::ChangePy(const std::string & key, const pybind11::object & obj)
 {
     OptionBase * ptr = GetOrThrow_(key);
     ptr->ChangePy(obj);

@@ -240,7 +240,7 @@ pybind11::object ModuleLocator::GetModulePy(const std::string & modulekey,
     return pybind11::cast(PyModulePtr(std::move(umbptr)));
 }
         
-void ModuleLocator::ChangeOptionPy(const std::string & modulekey, const std::string & optkey, pybind11::object value)
+void ModuleLocator::ChangeOptionPy(const std::string & modulekey, const std::string & optkey, const pybind11::object & value)
 {
     GetOrThrow_(modulekey).mi.options.ChangePy(optkey, value);
 }

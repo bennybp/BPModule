@@ -53,7 +53,7 @@ template class OptionHolder<OptionType::SetString>;
  *
  */
 template<OptionType OPTTYPE>
-static OptionIssues ValidatorWrapper_(pybind11::object valobj, const std::string & key, const OptionHolder<OPTTYPE> & value)
+static OptionIssues ValidatorWrapper_(pybind11::object & valobj, const std::string & key, const OptionHolder<OPTTYPE> & value)
 {
     try {
         if(!valobj || python::IsNone(valobj))

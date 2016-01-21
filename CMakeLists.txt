@@ -13,6 +13,7 @@ set(BPMODULE_MATH_LIBS "" CACHE STRING "Linker flags/libraries for math librarie
 ############################
 # Find some base libraries
 ############################
+find_package(MPI REQUIRED)
 
 #############
 # MATH
@@ -55,6 +56,7 @@ add_subdirectory(external)
 ExternalProject_Add(bpmodule_core
                     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bpmodule
                     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+                               -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                                -DDESTDIR=${CMAKE_BINARY_DIR}/stage                   # Pass in to allow for searching for dependencies 
                                -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/external
                                -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}

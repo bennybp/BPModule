@@ -73,7 +73,6 @@ macro(ADD_COREMODULE MODULE_NAME
       # Default flags for stuff
       list(APPEND ${MODULE_NAME}_CXX_FLAGS ${BPMODULE_CXX_STRICT_FLAGS})
       target_compile_options(${MODULE_NAME} PRIVATE ${${MODULE_NAME}_CXX_FLAGS})
-      #message(STATUS "${MODULE_NAME} cxx compile flags: ${${MODULE_NAME}_CXX_FLAGS}")
 
 
 
@@ -85,19 +84,18 @@ macro(ADD_COREMODULE MODULE_NAME
       # Passed in
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${MODULE_CXX_INCLUDES})
 
-      # Main dependencies
-      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${Boost_INCLUDE_DIRS})
-      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${BPMODULE_CORE_PYTHON_INCLUDE_DIRS})
-      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${MPI_CXX_INCLUDE_PATH})
+      # Include them
       target_include_directories(${MODULE_NAME} PRIVATE ${${MODULE_NAME}_CXX_INCLUDES})
 
-      # External dependencies
 
-      target_include_directories(${MODULE_NAME} SYSTEM PRIVATE ${PYBIND11_INCLUDE_DIR}) 
-      target_include_directories(${MODULE_NAME} SYSTEM PRIVATE ${LIBELEMENTAL_INCLUDE_DIR}) 
-      target_include_directories(${MODULE_NAME} SYSTEM PRIVATE ${MADNESS_INCLUDE_DIRS}) 
-
-      #message(STATUS "${MODULE_NAME} cxx includes: ${${MODULE_NAME}_CXX_INCLUDES}")
+      # External dependencies (mark as system includes)
+      list(APPEND ${MODULE_NAME}_CXX_EXTERNAL_INCLUDES ${Boost_INCLUDE_DIRS})
+      list(APPEND ${MODULE_NAME}_CXX_EXTERNAL_INCLUDES ${BPMODULE_CORE_PYTHON_INCLUDE_DIRS})
+      list(APPEND ${MODULE_NAME}_CXX_EXTERNAL_INCLUDES ${MPI_CXX_INCLUDE_PATH})
+      list(APPEND ${MODULE_NAME}_CXX_EXTERNAL_INCLUDES ${PYBIND11_INCLUDE_DIR})
+      list(APPEND ${MODULE_NAME}_CXX_EXTERNAL_INCLUDES ${LIBELEMENTAL_INCLUDE_DIR})
+      list(APPEND ${MODULE_NAME}_CXX_EXTERNAL_INCLUDES ${MADNESS_INCLUDE_DIRS})
+      target_include_directories(${MODULE_NAME} SYSTEM PRIVATE ${${MODULE_NAME}_CXX_EXTERNAL_INCLUDES})
 
 
       #################
@@ -116,9 +114,6 @@ macro(ADD_COREMODULE MODULE_NAME
 
 
       target_link_libraries(${MODULE_NAME} ${${MODULE_NAME}_CXX_LINK_FLAGS})
-
-
-      #message(STATUS "${MODULE_NAME} cxx link flags: ${${MODULE_NAME}_CXX_LINK_FLAGS}")
 
   endif()
 
