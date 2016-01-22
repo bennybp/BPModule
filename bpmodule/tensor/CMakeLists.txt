@@ -4,17 +4,11 @@ set(BPMODULE_TENSOR_FILES
     export.cpp
    )
   
-set(BPMODULE_TENSOR_HEADERS
-            InitFinalize.hpp
-            Matrix.hpp
-            Tensor.hpp
-   )
 
-
-ADD_SUPERMODULE(tensor
+ADD_COREMODULE(tensor
            "${BPMODULE_TENSOR_FILES}"
            ""
-           ""
+           "${LIBELEMENTAL_LIBRARIES}"
            "")
 
-INSTALL_COREMODULE(tensor "${BPMODULE_TENSOR_HEADERS}" "")
+INSTALL_COREMODULE(tensor)

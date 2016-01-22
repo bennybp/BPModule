@@ -1,21 +1,19 @@
 set(BPMODULE_UTIL_FILES
+            Memwatch.cpp
             Cmdline.cpp
             StringUtil.cpp 
             FormatString.cpp
+            Mangle.cpp
             export.cpp
    )
 
-set(BPMODULE_UTIL_HEADERS
-            Cmdline.hpp
-            FormatString.hpp
-            StringUtil.hpp
-   )
 
-
-ADD_SUPERMODULE(util 
+ADD_COREMODULE(util 
            "${BPMODULE_UTIL_FILES}"
            ""
-           ""
-           "")
+           "${MEMWATCH_LIBRARIES}"
+           "${MEMWATCH_INCLUDE_DIR}")
 
-INSTALL_COREMODULE(util "${BPMODULE_UTIL_HEADERS}" "")
+set_target_properties(util PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/external/memwatch/lib")
+
+INSTALL_COREMODULE(util)

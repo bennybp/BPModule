@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef _GUARD_TEST_BASE_HPP_
-#define _GUARD_TEST_BASE_HPP_
+#ifndef BPMODULE_GUARD_MODULEBASE__TEST_BASE_HPP_
+#define BPMODULE_GUARD_MODULEBASE__TEST_BASE_HPP_
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
 
@@ -21,24 +21,39 @@ namespace modulebase {
 class Test_Base : public ModuleBase
 {
     public:
-        Test_Base(unsigned long id);
+        typedef Test_Base BaseType;
 
 
-        //! \brief Just test some functionality
-        virtual void RunTest(void) = 0;
+        Test_Base(unsigned long id)
+            : ModuleBase(id, "Test_Base")
+        { }
 
+
+        /*! \brief Just test some functionality
+         */
+        void RunTest(void)
+        {
+            return ModuleBase::CallFunction(&Test_Base::RunTest_);
+        }
 
 
         /*! \brief Call RunTest() of another module
          *
          * \param [in] other Key of the other module in the database
          */ 
-        virtual void CallRunTest(const std::string & other) = 0;
+        void CallRunTest(const std::string & other)
+        {
+            return ModuleBase::CallFunction(&Test_Base::CallRunTest_, other);
+        }
 
 
 
-        //! Throw an exception
-        virtual void Throw(void) = 0;
+        /*! \brief Throw an exception
+         */
+        void TestThrow(void)
+        {
+            return ModuleBase::CallFunction(&Test_Base::TestThrow_);
+        }
 
 
 
@@ -46,9 +61,86 @@ class Test_Base : public ModuleBase
          *
          * \param [in] other Key of the other module in the database
          */ 
-        virtual void CallThrow(const std::string & other) = 0;
+        void CallThrow(const std::string & other)
+        {
+            return ModuleBase::CallFunction(&Test_Base::CallThrow_, other);
+        }
+
+
+
+
+        /////////////////////////////////////////
+        // To be implemented by derived classes
+        /////////////////////////////////////////
+        /*! \copydoc RunTest
+         * 
+         * \note To be implemented by derived classes
+         */ 
+        virtual void RunTest_(void) = 0;
+
+
+        /*! \copydoc CallRunTest
+         * 
+         * \note To be implemented by derived classes
+         */ 
+        virtual void CallRunTest_(const std::string & other) = 0;
+
+
+        /*! \copydoc TestThrow
+         * 
+         * \note To be implemented by derived classes
+         */ 
+        virtual void TestThrow_(void) = 0;
+
+
+        /*! \copydoc CallThrow
+         * 
+         * \note To be implemented by derived classes
+         */ 
+        virtual void CallThrow_(const std::string & other) = 0;
+
 
 };
+
+
+
+
+class Test_Base_Py : public Test_Base
+{
+    public:
+        using Test_Base::Test_Base;
+
+        MODULEBASE_FORWARD_PROTECTED_TO_PY
+
+    
+        virtual void RunTest_(void)
+        {
+            return CallPyOverride<void>("RunTest_");
+        }
+
+
+
+        virtual void CallRunTest_(const std::string & other)
+        {
+            return CallPyOverride<void>("CallRunTest_", other);
+        }
+
+
+
+        virtual void TestThrow_(void)
+        {
+            return CallPyOverride<void>("TestThrow_");
+        }
+
+
+
+        virtual void CallThrow_(const std::string & other)
+        {
+            return CallPyOverride<void>("CallThrow_", other);
+        }
+
+};
+
 
 } // close namespace modulebase
 } // close namespace bpmodule

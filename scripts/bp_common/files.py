@@ -6,13 +6,15 @@ import datetime
 
 
 def GenIncludeGuard(path):
-  base = os.path.basename(path)
+  f = os.path.realpath(path)
+  d = os.path.dirname(f)
+  base = os.path.basename(d) + "__" + os.path.basename(f)
   guard = base.upper()
   guard = guard.replace('.', '_')
   guard = guard.replace('-', '_')
   guard = guard.replace('/', '__')
   guard = guard.replace('\\', '__')
-  guard = "_GUARD_{}_".format(guard)
+  guard = "BPMODULE_GUARD_{}_".format(guard)
 
   return guard
 

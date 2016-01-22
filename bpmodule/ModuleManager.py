@@ -2,7 +2,7 @@ import sys
 import os
 import importlib
 
-from . import modulelocator, output, exception, CheckSupermodule
+from . import modulelocator, output, exception, datastore, CheckSupermodule
 
 
 
@@ -11,7 +11,7 @@ class ModuleManager(modulelocator.ModuleLocator):
         super(ModuleManager, self).__init__()
 
         # Main module store and module loaders
-        self.cml = modulelocator.CModuleLoader(self)
+        self.cml = modulelocator.CppModuleLoader(self)
         self.pml = modulelocator.PyModuleLoader(self) 
         self.modmap = {}
 
@@ -19,11 +19,22 @@ class ModuleManager(modulelocator.ModuleLocator):
 
 
     def Finalize(self):
+
+        #################################################
+        # WARNING WARNING WARNING
+        # Clearing the cache and store MUST be done BEFORE unloading
+        # the modules or else deleting elements will cause a segfault.
+        # The GenericHolder is a template, so the code for
+        # the destructors exists in the modules
+        #################################################
+        super(ModuleManager, self).ClearCache()
+        super(ModuleManager, self).ClearStore()
+
         output.Output("Deleting python modules\n")
+        self.pml.CloseAll()
         del self.pml
 
-        output.Output("Deleting C modules\n")
-        output.Output("Closing C handles\n")
+        output.Output("Deleting C++ modules & closing handles\n")
         del self.cml
 
 
@@ -39,8 +50,8 @@ class ModuleManager(modulelocator.ModuleLocator):
         self.paths.append(path)
 
 
-    def LoadModule(self, supermodule, name, key):
-        output.Output("Importing %1% module from supermodule %2% for key %3%\n", name, supermodule, key)
+    def LoadModule(self, supermodule, modulename, modulekey):
+        output.Output("Importing %1% module from supermodule %2% under key %3%\n", modulename, supermodule, modulekey)
 
         try:
             # update the paths
@@ -61,76 +72,61 @@ class ModuleManager(modulelocator.ModuleLocator):
             spath = os.path.dirname(m.__file__)
 
             # check options, etc
-            CheckSupermodule(spath)
+            #CheckSupermodule(spath)
+
+        except exception.GeneralException as e:
+            raise e
 
         except Exception as e:
-            raise exception.PyGeneralException(
-                                    "Unable to load supermodule {}".format(supermodule),
-                                    [
-                                      ("Exception", str(e))
-                                    ]
-                                   )
+            raise exception.GeneralException("Unable to load supermodule",
+                                             "supermodule", supermodule,
+                                             "exception", str(e)) from None
 
-        if not name in m.minfo:
-            raise exception.PyGeneralException(
-                                     "Supermodule doesn't have module!",
-                                    [
-                                      ("Supermodule", supermodule),
-                                      ("Name", name)
-                                    ]
-                                   )
+        if not modulename in m.minfo:
+            raise exception.GeneralException("Supermodule doesn't have module!",
+                                             "supermodule", supermodule,
+                                             "modulename", modulename)
 
 
-        minfo = m.minfo[name]
+        minfo = m.minfo[modulename]
 
         path = os.path.dirname(m.__file__) + "/"
 
         output.Output("\n")
-        output.Output("Loading module %1% v%2%\n", name, minfo["version"])
+        output.Output("Loading module %1% v%2%\n", modulename, minfo["version"])
 
-        # Copy the key and name to the dict
-        minfo["key"] = key
-        minfo["name"] = name
+        # Create a c++ moduleinfo
+        cppminfo = modulelocator.ModuleInfo()
+        cppminfo.key = modulekey
+        cppminfo.name = modulename
+        cppminfo.path = path
+        cppminfo.type = minfo["type"]
 
-        # set the path
-        minfo["path"] = path
+        if "soname" in minfo:
+            cppminfo.soname = minfo["soname"]
+
+        cppminfo.version = minfo["version"]
+        cppminfo.description = minfo["description"]
+        cppminfo.authors = minfo["authors"]
+        cppminfo.refs = minfo["refs"]
 
 
+        # Create the options
+        for optkey,opt in minfo["options"].items():
+            oph = datastore.MakeOptionHolder(optkey, opt[0], opt[2], opt[3], opt[4], opt[1])
+            cppminfo.options.AddOption(oph)
+        
+
+        # actually load
         if minfo["type"] == "c_module":
-            self.cml.LoadSO(key, minfo)
-        elif minfo["type"] == "python_module":  # TODO - check for CreateModule
-            self.pml.LoadPyModule(key, m.CreateModule, minfo)
-        output.Debug("Done importing module %1% from %2%\n", key, supermodule)
+            self.cml.LoadSO(cppminfo)
+        elif minfo["type"] == "python_module":
+            self.pml.LoadPyModule(m, cppminfo)
+        output.Debug("Done importing module %1% from %2%\n", modulekey, supermodule)
         output.Output("\n")
 
-        self.modmap[key] = minfo;
+        self.modmap[modulekey] = minfo;
 
-
-
-    # Set the options for a module under a given key
-    def SetOptions(self, key, useropt):
-        if not key in self.modmap:
-            raise exception.PyGeneralException(
-                                     "Key not loaded, so I can't change the options!",
-                                    [
-                                      ("Key", key)
-                                    ]
-                                   )
-
-        minfo = self.modmap[key]
-        defopt = minfo["options"]
-
-
-    #    if not CheckOptions(useropt, defopt):
-    #      raise exception.PyGeneralException(
-    #                 "Problem parsing options",
-    #              [
-    #                 ("ModuleName", minfo["name"]),
-    #                 ("ModuleKey", minfo["key"]),
-    #                 ("ModulePath", minfo["path"])
-    #              ])
-
-        super(ModuleManager, self).SetOptions(key, useropt);
 
 
     def SanityCheck(self):

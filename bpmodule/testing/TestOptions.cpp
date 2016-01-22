@@ -5,9 +5,9 @@
  */ 
 
 #include "bpmodule/testing/TestingBase.hpp"
-#include "bpmodule/options/OptionMap.hpp"
+#include "bpmodule/datastore/OptionMap.hpp"
 
-using bpmodule::options::OptionMap;
+using bpmodule::datastore::OptionMap;
 
 namespace bpmodule {
 namespace testing {

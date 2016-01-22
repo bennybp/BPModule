@@ -14,23 +14,21 @@ sys.setdlopenflags(os.RTLD_LAZY | os.RTLD_GLOBAL)
 
 # Standalone (don't depend on other core modules)
 from . import exception
-from . import mangle
 
 
 # TODO - can we get some order that will work with RTLD_NOW?
 # Probably not - there are circular dependencies
 # (modulelocator and modulebase, for example)
-from . import python_helper
+from . import python
 from . import util
 from . import output
-from . import options
 from . import parallel
+from . import datastore
 from . import math
 from . import tensor
-from . import datastore
 from . import modulebase
 from . import modulelocator
-from . import molecule
+from . import system
 from . import basisset
 
 from . import testing
@@ -67,7 +65,7 @@ def Init(argv, out = "stdout", color = True, debug = False):
   util.SetCmdline(argv)
 
   # Initialize Parallel
-  parallel.InitParallel()
+  parallel.Init()
 
   # Initialize tensor
   tensor.Init()
@@ -88,7 +86,7 @@ def Finalize():
   tensor.Finalize()
 
   output.Output("Finalizing parallelization\n")
-  parallel.FinalizeParallel()
+  parallel.Finalize()
 
   util.ClearCmdline()
 

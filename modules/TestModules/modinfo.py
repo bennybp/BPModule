@@ -1,3 +1,5 @@
+from bpmodule.datastore import OptionType
+
 minfo = {
 
   "TestModule1" :
@@ -10,17 +12,17 @@ minfo = {
     "refs"        : ["some paper", "some other paper"],
     "options"     : {
                         # Key                 Type    Default     Req     Check   Help
-                        "bool_opt_def":    (  "bool",  False,     False,   None,  "Some help string"),
-                        "bool_opt":        (  "bool",  None,      False,   None,  "Some help string"),
+                        "bool_opt_def":    (  OptionType.Bool,  False,     False,   None,  "Some help string"),
+                        "bool_opt":        (  OptionType.Bool,  None,      False,   None,  "Some help string"),
 
-                        "int_opt_def":     (  "int",    1,        False,   None,  "Some help string"),
-                        "int_opt":         (  "int",    None,     False,   None,  "Some help string"),
+                        "int_opt_def":     (  OptionType.Int,    1,        False,   None,  "Some help string"),
+                        "int_opt":         (  OptionType.Int,    None,     False,   None,  "Some help string"),
 
-                        "double_opt_def":  ( "float",   6.02e23,  False,   None,  "Some help string"),
-                        "double_opt":      ( "float",   None,     False,   None,  "Some help string"),
+                        "double_opt_def":  ( OptionType.Float,   6.02e23,  False,   None,  "Some help string"),
+                        "double_opt":      ( OptionType.Float,   None,     False,   None,  "Some help string"),
 
-                        "str_opt_def":     (  "str",    "Hi",     False,   None,  "Some help string"),
-                        "str_opt":         (  "str",    None,     False,   None,  "Some help string"),
+                        "str_opt_def":     (  OptionType.String,    "Hi",     False,   None,  "Some help string"),
+                        "str_opt":         (  OptionType.String,    None,     False,   None,  "Some help string"),
                     }
   },
 
@@ -34,17 +36,17 @@ minfo = {
     "refs"        : ["some paper", "some other paper"],
     "options"     : {
                         # Key                 Type    Default     Req     Check   Help
-                        "bool_opt_def":    (  "bool",  False,     False,   None,  "Some help string"),
-                        "bool_opt":        (  "bool",  None,      False,   None,  "Some help string"),
+                        "bool_opt_def":    (  OptionType.Bool,  False,     False,   None,  "Some help string"),
+                        "bool_opt":        (  OptionType.Bool,  None,      False,   None,  "Some help string"),
 
-                        "int_opt_def":     (  "int",    1,        False,   None,  "Some help string"),
-                        "int_opt":         (  "int",    None,     False,   None,  "Some help string"),
+                        "int_opt_def":     (  OptionType.Int,    1,        False,   None,  "Some help string"),
+                        "int_opt":         (  OptionType.Int,    None,     False,   None,  "Some help string"),
 
-                        "double_opt_def":  ( "float",   6.02e23,  False,   None,  "Some help string"),
-                        "double_opt":      ( "float",   None,     False,   None,  "Some help string"),
+                        "double_opt_def":  ( OptionType.Float,   6.02e23,  False,   None,  "Some help string"),
+                        "double_opt":      ( OptionType.Float,   None,     False,   None,  "Some help string"),
 
-                        "str_opt_def":     (  "str",    "Hi",     False,   None,  "Some help string"),
-                        "str_opt":         (  "str",    None,     False,   None,  "Some help string"),
+                        "str_opt_def":     (  OptionType.String,    "Hi",     False,   None,  "Some help string"),
+                        "str_opt":         (  OptionType.String,    None,     False,   None,  "Some help string"),
                     }
   },
 
@@ -80,9 +82,9 @@ minfo = {
     "refs"        : [],
     "options"     : {
                         # Key                 Type    Default     Req     Check   Help
-                        "int_opt_def":     (  "int",   5,         False,   None,  "Some help string"),
-                        "int_req":         (  "int",   None,      True,    None,  "Some help string"),
-                        "int_opt":         (  "int",   None,      False,   None,  "Some help string"),
+                        "int_opt_def":     (  OptionType.Int,   5,         False,   None,  "Some help string"),
+                        "int_req":         (  OptionType.Int,   None,      True,    None,  "Some help string"),
+                        "int_opt":         (  OptionType.Int,   None,      False,   None,  "Some help string"),
                     }
   },
 
@@ -95,9 +97,9 @@ minfo = {
     "refs"        : [],
     "options"     : {
                         # Key                   Type    Default     Req     Check   Help
-                        "float_opt_def":    (  "float",  5.0,       False,   None,  "Some help string"),
-                        "float_req":        (  "float",  None,      True,    None,  "Some help string"),
-                        "float_opt":        (  "float",  None,      False,   None,  "Some help string"),
+                        "float_opt_def":    (  OptionType.Float,  5.0,       False,   None,  "Some help string"),
+                        "float_req":        (  OptionType.Float,  None,      True,    None,  "Some help string"),
+                        "float_opt":        (  OptionType.Float,  None,      False,   None,  "Some help string"),
                     }
   },
 
@@ -110,9 +112,9 @@ minfo = {
     "refs"        : [],
     "options"     : {
                         # Key                 Type    Default     Req     Check   Help
-                        "bool_opt_def":    (  "bool",  False,     False,   None,  "Some help string"),
-                        "bool_req":        (  "bool",  None,      True,    None,  "Some help string"),
-                        "bool_opt":        (  "bool",  None,      False,   None,  "Some help string"),
+                        "bool_opt_def":    (  OptionType.Bool,  False,     False,   None,  "Some help string"),
+                        "bool_req":        (  OptionType.Bool,  None,      True,    None,  "Some help string"),
+                        "bool_opt":        (  OptionType.Bool,  None,      False,   None,  "Some help string"),
                     }
   },
 
@@ -125,9 +127,9 @@ minfo = {
     "refs"        : [],
     "options"     : {
                         # Key                 Type    Default     Req     Check   Help
-                        "str_opt_def":     (  "str",   "Hello",   False,   None,  "Some help string"),
-                        "str_req":         (  "str",   None,      True,    None,  "Some help string"),
-                        "str_opt":         (  "str",   None,      False,   None,  "Some help string"),
+                        "str_opt_def":     (  OptionType.String,   "Hello",   False,   None,  "Some help string"),
+                        "str_req":         (  OptionType.String,   None,      True,    None,  "Some help string"),
+                        "str_opt":         (  OptionType.String,   None,      False,   None,  "Some help string"),
                     }
   },
 
@@ -140,9 +142,9 @@ minfo = {
     "refs"        : [],
     "options"     : {
                         # Key                 Type         Default         Req     Check   Help
-                        "listint_opt_def":  (  "listint",   [ 1, 2, 3 ],   False,   None,  "Some help string"),
-                        "listint_req":      (  "listint",   None,          True,    None,  "Some help string"),
-                        "listint_opt":      (  "listint",   None,          False,   None,  "Some help string"),
+                        "listint_opt_def":  (  OptionType.ListInt,   [ 1, 2, 3 ],   False,   None,  "Some help string"),
+                        "listint_req":      (  OptionType.ListInt,   None,          True,    None,  "Some help string"),
+                        "listint_opt":      (  OptionType.ListInt,   None,          False,   None,  "Some help string"),
                     }
   },
 
@@ -155,9 +157,9 @@ minfo = {
     "refs"        : [],
     "options"     : {
                         # Key                   Type         Default                Req      Check   Help
-                        "listfloat_opt_def":  (  "listfloat",   [ 1.0, 2.0, 3.0 ],   False,   None,  "Some help string"),
-                        "listfloat_req":      (  "listfloat",   None,                True,    None,  "Some help string"),
-                        "listfloat_opt":      (  "listfloat",   None,                False,   None,  "Some help string"),
+                        "listfloat_opt_def":  (  OptionType.ListFloat,   [ 1.0, 2.0, 3.0 ],   False,   None,  "Some help string"),
+                        "listfloat_req":      (  OptionType.ListFloat,   None,                True,    None,  "Some help string"),
+                        "listfloat_opt":      (  OptionType.ListFloat,   None,                False,   None,  "Some help string"),
                     }
   },
 
@@ -170,9 +172,9 @@ minfo = {
     "refs"        : [],
     "options"     : {
                         # Key                 Type         Default                Req    Check   Help
-                        "listbool_opt_def":  ( "listbool", [ True, False, True ],  False, None, "Some help string"),
-                        "listbool_req":      ( "listbool",   None,                 True,  None, "Some help string"),
-                        "listbool_opt":      ( "listbool",   None,                 False, None, "Some help string"),
+                        "listbool_opt_def":  ( OptionType.ListBool, [ True, False, True ],  False, None, "Some help string"),
+                        "listbool_req":      ( OptionType.ListBool,   None,                 True,  None, "Some help string"),
+                        "listbool_opt":      ( OptionType.ListBool,   None,                 False, None, "Some help string"),
                     }
   },
 
@@ -185,9 +187,9 @@ minfo = {
     "refs"        : [],
     "options"     : {
                         # Key                 Type         Default                   Req     Check   Help
-                        "liststr_opt_def":  ( "liststr",    [ "A", "Test", "List" ],  False, None, "Some help string"),
-                        "liststr_req":      ( "liststr",    None,                     True,  None, "Some help string"),
-                        "liststr_opt":      ( "liststr",    None,                     False, None, "Some help string"),
+                        "liststr_opt_def":  ( OptionType.ListString,    [ "A", "Test", "List" ],  False, None, "Some help string"),
+                        "liststr_req":      ( OptionType.ListString,    None,                     True,  None, "Some help string"),
+                        "liststr_opt":      ( OptionType.ListString,    None,                     False, None, "Some help string"),
                     }
   },
 

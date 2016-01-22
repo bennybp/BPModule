@@ -4,30 +4,27 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include <boost/python/module.hpp>
-#include <boost/python/exception_translator.hpp>
+#include "bpmodule/python/Pybind11.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
-#include "bpmodule/exception/GeneralException.hpp"
-
-using namespace boost::python;
-
+using namespace bpmodule::exception;
 
 namespace bpmodule {
 namespace exception {
 namespace export_python {
 
-// the main exception translator
-void TranslateException(const GeneralException & ex)
+
+PYBIND11_PLUGIN(exception)
 {
-    PyErr_SetString(PyExc_RuntimeError, ex.ExceptionString().c_str());
-}
+    pybind11::module m("exception", "BPModule exceptions");
 
+    pybind11::class_<GeneralException>(m, "GeneralException")
+    .def(pybind11::init<const std::string &>())
+    .def("AppendInfo", static_cast<void(GeneralException::*)(const std::string &, const std::string &)>(&GeneralException::AppendInfo))
+    .def("what", &GeneralException::what)
+    ;
 
-
-BOOST_PYTHON_MODULE(exception)
-{
-    // set the translator for exceptions
-    register_exception_translator<GeneralException>(&TranslateException);
+    return m.ptr();
 }
 
 

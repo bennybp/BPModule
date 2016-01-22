@@ -1,5 +1,5 @@
-#ifndef _GUARD_BASISSET_HPP_
-#define _GUARD_BASISSET_HPP_
+#ifndef BPMODULE_GUARD_BASISSET__BASISSET_HPP_
+#define BPMODULE_GUARD_BASISSET__BASISSET_HPP_
 
 #include <vector>
 
@@ -31,6 +31,17 @@ class BasisSet
 
         GaussianShell Shell(int i) const;
 
+        int NPrim(void) const;
+        int NCartesian(void) const;
+        int NFunctions(void) const;
+
+        int MaxNPrim(void) const;
+        int MaxAM(void) const;
+        int MaxNCartesian(void) const;
+        int MaxNFunctions(void) const;
+
+        //! \todo make a printer class?
+        void Print(void) const;
 
         // iterate over shells
         const_iterator begin(void) const;

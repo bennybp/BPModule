@@ -5,12 +5,9 @@
  */ 
 
 
-#include <boost/python/module.hpp>
-#include <boost/python/def.hpp>
-
+#include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/math/Factorial.hpp"
-
-using namespace boost::python;
+#include "bpmodule/math/Locus.hpp"
 
 //! \todo Export exact casts? Or have the equivalent with python?
 
@@ -18,19 +15,31 @@ namespace bpmodule {
 namespace math {
 namespace export_python {
 
-BOOST_PYTHON_MODULE(math)
+PYBIND11_PLUGIN(math)
 {
-    def("Factorial", Factorial); 
-    def("FactorialF", FactorialF); 
-    def("FactorialD", FactorialD); 
+    pybind11::module m("math", "Some common math operations");
 
-    def("DoubleFactorial", DoubleFactorial); 
-    def("DoubleFactorialF", DoubleFactorialF); 
-    def("DoubleFactorialD", DoubleFactorialD); 
+    m.def("Factorial", Factorial); 
+    m.def("FactorialF", FactorialF); 
+    m.def("FactorialD", FactorialD); 
 
-    def("Double2nm1Factorial", Double2nm1Factorial); 
-    def("Double2nm1FactorialF", Double2nm1FactorialF); 
-    def("Double2nm1FactorialD", Double2nm1FactorialD); 
+    m.def("DoubleFactorial", DoubleFactorial); 
+    m.def("DoubleFactorialF", DoubleFactorialF); 
+    m.def("DoubleFactorialD", DoubleFactorialD); 
+
+    m.def("Double2nm1Factorial", Double2nm1Factorial); 
+    m.def("Double2nm1FactorialF", Double2nm1FactorialF); 
+    m.def("Double2nm1FactorialD", Double2nm1FactorialD); 
+
+    pybind11::class_<Point>(m,"Point")
+          .def(pybind11::init<double,double,double>())
+          .def("AddWeight",&Point::AddWeight)
+          .def("NWeights",&Point::NWeights)
+          .def("Weight",&Point::Weight)
+          .def("__getitem__",&Point::operator[]);
+          //.def("__str__",&Point::operator std::string());
+
+    return m.ptr();
 }
 
 

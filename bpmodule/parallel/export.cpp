@@ -4,25 +4,23 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include <boost/python/module.hpp>
-#include <boost/python/def.hpp>
-#include <boost/python/list.hpp> // needed since InitParallel takes lists
-                                 //! \todo move python parsing stuff to here?
 
-#include "bpmodule/parallel/Parallel.hpp"
-
-using namespace boost::python;
-
+#include "bpmodule/parallel/InitFinalize.hpp"
+#include "bpmodule/python/Pybind11.hpp"
 
 namespace bpmodule {
 namespace parallel {
 namespace export_python {
 
-BOOST_PYTHON_MODULE(parallel)
+PYBIND11_PLUGIN(parallel)
 {
+    pybind11::module m("parallel", "Parallelization stuff");
+
     // Parallelization
-    def("InitParallel", InitParallel);
-    def("FinalizeParallel", FinalizeParallel);
+    m.def("Init", Init);
+    m.def("Finalize", Finalize);
+
+    return m.ptr();
 }
 
 

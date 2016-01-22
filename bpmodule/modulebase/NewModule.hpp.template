@@ -1,0 +1,43 @@
+/*! \file
+ *
+ * \brief MODULEDESC (header)
+ * \author AUTHOR
+ */ 
+
+
+#ifndef HEADERGUARD
+#define HEADERGUARD
+
+#include "bpmodule/modulebase/ModuleBase.hpp"
+
+
+namespace bpmodule {
+namespace modulebase {
+
+/*! \brief MODULEDESC
+ *
+ */
+class CLASSNAME : public ModuleBase
+{
+    public:
+        CLASSNAME(unsigned long id)
+            : ModuleBase(id)
+        { }
+
+        CLASSNAME(PyObject * self, unsigned long id)
+            : ModuleBase(self, id)
+        { }
+
+
+    private:
+        virtual boost::python::object MoveToPyObject_(std::function<void(modulebase::ModuleBase *)> deleter)
+        {
+            return ModuleBase::MoveToPyObjectHelper_<CLASSNAME>(deleter, this);
+        }
+
+};
+
+} // close namespace modulebase
+} // close namespace bpmodule
+
+#endif

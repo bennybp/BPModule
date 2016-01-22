@@ -1,5 +1,5 @@
-#ifndef _GUARD_CAST_HPP_
-#define _GUARD_CAST_HPP_
+#ifndef BPMODULE_GUARD_MATH__CAST_HPP_
+#define BPMODULE_GUARD_MATH__CAST_HPP_
 
 #include "bpmodule/math/ExactCast.hpp"
 
@@ -17,12 +17,12 @@ namespace math {
  *
  * \throw bpmodule::exception::MathException if there is a problem (overflow, underflow, etc)
  */
+//template<typename Target, typename Source>
+//typename std::enable_if<std::is_arithmetic<Source>::value && std::is_arithmetic<Target>::value, Target>::type
+//numeric_cast(const Source & s)
 template<typename Target, typename Source>
 Target numeric_cast(const Source & s)
 {
-    static_assert(  ( std::is_integral<Source>::value && std::is_integral<Target>::value) ||
-                    ( std::is_floating_point<Source>::value && std::is_floating_point<Target>::value),
-                    "Attempting to perform integer <-> floating point conversion using numeric_cast. Consider round_cast");
     return detail::ExactCast<Target, Source>::Cast(s);
 }
 
@@ -35,7 +35,11 @@ Target numeric_cast(const Source & s)
 template<typename Target, typename Source>
 Target round_cast(Source s)
 {
+    static_assert(  ( std::is_arithmetic<Source>::value && std::is_arithmetic<Target>::value ),
+                    "Attempting to perform round cast on non-arithmetic types");
+
     static_assert(std::is_same<Source, Target>::value, "TODO: round_cast between different types");
+
     return s;
 }
 

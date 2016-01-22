@@ -1,5 +1,54 @@
-add_subdirectory(mangle)
-add_subdirectory(python_helper)
+cmake_minimum_required(VERSION 3.0)
+
+
+#################################
+# Load macros
+#################################
+include("cmake/CoreModule.cmake")
+
+
+##########################
+# Options to be passed in
+##########################
+set(BPMODULE_CORE_PYTHON_LIBRARIES "" CACHE STRING "Python libraries to link to")
+set(BPMODULE_CORE_PYTHON_INCLUDE_DIRS "" CACHE STRING "Include directories for python")
+
+
+##########################
+# Dependencies
+##########################
+find_package(OpenMP REQUIRED)
+find_package(MPI REQUIRED)
+find_package(Boost REQUIRED)
+
+
+##########################
+# Dependencies in external
+##########################
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../external/cmake")
+list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/pybind11")
+list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/memwatch")
+list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/libelemental")
+list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/madness")
+find_package(pybind11 REQUIRED)
+find_package(memwatch REQUIRED)
+find_package(libelemental REQUIRED)
+find_package(MADNESS REQUIRED CONFIG COMPONENTS world)
+
+
+# For some reason, this has a leading whitespace
+string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
+
+
+
+
+# Modules are created without a prefix
+set(CMAKE_SHARED_MODULE_PREFIX "")
+
+message(STATUS "Going to use python libraries: ${BPMODULE_CORE_PYTHON_LIBRARIES}")
+message(STATUS "Going to use python include dirs: ${BPMODULE_CORE_PYTHON_INCLUDE_DIRS}")
+
+add_subdirectory(python)
 add_subdirectory(output)
 add_subdirectory(util)
 add_subdirectory(exception)
@@ -7,26 +56,23 @@ add_subdirectory(parallel)
 add_subdirectory(math)
 add_subdirectory(tensor)
 add_subdirectory(datastore)
-add_subdirectory(options)
 add_subdirectory(modulebase)
 add_subdirectory(modulelocator)
-add_subdirectory(molecule)
+add_subdirectory(system)
 add_subdirectory(basisset)
 add_subdirectory(testing)
 
 
-# Install headers and other files
-set(BPMODULE_TOP_HEADERS
-            pragma.h
-)
+######################################
+# Make a header-only interface library
+######################################
+# Install the config file
+configure_file("bpmoduleConfig.cmake.in" "bpmoduleConfig.cmake" @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/bpmoduleConfig.cmake DESTINATION ${CMAKE_INSTALL_PREFIX})
 
-set(BPMODULE_FILES
-            __init__.py
-            modinfo.py
-            modulecheck.py
-            ModuleManager.py
-   )
+# Install all python files (for all core modules)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION modules FILES_MATCHING PATTERN "*.py")
 
-
-install(FILES ${BPMODULE_TOP_HEADERS} DESTINATION include/bpmodule)
-install(FILES ${BPMODULE_FILES} DESTINATION modules/bpmodule)
+# Install all headers (for all core modules)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION include FILES_MATCHING PATTERN "*.h")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION include FILES_MATCHING PATTERN "*.hpp")

@@ -2,7 +2,7 @@
 
 #include "bpmodule/basisset/AMConvert.hpp"
 #include "bpmodule/util/StringUtil.hpp" // for case insensitive compare
-#include "bpmodule/exception/BasisSetException.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 
 using bpmodule::util::CaseInsensitiveCompare;
 

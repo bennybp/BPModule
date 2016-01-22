@@ -5,14 +5,11 @@
  */ 
 
 
-#ifndef _GUARD_GENERICHOLDER_HPP_
-#define _GUARD_GENERICHOLDER_HPP_
+#ifndef BPMODULE_GUARD_DATASTORE__GENERICHOLDER_HPP_
+#define BPMODULE_GUARD_DATASTORE__GENERICHOLDER_HPP_
 
+#include "bpmodule/util/Mangle.hpp"
 #include "bpmodule/datastore/GenericBase.hpp"
-
-
-//! \todo I hate including python stuff here...
-#include "bpmodule/python_helper/Convert.hpp"
 
 
 namespace bpmodule {
@@ -53,7 +50,7 @@ class GenericHolder : public GenericBase
          * \param [in] m The object to move
          */
         GenericHolder(T && m)
-            : obj(std::move(m))
+            : obj(m)
 
         { }
 
@@ -92,7 +89,7 @@ class GenericHolder : public GenericBase
 
 
         ////////////////////////////////////////
-        // Virtual functions from PropBase
+        // Virtual functions from GenericBase
         ////////////////////////////////////////
         virtual const char * Type(void) const noexcept
         {
@@ -104,20 +101,10 @@ class GenericHolder : public GenericBase
             return typeid(T);
         }
 
-
+        
         virtual std::string DemangledType(void) const
         {
-            return mangle::DemangleCppType<T>();
-        }
-
-
-
-        ///////////////////////////////////////
-        // Python-related functions
-        ///////////////////////////////////////
-        virtual boost::python::object GetPy(void) const
-        {
-            return python_helper::ConvertToPy(obj);
+            return util::DemangleCppOrPyType(obj);
         }
 
 
@@ -125,18 +112,6 @@ class GenericHolder : public GenericBase
         //! The actual data
         T obj;
 };
-
-
-
-/*! \brief Create a detail::GenericBasePtr from python object
- *
- * This copies the data from the object.
- * 
- * \throw bpmodule::exception::PythonConvertException if there is a problem with a conversion
- *
- * \param [in] obj A python object containing data to copy
- */ 
-GenericBasePtr GenericHolderFactory(const boost::python::object & obj);
 
 
 

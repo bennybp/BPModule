@@ -1,20 +1,17 @@
 set(BPMODULE_MATH_FILES
             Factorial_LUT.cpp
+            WeightType.hpp
+            WeightType.cpp
+            Locus.hpp
+            Locus.cpp
             export.cpp
    )
   
-set(BPMODULE_MATH_HEADERS
-            Cast.hpp
-            ExactCast.hpp
-            Factorial.hpp
-            Factorial_LUT.hpp
-   )
 
-
-ADD_SUPERMODULE(math
+ADD_COREMODULE(math
            "${BPMODULE_MATH_FILES}"
            ""
            ""
            "")
 
-INSTALL_COREMODULE(math "${BPMODULE_MATH_HEADERS}" "")
+INSTALL_COREMODULE(math)

@@ -58,7 +58,7 @@ def Run():
         for k,limits in intlimitdict.items():
 
             # create an OptionMap
-            opt = bp.options.OptionMap( "nomodule", 
+            opt = bp.datastore.OptionMap( "nomodule", 
                                         { "test_opt" : ( "int", None, True, None, "(no help)" ),
                                           "test_opt_vec" : ( "listint", None, True, None, "(no help)" ) },
                                         None)

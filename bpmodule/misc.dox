@@ -10,7 +10,7 @@
  *  \brief Classes and functions for the basis set and basis functions
  */
 
-/*! \namespace bpmodule::molecule
+/*! \namespace bpmodule::system
  *  \brief Classes and functions for the moleule and atoms
  */
 
@@ -34,7 +34,7 @@
  *  \brief Classes and functions for dealing with parallelization
  */
 
-/*! \namespace bpmodule::python_helper
+/*! \namespace bpmodule::python
  *  \brief Helper classes and functions for exporting and importing from python
  */
 

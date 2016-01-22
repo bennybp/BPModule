@@ -1,22 +1,18 @@
 set(BPMODULE_DATASTORE_FILES
-            GenericHolder.cpp
+            UIDPointer.cpp
+            RegisterUIDPointer.cpp
+            OptionHolder.cpp
+            OptionBase.cpp
+            OptionMap.cpp
+            ModuleGraph.cpp
             export.cpp
    )
+
   
-set(BPMODULE_DATASTORE_HEADERS
-            Hashable.hpp
-            CalcData.hpp
-            CacheData.hpp
-            PropertyMap.hpp
-            GenericHolder.hpp
-            GenericBase.hpp
-   )
-
-
-ADD_SUPERMODULE(datastore
+ADD_COREMODULE(datastore
            "${BPMODULE_DATASTORE_FILES}"
            ""
            ""
            "")
 
-INSTALL_COREMODULE(datastore "${BPMODULE_DATASTORE_HEADERS}" "")
+INSTALL_COREMODULE(datastore)

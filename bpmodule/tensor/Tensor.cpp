@@ -3,10 +3,6 @@
 
 #include <memory>
 
-#include <boost/python/list.hpp>
-#include <boost/python/extract.hpp>
-
-
 
 namespace {
 

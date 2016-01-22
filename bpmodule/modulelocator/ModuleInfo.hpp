@@ -5,11 +5,11 @@
  */
 
 
-#ifndef _GUARD_MODULEINFO_HPP_
-#define _GUARD_MODULEINFO_HPP_
+#ifndef BPMODULE_GUARD_MODULELOCATOR__MODULEINFO_HPP_
+#define BPMODULE_GUARD_MODULELOCATOR__MODULEINFO_HPP_
 
 
-#include "bpmodule/options/OptionMap.hpp"
+#include "bpmodule/datastore/OptionMap.hpp"
 
 
 namespace bpmodule {
@@ -25,26 +25,10 @@ struct ModuleInfo
     std::string path;                  //!< Path for the module (not including the filename for an so file)
     std::string soname;                //!< SO filename (for c modules)
     std::string version;               //!< Arbitrary version string
-    std::vector<std::string> authors;  //!< Authors of the module
     std::string description;           //!< A description of the module
+    std::vector<std::string> authors;  //!< Authors of the module
     std::vector<std::string> refs;     //!< References for the module (articles, web pages, etc)
-    options::OptionMap options;        //!< Options for the module
-
-
-    ModuleInfo(void)                               = default;
-    ModuleInfo(const ModuleInfo & rhs)             = default;
-    ModuleInfo(ModuleInfo && rhs)                  = default;
-
-    ModuleInfo & operator=(const ModuleInfo & rhs) = default;
-    ~ModuleInfo(void)                              = default;
-
-
-    /*! \brief Construct from a python dictionary
-     *
-     * \throw bpmodule::exception::ModuleLocatorException if conversion fails
-     *        or the python dictionary is missing a required field
-     */
-    ModuleInfo(const boost::python::dict & dictionary);
+    datastore::OptionMap options;        //!< Options for the module
 
 
     /*! \brief Print out this info

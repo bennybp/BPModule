@@ -1,7 +1,5 @@
-#ifndef _GUARD_INITFINALIZE_HPP_
-#define _GUARD_INITFINALIZE_HPP_
-
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
+#ifndef BPMODULE_GUARD_TENSOR__INITFINALIZE_HPP_
+#define BPMODULE_GUARD_TENSOR__INITFINALIZE_HPP_
 
 
 namespace bpmodule {

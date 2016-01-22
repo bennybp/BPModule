@@ -22,17 +22,26 @@ def Run(mm):
       mm.LoadModule("TestModules",   "TestModule1",   "TESTMOD1")
       mm.LoadModule("TestModules",   "TestPyModule1", "TESTPYMOD1")
 
-      mm.SetOptions("TESTMOD1", { "double_opt_def": 1.111, "int_opt_def" : 55 })
+      mm.ChangeOption("TESTMOD1", "double_opt_def", 1.111)
+      mm.ChangeOption("TESTMOD1", "int_opt_def", 55 )
       mm.PrintInfo()
       mm.SanityCheck()
 
 
-      b1 = mm.GetModule_Test("TESTMOD1")
-      b2 = mm.GetModule_Test("TESTPYMOD1")
+      b1 = mm.GetModule("TESTMOD1", 0)
+      b2 = mm.GetModule("TESTPYMOD1", 0)
 
       b1.RunTest()
       bp.output.Output("\n")
       b2.RunTest()
+      bp.output.Output("\n")
+    
+      b3 = mm.GetModule("TESTMOD1", 0)
+      b4 = mm.GetModule("TESTPYMOD1", 0)
+
+      b3.RunTest()
+      bp.output.Output("\n")
+      b4.RunTest()
       bp.output.Output("\n")
     
       bp.output.Output("\nDone testing\n")

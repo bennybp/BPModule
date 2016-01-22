@@ -5,13 +5,13 @@
  */ 
 
 
-#ifndef _GUARD_TESTOPTIONS_HPP_
-#define _GUARD_TESTOPTIONS_HPP_
+#ifndef BPMODULE_GUARD_TESTING__TESTOPTIONS_HPP_
+#define BPMODULE_GUARD_TESTING__TESTOPTIONS_HPP_
 
 #include <string>
 
-#include "bpmodule/options/OptionMap.hpp"
-#include "bpmodule/python_helper/Convert.hpp"
+#include "bpmodule/datastore/OptionMap.hpp"
+#include "bpmodule/python/Convert.hpp"
 
 
 namespace bpmodule {
@@ -19,7 +19,7 @@ namespace testing {
 
 
 template<typename T>
-void TestOptionMap_Get(const options::OptionMap & opt, const std::string & key)
+void TestOptionMap_Get(const datastore::OptionMap & opt, const std::string & key)
 {
     // ignore return value
     opt.Get<T>(key);
@@ -27,10 +27,10 @@ void TestOptionMap_Get(const options::OptionMap & opt, const std::string & key)
 
 
 template<typename T>
-void TestOptionMap_Change(options::OptionMap & opt, const std::string & key, boost::python::object & value)
+void TestOptionMap_Change(datastore::OptionMap & opt, const std::string & key, pybind11::object value)
 {
     // ignore return value
-    const T tmp = python_helper::ConvertToCpp<T>(value);
+    const T tmp = python::ConvertToCpp<T>(value);
     opt.Change<T>(key, tmp);
 }
 

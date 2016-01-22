@@ -94,25 +94,25 @@ def Run():
             s = "Test construction with {} - with default".format(d1[0])
             expected = (d1[0] in validtypes)
             opt = { d1[0] : ( d1[0], d1[1], False, None, "(no help)" ) }
-            tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+            tester.Test(s, expected, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
             # wihout default, not required
             s = "Test construction with {} - no default".format(d1[0])
             expected = (d1[0] in validtypes)
             opt = { d1[0] : ( d1[0], None, False, None, "(no help)" ) }
-            tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+            tester.Test(s, expected, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
             # default, but required (should always be false)
             s = "Test construction with {}".format(d1[0])
             expected = False
             opt = { d1[0] : ( d1[0], d1[1], True, None, "(no help)" ) }
-            tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+            tester.Test(s, expected, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
             # without default, but required
             s = "Test construction with {}".format(d1[0])
             expected = (d1[0] in validtypes)
             opt = { d1[0] : ( d1[0], None, True, None, "(no help)" ) }
-            tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+            tester.Test(s, expected, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
 
         # Test two elements, no validator
@@ -123,27 +123,27 @@ def Run():
                 expected = (d1[0] in validtypes) and (d2[0] in validtypes)
                 opt = { d1[0] : ( d1[0], d1[1], False, None, "(no help)" ),  
                         d2[0] : ( d2[0], d2[1], False, None, "(no help)" ) }
-                tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, expected, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
                 s = "Test construction with {} + {} - no default".format(d1[0], d2[0])
                 expected = (d1[0] in validtypes) and (d2[0] in validtypes)
                 opt = { d1[0] : ( d1[0], None, False, None, "(no help)" ),  
                         d2[0] : ( d2[0], None, False, None, "(no help)" ) }
-                tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, expected, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
                 # default, but required (should always be false)
                 s = "Test construction with {} + {}".format(d1[0], d2[0])
                 expected = False
                 opt = { d1[0] : ( d1[0], d1[1], True, None, "(no help)" ),  
                         d2[0] : ( d2[0], d2[1], True, None, "(no help)" ) }
-                tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, expected, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
                 # without default, but required
                 s = "Test construction with {} + {}".format(d1[0], d2[0])
                 expected = (d1[0] in validtypes) and (d2[0] in validtypes)
                 opt = { d1[0] : ( d1[0], None, True, None, "(no help)" ),  
                         d2[0] : ( d2[0], None, True, None, "(no help)" ) }
-                tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, expected, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
 
 
@@ -153,40 +153,40 @@ def Run():
                 s = "Test construction with {} -> {}".format(t1, d1[0])
                 expected = (t1 in validtypes) and (IsValid(t1, d1[0]))
                 opt = { d1[0] : ( t1, d1[1], False, None, "(no help)" ) }  
-                tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, expected, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
                 s = "Test construction with {} -> {}, help = None".format(t1, d1[0])
                 expected = (t1 in validtypes) and (IsValid(t1, d1[0]))
                 opt = { d1[0] : ( t1, d1[1], False, None, None ) }  
-                tester.Test(s, expected, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, expected, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
                 s = "Test construction with {} -> {}, bad help".format(t1, d1[0])
                 opt = { d1[0] : ( t1, d1[1], False, None, 4 ) }  
-                tester.Test(s, False, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, False, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
                 
                 s = "Test construction with {} -> {}, bad required".format(t1, d1[0])
                 opt = { d1[0] : ( t1, d1[1], 19, None, "(no help)" ) }  
-                tester.Test(s, False, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, False, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
                 s = "Test construction with {} -> {}, required = None".format(t1, d1[0])
                 opt = { d1[0] : ( t1, d1[1], None, None, "(no help)" ) }  
-                tester.Test(s, False, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, False, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
                 s = "Test construction with {} -> {}, bad type".format(t1, d1[0])
                 opt = { d1[0] : ( 4, d1[1], False, None, "(no help)" ) }  
-                tester.Test(s, False, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, False, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
                 s = "Test construction with {} -> {}, bad type str".format(t1, d1[0])
                 opt = { d1[0] : ( "notype", d1[1], False, None, "(no help)" ) }  
-                tester.Test(s, False, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, False, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
                 s = "Test construction with {} -> {}, too many elements in tuple".format(t1, d1[0])
                 opt = { d1[0] : ( t1, d1[1], False, None, "(no help)", "extra" ) }  
-                tester.Test(s, False, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, False, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
                 s = "Test construction with {} -> {}, too few elements in tuple".format(t1, d1[0])
                 opt = { d1[0] : ( t1, d1[1], False, None ) }  
-                tester.Test(s, False, bp.testing.PyTestFunc, bp.options.OptionMap, "nomodule", opt, None)
+                tester.Test(s, False, bp.testing.PyTestFunc, bp.datastore.OptionMap, "nomodule", opt, None)
 
 
         for t1 in validtypes:
@@ -199,7 +199,7 @@ def Run():
 
             for opt in allopt:
                 # Construct with some valid data
-                opm = bp.options.OptionMap("nomodule", opt, None)
+                opm = bp.datastore.OptionMap("nomodule", opt, None)
 
                 v = opt["test_opt"]
 

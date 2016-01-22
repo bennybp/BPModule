@@ -4,19 +4,13 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include <boost/python/module.hpp>
-#include <boost/python/class.hpp>
-#include <boost/python/dict.hpp>
+#include "bpmodule/python/Pybind11_functional.hpp"
 
 // Various components
-#include "bpmodule/modulebase/All_python.hpp"
-#include "bpmodule/modulelocator/CModuleLoader.hpp"
-#include "bpmodule/modulelocator/PyModuleLoader.hpp"
-
+#include "bpmodule/modulebase/ModuleBase.hpp"
+#include "bpmodule/modulelocator/CppModuleLoader.hpp"
 
 using bpmodule::modulebase::ModuleBase;
-using bpmodule::modulebase::Test_Base;
-using namespace boost::python;
 
 
 namespace bpmodule {
@@ -24,58 +18,77 @@ namespace modulelocator {
 namespace export_python {
 
 
-
-/*! \brief Wraps GetModule so that it returns a type compatible with python
- *
- * This uses boost::shared_ptr, which boost::python automatically handles
- *
- * Putting this in the ModuleLocator source and headers would have required including boost for
- * basically every file in the project.
- *
- * \tparam T Type of module to get
- *
- * \param [in] ms ModuleLocator object to get the module from
- * \param [in] key Key to get
- *
- * \return boost::shared_ptr containing a pointer to the new object
- */
-template<typename T>
-static
-boost::shared_ptr<T> Wrap_GetModule(ModuleLocator * ms, const std::string & key)
+PYBIND11_PLUGIN(modulelocator)
 {
-    ScopedModule<T> mod = ms->GetModule<T>(key);
-    std::function<void(ModuleBase *)> dfunc = mod.get_deleter();
-    T * ptr = mod.release();
-    return boost::shared_ptr<T>(ptr, dfunc);
-}
+    pybind11::module m("modulelocator", "Module loading and location");
+
+    //////////////////////
+    // ModuleInfo
+    //////////////////////
+    pybind11::class_<ModuleInfo>(m, "ModuleInfo")
+    .def(pybind11::init<>())
+    .def("Print", &ModuleInfo::Print)
+    .def_readwrite("key", &ModuleInfo::key)
+    .def_readwrite("name", &ModuleInfo::name)
+    .def_readwrite("type", &ModuleInfo::type)
+    .def_readwrite("path", &ModuleInfo::path)
+    .def_readwrite("soname", &ModuleInfo::soname)
+    .def_readwrite("version", &ModuleInfo::version)
+    .def_readwrite("description", &ModuleInfo::description)
+    .def_readwrite("authors", &ModuleInfo::authors)
+    .def_readwrite("refs", &ModuleInfo::refs)
+    .def_readwrite("options", &ModuleInfo::options)
+    ;
+     
 
 
-
-
-////////////////////////////
-// Main boost python part
-////////////////////////////
-
-BOOST_PYTHON_MODULE(modulelocator)
-{
-    class_<ModuleLocator, boost::noncopyable>("ModuleLocator")
+    //////////////////////////
+    // Main ModuleLocator and
+    // module loaders
+    //////////////////////////
+    pybind11::class_<ModuleLocator>(m, "ModuleLocator")
+    .def(pybind11::init<>())
+    .def("InsertModule", &ModuleLocator::InsertModule)
     .def("Size", &ModuleLocator::Size)
-    .def("Has", &ModuleLocator::Has)
-    .def("SetOptions", static_cast<void(ModuleLocator::*)(const std::string &, const boost::python::dict &)>(&ModuleLocator::SetOptions))
-    .def("GetKeys", &ModuleLocator::GetKeys)
-    .def("KeyInfo", &ModuleLocator::KeyInfo)
+    .def("GetModuleKeys", &ModuleLocator::GetModuleKeys)
+    .def("ModuleKeyInfo", &ModuleLocator::ModuleKeyInfo)
     .def("PrintInfo", &ModuleLocator::PrintInfo)
+    .def("Has", &ModuleLocator::Has)
     .def("TestAll", &ModuleLocator::TestAll)
-    .def("GetModule", Wrap_GetModule<ModuleBase>)
-    .def("GetModule_Test", Wrap_GetModule<Test_Base>);
+    .def("ClearCache", &ModuleLocator::ClearCache)
+    .def("ClearStore", &ModuleLocator::ClearStore)
+    .def("GetModule", &ModuleLocator::GetModulePy)
+    .def("ChangeOption", &ModuleLocator::ChangeOptionPy)
+    .def("DotGraph", &ModuleLocator::DotGraph)
+    ;
 
 
-    class_<CModuleLoader, boost::noncopyable>("CModuleLoader", init<ModuleLocator *>())
-    .def("LoadSO", static_cast<void(CModuleLoader::*)(const std::string &, const boost::python::dict &)>(&CModuleLoader::LoadSO));
+    pybind11::class_<CppModuleLoader>(m, "CppModuleLoader")
+    .def(pybind11::init<ModuleLocator *>())
+    .def("LoadSO", &CppModuleLoader::LoadSO)
+    ;
 
-    class_<PyModuleLoader, boost::noncopyable>("PyModuleLoader", init<ModuleLocator *>())
-    .def("LoadPyModule", static_cast<void(PyModuleLoader::*)(const std::string &, boost::python::object, const boost::python::dict &)>(&PyModuleLoader::LoadPyModule));
 
+    ////////////////////////////////
+    // Pointers, etc
+    ////////////////////////////////
+    pybind11::class_<PyModulePtr>(m, "ModulePtr")
+    .def("__getattr__", &PyModulePtr::Py__getattr__)
+    ;
+
+
+
+    ///////////////////////////////
+    // Creation functions
+    ///////////////////////////////
+    pybind11::class_<ModuleCreationFuncs>(m, "ModuleCreationFuncs")
+    .def(pybind11::init<>())
+    .def("AddPyCreator", &ModuleCreationFuncs::AddPyCreator)
+    .def("HasCreator", &ModuleCreationFuncs::HasCreator)
+    .def("GetCreator", &ModuleCreationFuncs::GetCreator)
+    ;
+
+    return m.ptr();
 }
 
 

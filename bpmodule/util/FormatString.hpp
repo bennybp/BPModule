@@ -5,16 +5,16 @@
  */ 
 
 
-#ifndef _GUARD_FORMATSTRING_HPP_
-#define _GUARD_FORMATSTRING_HPP_
+#ifndef BPMODULE_GUARD_UTIL__FORMATSTRING_HPP_
+#define BPMODULE_GUARD_UTIL__FORMATSTRING_HPP_
 
 #include <iostream>
 #include <sstream>
 #include <string>
 
 #include <boost/format.hpp>
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
-#include "bpmodule/exception/GeneralException.hpp"
+
+#include "bpmodule/exception/Exceptions.hpp"
 
 
 namespace bpmodule {
@@ -116,22 +116,14 @@ std::string FormatString(const std::string & fmt, const Targs&... Fargs)
 
 
 
-
-
-namespace export_python {
-
-/*! \brief Create a format string from python
+/*! \brief Create a format string using a vector of strings
  *
  * \throw bpmodule::exception::GeneralException for malformed inputs, etc
- * 
- * \throw bpmodule::exception::PythonConvertException for some rare conversion problems
- *
  * \param [in] fmt Format string to use
  * \param [in] args Arguments to the format string
  */
-std::string FormatStringPy(const std::string & fmt, const boost::python::list & args);
+std::string FormatString(const std::string & fmt, const std::vector<std::string> & args);
 
-} // close namespace export_python
 
 
 

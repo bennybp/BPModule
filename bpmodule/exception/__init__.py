@@ -4,4 +4,4 @@ from .modinfo import *
 from .exception import *
 
 # Python versions
-from .PyGeneralException import *
+from .Exceptions import *

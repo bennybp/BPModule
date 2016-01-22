@@ -3,14 +3,11 @@ set(BPMODULE_OUTPUT_FILES
             export.cpp
    )
 
-set(BPMODULE_OUTPUT_HEADERS
-            Output.hpp
-   )
 
-ADD_SUPERMODULE(output 
+ADD_COREMODULE(output 
            "${BPMODULE_OUTPUT_FILES}"
            ""
            ""
            "")
 
-INSTALL_COREMODULE(output "${BPMODULE_OUTPUT_HEADERS}" "")
+INSTALL_COREMODULE(output)

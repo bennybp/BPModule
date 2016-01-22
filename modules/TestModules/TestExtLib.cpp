@@ -1,6 +1,5 @@
 #include <bpmodule/output/Output.hpp>
 #include <bpmodule/modulelocator/ModuleLocator.hpp>
-#include <bpmodule/exception/GeneralException.hpp>
 
 #include "TestExtLib.hpp"
 
@@ -27,7 +26,7 @@ TestExtLib::~TestExtLib()
 
 
 
-void TestExtLib::RunTest(void)
+void TestExtLib::RunTest_(void)
 {
     Output("+++ In TestExtLib: RunTest. Info: (%1%) %2% %3% v%4%\n", ID(), Key(), Name(), Version());
     Output("*** Testing calling other libraries\n");
@@ -40,19 +39,19 @@ void TestExtLib::RunTest(void)
 
 
 
-void TestExtLib::CallRunTest(const std::string & other)
+void TestExtLib::CallRunTest_(const std::string & other)
 {
 }
 
 
 
-void TestExtLib::Throw(void)
+void TestExtLib::TestThrow_(void)
 {
 }
 
 
 
-void TestExtLib::CallThrow(const std::string & other)
+void TestExtLib::CallThrow_(const std::string & other)
 {
 }
 

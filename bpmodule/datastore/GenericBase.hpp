@@ -5,12 +5,10 @@
  */ 
 
 
-#ifndef _GUARD_GENERICBASE_HPP_
-#define _GUARD_GENERICBASE_HPP_
+#ifndef BPMODULE_GUARD_DATASTORE__GENERICBASE_HPP_
+#define BPMODULE_GUARD_DATASTORE__GENERICBASE_HPP_
 
 #include <memory>
-
-#include "bpmodule/python_helper/BoostPython_fwd.hpp"
 
 namespace bpmodule {
 namespace datastore {
@@ -59,7 +57,10 @@ class GenericBase
 
         /*! \brief Returns a string representing the demangled type of the stored object
          *
-         * \return A string representing the type (obtained via typeid().name(), but demangled)
+         * For a C++ object, will return the demangled C++ type. For a python
+         * object, will return its class string.
+         *
+         * \return A string representing the type
          */
         virtual std::string DemangledType(void) const = 0;
 
@@ -82,25 +83,7 @@ class GenericBase
             return typeid(U) == TypeInfo();
         }
 
-
-        ///////////////////////////////////
-        // Python functions
-        ///////////////////////////////////
-        /*! \brief Return a copy of the data as a boost::python object
-         *
-         * \throw bpmodule::exception::PythonConvertException if the
-         *        data could not be converted
-         */ 
-        virtual boost::python::object GetPy(void) const = 0;
-
 };
-
-
-//! A pointer to a generic object
-typedef std::shared_ptr<GenericBase> GenericBasePtr;
-
-
-
 
 
 

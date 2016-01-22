@@ -3,12 +3,12 @@
 
 #include "bpmodule/basisset/Creators.hpp"
 #include "bpmodule/basisset/AMConvert.hpp"
-#include "bpmodule/molecule/AtomicInfo.hpp"
-#include "bpmodule/exception/BasisSetException.hpp"
+#include "bpmodule/system/AtomicInfo.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/output/Output.hpp"
 
 
-using bpmodule::molecule::AtomicZNumberFromSym;
+using bpmodule::system::AtomicZNumberFromSym;
 
 namespace bpmodule {
 namespace basisset {
@@ -70,11 +70,11 @@ BasisMap ReadBasisFile(const std::string & path)
                 {
                     getline(f, line);
                     std::stringstream ss3(line);
-                    double alpha, coef;
-                    ss3 >> alpha >> coef;
+                    double alpha, coef, coef2;
+                    ss3 >> alpha >> coef >> coef2;
 
                     gs_s.AddPrimitive(alpha, coef);
-                    gs_p.AddPrimitive(alpha, coef);
+                    gs_p.AddPrimitive(alpha, coef2);
                 }
 
                 gsv.push_back(gs_s);
@@ -112,7 +112,7 @@ BasisMap ReadBasisFile(const std::string & path)
 
 
 
-BasisSet SimpleCreator(const std::string & basispath, const molecule::Molecule & mol)
+BasisSet SimpleCreator(const std::string & basispath, const system::Molecule & mol)
 {
     detail::BasisMap bm = detail::ReadBasisFile(basispath);
 
