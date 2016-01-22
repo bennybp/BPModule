@@ -4,12 +4,17 @@
 #include <vector>
 
 #include "bpmodule/system/Atom.hpp"
+#include "bpmodule/math/MathSet.hpp"
 
 namespace bpmodule {
 namespace system {
 
+class Molecule: public MathSet<Atom>{
+    
+};
 
-class Molecule
+
+/*class Molecule
 {
     public:
         typedef std::vector<Atom>::iterator       iterator;
@@ -40,7 +45,7 @@ class Molecule
     private:
         unsigned long curid_;
         std::vector<Atom> atoms_;
-};
+};*/
 
 
 

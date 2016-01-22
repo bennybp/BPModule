@@ -22,5 +22,4 @@ const WeightType WeightType::Mass("MASS");
 const WeightType WeightType::Charge("CHARGE");
 const WeightType WeightType::VDWR("VAN DER WAALS RADIUS");
 const WeightType WeightType::CovR("COVALENT RADIUS");
-
 }}//End namespaces
