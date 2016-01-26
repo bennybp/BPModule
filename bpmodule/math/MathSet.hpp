@@ -9,6 +9,7 @@
 #define BPMODULE_GUARD_MATHSET_HPP_
 
 #include <set>
+#include <algorithm>
 #include "bpmodule/exception/Assert.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 
@@ -66,9 +67,11 @@ namespace math{
  *            copied a lot.  Must be default constructable and comparable with
  *            the less operator.
  *   \param U The type of the storage class.  This is a class that will hold the
- *            memory for the elements.  Must be default constructable and
- *            support insertion via a function with signature:
- *            `iterator insert(iterator,const T& value)`
+ *            memory for the elements.  Must be default constructable, capable
+ *            of returning an iterator to the end of the container via `end()`
+ *            and support insertion via a function with signature:
+ *            `X insert(end(),const T& value)` where X is an object that is
+ *            dereferencable to an object of type T
  */
 template<typename T,typename U=std::set<T> >
 class MathSet{
@@ -101,12 +104,18 @@ public:
     }
     
     ///Performs a shallow copy
-    MathSet(const MathSet<T,U>& Other)=default;
+    MathSet(const MathSet<T,U>& /*Other*/)=default;
 
     
     ///No special memory clean-up
-    virtual ~MathSet()=default;
+    ~MathSet()=default;
 
+    iterator begin(){return Elems_.begin();}
+    const_iterator begin()const{return Elems_.begin();}
+    iterator end(){return Elems_.end();}
+    const_iterator end()const{return Elems_.end();}
+    
+    
     ///True if this is a top-level universe
     bool IsUniverse()const{return !Universe_;}
     
@@ -129,6 +138,9 @@ public:
      * 
      * Either way, to the user, this looks like it does the same thing
      * 
+     * Note: calling this function invalidates all iterators that are
+     * out
+     * 
      */
     MathSet<T,U>& operator<<(const T& Elem);
 
@@ -137,11 +149,21 @@ public:
         return Elems_.count(Elem)==1;
     }
 
+    ///Returns the i-th element
+    T operator[](size_t i)const{
+        exception::Assert<exception::ValueOutOfRange>(
+          i<Elems_.size(),
+          "MathSet contains less elements than requested element"
+        );
+        return *(std::next(Elems_.begin(),i));
+    }
+    
+    
     ///Makes this, the union of this and other, returns this
     const MathSet<T,U>& operator+=(const MathSet<T,U>& RHS);
     
     ///Returns the union of this and other
-    MathSet<T,U>&& operator+(const MathSet<T,U>& RHS)const{
+    MathSet<T,U> operator+(const MathSet<T,U>& RHS)const{
         return (MathSet<T,U>(*this))+=RHS;
     }
     
@@ -149,7 +171,7 @@ public:
     const MathSet<T,U>& operator/=(const MathSet<T,U>& RHS);
     
     ///Returns the intersection of this and other
-    MathSet<T,U>&& operator/(const MathSet<T,U>& RHS)const{
+    MathSet<T,U> operator/(const MathSet<T,U>& RHS)const{
         return (MathSet<T,U>(*this))/=RHS;
     }
     
@@ -157,14 +179,14 @@ public:
     const MathSet<T,U>& operator-=(const MathSet<T,U>& RHS);
     
     ///Returns the set-difference of this and other
-    MathSet<T,U>&& operator-(const MathSt<T,U>& RHS)const{
+    MathSet<T,U> operator-(const MathSet<T,U>& RHS)const{
         return (MathSet<T,U>(*this))-=RHS;
     }
     
     ///Returns the complement of this
-    MathSet<T,U>&& Complement()const{
+    MathSet<T,U> Complement()const{
         exception::Assert<exception::ValueOutOfRange>(
-            !Universe_,
+            Universe_,
             "Complement must be taken in a universe"
         );
         MathSet<T,U> temp(*Universe_);
@@ -175,13 +197,12 @@ public:
 };
 
 template<typename T,typename U>
-bool MathSet<T,U>::InUniverse(const T& elem)const{
-    if(!IsUniverse()){
+bool MathSet<T,U>::InUniverse(const T& Elem)const{
+    if(!IsUniverse())
         exception::Assert<exception::ValueOutOfRange>(
             Universe_->Contains(Elem),
             "Element is not in universe"
         );
-    
     return true;
 }
 
@@ -190,7 +211,7 @@ MathSet<T,U>& MathSet<T,U>::operator<<(const T& Elem){
     if(IsUniverse()){
         //Scenario: we are the universe and thus responsible for memory
         if(!Storage_)Storage_=std::shared_ptr<U>(new U);
-        Elems_.insert(*(Storage_->insert(Storage_->back(),Elem)));
+        Elems_.insert(Elems_.begin(),*(Storage_->insert(Storage_->end(),Elem)));
     }
     else{
         InUniverse(Elem);

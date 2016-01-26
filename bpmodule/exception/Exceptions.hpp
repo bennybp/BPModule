@@ -65,10 +65,10 @@ class GeneralException : public std::exception
 
 
         GeneralException()                                         = delete;
-        GeneralException(const GeneralException & rhs)             = default;
-        GeneralException(GeneralException && rhs)                  = default;
-        GeneralException & operator=(GeneralException && rhs)      = default;
-        GeneralException & operator=(const GeneralException & rhs) = default;
+        GeneralException(const GeneralException & /*rhs*/)             = default;
+        GeneralException(GeneralException && /*rhs*/)                  = default;
+        GeneralException & operator=(GeneralException &&/*rhs*/)      = default;
+        GeneralException & operator=(const GeneralException &/*rhs*/) = default;
         virtual ~GeneralException()                                = default;
 
 

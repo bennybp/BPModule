@@ -45,6 +45,7 @@ Molecule::const_iterator Molecule::end(void) const
 
 void Molecule::AddAtom(const Atom& A){
     (*this)<<A;
+    Charge_+=A.Charge();
 }
 
 std::string Molecule::ToString()const{

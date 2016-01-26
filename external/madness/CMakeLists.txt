@@ -10,6 +10,9 @@ if(NOT MADNESS_FOUND)
   ExternalProject_Add(madness_external
                       SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/madness-source
                       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/madness
+                                 -DPYTHON_LIBRARY=${PYTHON_LIBRARY}
+                                 -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR}
+                                 -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
                                  -DENABLE_LIBXC=FALSE
                                  -DENABLE_GENTENSOR=FALSE
                                  -DENABLE_GPERFTOOLS=FALSE

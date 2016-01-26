@@ -5,16 +5,24 @@
 
 #include "bpmodule/system/Atom.hpp"
 #include "bpmodule/math/MathSet.hpp"
+#include "bpmodule/math/Point.hpp"
 
 namespace bpmodule {
 namespace system {
     
 class Molecule: 
-    public math::MathSet<Atom,math::PointStorage<std::string,Atom>{
+public math::MathSet<Atom,math::PointStorage<std::string,double> >{
+private:
+    ///The charge of the molecule
+    double Charge_;
 public:
-    Molecule()=default;
+    Molecule():Charge_(0.0){}
     void AddAtom(const Atom& A);
     std::string ToString()const;
+    
+    double Charge()const noexcept{return Charge_;}
+    
+    void SetCharge(double Q){Charge_=Q;}
 };
 
 inline std::ostream& operator<<(std::ostream& os,const Molecule& Mol){

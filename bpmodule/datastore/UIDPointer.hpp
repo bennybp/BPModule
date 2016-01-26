@@ -72,10 +72,10 @@ public:
     }
 
 
-    UIDPointer(const UIDPointer & rhs) = default;
-    UIDPointer(UIDPointer && rhs) = default;
-    UIDPointer & operator=(const UIDPointer & rhs) = default;
-    UIDPointer & operator=(UIDPointer && rhs) = default;
+    UIDPointer(const UIDPointer & /*rhs*/) = default;
+    UIDPointer(UIDPointer && /*rhs*/) = default;
+    UIDPointer & operator=(const UIDPointer & /*rhs*/) = default;
+    UIDPointer & operator=(UIDPointer && /*rhs*/) = default;
 
     /*! \brief Check if this UIDPointer contains data
      */ 

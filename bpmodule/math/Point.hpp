@@ -8,8 +8,10 @@
 #ifndef BPMODULE_GUARD_POINT_HPP_
 #define BPMODULE_GUARD_POINT_HPP_
 
+#include <array>
 #include <vector>
 #include <map>
+#include <memory>
 
 namespace bpmodule{
 namespace math{
@@ -41,8 +43,8 @@ public:
         return *this;
     }
 
-    Point<Key,T>&& operator*()const{
-        return Point(Idx_,Parent_);
+    Point<Key,T> operator*()const{
+        return Point<Key,T>(Idx_,Parent_);
     }
 
     bool operator==(const PSItr& other)const{
@@ -66,27 +68,52 @@ private:
     std::map<Key,std::vector<T> > Weights_;
 
 public:
-    typedef PSItr iterator;
-    typedef PSItr const_iterator;
+    typedef PSItr<Key,T> iterator;
+    typedef PSItr<Key,T> const_iterator;
     
-    iterator begin(){return PSItr(0,shared_from_this());}
-    const_iterator begin()const{return PSItr(0,shared_from_this());}
-    iterator end(){return PSItr(size(),shared_from_this());}
-    const_iterator end()const{return PSItr(size(),shared_from_this());}
+    virtual ~PointStorage()=default;
+    
+    iterator begin(){
+        return iterator(0,this->shared_from_this());
+    }
+    const_iterator begin()const{
+        return const_iterator(0,this->shared_from_this());
+    }
+    iterator end(){
+        return iterator(size(),this->shared_from_this());
+    }
+    const_iterator end()const{
+        return const_iterator(size(),this->shared_from_this());
+    }
     
     
-    ///Inserts the new value at the end (ignores iterator), returns iterator
-    ///to new point
-    iterator insert(iterator,const Point<Key,T>& Value){
+    /** \brief Inserts the new value at the end (ignores iterator) of the point
+     *         storage class, returns a modified copy as if it were an iterator
+     *         to the added point.
+     * 
+     * For all this magic to work Value's type must derive from Point<Key,T>.
+     * We first add value's data to the PointStorage class.  Then we default
+     * consturct a new U follwed by abuse of the fact that U derives from
+     * Point<Key,T>, with which we are friends, to set U's index and
+     * StorageClass.  Finally we return U as a unique_ptr so that its return
+     * type will be dereferencerable to U.
+     * 
+     * \param U must derive from Point<Key,T> and be default constructable
+     */
+    template<typename U>
+    std::unique_ptr<U> insert(const_iterator,const U& Value){
         for(size_t i=0;i<3;i++)
             Carts_.push_back(Value[i]);
-        std::map<Key,T>::const_iterator WI=Value.Weights_.begin(),
+        typename std::map<Key,T>::const_iterator WI=Value.Weights_.begin(),
                 WEnd=Value.Weights_.end();
         for(;WI!=WEnd;++WI){
             Weights_[WI->first].resize(size()-1);
             Weights_[WI->first].push_back(WI->second);                
         }
-        return iterator(size()-1,shared_from_this());
+        std::unique_ptr<U> NewValue(new U);
+        NewValue->Storage_=this->shared_from_this();
+        NewValue->Idx_=size()-1;
+        return NewValue;
     }
 
     PointStorage()=default;
@@ -137,6 +164,7 @@ private:
     std::shared_ptr<PointStorage<Key,T> > Storage_;
     
     friend PSItr<Key,T>;
+    friend PointStorage<Key,T>;
     Point(size_t Index,std::shared_ptr<PointStorage<Key,T> > Storage):
         Idx_(Index),Storage_(Storage){}
 public:
@@ -146,37 +174,38 @@ public:
     Point(double x,double y,double z):
         Idx_(0),Carts_({x,y,z}){
     }
+        
+    virtual ~Point()=default;
+        
     ///Adds a weight to this point
     void AddWeight(const Key& AKey,const T& Value){
         Weights_[AKey]=Value;
     }
     ///Returns the number of weights
     size_t NWeights()const{
-        return (Storage_?Storage_->NWeights():Weights_.size());
+        return Storage_?Storage_->NWeights():Weights_.size();
     }
     ///Returns the weight with the given key
     T& Weight(const Key& AKey){
-        return (Storage_?Storage_->Weight(AKey,Idx_):Weights_[AKey]);
+        return Storage_?Storage_->Weight(AKey,Idx_):Weights_[AKey];
     }
     ///Returns the weight with the given key (const version)
     const T& Weight(const Key& AKey)const{
-        return (Storage_?Storage_->Weight(AKey,Idx_):Weights_.at(AKey));
+        return Storage_?Storage_->Weight(AKey,Idx_):Weights_.at(AKey);
     }
     ///Returns the i-th Cartesian coordinate of the point (const version)
     const double& operator[](size_t i)const{
-        return (Storage_?(*Storage_)(Idx_,i):Carts_[i]);
+        return Storage_?(*Storage_)(Idx_,i):Carts_[i];
     }
     ///Returns the i-th Cartesian coordinate of the point
     double& operator[](size_t i){
-        return (Storage_?(*Storage_)(Idx_,i):Carts_[i]);
+        return Storage_?(*Storage_)(Idx_,i):Carts_[i];
     }
     ///A comparison operator so we can stick these in an std::set, just compares
     ///addresses
     bool operator<(const Point<Key,T>& RHS)const{
         return this<&RHS;
     }
-
-
 };
 
 }

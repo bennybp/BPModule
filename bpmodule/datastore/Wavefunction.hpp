@@ -33,10 +33,10 @@ class Wavefunction
 {
 public:
     Wavefunction(void) = default;
-    Wavefunction(const Wavefunction & rhs) = default;
-    Wavefunction & operator=(const Wavefunction & rhs) = default;
-    Wavefunction(Wavefunction && rhs) = default;
-    Wavefunction & operator=(Wavefunction && rhs) = default;
+    Wavefunction(const Wavefunction & /*rhs*/) = default;
+    Wavefunction & operator=(const Wavefunction & /*rhs*/) = default;
+    Wavefunction(Wavefunction && /*rhs*/) = default;
+    Wavefunction & operator=(Wavefunction && /*rhs*/) = default;
 
     UIDPointer<basisset::BasisSet> basis; 
     UIDPointer<system::Molecule> system;

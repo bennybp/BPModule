@@ -121,9 +121,9 @@ BasisSet SimpleCreator(const std::string & basispath, const system::Molecule & m
 
     for(const auto & atom : mol)
     {
-        auto gsv = bm.at(atom.z);
-        for(const auto & gb : gsv)
-            bs.AddShell(GaussianShell(gb, 0, atom.id, atom.xyz));
+        auto gsv = bm.at(atom.Z());
+        //for(const auto & gb : gsv)
+        //    bs.AddShell(GaussianShell(gb, 0, atom.id, atom.xyz));
     }
 
     return bs;

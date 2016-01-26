@@ -26,10 +26,10 @@ class GaussianBasisShell
 
 
         // compiler generated ok
-        GaussianBasisShell(const GaussianBasisShell & rhs)             = default;
-        GaussianBasisShell(GaussianBasisShell && rhs)                  = default;
-        GaussianBasisShell & operator=(const GaussianBasisShell & rhs) = default;
-        GaussianBasisShell & operator=(GaussianBasisShell && rhs)      = default;
+        GaussianBasisShell(const GaussianBasisShell & /*rhs*/)             = default;
+        GaussianBasisShell(GaussianBasisShell && /*rhs*/)                  = default;
+        GaussianBasisShell & operator=(const GaussianBasisShell & /*rhs*/) = default;
+        GaussianBasisShell & operator=(GaussianBasisShell && /*rhs*/)      = default;
 
         void AddPrimitive(double alpha, double coef)
         {

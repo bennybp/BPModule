@@ -90,8 +90,14 @@ PYBIND11_PLUGIN(system)
     .def("SetChargeAndMult",&Atom::SetChargeAndMult,
             "Sets the charge and multiplicity")
     .def("SetNElec",&Atom::SetNElec,"Sets the number of electrons")
-    .def("__str__",&Atom::ToString,"Prints the atom out")
+    .def("__str__",&Atom::ToString,"Prints the atom out");
 
+            
+    pybind11::class_<Molecule>(m,"Molecule")
+    .def(pybind11::init<>())
+    .def("AddAtom",&Molecule::AddAtom)
+    .def("__str__",&Molecule::ToString);        
+            
     /* Molecule class
     pybind11::class_<Molecule>(m, "Molecule")
     .def(pybind11::init<>())

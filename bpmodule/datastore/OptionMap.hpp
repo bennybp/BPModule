@@ -64,8 +64,8 @@ class OptionMap
 
 
 
-        OptionMap(OptionMap && rhs)                  = default;
-        OptionMap & operator=(OptionMap && rhs)      = default;
+        OptionMap(OptionMap && /*rhs*/)                  = default;
+        OptionMap & operator=(OptionMap && /*rhs*/)      = default;
 
 
 

@@ -54,9 +54,9 @@ class OptionBase
         virtual ~OptionBase() noexcept                  = default;
 
         // Don't allow copying / assigning
-        OptionBase & operator=(const OptionBase & rhs)  = delete;
-        OptionBase & operator=(OptionBase && rhs)       = delete;
-        OptionBase(const OptionBase && rhs)             = delete;
+        OptionBase & operator=(const OptionBase & /*rhs*/)  = delete;
+        OptionBase & operator=(OptionBase && /*rhs*/)       = delete;
+        OptionBase(const OptionBase && /*rhs*/)             = delete;
 
 
 
@@ -221,7 +221,7 @@ class OptionBase
          *
          * Should only be called from Clone(), hence it is kept protected
          */
-        OptionBase(const OptionBase & rhs) = default;
+        OptionBase(const OptionBase & /*rhs*/) = default;
 
 
 

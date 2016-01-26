@@ -37,7 +37,7 @@ class Atom: public math::Point<std::string,double>{
     public:
         ///Makes an atom with atomic number Z, at {x,y,z}, default ghost at
         ///origin
-        Atom(size_t Z=0,double x=0.0,double y=0.0,double z=0.0);
+        Atom(size_t ZIn=0,double x=0.0,double y=0.0,double z=0.0);
 
         ///@{ Setters
         ///Sets the mass to m

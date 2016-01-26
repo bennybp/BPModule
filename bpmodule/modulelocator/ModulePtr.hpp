@@ -35,12 +35,12 @@ class ModulePtr
         }
 
 
-        ModulePtr(ModulePtr && rhs) = default;
-        ModulePtr & operator=(ModulePtr && rhs) = default;
+        ModulePtr(ModulePtr && /*rhs*/) = default;
+        ModulePtr & operator=(ModulePtr && /*rhs*/) = default;
 
         // no copy construction or assignment
-        ModulePtr(const ModulePtr & rhs) = delete;
-        ModulePtr & operator=(const ModulePtr & rhs) = delete;
+        ModulePtr(const ModulePtr & /*rhs*/) = delete;
+        ModulePtr & operator=(const ModulePtr & /*rhs*/) = delete;
 
         ~ModulePtr() = default;
 
@@ -72,12 +72,12 @@ class PyModulePtr
             Assert<GeneralException>((bool)obj_, "PyModulePtr could not convert to python object");
         }
 
-        PyModulePtr(PyModulePtr && rhs) = default;
-        PyModulePtr & operator=(PyModulePtr && rhs) = default;
-        PyModulePtr & operator=(const PyModulePtr & rhs) = delete;
+        PyModulePtr(PyModulePtr && /*rhs*/) = default;
+        PyModulePtr & operator=(PyModulePtr && /*rhs*/) = default;
+        PyModulePtr & operator=(const PyModulePtr & /*rhs*/) = delete;
 
         // This must be copyable to be used from python
-        PyModulePtr(const PyModulePtr & rhs) = default;
+        PyModulePtr(const PyModulePtr & /*rhs*/) = default;
 
         ~PyModulePtr() = default;
 

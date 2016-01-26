@@ -7,32 +7,31 @@ namespace system {
 
 size_t DefaultMult(size_t Z){
     switch(Z){
-        case(0):{return 1;break;}
-        case(1):{return 2;break;}
-        case(2):{return 1;break;}
-        case(3):{return 2;break;}
-        case(4):{return 1;break;}
-        case(5):{return 2;break;}
-        case(6):{return 3;break;}
-        case(7):{return 4;break;}
-        case(8):{return 3;break;}
-        case(9):{return 2;break;}
-        case(10):{return 1;break;}
-        default:{return 0;break;}
+        case 0 :{return 1;}
+        case 1:{return 2;}
+        case 2:{return 1;}
+        case 3:{return 2;}
+        case 4:{return 1;}
+        case 5:{return 2;}
+        case 6:{return 3;}
+        case 7:{return 4;}
+        case 8:{return 3;}
+        case 9:{return 2;}
+        case 10:{return 1;}
+        default:{return 0;}
     }
-    return 0;
 }    
 
 std::string Atom::Symbol() const{
-    return AtomicNameFromZ(Z());
+    return AtomicNameFromZ((int)Z());
 }
 
-Atom::Atom(size_t Z,double x,double y,double z):
+Atom::Atom(size_t ZIn,double x,double y,double z):
     Base_t(x,y,z){
-        AddWeight("Z",(double)Z);
-        SetMass(AtomicMassFromZ(Z));
-        SetChargeAndMult(0.0,DefaultMult(Z));
-        SetNElec((double)Z);
+        AddWeight("Z",(double)ZIn);
+        SetMass(AtomicMassFromZ((int)ZIn));
+        SetChargeAndMult(0.0,DefaultMult((int)ZIn));
+        SetNElec((double)ZIn);
 }
 
 std::string Atom::ToString() const{
