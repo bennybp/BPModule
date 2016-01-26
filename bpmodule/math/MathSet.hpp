@@ -24,47 +24,57 @@ namespace math{
  *   very large sets in an optimized and object-oriented manner.  In particular
  *   the MathSet allows the actual element data to be stored in a separate 
  *   object, which all sets will contain a shared pointer to.  We term this 
- *   object the storage container.
+ *   object the storage container.  In particular we use this feature to be
+ *   able to store our points contigiously, while being able to store each
+ *   point as a separate object (whose real data lives in the storage container
+ *   ).
  * 
  *   We have to distinguish between two scenarios: working with a universe and
- *   working with sets of an existing universe.  We will term the first universe
- *   creation mode or UCM.  In UCM, we allocate the memory in the storage
- *   container.  UCM is triggered by using the default constructor.
+ *   working with sets within an existing universe.  We will term the first
+ *   scenario universe creation mode or UCM.  In UCM, we allocate the memory in
+ *   the storage container as well as define which elements can show up in
+ *   the universe.  UCM is triggered by using the default constructor or by
+ *   working with a MathSet that is a universe (can be checked by calling
+ *   IsUniverse).
  * 
+ *   Once you have a universe you can start making sets that live within that
+ *   universe (note the universe itself is a perfectly usable set, so if you
+ *   want all elements there's no need to make a new set).  To do this you use
+ *   the constructor that takes a shared_ptr.  The shared_ptr must point to a
+ *   valid instance of a MathSet or else you will enter UCM.  Now when you
+ *   add elements only the elements of type T will be copied, not the data
+ *   inside the storage container.
  * 
- *   The example below will likely explain most of this:
- *   \code
- *      //Default constructor gives us UCM
- *      MathSet<char> U;
- *      
- *      //Adds three elements to U and allocates their memory
- *      U<<'a'<<'b'<<'c';
- * 
- *      //Make a set that will be a subset of U
- *      MathSet<char> S(U);
- *      
- *      //Add the elements a and b to S
- *      S<<'a'<<'b';
- * 
- *      //Compute the complement of S
- *      MathSet<char> SC=S.Complement();
- * 
- *      //SC is now 'c'
- *   \endcode
- *   To the user the difference between normal operation and UCM are pretty
- *   transparent other than
+ *   Note that subsets can be used as universes themselves; however, one can not
+ *   modify the elements they contain.  We distinguish between modifiable and
+ *   non-modifiable universes by termming the former: top-level universes.  If 
+ *   one wants to use subsets of different universes to create a new universe,
+ *   the elements must be deep copied and inserted into a default constructed
+ *   MathSet, thus upgrading them to top-level universes.  Interestingly, this
+ *   is completely consistent with the mathematical notion that one can only
+ *   combine sets that belong to the same universe by realizing that our 
+ *   top-level universes are subsets of the true universe (the set of all 
+ *   possible elements), which in general is the only universe in which
+ *   arbitrary combining operations are possible.
  *    
- *      
+ *   Note for PODs no special memory semantics are needed so the universe will
+ *   contain two copies of each element, one in the storage container and one in
+ *   the Elems_ array.  Its subsets, however, will only contain elements in
+ *   the Elems_ array, and only those actually in the set.
  * 
  *   \param T The type of the element.  Should be very light weight, will be
- *            copied a lot.
+ *            copied a lot.  Must be default constructable and comparable with
+ *            the less operator.
  *   \param U The type of the storage class.  This is a class that will hold the
- *            memory for the elements.
+ *            memory for the elements.  Must be default constructable and
+ *            support insertion via a function with signature:
+ *            `iterator insert(iterator,const T& value)`
  */
 template<typename T,typename U=std::set<T> >
 class MathSet{
 private:
-    ///The universe of discourse for the set.  If NULL this is a top universe
+    ///The universe of discourse for the set.  If NULL this is a top-level 
+    ///universe that belongs to the true universe.
     std::shared_ptr<const MathSet<T> > Universe_;
 
     ///The elements in this set
@@ -73,22 +83,33 @@ private:
     ///The storage class
     std::shared_ptr<U> Storage_;
     
+    ///Checks if element is in Universe_, throws if it is not, basically code
+    ///factorization
+    bool InUniverse(const T& elem)const;
+    
 public:
     ///An iterator to the elements in this set
     typedef typename std::set<T>::iterator iterator;
     ///An iterator to const versions of the elements in this set
     typedef typename std::set<T>::const_iterator const_iterator;
-    
-    ///Makes an empty set, resulting set can be used as a universe
-    MathSet()=default;
 
-    ///Makes a set that is part of the given universe
-    MathSet(std::shared_ptr<MathSet<T> > AUniverse):
+    ///Makes a set that is part of the given universe (or a set that is a top-
+    ///level universe if NULL)
+    MathSet(std::shared_ptr<MathSet<T> > AUniverse=
+            std::shared_ptr<MathSet<T> >()):
         Universe_(AUniverse){
     }
     
+    ///Performs a shallow copy
+    MathSet(const MathSet<T,U>& Other)=default;
+
+    
+    ///No special memory clean-up
     virtual ~MathSet()=default;
 
+    ///True if this is a top-level universe
+    bool IsUniverse()const{return !Universe_;}
+    
     /** \brief Adds an element to this set, returns this
      * 
      * Lots of magic happens here.  If we are a top-level universe
@@ -99,9 +120,10 @@ public:
      * iterator insert(iterator,T);
      * \endcode
      * The resulting iterator should point to the newly added element and this
-     * is what is added to the MathSet.
+     * is what is added to the MathSet.  This signature and behavior is
+     * satisfied by all STL containers, as well as our PointStorage class.
      * 
-     * If we belong to a universe, then the only thing that happens is the
+     * If we a subset, then the only thing that happens is the
      * element is added to this set.  In a debug build, this function checks to
      * see if the element is in the universe before adding it.
      * 
@@ -116,37 +138,78 @@ public:
     }
 
     ///Makes this, the union of this and other, returns this
-    const MathSet<T,U>& operator+=(const MathSet<T,U>& LHS);
+    const MathSet<T,U>& operator+=(const MathSet<T,U>& RHS);
     
     ///Returns the union of this and other
-    MathSet<T,U>&& operator+(const MathSet<T,U>& LHS)const{
-        MathSet<T,U> Return(Universe_);
+    MathSet<T,U>&& operator+(const MathSet<T,U>& RHS)const{
+        return (MathSet<T,U>(*this))+=RHS;
+    }
+    
+    ///Makes this the intersection of this and other, returns this
+    const MathSet<T,U>& operator/=(const MathSet<T,U>& RHS);
+    
+    ///Returns the intersection of this and other
+    MathSet<T,U>&& operator/(const MathSet<T,U>& RHS)const{
+        return (MathSet<T,U>(*this))/=RHS;
+    }
+    
+    ///Makes this the set-difference of this and other, returns this
+    const MathSet<T,U>& operator-=(const MathSet<T,U>& RHS);
+    
+    ///Returns the set-difference of this and other
+    MathSet<T,U>&& operator-(const MathSt<T,U>& RHS)const{
+        return (MathSet<T,U>(*this))-=RHS;
+    }
+    
+    ///Returns the complement of this
+    MathSet<T,U>&& Complement()const{
+        exception::Assert<exception::ValueOutOfRange>(
+            !Universe_,
+            "Complement must be taken in a universe"
+        );
+        MathSet<T,U> temp(*Universe_);
+        temp.Universe_=Universe_;
+        temp-=*this;
+        return temp;
     }
 };
 
 template<typename T,typename U>
-MathSet<T,U>& MathSet<T,U>::operator<<(const T& Elem){
-    if(Universe_){
+bool MathSet<T,U>::InUniverse(const T& elem)const{
+    if(!IsUniverse()){
         exception::Assert<exception::ValueOutOfRange>(
             Universe_->Contains(Elem),
             "Element is not in universe"
         );
-        Elems_.insert(Elem);
+    
+    return true;
+}
+
+template<typename T,typename U>
+MathSet<T,U>& MathSet<T,U>::operator<<(const T& Elem){
+    if(IsUniverse()){
+        //Scenario: we are the universe and thus responsible for memory
+        if(!Storage_)Storage_=std::shared_ptr<U>(new U);
+        Elems_.insert(*(Storage_->insert(Storage_->back(),Elem)));
     }
-    else{//Scenario where we are the universe and thus responsible for memory
-        if(!Storage_)
-            Storage_=std::shared_ptr<U>(new U);
-        Elems_.insert(*(Storage_->insert(Storage_->back(),Elem));
+    else{
+        InUniverse(Elem);
+        Elems_.insert(Elem);
     }
     return *this;
 }
 
 template<typename T,typename U>
-const MathSet<T,U>& MathSet<T,U>::operator+=(const MathSet<T,U>& LHS){
-    const_iterator EI=LHS.begin(),EIEnd=LHS.end();
+const MathSet<T,U>& MathSet<T,U>::operator+=(const MathSet<T,U>& RHS){
+    const_iterator EI=RHS.begin(),EIEnd=RHS.end();
     iterator Hint=Elems_.begin();
+    exception::Assert<exception::ValueOutOfRange>(
+            Universe_.get()!=RHS.Universe_.get(),
+            "Universes are not equal in union"
+            );
     for(;EI!=EIEnd;++EI){
-        exception::Assert<exception::ValueOutOfRange>(
+        if(!IsUniverse())//Check that element is in universe
+            exception::Assert<exception::ValueOutOfRange>(
                 Universe_->Contains(*EI),
                 "Element is not in universe"
                 );
@@ -154,6 +217,33 @@ const MathSet<T,U>& MathSet<T,U>::operator+=(const MathSet<T,U>& LHS){
     }
     return *this;
 }
+
+template<typename T,typename U>
+const MathSet<T,U>& MathSet<T,U>::operator/=(const MathSet<T,U>& RHS){
+    exception::Assert<exception::ValueOutOfRange>(
+        Universe_.get()!=RHS.Universe_.get(),
+        "Universes are not equal in intersection"
+        );
+    std::set<T> LHS=Elems_;
+    Elems_.clear();
+    std::set_intersection(LHS.begin(),LHS.end(),RHS.begin(),RHS.end(),
+            std::inserter<std::set<T>>(Elems_,Elems_.begin()));
+    return *this;
+}
+
+template<typename T,typename U>
+const MathSet<T,U>& MathSet<T,U>::operator-=(const MathSet<T,U>& RHS){
+    exception::Assert<exception::ValueOutOfRange>(
+        Universe_.get()!=RHS.Universe_.get(),
+        "Universes are not equal in intersection"
+        );
+    std::set<T> LHS=Elems_;
+    Elems_.clear();
+    std::set_difference(LHS.begin(),LHS.end(),RHS.begin(),RHS.end(),
+            std::inserter<std::set<T>>(Elems_,Elems_.begin()));
+    return *this;
+}
+
 
 }
 }//End namespaces

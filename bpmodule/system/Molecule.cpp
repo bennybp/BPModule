@@ -5,7 +5,7 @@ namespace bpmodule {
 namespace system {
 
 
-Molecule::Molecule(void)
+/*Molecule::Molecule(void)
     : curid_(0)
 {
 }
@@ -41,8 +41,19 @@ Molecule::const_iterator Molecule::begin(void) const
 Molecule::const_iterator Molecule::end(void) const
 {
     return atoms_.end();
+}*/
+
+void Molecule::AddAtom(const Atom& A){
+    (*this)<<A;
 }
 
+std::string Molecule::ToString()const{
+    std::stringstream ss;
+    const_iterator AtomI=begin(),AtomEnd=end();
+    for(;AtomI!=AtomEnd;++AtomI)
+        ss<<*AtomI<<std::endl;
+    return ss.str();
+}
 
 
 } // close namespace system

@@ -66,7 +66,7 @@ PYBIND11_PLUGIN(system)
     m.def("AtomicNameFromSym", AtomicNameFromSym);
 
 
-    // Atom structure
+    /* Atom structure
     pybind11::class_<Atom>(m, "Atom")
     .def_readwrite("id", &Atom::id)
     .def_readwrite("z", &Atom::z)
@@ -76,14 +76,29 @@ PYBIND11_PLUGIN(system)
     .def("Name", &Atom::Name)
     .def("Symbol", &Atom::Symbol)
     ;
+    */
+    
+    pybind11::class_<Atom>(m,"Atom")
+    .def(pybind11::init<int,double,double,double>())
+    .def("Z",&Atom::Z,"Returns the atomic number")
+    .def("Symbol",&Atom::Symbol,"Returns the atomic symbol")
+    .def("Mass",&Atom::Mass,"Returns the mass")
+    .def("Charge",&Atom::Charge,"Returns the charge")
+    .def("Mult",&Atom::Mult,"Returns the multiplicity")
+    .def("NElec",&Atom::NElec,"Returns the number of electrons")
+    .def("SetMass",&Atom::SetMass,"Sets the mass of the atom")
+    .def("SetChargeAndMult",&Atom::SetChargeAndMult,
+            "Sets the charge and multiplicity")
+    .def("SetNElec",&Atom::SetNElec,"Sets the number of electrons")
+    .def("__str__",&Atom::ToString,"Prints the atom out")
 
-    // Molecule class
+    /* Molecule class
     pybind11::class_<Molecule>(m, "Molecule")
     .def(pybind11::init<>())
     .def("AddAtom", &Molecule::AddAtom)
     .def("GetAtom", &Molecule::GetAtom)
     .def("NAtoms", &Molecule::NAtoms)
-    ;
+    ;*/
 
     return m.ptr();
 }

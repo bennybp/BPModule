@@ -10,7 +10,6 @@
 
 #include <vector>
 #include <map>
-#include <memory>
 
 namespace bpmodule{
 namespace math{
@@ -21,6 +20,11 @@ class Point;
 template<typename Key,typename T>
 class PointStorage;
 
+
+/** \brief An iterator to a PointStorage class
+ * 
+ *  This iterator is only valid as long as the PointStorage class is valid.
+ */
 template<typename Key,typename T>
 class PSItr{
 private:
@@ -50,10 +54,10 @@ public:
  *   coordinates and weights.
  * 
  * \param Key The type of the weight lookup key
- * \param T The type of the weights
+ * \param T The type of the weights must be default constructable
  */
 template<typename Key,typename T>
-class PointStorage:public std::enable_shared_from_this<PointStorage<Key,T> >{
+class PointStorage: public std::enable_shared_from_this<PointStorage<Key,T> >{
 private:
     ///A 3 by NPoints array of coordinates
     std::vector<double> Carts_;
@@ -65,25 +69,24 @@ public:
     typedef PSItr iterator;
     typedef PSItr const_iterator;
     
-    iterator begin(){
-        return PSItr(0,std::shared_from_this());
-    }
-    const_iterator begin()const{
-        return PSItr(0,std::shared_from_this());
-    }
-    iterator end(){
-        return PSItr(size(),std::shared_from_this());
-    }
-    const_iterator end()const{
-        return PSItr(size(),std::shared_from_this());
-    }
+    iterator begin(){return PSItr(0,shared_from_this());}
+    const_iterator begin()const{return PSItr(0,shared_from_this());}
+    iterator end(){return PSItr(size(),shared_from_this());}
+    const_iterator end()const{return PSItr(size(),shared_from_this());}
+    
     
     ///Inserts the new value at the end (ignores iterator), returns iterator
     ///to new point
     iterator insert(iterator,const Point<Key,T>& Value){
-        Carts_.push_back(Value[0]);
-        Carts_.push_back(Value[1]);
-        Carts_.push_back(Value[2]);
+        for(size_t i=0;i<3;i++)
+            Carts_.push_back(Value[i]);
+        std::map<Key,T>::const_iterator WI=Value.Weights_.begin(),
+                WEnd=Value.Weights_.end();
+        for(;WI!=WEnd;++WI){
+            Weights_[WI->first].resize(size()-1);
+            Weights_[WI->first].push_back(WI->second);                
+        }
+        return iterator(size()-1,shared_from_this());
     }
 
     PointStorage()=default;
@@ -91,15 +94,45 @@ public:
     size_t size()const{return Carts_.size()/3;}
     ///The number of weights
     size_t NWeights()const{return Weights_.size();}
+    ///Returns the j-th coordinate of the i-th point
+    const double& operator()(size_t i,size_t j)const{
+        return Carts_[i*3+j];
+    }
+    ///Returns the j-th coordinate of the i-th point
+    double& operator()(size_t i,size_t j){
+        return Carts_[i*3+j];
+    }
+    ///Returns the weight of the i-th point
+    T& Weight(const Key& AKey,size_t i){
+        return Weights_[AKey][i];
+    }
+    ///Returns the weight of the i-th point (const version)
+    const T& Weight(const Key& AKey,size_t i)const{
+        return Weights_.at(AKey)[i];
+    }
 
 };
 
+/** \brief An interface to a point
+ * 
+ * Each point can be a stand alone point, which is what the user creates, or
+ * they can be tied to a PointStorage class.  In the latter case you are
+ * able to say grab the address of the first cart of the first atom and know
+ * that you have a 3*NPoints long array of contigious memory.  Similar stories
+ * hold for the weights, per key.  This is an
+ * advanced feature and we highly recommend that normal users ignore the fact
+ * that the return types are references.
+ */
 template<typename Key,typename T>
 class Point{
 private:
     ///The index of this point
     size_t Idx_;
 
+    ///Local buffers for object initialization
+    std::array<double,3> Carts_;
+    std::map<Key,T > Weights_;
+    
     ///The actual data
     std::shared_ptr<PointStorage<Key,T> > Storage_;
     
@@ -107,14 +140,41 @@ private:
     Point(size_t Index,std::shared_ptr<PointStorage<Key,T> > Storage):
         Idx_(Index),Storage_(Storage){}
 public:
-    Point()=default;
+    ///Makes a null point
+    Point():
+        Idx_(0),Carts_({0.0,0.0,0.0}){}
     Point(double x,double y,double z):
-        Idx_(0),Storage_(new PointStorage<Key,T>){
-        Storage_->insert(Storage_->begin(),*this);
+        Idx_(0),Carts_({x,y,z}){
     }
-    size_t NWeights()const{return Storage_->NWeights();}
-    double operator[](size_t i)const{return (*Storage_)[Idx_][i];}
-    double& operator[](size_t i){return (*Storage_)[Idx_][i];}
+    ///Adds a weight to this point
+    void AddWeight(const Key& AKey,const T& Value){
+        Weights_[AKey]=Value;
+    }
+    ///Returns the number of weights
+    size_t NWeights()const{
+        return (Storage_?Storage_->NWeights():Weights_.size());
+    }
+    ///Returns the weight with the given key
+    T& Weight(const Key& AKey){
+        return (Storage_?Storage_->Weight(AKey,Idx_):Weights_[AKey]);
+    }
+    ///Returns the weight with the given key (const version)
+    const T& Weight(const Key& AKey)const{
+        return (Storage_?Storage_->Weight(AKey,Idx_):Weights_.at(AKey));
+    }
+    ///Returns the i-th Cartesian coordinate of the point (const version)
+    const double& operator[](size_t i)const{
+        return (Storage_?(*Storage_)(Idx_,i):Carts_[i]);
+    }
+    ///Returns the i-th Cartesian coordinate of the point
+    double& operator[](size_t i){
+        return (Storage_?(*Storage_)(Idx_,i):Carts_[i]);
+    }
+    ///A comparison operator so we can stick these in an std::set, just compares
+    ///addresses
+    bool operator<(const Point<Key,T>& RHS)const{
+        return this<&RHS;
+    }
 
 
 };

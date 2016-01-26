@@ -8,10 +8,18 @@
 
 namespace bpmodule {
 namespace system {
-
-class Molecule: public MathSet<Atom>{
     
+class Molecule: 
+    public math::MathSet<Atom,math::PointStorage<std::string,Atom>{
+public:
+    Molecule()=default;
+    void AddAtom(const Atom& A);
+    std::string ToString()const;
 };
+
+inline std::ostream& operator<<(std::ostream& os,const Molecule& Mol){
+    return os<<Mol.ToString();
+}
 
 
 /*class Molecule
