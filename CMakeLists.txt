@@ -40,7 +40,7 @@ message(STATUS "Using math libraries: ${BPMODULE_MATH_LIBS}")
 set(Python_ADDITIONAL_VERSIONS "3.3;3.4;3.5;3.6")
 find_package(PythonLibs "3.3" REQUIRED)
 message(STATUS "Python libs: ${PYTHON_LIBRARIES}")
-message(STATUS "Python inlcude: ${PYTHON_INCLUDE_DIRS}")
+message(STATUS "Python include: ${PYTHON_INCLUDE_DIRS}")
 
 
 #################################
