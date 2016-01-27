@@ -3,6 +3,8 @@
 #include "bpmodule/system/AtomicInfo.hpp"
 
 namespace bpmodule {
+    typedef std::set<const util::Enumeration<system::AtomProperty>*> Set_t;
+    Set_t util::Enumeration<system::AtomProperty>::Enums_=Set_t();
 namespace system {
 
 size_t DefaultMult(size_t Z){
@@ -22,13 +24,25 @@ size_t DefaultMult(size_t Z){
     }
 }    
 
+
+
+
+const AtomProperty AtomProperty::Mass("MASS");
+const AtomProperty AtomProperty::Z("ATOMIC NUMBER");
+const AtomProperty AtomProperty::Charge("CHARGE");
+const AtomProperty AtomProperty::Mult("MULTIPLICITY");
+const AtomProperty AtomProperty::NElec("NUMBER OF ELECTRONS");
+
+
+
+
 std::string Atom::Symbol() const{
-    return AtomicNameFromZ((int)Z());
+    return AtomicSymFromZ((int)Z());
 }
 
 Atom::Atom(size_t ZIn,double x,double y,double z):
     Base_t(x,y,z){
-        AddWeight("Z",(double)ZIn);
+        AddWeight(AtomProperty::Z,(double)ZIn);
         SetMass(AtomicMassFromZ((int)ZIn));
         SetChargeAndMult(0.0,DefaultMult((int)ZIn));
         SetNElec((double)ZIn);

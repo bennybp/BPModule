@@ -123,8 +123,8 @@ inline bool operator==(const std::string& lhs,const Enumeration<T>& rhs){
    return rhs==lhs;
 }
 
-template<typename T>
-std::set<const Enumeration<T>* > Enumeration<T>::Enums_;
+//template<typename T>
+//std::set<const Enumeration<T>* > Enumeration<T>::Enums_;
 
 }}//end namespaces
 

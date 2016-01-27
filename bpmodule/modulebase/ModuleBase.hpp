@@ -54,10 +54,10 @@ class ModuleBase
 
         virtual ~ModuleBase();
 
-        ModuleBase(const ModuleBase & rhs)              = delete;
-        ModuleBase(ModuleBase && rhs)                   = delete;
-        ModuleBase & operator= (const ModuleBase & rhs) = delete;
-        ModuleBase & operator= (ModuleBase && rhs)      = delete;
+        ModuleBase(const ModuleBase & /*rhs*/)              = delete;
+        ModuleBase(ModuleBase && /*rhs*/)                   = delete;
+        ModuleBase & operator= (const ModuleBase & /*rhs*/) = delete;
+        ModuleBase & operator= (ModuleBase && /*rhs*/)      = delete;
 
 
         /*! \brief Get the unique ID of this module
@@ -224,7 +224,7 @@ class ModuleBase
                 try {
                     return python::CallPyFunc<R>(overload, std::forward<Targs>(args)...);
                 }
-                catch(exception::PythonCallException & ex)
+                catch(exception::PythonCallException & /*ex*/)
                 {
                     //ex.AppendInfo("vfunc", name);
                     throw;

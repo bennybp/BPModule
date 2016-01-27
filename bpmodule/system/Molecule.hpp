@@ -11,7 +11,7 @@ namespace bpmodule {
 namespace system {
     
 class Molecule: 
-public math::MathSet<Atom,math::PointStorage<std::string,double> >{
+public math::MathSet<Atom,math::PointStorage<AtomProperty,double> >{
 private:
     ///The charge of the molecule
     double Charge_;

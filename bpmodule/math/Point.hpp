@@ -12,6 +12,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include "bpmodule/pragma.h"
 
 namespace bpmodule{
 namespace math{
@@ -51,7 +52,11 @@ public:
         return Idx_==other.Idx_;
     }
 };
+//std::enable_shared_from doesn't have  virtual destructor, nothing I can do
+//about that so disable warning
 
+PRAGMA_WARNING_PUSH
+PRAGMA_WARNING_IGNORE_NONVIRTUAL_DTOR
 /** \brief The class that holds the memory for a point's 
  *   coordinates and weights.
  * 
@@ -149,6 +154,9 @@ public:
  * hold for the weights, per key.  This is an
  * advanced feature and we highly recommend that normal users ignore the fact
  * that the return types are references.
+ * 
+ * Side note, we can't use the ternary operator for the reference returns b/c
+ * it makes a temporary, which is pretty f-ing stupid
  */
 template<typename Key,typename T>
 class Point{
@@ -183,23 +191,28 @@ public:
     }
     ///Returns the number of weights
     size_t NWeights()const{
-        return Storage_?Storage_->NWeights():Weights_.size();
+        if(Storage_) return Storage_->NWeights();
+        return Weights_.size();
     }
     ///Returns the weight with the given key
     T& Weight(const Key& AKey){
-        return Storage_?Storage_->Weight(AKey,Idx_):Weights_[AKey];
+        if(Storage_)return Storage_->Weight(AKey,Idx_);
+        return Weights_[AKey];
     }
     ///Returns the weight with the given key (const version)
     const T& Weight(const Key& AKey)const{
-        return Storage_?Storage_->Weight(AKey,Idx_):Weights_.at(AKey);
+        if(Storage_)return Storage_->Weight(AKey,Idx_);
+        return Weights_.at(AKey);
     }
     ///Returns the i-th Cartesian coordinate of the point (const version)
     const double& operator[](size_t i)const{
-        return Storage_?(*Storage_)(Idx_,i):Carts_[i];
+        if(Storage_)return (*Storage_)(Idx_,i);
+        return Carts_[i];
     }
     ///Returns the i-th Cartesian coordinate of the point
     double& operator[](size_t i){
-        return Storage_?(*Storage_)(Idx_,i):Carts_[i];
+        if(Storage_)return (*Storage_)(Idx_,i);
+        return Carts_[i];
     }
     ///A comparison operator so we can stick these in an std::set, just compares
     ///addresses
@@ -207,6 +220,8 @@ public:
         return this<&RHS;
     }
 };
+
+PRAGMA_WARNING_POP
 
 }
 }//End namespaces

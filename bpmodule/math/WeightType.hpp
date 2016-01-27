@@ -26,13 +26,13 @@ namespace math{
  *  operations we provide the Weight enum.  If you add more
  *  enums don't forget to instantiate them in WeightType.cpp
  *
- */
+ *
 class WeightType: public util::Enumeration<WeightType>{
    private:
       ///The base class's type
       typedef util::Enumeration<WeightType> Base_t;
       ///How we will instantiate each member
-      WeightType(const std::string& Name):Base_t(Name){}
+      WeightType(const std::string):Base_t(Name){}
    public:
       ///A generic weight
       static const WeightType Weight;
@@ -47,7 +47,7 @@ class WeightType: public util::Enumeration<WeightType>{
       ///The covalent radius
       static const WeightType CovR;
 
-};
+};*/
 
 
 }}/* End namespaces */

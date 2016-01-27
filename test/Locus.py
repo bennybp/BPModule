@@ -16,8 +16,16 @@ def Run():
         tester = bp.testing.Tester("Testing construction of Locus Class")
         tester.PrintHeader()
     
-        MyPoint=bp.math.Point(1.2,1.3,1.4)
-        bp.output.Output("%1%\n",str(MyPoint))
+        O=bp.system.Atom(8,0.0,0.0,0.0)
+        H1=bp.system.Atom(1,0.0,0.0,0.89)
+        H2=bp.system.Atom(1,0.0,0.89,0.0)
+        Water=bp.system.Molecule
+        Water.AddAtom(O)
+        Water.AddAtom(H1)
+        Water.AddAtom(H2)
+
+        bp.output.Output("%1%\n",str(Water))
+
     except Exception as e:
       bp.output.Output("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()

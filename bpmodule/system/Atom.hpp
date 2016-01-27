@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include "bpmodule/math/Point.hpp"
+#include "bpmodule/util/Enumeration.hpp"
 
 namespace bpmodule {
 namespace system {
@@ -28,12 +29,25 @@ namespace system {
     std::string Symbol(void) const;
 };*/
 ///@todo int to double and double to int conversions through math casts
+
+class AtomProperty: public util::Enumeration<AtomProperty>{
+private:
+    AtomProperty(const std::string& Name):
+        util::Enumeration<AtomProperty>(Name){}
+public:
+    static const AtomProperty Mass;
+    static const AtomProperty Z;
+    static const AtomProperty Charge;
+    static const AtomProperty Mult;
+    static const AtomProperty NElec;
+};
+
     
 ///Wrapper class around math::Point for an atom
-class Atom: public math::Point<std::string,double>{
+class Atom: public math::Point<AtomProperty,double>{
     private:
         ///Typedef of the base type
-        typedef math::Point<std::string,double> Base_t;
+        typedef math::Point<AtomProperty,double> Base_t;
     public:
         ///Makes an atom with atomic number Z, at {x,y,z}, default ghost at
         ///origin
@@ -41,30 +55,30 @@ class Atom: public math::Point<std::string,double>{
 
         ///@{ Setters
         ///Sets the mass to m
-        void SetMass(double m){AddWeight("MASS",m);}
+        void SetMass(double m){AddWeight(AtomProperty::Mass,m);}
         ///Sets the charge to q and multiplicity to m
         void SetChargeAndMult(double q,size_t m){
-            AddWeight("CHARGE",q);
-            AddWeight("MULT",(double)m);
+            AddWeight(AtomProperty::Charge,q);
+            AddWeight(AtomProperty::Mult,(double)m);
         }
         ///Sets the number of electrons
-        void SetNElec(double N){AddWeight("NELEC",N);}
+        void SetNElec(double N){AddWeight(AtomProperty::NElec,N);}
         ///@}
         
         
         ///@{ Getters
         ///Returns the atomic number
-        size_t Z()const{return (size_t)Weight("Z");}
+        size_t Z()const{return (size_t)Weight(AtomProperty::Z);}
         ///Returns the atomic symbol
         std::string Symbol()const;
         ///Returns the mass
-        double Mass()const{return Weight("MASS");}
+        double Mass()const{return Weight(AtomProperty::Mass);}
         ///Returns the charge
-        double Charge()const{return Weight("CHARGE");}
+        double Charge()const{return Weight(AtomProperty::Charge);}
         ///Returns the multiplicity of the atom
-        size_t Mult()const{return (size_t)Weight("MULT");}
+        size_t Mult()const{return (size_t)Weight(AtomProperty::Mult);}
         ///Returns the number of electrons
-        double NElec()const{return Weight("NELEC");}
+        double NElec()const{return Weight(AtomProperty::NElec);}
         ///@}
         
         ///Useful for printing the Atom out

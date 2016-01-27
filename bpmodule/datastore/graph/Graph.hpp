@@ -23,6 +23,8 @@ template<typename U> class BFS;
 template<typename T,typename U> class BFSBase;
 template<typename U> class FindSubGraph;
 
+///\todo Switch to composition vs. inheritance
+
 /** \brief A basic graph object
  *
  *  To some extent a graph is a glorified container.  However unlike the
