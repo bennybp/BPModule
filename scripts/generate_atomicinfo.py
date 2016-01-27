@@ -25,6 +25,9 @@ for l in open(os.path.join(datadir, "ElementNames.txt")).readlines():
 
     atomicinfo[z] = { "sym" : sym,
                       "name" : name,
+                      "mult": "0",
+                      "termsym": "x",
+                      "mass": (0.0, 0.0, 0.0),
                       "isos" : {}
                     }
 
@@ -72,15 +75,23 @@ for z, atom in atomicinfo.items():
         isodat["abundance"] = (0, 0, 0)
 
 
+# Read in multiplicities
+for l in open(os.path.join(datadir, "NIST-ATOMICION.formatted.txt")).readlines()[5:]:
+  z, occ, mult, termsym = l.split()
+  z = int(z)
+  atomicinfo[z]["mult"] = mult
+  atomicinfo[z]["termsym"] = termsym
+
+
 
 with bp_common.HeaderSourceFiles(outbase, "LUTs for Atomic Information", 
-                                 ["molecule", "lut"],
+                                 ["system", "lut"],
                                  createheader = True,
                                  hppincludes = ["<map>",
-                                                "\"bpmodule/molecule/AtomicInfo.hpp\"",
+                                                "\"bpmodule/system/AtomicInfo.hpp\"",
                                                 "\"bpmodule/util/StringUtil.hpp\""],
                                  cppincludes = ["<map>",
-                                                "\"bpmodule/molecule/AtomicInfo.hpp\"",
+                                                "\"bpmodule/system/AtomicInfo.hpp\"",
                                                 "\"bpmodule/util/StringUtil.hpp\""]) as src:
 
     # Header file
@@ -110,6 +121,8 @@ with bp_common.HeaderSourceFiles(outbase, "LUTs for Atomic Information",
         src.f.write("  {{ {:<4} , {{ {},\n".format(k, k))
         src.f.write("             \"{}\",\n".format(v["sym"]))
         src.f.write("             \"{}\",\n".format(v["name"]))
+        src.f.write("             \"{}\",\n".format(v["mult"]))
+        src.f.write("             \"{}\",\n".format(v["termsym"]))
         src.f.write("             {},\n".format(v["mass"][0]))
         src.f.write("             {},\n".format(v["mass"][1]))
         src.f.write("             {},\n".format(v["mass"][2]))
