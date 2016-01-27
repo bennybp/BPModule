@@ -31,10 +31,8 @@ namespace detail {
 /*! \brief Storage of a module for use in ModulePtr
  *
  * Objects of this class (and derived classes)
- * are responsible for ownership
+ * are responsible for actual ownership
  * of the module data themselves, including deletion.
- *
- * Not copy or move constructable or assignable
  */
 class ModuleIMPLHolder
 {
@@ -47,7 +45,7 @@ class ModuleIMPLHolder
         ModuleIMPLHolder(ModuleIMPLHolder && rhs) = delete;
         ModuleIMPLHolder & operator=(ModuleIMPLHolder && rhs) = delete;
 
-        /*! \brief Return a C++ pointer to the module
+        /*! \brief Return a C++ pointer to the module base interface
          */ 
         virtual modulebase::ModuleBase * CppPtr(void) const = 0;
 
@@ -55,6 +53,10 @@ class ModuleIMPLHolder
          */ 
         virtual pybind11::object PythonObject(void) const = 0;
 
+        /*! \brief Determine if the held module is a given type
+         *
+         * \tparam T Type of module to compare to. Should be derived from ModuleBase
+         */ 
         template<typename T>
         bool IsType(void) const
         {

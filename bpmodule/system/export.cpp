@@ -64,6 +64,8 @@ PYBIND11_PLUGIN(system)
     m.def("AtomicZNumberFromSym", AtomicZNumberFromSym);
     m.def("AtomicNameFromZ", AtomicNameFromZ);
     m.def("AtomicNameFromSym", AtomicNameFromSym);
+    m.def("AtomicMultiplicityFromZ", AtomicMultiplicityFromZ);
+    m.def("AtomicMultiplicityFromSym", AtomicMultiplicityFromSym);
 
 
     /* Atom structure

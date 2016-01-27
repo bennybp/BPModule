@@ -14,7 +14,7 @@ struct IsotopeData
     double mass;          //! Mass of the isotope
     double mass_low;      //! Lower bound of the isotope mass
     double mass_high;     //! Upper bound of the isotope mass
-                         
+
     double abund;         //! Natural abundance of the isotope (out of 1)
     double abund_low;     //! Lower bound on the isotope's abundance
     double abund_high;    //! Upper bound on the isotope's abundance 
@@ -26,10 +26,13 @@ struct AtomicData
     int Z;                //! Atomic Z-number (number of protons)
     std::string sym;      //! Element's atomic symbol
     std::string name;     //! Full name of the element 
+    int multiplicity;     //! Ground-state multiplicity
+    std::string termsym;  //! Term symbol character
     double mass;          //! Mass of the element (isotope masses weighted by abundance)
     double mass_low;      //! Lower bound on the mass of the element
     double mass_high;     //! Upper bound on the mass of the element
 
+                         
 
     // All isotope information for this atom
     std::vector<IsotopeData> isotopes;
@@ -173,6 +176,25 @@ std::string AtomicNameFromZ(int Z);
  */
 std::string AtomicNameFromSym(const std::string & sym);
 
+
+
+/*! \brief Look up an atomic ground-state multiplicity by Z number
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        name is not defined for this Z number
+ */
+int AtomicMultiplicityFromZ(int Z);
+
+
+
+/*! \brief Look up an atomic ground-state multiplicity by symbol
+ *
+ * Symbol is not case sensitive
+ *
+ * \throw bpmodule::exception::MoleculeException if the
+ *        name is not defined for this symbol
+ */
+int AtomicMultiplicityFromSym(const std::string & sym);
 
 
 } // closing namespace system

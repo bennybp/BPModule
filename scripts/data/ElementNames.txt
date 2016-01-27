@@ -1,3 +1,4 @@
+0      Gho    Ghost
 1      H      Hydrogen
 2      He     Helium
 3      Li     Lithium
