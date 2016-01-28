@@ -29,7 +29,7 @@ def Run(mm):
 
 
       # Create the molecule/basis set
-      mol = bp.molecule.Molecule()
+      mol = bp.system.Molecule()
       mol.AddAtom(1, [0.0, 0.0, 0.0] )
       mol.AddAtom(1, [1.0, 0.0, 0.0] )
       mol.AddAtom(8, [0.0, 1.0, 0.0] )
