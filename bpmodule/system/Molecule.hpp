@@ -9,9 +9,9 @@
 
 namespace bpmodule {
 namespace system {
-    
+
 class Molecule: 
-public math::MathSet<Atom,math::PointStorage<AtomProperty,double> >{
+public math::MathSet<Atom,math::PointStorage<Atom>>{
 private:
     ///The charge of the molecule
     double Charge_;

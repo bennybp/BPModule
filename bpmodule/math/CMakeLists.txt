@@ -1,9 +1,6 @@
 set(BPMODULE_MATH_FILES
             Factorial_LUT.cpp
-            #WeightType.hpp
             WeightType.cpp
-            #MathSet.hpp
-            #Point.hpp
             export.cpp
    )
   

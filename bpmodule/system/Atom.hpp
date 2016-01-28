@@ -42,7 +42,7 @@ public:
     static const AtomProperty NElec;
 };
 
-    
+
 ///Wrapper class around math::Point for an atom
 class Atom: public math::Point<AtomProperty,double>{
     private:
@@ -64,6 +64,13 @@ class Atom: public math::Point<AtomProperty,double>{
         ///Sets the number of electrons
         void SetNElec(double N){AddWeight(AtomProperty::NElec,N);}
         ///@}
+        
+        ///Returns true if two Atoms are equal
+        bool operator==(const Atom& RHS)const;
+        ///Returns true if two Atoms are not equal
+        bool operator!=(const Atom& RHS)const{
+            return !((*this)==RHS);
+        }
         
         
         ///@{ Getters

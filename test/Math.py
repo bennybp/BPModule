@@ -18,7 +18,7 @@ import bpmodule as bp
 def Run():
     try:
 
-        tester = bp.testing.Tester("Testing construction of OptionMap objects")
+        tester = bp.testing.Tester("Testing Math Library")
         tester.PrintHeader()
 
         for i in range(1, 10):
@@ -33,8 +33,13 @@ def Run():
             bp.output.Output("%1%   %2%\n", str(type(bp.math.Double2nm1FactorialF(i))), bp.math.Double2nm1FactorialF(i))
             bp.output.Output("%1%   %2%\n", str(type(bp.math.Double2nm1FactorialD(i))), bp.math.Double2nm1FactorialD(i))
             bp.output.Output("\n")
+        
 
-
+        MyUniverse=bp.math.Universe()
+        Alphabet="abcdefghijklmnopqrstuvwxyz"
+        for i in list(Alphabet):
+           bp.output.Output("Adding: "+i)
+           MyUniverse.append(i)
 
         tester.PrintResults() 
 

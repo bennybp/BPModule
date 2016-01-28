@@ -35,7 +35,6 @@ const AtomProperty AtomProperty::NElec("NUMBER OF ELECTRONS");
 
 
 
-
 std::string Atom::Symbol() const{
     return AtomicSymFromZ((int)Z());
 }
@@ -46,6 +45,16 @@ Atom::Atom(size_t ZIn,double x,double y,double z):
         SetMass(AtomicMassFromZ((int)ZIn));
         SetChargeAndMult(0.0,DefaultMult((int)ZIn));
         SetNElec((double)ZIn);
+}
+
+bool Atom::operator==(const Atom& RHS)const{
+            if(Z()!=RHS.Z())return false;
+            if((*this)[0]!=RHS[0]||
+               (*this)[1]!=RHS[1]||
+               (*this)[2]!=RHS[2])return false;
+            if(NElec()!=RHS.NElec()||Charge()!=RHS.NElec())return false;
+            if(Mass()!=RHS.Mass())return false;
+            return true;
 }
 
 std::string Atom::ToString() const{
