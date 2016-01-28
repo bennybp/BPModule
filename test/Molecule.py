@@ -21,7 +21,7 @@ def Run():
         tester = bp.testing.Tester("Testing Molecule class")
         tester.PrintHeader()
 
-        mol = bp.molecule.Molecule()
+        mol = bp.system.Molecule()
         mol.AddAtom(1, [0.0, 0.0, 0.0] )
         mol.AddAtom(2, [1.0, 0.0, 0.0] )
         mol.AddAtom(3, [0.0, 1.0, 0.0] )

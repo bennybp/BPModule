@@ -142,6 +142,20 @@ std::string AtomicNameFromSym(const std::string & sym)
 
 
 
+int AtomicMultiplicityFromZ(int Z)
+{
+    return AtomicInfoFromZ(Z).multiplicity;
+}
+
+
+
+int AtomicMultiplicityFromSym(const std::string & sym)
+{
+    return AtomicInfoFromSym(sym).multiplicity;
+}
+
+
+
 } // closing namespace system
 } // closing namespace bpmodule
 
