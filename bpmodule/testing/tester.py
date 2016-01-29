@@ -30,23 +30,27 @@ class Tester:
 
 
     def Test(self, desc, expected, func, *args):
+        """
+        Syntax: Test(desc, expected, func, ...)
+        desc: The descrition of the test
+        expected: either True or False depending on 
+                  whether the function should pass
+        func(...): The function to call, all values following the function
+                   name will be forwarded to the function
+        """
         failed = func(*args)
-
+        
         fmt = "%|1$5| : %|2$-5|  %|3$-5|  %|4$-9|  : %5%\n"
-
-        if failed == 0:
-            if expected == True:
-                Output(fmt, self.ntest, "True", "True", "Success", desc)
-            else:
-                Error(fmt, self.ntest, "False", "True", "FAILED", desc)
-                self.nfailed += 1 
-        else:
-            if expected == False:
-                Output(fmt, self.ntest, "False", "False", "Success", desc)
-            else:
-                Error(fmt, self.ntest, "True", "False", "FAILED", desc)
-                self.nfailed += 1 
-
+        
+        passed=(failed==expected)
+        
+        
+        Output(fmt, self.ntest , expected , passed ,\
+                "Success" if passed else "FAILED", desc)
+        if not passed:
+            self.nfailed+=1
+        
         self.ntest += 1
+
        
          

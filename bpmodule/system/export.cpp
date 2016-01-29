@@ -80,7 +80,7 @@ PYBIND11_PLUGIN(system)
     ;
     */
     
-    pybind11::class_<Atom>(m,"Atom")
+    /*pybind11::class_<Atom>(m,"Atom")
     .def(pybind11::init<int,double,double,double>())
     .def("Z",&Atom::Z,"Returns the atomic number")
     .def("Symbol",&Atom::Symbol,"Returns the atomic symbol")

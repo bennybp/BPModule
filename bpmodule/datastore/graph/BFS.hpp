@@ -176,7 +176,7 @@ class BFSBase:public boost::default_bfs_visitor{
 
       void RunImpl(const Node_t& Node,bool Clean){
          if(Clean)Reset();
-         boost::breadth_first_visit(Graph_,Graph_.NodeLookUp_.at(Node),
+         boost::breadth_first_visit(Graph_.Base_,Graph_.NodeLookUp_.at(Node),
                boost::visitor(*this).
                color_map(Colors_));
       }

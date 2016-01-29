@@ -20,7 +20,7 @@ namespace math{
 template<typename T,typename U>
 class Universe;
     
-///An iterator to go with the universe class    
+///An iterator to go with the universe class, returns actual objects
 template<typename T,typename U>
 class SetItr{
     private:
@@ -110,29 +110,19 @@ class SetItr{
  */    
 template<typename T,typename U=std::vector<T>>
 class Universe{
-protected:
+private:
+    ///My type
     typedef Universe<T,U> My_t;
-    
-    ///The elements in this set
-    std::set<size_t> Elems_;
-    
-    ///The storage class
-    std::shared_ptr<U> Storage_;
-   
-    ///Implements a deep copy
+    ///Implements a deep copy (code factorization)
     void DeepCopy(const My_t& RHS){
         this->Elems_=RHS.Elems_;
         (*this)+=RHS;
     }
-    
-    ///Returns the index of an Elem in Storage_
-    size_t Idx(const T& Elem)const{
-        return std::distance(
-                Storage_->begin(),
-                std::find(Storage_->begin(),Storage_->end(),Elem)
-        );
-    }
-    
+protected:
+        ///The storage class
+    std::shared_ptr<U> Storage_;
+    ///The elements in this set
+    std::set<size_t> Elems_;
 public:
     ///An iterator to the elements in this set
     typedef SetItr<T,U> iterator;
@@ -159,21 +149,30 @@ public:
     ///Returns the cardinality of the universe (i.e. the number of elements)
     size_t size()const noexcept{return Elems_.size();}
     ///Returns an iterator to the first element in the universe
-    iterator begin(){
+    virtual iterator begin(){
         return iterator(Elems_.begin(),*Storage_);
     }
     ///Returns an iterator to a const version of the 
-    const_iterator begin()const{
+    virtual const_iterator begin()const{
         return const_iterator(Elems_.begin(),*Storage_);
     }
     ///Returns an iterator just past the last element
-    iterator end(){
+    virtual iterator end(){
         return iterator(Elems_.end(),*Storage_);
     }
     ///Returns an iterator just past a const version of the last element
-    const_iterator end()const{
+    virtual const_iterator end()const{
         return const_iterator(Elems_.end(),*Storage_);
-    }    
+    }
+    ///Returns the index of an Elem in Storage_
+    virtual size_t Idx(const T& Elem)const{
+        return std::distance(
+                Storage_->begin(),
+                std::find(Storage_->begin(),Storage_->end(),Elem)
+        );
+    }
+    T& operator[](size_t EI){return (*Storage_)[EI];}
+    const T& operator[](size_t EI)const{return (*Storage_)[EI];}
     ///@}
 
     /** \brief Adds an element to this set, returns this
@@ -193,11 +192,13 @@ public:
         return *this;
     }
 
-    ///Returns true if this universe contains Elem, comparison occurs via
-    ///Elem's equality operator is used for comparison
+    ///Returns true if this set contains Elem, comparison occurs via
+    ///Elem's operator==
     bool Contains(const T& Elem)const{
-        return Storage_?Storage_->end()!=
-            std::find(Storage_->begin(),Storage_->end(),Elem):false;
+        return Contains(Idx(Elem));
+    }
+    bool Contains(size_t EI)const{
+        return Elems_.count(EI)==1;
     }
     
     /** \brief Makes this the union of this and RHS
@@ -262,8 +263,7 @@ public:
     ///Helpful printing function
     virtual std::string ToString()const{
         std::stringstream ss;
-        for(const T& EI: *this)
-            ss<<EI<<" ";
+        for(const T& EI: *this)ss<<EI<<" ";
         return ss.str();
     }
 };

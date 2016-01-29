@@ -10,14 +10,18 @@
 #include "bpmodule/math/Universe.hpp"
 #include "bpmodule/math/MathSet.hpp"
 
+PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
+
 //! \todo Export exact casts? Or have the equivalent with python?
 
 namespace bpmodule {
 namespace math {
-namespace export_python {
-
 typedef Universe<std::string> PyU_t;
 typedef MathSet<std::string> PySet_t;
+
+namespace export_python {
+
+
     
     
 PYBIND11_PLUGIN(math)
@@ -36,7 +40,7 @@ PYBIND11_PLUGIN(math)
     m.def("Double2nm1FactorialF", Double2nm1FactorialF); 
     m.def("Double2nm1FactorialD", Double2nm1FactorialD);
     
-    pybind11::class_<PyU_t,std::shared_ptr<PyU_t>>(m,"Universe")
+   pybind11::class_<PyU_t,std::shared_ptr<PyU_t>>(m,"Universe")
     .def(pybind11::init<>())
     .def("append",&PyU_t::operator<<,"Adds a new universe to the set")
     .def("__iadd__",&PyU_t::operator+=,"Makes this the union of this and other")
@@ -49,10 +53,13 @@ PYBIND11_PLUGIN(math)
     .def("__div__",&PyU_t::operator/,
          "Returns the intersection of this and other")
     .def("__str__",&PyU_t::ToString,"Prints out the universe");
-    
+
     pybind11::class_<PySet_t>(m,"MathSet")
     .def(pybind11::init<std::shared_ptr<PyU_t>>())
-    .def("append",&PySet_t::operator<<,"Adds a new string to the set")
+    .def("append",(PySet_t& (PySet_t::*)(const std::string&)) 
+                  &PySet_t::operator<<,"Adds a new string to the set")
+    .def("append",(PySet_t& (PySet_t::*)(size_t)) 
+                  &PySet_t::operator<<,"Adds a new string to the set")
     .def("__iadd__",&PySet_t::operator+=,
          "Makes this the union of this and other")
     .def("__isub__",&PySet_t::operator-=,
@@ -64,6 +71,7 @@ PYBIND11_PLUGIN(math)
          "Returns set-difference of this and other")
     .def("__div__",&PySet_t::operator/,
          "Returns the intersection of this and other")
+    .def("Complement",&PySet_t::Complement,"Returns the complement of this")
     .def("__str__",&PySet_t::ToString,"Prints out the set");
     
 

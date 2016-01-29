@@ -86,7 +86,7 @@ class FindSubGraph{
          bool operator()(Map1To2 Map1,Map2To1 Map2)const{
             Map_t Temp1,Temp2;
             BGL_FORALL_VERTICES_T(v,SGraph_,Graph_t){
-               if(get(Map1,v)!=boost::graph_traits<Graph_t>::null_vertex())
+               if(get(Map1,v)!=boost::graph_traits<Parent_::Base_t>::null_vertex())
                   Temp1[LGraph_[get(Map1,v)]]=SGraph_[v];
             }
             Parent_->Large2Small_.push_back(Temp1);
@@ -171,7 +171,7 @@ class FindSubGraph{
          CallBack CB(this,Graph_,SubGraph,!StopOnFind);
          Compare<NodeComp_t> VComp(Graph_,SubGraph,NodeComp_);
          Compare<EdgeComp_t> EComp(Graph_,SubGraph,EdgeComp_);
-         return boost::vf2_subgraph_iso(SubGraph,Graph_,CB,Order
+         return boost::vf2_subgraph_iso(SubGraph,Graph_.base_,CB,Order
                       ,boost::vertices_equivalent(VComp).
                        edges_equivalent(EComp)
                  );

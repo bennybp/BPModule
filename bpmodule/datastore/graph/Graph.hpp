@@ -23,8 +23,6 @@ template<typename U> class BFS;
 template<typename T,typename U> class BFSBase;
 template<typename U> class FindSubGraph;
 
-///\todo Switch to composition vs. inheritance
-
 /** \brief A basic graph object
  *
  *  To some extent a graph is a glorified container.  However unlike the
@@ -357,7 +355,7 @@ template<typename U> class FindSubGraph;
               boost::adjacency_list<EdgeCon_t,NodeCon_t,
                      boost::bidirectionalS,Node_t,Edge_t>
 >
- class Graph: public Impl_t{
+ class Graph{
     private:
        ///Typedef of this's type
        typedef Graph<Node_t,Edge_t,EdgeCon_t,NodeCon_t,Impl_t> My_t;
@@ -370,6 +368,8 @@ template<typename U> class FindSubGraph;
 
        ///Users don't need this typedef (it's what BGL maps our edges to)
        typedef typename Impl_t::edge_descriptor Arc_t;
+       
+       Base_t Base_;
 
        ///This is so I can dereference BGL's node types back to what you want
        std::map<Node_t,Vertex_t> NodeLookUp_;
@@ -426,36 +426,36 @@ template<typename U> class FindSubGraph;
 
        ///Removes NodeI (and all edges to it) all iterators are invalidated
        void RemoveNode(const Node_t& NodeI){
-          boost::clear_vertex(NodeLookUp_.at(NodeI),*this);
-          boost::remove_vertex(NodeLookUp_.at(NodeI),*this);
+          boost::clear_vertex(NodeLookUp_.at(NodeI),Base_);
+          boost::remove_vertex(NodeLookUp_.at(NodeI),Base_);
        }
 
        ///Removes edge from NodeI to NodeJ iterators to edges are invalidated
        void RemoveEdge(const Node_t& NodeI,const Node_t& NodeJ){
           boost::remove_edge(
-          boost::edge(NodeLookUp_.at(NodeI),NodeLookUp_.at(NodeJ),*this).first,
-           *this);
+          boost::edge(NodeLookUp_.at(NodeI),NodeLookUp_.at(NodeJ),Base_).first,
+           Base_);
        }
 
        ///Removes the passed in edge, iterators to edges are invalidated
        void RemoveEdge(const Edge_t& Edge){
-          boost::remove_edge(EdgeLookUp_[Edge],*this);
+          boost::remove_edge(EdgeLookUp_[Edge],Base_);
        }
 
 
        /** \brief Node accessors*/
        ///@{
        ///Returns the number of nodes in the graph
-       size_t NNodes()const{return boost::num_vertices(*this);}
+       size_t NNodes()const{return boost::num_vertices(Base_);}
 
        ///Returns an iterator to the first node
        NodeItr_t NodeBegin()const{
-           return NodeItr_t(boost::vertices(*this).first,*this);
+           return NodeItr_t(boost::vertices(Base_).first,*this);
        }
 
        ///Returns an iterator to the last node
        NodeItr_t NodeEnd()const{
-           return NodeItr_t(boost::vertices(*this).second,*this);
+           return NodeItr_t(boost::vertices(Base_).second,*this);
        }
 
        ///Returns an std::vector of the Nodes connected to NodeI
@@ -463,9 +463,9 @@ template<typename U> class FindSubGraph;
            std::vector<Node_t> temp;
            typedef typename Impl_t::adjacency_iterator Itr_t;
            std::pair<Itr_t,Itr_t> Its=
-                 boost::adjacent_vertices(NodeLookUp_.at(NodeI),*this);
+                 boost::adjacent_vertices(NodeLookUp_.at(NodeI),Base_);
            for(;Its.first!=Its.second;++Its.first)
-              temp.push_back((*this)[*Its.first]);
+              temp.push_back(Base_[*Its.first]);
           return temp;
        }
        ///@}
@@ -473,25 +473,25 @@ template<typename U> class FindSubGraph;
        /** \brief Edge accessors*/
        ///@{
        ///Returns the number of edges in the graph
-       size_t NEdges()const{return boost::num_edges(*this);}
+       size_t NEdges()const{return boost::num_edges(Base_);}
 
        ///Returns the number of edges emanating from NodeI
        size_t NEdges(const Node_t& NodeI)const{
-          return boost::out_degree(NodeLookUp_.at(NodeI),*this);
+          return boost::out_degree(NodeLookUp_.at(NodeI),Base_);
        }
        ///Returns the number of edges ending in NodeI
        size_t NInEdges(const Node_t& NodeI)const{
-          return boost::in_degree(NodeLookUp_.at(NodeI),*this);
+          return boost::in_degree(NodeLookUp_.at(NodeI),Base_);
        }
 
        ///Returns an iterator to the first edge
        EdgeItr_t EdgeBegin()const{
-           return EdgeItr_t(boost::edges(*this).first,*this);
+           return EdgeItr_t(boost::edges(Base_).first,*this);
        }
 
        ///Returns an iterator just past the last edge
        EdgeItr_t EdgeEnd()const{
-           return EdgeItr_t(boost::edges(*this).second,*this);
+           return EdgeItr_t(boost::edges(Base_).second,*this);
        }
 
        ///Returns an std::vector of edges emanating from NodeI
@@ -499,9 +499,9 @@ template<typename U> class FindSubGraph;
           std::vector<Edge_t> temp;
           typedef typename Impl_t::out_edge_iterator Itr_t;
           std::pair<Itr_t,Itr_t> Its=
-                boost::out_edges(NodeLookUp_.at(NodeI),*this);
+                boost::out_edges(NodeLookUp_.at(NodeI),Base_);
           for(;Its.first!=Its.second;++Its.first)
-             temp.push_back((*this)[*Its.first]);
+             temp.push_back(Base_[*Its.first]);
          return temp;
        }
 
@@ -510,9 +510,9 @@ template<typename U> class FindSubGraph;
           std::vector<Edge_t> temp;
           typedef typename Impl_t::in_edge_iterator Itr_t;
           std::pair<Itr_t,Itr_t> Its=
-                boost::in_edges(NodeLookUp_.at(NodeI),*this);
+                boost::in_edges(NodeLookUp_.at(NodeI),Base_);
           for(;Its.first!=Its.second;++Its.first)
-             temp.push_back((*this)[*Its.first]);
+             temp.push_back(Base_[*Its.first]);
          return temp;
        }
        ///@}
@@ -520,7 +520,7 @@ template<typename U> class FindSubGraph;
 
        ///Returns true if two nodes are connected such that u-->v
        bool AreConn(const Node_t& u,const Node_t& v)const{
-          return boost::edge(NodeLookUp_.at(u),NodeLookUp_.at(v),*this).second;
+          return boost::edge(NodeLookUp_.at(u),NodeLookUp_.at(v),Base_).second;
        }
 
        ///Prints graph out, assumes your nodes can be passed to std::ostream
@@ -539,7 +539,7 @@ template<typename U> class FindSubGraph;
             const Impl_t& name;
           };
 
-          boost::write_graphviz(os,*this,label_writer(*this));
+          boost::write_graphviz(os,Base_,label_writer(Base_));
           /*os<<"Graph contains: "<<NNodes()<<" nodes and "
                    <<NEdges()<<" edges."<<std::endl;
           NodeItr_t NI=NodeBegin(),NIEnd=NodeEnd();
@@ -559,7 +559,7 @@ template<typename U> class FindSubGraph;
        void FillNodes(BeginItr_t BeginItr, EndItr_t EndItr){
           for(;BeginItr!=EndItr;++BeginItr){
              NodeLookUp_[*BeginItr]=
-                   boost::add_vertex(*BeginItr,*this);
+                   boost::add_vertex(*BeginItr,Base_);
           }
        }
 
@@ -570,7 +570,7 @@ template<typename U> class FindSubGraph;
              EdgeLookUp_[*BeginItr]=
              boost::add_edge(NodeLookUp_.at(std::get<0>(*BeginItr)),
                              NodeLookUp_.at(std::get<1>(*BeginItr)),
-                             *this).first;
+                             Base_).first;
        }
  };
 

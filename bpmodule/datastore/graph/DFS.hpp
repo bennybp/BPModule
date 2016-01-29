@@ -183,7 +183,7 @@ class DFSBase:public boost::default_dfs_visitor{
       void RunImpl(const Node_t& Node,bool Clean){
          if(Clean)Reset();
          try{
-         boost::depth_first_visit(Graph_,Graph_.NodeLookUp_.at(Node),
+         boost::depth_first_visit(Graph_.Base_,Graph_.NodeLookUp_.at(Node),
                *this,Colors_);
          }
          catch(const DFSException& e){}//Just let control continue...
