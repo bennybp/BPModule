@@ -9,8 +9,8 @@
 #include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/output/Output.hpp"
 
-using bpmodule::modulelocator::ModuleManager;
-using bpmodule::modulelocator::ModuleInfo;
+using bpmodule::modulemanager::ModuleManager;
+using bpmodule::modulemanager::ModuleInfo;
 using bpmodule::datastore::Wavefunction;
 using bpmodule::datastore::ModuleGraphNodeData;
 using bpmodule::datastore::ModuleGraphNode;
@@ -148,7 +148,7 @@ CacheData & ModuleBase::Cache(void) const noexcept
 // Private functions
 ////////////////////////////////
 
-void ModuleBase::SetMManager_(modulelocator::ModuleManager * mloc) noexcept
+void ModuleBase::SetMManager_(modulemanager::ModuleManager * mloc) noexcept
 {
     mlocator_ = mloc;
 }

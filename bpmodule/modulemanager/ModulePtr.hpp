@@ -5,13 +5,13 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULELOCATOR__MODULEPTR_HPP_
-#define BPMODULE_GUARD_MODULELOCATOR__MODULEPTR_HPP_
+#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULEPTR_HPP_
+#define BPMODULE_GUARD_MODULEMANAGER__MODULEPTR_HPP_
 
-#include "bpmodule/modulelocator/ModuleIMPLHolder.hpp"
+#include "bpmodule/modulemanager/ModuleIMPLHolder.hpp"
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 
 /*! \brief A C++ smart pointer containing a module
  *
@@ -134,7 +134,7 @@ class PyModulePtr
 
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 
 

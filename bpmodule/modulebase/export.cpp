@@ -7,11 +7,11 @@
 
 #include "bpmodule/modulebase/All.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
-#include "bpmodule/modulelocator/ModuleManager.hpp"
+#include "bpmodule/modulemanager/ModuleManager.hpp"
 
 
-using bpmodule::modulelocator::ModuleManager;
-using bpmodule::modulelocator::ModuleInfo;
+using bpmodule::modulemanager::ModuleManager;
+using bpmodule::modulemanager::ModuleInfo;
 using bpmodule::datastore::OptionMap;
 
 

@@ -11,7 +11,7 @@
 #include <string>
 
 #include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/modulelocator/ModuleManager.hpp"
+#include "bpmodule/modulemanager/ModuleManager.hpp"
 #include "bpmodule/util/FormatString.hpp"
 #include "bpmodule/python/Call.hpp"
 
@@ -133,7 +133,7 @@ class ModuleBase
         /*! \brief Create a module that is a child of this one
          */ 
         template<typename T>
-        modulelocator::ModulePtr<T> CreateChildModule(const std::string & key) const
+        modulemanager::ModulePtr<T> CreateChildModule(const std::string & key) const
         {
             return mlocator_->GetModule<T>(key, id_);
         }
@@ -153,7 +153,7 @@ class ModuleBase
          *
          * \throw std::logic_error if it hasn't been set
          */
-        modulelocator::ModuleManager & MManager(void) const;
+        modulemanager::ModuleManager & MManager(void) const;
 
 
 
@@ -249,7 +249,7 @@ class ModuleBase
 
     private:
         // allow ModuleManager to set up the pointers
-        friend class modulelocator::ModuleManager;
+        friend class modulemanager::ModuleManager;
 
 
 
@@ -262,7 +262,7 @@ class ModuleBase
 
 
         //! The ModuleManager in charge of this module
-        modulelocator::ModuleManager * mlocator_;
+        modulemanager::ModuleManager * mlocator_;
 
         //! My graph node
         datastore::ModuleGraphNode * graphnode_;
@@ -279,19 +279,19 @@ class ModuleBase
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        modulelocator::ModuleInfo & MInfo_(void);
+        modulemanager::ModuleInfo & MInfo_(void);
 
 
         /*! \brief Get all module information from the graph node
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        const modulelocator::ModuleInfo & MInfo_(void) const;
+        const modulemanager::ModuleInfo & MInfo_(void) const;
 
 
         /*! \brief Set the mlocator_ pointer
          */
-        void SetMManager_(modulelocator::ModuleManager * mloc) noexcept;
+        void SetMManager_(modulemanager::ModuleManager * mloc) noexcept;
 
 
         /*! \brief Set the graph node pointer

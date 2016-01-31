@@ -5,8 +5,8 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULELOCATOR__MODULEMANAGER_HPP_
-#define BPMODULE_GUARD_MODULELOCATOR__MODULEMANAGER_HPP_
+#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
+#define BPMODULE_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
 
 #include <unordered_map>
 #include <atomic>
@@ -14,13 +14,13 @@
 #include "bpmodule/datastore/ModuleGraph.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/modulelocator/ModuleCreationFuncs.hpp"
-#include "bpmodule/modulelocator/ModulePtr.hpp"
+#include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
+#include "bpmodule/modulemanager/ModulePtr.hpp"
 
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 
 
 
@@ -277,7 +277,7 @@ class ModuleManager
 
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 
 

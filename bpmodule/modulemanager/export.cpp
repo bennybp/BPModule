@@ -8,19 +8,19 @@
 
 // Various components
 #include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/modulelocator/CppModuleLoader.hpp"
+#include "bpmodule/modulemanager/CppModuleLoader.hpp"
 
 using bpmodule::modulebase::ModuleBase;
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 namespace export_python {
 
 
-PYBIND11_PLUGIN(modulelocator)
+PYBIND11_PLUGIN(modulemanager)
 {
-    pybind11::module m("modulelocator", "Module loading and location");
+    pybind11::module m("modulemanager", "Module loading and location");
 
     //////////////////////
     // ModuleInfo
@@ -93,6 +93,6 @@ PYBIND11_PLUGIN(modulelocator)
 
 
 } // close namespace export_python
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 

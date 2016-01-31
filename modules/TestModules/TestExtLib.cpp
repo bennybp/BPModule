@@ -1,5 +1,5 @@
 #include <bpmodule/output/Output.hpp>
-#include <bpmodule/modulelocator/ModuleLocator.hpp>
+#include <bpmodule/modulemanager/ModuleManager.hpp>
 
 #include "TestExtLib.hpp"
 
@@ -8,7 +8,7 @@
 #include "dynlib.hpp"
 
 using namespace bpmodule::output;
-using namespace bpmodule::modulelocator;
+using namespace bpmodule::modulemanager;
 using namespace bpmodule::exception;
 
 

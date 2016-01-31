@@ -1,4 +1,4 @@
-set(BPMODULE_MODULELOCATOR_FILES
+set(BPMODULE_MODULEMANAGER_FILES
             CppModuleLoader.cpp
             ModuleIMPLHolder.cpp
             ModuleInfo.cpp
@@ -7,10 +7,10 @@ set(BPMODULE_MODULELOCATOR_FILES
    )
 
 
-ADD_COREMODULE(modulelocator
-           "${BPMODULE_MODULELOCATOR_FILES}"
+ADD_COREMODULE(modulemanager
+           "${BPMODULE_MODULEMANAGER_FILES}"
            ""
            ""
            "")
 
-INSTALL_COREMODULE(modulelocator)
+INSTALL_COREMODULE(modulemanager)

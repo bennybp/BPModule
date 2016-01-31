@@ -5,8 +5,8 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULELOCATOR__MODULEIMPLHOLDER_HPP_
-#define BPMODULE_GUARD_MODULELOCATOR__MODULEIMPLHOLDER_HPP_
+#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULEIMPLHOLDER_HPP_
+#define BPMODULE_GUARD_MODULEMANAGER__MODULEIMPLHOLDER_HPP_
 
 #include <memory>
 
@@ -24,7 +24,7 @@ class ModuleBase;
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 namespace detail {
 
 
@@ -134,7 +134,7 @@ class PyModuleIMPLHolder : public ModuleIMPLHolder
 
 
 } // close namespace detail
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 
 #endif

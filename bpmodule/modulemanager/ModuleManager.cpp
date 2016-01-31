@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/modulelocator/ModuleManager.hpp"
+#include "bpmodule/modulemanager/ModuleManager.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
@@ -31,7 +31,7 @@ using bpmodule::exception::GeneralException;
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 
 
 
@@ -246,5 +246,5 @@ void ModuleManager::ChangeOptionPy(const std::string & modulekey, const std::str
 }
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule

@@ -2,17 +2,17 @@ import sys
 import os
 import importlib
 
-from . import modulelocator, output, exception, datastore, CheckSupermodule
+from . import modulemanager, output, exception, datastore, CheckSupermodule
 
 
 
-class ModuleManager(modulelocator.ModuleManager):
+class ModuleManager(modulemanager.ModuleManager):
     def __init__(self):
         super(ModuleManager, self).__init__()
 
         # Main module store and module loaders
-        self.cml = modulelocator.CppModuleLoader(self)
-        self.pml = modulelocator.PyModuleLoader(self) 
+        self.cml = modulemanager.CppModuleLoader(self)
+        self.pml = modulemanager.PyModuleLoader(self) 
         self.modmap = {}
 
         self.paths = [ ]
@@ -96,7 +96,7 @@ class ModuleManager(modulelocator.ModuleManager):
         output.Output("Loading module %1% v%2%\n", modulename, minfo["version"])
 
         # Create a c++ moduleinfo
-        cppminfo = modulelocator.ModuleInfo()
+        cppminfo = modulemanager.ModuleInfo()
         cppminfo.key = modulekey
         cppminfo.name = modulename
         cppminfo.path = path

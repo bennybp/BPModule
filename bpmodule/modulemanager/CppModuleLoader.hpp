@@ -5,15 +5,15 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULELOCATOR__CPPMODULELOADER_HPP_
-#define BPMODULE_GUARD_MODULELOCATOR__CPPMODULELOADER_HPP_
+#ifndef BPMODULE_GUARD_MODULEMANAGER__CPPMODULELOADER_HPP_
+#define BPMODULE_GUARD_MODULEMANAGER__CPPMODULELOADER_HPP_
 
 #include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/modulelocator/ModuleCreationFuncs.hpp"
+#include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 
 
 // forward declaration
@@ -83,7 +83,7 @@ class CppModuleLoader
 
 };
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 
 
