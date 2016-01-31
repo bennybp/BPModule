@@ -17,7 +17,7 @@ namespace modulelocator {
 
 
 // forward declaration
-class ModuleLocator;
+class ModuleManager;
 struct ModuleInfo;
 
 
@@ -29,7 +29,7 @@ class CppModuleLoader
 
         /*! \copydoc ModuleLoaderBase::ModuleLoaderBase
          */
-        CppModuleLoader(ModuleLocator * mlt);
+        CppModuleLoader(ModuleManager * mlt);
 
 
         /*! Destructor
@@ -59,7 +59,7 @@ class CppModuleLoader
          * \throw bpmodule::exception::ModuleLoadException if there is a problem loading
          *        the module (duplicate key, function doesn't exist, etc)
          *
-         * \throw bpmodule::exception::ModuleLocatorException if there is a problem converting
+         * \throw bpmodule::exception::ModuleManagerException if there is a problem converting
          *        the module info.
          *
          * \exstrong
@@ -71,7 +71,7 @@ class CppModuleLoader
 
 
     private:
-        ModuleLocator * mlt_;
+        ModuleManager * mlt_;
 
 
         //! Stores handles to to open SO files

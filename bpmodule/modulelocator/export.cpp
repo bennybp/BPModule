@@ -43,28 +43,28 @@ PYBIND11_PLUGIN(modulelocator)
 
 
     //////////////////////////
-    // Main ModuleLocator and
+    // Main ModuleManager and
     // module loaders
     //////////////////////////
-    pybind11::class_<ModuleLocator>(m, "ModuleLocator")
+    pybind11::class_<ModuleManager>(m, "ModuleManager")
     .def(pybind11::init<>())
-    .def("InsertModule", &ModuleLocator::InsertModule)
-    .def("Size", &ModuleLocator::Size)
-    .def("GetModuleKeys", &ModuleLocator::GetModuleKeys)
-    .def("ModuleKeyInfo", &ModuleLocator::ModuleKeyInfo)
-    .def("PrintInfo", &ModuleLocator::PrintInfo)
-    .def("Has", &ModuleLocator::Has)
-    .def("TestAll", &ModuleLocator::TestAll)
-    .def("ClearCache", &ModuleLocator::ClearCache)
-    .def("ClearStore", &ModuleLocator::ClearStore)
-    .def("GetModule", &ModuleLocator::GetModulePy)
-    .def("ChangeOption", &ModuleLocator::ChangeOptionPy)
-    .def("DotGraph", &ModuleLocator::DotGraph)
+    .def("InsertModule", &ModuleManager::InsertModule)
+    .def("Size", &ModuleManager::Size)
+    .def("GetModuleKeys", &ModuleManager::GetModuleKeys)
+    .def("ModuleKeyInfo", &ModuleManager::ModuleKeyInfo)
+    .def("PrintInfo", &ModuleManager::PrintInfo)
+    .def("Has", &ModuleManager::Has)
+    .def("TestAll", &ModuleManager::TestAll)
+    .def("ClearCache", &ModuleManager::ClearCache)
+    .def("ClearStore", &ModuleManager::ClearStore)
+    .def("GetModule", &ModuleManager::GetModulePy)
+    .def("ChangeOption", &ModuleManager::ChangeOptionPy)
+    .def("DotGraph", &ModuleManager::DotGraph)
     ;
 
 
     pybind11::class_<CppModuleLoader>(m, "CppModuleLoader")
-    .def(pybind11::init<ModuleLocator *>())
+    .def(pybind11::init<ModuleManager *>())
     .def("LoadSO", &CppModuleLoader::LoadSO)
     ;
 

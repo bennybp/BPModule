@@ -9,7 +9,7 @@
 
 #include "bpmodule/modulelocator/CppModuleLoader.hpp"
 #include "bpmodule/output/Output.hpp"
-#include "bpmodule/modulelocator/ModuleLocator.hpp"
+#include "bpmodule/modulelocator/ModuleManager.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/exception/Assert.hpp"
 
@@ -19,7 +19,7 @@ using namespace bpmodule::exception;
 namespace bpmodule {
 namespace modulelocator {
 
-CppModuleLoader::CppModuleLoader(ModuleLocator * mlt)
+CppModuleLoader::CppModuleLoader(ModuleManager * mlt)
     : mlt_(mlt)
 { }
 

@@ -7,10 +7,10 @@
 
 #include "bpmodule/modulebase/All.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
-#include "bpmodule/modulelocator/ModuleLocator.hpp"
+#include "bpmodule/modulelocator/ModuleManager.hpp"
 
 
-using bpmodule::modulelocator::ModuleLocator;
+using bpmodule::modulelocator::ModuleManager;
 using bpmodule::modulelocator::ModuleInfo;
 using bpmodule::datastore::OptionMap;
 
@@ -42,7 +42,7 @@ PYBIND11_PLUGIN(modulebase)
          .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), pybind11::return_value_policy::reference_internal)
          .def("Wfn", static_cast<datastore::Wavefunction &(ModuleBase::*)(void)>(&ModuleBase::Wfn), pybind11::return_value_policy::reference_internal) 
          .def("CreateChildModule", &ModuleBase::CreateChildModulePy)
-         //.def("MLocator", static_cast<ModuleLocator &(ModuleBase::*)(void) const>(&ModuleBase::MLocator), pybind11::return_value_policy::reference_internal) 
+         //.def("MManager", static_cast<ModuleManager &(ModuleBase::*)(void) const>(&ModuleBase::MManager), pybind11::return_value_policy::reference_internal) 
          ;
 
 

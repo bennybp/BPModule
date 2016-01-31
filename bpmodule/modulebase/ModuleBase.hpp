@@ -11,7 +11,7 @@
 #include <string>
 
 #include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/modulelocator/ModuleLocator.hpp"
+#include "bpmodule/modulelocator/ModuleManager.hpp"
 #include "bpmodule/util/FormatString.hpp"
 #include "bpmodule/python/Call.hpp"
 
@@ -149,11 +149,11 @@ class ModuleBase
 
 
     protected:
-        /*! \brief Get the internal ModuleLocator that is in charge of this module
+        /*! \brief Get the internal ModuleManager that is in charge of this module
          *
          * \throw std::logic_error if it hasn't been set
          */
-        modulelocator::ModuleLocator & MLocator(void) const;
+        modulelocator::ModuleManager & MManager(void) const;
 
 
 
@@ -248,8 +248,8 @@ class ModuleBase
 
 
     private:
-        // allow ModuleLocator to set up the pointers
-        friend class modulelocator::ModuleLocator;
+        // allow ModuleManager to set up the pointers
+        friend class modulelocator::ModuleManager;
 
 
 
@@ -261,8 +261,8 @@ class ModuleBase
         const char * modtype_;
 
 
-        //! The ModuleLocator in charge of this module
-        modulelocator::ModuleLocator * mlocator_;
+        //! The ModuleManager in charge of this module
+        modulelocator::ModuleManager * mlocator_;
 
         //! My graph node
         datastore::ModuleGraphNode * graphnode_;
@@ -291,7 +291,7 @@ class ModuleBase
 
         /*! \brief Set the mlocator_ pointer
          */
-        void SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept;
+        void SetMManager_(modulelocator::ModuleManager * mloc) noexcept;
 
 
         /*! \brief Set the graph node pointer

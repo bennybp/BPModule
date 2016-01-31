@@ -2,7 +2,7 @@ set(BPMODULE_MODULELOCATOR_FILES
             CppModuleLoader.cpp
             ModuleIMPLHolder.cpp
             ModuleInfo.cpp
-            ModuleLocator.cpp
+            ModuleManager.cpp
             export.cpp
    )
 

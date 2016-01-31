@@ -1,4 +1,4 @@
-minfo = { "BPModule_ModuleLocator" :
+minfo = { "BPModule_ModuleManager" :
   {
     "type"        : "core",
     "version"     : "0.1a",

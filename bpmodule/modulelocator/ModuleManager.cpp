@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/modulelocator/ModuleLocator.hpp"
+#include "bpmodule/modulelocator/ModuleManager.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
@@ -26,7 +26,7 @@ using bpmodule::datastore::ModuleGraphNode;
 using bpmodule::datastore::Wavefunction;
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
-using bpmodule::exception::ModuleLocatorException;
+using bpmodule::exception::ModuleManagerException;
 using bpmodule::exception::GeneralException;
 
 
@@ -35,18 +35,18 @@ namespace modulelocator {
 
 
 
-ModuleLocator::ModuleLocator()
+ModuleManager::ModuleManager()
     : curid_(100) // reserve some for my use
 { }
 
 
-ModuleLocator::~ModuleLocator()
+ModuleManager::~ModuleManager()
 {
 }
 
 
 
-void ModuleLocator::InsertModule(const ModuleCreationFuncs & cf, const ModuleInfo & mi)
+void ModuleManager::InsertModule(const ModuleCreationFuncs & cf, const ModuleInfo & mi)
 {
     auto mc = cf.GetCreator(mi.name);
 
@@ -60,13 +60,13 @@ void ModuleLocator::InsertModule(const ModuleCreationFuncs & cf, const ModuleInf
 }
 
 
-size_t ModuleLocator::Size(void) const noexcept
+size_t ModuleManager::Size(void) const noexcept
 {
     return store_.size();
 }
 
 
-std::vector<std::string> ModuleLocator::GetModuleKeys(void) const
+std::vector<std::string> ModuleManager::GetModuleKeys(void) const
 {
     std::vector<std::string> vec;
     vec.reserve(store_.size());
@@ -77,28 +77,28 @@ std::vector<std::string> ModuleLocator::GetModuleKeys(void) const
 
 
 
-bool ModuleLocator::Has(const std::string & modulekey) const
+bool ModuleManager::Has(const std::string & modulekey) const
 {
     return store_.count(modulekey);
 }
 
 
 
-ModuleInfo ModuleLocator::ModuleKeyInfo(const std::string & modulekey) const
+ModuleInfo ModuleManager::ModuleKeyInfo(const std::string & modulekey) const
 {
     return GetOrThrow_(modulekey).mi;
 }
 
 
 
-void ModuleLocator::PrintInfo(void) const
+void ModuleManager::PrintInfo(void) const
 {
     for(const auto & it : store_)
         it.second.mi.Print();
 }
 
 
-void ModuleLocator::TestAll(void)
+void ModuleManager::TestAll(void)
 {
     output::Debug("Testing all modules\n");
     for(const auto & it : store_)
@@ -128,32 +128,32 @@ void ModuleLocator::TestAll(void)
 }
 
 
-void ModuleLocator::ClearCache(void)
+void ModuleManager::ClearCache(void)
 {
     cachemap_.clear();
 }
 
-void ModuleLocator::ClearStore(void)
+void ModuleManager::ClearStore(void)
 {
     store_.clear();
 }
 
 
-const ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & modulekey) const
+const ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string & modulekey) const
 {
     if(Has(modulekey))
         return store_.at(modulekey);
     else
-        throw ModuleLocatorException("Missing module key in ModuleLocator", "modulekey", modulekey);
+        throw ModuleManagerException("Missing module key in ModuleManager", "modulekey", modulekey);
 }
 
 
-ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & modulekey)
+ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string & modulekey)
 {
     if(Has(modulekey))
         return store_.at(modulekey);
     else
-        throw ModuleLocatorException("Missing module key in ModuleLocator", "modulekey", modulekey);
+        throw ModuleManagerException("Missing module key in ModuleManager", "modulekey", modulekey);
 }
 
 
@@ -161,7 +161,7 @@ ModuleLocator::StoreEntry & ModuleLocator::GetOrThrow_(const std::string & modul
 // Module Creation
 /////////////////////////////////////////
 std::unique_ptr<detail::ModuleIMPLHolder>
-ModuleLocator::CreateModule_(const std::string & modulekey, unsigned long parentid)
+ModuleManager::CreateModule_(const std::string & modulekey, unsigned long parentid)
 {
     // obtain the creator
     const StoreEntry & se = GetOrThrow_(modulekey);
@@ -207,7 +207,7 @@ ModuleLocator::CreateModule_(const std::string & modulekey, unsigned long parent
     // set the info
     ModuleBase * p = umbptr->CppPtr();
 
-    p->SetMLocator_(this);
+    p->SetMManager_(this);
     p->SetGraphNode_(&(mgraphmap_.at(curid_)));
 
     // get this modules cache
@@ -222,7 +222,7 @@ ModuleLocator::CreateModule_(const std::string & modulekey, unsigned long parent
 }
 
 
-std::string ModuleLocator::DotGraph(void) const
+std::string ModuleManager::DotGraph(void) const
 {
     std::stringstream ss;
     ss << mgraph_;
@@ -233,14 +233,14 @@ std::string ModuleLocator::DotGraph(void) const
 ////////////////////
 // Python
 ////////////////////
-pybind11::object ModuleLocator::GetModulePy(const std::string & modulekey,
+pybind11::object ModuleManager::GetModulePy(const std::string & modulekey,
                                             unsigned long parentid)
 {
     std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(modulekey, parentid);
     return pybind11::cast(PyModulePtr(std::move(umbptr)));
 }
         
-void ModuleLocator::ChangeOptionPy(const std::string & modulekey, const std::string & optkey, const pybind11::object & value)
+void ModuleManager::ChangeOptionPy(const std::string & modulekey, const std::string & optkey, const pybind11::object & value)
 {
     GetOrThrow_(modulekey).mi.options.ChangePy(optkey, value);
 }

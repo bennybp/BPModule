@@ -6,7 +6,7 @@ from . import modulelocator, output, exception, datastore, CheckSupermodule
 
 
 
-class ModuleManager(modulelocator.ModuleLocator):
+class ModuleManager(modulelocator.ModuleManager):
     def __init__(self):
         super(ModuleManager, self).__init__()
 
