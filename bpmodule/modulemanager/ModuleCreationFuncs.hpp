@@ -1,14 +1,14 @@
-#ifndef BPMODULE_GUARD_MODULELOCATOR__MODULECREATIONFUNCS_HPP_
-#define BPMODULE_GUARD_MODULELOCATOR__MODULECREATIONFUNCS_HPP_
+#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULECREATIONFUNCS_HPP_
+#define BPMODULE_GUARD_MODULEMANAGER__MODULECREATIONFUNCS_HPP_
 
 #include <functional>
 #include <map>
 
-#include "bpmodule/modulelocator/ModuleIMPLHolder.hpp"
+#include "bpmodule/modulemanager/ModuleIMPLHolder.hpp"
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 
         
 /*! \brief Stores creation functions for modules
@@ -92,7 +92,7 @@ class ModuleCreationFuncs
 };
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 
 

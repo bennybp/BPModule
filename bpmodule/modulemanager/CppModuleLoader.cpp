@@ -7,9 +7,9 @@
 
 #include <dlfcn.h>
 
-#include "bpmodule/modulelocator/CppModuleLoader.hpp"
+#include "bpmodule/modulemanager/CppModuleLoader.hpp"
 #include "bpmodule/output/Output.hpp"
-#include "bpmodule/modulelocator/ModuleLocator.hpp"
+#include "bpmodule/modulemanager/ModuleManager.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/exception/Assert.hpp"
 
@@ -17,9 +17,9 @@ using namespace bpmodule::exception;
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 
-CppModuleLoader::CppModuleLoader(ModuleLocator * mlt)
+CppModuleLoader::CppModuleLoader(ModuleManager * mlt)
     : mlt_(mlt)
 { }
 
@@ -137,5 +137,5 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
 
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule

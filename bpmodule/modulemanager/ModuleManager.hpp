@@ -5,8 +5,8 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULELOCATOR__MODULELOCATOR_HPP_
-#define BPMODULE_GUARD_MODULELOCATOR__MODULELOCATOR_HPP_
+#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
+#define BPMODULE_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
 
 #include <unordered_map>
 #include <atomic>
@@ -14,13 +14,13 @@
 #include "bpmodule/datastore/ModuleGraph.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/modulelocator/ModuleCreationFuncs.hpp"
-#include "bpmodule/modulelocator/ModulePtr.hpp"
+#include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
+#include "bpmodule/modulemanager/ModulePtr.hpp"
 
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 
 
 
@@ -28,18 +28,18 @@ namespace modulelocator {
  *
  * Holds loaded modules for later use
  */
-class ModuleLocator
+class ModuleManager
 {
     public:
-        ModuleLocator();
-        ~ModuleLocator();
+        ModuleManager();
+        ~ModuleManager();
 
 
         // no copy construction or assignment
-        ModuleLocator(const ModuleLocator & rhs)             = delete;
-        ModuleLocator(ModuleLocator && rhs)                  = delete;
-        ModuleLocator & operator=(const ModuleLocator & rhs) = delete;
-        ModuleLocator & operator=(ModuleLocator && rhs)      = delete;
+        ModuleManager(const ModuleManager & rhs)             = delete;
+        ModuleManager(ModuleManager && rhs)                  = delete;
+        ModuleManager & operator=(const ModuleManager & rhs) = delete;
+        ModuleManager & operator=(ModuleManager && rhs)      = delete;
 
 
         /*! \brief Returns the number of modules in the database
@@ -56,7 +56,7 @@ class ModuleLocator
 
         /*! \brief Returns the information about a module with a given module key
          *
-         * \throw bpmodule::exception::ModuleLocatorException
+         * \throw bpmodule::exception::ModuleManagerException
          *        if the module key doesn't exist in the database
          *
          * \param [in] modulekey A module key
@@ -96,7 +96,7 @@ class ModuleLocator
 
         /*! \brief Return a new module object wrapped in an RAII-style scoping object
          *
-         * \throw bpmodule::exception::ModuleLocatorException
+         * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
          * \throw bpmodule::exception::ModuleCreateException if there are other
@@ -129,7 +129,7 @@ class ModuleLocator
 
         /*! \brief Retrieve a module as a python object
          * 
-         * \throw bpmodule::exception::ModuleLocatorException
+         * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
          * \throw bpmodule::exception::ModuleCreateException if there are other
@@ -240,7 +240,7 @@ class ModuleLocator
 
         /*! \brief Obtain a module or throw exception
          *
-         * \throw bpmodule::exception::ModuleLocatorException
+         * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist
          *
          * \param [in] modulekey A module key
@@ -256,7 +256,7 @@ class ModuleLocator
 
         /*! \brief Create a module and its deleter functor
          * 
-         * \throw bpmodule::exception::ModuleLocatorException
+         * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
          * \throw bpmodule::exception::ModuleCreateException if there are other
@@ -277,7 +277,7 @@ class ModuleLocator
 
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 
 

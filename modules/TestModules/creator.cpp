@@ -1,7 +1,7 @@
 #include "TestModule1.hpp"
 #include "TestExtLib.hpp"
 
-using bpmodule::modulelocator::ModuleCreationFuncs;
+using bpmodule::modulemanager::ModuleCreationFuncs;
 
 
 extern "C" {

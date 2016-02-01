@@ -5,15 +5,15 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULELOCATOR__MODULEINFO_HPP_
-#define BPMODULE_GUARD_MODULELOCATOR__MODULEINFO_HPP_
+#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULEINFO_HPP_
+#define BPMODULE_GUARD_MODULEMANAGER__MODULEINFO_HPP_
 
 
 #include "bpmodule/datastore/OptionMap.hpp"
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 
 /*! \brief Structure that stores information about a loaded module
  */
@@ -37,7 +37,7 @@ struct ModuleInfo
 };
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 
 

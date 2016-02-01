@@ -234,7 +234,7 @@ class ModuleCreateException : public GeneralException
 /*! \brief An exception thrown when there is a problem with
  *         the module locator
  */
-class ModuleLocatorException : public GeneralException
+class ModuleManagerException : public GeneralException
 {
     public:
         using GeneralException::GeneralException;

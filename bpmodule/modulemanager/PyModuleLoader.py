@@ -1,5 +1,4 @@
 import os
-from . import ModuleLocator,ModuleInfo
 from bpmodule.exception import GeneralException
 from bpmodule import output
 

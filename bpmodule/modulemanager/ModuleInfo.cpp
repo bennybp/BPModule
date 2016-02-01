@@ -5,12 +5,12 @@
  */
 
 
-#include "bpmodule/modulelocator/ModuleInfo.hpp"
+#include "bpmodule/modulemanager/ModuleInfo.hpp"
 #include "bpmodule/output/Output.hpp"
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 
 
 void ModuleInfo::Print(void) const
@@ -42,6 +42,6 @@ void ModuleInfo::Print(void) const
 
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 

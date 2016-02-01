@@ -9,8 +9,8 @@
 #include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/output/Output.hpp"
 
-using bpmodule::modulelocator::ModuleLocator;
-using bpmodule::modulelocator::ModuleInfo;
+using bpmodule::modulemanager::ModuleManager;
+using bpmodule::modulemanager::ModuleInfo;
 using bpmodule::datastore::Wavefunction;
 using bpmodule::datastore::ModuleGraphNodeData;
 using bpmodule::datastore::ModuleGraphNode;
@@ -96,7 +96,7 @@ const ModuleGraphNode * ModuleBase::MyNode(void) const
 ////////////////////////////////
 // Protected functions
 ////////////////////////////////
-ModuleLocator & ModuleBase::MLocator(void) const
+ModuleManager & ModuleBase::MManager(void) const
 {
     if(mlocator_ == nullptr)
         throw std::logic_error("Developer error - mlocator is null for a module!");
@@ -148,7 +148,7 @@ CacheData & ModuleBase::Cache(void) const noexcept
 // Private functions
 ////////////////////////////////
 
-void ModuleBase::SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept
+void ModuleBase::SetMManager_(modulemanager::ModuleManager * mloc) noexcept
 {
     mlocator_ = mloc;
 }

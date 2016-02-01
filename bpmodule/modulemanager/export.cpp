@@ -8,19 +8,19 @@
 
 // Various components
 #include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/modulelocator/CppModuleLoader.hpp"
+#include "bpmodule/modulemanager/CppModuleLoader.hpp"
 
 using bpmodule::modulebase::ModuleBase;
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 namespace export_python {
 
 
-PYBIND11_PLUGIN(modulelocator)
+PYBIND11_PLUGIN(modulemanager)
 {
-    pybind11::module m("modulelocator", "Module loading and location");
+    pybind11::module m("modulemanager", "Module loading and location");
 
     //////////////////////
     // ModuleInfo
@@ -43,28 +43,28 @@ PYBIND11_PLUGIN(modulelocator)
 
 
     //////////////////////////
-    // Main ModuleLocator and
+    // Main ModuleManager and
     // module loaders
     //////////////////////////
-    pybind11::class_<ModuleLocator>(m, "ModuleLocator")
+    pybind11::class_<ModuleManager>(m, "ModuleManager")
     .def(pybind11::init<>())
-    .def("InsertModule", &ModuleLocator::InsertModule)
-    .def("Size", &ModuleLocator::Size)
-    .def("GetModuleKeys", &ModuleLocator::GetModuleKeys)
-    .def("ModuleKeyInfo", &ModuleLocator::ModuleKeyInfo)
-    .def("PrintInfo", &ModuleLocator::PrintInfo)
-    .def("Has", &ModuleLocator::Has)
-    .def("TestAll", &ModuleLocator::TestAll)
-    .def("ClearCache", &ModuleLocator::ClearCache)
-    .def("ClearStore", &ModuleLocator::ClearStore)
-    .def("GetModule", &ModuleLocator::GetModulePy)
-    .def("ChangeOption", &ModuleLocator::ChangeOptionPy)
-    .def("DotGraph", &ModuleLocator::DotGraph)
+    .def("InsertModule", &ModuleManager::InsertModule)
+    .def("Size", &ModuleManager::Size)
+    .def("GetModuleKeys", &ModuleManager::GetModuleKeys)
+    .def("ModuleKeyInfo", &ModuleManager::ModuleKeyInfo)
+    .def("PrintInfo", &ModuleManager::PrintInfo)
+    .def("Has", &ModuleManager::Has)
+    .def("TestAll", &ModuleManager::TestAll)
+    .def("ClearCache", &ModuleManager::ClearCache)
+    .def("ClearStore", &ModuleManager::ClearStore)
+    .def("GetModule", &ModuleManager::GetModulePy)
+    .def("ChangeOption", &ModuleManager::ChangeOptionPy)
+    .def("DotGraph", &ModuleManager::DotGraph)
     ;
 
 
     pybind11::class_<CppModuleLoader>(m, "CppModuleLoader")
-    .def(pybind11::init<ModuleLocator *>())
+    .def(pybind11::init<ModuleManager *>())
     .def("LoadSO", &CppModuleLoader::LoadSO)
     ;
 
@@ -93,6 +93,6 @@ PYBIND11_PLUGIN(modulelocator)
 
 
 } // close namespace export_python
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 

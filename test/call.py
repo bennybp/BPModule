@@ -58,7 +58,7 @@ def Run(mm):
 
 bp.Init(sys.argv, out = "stdout", color = True, debug = True)
 
-with bp.ModuleManager() as mm:
+with bp.ModuleAdministrator() as mm:
     Run(mm)
 
 bp.Finalize()

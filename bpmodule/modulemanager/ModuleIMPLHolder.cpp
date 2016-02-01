@@ -5,12 +5,12 @@
  */
 
 
-#include "bpmodule/modulelocator/ModuleIMPLHolder.hpp"
+#include "bpmodule/modulemanager/ModuleIMPLHolder.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 namespace detail {
 
 
@@ -35,5 +35,5 @@ pybind11::object PyModuleIMPLHolder::PythonObject(void) const
 
 
 } // close namespace detail
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule

@@ -1,7 +1,7 @@
 from .modinfo import *
 
 # SO file
-from .modulelocator import *
+from .modulemanager import *
 
 # Other
 from .PyModuleLoader import PyModuleLoader
