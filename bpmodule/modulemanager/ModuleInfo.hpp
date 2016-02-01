@@ -19,7 +19,6 @@ namespace modulemanager {
  */
 struct ModuleInfo
 {
-    std::string key;                   //!< The key in the module database
     std::string name;                  //!< Some descriptive name for the module
     std::string type;                  //!< Type of the module (c_module, python_module, etc)
     std::string path;                  //!< Path for the module (not including the filename for an so file)

@@ -46,17 +46,44 @@ ModuleManager::~ModuleManager()
 
 
 
-void ModuleManager::InsertModule(const ModuleCreationFuncs & cf, const ModuleInfo & mi)
+void ModuleManager::InsertModule(const ModuleCreationFuncs & mc, const ModuleInfo & mi)
 {
-    auto mc = cf.GetCreator(mi.name);
+    using exception::Assert;
+
+    Assert<ModuleManagerException>(mc.HasCreator(mi.name), "ModuleCreationFuncs doesn't have creator for this module",
+                                                           "modulename", mi.name);
 
     // add to store
     // but throw if key already exists
-    if(store_.count(mi.key))
-        throw ModuleLoadException("Cannot insert module: duplicate key",
-                                  "modulepath", mi.path, "modulekey", mi.key, "modulename", mi.name);
+    if(store_.count(mi.name))
+        throw ModuleLoadException("Cannot insert module: duplicate name",
+                                  "modulepath", mi.path, "modulename", mi.name);
 
-    store_.emplace(mi.key, StoreEntry{mi, mc});
+    store_.emplace(mi.name, StoreEntry{mi, mc.GetCreator(mi.name)});
+}
+
+
+void ModuleManager::AddKey(const std::string & modulekey, const std::string & modulename)
+{
+    if(!HasName(modulename))
+        throw ModuleManagerException("Cannot add key: The given name doesn't exist",
+                                     "modulekey", modulekey, "modulename", modulename);
+    if(HasKey(modulekey))
+        throw ModuleManagerException("Cannot add key: Already exists",
+                                     "modulekey", modulekey, "modulename", modulename);
+
+    keymap_.emplace(modulekey, modulename);
+}
+
+
+void ModuleManager::ReplaceKey(const std::string & modulekey, const std::string & modulename)
+{
+    if(!HasName(modulename))
+        throw ModuleManagerException("Cannot add key: The given name doesn't exist",
+                                     "modulekey", modulekey, "modulename", modulename);
+
+    keymap_.erase(modulekey); // ok if it doesn't exist
+    AddKey(modulekey, modulename);
 }
 
 
@@ -66,20 +93,15 @@ size_t ModuleManager::Size(void) const noexcept
 }
 
 
-std::vector<std::string> ModuleManager::GetModuleKeys(void) const
+bool ModuleManager::HasKey(const std::string & modulekey) const
 {
-    std::vector<std::string> vec;
-    vec.reserve(store_.size());
-    for(const auto & it : store_)
-        vec.push_back(it.first);
-    return vec;
+    return keymap_.count(modulekey);
 }
 
 
-
-bool ModuleManager::Has(const std::string & modulekey) const
+bool ModuleManager::HasName(const std::string & modulename) const
 {
-    return store_.count(modulekey);
+    return store_.count(modulename);
 }
 
 
@@ -87,6 +109,11 @@ bool ModuleManager::Has(const std::string & modulekey) const
 ModuleInfo ModuleManager::ModuleKeyInfo(const std::string & modulekey) const
 {
     return GetOrThrow_(modulekey).mi;
+}
+
+ModuleInfo ModuleManager::ModuleNameInfo(const std::string & modulename) const
+{
+    return GetOrThrowName_(modulename).mi;
 }
 
 
@@ -114,17 +141,25 @@ void ModuleManager::TestAll(void)
                 output::Error("    Missing \"%1%\"\n", optit);
         }
 
+
+        output::Debug("Test of %1% OK\n", it.first);
+    }
+
+    output::Debug("Testing getting of modules\n");
+    for(const auto & it : keymap_)
+    {
         try {
             GetModule<ModuleBase>(it.first, 0);
         }
         catch(std::exception & ex)
         {
-            output::Error("Error - module %1% [key %2%]\" failed test loading!\n", it.second.mi.name, it.first);
+            output::Error("Error - module %1% [key %2%]\" failed test loading!\n", it.second, it.first);
             throw GeneralException(ex, "location", "TestAll");
         }
-
-        output::Debug("Test of %1% OK\n", it.first);
     }
+
+
+    output::Debug("Testing done!\n");
 }
 
 
@@ -135,25 +170,46 @@ void ModuleManager::ClearCache(void)
 
 void ModuleManager::ClearStore(void)
 {
+    keymap_.clear();
     store_.clear();
 }
 
 
-const ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string & modulekey) const
+
+std::string ModuleManager::GetOrThrowKey_(const std::string & modulekey) const
 {
-    if(Has(modulekey))
-        return store_.at(modulekey);
+    if(HasKey(modulekey))
+        return keymap_.at(modulekey);
     else
         throw ModuleManagerException("Missing module key in ModuleManager", "modulekey", modulekey);
+}
+
+
+ModuleManager::StoreEntry & ModuleManager::GetOrThrowName_(const std::string & modulename)
+{
+    if(HasName(modulename))
+        return store_.at(modulename);
+    else
+        throw ModuleManagerException("Missing module name in ModuleManager", "modulename", modulename);
+}
+
+const ModuleManager::StoreEntry & ModuleManager::GetOrThrowName_(const std::string & modulename) const
+{
+    if(HasName(modulename))
+        return store_.at(modulename);
+    else
+        throw ModuleManagerException("Missing module name in ModuleManager", "modulename", modulename);
 }
 
 
 ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string & modulekey)
 {
-    if(Has(modulekey))
-        return store_.at(modulekey);
-    else
-        throw ModuleManagerException("Missing module key in ModuleManager", "modulekey", modulekey);
+    return GetOrThrowName_(GetOrThrowKey_(modulekey));
+}
+
+const ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string & modulekey) const
+{
+    return GetOrThrowName_(GetOrThrowKey_(modulekey));
 }
 
 
@@ -175,14 +231,14 @@ ModuleManager::CreateModule_(const std::string & modulekey, unsigned long parent
     {
         throw exception::ModuleCreateException(ex,
                                                "path", se.mi.path,
-                                               "modulekey", se.mi.key,
+                                               "modulekey", modulekey,
                                                "modulename", se.mi.name);
     }
 
     if(!umbptr)
         throw exception::ModuleCreateException("Module function returned a null pointer",
                                                "path", se.mi.path,
-                                               "modulekey", se.mi.key,
+                                               "modulekey", modulekey,
                                                "modulename", se.mi.name);
 
  
@@ -191,14 +247,14 @@ ModuleManager::CreateModule_(const std::string & modulekey, unsigned long parent
     if(parentid != 0)
     {
         ModuleGraphNode parent = mgraphmap_.at(parentid);
-        ModuleGraphNode mine{new ModuleGraphNodeData{parent->wfn, se.mi}};
+        ModuleGraphNode mine{new ModuleGraphNodeData{modulekey, parent->wfn, se.mi}};
         mgraph_.AddNode(mine);
         mgraph_.AddEdge(std::make_tuple(mine, parent));
         mgraphmap_.emplace(curid_, mine);
     }
     else
     {
-        ModuleGraphNode mine{new ModuleGraphNodeData{Wavefunction(), se.mi}};
+        ModuleGraphNode mine{new ModuleGraphNodeData{modulekey, Wavefunction(), se.mi}};
         mgraph_.AddNode(mine);
         mgraphmap_.emplace(curid_, mine);
     }

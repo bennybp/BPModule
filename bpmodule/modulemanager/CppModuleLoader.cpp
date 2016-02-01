@@ -73,12 +73,11 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
 
     if(minfo.path == "")
         throw ModuleLoadException("Cannot open SO file - path not set in module info",
-                                  "modulekey", minfo.key, "modulename", minfo.name);
+                                  "modulename", minfo.name);
 
     if(minfo.soname == "")
         throw ModuleLoadException("Cannot open SO file - module soname not set in module info",
-                                  "modulekey", minfo.key, "path", minfo.path,
-                                  "modulename", minfo.name);
+                                  "path", minfo.path, "modulename", minfo.name);
 
 
     // trailing slash on path should have been added by python scripts
@@ -104,7 +103,7 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
         // open the module
         if(!handle)
             throw ModuleLoadException("Cannot open SO file",
-                                      "path", sopath, "modulekey", minfo.key,
+                                      "path", sopath,
                                       "modulename", minfo.name, "dlerror", std::string(dlerror()));
 
         // 1.) Initialize the supermodule if the function exists
@@ -126,8 +125,7 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
         {
             dlclose(handle);
             throw ModuleLoadException("Cannot find InsertSupermodule function in SO file",
-                                      "path", sopath, "modulekey", minfo.key,
-                                      "modulename", minfo.name, "dlerror", error);
+                                      "path", sopath, "modulename", minfo.name, "dlerror", error);
         }
 
         output::Success("Successfully opened %1%\n", sopath);
@@ -142,7 +140,13 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
 
     Assert<ModuleManagerException>(soinfo_.count(sopath) == 1, "CppModuleLoader SOInfo doesn't have just-added so file");
 
-    mm_->InsertModule(soinfo_.at(sopath).creators, minfo);
+    // does this module actually create something with this key?
+    const ModuleCreationFuncs & cf2 = soinfo_.at(sopath).creators;
+    if(!cf2.HasCreator(minfo.name))
+        throw ModuleLoadException("Creators from SO file cannot create a module with this name",
+                                  "path", sopath, "modulename", minfo.name);
+
+    mm_->InsertModule(cf2, minfo);
 }
 
 

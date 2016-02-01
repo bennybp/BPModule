@@ -47,7 +47,7 @@ unsigned long ModuleBase::ID(void) const noexcept
 
 std::string ModuleBase::Key(void) const 
 {
-    return MInfo_().key;
+    return GraphData().modulekey;
 }
 
 

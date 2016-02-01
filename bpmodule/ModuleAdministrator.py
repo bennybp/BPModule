@@ -97,7 +97,6 @@ class ModuleAdministrator(modulemanager.ModuleManager):
 
         # Create a c++ moduleinfo
         cppminfo = modulemanager.ModuleInfo()
-        cppminfo.key = modulekey
         cppminfo.name = modulename
         cppminfo.path = path
         cppminfo.type = minfo["type"]
@@ -122,7 +121,12 @@ class ModuleAdministrator(modulemanager.ModuleManager):
             self.cml.LoadSO(cppminfo)
         elif minfo["type"] == "python_module":
             self.pml.LoadPyModule(m, cppminfo)
-        output.Debug("Done importing module %1% from %2%\n", modulekey, supermodule)
+
+        output.Debug("Imported module name %1% from %2%\n", modulename, supermodule)
+
+        super(ModuleAdministrator, self).AddKey(modulekey, modulename)
+
+        output.Debug("Associated key %1% with module %2%\n", modulekey, supermodule)
         output.Output("\n")
 
         self.modmap[modulekey] = minfo;

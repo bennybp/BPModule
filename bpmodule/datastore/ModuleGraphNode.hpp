@@ -20,6 +20,7 @@ namespace datastore {
 
 struct ModuleGraphNodeData
 {
+    std::string modulekey;
     datastore::Wavefunction wfn;
     modulemanager::ModuleInfo minfo;
 };
