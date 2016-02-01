@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Loading and storing of C modules (header)
+ * \brief Loading and storing of C/C++ modules (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
@@ -8,7 +8,6 @@
 #ifndef BPMODULE_GUARD_MODULEMANAGER__CPPMODULELOADER_HPP_
 #define BPMODULE_GUARD_MODULEMANAGER__CPPMODULELOADER_HPP_
 
-#include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
 
 
@@ -21,15 +20,17 @@ class ModuleManager;
 struct ModuleInfo;
 
 
-/*! \brief Loads C/C++ modules
+/*! \brief Loads C/C++ modules from an SO file
  */
 class CppModuleLoader
 {
     public:
 
-        /*! \copydoc ModuleLoaderBase::ModuleLoaderBase
+        /*! Constructor
+         * 
+         * \param [in] mm The module manager to load modules into
          */
-        CppModuleLoader(ModuleManager * mlt);
+        CppModuleLoader(ModuleManager * mm);
 
 
         /*! Destructor
@@ -38,31 +39,32 @@ class CppModuleLoader
          */
         ~CppModuleLoader();
 
-        CppModuleLoader(const CppModuleLoader & rhs)             = delete;
-        CppModuleLoader(CppModuleLoader && rhs)                  = delete;
-        CppModuleLoader & operator=(const CppModuleLoader & rhs) = delete;
-        CppModuleLoader & operator=(CppModuleLoader && rhs)      = delete;
+        CppModuleLoader(const CppModuleLoader &)             = delete;
+        CppModuleLoader(CppModuleLoader &&)                  = delete;
+        CppModuleLoader & operator=(const CppModuleLoader &) = delete;
+        CppModuleLoader & operator=(CppModuleLoader &&)      = delete;
 
 
 
         /*! \brief Loads an SO file for a C/C++ module and inserts it into the database
          *
-         * The module path and name must be stored in the module info
+         * The module path and soname must already be stored in the \p minfo parameter
          *
-         * This functions opens the SO file (via dlopen) and obtains a pointer
-         * to the creation function contained in the module, and inserts it
-         * into the database. If the SO file has already been opened, it will reuse the
+         * This functions opens the SO file and obtains a pointer
+         * to the creation and initialization functions contained in the module. It then inserts it
+         * into the ModuleManager associated with this object.
+         *
+         * If the SO file has already been opened, it will reuse the
          * existing handle.
          *
-         * The key in the \minfo parameter must be unique. An exception is thrown if the key already exists.
+         * The key in the \minfo parameter must be unique. An exception is thrown if the key already exists
+         * in the ModuleManager.
          *
          * \throw bpmodule::exception::ModuleLoadException if there is a problem loading
-         *        the module (duplicate key, function doesn't exist, etc)
+         *        the module (duplicate key, function doesn't exist, etc) or if minfo
+         *        doesn't contain a path and soname
          *
-         * \throw bpmodule::exception::ModuleManagerException if there is a problem converting
-         *        the module info.
-         *
-         * \exstrong
+         * \exbasic
          *
          * \param [in] key The key for this module
          * \param [in] minfo The module information, including the path and name
@@ -71,16 +73,18 @@ class CppModuleLoader
 
 
     private:
-        ModuleManager * mlt_;
+        //! The ModuleManager to load modules into
+        ModuleManager * mm_;
 
+        //! Holds information about a module so file
+        struct SOInfo
+        {
+            void * handle;                //!< Handle return from dlopen
+            ModuleCreationFuncs creators; //!< Creator functions in that module
+        };
 
-        //! Stores handles to to open SO files
-        std::unordered_map<std::string, void *> handles_;
-
-
-        //! Stores all the creators in an SO file
-        std::unordered_map<std::string, ModuleCreationFuncs> creators_;
-
+        //! Stores handles and creation funcs to open SO files
+        std::unordered_map<std::string, SOInfo> soinfo_;
 };
 
 } // close namespace modulemanager

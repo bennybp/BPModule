@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Loading and storing of C modules (source)
+ * \brief Loading and storing of C/C++ modules (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
@@ -19,8 +19,8 @@ using namespace bpmodule::exception;
 namespace bpmodule {
 namespace modulemanager {
 
-CppModuleLoader::CppModuleLoader(ModuleManager * mlt)
-    : mlt_(mlt)
+CppModuleLoader::CppModuleLoader(ModuleManager * mm)
+    : mm_(mm)
 { }
 
 
@@ -31,13 +31,16 @@ CppModuleLoader::~CppModuleLoader()
     typedef void (*FinalizeFunc)(void);
 
     // delete creator functions
-    creators_.clear();
+    for(auto & it : soinfo_)
+        it.second.creators.Clear();
 
     // close all the handles
-    for(auto it : handles_)
+    for(auto it : soinfo_)
     {
+        void * handle = it.second.handle;
+
         output::Output("Closing %1%\n", it.first);
-        FinalizeFunc ffn = reinterpret_cast<FinalizeFunc>(dlsym(it.second, "FinalizeSupermodule"));
+        FinalizeFunc ffn = reinterpret_cast<FinalizeFunc>(dlsym(handle, "FinalizeSupermodule"));
 
         // it's ok if it doesn't exist
         char const * error;
@@ -50,9 +53,12 @@ CppModuleLoader::~CppModuleLoader()
         }
 
         // close the so
-        dlclose(it.second);
+        dlclose(handle);
     }
-    handles_.clear();
+
+    // clear everything else
+    // (not needed. this is the destructor)
+    //soinfo_.clear();
 }
 
 
@@ -65,22 +71,25 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
     // Function for creating modules
     typedef ModuleCreationFuncs (*GeneratorFunc)(void);
 
+    if(minfo.path == "")
+        throw ModuleLoadException("Cannot open SO file - path not set in module info",
+                                  "modulekey", minfo.key, "modulename", minfo.name);
 
-    // may throw
-    ModuleInfo mi(minfo);
+    if(minfo.soname == "")
+        throw ModuleLoadException("Cannot open SO file - module soname not set in module info",
+                                  "modulekey", minfo.key, "path", minfo.path,
+                                  "modulename", minfo.name);
+
 
     // trailing slash on path should have been added by python scripts
-    std::string sopath = mi.path + mi.soname;
+    std::string sopath = minfo.path + minfo.soname;
 
     ModuleCreationFuncs cf;
 
     // see if the module is loaded
     // if so, reuse that handle
-    if(handles_.count(sopath) > 0)
-    {
-        Assert<GeneralException>(creators_.count(sopath) > 0, "Creators does not have something for an already-loaded SO file");
-        cf = creators_.at(sopath);
-    }
+    if(soinfo_.count(sopath) > 0)
+        cf = soinfo_.at(sopath).creators;
     else
     {
         // first time loading this so file. Load it, get the
@@ -95,8 +104,8 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
         // open the module
         if(!handle)
             throw ModuleLoadException("Cannot open SO file",
-                                      "path", sopath, "modulekey", mi.key,
-                                      "modulename", mi.name, "dlerror", std::string(dlerror()));
+                                      "path", sopath, "modulekey", minfo.key,
+                                      "modulename", minfo.name, "dlerror", std::string(dlerror()));
 
         // 1.) Initialize the supermodule if the function exists
         InitializeFunc ifn = reinterpret_cast<InitializeFunc>(dlsym(handle, "InitializeSupermodule"));
@@ -116,23 +125,24 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
         if((error = dlerror()) != NULL)
         {
             dlclose(handle);
-            throw ModuleLoadException("Cannot find function in SO file",
-                                      "path", sopath, "modulekey", mi.key,
-                                      "modulename", mi.name, "dlerror", error);
+            throw ModuleLoadException("Cannot find InsertSupermodule function in SO file",
+                                      "path", sopath, "modulekey", minfo.key,
+                                      "modulename", minfo.name, "dlerror", error);
         }
 
         output::Success("Successfully opened %1%\n", sopath);
 
         cf = fn();
 
-        creators_.emplace(sopath, cf);
+        SOInfo soinfo{handle, std::move(cf)};
 
-        if(handles_.count(sopath) == 0)
-            handles_.emplace(sopath, handle);      // strong exception guarantee, but shouldn't ever throw
+        if(soinfo_.count(sopath) == 0)
+            soinfo_.emplace(sopath, std::move(soinfo)); // only line that modifies this object
     }
 
+    Assert<ModuleManagerException>(soinfo_.count(sopath) == 1, "CppModuleLoader SOInfo doesn't have just-added so file");
 
-    mlt_->InsertModule(cf, mi); // strong exception guarantee
+    mm_->InsertModule(soinfo_.at(sopath).creators, minfo);
 }
 
 
