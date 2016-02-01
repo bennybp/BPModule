@@ -42,7 +42,7 @@ sys.setdlopenflags(olddl)
 # Load other python stuff from this directory
 ##########################################
 from .modulecheck import *
-from .ModuleManager import *
+from .ModuleAdministrator import *
 
 
 
