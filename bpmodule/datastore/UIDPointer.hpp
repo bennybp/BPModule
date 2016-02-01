@@ -214,7 +214,7 @@ private:
         pyobj_ = std::make_shared<const pybind11::object>(python::ConvertToPy(data_.get(), 
                                                           pybind11::return_value_policy::reference));
         }
-        catch(exception::PythonConvertException & ex)
+        catch(exception::PythonConvertException &)
         {
             output::Debug("Object can't be converted to python object: %1% -- don't use from python!\n", util::DemangleCppType<T>());
         }

@@ -39,8 +39,11 @@ message(STATUS "Using math libraries: ${BPMODULE_MATH_LIBS}")
 #############
 set(Python_ADDITIONAL_VERSIONS "3.3;3.4;3.5;3.6")
 find_package(PythonLibs "3.3" REQUIRED)
+find_package(PythonInterp ${PYTHONLIBS_VERSION_STRING} EXACT REQUIRED)
+message(STATUS "Python version: ${PYTHONLIBS_VERSION_STRING}")
 message(STATUS "Python libs: ${PYTHON_LIBRARIES}")
 message(STATUS "Python include: ${PYTHON_INCLUDE_DIRS}")
+message(STATUS "Python executable: ${PYTHON_EXECUTABLE}")
 
 
 #################################
@@ -61,6 +64,8 @@ ExternalProject_Add(bpmodule_core
                                -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/external
                                -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
                                -DMPI_C_COMPILER=${MPI_C_COMPILER}
+                               -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+                               -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                     CMAKE_CACHE_ARGS -DBPMODULE_CORE_PYTHON_LIBRARIES:STRING=${PYTHON_LIBRARIES}
                                      -DBPMODULE_CORE_PYTHON_INCLUDE_DIRS:STRING=${PYTHON_INCLUDE_DIRS}
                                      -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}

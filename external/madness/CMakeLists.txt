@@ -21,7 +21,7 @@ if(NOT MADNESS_FOUND)
                                  -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                                  -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
                                  -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
-                      CMAKE_CACHE_ARGS -DLAPACK_LIBRARIES:STRING=${BPMODULE_MATH_LIBS}
+                      CMAKE_CACHE_ARGS -DLAPACK_LIBRARIES:STRING=${BPMODULE_MATH_LIBS} -DPYTHON_EXECUTABLE:PATH=${PYTHON_EXECUTABLE}
                       BUILD_COMMAND ${CMAKE_COMMAND} --build . --target MADworld
                       INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install-common install-world install-config DESTDIR=${CMAKE_BINARY_DIR}/stage
                      )
