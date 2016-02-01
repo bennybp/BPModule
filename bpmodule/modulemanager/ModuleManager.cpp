@@ -237,7 +237,11 @@ pybind11::object ModuleManager::GetModulePy(const std::string & modulekey,
                                             unsigned long parentid)
 {
     std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(modulekey, parentid);
-    return pybind11::cast(PyModulePtr(std::move(umbptr)));
+
+    // we use a pointer so that the python object
+    // can take ownership and we can avoid having
+    // a copy constructor for PyModulePtr
+    return python::ConvertToPy(new PyModulePtr(std::move(umbptr)), pybind11::return_value_policy::take_ownership);
 }
         
 void ModuleManager::ChangeOptionPy(const std::string & modulekey, const std::string & optkey, const pybind11::object & value)
