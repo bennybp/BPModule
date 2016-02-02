@@ -21,9 +21,6 @@ void ModuleInfo::Print(void) const
     output::Output("            Type: %1%\n", type);
     output::Output("            Path: %1%\n", path);
 
-    if(soname.size())
-        output::Output("          SOName: %1%\n", soname);
-
     output::Output("     Description: %1%\n", description);
 
     output::Output("         Authors: %1%\n", (authors.size() ? authors[0] : ""));

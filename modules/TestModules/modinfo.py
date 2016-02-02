@@ -5,7 +5,7 @@ minfo = {
   "TestModule1" :
   {
     "type"        : "c_module",
-    "soname"      : "TestModules.so",
+    "modpath"     : "TestModules.so",
     "version"     : "0.1a",
     "description" : "Some test module",
     "authors"     : ["me", "myself", "I"],
@@ -57,7 +57,7 @@ minfo = {
   "TestExtLib" :
   {
     "type"        : "c_module",
-    "soname"      : "TestModules.so",
+    "modpath"     : "TestModules.so",
     "version"     : "0.1a",
     "description" : "Some test module",
     "authors"     : ["me", "myself", "I"],

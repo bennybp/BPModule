@@ -101,8 +101,8 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         cppminfo.path = path
         cppminfo.type = minfo["type"]
 
-        if "soname" in minfo:
-            cppminfo.soname = minfo["soname"]
+        if "modpath" in minfo:
+            cppminfo.path = os.path.join(cppminfo.path, minfo["modpath"])
 
         cppminfo.version = minfo["version"]
         cppminfo.description = minfo["description"]
@@ -120,7 +120,7 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         if minfo["type"] == "c_module":
             self.cml.LoadSO(cppminfo)
         elif minfo["type"] == "python_module":
-            self.pml.LoadPyModule(m, cppminfo)
+            self.pml.LoadPyModule(cppminfo)
 
         output.Debug("Imported module name %1% from %2%\n", modulename, supermodule)
 

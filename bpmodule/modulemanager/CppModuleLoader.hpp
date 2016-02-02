@@ -48,7 +48,7 @@ class CppModuleLoader
 
         /*! \brief Loads an SO file for a C/C++ module and inserts it into the database
          *
-         * The module path and soname must already be stored in the \p minfo parameter
+         * The module path of the \p minfo parameter must be set to the full path to the .so file
          *
          * This functions opens the SO file and obtains a pointer
          * to the creation and initialization functions contained in the module. It then inserts it
@@ -62,7 +62,7 @@ class CppModuleLoader
          *
          * \throw bpmodule::exception::ModuleLoadException if there is a problem loading
          *        the module (duplicate key, function doesn't exist, etc) or if minfo
-         *        doesn't contain a path and soname
+         *        doesn't contain a path
          *
          * \exbasic
          *

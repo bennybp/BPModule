@@ -1,4 +1,6 @@
 import os
+import sys
+import importlib
 from bpmodule.exception import GeneralException
 from bpmodule import output
 
@@ -11,34 +13,46 @@ class PyModuleLoader:
     # (key = path to module)
     self.loaded = {}
 
-  def LoadPyModule(self, mod, cppminfo):
+  def LoadPyModule(self, minfo):
 
-    mpath = os.path.dirname(os.path.abspath(mod.__file__))
+    if not minfo.path in self.loaded:
+        # split the path - we need to add the directory above
+        # to the import path
+        mpath,mimportname = os.path.split(os.path.abspath(minfo.path))
 
-    if mpath in self.loaded:
-        creators = self.loaded[mpath][1]
-    else:
-        if not hasattr(mod, "InsertSupermodule"):
+        # update the paths
+        oldpath = sys.path
+        sys.path = mpath
+
+        # Don't use RTLD_GLOBAL
+        olddl = sys.getdlopenflags()
+        sys.setdlopenflags(os.RTLD_NOW)
+        m = importlib.import_module(mimportname)
+        sys.setdlopenflags(olddl)
+
+        # reset the paths
+        sys.path = oldpath
+
+        if not hasattr(m, "InsertSupermodule"):
             raise exception.GeneralException("Python supermodule doesn't have a InsertSupermodule function. Skipping",
-                                                 "supermodule", supermodule)
+                                             "supermodule", minfo.path)
 
         # See if there is an initialization function
-        if hasattr(mod, "InitializeSupermodule"):
-            output.Debug("Initializing supermodule: %1%\n", mpath)
+        if hasattr(m, "InitializeSupermodule"):
+            output.Debug("Initializing supermodule: %1%\n", minfo.path)
             mod.InitializeSupermodule()
         else:
-            output.Debug("Supermodule %1% doesn't have initialization function. Skipping\n", mpath)
-
-        creators = mod.InsertSupermodule()
-        self.loaded[mpath] = (mod, creators)
+            output.Debug("Supermodule %1% doesn't have initialization function. Skipping\n", minfo.path)
 
 
-    if not creators.HasCreator(cppminfo.name):
-      raise GeneralException("Error - this module cannot create this key", "name", cppminfo.name)
+        creators = m.InsertSupermodule()
 
-    self.mlt.InsertModule(creators, cppminfo)
+        self.loaded[mpath] = (m, creators)
 
+        if not creators.HasCreator(minfo.name):
+          raise GeneralException("Error - this module cannot create this key", "name", minfo.name)
 
+        self.mlt.InsertModule(creators, minfo)
 
   def CloseAll(self):
     output.Debug("Closing python modules\n")
