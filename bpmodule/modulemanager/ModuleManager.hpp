@@ -23,6 +23,10 @@ namespace bpmodule {
 namespace modulemanager {
 
 
+// forward declaration
+class ModuleLoaderBase;
+
+
 
 /*! \brief Module database
  *
@@ -183,24 +187,6 @@ class ModuleManager
 
 
 
-
-        /*! \brief Clears all entries in the cache and performs some cleanup
-         * 
-         * Must be run before unloading SOs
-         */
-        void ClearCache(void);
-
-
-        /*! \brief Clears all entries in the module store
-         *
-         * Must be run before unloading SOs
-         */
-        void ClearStore(void);
-
-
-
-
-
         /*! \brief Change an option for a module
          */
         template<typename T>        
@@ -235,7 +221,8 @@ class ModuleManager
          * \param [in] mc Functions for creating modules
          * \param [in] mi Information about the module
          */
-        void InsertModule(const ModuleCreationFuncs & mc, const ModuleInfo & mi);
+        void LoadModuleFromModuleInfo(const ModuleInfo & minfo);
+
 
 
     private:
@@ -247,6 +234,11 @@ class ModuleManager
             ModuleInfo mi;             //!< Information for this module
             ModuleCreationFuncs::Func mc; //!< Function to create this module
         };
+
+
+        /*! \brief Handlers for different module types
+         */   
+        std::unordered_map<std::string, std::unique_ptr<ModuleLoaderBase>> loadhandlers_;
 
 
         /*! \brief Actual storage object - maps module names to creation functions

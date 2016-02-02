@@ -10,6 +10,12 @@
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 
+////////////
+// Handlers
+////////////
+#include "bpmodule/modulemanager/CppModuleLoader.hpp"
+#include "bpmodule/modulemanager/PyModuleLoader.hpp"
+
 //////////////////////////////////////////////
 //! \todo can probably be removed when graph inheritance is done
 #include "bpmodule/basisset/BasisSet.hpp"
@@ -37,29 +43,28 @@ namespace modulemanager {
 
 ModuleManager::ModuleManager()
     : curid_(100) // reserve some for my use
-{ }
+{
+    // add the handlers
+    loadhandlers_.emplace("c_module", std::unique_ptr<ModuleLoaderBase>(new CppModuleLoader()));
+    loadhandlers_.emplace("python_module", std::unique_ptr<ModuleLoaderBase>(new PyModuleLoader()));
+}
 
 
 ModuleManager::~ModuleManager()
 {
-}
+    /*
+       WARNING WARNING WARNING
+       Clearing the cache and store MUST be done BEFORE unloading
+       the modules or else deleting elements will cause a segfault.
+       The GenericHolder is a template, so the code for
+       the destructors exists in the modules
+    */
+    cachemap_.clear();
+    keymap_.clear();
+    store_.clear();
 
-
-
-void ModuleManager::InsertModule(const ModuleCreationFuncs & mc, const ModuleInfo & mi)
-{
-    using exception::Assert;
-
-    Assert<ModuleManagerException>(mc.HasCreator(mi.name), "ModuleCreationFuncs doesn't have creator for this module",
-                                                           "modulename", mi.name);
-
-    // add to store
-    // but throw if key already exists
-    if(store_.count(mi.name))
-        throw ModuleLoadException("Cannot insert module: duplicate name",
-                                  "modulepath", mi.path, "modulename", mi.name);
-
-    store_.emplace(mi.name, StoreEntry{mi, mc.GetCreator(mi.name)});
+    // NOW we can close all the handlers
+    loadhandlers_.clear();
 }
 
 
@@ -163,19 +168,6 @@ void ModuleManager::TestAll(void)
 }
 
 
-void ModuleManager::ClearCache(void)
-{
-    cachemap_.clear();
-}
-
-void ModuleManager::ClearStore(void)
-{
-    keymap_.clear();
-    store_.clear();
-}
-
-
-
 std::string ModuleManager::GetOrThrowKey_(const std::string & modulekey) const
 {
     if(HasKey(modulekey))
@@ -211,6 +203,34 @@ const ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string &
 {
     return GetOrThrowName_(GetOrThrowKey_(modulekey));
 }
+
+
+/////////////////////////////////////////
+// Module Loading
+/////////////////////////////////////////
+void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo)
+{
+    // check for duplicates
+    if(store_.count(minfo.name))
+        throw ModuleLoadException("Cannot load module: duplicate name",
+                                  "modulepath", minfo.path, "modulename", minfo.name);
+
+    // Using the handler, load the module
+    if(!loadhandlers_.count(minfo.type))
+        throw ModuleLoadException("Cannot load module: unknown module type",
+                                  "modulepath", minfo.path, "modulename", minfo.name, "type", minfo.type);
+
+
+    // may throw an exception
+    ModuleCreationFuncs::Func cf = loadhandlers_.at(minfo.type)->LoadModule(minfo);
+
+
+    // add to store
+    store_.emplace(minfo.name, StoreEntry{minfo, std::move(cf)});
+}
+
+
+
 
 
 /////////////////////////////////////////

@@ -19,11 +19,6 @@ using namespace bpmodule::exception;
 namespace bpmodule {
 namespace modulemanager {
 
-CppModuleLoader::CppModuleLoader(ModuleManager * mm)
-    : mm_(mm)
-{ }
-
-
 
 CppModuleLoader::~CppModuleLoader()
 {
@@ -63,7 +58,8 @@ CppModuleLoader::~CppModuleLoader()
 
 
 
-void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
+
+ModuleCreationFuncs::Func CppModuleLoader::LoadModule(const ModuleInfo & minfo)
 {
     // Initializing/Finalizing the so file
     typedef void (*InitializeFunc)(void);
@@ -124,7 +120,7 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
 
         cf = fn();
 
-        SOInfo soinfo{handle, std::move(cf)};
+        SOInfo soinfo{std::move(handle), std::move(cf)};
 
         if(soinfo_.count(minfo.path) == 0)
             soinfo_.emplace(minfo.path, std::move(soinfo)); // only line that modifies this object
@@ -138,7 +134,7 @@ void CppModuleLoader::LoadSO(const ModuleInfo & minfo)
         throw ModuleLoadException("Creators from SO file cannot create a module with this name",
                                   "path", minfo.path, "modulename", minfo.name);
 
-    mm_->InsertModule(cf2, minfo);
+    return cf2.GetCreator(minfo.name);
 }
 
 

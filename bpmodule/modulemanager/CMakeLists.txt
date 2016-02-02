@@ -1,5 +1,6 @@
 set(BPMODULE_MODULEMANAGER_FILES
             CppModuleLoader.cpp
+            PyModuleLoader.cpp
             ModuleIMPLHolder.cpp
             ModuleInfo.cpp
             ModuleManager.cpp

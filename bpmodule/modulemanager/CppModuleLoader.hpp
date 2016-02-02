@@ -8,7 +8,7 @@
 #ifndef BPMODULE_GUARD_MODULEMANAGER__CPPMODULELOADER_HPP_
 #define BPMODULE_GUARD_MODULEMANAGER__CPPMODULELOADER_HPP_
 
-#include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
+#include "bpmodule/modulemanager/ModuleLoaderBase.hpp"
 
 
 namespace bpmodule {
@@ -22,15 +22,13 @@ struct ModuleInfo;
 
 /*! \brief Loads C/C++ modules from an SO file
  */
-class CppModuleLoader
+class CppModuleLoader : public ModuleLoaderBase
 {
     public:
 
         /*! Constructor
-         * 
-         * \param [in] mm The module manager to load modules into
          */
-        CppModuleLoader(ModuleManager * mm);
+        CppModuleLoader() = default;
 
 
         /*! Destructor
@@ -69,13 +67,10 @@ class CppModuleLoader
          * \param [in] key The key for this module
          * \param [in] minfo The module information, including the path and name
          */
-        void LoadSO(const ModuleInfo & minfo);
+        ModuleCreationFuncs::Func LoadModule(const ModuleInfo & minfo);
 
 
     private:
-        //! The ModuleManager to load modules into
-        ModuleManager * mm_;
-
         //! Holds information about a module so file
         struct SOInfo
         {

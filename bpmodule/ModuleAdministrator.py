@@ -10,32 +10,10 @@ class ModuleAdministrator(modulemanager.ModuleManager):
     def __init__(self):
         super(ModuleAdministrator, self).__init__()
 
-        # Main module store and module loaders
-        self.cml = modulemanager.CppModuleLoader(self)
-        self.pml = modulemanager.PyModuleLoader(self) 
-        self.modmap = {}
+        # TODO - remove me?
+        #self.modmap = {}
 
         self.paths = [ ]
-
-
-    def Finalize(self):
-
-        #################################################
-        # WARNING WARNING WARNING
-        # Clearing the cache and store MUST be done BEFORE unloading
-        # the modules or else deleting elements will cause a segfault.
-        # The GenericHolder is a template, so the code for
-        # the destructors exists in the modules
-        #################################################
-        super(ModuleAdministrator, self).ClearCache()
-        super(ModuleAdministrator, self).ClearStore()
-
-        output.Output("Deleting python modules\n")
-        self.pml.CloseAll()
-        del self.pml
-
-        output.Output("Deleting C++ modules & closing handles\n")
-        del self.cml
 
 
     def __enter__(self):
@@ -43,7 +21,7 @@ class ModuleAdministrator(modulemanager.ModuleManager):
 
 
     def __exit__(self, exc_type, exc_value, traceback):
-        self.Finalize()
+        pass
         
 
     def AddPath(self, path):
@@ -90,7 +68,7 @@ class ModuleAdministrator(modulemanager.ModuleManager):
 
         minfo = m.minfo[modulename]
 
-        path = os.path.dirname(m.__file__) + "/"
+        path = os.path.dirname(m.__file__)
 
         output.Output("\n")
         output.Output("Loading module %1% v%2%\n", modulename, minfo["version"])
@@ -99,10 +77,11 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         cppminfo = modulemanager.ModuleInfo()
         cppminfo.name = modulename
         cppminfo.path = path
-        cppminfo.type = minfo["type"]
 
         if "modpath" in minfo:
             cppminfo.path = os.path.join(cppminfo.path, minfo["modpath"])
+
+        cppminfo.type = minfo["type"]
 
         cppminfo.version = minfo["version"]
         cppminfo.description = minfo["description"]
@@ -117,10 +96,7 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         
 
         # actually load
-        if minfo["type"] == "c_module":
-            self.cml.LoadSO(cppminfo)
-        elif minfo["type"] == "python_module":
-            self.pml.LoadPyModule(cppminfo)
+        super(ModuleAdministrator, self).LoadModuleFromModuleInfo(cppminfo)
 
         output.Debug("Imported module name %1% from %2%\n", modulename, supermodule)
 
@@ -129,7 +105,8 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         output.Debug("Associated key %1% with module %2%\n", modulekey, supermodule)
         output.Output("\n")
 
-        self.modmap[modulekey] = minfo;
+        # TODO - remove me?
+        #self.modmap[modulekey] = minfo;
 
 
 
