@@ -56,7 +56,7 @@ std::pair<std::string, std::string> SplitPath(const std::string & path)
     if(slashpos == tmp.npos)
         return {tmp, ""};
     else
-        return {tmp.substr(0, slashpos), path.substr(slashpos, tmp.npos)};
+        return {tmp.substr(0, slashpos), path.substr(slashpos+1, tmp.npos)};
     
 }
 
