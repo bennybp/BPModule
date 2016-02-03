@@ -15,19 +15,12 @@ namespace bpmodule {
 namespace modulemanager {
 
 
-// forward declaration
-class ModuleManager;
-struct ModuleInfo;
-
-
 /*! \brief Loads C/C++ modules from an SO file
  */
 class CppModuleLoader : public ModuleLoaderBase
 {
     public:
 
-        /*! Constructor
-         */
         CppModuleLoader() = default;
 
 
@@ -42,40 +35,14 @@ class CppModuleLoader : public ModuleLoaderBase
         CppModuleLoader & operator=(const CppModuleLoader &) = delete;
         CppModuleLoader & operator=(CppModuleLoader &&)      = delete;
 
-
-
-        /*! \brief Loads an SO file for a C/C++ module and inserts it into the database
-         *
-         * The module path of the \p minfo parameter must be set to the full path to the .so file
-         *
-         * This functions opens the SO file and obtains a pointer
-         * to the creation and initialization functions contained in the module. It then inserts it
-         * into the ModuleManager associated with this object.
-         *
-         * If the SO file has already been opened, it will reuse the
-         * existing handle.
-         *
-         * The key in the \minfo parameter must be unique. An exception is thrown if the key already exists
-         * in the ModuleManager.
-         *
-         * \throw bpmodule::exception::ModuleLoadException if there is a problem loading
-         *        the module (duplicate key, function doesn't exist, etc) or if minfo
-         *        doesn't contain a path
-         *
-         * \exbasic
-         *
-         * \param [in] key The key for this module
-         * \param [in] minfo The module information, including the path and name
-         */
-        ModuleCreationFuncs::Func LoadModule(const ModuleInfo & minfo);
-
+        virtual const ModuleCreationFuncs & LoadSupermodule(const std::string & spath);
 
     private:
         //! Holds information about a module so file
         struct SOInfo
         {
-            void * handle;                //!< Handle return from dlopen
-            ModuleCreationFuncs creators; //!< Creator functions in that module
+            void * handle;                //!< Handle returned from dlopen
+            ModuleCreationFuncs creators; //!< Creator functions in that supermodule
         };
 
         //! Stores handles and creation funcs to open SO files

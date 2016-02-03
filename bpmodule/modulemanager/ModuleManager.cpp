@@ -210,6 +210,11 @@ const ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string &
 /////////////////////////////////////////
 void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo)
 {
+    // path set?
+    if(minfo.path.size() == 0)
+        throw ModuleLoadException("Cannot load module: Empty path",
+                                  "modulepath", minfo.path, "modulename", minfo.name);
+
     // check for duplicates
     if(store_.count(minfo.name))
         throw ModuleLoadException("Cannot load module: duplicate name",
@@ -220,13 +225,16 @@ void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo)
         throw ModuleLoadException("Cannot load module: unknown module type",
                                   "modulepath", minfo.path, "modulename", minfo.name, "type", minfo.type);
 
-
     // may throw an exception
-    ModuleCreationFuncs::Func cf = loadhandlers_.at(minfo.type)->LoadModule(minfo);
+    const ModuleCreationFuncs & mcf = loadhandlers_.at(minfo.type)->LoadSupermodule(minfo.path);
 
+    // does this module actually create a module with this name
+    if(!mcf.HasCreator(minfo.name))
+        throw ModuleLoadException("Creators from this supermodule cannot create a module with this name",
+                                  "path", minfo.path, "modulename", minfo.name);
 
     // add to store
-    store_.emplace(minfo.name, StoreEntry{minfo, std::move(cf)});
+    store_.emplace(minfo.name, StoreEntry{minfo, mcf.GetCreator(minfo.name)});
 }
 
 

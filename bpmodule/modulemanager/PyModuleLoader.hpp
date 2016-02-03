@@ -15,26 +15,19 @@ namespace bpmodule {
 namespace modulemanager {
 
 
-// forward declaration
-struct ModuleInfo;
-
-
 /*! \brief Loads C/C++ modules from an SO file
  */
 class PyModuleLoader : public ModuleLoaderBase
 {
     public:
 
-        /*! Constructor
-         */
         PyModuleLoader() = default;
-
 
         /*! Destructor
          *
-         * Deletes all module objects and creation funcs
+         * Deletes all objects and closes all creation functions
          */
-        ~PyModuleLoader() = default;
+        ~PyModuleLoader();
 
         PyModuleLoader(const PyModuleLoader &)             = delete;
         PyModuleLoader(PyModuleLoader &&)                  = delete;
@@ -42,10 +35,7 @@ class PyModuleLoader : public ModuleLoaderBase
         PyModuleLoader & operator=(PyModuleLoader &&)      = delete;
 
 
-
-        /*! \brief Loads a python modulen and inserts it into the database
-         */
-        ModuleCreationFuncs::Func LoadModule(const ModuleInfo & minfo);
+        virtual const ModuleCreationFuncs & LoadSupermodule(const std::string & spath);
 
 
     private:

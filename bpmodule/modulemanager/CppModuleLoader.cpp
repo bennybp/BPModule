@@ -9,7 +9,6 @@
 
 #include "bpmodule/modulemanager/CppModuleLoader.hpp"
 #include "bpmodule/output/Output.hpp"
-#include "bpmodule/modulemanager/ModuleManager.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/exception/Assert.hpp"
 
@@ -34,13 +33,13 @@ CppModuleLoader::~CppModuleLoader()
     {
         void * handle = it.second.handle;
 
-        output::Output("Closing %1%\n", it.first);
+        output::Output("Looking to close C++ supermodule %1%\n", it.first);
         FinalizeFunc ffn = reinterpret_cast<FinalizeFunc>(dlsym(handle, "FinalizeSupermodule"));
 
         // it's ok if it doesn't exist
         char const * error;
         if((error = dlerror()) != NULL)
-            output::Debug("SO file %1% doesn't have finalization function. Skipping\n", it.first);
+            output::Debug("Supermodule %1% doesn't have finalization function. Skipping\n", it.first);
         else
         {
             output::Debug("Running finalization function in %1%\n", it.first);
@@ -49,17 +48,17 @@ CppModuleLoader::~CppModuleLoader()
 
         // close the so
         dlclose(handle);
+
+        output::Output("Closed supermodule %1%\n", it.first);
     }
 
-    // clear everything else
-    // (not needed. this is the destructor)
-    //soinfo_.clear();
+    // soinfo_ is cleared via its destructor
 }
 
 
 
 
-ModuleCreationFuncs::Func CppModuleLoader::LoadModule(const ModuleInfo & minfo)
+const ModuleCreationFuncs & CppModuleLoader::LoadSupermodule(const std::string & spath)
 {
     // Initializing/Finalizing the so file
     typedef void (*InitializeFunc)(void);
@@ -67,17 +66,12 @@ ModuleCreationFuncs::Func CppModuleLoader::LoadModule(const ModuleInfo & minfo)
     // Function for creating modules
     typedef ModuleCreationFuncs (*GeneratorFunc)(void);
 
-    if(minfo.path == "")
-        throw ModuleLoadException("Cannot open SO file - path not set in module info",
-                                  "modulename", minfo.name);
+    if(spath.size() == 0)
+        throw ModuleLoadException("Cannot open supermodule SO file - path not given");
 
-    ModuleCreationFuncs cf;
+    output::Debug("Loading supermodule %1%\n", spath);
 
-    // see if the module is loaded
-    // if so, reuse that handle
-    if(soinfo_.count(minfo.path) > 0)
-        cf = soinfo_.at(minfo.path).creators;
-    else
+    if(soinfo_.count(spath) == 0)
     {
         // first time loading this so file. Load it, get the
         // creators and run the initialization functions
@@ -85,58 +79,53 @@ ModuleCreationFuncs::Func CppModuleLoader::LoadModule(const ModuleInfo & minfo)
         void * handle;
         char const * error; // for dlerror
 
-        output::Debug("Looking to open so file: %1%\n", minfo.path);
-        handle = dlopen(minfo.path.c_str(), RTLD_NOW | RTLD_GLOBAL);
+        output::Debug("Supermodule not yet loaded. Looking to open C++ supermodule SO file: %1%\n", spath);
+        handle = dlopen(spath.c_str(), RTLD_NOW | RTLD_GLOBAL);
 
         // open the module
         if(!handle)
-            throw ModuleLoadException("Cannot open SO file",
-                                      "path", minfo.path,
-                                      "modulename", minfo.name, "dlerror", std::string(dlerror()));
+            throw ModuleLoadException("Cannot open supermodule SO file - dlopen error",
+                                      "path", spath,
+                                      "dlerror", std::string(dlerror()));
 
-        // 1.) Initialize the supermodule if the function exists
-        InitializeFunc ifn = reinterpret_cast<InitializeFunc>(dlsym(handle, "InitializeSupermodule"));
-        // it's ok if it doesn't exist
-        if((error = dlerror()) != NULL)
-            output::Debug("SO file %1% doesn't have initialization function. Skipping\n", minfo.path);
-        else
-        {
-            output::Debug("Running initialization function in %1%\n", minfo.path);
-            ifn();
-        }
-        
+        output::Success("Successfully opened supermodule %1%\n", spath);
 
-
-        // 2.) Module creator generation
+        // Check for the InsertSupermodule function first (before initializing)
         GeneratorFunc fn = reinterpret_cast<GeneratorFunc>(dlsym(handle, "InsertSupermodule"));
         if((error = dlerror()) != NULL)
         {
             dlclose(handle);
             throw ModuleLoadException("Cannot find InsertSupermodule function in SO file",
-                                      "path", minfo.path, "modulename", minfo.name, "dlerror", error);
+                                      "path", spath, "dlerror", error);
         }
 
-        output::Success("Successfully opened %1%\n", minfo.path);
 
-        cf = fn();
+        // Now initialize the supermodule if the function exists
+        InitializeFunc ifn = reinterpret_cast<InitializeFunc>(dlsym(handle, "InitializeSupermodule"));
 
-        SOInfo soinfo{std::move(handle), std::move(cf)};
+        if((error = dlerror()) != NULL) // it's ok if it doesn't exist
+            output::Debug("SO file %1% doesn't have initialization function. Skipping\n", spath);
+        else
+        {
+            output::Debug("Running initialization function for supermodule %1%\n", spath);
+            ifn();
+        }
+        
 
-        if(soinfo_.count(minfo.path) == 0)
-            soinfo_.emplace(minfo.path, std::move(soinfo)); // only line that modifies this object
+        // get the module creation functions
+        // and put them right in the map
+        soinfo_.emplace(spath, SOInfo{std::move(handle), fn()});  // only line that modifies the object
+
+        output::Debug("Finished loading supermodule %1%\n", spath);
     }
+    else
+        output::Debug("Supermodule %1% has already been loaded\n", spath);
 
-    Assert<ModuleManagerException>(soinfo_.count(minfo.path) == 1, "CppModuleLoader SOInfo doesn't have just-added so file");
+    // just to be safe
+    Assert<ModuleManagerException>(soinfo_.count(spath) == 1, "CppModuleLoader SOInfo doesn't this information...");
 
-    // does this module actually create something with this key?
-    const ModuleCreationFuncs & cf2 = soinfo_.at(minfo.path).creators;
-    if(!cf2.HasCreator(minfo.name))
-        throw ModuleLoadException("Creators from SO file cannot create a module with this name",
-                                  "path", minfo.path, "modulename", minfo.name);
-
-    return cf2.GetCreator(minfo.name);
+    return soinfo_.at(spath).creators;
 }
-
 
 
 } // close namespace modulemanager

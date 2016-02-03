@@ -15,23 +15,13 @@ namespace bpmodule {
 namespace modulemanager {
 
 
-// forward declaration
-struct ModuleInfo;
-
-
-/*! \brief Loads C/C++ modules from an SO file
+/*! \brief A base class for module loaders
  */
 class ModuleLoaderBase
 {
     public:
 
-        /*! Constructor
-         * 
-         * \param [in] mm The module manager to load modules into
-         */
         ModuleLoaderBase() = default;
-
-
         virtual ~ModuleLoaderBase() = default;
 
         ModuleLoaderBase(const ModuleLoaderBase &)             = delete;
@@ -40,7 +30,17 @@ class ModuleLoaderBase
         ModuleLoaderBase & operator=(ModuleLoaderBase &&)      = delete;
 
 
-        virtual ModuleCreationFuncs::Func LoadModule(const ModuleInfo & minfo) = 0;
+        /*! \brief Load a supermodule module
+         *
+         * \throw bpmodule::exception::ModuleLoadException if there
+         *        is a problem (missing function, etc)
+         *
+         * \exbasic
+         *
+         * \param [in] spath The path to the supermodule
+         * \return Functions that is used to create modules in that supermodule
+         */
+        virtual const ModuleCreationFuncs & LoadSupermodule(const std::string & spath) = 0;
 };
 
 } // close namespace modulemanager
