@@ -14,22 +14,6 @@
 #include "bpmodule/datastore/ModuleGraph.hpp"
 
 
-//! \todo pybind11 needs this for the default arguments
-PRAGMA_WARNING_PUSH
-PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS
-namespace pybind11 {
-namespace detail {
-
-    template<>
-    std::string to_string(const bpmodule::datastore::OptionMap & opt)
-    {
-        return "OptionMap()";
-    }
-}
-}
-PRAGMA_WARNING_POP
-
-
 
 using bpmodule::basisset::BasisSet;
 using bpmodule::system::Molecule;
@@ -161,29 +145,23 @@ PYBIND11_PLUGIN(datastore)
     ////////////////////////////////////////
     // CacheData
     // Can just store python object
-    // //! \todo GetCopy and GetRef are equivalent for python
+    //!\todo GetCopy and GetRef are equivalent for python
     ////////////////////////////////////////
     pybind11::class_<CacheData>(m, "CacheData")
     .def("CountKey", &CacheData::CountKey)
     .def("Size", &CacheData::Size)
     .def("GetKeys", &CacheData::GetKeys)
     .def("Erase", &CacheData::Erase)
-    .def("HasKey", &CacheData::HasKeyPy)
-    .def("HasKey", &CacheData::HasKeyPy,
+    .def("HasData", &CacheData::HasData,
                    "See if the cache has some data",
                    pybind11::arg("key"),
                    pybind11::arg("opt") = OptionMap(),
                    pybind11::arg("sigopt") = pybind11::list())
-    .def("GetCopy", &CacheData::GetCopyPy,
-                   "Get a copy of the data", pybind11::return_value_policy::copy,
-                   pybind11::arg("key"),
-                   pybind11::arg("opt") = OptionMap(),
-                   pybind11::arg("sigopt") = pybind11::list())
-    .def("GetRef", &CacheData::GetRefPy, 
-                   "Get reference", pybind11::return_value_policy::reference_internal,
-                   pybind11::arg("key"),
-                   pybind11::arg("opt") = OptionMap(),
-                   pybind11::arg("sigopt") = pybind11::list())
+    .def("Get", &CacheData::GetPy, 
+                "Get reference", pybind11::return_value_policy::reference_internal,
+                pybind11::arg("key"),
+                pybind11::arg("opt") = OptionMap(),
+                pybind11::arg("sigopt") = pybind11::list())
     .def("Set", &CacheData::SetPy, 
                 "Set data",
                 pybind11::arg("key"), 

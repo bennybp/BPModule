@@ -8,21 +8,38 @@
 #ifndef BPMODULE_GUARD_DATASTORE__CACHEDATA_HPP_
 #define BPMODULE_GUARD_DATASTORE__CACHEDATA_HPP_
 
-#include <map>
+#include <unordered_map>
 
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/datastore/GenericHolder.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/datastore/OptionMap.hpp"
 
-//! \todo split out python stuff?
 
 
 namespace bpmodule {
 namespace datastore {
 
-//! \todo docs outdated
-//! \todo printing
+
+/*! Storage of cache data
+ *
+ * Each module gets a CacheData object that is shared between
+ * instantiations. It allows for storage of arbitrary data
+ * mapped to a key, options pair. The options
+ * should be those options used to generate the data but it is generally
+ * left up to the module to determine what that means.
+ *
+ * Functions that take strings for the "significant options"
+ * will compare only options with those keys when finding
+ * or otherwise manipulating data.
+ *
+ * Once data is stored, the data itself should be considered
+ * constant, although this cannot be strictly enforced
+ * in python.
+ *
+ * \todo thread safety
+ * \todo printing
+ */
 class CacheData
 {
     public:
@@ -30,11 +47,17 @@ class CacheData
         virtual ~CacheData(void) = default;
 
 
-        CacheData(const CacheData & rhs)             = delete;
-        CacheData(CacheData && rhs)                  = default;
-        CacheData & operator=(const CacheData & rhs) = delete;
-        CacheData & operator=(CacheData && rhs)      = default;
+        CacheData(const CacheData &)             = delete;
+        CacheData(CacheData &&)                  = default;
+        CacheData & operator=(const CacheData &) = delete;
+        CacheData & operator=(CacheData &&)      = default;
 
+
+       /*! \brief Count the number objects stored for a given key
+        * 
+        * There may be multiple objects stored, since a key can
+        * be stored for several options.
+        */
         size_t CountKey(const std::string & key) const
         {
             return cmap_.count(key);
@@ -44,9 +67,11 @@ class CacheData
         /*! \brief Determine if this object contains data for a key
          *
          * \param [in] key The key to the data
+         * \param [in] opt Options associated with the data.
+         * \param [in] sigopt Options that are significant for the data
          * \return True if the key exists, false otherwise
          */
-        bool HasKey(const std::string & key,
+        bool HasData(const std::string & key,
                     const OptionMap & opt = OptionMap(),
                     const std::vector<std::string> & sigopt = std::vector<std::string>()) const
         {
@@ -58,11 +83,19 @@ class CacheData
         }
 
 
-        bool HasKeyPy(const std::string & key,
+
+        /*! \brief Determine if this object contains data for a key (python version)
+         *
+         * \param [in] key The key to the data
+         * \param [in] opt Options associated with the data.
+         * \param [in] sigopt Options that are significant for the data
+         * \return True if the key exists, false otherwise
+         */
+        bool HasDataPy(const std::string & key,
                       const OptionMap & opt = OptionMap(),
                       pybind11::list sigopt = pybind11::list()) const
         {
-            return HasKey(key, opt, python::ConvertToCpp<std::vector<std::string>>(sigopt));
+            return HasData(key, opt, python::ConvertToCpp<std::vector<std::string>>(sigopt));
         }
 
 
@@ -97,76 +130,62 @@ class CacheData
 
 
 
-        /*! \brief Return a const reference to the underlying data
+        /*! \brief Return the underlying data
          *
-         * \throw bpmodule::exception::DataStoreException
-         *        if the key doesn't exist or 
-         *        is of the wrong type
+         * \throw bpmodule::exception::DataStoreException if key (with the given
+         *        significant options) doesn't exist or is of the wrong type
          *
          * \tparam T The type of the data
          *
          * \param [in] key The key to the data
+         * \param [in] opt Options associated with the data.
+         * \param [in] sigopt Options that are significant for the data
          * \return A const referance to the data
          */
         template<typename T>
-        const T & GetRef(const std::string & key,
-                         const OptionMap & opt = OptionMap(),
-                         const std::vector<std::string> & sigopt = std::vector<std::string>()) const
+        const T & Get(const std::string & key,
+                      const OptionMap & opt = OptionMap(),
+                      const std::vector<std::string> & sigopt = std::vector<std::string>()) const
         {
             const detail::GenericHolder<T> * ph = GetOrThrow_Cast_<T>(key, opt, sigopt);
             return ph->GetRef();
         }
 
 
-        pybind11::object GetRefPy(const std::string & key,
-                                  const OptionMap & opt = OptionMap(),
-                                  pybind11::list sigopt = pybind11::list()) const
-        {
-            return GetRef<pybind11::object>(key, opt,
-                                            python::ConvertToCpp<std::vector<std::string>>(sigopt));
-        }
 
-
-        /*! \brief Return a copy of the underlying data
+        /*! \brief Return the underlying data (python version)
+         * 
+         * Since it actually stores python objects, returning by
+         * copy or reference is undefined.
          *
-         * \throw bpmodule::exception::DataStoreException
-         *        if the key doesn't exist or 
-         *        is of the wrong type
+         * \throw bpmodule::exception::DataStoreException if key (with the given
+         *        significant options) doesn't exist
          *
          * \tparam T The type of the data
          *
          * \param [in] key The key to the data
+         * \param [in] opt Options associated with the data.
+         * \param [in] sigopt Options that are significant for the data
          * \return A copy of the data
          */
-        template<typename T>
-        T GetCopy(const std::string & key, const OptionMap & opt,
-                  const std::vector<std::string> & sigopt) const
-        {
-            return GetRef<T>(key, opt, sigopt);
-        }
-
-
-
-        pybind11::object GetCopyPy(const std::string & key,
+        pybind11::object GetPy(const std::string & key,
                                    const OptionMap & opt = OptionMap(),
                                    pybind11::list sigopt = pybind11::list()) const
         {
-            return GetRef<pybind11::object>(key, opt,
-                                            python::ConvertToCpp<std::vector<std::string>>(sigopt));
+            return Get<pybind11::object>(key, opt,
+                                         python::ConvertToCpp<std::vector<std::string>>(sigopt));
         }
 
 
-        /*! \brief Set the data associated with a given key via copy
+
+        /*! \brief Add data associated with a given key via copy
          * 
-         * If the key exists, the data is overwritten.
-         * Then, the data itself may remain if another CacheData contains the same data
-         * (set via SetRef, etc).
-         *
-         * \exstrong
+         * Keys are not overwritten. Instead, additional keys are inserted
          *
          * \tparam T The type of the data
          *
          * \param [in] key The key to the data
+         * \param [in] opt Options associated with the data.
          * \param [in] value The data to store
          */
         template<typename T>
@@ -178,6 +197,16 @@ class CacheData
 
 
 
+        /*! \brief Set the data associated with a given key (python version)
+         * 
+         * Data is stored as a python object
+         * 
+         * Keys are not overwritten. Instead, additional keys are inserted
+         *
+         * \param [in] key The key to the data
+         * \param [in] opt Options associated with the data.
+         * \param [in] value The data to store
+         */
         void SetPy(const std::string & key, pybind11::object value,
                    const OptionMap & opt = OptionMap())
         {
@@ -186,7 +215,7 @@ class CacheData
 
 
 
-        /*! \brief Set the data associated with a given key via move semantics
+        /*! \brief Add data associated with a given key via move semantics
          * 
          * \copydetails Set
          */
@@ -201,12 +230,7 @@ class CacheData
 
         /*! \brief Remove a key from this data store
          * 
-         * The data itself may remain if another CacheData contains the same data
-         * (set via SetRef, etc).
-         *
          * The key does not have to exist. If the key doesn't exists, nothing will happen.
-         *
-         * \exstrong
          *
          * \param [in] key The key to the data
          * \return The number of elements removed
@@ -229,14 +253,14 @@ class CacheData
          */
         struct CacheDataEntry
         {
+            OptionMap options;                               //! Options used for the data
             std::unique_ptr<detail::GenericBase> value;      //! The stored data
-            OptionMap options;        //! Options used for the data
         };
 
 
 
         //! The container to use to store the data
-        std::multimap<std::string, CacheDataEntry> cmap_;
+        std::unordered_multimap<std::string, CacheDataEntry> cmap_;
 
 
 
@@ -245,45 +269,16 @@ class CacheData
         // Private functions          //
         ////////////////////////////////
 
-        /*! \brief Obtains a CacheDataEntry or throws if key doesn't exist
+        /*! \brief Obtains a CacheDataEntry or throws if data doesn't exist
          * 
-         * \throw bpmodule::exception::DataStoreException if key doesn't exist
-         *
-         * \exstrong
+         * \throw bpmodule::exception::DataStoreException if key (with the given
+         *        significant options) doesn't exist
          *
          * \param [in] key Key of the data to get
+         * \param [in] opt Options associated with the data.
+         * \param [in] sigopt Options that are significant for the data
          * \return CacheDataEntry containing the data for the given key
          */ 
-        CacheDataEntry & GetOrThrow_(const std::string & key,
-                                     const OptionMap & opt,
-                                     const std::vector<std::string> & sigopt)
-        {
-            if(cmap_.count(key))
-            {
-                auto range = cmap_.equal_range(key);
-                for(auto it = range.first; it != range.second; ++it)
-                {
-                    if(sigopt.size())
-                    {
-                        if(opt.CompareSelect(it->second.options, sigopt))
-                            return it->second;
-                    }
-                    else
-                    {
-                        if(opt.Compare(it->second.options))
-                            return it->second;
-                    }
-                }
-
-                throw exception::DataStoreException("Key with these options not found in CacheData", "key", key);
-            }
-            else
-                throw exception::DataStoreException("Key not found in CacheData", "key", key);
-        }
-
-
-
-        //! \copydoc GetOrThrow_
         const CacheDataEntry & GetOrThrow_(const std::string & key,
                                            const OptionMap & opt,
                                            const std::vector<std::string> & sigopt) const
@@ -293,18 +288,14 @@ class CacheData
                 auto range = cmap_.equal_range(key);
                 for(auto it = range.first; it != range.second; ++it)
                 {
-                    if(sigopt.size())
-                    {
-                        if(opt.CompareSelect(it->second.options, sigopt))
-                            return it->second;
-                    }
-                    else
-                    {
-                        if(opt.Compare(it->second.options))
-                            return it->second;
-                    }
+                    if(sigopt.size() == 0 && opt.Compare(it->second.options))
+                        return it->second;
+                    
+                    if(sigopt.size() && opt.CompareSelect(it->second.options, sigopt))
+                        return it->second;
                 }
 
+                // if you got here, it was not found
                 throw exception::DataStoreException("Key with these options not found in CacheData", "key", key);
             }
             else
@@ -316,10 +307,12 @@ class CacheData
 
         /*! \brief Obtains a pointer to a GenericHolder cast to desired type
          * 
-         * \throw bpmodule::exception::DataStoreException if key 
-         *        doesn't exist or if the cast fails.
+         * \throw bpmodule::exception::DataStoreException if key (with the given 
+         *        significant options) doesn't exist or the cast fails.
          *
          * \param [in] key Key of the data to get
+         * \param [in] opt Options associated with the data.
+         * \param [in] sigopt Options that are significant for the data
          * \return detail::GenericHolder containing the data for the given key
          */ 
         template<typename T>
@@ -341,15 +334,14 @@ class CacheData
 
         /*! \brief Sets the data for a given key via a pointer
          * 
-         * \exstrong
-         *
          * \param [in] key Key of the data to set
          * \param [in] value Pointer to the data to set
+         * \param [in] opt Options to be associated with the data
          */ 
         void Set_(const std::string & key, std::unique_ptr<detail::GenericBase> && value, const OptionMap & opt)
         {
             // emplace has strong exception guarantee
-            cmap_.emplace(key, CacheDataEntry{std::move(value), opt});
+            cmap_.emplace(key, CacheDataEntry{opt, std::move(value)});
         }
 
 
