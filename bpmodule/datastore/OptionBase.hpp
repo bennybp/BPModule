@@ -51,12 +51,12 @@ class OptionBase
                    bool required,
                    const std::string & help);
 
-        virtual ~OptionBase() noexcept                  = default;
+        virtual ~OptionBase() noexcept              = default;
 
         // Don't allow copying / assigning
-        OptionBase & operator=(const OptionBase & /*rhs*/)  = delete;
-        OptionBase & operator=(OptionBase && /*rhs*/)       = delete;
-        OptionBase(const OptionBase && /*rhs*/)             = delete;
+        OptionBase & operator=(const OptionBase &)  = delete;
+        OptionBase & operator=(OptionBase &&)       = default;
+        OptionBase(OptionBase &&)                   = default;
 
 
 

@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Loading and storing of C/C++ modules (header)
+ * \brief Loading and storing of C/C++ supermodules (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
@@ -8,14 +8,21 @@
 #ifndef BPMODULE_GUARD_MODULEMANAGER__CPPMODULELOADER_HPP_
 #define BPMODULE_GUARD_MODULEMANAGER__CPPMODULELOADER_HPP_
 
+#include <unordered_map>
+
 #include "bpmodule/modulemanager/ModuleLoaderBase.hpp"
+#include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
 
 
 namespace bpmodule {
 namespace modulemanager {
 
 
-/*! \brief Loads C/C++ modules from an SO file
+/*! \brief Loader for C++ supermodules
+ *
+ * This loader loads supermodules for C++ modules from a
+ * shared object module (.so) file. Handles and creation functions
+ * are cached and closed at destruction.
  */
 class CppModuleLoader : public ModuleLoaderBase
 {
@@ -28,17 +35,20 @@ class CppModuleLoader : public ModuleLoaderBase
          *
          * Deletes all objects and closes all SO file handles
          */
-        ~CppModuleLoader();
+        virtual ~CppModuleLoader();
+
 
         CppModuleLoader(const CppModuleLoader &)             = delete;
-        CppModuleLoader(CppModuleLoader &&)                  = delete;
         CppModuleLoader & operator=(const CppModuleLoader &) = delete;
-        CppModuleLoader & operator=(CppModuleLoader &&)      = delete;
+        CppModuleLoader(CppModuleLoader &&)                  = default;
+        CppModuleLoader & operator=(CppModuleLoader &&)      = default;
+
 
         virtual const ModuleCreationFuncs & LoadSupermodule(const std::string & spath);
 
+
     private:
-        //! Holds information about a module so file
+        //! Holds information about a supermodule so file
         struct SOInfo
         {
             void * handle;                //!< Handle returned from dlopen

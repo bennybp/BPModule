@@ -6,9 +6,7 @@
 
 #include "bpmodule/python/Pybind11_functional.hpp"
 
-// Various components
 #include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/modulemanager/CppModuleLoader.hpp"
 
 using bpmodule::modulebase::ModuleBase;
 
@@ -41,8 +39,7 @@ PYBIND11_PLUGIN(modulemanager)
 
 
     //////////////////////////
-    // Main ModuleManager and
-    // module loaders
+    // Main ModuleManager
     //////////////////////////
     pybind11::class_<ModuleManager>(m, "ModuleManager")
     .def(pybind11::init<>())
