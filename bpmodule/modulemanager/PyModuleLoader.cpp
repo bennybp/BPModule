@@ -1,3 +1,10 @@
+/*! \file
+ *
+ * \brief Loading and storing of Python supermodules (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
+
 #include "bpmodule/modulemanager/PyModuleLoader.hpp"
 #include "bpmodule/util/Filesystem.hpp"
 #include "bpmodule/output/Output.hpp"
@@ -19,7 +26,7 @@ PyModuleLoader::~PyModuleLoader()
         it.second.creators.Clear();
 
     // close all the handles
-    for(auto it : objmap_)
+    for(auto & it : objmap_)
     {
         output::Output("Looking to close python supermodule %1%\n", it.first);
 

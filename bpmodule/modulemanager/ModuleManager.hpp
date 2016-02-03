@@ -262,7 +262,7 @@ class ModuleManager
          *
          * \todo replace with something?
          */
-        std::map<unsigned long, datastore::ModuleGraphNode> mgraphmap_;
+        std::unordered_map<unsigned long, datastore::ModuleGraphNode> mgraphmap_;
 
 
         //! The id to assign to the next created module

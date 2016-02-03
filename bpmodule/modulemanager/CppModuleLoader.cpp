@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Loading and storing of C/C++ modules (source)
+ * \brief Loading and storing of C/C++ supermodules (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
@@ -29,7 +29,7 @@ CppModuleLoader::~CppModuleLoader()
         it.second.creators.Clear();
 
     // close all the handles
-    for(auto it : soinfo_)
+    for(auto & it : soinfo_)
     {
         void * handle = it.second.handle;
 

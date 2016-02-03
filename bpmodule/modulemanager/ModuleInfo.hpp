@@ -15,18 +15,18 @@
 namespace bpmodule {
 namespace modulemanager {
 
-/*! \brief Structure that stores information about a loaded module
+/*! \brief Structure that stores information about a module
  */
 struct ModuleInfo
 {
     std::string name;                  //!< Some descriptive name for the module
     std::string type;                  //!< Type of the module (c_module, python_module, etc)
-    std::string path;                  //!< Path for the module (not including the filename for an so file)
+    std::string path;                  //!< Full path for the module (including the filename for an SO file)
     std::string version;               //!< Arbitrary version string
     std::string description;           //!< A description of the module
     std::vector<std::string> authors;  //!< Authors of the module
     std::vector<std::string> refs;     //!< References for the module (articles, web pages, etc)
-    datastore::OptionMap options;        //!< Options for the module
+    datastore::OptionMap options;      //!< Options for the module
 
 
     /*! \brief Print out this info
