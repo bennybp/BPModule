@@ -28,11 +28,9 @@ PYBIND11_PLUGIN(modulemanager)
     pybind11::class_<ModuleInfo>(m, "ModuleInfo")
     .def(pybind11::init<>())
     .def("Print", &ModuleInfo::Print)
-    .def_readwrite("key", &ModuleInfo::key)
     .def_readwrite("name", &ModuleInfo::name)
     .def_readwrite("type", &ModuleInfo::type)
     .def_readwrite("path", &ModuleInfo::path)
-    .def_readwrite("soname", &ModuleInfo::soname)
     .def_readwrite("version", &ModuleInfo::version)
     .def_readwrite("description", &ModuleInfo::description)
     .def_readwrite("authors", &ModuleInfo::authors)
@@ -48,24 +46,19 @@ PYBIND11_PLUGIN(modulemanager)
     //////////////////////////
     pybind11::class_<ModuleManager>(m, "ModuleManager")
     .def(pybind11::init<>())
-    .def("InsertModule", &ModuleManager::InsertModule)
+    .def("LoadModuleFromModuleInfo", &ModuleManager::LoadModuleFromModuleInfo)
     .def("Size", &ModuleManager::Size)
-    .def("GetModuleKeys", &ModuleManager::GetModuleKeys)
+    .def("AddKey", &ModuleManager::AddKey)
+    .def("ReplaceKey", &ModuleManager::ReplaceKey)
     .def("ModuleKeyInfo", &ModuleManager::ModuleKeyInfo)
+    .def("ModuleNameInfo", &ModuleManager::ModuleNameInfo)
     .def("PrintInfo", &ModuleManager::PrintInfo)
-    .def("Has", &ModuleManager::Has)
+    .def("HasKey", &ModuleManager::HasKey)
+    .def("HasName", &ModuleManager::HasName)
     .def("TestAll", &ModuleManager::TestAll)
-    .def("ClearCache", &ModuleManager::ClearCache)
-    .def("ClearStore", &ModuleManager::ClearStore)
     .def("GetModule", &ModuleManager::GetModulePy)
     .def("ChangeOption", &ModuleManager::ChangeOptionPy)
     .def("DotGraph", &ModuleManager::DotGraph)
-    ;
-
-
-    pybind11::class_<CppModuleLoader>(m, "CppModuleLoader")
-    .def(pybind11::init<ModuleManager *>())
-    .def("LoadSO", &CppModuleLoader::LoadSO)
     ;
 
 
@@ -85,7 +78,6 @@ PYBIND11_PLUGIN(modulemanager)
     .def(pybind11::init<>())
     .def("AddPyCreator", &ModuleCreationFuncs::AddPyCreator)
     .def("HasCreator", &ModuleCreationFuncs::HasCreator)
-    .def("GetCreator", &ModuleCreationFuncs::GetCreator)
     ;
 
     return m.ptr();

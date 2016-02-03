@@ -62,6 +62,13 @@ class ModuleCreationFuncs
             return creators_.at(modulename);
         }
 
+
+        void Clear(void)
+        {
+            creators_.clear();
+        }
+
+
     private:
 
         std::map<std::string, Func> creators_;

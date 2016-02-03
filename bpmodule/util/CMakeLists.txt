@@ -4,6 +4,7 @@ set(BPMODULE_UTIL_FILES
             StringUtil.cpp 
             FormatString.cpp
             Mangle.cpp
+            Filesystem.cpp
             export.cpp
    )
 

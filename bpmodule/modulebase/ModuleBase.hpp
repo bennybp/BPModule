@@ -224,7 +224,7 @@ class ModuleBase
                 try {
                     return python::CallPyFunc<R>(overload, std::forward<Targs>(args)...);
                 }
-                catch(exception::PythonCallException & /*ex*/)
+                catch(exception::PythonCallException &)
                 {
                     //ex.AppendInfo("vfunc", name);
                     throw;

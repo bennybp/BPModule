@@ -44,7 +44,7 @@ Ret CallPyFunc(pybind11::object & obj, Targs... Fargs)
     try {
         ret = obj.call(Fargs...);
     }
-    catch(const std::exception & /*ex*/)
+    catch(const std::exception &)
     {
         std::string what = detail::GetPyException();
         throw PythonCallException(what, "from", "within a python function");
