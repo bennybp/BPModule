@@ -10,7 +10,7 @@
 
 #include <memory>
 
-#include "bpmodule/modulelocator/ModuleInfo.hpp"
+#include "bpmodule/modulemanager/ModuleInfo.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 
 
@@ -20,8 +20,9 @@ namespace datastore {
 
 struct ModuleGraphNodeData
 {
+    std::string modulekey;
     datastore::Wavefunction wfn;
-    modulelocator::ModuleInfo minfo;
+    modulemanager::ModuleInfo minfo;
 };
 
 
@@ -30,7 +31,7 @@ typedef std::shared_ptr<ModuleGraphNodeData> ModuleGraphNode;
 
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 
 

@@ -32,14 +32,14 @@ def Run(mm):
       b2 = mm.GetModule("TESTPYMOD1", 0)
 
       try:
-        b1.CallThrow("TestModule1")
+        b1.CallThrow("TESTMOD1")
         bp.output.Output("\n")
       except Exception as e:
         bp.output.Warning(str(e))
         bp.output.Output("\n\n")
 
       try:
-        b1.CallThrow("TestPyModule1")
+        b1.CallThrow("TESTPYMOD1")
         bp.output.Output("\n")
       except Exception as e:
         bp.output.Warning(str(e))
@@ -47,14 +47,14 @@ def Run(mm):
    
     
       try:
-        b2.CallThrow("TestModule1")
+        b2.CallThrow("TESTMOD1")
         bp.output.Output("\n")
       except Exception as e:
         bp.output.Warning(str(e))
         bp.output.Output("\n\n")
 
       try:
-        b2.CallThrow("TestPyModule1")
+        b2.CallThrow("TESTPYMOD1")
         bp.output.Output("\n")
       except Exception as e:
         bp.output.Warning(str(e))
@@ -75,7 +75,7 @@ def Run(mm):
 
 bp.Init(sys.argv, out = "stdout", color = True, debug = True)
 
-with bp.ModuleManager() as mm:
+with bp.ModuleAdministrator() as mm:
     Run(mm)
 
 bp.Finalize()

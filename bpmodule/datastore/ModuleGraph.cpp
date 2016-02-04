@@ -18,6 +18,6 @@ template class LibGraph::Graph<ModuleGraphNode>;
 
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 

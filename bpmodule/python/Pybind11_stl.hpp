@@ -43,8 +43,8 @@ public:
     static handle cast(const type &src, return_value_policy policy, handle parent) {
         list l(src.size());
         size_t index = 0;
-        for (auto const &value: src) {
-            object value_ = object(value_conv::cast(value, policy, parent), false);
+        for (auto const &value2: src) {
+            object value_ = object(value_conv::cast(value2, policy, parent), false);
             if (!value_)
                 return handle();
             PyList_SET_ITEM(l.ptr(), index++, value_.release().ptr()); // steals a reference

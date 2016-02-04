@@ -39,9 +39,11 @@ message(STATUS "Using math libraries: ${BPMODULE_MATH_LIBS}")
 #############
 set(Python_ADDITIONAL_VERSIONS "3.3;3.4;3.5;3.6")
 find_package(PythonLibs "3.3" REQUIRED)
-find_package(PythonInterp "3.3" REQUIRED)
+find_package(PythonInterp ${PYTHONLIBS_VERSION_STRING} EXACT REQUIRED)
+message(STATUS "Python version: ${PYTHONLIBS_VERSION_STRING}")
 message(STATUS "Python libs: ${PYTHON_LIBRARIES}")
 message(STATUS "Python include: ${PYTHON_INCLUDE_DIRS}")
+message(STATUS "Python executable: ${PYTHON_EXECUTABLE}")
 
 
 #################################

@@ -11,7 +11,7 @@
 #include <string>
 
 #include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/modulelocator/ModuleLocator.hpp"
+#include "bpmodule/modulemanager/ModuleManager.hpp"
 #include "bpmodule/util/FormatString.hpp"
 #include "bpmodule/python/Call.hpp"
 
@@ -133,7 +133,7 @@ class ModuleBase
         /*! \brief Create a module that is a child of this one
          */ 
         template<typename T>
-        modulelocator::ModulePtr<T> CreateChildModule(const std::string & key) const
+        modulemanager::ModulePtr<T> CreateChildModule(const std::string & key) const
         {
             return mlocator_->GetModule<T>(key, id_);
         }
@@ -149,11 +149,11 @@ class ModuleBase
 
 
     protected:
-        /*! \brief Get the internal ModuleLocator that is in charge of this module
+        /*! \brief Get the internal ModuleManager that is in charge of this module
          *
          * \throw std::logic_error if it hasn't been set
          */
-        modulelocator::ModuleLocator & MLocator(void) const;
+        modulemanager::ModuleManager & MManager(void) const;
 
 
 
@@ -224,7 +224,7 @@ class ModuleBase
                 try {
                     return python::CallPyFunc<R>(overload, std::forward<Targs>(args)...);
                 }
-                catch(exception::PythonCallException & /*ex*/)
+                catch(exception::PythonCallException &)
                 {
                     //ex.AppendInfo("vfunc", name);
                     throw;
@@ -248,8 +248,8 @@ class ModuleBase
 
 
     private:
-        // allow ModuleLocator to set up the pointers
-        friend class modulelocator::ModuleLocator;
+        // allow ModuleManager to set up the pointers
+        friend class modulemanager::ModuleManager;
 
 
 
@@ -261,8 +261,8 @@ class ModuleBase
         const char * modtype_;
 
 
-        //! The ModuleLocator in charge of this module
-        modulelocator::ModuleLocator * mlocator_;
+        //! The ModuleManager in charge of this module
+        modulemanager::ModuleManager * mlocator_;
 
         //! My graph node
         datastore::ModuleGraphNode * graphnode_;
@@ -279,19 +279,19 @@ class ModuleBase
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        modulelocator::ModuleInfo & MInfo_(void);
+        modulemanager::ModuleInfo & MInfo_(void);
 
 
         /*! \brief Get all module information from the graph node
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        const modulelocator::ModuleInfo & MInfo_(void) const;
+        const modulemanager::ModuleInfo & MInfo_(void) const;
 
 
         /*! \brief Set the mlocator_ pointer
          */
-        void SetMLocator_(modulelocator::ModuleLocator * mloc) noexcept;
+        void SetMManager_(modulemanager::ModuleManager * mloc) noexcept;
 
 
         /*! \brief Set the graph node pointer

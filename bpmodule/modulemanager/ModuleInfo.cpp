@@ -5,12 +5,12 @@
  */
 
 
-#include "bpmodule/modulelocator/ModuleInfo.hpp"
+#include "bpmodule/modulemanager/ModuleInfo.hpp"
 #include "bpmodule/output/Output.hpp"
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
 
 
 void ModuleInfo::Print(void) const
@@ -18,12 +18,8 @@ void ModuleInfo::Print(void) const
     output::Output("\n");
     output::Output("  ++ Module: %1%\n", name);
     output::Output("         Version: %1%\n", version);
-    output::Output("             Key: %1%\n", key);
     output::Output("            Type: %1%\n", type);
     output::Output("            Path: %1%\n", path);
-
-    if(soname.size())
-        output::Output("          SOName: %1%\n", soname);
 
     output::Output("     Description: %1%\n", description);
 
@@ -42,6 +38,6 @@ void ModuleInfo::Print(void) const
 
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 

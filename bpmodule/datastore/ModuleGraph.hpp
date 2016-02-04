@@ -28,7 +28,7 @@ typedef LibGraph::Graph<ModuleGraphNode> ModuleGraph;
       
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 
 

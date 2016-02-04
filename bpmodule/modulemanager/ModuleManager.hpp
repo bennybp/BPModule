@@ -5,8 +5,8 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULELOCATOR__MODULELOCATOR_HPP_
-#define BPMODULE_GUARD_MODULELOCATOR__MODULELOCATOR_HPP_
+#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
+#define BPMODULE_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
 
 #include <unordered_map>
 #include <atomic>
@@ -14,13 +14,17 @@
 #include "bpmodule/datastore/ModuleGraph.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/modulelocator/ModuleCreationFuncs.hpp"
-#include "bpmodule/modulelocator/ModulePtr.hpp"
+#include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
+#include "bpmodule/modulemanager/ModulePtr.hpp"
 
 
 
 namespace bpmodule {
-namespace modulelocator {
+namespace modulemanager {
+
+
+// forward declaration
+class ModuleLoaderBase;
 
 
 
@@ -28,18 +32,18 @@ namespace modulelocator {
  *
  * Holds loaded modules for later use
  */
-class ModuleLocator
+class ModuleManager
 {
     public:
-        ModuleLocator();
-        ~ModuleLocator();
+        ModuleManager();
+        ~ModuleManager();
 
 
         // no copy construction or assignment
-        ModuleLocator(const ModuleLocator & rhs)             = delete;
-        ModuleLocator(ModuleLocator && rhs)                  = delete;
-        ModuleLocator & operator=(const ModuleLocator & rhs) = delete;
-        ModuleLocator & operator=(ModuleLocator && rhs)      = delete;
+        ModuleManager(const ModuleManager & rhs)             = delete;
+        ModuleManager(ModuleManager && rhs)                  = delete;
+        ModuleManager & operator=(const ModuleManager & rhs) = delete;
+        ModuleManager & operator=(ModuleManager && rhs)      = delete;
 
 
         /*! \brief Returns the number of modules in the database
@@ -49,19 +53,24 @@ class ModuleLocator
         size_t Size(void) const noexcept;
 
 
-        /*! \brief Returns the keys for all modules in the database
-         */
-        std::vector<std::string> GetModuleKeys(void) const;
-
-
         /*! \brief Returns the information about a module with a given module key
          *
-         * \throw bpmodule::exception::ModuleLocatorException
-         *        if the module key doesn't exist in the database
+         * \throw bpmodule::exception::ModuleManagerException
+         *        if the module key or its associated name doesn't exist in the database
          *
          * \param [in] modulekey A module key
          */
-        ModuleInfo ModuleKeyInfo(const std::string & modulekeykey) const;
+        ModuleInfo ModuleKeyInfo(const std::string & modulekey) const;
+
+
+        /*! \brief Returns the information about a module with a given module name
+         *
+         * \throw bpmodule::exception::ModuleManagerException
+         *        if the module name doesn't exist in the database
+         *
+         * \param [in] modulekey A module key
+         */
+        ModuleInfo ModuleNameInfo(const std::string & modulename) const;
 
 
         
@@ -75,7 +84,41 @@ class ModuleLocator
          * \param [in] modulekey A module key
          * \return True if the key exists in the map, false if it doesn't
          */
-        bool Has(const std::string & modulekey) const;
+        bool HasKey(const std::string & modulekey) const;
+
+
+        /*! \brief Returns true if a module with the given module name exists in the database
+         *
+         * \param [in] modulename Name of the module
+         * \return True if the name exists in the map, false if it doesn't
+         */
+        bool HasName(const std::string & modulename) const;
+
+
+
+        /*! \brief Associates a key with a given module name
+         * 
+         * \throw bpmodule::exception::ModuleManagerException
+         *        if the module key already exists or if a module with the given
+         *        name doesn't exist
+         *
+         * \param [in] modulekey The key to be used
+         * \param [in] modulename The name of the module to be associated with \p key
+         */
+        void AddKey(const std::string & modulekey, const std::string & modulename);
+
+
+        /*! \brief Associates or re-associates a key with a given module name
+         * 
+         * Will overwrite if the key already exists
+         *
+         * \throw bpmodule::exception::ModuleManagerException
+         *        if a module with the given name doesn't exist
+         *
+         * \param [in] modulekey The key to be used
+         * \param [in] modulename The name of the module to be associated with \p key
+         */
+        void ReplaceKey(const std::string & modulekey, const std::string & modulename);
 
 
 
@@ -96,7 +139,7 @@ class ModuleLocator
 
         /*! \brief Return a new module object wrapped in an RAII-style scoping object
          *
-         * \throw bpmodule::exception::ModuleLocatorException
+         * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
          * \throw bpmodule::exception::ModuleCreateException if there are other
@@ -129,7 +172,7 @@ class ModuleLocator
 
         /*! \brief Retrieve a module as a python object
          * 
-         * \throw bpmodule::exception::ModuleLocatorException
+         * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
          * \throw bpmodule::exception::ModuleCreateException if there are other
@@ -141,24 +184,6 @@ class ModuleLocator
          * \return The module wrapped in a python object
          */
         pybind11::object GetModulePy(const std::string & modulekey, unsigned long parentid);
-
-
-
-
-        /*! \brief Clears all entries in the cache and performs some cleanup
-         * 
-         * Must be run before unloading SOs
-         */
-        void ClearCache(void);
-
-
-        /*! \brief Clears all entries in the module store
-         *
-         * Must be run before unloading SOs
-         */
-        void ClearStore(void);
-
-
 
 
 
@@ -187,14 +212,17 @@ class ModuleLocator
         /*! \brief Adds/inserts a module creator to the database
          *
          * \throw bpmodule::exception::ModuleLoaderException if the key
-         *        already exists in the database
+         *        already exists in the database or if \p mc doesn't
+         *        contain a creator for the given module name (in \p mi)
          *
-         * \param [in] modulekey A module key
-         * \param [in] func A function that generates the module
-         * \param [in] dfunc A function that deletes the module
+         *  \note We pass all module creation funcs. This is so we
+         *        don't need to export IMPL holders to pybind11 
+         *
+         * \param [in] mc Functions for creating modules
          * \param [in] mi Information about the module
          */
-        void InsertModule(const ModuleCreationFuncs & cf, const ModuleInfo & mi);
+        void LoadModuleFromModuleInfo(const ModuleInfo & minfo);
+
 
 
     private:
@@ -208,9 +236,19 @@ class ModuleLocator
         };
 
 
-        /*! \brief Actual storage object - maps module keys to creation functions
+        /*! \brief Handlers for different module types
+         */   
+        std::unordered_map<std::string, std::unique_ptr<ModuleLoaderBase>> loadhandlers_;
+
+
+        /*! \brief Actual storage object - maps module names to creation functions
          */
         std::unordered_map<std::string, StoreEntry> store_;
+
+
+        /*! \brief Stores map of keys to module names
+         */
+        std::unordered_map<std::string, std::string> keymap_;
 
 
         /*! \brief Map for storing created module information
@@ -224,7 +262,7 @@ class ModuleLocator
          *
          * \todo replace with something?
          */
-        std::map<unsigned long, datastore::ModuleGraphNode> mgraphmap_;
+        std::unordered_map<unsigned long, datastore::ModuleGraphNode> mgraphmap_;
 
 
         //! The id to assign to the next created module
@@ -238,15 +276,37 @@ class ModuleLocator
         std::unordered_map<std::string, datastore::CacheData> cachemap_;
 
 
-        /*! \brief Obtain a module or throw exception
-         *
-         * \throw bpmodule::exception::ModuleLocatorException
+        /*! \brief Obtain the module name for a key or throw an exception
+         * 
+         * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist
+         */
+        std::string GetOrThrowKey_(const std::string & modulekey) const;
+
+
+        /*! \brief Obtain stored internal info for a module (via name) or throw an exception
+         *
+         * \throw bpmodule::exception::ModuleManagerException
+         *        if the name doesn't exist
+         *
+         * \param [in] modulename Name of the module
+         */
+        const StoreEntry & GetOrThrowName_(const std::string & modulename) const;
+
+
+        /*! \copydoc GetOrThrowName_
+         */ 
+        StoreEntry & GetOrThrowName_(const std::string & modulename);
+
+
+        /*! \brief Obtain stored internal info for a module (via key) or throw an exception
+         *
+         * \throw bpmodule::exception::ModuleManagerException
+         *        if the key or name doesn't exist
          *
          * \param [in] modulekey A module key
          */
         const StoreEntry & GetOrThrow_(const std::string & modulekey) const;
-
 
 
         /*! \copydoc GetOrThrow_
@@ -254,9 +314,10 @@ class ModuleLocator
         StoreEntry & GetOrThrow_(const std::string & modulekey);
 
 
-        /*! \brief Create a module and its deleter functor
+
+        /*! \brief Create a module via its creator function
          * 
-         * \throw bpmodule::exception::ModuleLocatorException
+         * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
          * \throw bpmodule::exception::ModuleCreateException if there are other
@@ -277,7 +338,7 @@ class ModuleLocator
 
 
 
-} // close namespace modulelocator
+} // close namespace modulemanager
 } // close namespace bpmodule
 
 

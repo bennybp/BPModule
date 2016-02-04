@@ -18,7 +18,7 @@ from . import exception
 
 # TODO - can we get some order that will work with RTLD_NOW?
 # Probably not - there are circular dependencies
-# (modulelocator and modulebase, for example)
+# (modulemanager and modulebase, for example)
 from . import python
 from . import util
 from . import output
@@ -27,7 +27,7 @@ from . import datastore
 from . import math
 from . import tensor
 from . import modulebase
-from . import modulelocator
+from . import modulemanager
 from . import system
 from . import basisset
 
@@ -42,7 +42,7 @@ sys.setdlopenflags(olddl)
 # Load other python stuff from this directory
 ##########################################
 from .modulecheck import *
-from .ModuleManager import *
+from .ModuleAdministrator import *
 
 
 
@@ -74,10 +74,10 @@ def Init(argv, out = "stdout", color = True, debug = False):
   # Set some info about the base module and
   # print it
   # Also, set some options (currently unused)
-  for name,minfo in modulelocator.minfo.items():
+  for name,minfo in modulemanager.minfo.items():
       minfo["name"] = name
       minfo["key"] = "CORE"
-      minfo["path"] = os.path.dirname(modulelocator.__file__) + "/"
+      minfo["path"] = os.path.dirname(modulemanager.__file__) + "/"
 
 
 
