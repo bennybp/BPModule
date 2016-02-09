@@ -9,26 +9,7 @@
 
 namespace bpmodule {
 namespace system {
-/*
-class Molecule: 
-public math::MathSet<Atom,math::PointStorage<Atom>>{
-private:
-    ///The charge of the molecule
-    double Charge_;
-public:
-    Molecule():Charge_(0.0){}
-    void AddAtom(const Atom& A);
-    std::string ToString()const;
-    
-    double Charge()const noexcept{return Charge_;}
-    
-    void SetCharge(double Q){Charge_=Q;}
-};
 
-inline std::ostream& operator<<(std::ostream& os,const Molecule& Mol){
-    return os<<Mol.ToString();
-}
-*/
 
 class Molecule
 {
@@ -37,6 +18,7 @@ class Molecule
         std::vector<Atom> atoms_;
 
         double charge_;
+        double nelectrons_;
 
     public:
         typedef std::vector<Atom>::iterator       iterator;
@@ -52,21 +34,21 @@ class Molecule
         Molecule & operator=(Molecule && rhs)      = default;
 
 
-        void AddAtom(int Z, CoordType xyz);
-
-        Atom & GetAtom(int i);
-        const Atom & GetAtom(int i) const;
+        Atom GetAtom(size_t i) const;
+        void SetAtom(size_t i, const Atom & a);
+        void AddAtom(const Atom & a);
 
         int NAtoms(void) const noexcept;
+
+
+        // Some molecule properties
+        double GetCharge(void) const;
+        double GetNElectrons(void) const;
 
 
         // Iteration over all atoms
         const_iterator begin(void) const;
         const_iterator end(void) const;
-
-        // Some molecule properties
-        double Charge(void) const noexcept { return charge_; } 
-        void SetCharge(double charge) noexcept { charge_ = charge; }
 
 
 };

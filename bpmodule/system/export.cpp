@@ -68,46 +68,49 @@ PYBIND11_PLUGIN(system)
     m.def("AtomicMultiplicityFromSym", AtomicMultiplicityFromSym);
 
 
-    /* Atom structure
-    pybind11::class_<Atom>(m, "Atom")
-    .def_readwrite("id", &Atom::id)
-    .def_readwrite("z", &Atom::z)
-    .def_readwrite("isonum", &Atom::isonum)
-    .def_readwrite("xyz", &Atom::xyz)
-    .def("Mass", &Atom::Mass)
-    .def("Name", &Atom::Name)
-    .def("Symbol", &Atom::Symbol)
+    // Atom class
+    pybind11::class_<Atom>(m, "Atom", pybind11::base<math::Point>())
+    .def("GetID", &Atom::GetID)
+    .def("SetID", &Atom::SetID)
+    .def("GetZ", &Atom::GetZ)
+    .def("SetZ", &Atom::SetZ)
+    .def("GetIsonum", &Atom::GetIsonum)
+    .def("SetIsonum", &Atom::SetIsonum)
+    .def("GetMass", &Atom::GetMass)
+    .def("SetMass", &Atom::SetMass)
+    .def("GetIsotopeMass", &Atom::GetIsotopeMass)
+    .def("SetIsotopeMass", &Atom::SetIsotopeMass)
+    .def("GetCharge", &Atom::GetCharge)
+    .def("SetCharge", &Atom::SetCharge)
+    .def("GetMultiplicity", &Atom::GetMultiplicity)
+    .def("SetMultiplicity", &Atom::SetMultiplicity)
+    .def("GetNElectrons", &Atom::GetNElectrons)
+    .def("SetNElectrons", &Atom::SetNElectrons)
+    .def("GetName", &Atom::GetName)
+    .def("GetSymbol", &Atom::GetSymbol)
     ;
-    */
-    
-    /*pybind11::class_<Atom>(m,"Atom")
-    .def(pybind11::init<int,double,double,double>())
-    .def("Z",&Atom::Z,"Returns the atomic number")
-    .def("Symbol",&Atom::Symbol,"Returns the atomic symbol")
-    .def("Mass",&Atom::Mass,"Returns the mass")
-    .def("Charge",&Atom::Charge,"Returns the charge")
-    .def("Mult",&Atom::Mult,"Returns the multiplicity")
-    .def("NElec",&Atom::NElec,"Returns the number of electrons")
-    .def("SetMass",&Atom::SetMass,"Sets the mass of the atom")
-    .def("SetChargeAndMult",&Atom::SetChargeAndMult,
-            "Sets the charge and multiplicity")
-    .def("SetNElec",&Atom::SetNElec,"Sets the number of electrons")
-    .def("__str__",&Atom::ToString,"Prints the atom out");
+   
 
-            
+    // Atom creators
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int, int)>(CreateAtom));
+
+
+    // Main molecule class 
     pybind11::class_<Molecule>(m,"Molecule")
     .def(pybind11::init<>())
+    .def(pybind11::init<const Molecule &>())
+    .def("GetAtom",&Molecule::GetAtom)
+    .def("SetAtom",&Molecule::SetAtom)
     .def("AddAtom",&Molecule::AddAtom)
-    .def("__str__",&Molecule::ToString);        
-            
-    /* Molecule class
-    pybind11::class_<Molecule>(m, "Molecule")
-    .def(pybind11::init<>())
-    .def("AddAtom", &Molecule::AddAtom)
-    .def("GetAtom", &Molecule::GetAtom)
-    .def("NAtoms", &Molecule::NAtoms)
-    ;*/
-
+    .def("NAtoms",&Molecule::AddAtom)
+    .def("GetCharge",&Molecule::GetCharge)
+    .def("GetNElectrons",&Molecule::GetNElectrons)
+    ;
+    
+        
     return m.ptr();
 }
 

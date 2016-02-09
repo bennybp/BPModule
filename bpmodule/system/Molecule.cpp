@@ -11,28 +11,41 @@ Molecule::Molecule(void)
 }
 
 
-void Molecule::AddAtom(int Z, CoordType xyz)
-{
-    Atom a(curid_, Z, xyz);
-    atoms_.push_back(Atom(curid_, Z, xyz));
-    curid_++;
-}
-
-
 //! \todo wrap exceptions
-Atom & Molecule::GetAtom(int i)
+Atom Molecule::GetAtom(size_t i) const
 {
     return atoms_.at(i);
 }
 
-const Atom & Molecule::GetAtom(int i) const
+void Molecule::SetAtom(size_t i, const Atom & a)
 {
-    return atoms_.at(i);
+    atoms_.at(i) = a;
+    charge_ += a.GetCharge();
+    nelectrons_ += a.GetNElectrons();
+}
+
+void Molecule::AddAtom(const Atom & a)
+{
+    Atom toappend(a);
+    toappend.SetID(curid_++);
+    atoms_.push_back(toappend);
 }
 
 int Molecule::NAtoms(void) const noexcept
 {
     return static_cast<int>(atoms_.size());
+}
+
+double Molecule::GetCharge(void) const
+{
+    return std::accumulate(this->begin(), this->end(), static_cast<double>(0.0),
+                           [](double sum, const Atom & a) { return sum + a.GetCharge(); });
+}
+
+double Molecule::GetNElectrons(void) const
+{
+    return std::accumulate(this->begin(), this->end(), static_cast<double>(0.0),
+                           [](double sum, const Atom & a) { return sum + a.GetNElectrons(); });
 }
 
 

@@ -5,7 +5,6 @@
 #include <string>
 #include "bpmodule/math/Point.hpp"
 #include "bpmodule/math/Cast.hpp"
-#include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/util/Enumeration.hpp"
 
 namespace bpmodule {
@@ -14,8 +13,10 @@ namespace system {
 
 enum class AtomWeights
 {
-    Mass,
     Z,
+    IsotopeNumber,
+    Mass,
+    IsotopeMass,
     Charge,
     Multiplicity,
     NElectrons,
@@ -35,27 +36,18 @@ class Atom : public math::WeightedPoint<AtomWeights>
 
     public:
         //! Constructor
-        Atom(size_t id, int Z, CoordType xyz)
+        Atom(size_t id, CoordType xyz, int Z, int isonum,
+             double mass, double isotopemass, double q, double mult, double nelec)
             : Point_t(xyz), id_(id)
         {
             SetZ(Z);
-            SetIsonum(MostCommonIsotopeFromZ(Z));
-            SetMass(AtomicMassFromZ(Z));
-            SetMultiplicity(AtomicMultiplicityFromZ(Z));
-            SetNElectrons(Z);
-            SetCharge(0);
+            SetIsonum(isonum);
+            SetMass(mass);
+            SetIsotopeMass(isotopemass);
+            SetCharge(q);
+            SetMultiplicity(mult);
+            SetNElectrons(nelec);
         }
-
-
-        //! Constructor with coordinates separated
-        Atom(size_t id, int Z, double x, double y, double z)
-            : Atom(id, Z, {x,y,z})
-        { }
-
-
-        //! Default constructor
-        Atom() : Atom(0, 0, {0, 0, 0})  { }
-
 
 
         //! ID of this atom
@@ -69,22 +61,29 @@ class Atom : public math::WeightedPoint<AtomWeights>
         int GetZ(void) const noexcept { return Z_; }
         void SetZ(int Z) noexcept
         {
-            // set the integer and the weight
             Z_ = Z;
-
-            //! \todo Replace with other exact cast?
             Point_t::Weight(AtomWeights::Z) = math::numeric_cast<double>(Z);
         }
 
 
         //! Isotope number
         int GetIsonum(void) const noexcept { return isonum_; }
-        void SetIsonum(int isonum) noexcept { isonum_ = isonum; }
+        void SetIsonum(int isonum) noexcept
+        {
+            isonum_ = isonum;
+            Point_t::Weight(AtomWeights::IsotopeNumber) = math::numeric_cast<double>(isonum);
+        }
 
 
         //! Atomic mass for this atom
         double GetMass(void) const      { return Point_t::Weight(AtomWeights::Mass); }
         void SetMass(double mass)       { Point_t::Weight(AtomWeights::Mass) = mass; }
+
+
+        //! Isotope mass
+        double GetIsotopeMass(void) const  { return Point_t::Weight(AtomWeights::IsotopeMass); }
+        void SetIsotopeMass(double mass)   { Point_t::Weight(AtomWeights::IsotopeMass) = mass; }
+
 
         //! Charge on this atom
         double GetCharge(void) const      { return Point_t::Weight(AtomWeights::Charge); }
@@ -99,11 +98,17 @@ class Atom : public math::WeightedPoint<AtomWeights>
         void SetNElectrons(double nelectrons) { Point_t::Weight(AtomWeights::NElectrons) = nelectrons; }
 
         //! Name of the element
-        std::string Name(void) const;
+        std::string GetName(void) const;
 
         //! Symbol of the element;
-        std::string Symbol(void) const;
+        std::string GetSymbol(void) const;
 };
+
+
+Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z);
+Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z, int isonum);
+Atom CreateAtom(size_t id, double x, double y, double z, int Z);
+Atom CreateAtom(size_t id, double x, double y, double z, int Z, int isonum);
 
 
 

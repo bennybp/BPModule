@@ -8,6 +8,50 @@ namespace bpmodule {
 //    Set_t util::Enumeration<system::AtomProperty>::Enums_=Set_t();
 namespace system {
 
+
+std::string Atom::GetName(void) const
+{
+    return AtomicNameFromZ(GetZ());
+
+}
+
+std::string Atom::GetSymbol(void) const
+{
+    return AtomicSymFromZ(GetZ());
+}
+
+
+Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z)
+{
+    int isonum = MostCommonIsotopeFromZ(Z);
+    return CreateAtom(id, xyz, Z, isonum);
+
+}
+
+Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z, int isonum)
+{
+    return Atom(id,
+                xyz,
+                Z,
+                isonum,
+                AtomicMassFromZ(Z),
+                IsotopeMassFromZ(Z, isonum),
+                0,  //! \todo default charge
+                AtomicMultiplicityFromZ(Z),
+                Z); //! 0 charge, nelectrons = Z
+}
+
+Atom CreateAtom(size_t id, double x, double y, double z, int Z)
+{
+    return CreateAtom(id, {x,y,z}, Z);
+}
+
+Atom CreateAtom(size_t id, double x, double y, double z, int Z, int isonum)
+{
+    return CreateAtom(id, {x,y,z}, Z, isonum);
+}
+
+
 /*
 size_t DefaultMult(size_t Z){
     switch(Z){
@@ -79,16 +123,6 @@ const double & Atom::Mass(void) const
 }
 
 
-std::string Atom::Name(void) const
-{
-    return AtomicNameFromZ(z);
-
-}
-
-std::string Atom::Symbol(void) const
-{
-    return AtomicSymFromZ(z);
-}
 */
 
 } // close namespace system

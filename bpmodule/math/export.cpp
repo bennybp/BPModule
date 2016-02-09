@@ -75,6 +75,10 @@ PYBIND11_PLUGIN(math)
     .def("__str__",&PySet_t::ToString,"Prints out the set");
     
 
+    //! \todo Registration helper for point
+    
+
+
     return m.ptr();
 }
 
