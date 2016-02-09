@@ -9,7 +9,7 @@
 
 namespace bpmodule {
 namespace system {
-
+/*
 class Molecule: 
 public math::MathSet<Atom,math::PointStorage<Atom>>{
 private:
@@ -28,13 +28,20 @@ public:
 inline std::ostream& operator<<(std::ostream& os,const Molecule& Mol){
     return os<<Mol.ToString();
 }
+*/
 
-
-/*class Molecule
+class Molecule
 {
+    private:
+        unsigned long curid_;
+        std::vector<Atom> atoms_;
+
+        double charge_;
+
     public:
         typedef std::vector<Atom>::iterator       iterator;
         typedef std::vector<Atom>::const_iterator const_iterator;
+        typedef Atom::CoordType CoordType;
 
         Molecule(void);
 
@@ -47,7 +54,8 @@ inline std::ostream& operator<<(std::ostream& os,const Molecule& Mol){
 
         void AddAtom(int Z, CoordType xyz);
 
-        Atom GetAtom(int i) const;
+        Atom & GetAtom(int i);
+        const Atom & GetAtom(int i) const;
 
         int NAtoms(void) const noexcept;
 
@@ -56,12 +64,12 @@ inline std::ostream& operator<<(std::ostream& os,const Molecule& Mol){
         const_iterator begin(void) const;
         const_iterator end(void) const;
 
+        // Some molecule properties
+        double Charge(void) const noexcept { return charge_; } 
+        void SetCharge(double charge) noexcept { charge_ = charge; }
 
 
-    private:
-        unsigned long curid_;
-        std::vector<Atom> atoms_;
-};*/
+};
 
 
 

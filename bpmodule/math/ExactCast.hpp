@@ -24,9 +24,9 @@ struct ExactCast
 {
     static Target Cast(const Source & s)
     {
-        static_assert(  ( std::is_integral<Source>::value && std::is_integral<Target>::value) ||
-                        ( std::is_floating_point<Source>::value && std::is_floating_point<Target>::value),
-                        "Attempting to perform integer <-> floating point conversion. Consider using round_cast");
+        static_assert(  ( std::is_integral<Source>::value || std::is_floating_point<Source>::value ) &&
+                        ( std::is_integral<Target>::value || std::is_floating_point<Target>::value ),
+                         "Attempting to perform conversion between two unknown types");
 
         static_assert(  ( std::is_arithmetic<Source>::value && std::is_arithmetic<Target>::value ),
                         "Attempting to perform numeric cast on non-arithmetic types");
@@ -44,7 +44,7 @@ struct ExactCast
         // this is written with branching so that the limits checking isn't always done
         // (ie, going from short->int should be pretty much optimized out)
         //
-        // Actually, most branching shown here should be optimized out at compile
+        // Actually, most branching shown here should be optimized out at compile time
         ////////////////////////////////////////////////////////////////////////////////
 
         ///////////////////
@@ -153,6 +153,46 @@ struct ExactCast
                                                "fpfrom", util::DemangleCppType<Source>(),
                                                "fpto", util::DemangleCppType<Target>());
             PRAGMA_WARNING_POP
+        }
+
+        else if(std::is_floating_point<Source>::value && std::is_integral<Target>::value)
+        {
+            // Check validity (ie does the FP source have exactly an integer?)
+            PRAGMA_WARNING_PUSH
+            PRAGMA_WARNING_IGNORE_FP_EQUALITY
+            if(std::fmod(s, static_cast<Source>(1.0)) == static_cast<Source>(0))
+                throw exception::MathException("Error in numeric_cast",
+                                               "desc", "Floating point conversion to integer results in loss of information",
+                                               "fpfrom", util::DemangleCppType<Source>(),
+                                               "ito", util::DemangleCppType<Target>());
+            else
+                return static_cast<Target>(s);
+            PRAGMA_WARNING_POP
+        }
+
+        else if(std::is_integral<Source>::value && std::is_floating_point<Target>::value)
+        {
+            // Can the floating point handle the integer?
+            Target t = static_cast<Target>(s);
+
+            PRAGMA_WARNING_PUSH
+            PRAGMA_WARNING_IGNORE_FP_EQUALITY
+            if(std::fmod(s, static_cast<Source>(1.0)) == static_cast<Source>(0))
+                throw exception::MathException("Error in numeric_cast",
+                                               "desc", "Floating point type cannot exactly handle this integer",
+                                               "ifrom", util::DemangleCppType<Source>(),
+                                               "fpto", util::DemangleCppType<Target>());
+
+            Source s2 = static_cast<Source>(s);
+            if(s != s2)
+                throw exception::MathException("Error in numeric_cast",
+                                               "desc", "Floating point type cannot exactly handle this integer",
+                                               "ifrom", util::DemangleCppType<Source>(),
+                                               "fpto", util::DemangleCppType<Target>());
+            else
+                return t;
+            PRAGMA_WARNING_POP
+
         }
 
         else

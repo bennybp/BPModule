@@ -5,23 +5,27 @@ namespace bpmodule {
 namespace system {
 
 
-/*Molecule::Molecule(void)
+Molecule::Molecule(void)
     : curid_(0)
 {
 }
 
 
-void Molecule::AddAtom(int z, CoordType xyz)
+void Molecule::AddAtom(int Z, CoordType xyz)
 {
-    int isonum = MostCommonIsotopeFromZ(z);
-
-    atoms_.push_back(Atom{curid_, z, isonum, xyz});
+    Atom a(curid_, Z, xyz);
+    atoms_.push_back(Atom(curid_, Z, xyz));
     curid_++;
 }
 
 
 //! \todo wrap exceptions
-Atom Molecule::GetAtom(int i) const
+Atom & Molecule::GetAtom(int i)
+{
+    return atoms_.at(i);
+}
+
+const Atom & Molecule::GetAtom(int i) const
 {
     return atoms_.at(i);
 }
@@ -41,8 +45,9 @@ Molecule::const_iterator Molecule::begin(void) const
 Molecule::const_iterator Molecule::end(void) const
 {
     return atoms_.end();
-}*/
+}
 
+/*
 void Molecule::AddAtom(const Atom& A){
     (*this)<<A;
     Charge_+=A.Charge();
@@ -55,7 +60,7 @@ std::string Molecule::ToString()const{
         ss<<*AtomI<<std::endl;
     return ss.str();
 }
-
+*/
 
 } // close namespace system
 } // close namespace bpmodule
