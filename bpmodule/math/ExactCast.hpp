@@ -2,6 +2,7 @@
 #define BPMODULE_GUARD_MATH__EXACTCAST_HPP_
 
 #include <limits>
+#include <cmath>
 
 #include "bpmodule/pragma.h"
 #include "bpmodule/exception/Exceptions.hpp"
