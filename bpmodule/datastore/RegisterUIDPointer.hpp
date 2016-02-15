@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Registers a UIDPoitner to python (header)
+ * \brief Registers a UIDPointer to python (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
