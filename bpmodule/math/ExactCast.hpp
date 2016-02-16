@@ -17,7 +17,7 @@ namespace detail {
 
 /*! \brief Perform a cast between types that preserves precision
  *
- * Can be used for integer <-> integer or floating point <-> floating point, but not
+ * Can be used for integer <-> integer or floating point <-> floating point, and exact
  * integer <-> floating point
  */
 template<typename Target, typename Source>
