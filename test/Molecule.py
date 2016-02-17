@@ -15,6 +15,18 @@ sys.path.insert(0, bppath)
 import bpmodule as bp
 
 
+def PrintMol(mol):
+    bp.output.Output("\nNumber of atoms: {}\n".format(mol.NAtoms()))
+
+    for i in range(0, mol.NAtoms()):
+      a = mol.GetAtom(i)
+      print("{:<4}  {:<4}  {:<15}  {:<20}   {}".format(i,
+                                                         a.GetSymbol(),
+                                                         a.GetName(),
+                                                         a.GetMass(),
+                                                         a.GetCoords()))
+    bp.output.Output("Center of Mass: %1%\n", mol.CenterOfMass().GetCoords())
+
 def Run():
     try:
 
@@ -30,17 +42,15 @@ def Run():
         mol.AddAtom(bp.system.CreateAtom(4, [ 1.942500819960,     0.000000000000,    -0.701145981971], 1))
         mol.AddAtom(bp.system.CreateAtom(5, [-1.007295466862,    -1.669971842687,    -0.705916966833], 1))
         mol.AddAtom(bp.system.CreateAtom(6, [-1.007295466862,     1.669971842687,    -0.705916966833], 1))
-        bp.output.Output("Number of atoms: %1%\n", mol.NAtoms())
+        PrintMol(mol)
 
-        for i in range(0, mol.NAtoms()):
-          a = mol.GetAtom(i)
-          print("{:<4}  {:<4}  {:<15}  {:<20}   {}".format(i,
-                                                             a.GetSymbol(),
-                                                             a.GetName(),
-                                                             a.GetMass(),
-                                                             a.GetCoords()))
+        mol2 = mol.Translate( [ 2.0, 3.0, 4.0 ] )
+        PrintMol(mol2)
 
-        bp.output.Output("Center of Mass: %1%\n", mol.CenterOfMass().GetCoords())
+        mol2 = mol.Rotate( [ 0.0, 1.0, 0.0,
+                             0.0, 0.0, 1.0,
+                             1.0, 0.0, 0.0 ] )
+        PrintMol(mol2)
 
         tester.PrintResults() 
 

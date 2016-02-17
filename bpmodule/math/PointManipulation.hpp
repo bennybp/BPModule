@@ -23,11 +23,9 @@ namespace math {
 template<typename Point, typename Vector>
 void TranslatePoint(Point & point, const Vector & vec)
 {
-    const auto & coords = point.GetCoords();
-
-    point.SetCoords(vec[0] + coords[0],
-                    vec[1] + coords[1],
-                    vec[2] + coords[2]);
+    point[0] += vec[0];
+    point[1] += vec[1];
+    point[2] += vec[2];
 }
 
 
@@ -77,9 +75,12 @@ PointContainer TranslatePointContainer_Copy(const PointContainer & cont, const V
 template<typename Point, typename FlatMatrix9>
 void RotatePoint(Point & point, const FlatMatrix9 & mat)
 {
-    point[0] = mat[0]*point[0] + mat[1]*point[1] + mat[2]*point[2];
-    point[1] = mat[3]*point[0] + mat[4]*point[1] + mat[5]*point[2];
-    point[2] = mat[6]*point[0] + mat[7]*point[1] + mat[8]*point[2];
+    auto tmp0 = point[0];
+    auto tmp1 = point[1];
+    auto tmp2 = point[2];
+    point[0] = mat[0]*tmp0 + mat[1]*tmp1 + mat[2]*tmp2;
+    point[1] = mat[3]*tmp0 + mat[4]*tmp1 + mat[5]*tmp2;
+    point[2] = mat[6]*tmp0 + mat[7]*tmp1 + mat[8]*tmp2;
 }
 
 
