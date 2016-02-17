@@ -68,6 +68,7 @@ PYBIND11_PLUGIN(system)
     m.def("AtomicMultiplicityFromSym", AtomicMultiplicityFromSym);
 
 
+    // Atom structure
     // Atom class
     pybind11::class_<Atom>(m, "Atom", pybind11::base<math::Point>())
     .def("GetID", &Atom::GetID)
@@ -105,11 +106,15 @@ PYBIND11_PLUGIN(system)
     .def("GetAtom",&Molecule::GetAtom)
     .def("SetAtom",&Molecule::SetAtom)
     .def("AddAtom",&Molecule::AddAtom)
-    .def("NAtoms",&Molecule::AddAtom)
+    .def("NAtoms",&Molecule::NAtoms)
     .def("GetCharge",&Molecule::GetCharge)
     .def("GetNElectrons",&Molecule::GetNElectrons)
+    .def("Translate", &Molecule::Translate<std::array<double, 3>>)
+    .def("Rotate", &Molecule::Rotate<std::array<double, 9>>)
+    .def("CenterOfMass", &Molecule::CenterOfMass)
+    .def("CenterOfNuclearCharge", &Molecule::CenterOfNuclearCharge)
     ;
-    
+
         
     return m.ptr();
 }

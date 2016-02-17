@@ -27,8 +27,9 @@ void Molecule::SetAtom(size_t i, const Atom & a)
 void Molecule::AddAtom(const Atom & a)
 {
     Atom toappend(a);
-    toappend.SetID(curid_++);
+    toappend.SetID(curid_);
     atoms_.push_back(toappend);
+    curid_++;
 }
 
 int Molecule::NAtoms(void) const noexcept
@@ -46,6 +47,29 @@ double Molecule::GetNElectrons(void) const
 {
     return std::accumulate(this->begin(), this->end(), static_cast<double>(0.0),
                            [](double sum, const Atom & a) { return sum + a.GetNElectrons(); });
+}
+
+math::Point Molecule::CenterOfMass(void) const
+{
+    return math::WeightedPointsCenter<math::Point>(*this, &Atom::GetMass);
+}
+
+math::Point Molecule::CenterOfNuclearCharge(void) const
+{
+    return math::WeightedPointsCenter<math::Point>(*this, &Atom::GetZ);
+}
+
+
+
+Molecule::iterator Molecule::begin(void)
+{
+    return atoms_.begin();
+}
+
+
+Molecule::iterator Molecule::end(void)
+{
+    return atoms_.end();
 }
 
 

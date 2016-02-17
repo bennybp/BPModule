@@ -21,20 +21,26 @@ def Run():
         tester = bp.testing.Tester("Testing Molecule class")
         tester.PrintHeader()
 
+
         mol = bp.system.Molecule()
-        mol.AddAtom(1, [0.0, 0.0, 0.0] )
-        mol.AddAtom(2, [1.0, 0.0, 0.0] )
-        mol.AddAtom(3, [0.0, 1.0, 0.0] )
-        mol.AddAtom(4, [0.0, 0.0, 1.0] )
+        mol.AddAtom(bp.system.CreateAtom(0, [ 0.000000000000,     0.000000000000,     0.000000000000], 6))
+        mol.AddAtom(bp.system.CreateAtom(1, [ 0.000000000000,     0.000000000000,     2.845112131228], 6))
+        mol.AddAtom(bp.system.CreateAtom(2, [ 1.899115961744,     0.000000000000,     4.139062527233], 8))
+        mol.AddAtom(bp.system.CreateAtom(3, [-1.894048308506,     0.000000000000,     3.747688672216], 1))
+        mol.AddAtom(bp.system.CreateAtom(4, [ 1.942500819960,     0.000000000000,    -0.701145981971], 1))
+        mol.AddAtom(bp.system.CreateAtom(5, [-1.007295466862,    -1.669971842687,    -0.705916966833], 1))
+        mol.AddAtom(bp.system.CreateAtom(6, [-1.007295466862,     1.669971842687,    -0.705916966833], 1))
         bp.output.Output("Number of atoms: %1%\n", mol.NAtoms())
 
         for i in range(0, mol.NAtoms()):
           a = mol.GetAtom(i)
           print("{:<4}  {:<4}  {:<15}  {:<20}   {}".format(i,
-                                                             a.Symbol(),
-                                                             a.Name(),
-                                                             a.Mass(),
-                                                             a.xyz))
+                                                             a.GetSymbol(),
+                                                             a.GetName(),
+                                                             a.GetMass(),
+                                                             a.GetCoords()))
+
+        bp.output.Output("Center of Mass: %1%\n", mol.CenterOfMass().GetCoords())
 
         tester.PrintResults() 
 

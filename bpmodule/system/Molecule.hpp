@@ -5,7 +5,7 @@
 
 #include "bpmodule/system/Atom.hpp"
 #include "bpmodule/math/MathSet.hpp"
-#include "bpmodule/math/Point.hpp"
+#include "bpmodule/math/PointManipulation.hpp"
 
 namespace bpmodule {
 namespace system {
@@ -47,9 +47,29 @@ class Molecule
 
 
         // Iteration over all atoms
+        typedef Atom value_type;
+        iterator begin(void);
+        iterator end(void);
         const_iterator begin(void) const;
         const_iterator end(void) const;
 
+
+        // Manipulations
+        template<typename VectorType>
+        Molecule Translate(const VectorType & vec) const
+        {
+            return math::TranslatePointContainer_Copy(*this, vec);
+        }
+
+        template<typename MatrixType>
+        Molecule Rotate(const MatrixType & mat) const
+        {
+            return math::RotatePointContainer_Copy(*this, mat);
+        }
+
+        // Centers
+        math::Point CenterOfMass(void) const;
+        math::Point CenterOfNuclearCharge(void) const;
 
 };
 

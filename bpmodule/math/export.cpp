@@ -6,9 +6,11 @@
 
 
 #include "bpmodule/python/Pybind11.hpp"
+#include "bpmodule/python/Pybind11_stl.hpp"
 #include "bpmodule/math/Factorial.hpp"
 #include "bpmodule/math/Universe.hpp"
 #include "bpmodule/math/MathSet.hpp"
+#include "bpmodule/math/Point.hpp"
 
 PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
 
@@ -75,7 +77,12 @@ PYBIND11_PLUGIN(math)
     .def("__str__",&PySet_t::ToString,"Prints out the set");
     
 
-    //! \todo Registration helper for point
+
+    pybind11::class_<Point>(m, "Point")
+    .def("GetCoords", &Point::GetCoords)
+    .def("SetCoords", static_cast<void (Point::*)(double, double, double)>(&Point::SetCoords))
+    .def("SetCoords", static_cast<void (Point::*)(const Point::CoordType &)>(&Point::SetCoords))
+    ;
     
 
 

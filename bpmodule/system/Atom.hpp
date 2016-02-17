@@ -11,91 +11,74 @@ namespace bpmodule {
 namespace system {
 
 
-enum class AtomWeights
-{
-    Z,
-    IsotopeNumber,
-    Mass,
-    IsotopeMass,
-    Charge,
-    Multiplicity,
-    NElectrons,
-    NWEIGHTS
-};
-
-
-
-class Atom : public math::WeightedPoint<AtomWeights>
+/*! \brief A center in a molecule
+ * 
+ * Follows PointConcept via derivation from math::Point
+ */
+class Atom : public math::Point
 {
     private:
-        typedef math::WeightedPoint<AtomWeights> Point_t;
-
         size_t id_;    //!< Unique id of this center
+
         int Z_;        //!< Atomic Z number (as integer. Also stored as a (double) weight)
         int isonum_;   //!< Isotope number
 
+        double mass_;
+        double isomass_;
+        double charge_;
+        double multiplicity_;
+        double nelectrons_;
+
     public:
-        //! Constructor
-        Atom(size_t id, CoordType xyz, int Z, int isonum,
-             double mass, double isotopemass, double q, double mult, double nelec)
-            : Point_t(xyz), id_(id)
+        typedef math::Point::CoordType CoordType;
+
+        // constructor
+        Atom(size_t id, CoordType xyz, int Z, int isonum, double mass, double isotopemass,
+             double charge, double multiplicity, double nelectrons)
         {
+            // we do it this way in case we change where the info is stored
+            SetCoords(xyz);
+            SetID(id);
             SetZ(Z);
             SetIsonum(isonum);
             SetMass(mass);
             SetIsotopeMass(isotopemass);
-            SetCharge(q);
-            SetMultiplicity(mult);
-            SetNElectrons(nelec);
+            SetCharge(charge);
+            SetMultiplicity(multiplicity);
+            SetNElectrons(nelectrons);
         }
 
 
-        //! ID of this atom
-        size_t GetID(void) const noexcept  { return id_; }
 
-        //! Set the ID
-        void SetID(size_t id) noexcept  { id_ = id; }
+        /*
+         * I'm aware that a class with lots of getters/setters is bad
+         * form. However, we are leaving it open to future optimizations,
+         * such as storing the data elsewhere
+         */
+        size_t GetID(void) const noexcept { return id_; }
+        void SetID(size_t id) noexcept { id_ = id; }
 
-
-        //! Atomic Z number
         int GetZ(void) const noexcept { return Z_; }
-        void SetZ(int Z) noexcept
-        {
-            Z_ = Z;
-            Point_t::Weight(AtomWeights::Z) = math::numeric_cast<double>(Z);
-        }
+        void SetZ(int Z) noexcept { Z_ = Z; }
 
-
-        //! Isotope number
         int GetIsonum(void) const noexcept { return isonum_; }
-        void SetIsonum(int isonum) noexcept
-        {
-            isonum_ = isonum;
-            Point_t::Weight(AtomWeights::IsotopeNumber) = math::numeric_cast<double>(isonum);
-        }
+        void SetIsonum(int isonum) noexcept { isonum_ = isonum; }
 
+        double GetMass(void) const noexcept { return mass_; }
+        void SetMass(double mass) noexcept { mass_ = mass; }
 
-        //! Atomic mass for this atom
-        double GetMass(void) const      { return Point_t::Weight(AtomWeights::Mass); }
-        void SetMass(double mass)       { Point_t::Weight(AtomWeights::Mass) = mass; }
+        double GetIsotopeMass(void) const noexcept { return isomass_; }
+        void SetIsotopeMass(double isomass) noexcept { isomass_ = isomass; }
 
+        double GetCharge(void) const noexcept { return charge_; }
+        void SetCharge(double charge) noexcept { charge_ = charge; }
 
-        //! Isotope mass
-        double GetIsotopeMass(void) const  { return Point_t::Weight(AtomWeights::IsotopeMass); }
-        void SetIsotopeMass(double mass)   { Point_t::Weight(AtomWeights::IsotopeMass) = mass; }
+        double GetMultiplicity(void) const noexcept { return charge_; }
+        void SetMultiplicity(double m) noexcept { multiplicity_ = m; }
 
+        double GetNElectrons(void) const noexcept { return nelectrons_; }
+        void SetNElectrons(double n) noexcept { nelectrons_ = n; }
 
-        //! Charge on this atom
-        double GetCharge(void) const      { return Point_t::Weight(AtomWeights::Charge); }
-        void SetCharge(double mass)       { Point_t::Weight(AtomWeights::Charge) = mass; }
-
-        //! Multiplicity on this atom
-        double GetMultiplicity(void) const      { return Point_t::Weight(AtomWeights::Multiplicity); }
-        void SetMultiplicity(double mult)       { Point_t::Weight(AtomWeights::Multiplicity) = mult; }
-
-        //! NElectrons on this atom
-        double GetNElectrons(void) const      { return Point_t::Weight(AtomWeights::NElectrons); }
-        void SetNElectrons(double nelectrons) { Point_t::Weight(AtomWeights::NElectrons) = nelectrons; }
 
         //! Name of the element
         std::string GetName(void) const;
@@ -105,9 +88,27 @@ class Atom : public math::WeightedPoint<AtomWeights>
 };
 
 
+
+/* \brief Create an atom given an ID, coordinates, and atomic number
+ *
+ * The rest of the data is filled in automatically
+ */
 Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z);
-Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z, int isonum);
+
+
+/*! \copydocs CreateAtom(size_t, Atom::CoordType, int) */
 Atom CreateAtom(size_t id, double x, double y, double z, int Z);
+
+
+
+/* \brief Create an atom given an ID, coordinates, atomic number, and isotope number
+ *
+ * The rest of the data is filled in automatically
+ */
+Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z, int isonum);
+
+
+/*! \copydocs CreateAtom(size_t, Atom::CoordType, int, int) */
 Atom CreateAtom(size_t id, double x, double y, double z, int Z, int isonum);
 
 

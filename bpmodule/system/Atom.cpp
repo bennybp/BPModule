@@ -1,6 +1,6 @@
-#include <sstream>
 #include "bpmodule/system/Atom.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
+#include "bpmodule/math/Cast.hpp"
 
 namespace bpmodule {
 
@@ -37,8 +37,8 @@ Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z, int isonum)
                 AtomicMassFromZ(Z),
                 IsotopeMassFromZ(Z, isonum),
                 0,  //! \todo default charge
-                AtomicMultiplicityFromZ(Z),
-                Z); //! 0 charge, nelectrons = Z
+                math::numeric_cast<double>(AtomicMultiplicityFromZ(Z)),
+                math::numeric_cast<double>(Z)); //! 0 charge, nelectrons = Z
 }
 
 Atom CreateAtom(size_t id, double x, double y, double z, int Z)
