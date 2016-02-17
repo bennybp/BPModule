@@ -161,7 +161,7 @@ struct ExactCast
             // Check validity (ie does the FP source have exactly an integer?)
             PRAGMA_WARNING_PUSH
             PRAGMA_WARNING_IGNORE_FP_EQUALITY
-            if(std::fmod(s, static_cast<Source>(1.0)) == static_cast<Source>(0))
+            if(std::fmod(s, static_cast<Source>(1.0)) != static_cast<Source>(0))
                 throw exception::MathException("Error in numeric_cast",
                                                "desc", "Floating point conversion to integer results in loss of information",
                                                "fpfrom", util::DemangleCppType<Source>(),
@@ -178,7 +178,7 @@ struct ExactCast
 
             PRAGMA_WARNING_PUSH
             PRAGMA_WARNING_IGNORE_FP_EQUALITY
-            if(std::fmod(s, static_cast<Source>(1.0)) == static_cast<Source>(0))
+            if(std::fmod(s, static_cast<Source>(1.0)) != static_cast<Source>(0))
                 throw exception::MathException("Error in numeric_cast",
                                                "desc", "Floating point type cannot exactly handle this integer",
                                                "ifrom", util::DemangleCppType<Source>(),
