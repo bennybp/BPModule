@@ -23,13 +23,16 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
     #   869  : parameter "XXX" was never referenced.
     #          This is due to a bug in Intel before Intel 16 that causes this
     #          remark to be printed for variadic templates
+    # 11074  : Inlining inhibited by limit max-size (etc)
+    # 11076  : To get full report use -qopt-report=4 -qopt-report-phase ipo
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd1418")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd1419")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd411")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd383")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd981")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd869")
-
+    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd11074")
+    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd11076")
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-std=c++11")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-Wall;-Wextra;-pedantic")
