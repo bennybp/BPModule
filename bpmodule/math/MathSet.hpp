@@ -67,7 +67,6 @@ namespace bpmodule {
             std::shared_ptr<const Base_t> Universe_;
 
             ///Checks if Elem (either as type T or as size_t) is in the universe
-
             template<typename V>
             void InUniverse(const V& Elem)const {
                 exception::Assert<exception::ValueOutOfRange>(
@@ -76,32 +75,22 @@ namespace bpmodule {
                         );
             }
 
-            ///Normal copy of our class (code factorization)
-
-            void Copy(const My_t& RHS) {
-                this->Elems_ = RHS.Elems_;
-                this->Universe_ = RHS.Universe_;
-            }
         protected:
             MathSet() = default;
+
         public:
 
 
 
             ///Makes a set that is part of the given universe
-
             MathSet(std::shared_ptr<const Base_t> AUniverse) : Universe_(AUniverse) {
             }
 
 
             ///Deep copies elements, shallow copies Universe_ and Storage_
-
-            MathSet(const My_t& RHS) : Base_t() {
-                Copy(RHS);
-            }
+            MathSet(const My_t&) = default;
 
             ///Returns a deep copy of everything
-
             virtual My_t Clone()const {
                 My_t Temp;
                 //Deep copies this's member data
@@ -117,14 +106,13 @@ namespace bpmodule {
 
 
             ///Same as copy constructor, but for assignment
-
-            My_t& operator=(const My_t& RHS) {
-                if (this != &RHS)Copy(RHS);
+            My_t& operator=(My_t RHS) {
+                using std::swap;
+                if (this != &RHS)swap(*this, RHS);
                 return *this;
             }
 
             ///For adding an element, if you know its index in the universe
-
             My_t& operator<<(size_t Idx) {
                 InUniverse(Idx);
                 this->Elems_.insert(Idx);
@@ -132,14 +120,12 @@ namespace bpmodule {
             }
 
             ///Unlike the base class, we just add the index
-
             virtual My_t& operator<<(const T& Elem) {
                 InUniverse(Elem);
                 return (*this) << Universe_->Idx(Elem);
             }
 
             ///Makes this the union of this and other
-
             const My_t& operator+=(const My_t& RHS) {
                 for (const size_t& EI : RHS.Elems_)
                     this->Elems_.insert(EI);
@@ -147,13 +133,11 @@ namespace bpmodule {
             }
 
             ///Returns the union of this and other (result shares same resources)
-
             My_t operator+(const My_t& RHS)const {
                 return My_t(*this) += RHS;
             }
 
             ///Makes this the intersection of this and other
-
             const My_t& operator/=(const My_t& RHS) {
                 std::set<size_t> Temp(std::move(this->Elems_));
                 this->Elems_ = std::set<size_t>();
@@ -165,13 +149,11 @@ namespace bpmodule {
             }
 
             ///Returns the intersection of this and other
-
             My_t operator/(const My_t& RHS)const {
                 return My_t(*this) /= RHS;
             }
 
             ///Makes this the set-difference of this and other
-
             const My_t operator-=(const My_t& RHS) {
                 std::set<size_t> Temp(std::move(this->Elems_));
                 this->Elems_ = std::set<size_t>();
@@ -183,13 +165,11 @@ namespace bpmodule {
             }
 
             ///Returns the set-difference of this and other
-
             My_t operator-(const My_t& RHS)const {
                 return My_t(*this) -= RHS;
             }
 
             ///Returns the complement of this
-
             My_t Complement()const {
                 My_t Temp;
                 Temp.Universe_ = Universe_;
@@ -199,9 +179,6 @@ namespace bpmodule {
                 return Temp;
             }
 
-            ///@{
-            ///Basic forwarding of remaining functions and types
-
             virtual std::string ToString()const {
                 std::stringstream ss;
                 for (const size_t& EI : this->Elems_)
@@ -209,24 +186,13 @@ namespace bpmodule {
                 return ss.str();
             }
 
-            typedef typename Base_t::iterator iterator;
+            ///@{
+            ///Basic forwarding of remaining functions and types
+
             typedef typename Base_t::const_iterator const_iterator;
+            using Base_t::begin;
+            using Base_t::end;
 
-            virtual iterator begin() {
-                return Base_t::begin();
-            }
-
-            virtual const_iterator begin()const {
-                return Base_t::begin();
-            }
-
-            virtual iterator end() {
-                return Base_t::end();
-            }
-
-            virtual const_iterator end()const {
-                return Base_t::end();
-            }
             ///@}
         };
 

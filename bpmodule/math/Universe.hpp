@@ -20,12 +20,16 @@ namespace math{
 template<typename T,typename U>
 class Universe;
     
-///An iterator to go with the universe class, returns actual objects
+/** An iterator to go with the universe class, returns actual objects
+ *
+ * The iterator only allows accessing the data, not modifying. That is,
+ * this only behaves like a const_iterator
+ */
 template<typename T,typename U>
-class SetItr{
+class ConstSetItr{
     private:
         ///My type
-        typedef SetItr<T,U> My_t;
+        typedef ConstSetItr<T,U> My_t;
         ///Type of the iterator to the Indices in the universe
         typedef std::set<size_t>::const_iterator Itr_t;
         ///The index I currently point to
@@ -35,12 +39,9 @@ class SetItr{
         ///Let universe play with my private parts
         friend Universe<T,U>;
         ///Only universe can make a working iterator
-        SetItr(Itr_t CurrIdx,const U& Set):
+        ConstSetItr(Itr_t CurrIdx,const U& Set):
             CurrIdx_(CurrIdx),Set_(&Set){}
     public:
-        ///Makes a null iterator to a set
-        SetItr():CurrIdx_(0),Set_(nullptr){}
-        
         ///Returns true if this iterator is equal to RHS
         bool operator==(const My_t& RHS)const{
             return (CurrIdx_==RHS.CurrIdx_);
@@ -49,18 +50,26 @@ class SetItr{
         bool operator!=(const My_t& RHS)const{
             return !this->operator ==(RHS);
         }
-        ///Returns a copy of the current element
-        T operator*()const{
+        ///Returns a reference to the current element
+        const T & operator*()const{
             return (*Set_)[*CurrIdx_];
         }
+
+        ///Prefix increment operator
         const My_t& operator++(){
             ++CurrIdx_;
             return *this;
         }
+        ///Postfix increment operator
+        const My_t& operator++(int){
+            My_t ret(*this);
+            ++CurrIdx_;
+            return ret;
+        }
         
 };
 
-    
+
 /** \brief A class that implements a mathematical (ordered) set that is a
  *  universe.  Order is defined as that in which the elements are inserted.
  * 
@@ -113,33 +122,29 @@ class Universe{
 private:
     ///My type
     typedef Universe<T,U> My_t;
-    ///Implements a deep copy (code factorization)
-    void DeepCopy(const My_t& RHS){
-        this->Elems_=RHS.Elems_;
-        (*this)+=RHS;
-    }
-protected:
-        ///The storage class
+    ///The storage class
     std::shared_ptr<U> Storage_;
+protected:
     ///The elements in this set
     std::set<size_t> Elems_;
 public:
-    ///An iterator to the elements in this set
-    typedef SetItr<T,U> iterator;
     ///An iterator to const versions of the elements in this set
-    typedef SetItr<T,U> const_iterator;
+    typedef ConstSetItr<T,U> const_iterator;
     
     ///Deep copies the universe
-    Universe(const My_t& RHS){DeepCopy(RHS);}
+    Universe(const My_t& RHS) : Storage_(new U(*RHS.Storage_)), Elems_(RHS.Elems_){
+    }
+        
     
     ///Deep copies during assignment
-    const My_t& operator=(const My_t& RHS){
-        if(this!=&RHS)DeepCopy(RHS);
+    const My_t& operator=(My_t RHS){
+        using std::swap;
+        if(this!=&RHS)swap(*this, RHS);
         return *this;
     }
     
     ///Makes a empty universe
-    Universe()=default;
+    Universe() : Storage_(new U) { };
     
     ///No special memory clean-up
     virtual ~Universe()=default;
@@ -148,17 +153,9 @@ public:
     ///Basic accessors
     ///Returns the cardinality of the universe (i.e. the number of elements)
     size_t size()const noexcept{return Elems_.size();}
-    ///Returns an iterator to the first element in the universe
-    virtual iterator begin(){
-        return iterator(Elems_.begin(),*Storage_);
-    }
     ///Returns an iterator to a const version of the 
     virtual const_iterator begin()const{
         return const_iterator(Elems_.begin(),*Storage_);
-    }
-    ///Returns an iterator just past the last element
-    virtual iterator end(){
-        return iterator(Elems_.end(),*Storage_);
     }
     ///Returns an iterator just past a const version of the last element
     virtual const_iterator end()const{
@@ -211,7 +208,7 @@ public:
      *  will have to merge the sets manually.
      */
     const My_t& operator+=(const My_t& RHS){
-        for(const T& EI : RHS)
+        for(const T & EI : RHS)
             if(!this->Contains(EI))(*this)<<EI;
         return *this;
     }
@@ -230,9 +227,14 @@ public:
      */
     const My_t& operator/=(const My_t& RHS){
         std::shared_ptr<U> Temp(new U);
-        for(const T& EI : *this)
-            if(RHS.Contains(EI))Temp->insert(Temp->end(),EI);
-        Storage_=Temp;
+        std::set<size_t> TempElems;
+        for(const T & Elem : *this)
+            if(RHS.Contains(Elem)){
+                TempElems.insert(Temp->size());
+                Temp->insert(Temp->end(),Elem);
+            }
+        Storage_=std::move(Temp);
+        Elems_=std::move(TempElems);
         return *this;
     }
     
@@ -249,9 +251,14 @@ public:
      */
     const My_t& operator-=(const My_t& RHS){
         std::shared_ptr<U> Temp(new U);
-        for(const T& EI : *this)
-            if(!RHS.Contains(EI))Temp->insert(Temp->end(),EI);
-        Storage_=Temp;
+        std::set<size_t> TempElems;
+        for(const T & EI : *this)
+            if(!RHS.Contains(EI)){
+                TempElems.insert(Temp->size());
+                Temp->insert(Temp->end(),EI);
+            }
+        Storage_=std::move(Temp);
+        Elems_=std::move(TempElems);
         return *this;
     }
     
@@ -263,7 +270,7 @@ public:
     ///Helpful printing function
     virtual std::string ToString()const{
         std::stringstream ss;
-        for(const T& EI: *this)ss<<EI<<" ";
+        for(const T & EI: *this)ss<<EI<<" ";
         return ss.str();
     }
 };
