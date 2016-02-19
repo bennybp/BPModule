@@ -9,6 +9,7 @@ if(NOT PYBIND11_FOUND)
   ExternalProject_Add(pybind11_external
                       SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pybind11-source
                       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/pybind11
+                                 -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                                  -DPYTHON_LIBRARY=${PYTHON_LIBRARY}
                                  -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR}
                                  -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}

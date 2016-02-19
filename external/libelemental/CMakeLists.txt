@@ -10,6 +10,7 @@ if(NOT LIBELEMENTAL_FOUND)
   ExternalProject_Add(libelemental_external
                       SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libelemental-source
                       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/libelemental 
+                                 #-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                                  -DBUILD_KISSFFT:Bool=Off
                                  -DBUILD_METIS:Bool=Off
                                  -DINSTALL_PYTHON_PACKAGE:Bool=No
