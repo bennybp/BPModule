@@ -186,6 +186,27 @@ namespace bpmodule {
                 return ss.str();
             }
 
+
+            My_t Transform(std::function<T(const T&)> transformer)const
+            {
+                std::shared_ptr<Base_t> newuniverse(new Base_t);
+
+                size_t i = 0;
+                for(const auto & it : *Universe_)
+                {
+                    if(this->Elems_.count(i) > 0)
+                        (*newuniverse) << transformer(it);
+                    else
+                        (*newuniverse) << it;
+                    ++i;
+                }
+
+                // Copy all the other data, then replace the universe
+                My_t ret(*this);
+                ret.Universe_ = newuniverse;
+                return ret;
+            }
+
             ///@{
             ///Basic forwarding of remaining functions and types
 

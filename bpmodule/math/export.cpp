@@ -7,6 +7,7 @@
 
 #include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/python/Pybind11_stl.hpp"
+#include "bpmodule/python/Pybind11_functional.hpp"
 #include "bpmodule/math/Factorial.hpp"
 #include "bpmodule/math/Universe.hpp"
 #include "bpmodule/math/MathSet.hpp"
@@ -58,10 +59,13 @@ PYBIND11_PLUGIN(math)
 
     pybind11::class_<PySet_t>(m,"MathSet")
     .def(pybind11::init<std::shared_ptr<PyU_t>>())
+    .def(pybind11::init<const PySet_t &>())
     .def("append",(PySet_t& (PySet_t::*)(const std::string&)) 
                   &PySet_t::operator<<,"Adds a new string to the set")
     .def("append",(PySet_t& (PySet_t::*)(size_t)) 
                   &PySet_t::operator<<,"Adds a new string to the set")
+    .def("Transform", &PySet_t::Transform,
+                     "Perform a transformation on the elements of the set")
     .def("__iadd__",&PySet_t::operator+=,
          "Makes this the union of this and other")
     .def("__isub__",&PySet_t::operator-=,
