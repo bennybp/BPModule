@@ -48,7 +48,7 @@ def Run():
         MySets.append(MySets[0].Complement())
 
         #Set 2 is "abr" (tests copy)
-        MySets.append(MySets[0])
+        MySets.append(bp.math.MathSet(MySets[0]))
         MySets[2].append("b")
         MySets[2].append("r")
         
@@ -60,6 +60,12 @@ def Run():
        
         #Set 5 is "abr" (test union)
         MySets.append(MySets[3]+MySets[2])
+
+        #Set 6 is "A" (transform MySets[0])
+        MySets.append(MySets[0].Transform(lambda c: c.upper()))
+
+        #Set 7 should be the same as Set 1 (only elements of Set 0 are transformed)
+        MySets.append(MySets[6].Complement())
         
         #Finally test that MyUniverse is really a shared_ptr, is being passed
         #that way, and the reference count is not completely messed up
@@ -69,6 +75,8 @@ def Run():
         tester.Test("Intersection",True,SetComp,MySets[3],"br") 
         tester.Test("Set-difference",True,SetComp,MySets[4],"a")
         tester.Test("Union",True,SetComp,MySets[5],"abr")         
+        tester.Test("Transform",True,SetComp,MySets[6],"A")
+        tester.Test("Complement",True,SetComp,MySets[7],Alphabet[1:26])
 
         tester.PrintResults() 
 
