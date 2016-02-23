@@ -1,6 +1,7 @@
-#ifndef BPMODULE_GUARD_POINT_HPP_
-#define BPMODULE_GUARD_POINT_HPP_
+#ifndef BPMODULE_GUARD_MATH__POINT_HPP_
+#define BPMODULE_GUARD_MATH__POINT_HPP_
 
+#include "bpmodule/pragma.h"
 #include <array>
 
 namespace bpmodule{
@@ -29,6 +30,14 @@ class PointT
         PointT(PointT &&)                  = default;
         PointT & operator=(const PointT &) = default;
         PointT & operator=(PointT &&)      = default;
+
+        bool operator==(const PointT & rhs) const
+        {
+            PRAGMA_WARNING_PUSH
+            PRAGMA_WARNING_IGNORE_FP_EQUALITY
+            return coords_ == rhs.coords_;
+            PRAGMA_WARNING_POP
+        }
 
         T & operator[](size_t i) { return coords_[i]; }
         T & at(size_t i) { return coords_.at(i); }

@@ -5,8 +5,8 @@
  * Created on January 22, 2016, 11:11 AM
  */
 
-#ifndef BPMODULE_GUARD_MATHSET_HPP_
-#define BPMODULE_GUARD_MATHSET_HPP_
+#ifndef BPMODULE_GUARD_MATH__MATHSET_HPP_
+#define BPMODULE_GUARD_MATH__MATHSET_HPP_
 
 #include <vector> //For default set container
 #include <algorithm> //For set operations

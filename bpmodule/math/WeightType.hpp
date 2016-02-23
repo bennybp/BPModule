@@ -8,8 +8,8 @@
  * @date Jan 15, 2016
  * @brief Definitions of the recognized weight type labels.
  */
-#ifndef BPMODULE_MATH_WEIGHTTYPE_HPP_
-#define BPMODULE_MATH_WEIGHTTYPE_HPP_
+#ifndef BPMODULE_GUARD_MATH__WEIGHTTYPE_HPP_
+#define BPMODULE_GUARD_MATH__WEIGHTTYPE_HPP_
 
 #include "bpmodule/util/Enumeration.hpp"
 

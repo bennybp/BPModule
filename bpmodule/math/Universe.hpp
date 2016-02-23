@@ -1,5 +1,5 @@
-#ifndef BPMODULE_GUARD_Universe_HPP_
-#define BPMODULE_GUARD_Universe_HPP_
+#ifndef BPMODULE_GUARD_MATH__UNIVERSE_HPP_
+#define BPMODULE_GUARD_MATH__UNIVERSE_HPP_
 /* 
  * \file   Universe.hpp
  * Original Author: richard
@@ -128,6 +128,8 @@ protected:
     ///The elements in this set
     std::set<size_t> Elems_;
 public:
+    typedef T value_type;
+
     ///An iterator to const versions of the elements in this set
     typedef ConstSetItr<T,U> const_iterator;
     
