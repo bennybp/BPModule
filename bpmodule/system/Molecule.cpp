@@ -17,6 +17,14 @@ int Molecule::NAtoms(void) const noexcept
     return this->size();
 }
 
+std::set<std::string> Molecule::AllTags(void) const
+{
+    std::set<std::string> tags;
+    for(const auto & it : *this)
+        tags.insert(it.GetTag());
+    return tags;
+}
+
 double Molecule::GetCharge(void) const
 {
     return std::accumulate(this->begin(), this->end(), static_cast<double>(0.0),

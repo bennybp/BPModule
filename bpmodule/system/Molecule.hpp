@@ -46,6 +46,9 @@ class Molecule : public math::MathSet<Atom>
         using Base_t::end;
 
 
+        // General info
+        std::set<std::string> AllTags(void) const;
+
         // Manipulations
         template<typename VectorType>
         Molecule Translate(const VectorType & vec) const

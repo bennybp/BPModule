@@ -90,10 +90,10 @@ PYBIND11_PLUGIN(system)
    
 
     // Atom creators
-    m.def("CreateAtom", static_cast<Atom (*)(Atom::CoordType, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(Atom::CoordType, int, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(Atom::CoordType, int, const std::string &)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(Atom::CoordType, int, int, const std::string &)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, const std::string &)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, int, const std::string &)>(CreateAtom));
 
 
     // Main molecule class 
@@ -105,6 +105,7 @@ PYBIND11_PLUGIN(system)
     .def("NAtoms",&Molecule::NAtoms)
     .def("GetCharge",&Molecule::GetCharge)
     .def("GetNElectrons",&Molecule::GetNElectrons)
+    .def("AllTags", &Molecule::AllTags)
     .def("Translate", &Molecule::Translate<std::array<double, 3>>)
     .def("Rotate", &Molecule::Rotate<std::array<double, 9>>)
     .def("CenterOfMass", &Molecule::CenterOfMass)

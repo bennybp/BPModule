@@ -31,7 +31,7 @@ def Run():
 
         time0 = perf_counter()
         for i in range(0, ntest):
-            molu.append(bp.system.CreateAtom([ random.uniform(-1000, 1000), random.uniform(-1000, 1000), random.uniform(-1000, 1000) ], 6))
+            molu.append(bp.system.CreateAtom([ random.uniform(-1000, 1000), random.uniform(-1000, 1000), random.uniform(-1000, 1000) ], 6, "notag"))
         mol = bp.system.Molecule(molu, True)
         time1 = perf_counter()
         bp.output.Output("NAtoms: {}\n".format(mol.NAtoms()))

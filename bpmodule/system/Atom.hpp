@@ -25,12 +25,14 @@ class Atom : public math::Point
         double multiplicity_;
         double nelectrons_;
 
+        std::string tag_;
+
     public:
         typedef math::Point::CoordType CoordType;
 
         // constructor
         Atom(CoordType xyz, int Z, int isonum,
-             double charge, double multiplicity, double nelectrons)
+             double charge, double multiplicity, double nelectrons, const std::string & tag)
         {
             // we do it this way in case we change where the info is stored
             SetCoords(xyz);
@@ -39,6 +41,7 @@ class Atom : public math::Point
             SetCharge(charge);
             SetMultiplicity(multiplicity);
             SetNElectrons(nelectrons);
+            SetTag(tag);
         }
 
 
@@ -63,6 +66,9 @@ class Atom : public math::Point
         double GetNElectrons(void) const noexcept { return nelectrons_; }
         void SetNElectrons(double n) noexcept { nelectrons_ = n; }
 
+        const std::string & GetTag(void) const { return tag_; }
+        void SetTag(const std::string & tag) { tag_ = tag; }
+
         bool operator==(const Atom & rhs) const;
         bool operator!=(const Atom & rhs) const;
 
@@ -85,11 +91,11 @@ std::ostream& operator<<(std::ostream& os,const Atom& A);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(Atom::CoordType xyz, int Z);
+Atom CreateAtom(Atom::CoordType xyz, int Z, const std::string & tag);
 
 
 /*! \copydocs CreateAtom(size_t, Atom::CoordType, int) */
-Atom CreateAtom(double x, double y, double z, int Z);
+Atom CreateAtom(double x, double y, double z, int Z, const std::string & tag);
 
 
 
@@ -97,11 +103,11 @@ Atom CreateAtom(double x, double y, double z, int Z);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(Atom::CoordType xyz, int Z, int isonum);
+Atom CreateAtom(Atom::CoordType xyz, int Z, int isonum, const std::string & tag);
 
 
 /*! \copydocs CreateAtom(size_t, Atom::CoordType, int, int) */
-Atom CreateAtom(double x, double y, double z, int Z, int isonum);
+Atom CreateAtom(double x, double y, double z, int Z, int isonum, const std::string & tag);
 
 
 

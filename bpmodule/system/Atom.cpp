@@ -58,31 +58,32 @@ std::ostream& operator<<(std::ostream& os,const Atom& A)
 }
 
 
-Atom CreateAtom(Atom::CoordType xyz, int Z)
+Atom CreateAtom(Atom::CoordType xyz, int Z, const std::string & tag)
 {
     int isonum = MostCommonIsotopeFromZ(Z);
-    return CreateAtom(xyz, Z, isonum);
+    return CreateAtom(xyz, Z, isonum, tag);
 
 }
 
-Atom CreateAtom(Atom::CoordType xyz, int Z, int isonum)
+Atom CreateAtom(Atom::CoordType xyz, int Z, int isonum, const std::string & tag)
 {
     return Atom(xyz,
                 Z,
                 isonum,
                 0,  //! \todo default charge
                 math::numeric_cast<double>(AtomicMultiplicityFromZ(Z)),
-                math::numeric_cast<double>(Z)); //! 0 charge, nelectrons = Z
+                math::numeric_cast<double>(Z),  //! 0 charge, nelectrons = Z
+                tag);
 }
 
-Atom CreateAtom(double x, double y, double z, int Z)
+Atom CreateAtom(double x, double y, double z, int Z, const std::string & tag)
 {
-    return CreateAtom({x,y,z}, Z);
+    return CreateAtom({x,y,z}, Z, tag);
 }
 
-Atom CreateAtom(double x, double y, double z, int Z, int isonum)
+Atom CreateAtom(double x, double y, double z, int Z, int isonum, const std::string & tag)
 {
-    return CreateAtom({x,y,z}, Z, isonum);
+    return CreateAtom({x,y,z}, Z, isonum, tag);
 }
 
 
