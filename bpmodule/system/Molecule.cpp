@@ -20,8 +20,6 @@ Atom Molecule::GetAtom(size_t i) const
 void Molecule::SetAtom(size_t i, const Atom & a)
 {
     atoms_.at(i) = a;
-    charge_ += a.GetCharge();
-    nelectrons_ += a.GetNElectrons();
 }
 
 void Molecule::AddAtom(const Atom & a)

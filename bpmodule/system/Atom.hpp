@@ -23,8 +23,6 @@ class Atom : public math::Point
         int Z_;        //!< Atomic Z number (as integer. Also stored as a (double) weight)
         int isonum_;   //!< Isotope number
 
-        double mass_;
-        double isomass_;
         double charge_;
         double multiplicity_;
         double nelectrons_;
@@ -33,7 +31,7 @@ class Atom : public math::Point
         typedef math::Point::CoordType CoordType;
 
         // constructor
-        Atom(size_t id, CoordType xyz, int Z, int isonum, double mass, double isotopemass,
+        Atom(size_t id, CoordType xyz, int Z, int isonum,
              double charge, double multiplicity, double nelectrons)
         {
             // we do it this way in case we change where the info is stored
@@ -41,8 +39,6 @@ class Atom : public math::Point
             SetID(id);
             SetZ(Z);
             SetIsonum(isonum);
-            SetMass(mass);
-            SetIsotopeMass(isotopemass);
             SetCharge(charge);
             SetMultiplicity(multiplicity);
             SetNElectrons(nelectrons);
@@ -64,12 +60,6 @@ class Atom : public math::Point
         int GetIsonum(void) const noexcept { return isonum_; }
         void SetIsonum(int isonum) noexcept { isonum_ = isonum; }
 
-        double GetMass(void) const noexcept { return mass_; }
-        void SetMass(double mass) noexcept { mass_ = mass; }
-
-        double GetIsotopeMass(void) const noexcept { return isomass_; }
-        void SetIsotopeMass(double isomass) noexcept { isomass_ = isomass; }
-
         double GetCharge(void) const noexcept { return charge_; }
         void SetCharge(double charge) noexcept { charge_ = charge; }
 
@@ -79,6 +69,13 @@ class Atom : public math::Point
         double GetNElectrons(void) const noexcept { return nelectrons_; }
         void SetNElectrons(double n) noexcept { nelectrons_ = n; }
 
+        bool operator==(const Atom & rhs) const;
+        bool operator!=(const Atom & rhs) const;
+
+        //! Lookups in Atomic Info
+        double GetMass(void) const;
+
+        double GetIsotopeMass(void) const;
 
         //! Name of the element
         std::string GetName(void) const;
@@ -87,6 +84,7 @@ class Atom : public math::Point
         std::string GetSymbol(void) const;
 };
 
+std::ostream& operator<<(std::ostream& os,const Atom& A);
 
 
 /* \brief Create an atom given an ID, coordinates, and atomic number

@@ -17,9 +17,6 @@ class Molecule
         unsigned long curid_;
         std::vector<Atom> atoms_;
 
-        double charge_;
-        double nelectrons_;
-
     public:
         typedef std::vector<Atom>::iterator       iterator;
         typedef std::vector<Atom>::const_iterator const_iterator;

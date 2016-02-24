@@ -8,6 +8,15 @@ namespace bpmodule {
 //    Set_t util::Enumeration<system::AtomProperty>::Enums_=Set_t();
 namespace system {
 
+double Atom::GetMass(void) const
+{
+    return AtomicMassFromZ(GetZ());
+}
+
+double Atom::GetIsotopeMass(void) const
+{
+    return IsotopeMassFromZ(GetZ(), GetIsonum());
+}
 
 std::string Atom::GetName(void) const
 {
@@ -18,6 +27,35 @@ std::string Atom::GetName(void) const
 std::string Atom::GetSymbol(void) const
 {
     return AtomicSymFromZ(GetZ());
+}
+
+
+bool Atom::operator==(const Atom & rhs) const
+{
+    PRAGMA_WARNING_PUSH
+    PRAGMA_WARNING_IGNORE_FP_EQUALITY
+
+    return GetID() == rhs.GetID() &&
+           GetZ() == rhs.GetZ() &&
+           GetIsonum() == rhs.GetIsonum() &&
+           GetCharge() == rhs.GetCharge() &&
+           GetMultiplicity() == rhs.GetMultiplicity() &&
+           GetNElectrons() == rhs.GetNElectrons() &&
+           static_cast<math::Point>(*this) == static_cast<math::Point>(rhs)
+           ;
+             
+    PRAGMA_WARNING_POP
+}
+
+bool Atom::operator!=(const Atom & rhs) const
+{
+    return !((*this) == rhs);
+}
+
+std::ostream& operator<<(std::ostream& os,const Atom& A)
+{
+    os<<A.GetSymbol()<<" "<<A[0]<<" "<<A[1]<<" "<<A[2];
+    return os;
 }
 
 
@@ -34,8 +72,6 @@ Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z, int isonum)
                 xyz,
                 Z,
                 isonum,
-                AtomicMassFromZ(Z),
-                IsotopeMassFromZ(Z, isonum),
                 0,  //! \todo default charge
                 math::numeric_cast<double>(AtomicMultiplicityFromZ(Z)),
                 math::numeric_cast<double>(Z)); //! 0 charge, nelectrons = Z
@@ -102,11 +138,6 @@ bool Atom::operator==(const Atom& RHS)const{
             return true;
 }
 
-std::string Atom::ToString() const{
-    std::stringstream ss;
-    ss<<Symbol()<<" "<<(*this)[0]<<" "<<(*this)[1]<<" "<<(*this)[2];
-    return ss.str();
-}
 */
     
 
