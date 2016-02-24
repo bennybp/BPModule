@@ -30,6 +30,7 @@ class PointT
         PointT(PointT &&)                  = default;
         PointT & operator=(const PointT &) = default;
         PointT & operator=(PointT &&)      = default;
+        virtual ~PointT()                  = default;
 
         bool operator==(const PointT & rhs) const
         {
