@@ -72,8 +72,6 @@ PYBIND11_PLUGIN(system)
     // Atom structure
     // Atom class
     pybind11::class_<Atom>(m, "Atom", pybind11::base<math::Point>())
-    .def("GetID", &Atom::GetID)
-    .def("SetID", &Atom::SetID)
     .def("GetZ", &Atom::GetZ)
     .def("SetZ", &Atom::SetZ)
     .def("GetIsonum", &Atom::GetIsonum)
@@ -92,10 +90,10 @@ PYBIND11_PLUGIN(system)
    
 
     // Atom creators
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(Atom::CoordType, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(Atom::CoordType, int, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, int)>(CreateAtom));
 
 
     // Main molecule class 

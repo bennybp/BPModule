@@ -35,8 +35,7 @@ bool Atom::operator==(const Atom & rhs) const
     PRAGMA_WARNING_PUSH
     PRAGMA_WARNING_IGNORE_FP_EQUALITY
 
-    return GetID() == rhs.GetID() &&
-           GetZ() == rhs.GetZ() &&
+    return GetZ() == rhs.GetZ() &&
            GetIsonum() == rhs.GetIsonum() &&
            GetCharge() == rhs.GetCharge() &&
            GetMultiplicity() == rhs.GetMultiplicity() &&
@@ -59,17 +58,16 @@ std::ostream& operator<<(std::ostream& os,const Atom& A)
 }
 
 
-Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z)
+Atom CreateAtom(Atom::CoordType xyz, int Z)
 {
     int isonum = MostCommonIsotopeFromZ(Z);
-    return CreateAtom(id, xyz, Z, isonum);
+    return CreateAtom(xyz, Z, isonum);
 
 }
 
-Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z, int isonum)
+Atom CreateAtom(Atom::CoordType xyz, int Z, int isonum)
 {
-    return Atom(id,
-                xyz,
+    return Atom(xyz,
                 Z,
                 isonum,
                 0,  //! \todo default charge
@@ -77,14 +75,14 @@ Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z, int isonum)
                 math::numeric_cast<double>(Z)); //! 0 charge, nelectrons = Z
 }
 
-Atom CreateAtom(size_t id, double x, double y, double z, int Z)
+Atom CreateAtom(double x, double y, double z, int Z)
 {
-    return CreateAtom(id, {x,y,z}, Z);
+    return CreateAtom({x,y,z}, Z);
 }
 
-Atom CreateAtom(size_t id, double x, double y, double z, int Z, int isonum)
+Atom CreateAtom(double x, double y, double z, int Z, int isonum)
 {
-    return CreateAtom(id, {x,y,z}, Z, isonum);
+    return CreateAtom({x,y,z}, Z, isonum);
 }
 
 

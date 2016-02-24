@@ -18,8 +18,6 @@ namespace system {
 class Atom : public math::Point
 {
     private:
-        size_t id_;    //!< Unique id of this center
-
         int Z_;        //!< Atomic Z number (as integer. Also stored as a (double) weight)
         int isonum_;   //!< Isotope number
 
@@ -31,12 +29,11 @@ class Atom : public math::Point
         typedef math::Point::CoordType CoordType;
 
         // constructor
-        Atom(size_t id, CoordType xyz, int Z, int isonum,
+        Atom(CoordType xyz, int Z, int isonum,
              double charge, double multiplicity, double nelectrons)
         {
             // we do it this way in case we change where the info is stored
             SetCoords(xyz);
-            SetID(id);
             SetZ(Z);
             SetIsonum(isonum);
             SetCharge(charge);
@@ -51,9 +48,6 @@ class Atom : public math::Point
          * form. However, we are leaving it open to future optimizations,
          * such as storing the data elsewhere
          */
-        size_t GetID(void) const noexcept { return id_; }
-        void SetID(size_t id) noexcept { id_ = id; }
-
         int GetZ(void) const noexcept { return Z_; }
         void SetZ(int Z) noexcept { Z_ = Z; }
 
@@ -91,11 +85,11 @@ std::ostream& operator<<(std::ostream& os,const Atom& A);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z);
+Atom CreateAtom(Atom::CoordType xyz, int Z);
 
 
 /*! \copydocs CreateAtom(size_t, Atom::CoordType, int) */
-Atom CreateAtom(size_t id, double x, double y, double z, int Z);
+Atom CreateAtom(double x, double y, double z, int Z);
 
 
 
@@ -103,11 +97,11 @@ Atom CreateAtom(size_t id, double x, double y, double z, int Z);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(size_t id, Atom::CoordType xyz, int Z, int isonum);
+Atom CreateAtom(Atom::CoordType xyz, int Z, int isonum);
 
 
 /*! \copydocs CreateAtom(size_t, Atom::CoordType, int, int) */
-Atom CreateAtom(size_t id, double x, double y, double z, int Z, int isonum);
+Atom CreateAtom(double x, double y, double z, int Z, int isonum);
 
 
 

@@ -29,13 +29,13 @@ def Run():
 
 
         molu = bp.system.AtomSetUniverse()
-        molu.append(bp.system.CreateAtom(0, [ 0.000000000000,     0.000000000000,     0.000000000000], 6))
-        molu.append(bp.system.CreateAtom(1, [ 0.000000000000,     0.000000000000,     2.845112131228], 6))
-        molu.append(bp.system.CreateAtom(2, [ 1.899115961744,     0.000000000000,     4.139062527233], 8))
-        molu.append(bp.system.CreateAtom(3, [-1.894048308506,     0.000000000000,     3.747688672216], 1))
-        molu.append(bp.system.CreateAtom(4, [ 1.942500819960,     0.000000000000,    -0.701145981971], 1))
-        molu.append(bp.system.CreateAtom(5, [-1.007295466862,    -1.669971842687,    -0.705916966833], 1))
-        molu.append(bp.system.CreateAtom(6, [-1.007295466862,     1.669971842687,    -0.705916966833], 1))
+        molu.append(bp.system.CreateAtom([ 0.000000000000,     0.000000000000,     0.000000000000], 6))
+        molu.append(bp.system.CreateAtom([ 0.000000000000,     0.000000000000,     2.845112131228], 6))
+        molu.append(bp.system.CreateAtom([ 1.899115961744,     0.000000000000,     4.139062527233], 8))
+        molu.append(bp.system.CreateAtom([-1.894048308506,     0.000000000000,     3.747688672216], 1))
+        molu.append(bp.system.CreateAtom([ 1.942500819960,     0.000000000000,    -0.701145981971], 1))
+        molu.append(bp.system.CreateAtom([-1.007295466862,    -1.669971842687,    -0.705916966833], 1))
+        molu.append(bp.system.CreateAtom([-1.007295466862,     1.669971842687,    -0.705916966833], 1))
 
 
         mol = bp.system.Molecule(molu, True)
