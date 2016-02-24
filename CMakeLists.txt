@@ -7,8 +7,16 @@ include(ExternalProject)
 
 
 set(BPMODULE_MATH_LIBS "" CACHE STRING "Linker flags/libraries for math libraries")
+set(BPMODULE_BUILD_TYPE "" CACHE STRING "Build type for BPModule (as opposed to all the external dependencies)")
 #set(BPMODULE_PYTHON_VERSION "" CACHE STRING "Python version to use (example, 3.3)")
 
+############################
+# Build type
+############################
+if(NOT BPMODULE_BUILD_TYPE)
+    message(STATUS "BPMODULE_BUILD_TYPE not specified. Using CMAKE_BUILD_TYPE (=${CMAKE_BUILD_TYPE})")
+    set(BPMODULE_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+endif()
 
 ############################
 # Find some base libraries
@@ -59,7 +67,7 @@ add_subdirectory(external)
 ExternalProject_Add(bpmodule_core
                     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/bpmodule
                     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-                               -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+                               -DCMAKE_BUILD_TYPE=${BPMODULE_BUILD_TYPE}
                                -DDESTDIR=${CMAKE_BINARY_DIR}/stage                   # Pass in to allow for searching for dependencies 
                                -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/external
                                -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}

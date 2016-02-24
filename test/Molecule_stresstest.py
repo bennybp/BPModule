@@ -27,11 +27,12 @@ def Run():
         tester = bp.testing.Tester("Testing Molecule class")
         tester.PrintHeader()
 
-        mol = bp.system.Molecule()
+        molu = bp.system.AtomSetUniverse()
 
         time0 = perf_counter()
         for i in range(0, ntest):
-            mol.AddAtom(bp.system.CreateAtom(0, [ random.uniform(-1000, 1000), random.uniform(-1000, 1000), random.uniform(-1000, 1000) ], 6))
+            molu.append(bp.system.CreateAtom(0, [ random.uniform(-1000, 1000), random.uniform(-1000, 1000), random.uniform(-1000, 1000) ], 6))
+        mol = bp.system.Molecule(molu, True)
         time1 = perf_counter()
         bp.output.Output("NAtoms: {}\n".format(mol.NAtoms()))
         bp.output.Output("     Time to fill: {}\n".format(time1-time0))
