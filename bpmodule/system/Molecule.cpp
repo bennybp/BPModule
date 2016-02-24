@@ -5,34 +5,16 @@ namespace bpmodule {
 namespace system {
 
 
-Molecule::Molecule(void)
-    : curid_(0)
+Molecule::Molecule(std::shared_ptr<const AtomSetUniverse> universe, bool fill)
+    : Base_t(universe, fill)
 {
-}
-
-
-//! \todo wrap exceptions
-Atom Molecule::GetAtom(size_t i) const
-{
-    return atoms_.at(i);
-}
-
-void Molecule::SetAtom(size_t i, const Atom & a)
-{
-    atoms_.at(i) = a;
-}
-
-void Molecule::AddAtom(const Atom & a)
-{
-    Atom toappend(a);
-    toappend.SetID(curid_);
-    atoms_.push_back(toappend);
-    curid_++;
+    // empty for now, but stuff may be added in the future
 }
 
 int Molecule::NAtoms(void) const noexcept
 {
-    return static_cast<int>(atoms_.size());
+    // from base class
+    return this->size();
 }
 
 double Molecule::GetCharge(void) const
@@ -57,45 +39,13 @@ math::Point Molecule::CenterOfNuclearCharge(void) const
     return math::WeightedPointsCenter<math::Point>(*this, &Atom::GetZ);
 }
 
-
-
-Molecule::iterator Molecule::begin(void)
-{
-    return atoms_.begin();
-}
-
-
-Molecule::iterator Molecule::end(void)
-{
-    return atoms_.end();
-}
-
-
-Molecule::const_iterator Molecule::begin(void) const
-{
-    return atoms_.begin();
-}
-
-
-Molecule::const_iterator Molecule::end(void) const
-{
-    return atoms_.end();
-}
-
-/*
-void Molecule::AddAtom(const Atom& A){
-    (*this)<<A;
-    Charge_+=A.Charge();
-}
-
 std::string Molecule::ToString()const{
     std::stringstream ss;
-    const_iterator AtomI=begin(),AtomEnd=end();
-    for(;AtomI!=AtomEnd;++AtomI)
-        ss<<*AtomI<<std::endl;
+    for(const auto & it : *this)
+        ss<<it<<"\n";
     return ss.str();
 }
-*/
+
 
 } // close namespace system
 } // close namespace bpmodule

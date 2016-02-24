@@ -33,12 +33,12 @@ def Run():
             bp.output.Output("%1%   %2%\n", str(type(bp.math.Double2nm1FactorialD(i))), bp.math.Double2nm1FactorialD(i))
             bp.output.Output("\n")
 
-        MyUniverse=bp.math.Universe()
+        MyUniverse=bp.math.StringSetUniverse()
         Alphabet="abcdefghijklmnopqrstuvwxyz"
         for i in list(Alphabet):
            MyUniverse.append(i)
         MySets=[]
-        MySets.append(bp.math.MathSet(MyUniverse))
+        MySets.append(bp.math.StringSet(MyUniverse, False))
         
         #Set 0 is just "a"
         MySets[0].append("a")      
@@ -48,7 +48,7 @@ def Run():
         MySets.append(MySets[0].Complement())
 
         #Set 2 is "abr" (tests copy)
-        MySets.append(bp.math.MathSet(MySets[0]))
+        MySets.append(bp.math.StringSet(MySets[0]))
         MySets[2].append("b")
         MySets[2].append("r")
         

@@ -80,15 +80,25 @@ namespace bpmodule {
 
         public:
 
-
+            typedef T value_type;
+            typedef U store_type;
 
             ///Makes a set that is part of the given universe
-            MathSet(std::shared_ptr<const Base_t> AUniverse) : Universe_(AUniverse) {
+            // fill = Make this set a set of all elements in the universe
+            MathSet(std::shared_ptr<const Base_t> AUniverse, bool fill) : Universe_(AUniverse)
+            {
+                //!\todo replace with getting a set of indicies from the universe? Would probably be safer
+                if(fill)
+                {
+                    for(size_t i = 0; i < AUniverse->size(); i++) this->Elems_.insert(i);
+                }
             }
 
 
             ///Deep copies elements, shallow copies Universe_ and Storage_
             MathSet(const My_t&) = default;
+            MathSet(My_t&&) = default;
+            MathSet & operator=(My_t&&) = default;
 
             ///Returns a deep copy of everything
             virtual My_t Clone()const {
@@ -100,17 +110,18 @@ namespace bpmodule {
                 return Temp;
             }
 
+
+            size_t size(void)const noexcept {
+                return this->Elems_.size();
+            }
+
             virtual size_t Idx(const T& Elem)const {
                 return Universe_->Idx(Elem);
             }
 
 
             ///Same as copy constructor, but for assignment
-            My_t& operator=(My_t RHS) {
-                using std::swap;
-                if (this != &RHS)swap(*this, RHS);
-                return *this;
-            }
+            My_t& operator=(const My_t &) = default;
 
             ///For adding an element, if you know its index in the universe
             My_t& operator<<(size_t Idx) {
@@ -189,6 +200,8 @@ namespace bpmodule {
 
             My_t Transform(std::function<T(const T&)> transformer)const
             {
+                //! \todo better way to do this function?
+
                 std::shared_ptr<Base_t> newuniverse(new Base_t);
 
                 size_t i = 0;
@@ -210,12 +223,37 @@ namespace bpmodule {
             ///@{
             ///Basic forwarding of remaining functions and types
 
-            typedef typename Base_t::const_iterator const_iterator;
-            using Base_t::begin;
-            using Base_t::end;
+            typedef ConstSetItr<T, U> const_iterator;
+
+            
+            const_iterator begin() const {
+                return const_iterator(Universe_->MakeIterator(this->Elems_.begin()));
+            }
+
+            const_iterator end() const { 
+                return const_iterator(Universe_->MakeIterator(this->Elems_.end()));
+            }
+
 
             ///@}
         };
+
+
+
+        // Free function to help transform a class derived from MathSet
+        template<typename T>
+        T TransformMathSet(const T & mset,
+                           std::function<typename T::value_type(const typename T::value_type)> transformer)
+        { 
+            typedef MathSet<typename T::value_type, typename T::store_type> Base_t;
+            T ret(mset); // copies all members of mset, but shallow copies universe
+
+            // Deep copies universe, etc
+            //! \todo Set only the MathSet part? UGLY. Consider replacing with a function
+            static_cast<Base_t &>(ret).operator=(mset.Transform(transformer));
+            return ret;
+        }
+
 
 
     }

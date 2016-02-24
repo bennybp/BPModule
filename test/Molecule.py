@@ -17,14 +17,8 @@ import bpmodule as bp
 
 def PrintMol(mol):
     bp.output.Output("\nNumber of atoms: {}\n".format(mol.NAtoms()))
+    print(mol)
 
-    for i in range(0, mol.NAtoms()):
-      a = mol.GetAtom(i)
-      print("{:<4}  {:<4}  {:<15}  {:<20}   {}".format(i,
-                                                         a.GetSymbol(),
-                                                         a.GetName(),
-                                                         a.GetMass(),
-                                                         a.GetCoords()))
     bp.output.Output("Center of Mass: %1%\n", mol.CenterOfMass().GetCoords())
 
 def Run():
@@ -34,14 +28,17 @@ def Run():
         tester.PrintHeader()
 
 
-        mol = bp.system.Molecule()
-        mol.AddAtom(bp.system.CreateAtom(0, [ 0.000000000000,     0.000000000000,     0.000000000000], 6))
-        mol.AddAtom(bp.system.CreateAtom(1, [ 0.000000000000,     0.000000000000,     2.845112131228], 6))
-        mol.AddAtom(bp.system.CreateAtom(2, [ 1.899115961744,     0.000000000000,     4.139062527233], 8))
-        mol.AddAtom(bp.system.CreateAtom(3, [-1.894048308506,     0.000000000000,     3.747688672216], 1))
-        mol.AddAtom(bp.system.CreateAtom(4, [ 1.942500819960,     0.000000000000,    -0.701145981971], 1))
-        mol.AddAtom(bp.system.CreateAtom(5, [-1.007295466862,    -1.669971842687,    -0.705916966833], 1))
-        mol.AddAtom(bp.system.CreateAtom(6, [-1.007295466862,     1.669971842687,    -0.705916966833], 1))
+        molu = bp.system.AtomSetUniverse()
+        molu.append(bp.system.CreateAtom(0, [ 0.000000000000,     0.000000000000,     0.000000000000], 6))
+        molu.append(bp.system.CreateAtom(1, [ 0.000000000000,     0.000000000000,     2.845112131228], 6))
+        molu.append(bp.system.CreateAtom(2, [ 1.899115961744,     0.000000000000,     4.139062527233], 8))
+        molu.append(bp.system.CreateAtom(3, [-1.894048308506,     0.000000000000,     3.747688672216], 1))
+        molu.append(bp.system.CreateAtom(4, [ 1.942500819960,     0.000000000000,    -0.701145981971], 1))
+        molu.append(bp.system.CreateAtom(5, [-1.007295466862,    -1.669971842687,    -0.705916966833], 1))
+        molu.append(bp.system.CreateAtom(6, [-1.007295466862,     1.669971842687,    -0.705916966833], 1))
+
+
+        mol = bp.system.Molecule(molu, True)
         PrintMol(mol)
 
         mol2 = mol.Translate( [ 2.0, 3.0, 4.0 ] )

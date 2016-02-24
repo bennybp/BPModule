@@ -26,16 +26,14 @@ namespace math {
  * \tparam T The type being held within the math set
  */
 template<typename T, typename U = std::vector<T>>
-void RegisterMathSet(pybind11::module & m, const char * classname)
+void RegisterMathSet(pybind11::module & m,
+                     const char * universename, const char * mathsetname)
 {
     typedef Universe<T, U> Universe_t;
     typedef MathSet<T, U> MathSet_t;
 
-    std::string pyname_ms = std::string("MathSet_") + classname;
-    std::string pyname_u = std::string("Universe_") + classname;
-
     // Register the universe
-    pybind11::class_<Universe_t,std::shared_ptr<Universe_t>>(m, pyname_u.c_str())
+    pybind11::class_<Universe_t,std::shared_ptr<Universe_t>>(m, universename)
     .def(pybind11::init<>())
     .def("append",&Universe_t::operator<<,"Adds a new universe to the set")
     .def("__iadd__",&Universe_t::operator+=,"Makes this the union of this and other")
@@ -49,8 +47,8 @@ void RegisterMathSet(pybind11::module & m, const char * classname)
          "Returns the intersection of this and other")
     .def("__str__",&Universe_t::ToString,"Prints out the universe");
 
-    pybind11::class_<MathSet_t>(m, pyname_ms.c_str())
-    .def(pybind11::init<std::shared_ptr<Universe_t>>())
+    pybind11::class_<MathSet_t>(m, mathsetname)
+    .def(pybind11::init<std::shared_ptr<Universe_t>, bool>())
     .def(pybind11::init<const MathSet_t &>())
     .def("append",(MathSet_t& (MathSet_t::*)(const T&)) 
                   &MathSet_t::operator<<,"Adds a new element to the set")

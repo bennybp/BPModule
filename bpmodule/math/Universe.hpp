@@ -17,8 +17,11 @@
 namespace bpmodule {
 namespace math{
     
+// Forward declarations for friends
 template<typename T,typename U>
 class Universe;
+template<typename T,typename U>
+class MathSet;
     
 /** An iterator to go with the universe class, returns actual objects
  *
@@ -104,7 +107,7 @@ class ConstSetItr{
  *            \code
  *            class SetStorage{
  *            public:
- *               //Fucntion that returns an iterator to the first element
+ *               //Function that returns an iterator to the first element
  *               iterator begin();
  *               //Function that returns an iterator just past the last element
  *               iterator end();
@@ -119,14 +122,22 @@ class ConstSetItr{
  */    
 template<typename T,typename U=std::vector<T>>
 class Universe{
-private:
+protected:
+    friend MathSet<T,U>;
+
     ///My type
     typedef Universe<T,U> My_t;
     ///The storage class
     std::shared_ptr<U> Storage_;
-protected:
     ///The elements in this set
     std::set<size_t> Elems_;
+
+    ///For iterating over MathSet and other derived classes
+    virtual ConstSetItr<T,U> MakeIterator(std::set<size_t>::const_iterator elemit) const
+    {
+        return ConstSetItr<T,U>(elemit, *Storage_);
+    }
+
 public:
     typedef T value_type;
 
@@ -139,12 +150,21 @@ public:
         
     
     ///Deep copies during assignment
-    const My_t& operator=(My_t RHS){
+    My_t& operator=(const My_t & RHS){
         using std::swap;
-        if(this!=&RHS)swap(*this, RHS);
+        if(this != &RHS)
+        {
+            My_t tmp(RHS);
+            swap(*this, tmp);
+        }
         return *this;
     }
-    
+   
+
+    My_t & operator=(My_t &&) = default;
+    Universe(My_t &&) = default;
+
+ 
     ///Makes a empty universe
     Universe() : Storage_(new U) { };
     
@@ -163,6 +183,8 @@ public:
     virtual const_iterator end()const{
         return const_iterator(Elems_.end(),*Storage_);
     }
+
+
     ///Returns the index of an Elem in Storage_
     virtual size_t Idx(const T& Elem)const{
         return std::distance(

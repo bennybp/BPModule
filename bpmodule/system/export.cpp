@@ -10,6 +10,7 @@
 #include "bpmodule/system/Molecule.hpp"
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/python/Convert.hpp"
+#include "bpmodule/math/RegisterMathSet.hpp"
 
 using bpmodule::python::ConvertToCpp;
 
@@ -98,12 +99,11 @@ PYBIND11_PLUGIN(system)
 
 
     // Main molecule class 
-    pybind11::class_<Molecule>(m,"Molecule")
-    .def(pybind11::init<>())
+    math::RegisterMathSet<Atom>(m, "AtomSetUniverse", "AtomSet");
+
+    pybind11::class_<Molecule>(m,"Molecule", pybind11::base<AtomSet>())
+    .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
     .def(pybind11::init<const Molecule &>())
-    .def("GetAtom",&Molecule::GetAtom)
-    .def("SetAtom",&Molecule::SetAtom)
-    .def("AddAtom",&Molecule::AddAtom)
     .def("NAtoms",&Molecule::NAtoms)
     .def("GetCharge",&Molecule::GetCharge)
     .def("GetNElectrons",&Molecule::GetNElectrons)
@@ -111,6 +111,8 @@ PYBIND11_PLUGIN(system)
     .def("Rotate", &Molecule::Rotate<std::array<double, 9>>)
     .def("CenterOfMass", &Molecule::CenterOfMass)
     .def("CenterOfNuclearCharge", &Molecule::CenterOfNuclearCharge)
+    .def("ToString", &Molecule::ToString)
+    .def("__str__", &Molecule::ToString)
     ;
 
         
