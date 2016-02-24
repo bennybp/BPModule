@@ -1,6 +1,7 @@
 #ifndef BPMODULE_GUARD_MOLECULE__MOLECULE_HPP_
 #define BPMODULE_GUARD_MOLECULE__MOLECULE_HPP_
 
+#include <map>
 #include "bpmodule/system/Atom.hpp"
 #include "bpmodule/math/MathSet.hpp"
 #include "bpmodule/math/PointManipulation.hpp"
@@ -48,6 +49,8 @@ class Molecule : public math::MathSet<Atom>
 
         // General info
         std::set<std::string> AllTags(void) const;
+        std::map<std::string, Molecule> Fragments(void) const;
+
 
         // Manipulations
         template<typename VectorType>

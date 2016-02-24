@@ -220,6 +220,19 @@ namespace bpmodule {
                 return ret;
             }
 
+
+            void Select(std::function<bool(const T&)> selector)
+            {
+                std::set<size_t> newelems;
+                for(const auto & idx : this->Elems_)
+                {
+                    const auto & el = (*Universe_)[idx];
+                    if(selector(el))
+                        newelems.insert(idx);
+                }
+                this->Elems_ = newelems; 
+            }
+
             ///@{
             ///Basic forwarding of remaining functions and types
 
@@ -251,6 +264,17 @@ namespace bpmodule {
             // Deep copies universe, etc
             //! \todo Set only the MathSet part? UGLY. Consider replacing with a function
             static_cast<Base_t &>(ret).operator=(mset.Transform(transformer));
+            return ret;
+        }
+
+        // Free function to help transform a class derived from MathSet
+        template<typename T>
+        T PartitionMathSet(const T & mset,
+                           std::function<bool(const typename T::value_type)> selector)
+        { 
+            typedef MathSet<typename T::value_type, typename T::store_type> Base_t;
+            T ret(mset); // copies all members of mset, but shallow copies universe
+            ret.Select(selector);
             return ret;
         }
 

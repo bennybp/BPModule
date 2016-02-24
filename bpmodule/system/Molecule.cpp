@@ -25,6 +25,18 @@ std::set<std::string> Molecule::AllTags(void) const
     return tags;
 }
 
+
+std::map<std::string, Molecule> Molecule::Fragments(void) const
+{
+    std::map<std::string, Molecule> ret;
+    std::set<std::string> alltags = AllTags();
+
+    for(const auto & tag : alltags)
+        ret.emplace(tag, PartitionMathSet(*this, [tag](const Atom & a) { return a.GetTag() == tag; }));
+    return ret;
+}
+
+
 double Molecule::GetCharge(void) const
 {
     return std::accumulate(this->begin(), this->end(), static_cast<double>(0.0),

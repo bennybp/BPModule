@@ -59,6 +59,18 @@ def Run():
                              1.0, 0.0, 0.0 ] )
         PrintMol(mol2)
 
+        frags = mol.Fragments()
+        print(frags)
+        for k,v in frags.items():
+            print("+++Fragment {}".format(k))
+            PrintMol(v)
+
+
+        mol3 = frags["frag1"].Translate( [ 100.0, 100.0, 100.0] )
+        PrintMol(mol3)
+        #PrintMol(mol3.Complement())
+
+
         tester.PrintResults() 
 
 
