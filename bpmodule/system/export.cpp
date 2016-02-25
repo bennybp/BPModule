@@ -12,7 +12,6 @@
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/math/RegisterMathSet.hpp"
 
-using bpmodule::python::ConvertToCpp;
 
 namespace bpmodule {
 namespace system {
@@ -86,32 +85,37 @@ PYBIND11_PLUGIN(system)
     .def("GetIsotopeMass", &Atom::GetIsotopeMass)
     .def("GetName", &Atom::GetName)
     .def("GetSymbol", &Atom::GetSymbol)
+    .def("GetTags", &Atom::GetTags)
+    .def("SetTags", &Atom::SetTags)
+    .def("HasTag", &Atom::HasTag)
     ;
    
 
     // Atom creators
-    m.def("CreateAtom", static_cast<Atom (*)(Atom::CoordType, int, const std::string &)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(Atom::CoordType, int, int, const std::string &)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, const std::string &)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, int, const std::string &)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(Atom::CoordType, int, const Atom::TagsType &)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(Atom::CoordType, int, int, const Atom::TagsType &)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, const Atom::TagsType &)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, int, const Atom::TagsType &)>(CreateAtom));
 
-
-    // Main molecule class 
+    // Export AtomSet, etc
     math::RegisterMathSet<Atom>(m, "AtomSetUniverse", "AtomSet");
 
-    pybind11::class_<Molecule>(m,"Molecule", pybind11::base<AtomSet>())
+    // Main molecule class 
+    pybind11::class_<Molecule>(m,"Molecule")
     .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
     .def(pybind11::init<const Molecule &>())
     .def("NAtoms",&Molecule::NAtoms)
     .def("GetCharge",&Molecule::GetCharge)
     .def("GetNElectrons",&Molecule::GetNElectrons)
-    .def("AllTags", &Molecule::AllTags)
-    .def("Fragments", &Molecule::Fragments)
+    .def("GetAllTags", &Molecule::GetAllTags)
+    .def("GetAllFragments", &Molecule::GetAllFragments)
+    .def("GetFragment", &Molecule::GetFragment)
     .def("Translate", &Molecule::Translate<std::array<double, 3>>)
     .def("Rotate", &Molecule::Rotate<std::array<double, 9>>)
     .def("CenterOfMass", &Molecule::CenterOfMass)
     .def("CenterOfNuclearCharge", &Molecule::CenterOfNuclearCharge)
     .def("ToString", &Molecule::ToString)
+    .def("Complement", &Molecule::Complement)
     .def("__str__", &Molecule::ToString)
     ;
 

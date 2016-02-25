@@ -2,6 +2,7 @@
 #define BPMODULE_GUARD_MOLECULE__ATOM_HPP_
 
 #include <iostream>
+#include <set>
 #include <string>
 #include "bpmodule/math/Point.hpp"
 #include "bpmodule/math/Cast.hpp"
@@ -25,14 +26,15 @@ class Atom : public math::Point
         double multiplicity_;
         double nelectrons_;
 
-        std::string tag_;
+        std::set<std::string> tags_;
 
     public:
+        typedef std::set<std::string> TagsType;
         typedef math::Point::CoordType CoordType;
 
         // constructor
         Atom(CoordType xyz, int Z, int isonum,
-             double charge, double multiplicity, double nelectrons, const std::string & tag)
+             double charge, double multiplicity, double nelectrons, const TagsType & tags)
         {
             // we do it this way in case we change where the info is stored
             SetCoords(xyz);
@@ -41,7 +43,7 @@ class Atom : public math::Point
             SetCharge(charge);
             SetMultiplicity(multiplicity);
             SetNElectrons(nelectrons);
-            SetTag(tag);
+            SetTags(tags);
         }
 
 
@@ -66,8 +68,9 @@ class Atom : public math::Point
         double GetNElectrons(void) const noexcept { return nelectrons_; }
         void SetNElectrons(double n) noexcept { nelectrons_ = n; }
 
-        const std::string & GetTag(void) const { return tag_; }
-        void SetTag(const std::string & tag) { tag_ = tag; }
+        TagsType GetTags(void) const { return tags_; }
+        void SetTags(const TagsType & tags) { tags_ = tags; }
+        bool HasTag(const std::string & tag) const { return tags_.count(tag); }
 
         bool operator==(const Atom & rhs) const;
         bool operator!=(const Atom & rhs) const;
@@ -91,11 +94,11 @@ std::ostream& operator<<(std::ostream& os,const Atom& A);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(Atom::CoordType xyz, int Z, const std::string & tag);
+Atom CreateAtom(Atom::CoordType xyz, int Z, const Atom::TagsType & tags);
 
 
 /*! \copydocs CreateAtom(size_t, Atom::CoordType, int) */
-Atom CreateAtom(double x, double y, double z, int Z, const std::string & tag);
+Atom CreateAtom(double x, double y, double z, int Z, const Atom::TagsType & tags);
 
 
 
@@ -103,11 +106,11 @@ Atom CreateAtom(double x, double y, double z, int Z, const std::string & tag);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(Atom::CoordType xyz, int Z, int isonum, const std::string & tag);
+Atom CreateAtom(Atom::CoordType xyz, int Z, int isonum, const Atom::TagsType & tags);
 
 
 /*! \copydocs CreateAtom(size_t, Atom::CoordType, int, int) */
-Atom CreateAtom(double x, double y, double z, int Z, int isonum, const std::string & tag);
+Atom CreateAtom(double x, double y, double z, int Z, int isonum, const Atom::TagsType & tags);
 
 
 

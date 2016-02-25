@@ -291,6 +291,16 @@ class PythonConvertException : public GeneralException
 };
 
 
+/*! \brief An exception thrown when there is a problem with
+ *         molecules, systems, etc
+ */
+class SystemException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
+
 
 } // close namespace exception
 } // close namespace bpmodule

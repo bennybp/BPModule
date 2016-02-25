@@ -75,11 +75,16 @@ namespace bpmodule {
                         );
             }
 
-        protected:
-            MathSet() = default;
+            MathSet(std::shared_ptr<const Base_t> Universe, const std::set<size_t> & Elems)
+                : Universe_(Universe)
+            {
+                this->Elems_ = Elems;
+            }
+
+
 
         public:
-
+            typedef ConstSetItr<T, U> const_iterator;
             typedef T value_type;
             typedef U store_type;
 
@@ -102,12 +107,8 @@ namespace bpmodule {
 
             ///Returns a deep copy of everything
             virtual My_t Clone()const {
-                My_t Temp;
-                //Deep copies this's member data
-                Temp.Base_t::operator=(*this);
-                //Deep copies the universe
-                Temp.Universe_ = std::shared_ptr<Base_t>(new Base_t(*Universe_));
-                return Temp;
+                return My_t(std::shared_ptr<Base_t>(new Base_t(*Universe_)), this->Elems_);
+                //                                         ^^ Deep copy universe, copy elements
             }
 
 
@@ -182,8 +183,7 @@ namespace bpmodule {
 
             ///Returns the complement of this
             My_t Complement()const {
-                My_t Temp;
-                Temp.Universe_ = Universe_;
+                My_t Temp(Universe_, {});
                 for (const T& EI : *Universe_) {
                     if (!this->Contains(EI))Temp << EI;
                 }
@@ -201,27 +201,24 @@ namespace bpmodule {
             My_t Transform(std::function<T(const T&)> transformer)const
             {
                 //! \todo better way to do this function?
-
+                //  This makes some assumptions about the ordering of elements
                 std::shared_ptr<Base_t> newuniverse(new Base_t);
 
-                size_t i = 0;
-                for(const auto & it : *Universe_)
+                for(size_t i = 0; i < Universe_->size(); ++i)
                 {
+                    const auto & it = (*Universe_)[i];
+
                     if(this->Elems_.count(i) > 0)
                         (*newuniverse) << transformer(it);
                     else
                         (*newuniverse) << it;
-                    ++i;
                 }
-
-                // Copy all the other data, then replace the universe
-                My_t ret(*this);
-                ret.Universe_ = newuniverse;
-                return ret;
+                    
+                return My_t(newuniverse, this->Elems_);
             }
 
 
-            void Select(std::function<bool(const T&)> selector)
+            My_t Partition(std::function<bool(const T&)> selector) const
             {
                 std::set<size_t> newelems;
                 for(const auto & idx : this->Elems_)
@@ -230,13 +227,11 @@ namespace bpmodule {
                     if(selector(el))
                         newelems.insert(idx);
                 }
-                this->Elems_ = newelems; 
+
+                return My_t(Universe_, newelems);
             }
 
             ///@{
-            ///Basic forwarding of remaining functions and types
-
-            typedef ConstSetItr<T, U> const_iterator;
 
             
             const_iterator begin() const {
@@ -250,35 +245,6 @@ namespace bpmodule {
 
             ///@}
         };
-
-
-
-        // Free function to help transform a class derived from MathSet
-        template<typename T>
-        T TransformMathSet(const T & mset,
-                           std::function<typename T::value_type(const typename T::value_type)> transformer)
-        { 
-            typedef MathSet<typename T::value_type, typename T::store_type> Base_t;
-            T ret(mset); // copies all members of mset, but shallow copies universe
-
-            // Deep copies universe, etc
-            //! \todo Set only the MathSet part? UGLY. Consider replacing with a function
-            static_cast<Base_t &>(ret).operator=(mset.Transform(transformer));
-            return ret;
-        }
-
-        // Free function to help transform a class derived from MathSet
-        template<typename T>
-        T PartitionMathSet(const T & mset,
-                           std::function<bool(const typename T::value_type)> selector)
-        { 
-            typedef MathSet<typename T::value_type, typename T::store_type> Base_t;
-            T ret(mset); // copies all members of mset, but shallow copies universe
-            ret.Select(selector);
-            return ret;
-        }
-
-
 
     }
 }//End namespaces
