@@ -92,10 +92,10 @@ PYBIND11_PLUGIN(system)
    
 
     // Atom creators
-    m.def("CreateAtom", static_cast<Atom (*)(Atom::CoordType, int, const Atom::TagsType &)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(Atom::CoordType, int, int, const Atom::TagsType &)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, const Atom::TagsType &)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, int, const Atom::TagsType &)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int, const Atom::TagsType &)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int, int, const Atom::TagsType &)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int, const Atom::TagsType &)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int, int, const Atom::TagsType &)>(CreateAtom));
 
     // Export AtomSet, etc
     math::RegisterMathSet<Atom>(m, "AtomSetUniverse", "AtomSet");
@@ -105,6 +105,8 @@ PYBIND11_PLUGIN(system)
     .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
     .def(pybind11::init<const Molecule &>())
     .def("NAtoms",&Molecule::NAtoms)
+    .def("HasAtom", &Molecule::HasAtom)
+    .def("GetAtom", &Molecule::GetAtom)
     .def("GetCharge",&Molecule::GetCharge)
     .def("GetNElectrons",&Molecule::GetNElectrons)
     .def("GetAllTags", &Molecule::GetAllTags)
@@ -116,6 +118,9 @@ PYBIND11_PLUGIN(system)
     .def("CenterOfNuclearCharge", &Molecule::CenterOfNuclearCharge)
     .def("ToString", &Molecule::ToString)
     .def("Complement", &Molecule::Complement)
+    .def("Intersection", &Molecule::Intersection)
+    .def("Union", &Molecule::Union)
+    .def("Difference", &Molecule::Difference)
     .def("__str__", &Molecule::ToString)
     ;
 

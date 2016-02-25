@@ -29,6 +29,24 @@ Molecule::Molecule(std::shared_ptr<const AtomSetUniverse> universe, bool fill)
 }
 
 
+bool Molecule::HasAtom(size_t atomidx) const
+{
+    for(const auto & it : atoms_)
+        if(it.GetIdx() == atomidx)
+            return true;
+    return false;
+}
+
+Atom Molecule::GetAtom(size_t atomidx) const
+{
+    for(const auto & it : atoms_)
+        if(it.GetIdx() == atomidx)
+            return it;
+    throw SystemException("This molecule doesn't have an atom with this index",
+                          "atomidx", atomidx);
+    
+}
+
 int Molecule::NAtoms(void) const
 {
     return atoms_.size();
@@ -82,6 +100,24 @@ double Molecule::GetNElectrons(void) const
 Molecule Molecule::Complement(void) const
 {
     return Molecule(atoms_.Complement());
+}
+
+Molecule Molecule::Intersection(const Molecule & rhs) const
+{
+    //! \todo Named functions in MathSet
+    return Molecule(atoms_ / rhs.atoms_);
+}
+
+Molecule Molecule::Union(const Molecule & rhs) const
+{
+    //! \todo Named functions in MathSet
+    return Molecule(atoms_ + rhs.atoms_);
+}
+
+Molecule Molecule::Difference(const Molecule & rhs) const
+{
+    //! \todo Named functions in MathSet
+    return Molecule(atoms_ - rhs.atoms_);
 }
 
 

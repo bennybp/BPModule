@@ -19,6 +19,7 @@ namespace system {
 class Atom : public math::Point
 {
     private:
+        size_t idx_;   //!< Unique index of the atom
         int Z_;        //!< Atomic Z number (as integer. Also stored as a (double) weight)
         int isonum_;   //!< Isotope number
 
@@ -33,10 +34,11 @@ class Atom : public math::Point
         typedef math::Point::CoordType CoordType;
 
         // constructor
-        Atom(CoordType xyz, int Z, int isonum,
+        Atom(size_t idx, CoordType xyz, int Z, int isonum,
              double charge, double multiplicity, double nelectrons, const TagsType & tags)
         {
             // we do it this way in case we change where the info is stored
+            idx_ = idx;
             SetCoords(xyz);
             SetZ(Z);
             SetIsonum(isonum);
@@ -53,6 +55,9 @@ class Atom : public math::Point
          * form. However, we are leaving it open to future optimizations,
          * such as storing the data elsewhere
          */
+
+        size_t GetIdx(void) const noexcept { return idx_; }
+
         int GetZ(void) const noexcept { return Z_; }
         void SetZ(int Z) noexcept { Z_ = Z; }
 
@@ -94,11 +99,11 @@ std::ostream& operator<<(std::ostream& os,const Atom& A);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(Atom::CoordType xyz, int Z, const Atom::TagsType & tags);
+Atom CreateAtom(size_t idx,Atom::CoordType xyz, int Z, const Atom::TagsType & tags);
 
 
-/*! \copydocs CreateAtom(size_t, Atom::CoordType, int) */
-Atom CreateAtom(double x, double y, double z, int Z, const Atom::TagsType & tags);
+/*! \copydocs CreateAtom(size_t,size_t, Atom::CoordType, int) */
+Atom CreateAtom(size_t idx,double x, double y, double z, int Z, const Atom::TagsType & tags);
 
 
 
@@ -106,11 +111,11 @@ Atom CreateAtom(double x, double y, double z, int Z, const Atom::TagsType & tags
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(Atom::CoordType xyz, int Z, int isonum, const Atom::TagsType & tags);
+Atom CreateAtom(size_t idx,Atom::CoordType xyz, int Z, int isonum, const Atom::TagsType & tags);
 
 
-/*! \copydocs CreateAtom(size_t, Atom::CoordType, int, int) */
-Atom CreateAtom(double x, double y, double z, int Z, int isonum, const Atom::TagsType & tags);
+/*! \copydocs CreateAtom(size_t,size_t, Atom::CoordType, int, int) */
+Atom CreateAtom(size_t idx,double x, double y, double z, int Z, int isonum, const Atom::TagsType & tags);
 
 
 

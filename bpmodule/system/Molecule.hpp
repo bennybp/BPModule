@@ -59,6 +59,9 @@ class Molecule
         double GetCharge(void) const;
         double GetNElectrons(void) const;
 
+        // Get an atom
+        bool HasAtom(size_t atomidx) const;
+        Atom GetAtom(size_t atomidx) const;
 
         // Printing
         std::string ToString(void) const;
@@ -80,6 +83,10 @@ class Molecule
 
         // Set operations
         Molecule Complement(void) const;
+        Molecule Intersection(const Molecule & rhs) const;
+        Molecule Union(const Molecule & rhs) const;
+        Molecule Difference(const Molecule & rhs) const;
+        
 
         // Manipulations
         template<typename VectorType>

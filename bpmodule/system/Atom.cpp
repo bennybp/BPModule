@@ -58,16 +58,17 @@ std::ostream& operator<<(std::ostream& os,const Atom& A)
 }
 
 
-Atom CreateAtom(Atom::CoordType xyz, int Z, const Atom::TagsType & tags)
+Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, const Atom::TagsType & tags)
 {
     int isonum = MostCommonIsotopeFromZ(Z);
-    return CreateAtom(xyz, Z, isonum, tags);
+    return CreateAtom(idx, xyz, Z, isonum, tags);
 
 }
 
-Atom CreateAtom(Atom::CoordType xyz, int Z, int isonum, const Atom::TagsType & tags)
+Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, int isonum, const Atom::TagsType & tags)
 {
-    return Atom(xyz,
+    return Atom(idx,
+                xyz,
                 Z,
                 isonum,
                 0,  //! \todo default charge
@@ -76,14 +77,14 @@ Atom CreateAtom(Atom::CoordType xyz, int Z, int isonum, const Atom::TagsType & t
                 tags);
 }
 
-Atom CreateAtom(double x, double y, double z, int Z, const Atom::TagsType & tags)
+Atom CreateAtom(size_t idx, double x, double y, double z, int Z, const Atom::TagsType & tags)
 {
-    return CreateAtom({x,y,z}, Z, tags);
+    return CreateAtom(idx, {x,y,z}, Z, tags);
 }
 
-Atom CreateAtom(double x, double y, double z, int Z, int isonum, const Atom::TagsType & tags)
+Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum, const Atom::TagsType & tags)
 {
-    return CreateAtom({x,y,z}, Z, isonum, tags);
+    return CreateAtom(idx, {x,y,z}, Z, isonum, tags);
 }
 
 
