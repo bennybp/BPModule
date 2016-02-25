@@ -6,8 +6,15 @@
 #include "bpmodule/math/MathSet.hpp"
 #include "bpmodule/math/PointManipulation.hpp"
 
+// Instantiated in the cpp file
+extern template class bpmodule::math::Universe<bpmodule::system::Atom>;
+extern template class bpmodule::math::MathSet<bpmodule::system::Atom>;
+
+
+
 namespace bpmodule {
 namespace system {
+
 
 
 typedef math::Universe<Atom> AtomSetUniverse;

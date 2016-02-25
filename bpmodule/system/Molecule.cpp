@@ -5,8 +5,16 @@
 using bpmodule::exception::SystemException;
 
 
+// Instantiate the MathSet, etc, templates
+template class bpmodule::math::Universe<bpmodule::system::Atom>;
+template class bpmodule::math::MathSet<bpmodule::system::Atom>;
+
+
 namespace bpmodule {
 namespace system {
+
+
+
 
 Molecule::Molecule(const AtomSet & atoms)
     : atoms_(atoms)

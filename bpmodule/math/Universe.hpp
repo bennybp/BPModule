@@ -169,7 +169,8 @@ public:
     Universe() : Storage_(new U) { };
     
     ///No special memory clean-up
-    virtual ~Universe()=default;
+    // Cannot be =default due to compiler bugs
+    virtual ~Universe() { };
     
     ///@{
     ///Basic accessors
