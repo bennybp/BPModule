@@ -96,6 +96,10 @@ double Molecule::GetNElectrons(void) const
                            [](double sum, const Atom & a) { return sum + a.GetNElectrons(); });
 }
 
+Molecule Molecule::Transform(std::function<Atom(const Atom &)> transformer) const
+{
+    return Molecule(atoms_.Transform(transformer));
+}
 
 Molecule Molecule::Complement(void) const
 {

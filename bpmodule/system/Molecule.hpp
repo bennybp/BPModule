@@ -82,6 +82,7 @@ class Molecule
         math::Point CenterOfNuclearCharge(void) const;
 
         // Set operations
+        Molecule Transform(std::function<Atom(const Atom &)> transformer) const;
         Molecule Complement(void) const;
         Molecule Intersection(const Molecule & rhs) const;
         Molecule Union(const Molecule & rhs) const;
@@ -92,15 +93,13 @@ class Molecule
         template<typename VectorType>
         Molecule Translate(const VectorType & vec) const
         {
-            AtomSet newatoms = atoms_.Transform(std::bind(math::TranslatePoint_Copy<Atom, VectorType>, std::placeholders::_1, vec));
-            return Molecule(newatoms);
+            return Transform(std::bind(math::TranslatePoint_Copy<Atom, VectorType>, std::placeholders::_1, vec));
         }
 
         template<typename MatrixType>
         Molecule Rotate(const MatrixType & mat) const
         {
-            AtomSet newatoms = atoms_.Transform(std::bind(math::RotatePoint_Copy<Atom, MatrixType>, std::placeholders::_1, mat));
-            return Molecule(newatoms);
+            return Transform(std::bind(math::RotatePoint_Copy<Atom, MatrixType>, std::placeholders::_1, mat));
         }
 
 
