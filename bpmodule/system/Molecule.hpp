@@ -38,6 +38,8 @@ class Molecule
         typedef std::map<std::string, Molecule> FragMapType;
         typedef AtomSet::value_type value_type;
         typedef AtomSet::const_iterator const_iterator;
+        typedef AtomSet::SelectorFunc SelectorFunc;
+        typedef AtomSet::TransformerFunc TransformerFunc;
 
         /*! \brief Construct a molecule given a universe
          * 
@@ -82,7 +84,9 @@ class Molecule
         math::Point CenterOfNuclearCharge(void) const;
 
         // Set operations
-        Molecule Transform(std::function<Atom(const Atom &)> transformer) const;
+        void Insert(const Atom & atom);
+        Molecule Partition(SelectorFunc selector) const;
+        Molecule Transform(TransformerFunc transformer) const;
         Molecule Complement(void) const;
         Molecule Intersection(const Molecule & rhs) const;
         Molecule Union(const Molecule & rhs) const;

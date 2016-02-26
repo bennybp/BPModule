@@ -106,6 +106,12 @@ Molecule Molecule::Complement(void) const
     return Molecule(atoms_.Complement());
 }
 
+void Molecule::Insert(const Atom & atom)
+{
+    //! \todo Named functions in MathSet
+    atoms_ << atom;
+}
+
 Molecule Molecule::Intersection(const Molecule & rhs) const
 {
     //! \todo Named functions in MathSet

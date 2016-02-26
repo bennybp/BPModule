@@ -87,6 +87,8 @@ namespace bpmodule {
             typedef ConstSetItr<T, U> const_iterator;
             typedef T value_type;
             typedef U store_type;
+            typedef std::function<bool(const T &)> SelectorFunc;
+            typedef std::function<T(const T &)> TransformerFunc;
 
             ///Makes a set that is part of the given universe
             // fill = Make this set a set of all elements in the universe
@@ -198,7 +200,7 @@ namespace bpmodule {
             }
 
 
-            My_t Transform(std::function<T(const T&)> transformer)const
+            My_t Transform(TransformerFunc transformer)const
             {
                 //! \todo better way to do this function?
                 //  This makes some assumptions about the ordering of elements
@@ -218,7 +220,7 @@ namespace bpmodule {
             }
 
 
-            My_t Partition(std::function<bool(const T&)> selector) const
+            My_t Partition(SelectorFunc selector) const
             {
                 std::set<size_t> newelems;
                 for(const auto & idx : this->Elems_)
