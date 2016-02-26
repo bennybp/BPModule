@@ -69,10 +69,8 @@ namespace bpmodule {
             ///Checks if Elem (either as type T or as size_t) is in the universe
             template<typename V>
             void InUniverse(const V& Elem)const {
-                exception::Assert<exception::ValueOutOfRange>(
-                        Universe_->Contains(Elem),
-                        "Requested element is not in the universe for this set"
-                        );
+                if(!Universe_->Contains(Elem))
+                    throw exception::ValueOutOfRange("Requested element is not in the universe for this set");
             }
 
             MathSet(std::shared_ptr<const Base_t> Universe, const std::set<size_t> & Elems)
