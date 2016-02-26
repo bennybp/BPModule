@@ -28,7 +28,7 @@ def Run():
 
 
         molu = bp.system.AtomSetUniverse()
-        molu.append(bp.system.CreateAtom(0, [ 0.000000000000,     0.000000000000,     0.000000000000], 6, {"frag1", "atom1"}))
+        molu.append(bp.system.CreateAtom(0, [ 0.000000000000,     0.000000000000,     0.000000000000], 6, {"frag1"}))
         molu.append(bp.system.CreateAtom(1, [ 0.000000000000,     0.000000000000,     2.845112131228], 6, {"frag1"}))
         molu.append(bp.system.CreateAtom(2, [ 1.899115961744,     0.000000000000,     4.139062527233], 8, {"frag1"}))
         molu.append(bp.system.CreateAtom(3, [-1.894048308506,     0.000000000000,     3.747688672216], 1, {"frag1"}))
@@ -77,9 +77,10 @@ def Run():
         print("Intersection")
         PrintMol(mol3c.Intersection(mol3))
 
-        atom1 = mol3.GetFragment("atom1")
-        print("New intersection")
-        PrintMol(mol3.Intersection(atom1))
+        atom0 = mol3.GetAtom(0)
+        mol3c.Insert(atom0)
+        print("mol3c now")
+        PrintMol(mol3c)
         
         
 

@@ -65,7 +65,7 @@ Molecule::TagsType Molecule::GetAllTags(void) const
 
 Molecule Molecule::GetFragment(const std::string & tag) const
 {
-    Molecule ret = atoms_.Partition([tag](const Atom & a) { return a.HasTag(tag); });
+    Molecule ret = this->Partition([tag](const Atom & a) { return a.HasTag(tag); });
     if(ret.NAtoms() == 0)
         throw SystemException("This molecule does not have atoms with this tag",
                               "tag", tag);
@@ -96,7 +96,12 @@ double Molecule::GetNElectrons(void) const
                            [](double sum, const Atom & a) { return sum + a.GetNElectrons(); });
 }
 
-Molecule Molecule::Transform(std::function<Atom(const Atom &)> transformer) const
+Molecule Molecule::Partition(Molecule::SelectorFunc selector) const
+{
+    return Molecule(atoms_.Partition(selector));
+}
+
+Molecule Molecule::Transform(Molecule::TransformerFunc transformer) const
 {
     return Molecule(atoms_.Transform(transformer));
 }
