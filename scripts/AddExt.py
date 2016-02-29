@@ -7,6 +7,17 @@
 ############                                                          ##########
 ############  Syntax (in this directory):                             ##########
 ############  AddExt.py <project-name>                                ##########
+############                                                          ##########
+############  After running this script you still have to add your    ##########
+############  git submodule.  Assuming it is at:                      ##########
+############                                                          ##########
+############    git@github.com:PathToMyCode.git                       ##########
+############                                                          ##########
+############  This is done by:                                        ##########
+############                                                          ##########
+############     git submodule add git@github.com:PathToMyCode.git \  ##########
+############     external/<project-name>/<project-name-source>        ##########
+############                                                          ##########
 ################################################################################
 import sys,os
 
@@ -47,8 +58,11 @@ SrcDir=os.path.join(Dir2Make,str(PName+"-source"))
 
 
 #Make the directory structure
-#MakeDir(Dir2Make)
-#MakeDir(SrcDir)
+if(not os.path.isdir(Dir2Make)):
+   MakeDir(Dir2Make)
+#We will do this with the git add submodule
+#if(not os.path.isdir(SrcDir)):
+#   MakeDir(SrcDir)
 
 PNameUp=PName.upper()
 PNameLow=PName.lower()

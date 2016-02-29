@@ -30,11 +30,12 @@ list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/pybin
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/memwatch")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/libelemental")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/madness")
+list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/libtaskforce")
 find_package(pybind11 REQUIRED)
 find_package(memwatch REQUIRED)
 find_package(libelemental REQUIRED)
 find_package(MADNESS REQUIRED CONFIG COMPONENTS world)
-
+find_package(libtaskforce REQUIRED)
 
 # For some reason, this has a leading whitespace
 string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
