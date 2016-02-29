@@ -69,10 +69,8 @@ namespace bpmodule {
             ///Checks if Elem (either as type T or as size_t) is in the universe
             template<typename V>
             void InUniverse(const V& Elem)const {
-                exception::Assert<exception::ValueOutOfRange>(
-                        Universe_->Contains(Elem),
-                        "Requested element is not in the universe for this set"
-                        );
+                if(!Universe_->Contains(Elem))
+                    throw exception::ValueOutOfRange("Requested element is not in the universe for this set");
             }
 
             MathSet(std::shared_ptr<const Base_t> Universe, const std::set<size_t> & Elems)
@@ -87,6 +85,8 @@ namespace bpmodule {
             typedef ConstSetItr<T, U> const_iterator;
             typedef T value_type;
             typedef U store_type;
+            typedef std::function<bool(const T &)> SelectorFunc;
+            typedef std::function<T(const T &)> TransformerFunc;
 
             ///Makes a set that is part of the given universe
             // fill = Make this set a set of all elements in the universe
@@ -198,7 +198,7 @@ namespace bpmodule {
             }
 
 
-            My_t Transform(std::function<T(const T&)> transformer)const
+            My_t Transform(TransformerFunc transformer)const
             {
                 //! \todo better way to do this function?
                 //  This makes some assumptions about the ordering of elements
@@ -218,7 +218,7 @@ namespace bpmodule {
             }
 
 
-            My_t Partition(std::function<bool(const T&)> selector) const
+            My_t Partition(SelectorFunc selector) const
             {
                 std::set<size_t> newelems;
                 for(const auto & idx : this->Elems_)

@@ -29,6 +29,24 @@ Molecule::Molecule(std::shared_ptr<const AtomSetUniverse> universe, bool fill)
 }
 
 
+bool Molecule::HasAtom(size_t atomidx) const
+{
+    for(const auto & it : atoms_)
+        if(it.GetIdx() == atomidx)
+            return true;
+    return false;
+}
+
+Atom Molecule::GetAtom(size_t atomidx) const
+{
+    for(const auto & it : atoms_)
+        if(it.GetIdx() == atomidx)
+            return it;
+    throw SystemException("This molecule doesn't have an atom with this index",
+                          "atomidx", atomidx);
+    
+}
+
 int Molecule::NAtoms(void) const
 {
     return atoms_.size();
@@ -47,7 +65,7 @@ Molecule::TagsType Molecule::GetAllTags(void) const
 
 Molecule Molecule::GetFragment(const std::string & tag) const
 {
-    Molecule ret = atoms_.Partition([tag](const Atom & a) { return a.HasTag(tag); });
+    Molecule ret = this->Partition([tag](const Atom & a) { return a.HasTag(tag); });
     if(ret.NAtoms() == 0)
         throw SystemException("This molecule does not have atoms with this tag",
                               "tag", tag);
@@ -78,10 +96,43 @@ double Molecule::GetNElectrons(void) const
                            [](double sum, const Atom & a) { return sum + a.GetNElectrons(); });
 }
 
+Molecule Molecule::Partition(Molecule::SelectorFunc selector) const
+{
+    return Molecule(atoms_.Partition(selector));
+}
+
+Molecule Molecule::Transform(Molecule::TransformerFunc transformer) const
+{
+    return Molecule(atoms_.Transform(transformer));
+}
 
 Molecule Molecule::Complement(void) const
 {
     return Molecule(atoms_.Complement());
+}
+
+void Molecule::Insert(const Atom & atom)
+{
+    //! \todo Named functions in MathSet
+    atoms_ << atom;
+}
+
+Molecule Molecule::Intersection(const Molecule & rhs) const
+{
+    //! \todo Named functions in MathSet
+    return Molecule(atoms_ / rhs.atoms_);
+}
+
+Molecule Molecule::Union(const Molecule & rhs) const
+{
+    //! \todo Named functions in MathSet
+    return Molecule(atoms_ + rhs.atoms_);
+}
+
+Molecule Molecule::Difference(const Molecule & rhs) const
+{
+    //! \todo Named functions in MathSet
+    return Molecule(atoms_ - rhs.atoms_);
 }
 
 

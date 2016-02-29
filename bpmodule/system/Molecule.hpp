@@ -38,6 +38,8 @@ class Molecule
         typedef std::map<std::string, Molecule> FragMapType;
         typedef AtomSet::value_type value_type;
         typedef AtomSet::const_iterator const_iterator;
+        typedef AtomSet::SelectorFunc SelectorFunc;
+        typedef AtomSet::TransformerFunc TransformerFunc;
 
         /*! \brief Construct a molecule given a universe
          * 
@@ -59,6 +61,9 @@ class Molecule
         double GetCharge(void) const;
         double GetNElectrons(void) const;
 
+        // Get an atom
+        bool HasAtom(size_t atomidx) const;
+        Atom GetAtom(size_t atomidx) const;
 
         // Printing
         std::string ToString(void) const;
@@ -79,21 +84,26 @@ class Molecule
         math::Point CenterOfNuclearCharge(void) const;
 
         // Set operations
+        void Insert(const Atom & atom);
+        Molecule Partition(SelectorFunc selector) const;
+        Molecule Transform(TransformerFunc transformer) const;
         Molecule Complement(void) const;
+        Molecule Intersection(const Molecule & rhs) const;
+        Molecule Union(const Molecule & rhs) const;
+        Molecule Difference(const Molecule & rhs) const;
+        
 
         // Manipulations
         template<typename VectorType>
         Molecule Translate(const VectorType & vec) const
         {
-            AtomSet newatoms = atoms_.Transform(std::bind(math::TranslatePoint_Copy<Atom, VectorType>, std::placeholders::_1, vec));
-            return Molecule(newatoms);
+            return Transform(std::bind(math::TranslatePoint_Copy<Atom, VectorType>, std::placeholders::_1, vec));
         }
 
         template<typename MatrixType>
         Molecule Rotate(const MatrixType & mat) const
         {
-            AtomSet newatoms = atoms_.Transform(std::bind(math::RotatePoint_Copy<Atom, MatrixType>, std::placeholders::_1, mat));
-            return Molecule(newatoms);
+            return Transform(std::bind(math::RotatePoint_Copy<Atom, MatrixType>, std::placeholders::_1, mat));
         }
 
 

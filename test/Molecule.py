@@ -28,23 +28,23 @@ def Run():
 
 
         molu = bp.system.AtomSetUniverse()
-        molu.append(bp.system.CreateAtom([ 0.000000000000,     0.000000000000,     0.000000000000], 6, {"frag1"}))
-        molu.append(bp.system.CreateAtom([ 0.000000000000,     0.000000000000,     2.845112131228], 6, {"frag1"}))
-        molu.append(bp.system.CreateAtom([ 1.899115961744,     0.000000000000,     4.139062527233], 8, {"frag1"}))
-        molu.append(bp.system.CreateAtom([-1.894048308506,     0.000000000000,     3.747688672216], 1, {"frag1"}))
-        molu.append(bp.system.CreateAtom([ 1.942500819960,     0.000000000000,    -0.701145981971], 1, {"frag1"}))
-        molu.append(bp.system.CreateAtom([-1.007295466862,    -1.669971842687,    -0.705916966833], 1, {"frag1"}))
-        molu.append(bp.system.CreateAtom([-1.007295466862,     1.669971842687,    -0.705916966833], 1, {"frag1"}))
+        molu.append(bp.system.CreateAtom(0, [ 0.000000000000,     0.000000000000,     0.000000000000], 6, {"frag1"}))
+        molu.append(bp.system.CreateAtom(1, [ 0.000000000000,     0.000000000000,     2.845112131228], 6, {"frag1"}))
+        molu.append(bp.system.CreateAtom(2, [ 1.899115961744,     0.000000000000,     4.139062527233], 8, {"frag1"}))
+        molu.append(bp.system.CreateAtom(3, [-1.894048308506,     0.000000000000,     3.747688672216], 1, {"frag1"}))
+        molu.append(bp.system.CreateAtom(4, [ 1.942500819960,     0.000000000000,    -0.701145981971], 1, {"frag1"}))
+        molu.append(bp.system.CreateAtom(5, [-1.007295466862,    -1.669971842687,    -0.705916966833], 1, {"frag1"}))
+        molu.append(bp.system.CreateAtom(6, [-1.007295466862,     1.669971842687,    -0.705916966833], 1, {"frag1"}))
 
 
         # same as above, shifted 2,2,2
-        molu.append(bp.system.CreateAtom([ 2.000000000000,  2.000000000000,  2.000000000000 ], 6, {"frag2"}))
-        molu.append(bp.system.CreateAtom([ 2.000000000000,  2.000000000000,  4.845112131228 ], 6, {"frag2"}))
-        molu.append(bp.system.CreateAtom([ 3.899115961744,  2.000000000000,  6.139062527233 ], 8, {"frag2"}))
-        molu.append(bp.system.CreateAtom([ 0.105951691494,  2.000000000000,  5.747688672216 ], 1, {"frag2"}))
-        molu.append(bp.system.CreateAtom([ 3.942500819960,  2.000000000000,  1.298854018029 ], 1, {"frag2"}))
-        molu.append(bp.system.CreateAtom([ 0.992704533138,  0.330028157313,  1.294083033167 ], 1, {"frag2"}))
-        molu.append(bp.system.CreateAtom([ 0.992704533138,  3.669971842687,  1.294083033167 ], 1, {"frag2"}))
+        molu.append(bp.system.CreateAtom(7, [ 2.000000000000,  2.000000000000,  2.000000000000 ], 6, {"frag2"}))
+        molu.append(bp.system.CreateAtom(8, [ 2.000000000000,  2.000000000000,  4.845112131228 ], 6, {"frag2"}))
+        molu.append(bp.system.CreateAtom(9, [ 3.899115961744,  2.000000000000,  6.139062527233 ], 8, {"frag2"}))
+        molu.append(bp.system.CreateAtom(10, [ 0.105951691494,  2.000000000000,  5.747688672216 ], 1, {"frag2"}))
+        molu.append(bp.system.CreateAtom(11, [ 3.942500819960,  2.000000000000,  1.298854018029 ], 1, {"frag2"}))
+        molu.append(bp.system.CreateAtom(12, [ 0.992704533138,  0.330028157313,  1.294083033167 ], 1, {"frag2"}))
+        molu.append(bp.system.CreateAtom(13, [ 0.992704533138,  3.669971842687,  1.294083033167 ], 1, {"frag2"}))
 
 
         mol = bp.system.Molecule(molu, True)
@@ -68,8 +68,21 @@ def Run():
         print("Translated molecule")
         PrintMol(mol3)
         print("Its complement")
-        PrintMol(mol3.Complement())
+        mol3c = mol3.Complement()
+        PrintMol(mol3c)
+        print("Union")
+        PrintMol(mol3c.Union(mol3))
+        print("Difference")
+        PrintMol(mol3c.Difference(mol3))
+        print("Intersection")
+        PrintMol(mol3c.Intersection(mol3))
 
+        atom0 = mol3.GetAtom(0)
+        mol3c.Insert(atom0)
+        print("mol3c now")
+        PrintMol(mol3c)
+        
+        
 
         tester.PrintResults() 
 
