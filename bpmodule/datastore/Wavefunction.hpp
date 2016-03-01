@@ -18,12 +18,7 @@ namespace bpmodule {
 namespace system {
 class Molecule;
 }
-
-namespace basisset {
-class BasisSet;
 }
-}
-
 
 
 namespace bpmodule {
@@ -33,12 +28,11 @@ class Wavefunction
 {
 public:
     Wavefunction(void) = default;
-    Wavefunction(const Wavefunction & /*rhs*/) = default;
-    Wavefunction & operator=(const Wavefunction & /*rhs*/) = default;
-    Wavefunction(Wavefunction && /*rhs*/) = default;
-    Wavefunction & operator=(Wavefunction && /*rhs*/) = default;
+    Wavefunction(const Wavefunction &) = default;
+    Wavefunction & operator=(const Wavefunction &) = default;
+    Wavefunction(Wavefunction &&) = default;
+    Wavefunction & operator=(Wavefunction &&) = default;
 
-    UIDPointer<basisset::BasisSet> basis; 
     UIDPointer<system::Molecule> system;
     UIDPointer<tensor::DistMatrixD> cmat; //! \todo REPLACE ME WITH TENSOR<2> or <3>
     UIDPointer<tensor::DistMatrixD> epsilon; //! \todo REPLACE ME WITH TENSOR<1> or <2>
@@ -46,7 +40,6 @@ public:
     std::string UniqueString(void) const
     {
         std::string s = "WFN_";
-        s += "B:" + std::to_string(basis.Valid()) + "_" + std::to_string(basis.UID()) + "_";
         s += "M:" + std::to_string(system.Valid()) + "_" + std::to_string(system.UID()) + "_";
         s += "C:" + std::to_string(cmat.Valid()) + "_" + std::to_string(cmat.UID()) + "_";
         s += "E:" + std::to_string(epsilon.Valid()) + "_" + std::to_string(epsilon.UID()) + ";";

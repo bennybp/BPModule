@@ -9,6 +9,7 @@
 #define BPMODULE_GUARD_MODULEBASE__ONEELECTRONINTEGRALIMPL_HPP_
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
+#include "bpmodule/basisset/BasisSet.hpp"
 
 
 namespace bpmodule {

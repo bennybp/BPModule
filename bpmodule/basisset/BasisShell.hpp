@@ -1,37 +1,40 @@
-#ifndef BPMODULE_GUARD_SYSTEM__BASISSETSHELL_HPP_
-#define BPMODULE_GUARD_SYSTEM__BASISSETSHELL_HPP_
+#ifndef BPMODULE_GUARD_BASISSET__BASISSHELL_HPP_
+#define BPMODULE_GUARD_BASISSET__BASISSHELL_HPP_
 
 #include <array>
+#include <vector>
+#include "bpmodule/pragma.h"
 #include "bpmodule/basisset/NCartesian.hpp"
 
+
 namespace bpmodule {
-namespace system {
+namespace basisset {
 
 
-enum class BasisSetShellType
+enum class ShellType
 {
     Gaussian,
     Slater
 };
 
 
-
-class BasisSetShell
+// Meant to be stored with the molecule
+class BasisShell
 {
     public:
-        BasisSetShell(BasisSetShellType type, int am, bool cart)
+        BasisShell(ShellType type, int am, bool cart)
             : type_(type), am_(am), cart_(cart)
         { }
 
 
         // compiler generated ok
-        BasisSetShell(const BasisSetShell &)             = default;
-        BasisSetShell(BasisSetShell &&)                  = default;
-        BasisSetShell & operator=(const BasisSetShell &) = default;
-        BasisSetShell & operator=(BasisSetShell &&)      = default;
+        BasisShell(const BasisShell &)             = default;
+        BasisShell(BasisShell &&)                  = default;
+        BasisShell & operator=(const BasisShell &) = default;
+        BasisShell & operator=(BasisShell &&)      = default;
 
 
-        BasisSetShellType GetType(void) const { return type_; }
+        ShellType GetType(void) const { return type_; }
 
         int AM(void) const noexcept { return am_; }
 
@@ -59,8 +62,11 @@ class BasisSetShell
             coefs_.push_back(coef);
         }
 
-        bool operator==(const BasisSetShell & rhs) const
+        bool operator==(const BasisShell & rhs) const
         {
+            PRAGMA_WARNING_PUSH
+            PRAGMA_WARNING_IGNORE_FP_EQUALITY
+
             return (
                      type_ == rhs.type_ &&
                      am_ == rhs.am_ &&
@@ -68,10 +74,12 @@ class BasisSetShell
                      alphas_ == rhs.alphas_ &&
                      coefs_ == rhs.coefs_
                    ); 
+
+            PRAGMA_WARNING_POP
         }
 
     private:
-        BasisSetShellType type_;
+        ShellType type_;
         int am_;                    //!< Angular momentum
         bool cart_;                 //!< Is cartesian?
         std::vector<double> alphas_; //!< Exponents
@@ -79,7 +87,8 @@ class BasisSetShell
 };
 
 
-} // close namespace system
+
+} // close namespace basisset
 } // close namespace bpmodule
 
 

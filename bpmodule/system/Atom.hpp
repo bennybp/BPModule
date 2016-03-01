@@ -1,18 +1,18 @@
 #ifndef BPMODULE_GUARD_SYSTEM__ATOM_HPP_
 #define BPMODULE_GUARD_SYSTEM__ATOM_HPP_
 
-#include <iostream>
-#include <set>
+#include <map>
 #include <string>
 #include "bpmodule/math/Point.hpp"
 #include "bpmodule/math/Cast.hpp"
-#include "bpmodule/system/BasisSetShell.hpp"
+#include "bpmodule/basisset/BasisShell.hpp"
 
 
 namespace bpmodule {
 namespace system {
 
-typedef std::vector<BasisSetShell> ShellVector;
+typedef std::vector<basisset::BasisShell> ShellVector;
+typedef std::map<std::string, ShellVector> ShellMap;
 
 
 /*! \brief A center in a molecule
@@ -32,7 +32,7 @@ class Atom : public math::Point
         double multiplicity_;
         double nelectrons_;
 
-        ShellVector bshells_; //!< Basis functions associated with this atom/center
+        ShellMap bshells_; //!< Basis functions associated with this atom/center
 
     public:
         typedef math::Point::CoordType CoordType;
@@ -82,9 +82,10 @@ class Atom : public math::Point
         double GetNElectrons(void) const noexcept { return nelectrons_; }
         void SetNElectrons(double n) noexcept { nelectrons_ = n; }
 
-        ShellVector GetShells(void) const { return bshells_; }
-        void SetShells(const ShellVector & shells) { bshells_ = shells; }
-        void AddShell(const BasisSetShell & shell) { bshells_.push_back(shell); }
+        ShellMap GetAllShells(void) const { return bshells_; }
+        ShellVector GetShells(const std::string & label) const { return bshells_.at(label); } //! \todo exceptions
+        void SetShells(const std::string & label, const ShellVector & shells) { bshells_[label] = shells; }
+        void AddShell(const std::string & label, const basisset::BasisShell & shell) { bshells_[label].push_back(shell); }
 
 
         bool operator==(const Atom & rhs) const;

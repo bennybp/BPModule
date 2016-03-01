@@ -5,6 +5,8 @@
  */ 
 
 
+#include "bpmodule/python/Pybind11_stl.hpp"
+#include "bpmodule/python/Pybind11_functional.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/system/Molecule.hpp"
@@ -68,31 +70,6 @@ PYBIND11_PLUGIN(system)
     m.def("AtomicMultiplicityFromSym", AtomicMultiplicityFromSym);
 
 
-    // Enumeration for basis set shell types
-    pybind11::enum_<BasisSetShellType>(m, "BasisSetShellType")
-    .value("Gaussian", BasisSetShellType::Gaussian)
-    .value("Slater", BasisSetShellType::Slater)
-    ;
-
-
-    // BasisSetShell class
-    pybind11::class_<BasisSetShell>(m, "GaussianBasisShell")
-       .def(pybind11::init<BasisSetShellType, int, bool>())
-       .def("GetType", &BasisSetShell::GetType)
-       .def("AM", &BasisSetShell::AM)
-       .def("NPrim", &BasisSetShell::NPrim)
-       .def("NCartesian", &BasisSetShell::NCartesian)
-       .def("NSpherical", &BasisSetShell::NSpherical)
-       .def("NFunctions", &BasisSetShell::NFunctions)
-       .def("IsCartesian", &BasisSetShell::IsCartesian)
-       .def("IsSpherical", &BasisSetShell::IsSpherical)
-       .def("Alphas", &BasisSetShell::Alphas)
-       .def("Coefs", &BasisSetShell::Coefs)
-       .def("Alpha", &BasisSetShell::Alpha)
-       .def("Coef", &BasisSetShell::Coef)
-       .def("AddPrimitive", &BasisSetShell::AddPrimitive);
-
-
     // Atom structure
     // Atom class
     pybind11::class_<Atom>(m, "Atom", pybind11::base<math::Point>())
@@ -110,6 +87,7 @@ PYBIND11_PLUGIN(system)
     .def("SetMultiplicity", &Atom::SetMultiplicity)
     .def("GetNElectrons", &Atom::GetNElectrons)
     .def("SetNElectrons", &Atom::SetNElectrons)
+    .def("GetAllShells", &Atom::GetAllShells)
     .def("GetShells", &Atom::GetShells)
     .def("SetShells", &Atom::SetShells)
     .def("AddShell", &Atom::AddShell)

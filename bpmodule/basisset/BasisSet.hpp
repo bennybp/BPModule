@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "bpmodule/basisset/GaussianShell.hpp"
+#include "bpmodule/basisset/BasisSetShell.hpp"
 
 namespace bpmodule {
 namespace basisset {
@@ -12,8 +12,8 @@ namespace basisset {
 class BasisSet
 {
     public:
-        typedef std::vector<GaussianShell>::iterator iterator;
-        typedef std::vector<GaussianShell>::const_iterator const_iterator;
+        typedef std::vector<BasisSetShell>::iterator iterator;
+        typedef std::vector<BasisSetShell>::const_iterator const_iterator;
 
         BasisSet(void);
 
@@ -24,12 +24,12 @@ class BasisSet
         BasisSet & operator=(BasisSet && rhs)      = default;
 
         // note - pass by copy
-        void AddShell(GaussianShell gs);
+        void AddShell(BasisSetShell gs);
 
 
         int NShell(void) const noexcept;
 
-        GaussianShell Shell(int i) const;
+        BasisSetShell Shell(int i) const;
 
         int NPrim(void) const;
         int NCartesian(void) const;
@@ -49,7 +49,7 @@ class BasisSet
 
     private:
         unsigned long curid_;
-        std::vector<GaussianShell> shells_;
+        std::vector<BasisSetShell> shells_;
 };
 
 
