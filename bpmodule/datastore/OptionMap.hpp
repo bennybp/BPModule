@@ -20,6 +20,10 @@ namespace bpmodule {
 namespace datastore {
 
 
+//! Significant Options to compare
+typedef std::set<std::string> KeySet;
+
+
 //! Holds top-level issues with an OptionMap
 typedef std::vector<std::string> WholeOptionMapIssues;
 
@@ -136,7 +140,7 @@ class OptionMap
 
         /*! \brief Obtain the option keys for all missing required options
          */
-        std::vector<std::string> AllMissingReq(void) const;
+        KeySet AllMissingReq(void) const;
 
 
 
@@ -284,7 +288,7 @@ class OptionMap
 
         /*! \brief Compare two OptionMap, but only with some keys
          */
-        bool CompareSelect(const OptionMap & rhs, const std::vector<std::string> & selection) const;
+        bool CompareSelect(const OptionMap & rhs, const KeySet & selection) const;
 
 
 

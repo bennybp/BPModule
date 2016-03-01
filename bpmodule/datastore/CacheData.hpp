@@ -71,7 +71,7 @@ class CacheData
          */
         bool HasData(const std::string & key,
                     const OptionMap & opt = OptionMap(),
-                    const std::vector<std::string> & sigopt = std::vector<std::string>()) const
+                    const KeySet & sigopt = KeySet()) const
         {
             auto range = cmap_.equal_range(key);
             for(auto it = range.first; it != range.second; ++it)
@@ -93,7 +93,7 @@ class CacheData
                       const OptionMap & opt = OptionMap(),
                       pybind11::list sigopt = pybind11::list()) const
         {
-            return HasData(key, opt, python::ConvertToCpp<std::vector<std::string>>(sigopt));
+            return HasData(key, opt, python::ConvertToCpp<KeySet>(sigopt));
         }
 
 
@@ -103,12 +103,11 @@ class CacheData
          * 
          * \return A vector of strings containing all the keys
          */
-        std::vector<std::string> GetKeys(void) const
+        KeySet GetKeys(void) const
         {
-            std::vector<std::string> v;
-            v.reserve(cmap_.size());
+            KeySet v;
             for(auto & it : cmap_)
-                v.push_back(it.first);
+                v.insert(it.first);
             return v;
         }
 
@@ -143,7 +142,7 @@ class CacheData
         template<typename T>
         const T & Get(const std::string & key,
                       const OptionMap & opt = OptionMap(),
-                      const std::vector<std::string> & sigopt = std::vector<std::string>()) const
+                      const KeySet & sigopt = KeySet()) const
         {
             const detail::GenericHolder<T> * ph = GetOrThrow_Cast_<T>(key, opt, sigopt);
             return ph->GetRef();
@@ -171,7 +170,7 @@ class CacheData
                                    pybind11::list sigopt = pybind11::list()) const
         {
             return Get<pybind11::object>(key, opt,
-                                         python::ConvertToCpp<std::vector<std::string>>(sigopt));
+                                         python::ConvertToCpp<KeySet>(sigopt));
         }
 
 
@@ -279,7 +278,7 @@ class CacheData
          */ 
         const CacheDataEntry & GetOrThrow_(const std::string & key,
                                            const OptionMap & opt,
-                                           const std::vector<std::string> & sigopt) const
+                                           const KeySet & sigopt) const
         {
             if(cmap_.count(key))
             {
@@ -316,7 +315,7 @@ class CacheData
         template<typename T>
         const detail::GenericHolder<T> * GetOrThrow_Cast_(const std::string & key,
                                                           const OptionMap & opt,
-                                                          const std::vector<std::string> & sigopt) const
+                                                          const KeySet & sigopt) const
         {
             const CacheDataEntry & pme = GetOrThrow_(key, opt, sigopt);
             const detail::GenericHolder<T> * ph = dynamic_cast<const detail::GenericHolder<T> *>(pme.value.get());

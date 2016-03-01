@@ -1,9 +1,9 @@
 INPUT += dox/basic.dox \
-         dox/dictionary.dox \
          dox/exception.dox \
          dox/options.dox \
          dox/output.dox \
          dox/modulebasics.dox \
+         dox/graphandcache.dox \
          dox/philosophy.dox \
          dox/python.dox \
          dox/developers.dox
