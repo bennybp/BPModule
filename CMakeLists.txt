@@ -79,7 +79,8 @@ ExternalProject_Add(bpmodule_core
                     CMAKE_CACHE_ARGS -DBPMODULE_CORE_PYTHON_LIBRARIES:STRING=${PYTHON_LIBRARIES}
                                      -DBPMODULE_CORE_PYTHON_INCLUDE_DIRS:STRING=${PYTHON_INCLUDE_DIRS}
                                      -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
-                    INSTALL_COMMAND make install DESTDIR=${CMAKE_BINARY_DIR}/stage
+                    BUILD_COMMAND $(MAKE) --silent
+                    INSTALL_COMMAND $(MAKE) install DESTDIR=${CMAKE_BINARY_DIR}/stage
 )
 add_dependencies(bpmodule_core memwatch_external
                                pybind11_external
