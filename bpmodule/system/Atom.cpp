@@ -8,15 +8,6 @@ namespace bpmodule {
 //    Set_t util::Enumeration<system::AtomProperty>::Enums_=Set_t();
 namespace system {
 
-double Atom::GetMass(void) const
-{
-    return AtomicMassFromZ(GetZ());
-}
-
-double Atom::GetIsotopeMass(void) const
-{
-    return IsotopeMassFromZ(GetZ(), GetIsonum());
-}
 
 std::string Atom::GetName(void) const
 {
@@ -35,12 +26,18 @@ bool Atom::operator==(const Atom & rhs) const
     PRAGMA_WARNING_PUSH
     PRAGMA_WARNING_IGNORE_FP_EQUALITY
 
+
+    // order by the parts that are most likely to be different, since
+    //   this should short-circuit on the first false comparison
     return GetZ() == rhs.GetZ() &&
+           static_cast<math::Point>(*this) == static_cast<math::Point>(rhs) &&
+           GetShells() == rhs.GetShells() &&
            GetIsonum() == rhs.GetIsonum() &&
+           GetMass() == rhs.GetMass() &&
+           GetIsotopeMass() == rhs.GetIsotopeMass() &&
            GetCharge() == rhs.GetCharge() &&
            GetMultiplicity() == rhs.GetMultiplicity() &&
-           GetNElectrons() == rhs.GetNElectrons() &&
-           static_cast<math::Point>(*this) == static_cast<math::Point>(rhs)
+           GetNElectrons() == rhs.GetNElectrons()
            ;
              
     PRAGMA_WARNING_POP
@@ -58,14 +55,14 @@ std::ostream& operator<<(std::ostream& os,const Atom& A)
 }
 
 
-Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, const Atom::TagsType & tags)
+Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z)
 {
     int isonum = MostCommonIsotopeFromZ(Z);
-    return CreateAtom(idx, xyz, Z, isonum, tags);
+    return CreateAtom(idx, xyz, Z, isonum);
 
 }
 
-Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, int isonum, const Atom::TagsType & tags)
+Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, int isonum)
 {
     return Atom(idx,
                 xyz,
@@ -73,18 +70,17 @@ Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, int isonum, const Atom::
                 isonum,
                 0,  //! \todo default charge
                 math::numeric_cast<double>(AtomicMultiplicityFromZ(Z)),
-                math::numeric_cast<double>(Z),  //! 0 charge, nelectrons = Z
-                tags);
+                math::numeric_cast<double>(Z));  //! 0 charge, nelectrons = Z
 }
 
-Atom CreateAtom(size_t idx, double x, double y, double z, int Z, const Atom::TagsType & tags)
+Atom CreateAtom(size_t idx, double x, double y, double z, int Z)
 {
-    return CreateAtom(idx, {x,y,z}, Z, tags);
+    return CreateAtom(idx, {x,y,z}, Z);
 }
 
-Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum, const Atom::TagsType & tags)
+Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum)
 {
-    return CreateAtom(idx, {x,y,z}, Z, isonum, tags);
+    return CreateAtom(idx, {x,y,z}, Z, isonum);
 }
 
 

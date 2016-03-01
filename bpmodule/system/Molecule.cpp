@@ -52,37 +52,6 @@ int Molecule::NAtoms(void) const
     return atoms_.size();
 }
 
-Molecule::TagsType Molecule::GetAllTags(void) const
-{
-    std::set<std::string> tags;
-    for(const auto & it : *this)
-    {
-        TagsType atomtags = it.GetTags();
-        tags.insert(atomtags.begin(), atomtags.end());
-    }
-    return tags;
-}
-
-Molecule Molecule::GetFragment(const std::string & tag) const
-{
-    Molecule ret = this->Partition([tag](const Atom & a) { return a.HasTag(tag); });
-    if(ret.NAtoms() == 0)
-        throw SystemException("This molecule does not have atoms with this tag",
-                              "tag", tag);
-    return ret;
-}
-
-Molecule::FragMapType Molecule::GetAllFragments(void) const
-{
-    FragMapType ret;
-    TagsType alltags = GetAllTags();
-
-    for(const auto & tag : alltags)
-        ret.emplace(tag, GetFragment(tag));
-    return ret;
-}
-
-
 double Molecule::GetCharge(void) const
 {
     return std::accumulate(this->begin(), this->end(), static_cast<double>(0.0),

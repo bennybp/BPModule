@@ -1,5 +1,5 @@
-#ifndef BPMODULE_GUARD_MOLECULE__MOLECULE_HPP_
-#define BPMODULE_GUARD_MOLECULE__MOLECULE_HPP_
+#ifndef BPMODULE_GUARD_SYSTEM__MOLECULE_HPP_
+#define BPMODULE_GUARD_SYSTEM__MOLECULE_HPP_
 
 #include <map>
 #include "bpmodule/system/Atom.hpp"
@@ -34,7 +34,6 @@ class Molecule
 
     public:
         typedef Atom::CoordType CoordType;
-        typedef Atom::TagsType TagsType;
         typedef std::map<std::string, Molecule> FragMapType;
         typedef AtomSet::value_type value_type;
         typedef AtomSet::const_iterator const_iterator;
@@ -73,11 +72,6 @@ class Molecule
         const_iterator begin(void) const { return atoms_.begin(); }
         const_iterator end(void) const { return atoms_.end(); }
 
-
-        // Fragments
-        TagsType GetAllTags(void) const;
-        FragMapType GetAllFragments(void) const;
-        Molecule GetFragment(const std::string & tag) const;
 
         // Centers
         math::Point CenterOfMass(void) const;
