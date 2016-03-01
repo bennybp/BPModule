@@ -5,9 +5,10 @@
  */
 
 
+// For dlsym, etc.
 #include <dlfcn.h>
 
-#include "bpmodule/modulemanager/CppModuleLoader.hpp"
+#include "bpmodule/modulemanager/CppSupermoduleLoader.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/exception/Assert.hpp"
@@ -19,7 +20,7 @@ namespace bpmodule {
 namespace modulemanager {
 
 
-CppModuleLoader::~CppModuleLoader()
+CppSupermoduleLoader::~CppSupermoduleLoader()
 {
     // Finalization function in the so file
     typedef void (*FinalizeFunc)(void);
@@ -58,7 +59,7 @@ CppModuleLoader::~CppModuleLoader()
 
 
 
-const ModuleCreationFuncs & CppModuleLoader::LoadSupermodule(const std::string & spath)
+const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::string & spath)
 {
     // Initializing/Finalizing the so file
     typedef void (*InitializeFunc)(void);
@@ -113,7 +114,7 @@ const ModuleCreationFuncs & CppModuleLoader::LoadSupermodule(const std::string &
         
 
         // get the module creation functions
-        // and put them right in the map
+        // and put them in the map, under the key for this supermodule
         soinfo_.emplace(spath, SOInfo{std::move(handle), fn()});  // only line that modifies the object
 
         output::Debug("Finished loading supermodule %1%\n", spath);
@@ -122,7 +123,7 @@ const ModuleCreationFuncs & CppModuleLoader::LoadSupermodule(const std::string &
         output::Debug("Supermodule %1% has already been loaded\n", spath);
 
     // just to be safe
-    Assert<ModuleManagerException>(soinfo_.count(spath) == 1, "CppModuleLoader SOInfo doesn't this information...");
+    Assert<ModuleManagerException>(soinfo_.count(spath) == 1, "CppSupermoduleLoader SOInfo doesn't this information...");
 
     return soinfo_.at(spath).creators;
 }

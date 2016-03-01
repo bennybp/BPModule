@@ -5,12 +5,12 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__PYMODULELOADER_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__PYMODULELOADER_HPP_
+#ifndef BPMODULE_GUARD_MODULEMANAGER__PYSUPERMODULELOADER_HPP_
+#define BPMODULE_GUARD_MODULEMANAGER__PYSUPERMODULELOADER_HPP_
 
 #include <unordered_map>
 
-#include "bpmodule/modulemanager/ModuleLoaderBase.hpp"
+#include "bpmodule/modulemanager/SupermoduleLoaderBase.hpp"
 #include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
 #include "bpmodule/python/Pybind11.hpp"
 
@@ -26,24 +26,24 @@ namespace modulemanager {
  * Module objects and creation functions are cached
  * and deleted/closed at destruction.
  */
-class PyModuleLoader : public ModuleLoaderBase
+class PySupermoduleLoader : public SupermoduleLoaderBase
 {
     public:
 
-        PyModuleLoader() = default;
+        PySupermoduleLoader() = default;
 
 
         /*! Destructor
          *
          * Deletes all objects and closes all creation functions
          */
-        ~PyModuleLoader();
+        ~PySupermoduleLoader();
 
 
-        PyModuleLoader(const PyModuleLoader &)             = delete;
-        PyModuleLoader & operator=(const PyModuleLoader &) = delete;
-        PyModuleLoader(PyModuleLoader &&)                  = default;
-        PyModuleLoader & operator=(PyModuleLoader &&)      = default;
+        PySupermoduleLoader(const PySupermoduleLoader &)             = delete;
+        PySupermoduleLoader & operator=(const PySupermoduleLoader &) = delete;
+        PySupermoduleLoader(PySupermoduleLoader &&)                  = default;
+        PySupermoduleLoader & operator=(PySupermoduleLoader &&)      = default;
 
 
         virtual const ModuleCreationFuncs & LoadSupermodule(const std::string & spath);

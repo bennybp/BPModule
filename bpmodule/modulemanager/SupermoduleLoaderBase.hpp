@@ -5,8 +5,8 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULELOADERBASE_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__MODULELOADERBASE_HPP_
+#ifndef BPMODULE_GUARD_MODULEMANAGER__SUPERMODULELOADERBASE_HPP_
+#define BPMODULE_GUARD_MODULEMANAGER__SUPERMODULELOADERBASE_HPP_
 
 
 #include <string>
@@ -30,17 +30,17 @@ class ModuleCreationFuncs;
  * any loaded supermodule are active and therefore handles, etc, 
  * can be safely closed.
  */
-class ModuleLoaderBase
+class SupermoduleLoaderBase
 {
     public:
 
-        ModuleLoaderBase() = default;
-        virtual ~ModuleLoaderBase() = default;
+        SupermoduleLoaderBase() = default;
+        virtual ~SupermoduleLoaderBase() = default;
 
-        ModuleLoaderBase(const ModuleLoaderBase &)             = delete;
-        ModuleLoaderBase & operator=(const ModuleLoaderBase &) = delete;
-        ModuleLoaderBase(ModuleLoaderBase &&)                  = default;
-        ModuleLoaderBase & operator=(ModuleLoaderBase &&)      = default;
+        SupermoduleLoaderBase(const SupermoduleLoaderBase &)             = delete;
+        SupermoduleLoaderBase & operator=(const SupermoduleLoaderBase &) = delete;
+        SupermoduleLoaderBase(SupermoduleLoaderBase &&)                  = default;
+        SupermoduleLoaderBase & operator=(SupermoduleLoaderBase &&)      = default;
 
 
         /*! \brief Load a supermodule

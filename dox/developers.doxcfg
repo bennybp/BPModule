@@ -3,6 +3,7 @@ INPUT += dox/basic.dox \
          dox/exception.dox \
          dox/options.dox \
          dox/output.dox \
+         dox/modulebasics.dox \
          dox/philosophy.dox \
          dox/python.dox \
          dox/developers.dox

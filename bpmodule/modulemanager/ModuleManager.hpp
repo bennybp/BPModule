@@ -8,7 +8,6 @@
 #ifndef BPMODULE_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
 #define BPMODULE_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
 
-#include <unordered_map>
 #include <atomic>
 
 #include "bpmodule/datastore/ModuleGraph.hpp"
@@ -24,13 +23,15 @@ namespace modulemanager {
 
 
 // forward declaration
-class ModuleLoaderBase;
+class SupermoduleLoaderBase;
 
 
 
-/*! \brief Module database
+/*! \brief Handles loading of supermodules and creation of modules
  *
- * Holds loaded modules for later use
+ * This is the workhorse of the project. It is used to load supermodules,
+ * manage the module names and keys, and to create modules via those
+ * names and keys.
  */
 class ModuleManager
 {
@@ -68,7 +69,7 @@ class ModuleManager
          * \throw bpmodule::exception::ModuleManagerException
          *        if the module name doesn't exist in the database
          *
-         * \param [in] modulekey A module key
+         * \param [in] modulename A module name
          */
         ModuleInfo ModuleNameInfo(const std::string & modulename) const;
 
@@ -103,20 +104,21 @@ class ModuleManager
          *        name doesn't exist
          *
          * \param [in] modulekey The key to be used
-         * \param [in] modulename The name of the module to be associated with \p key
+         * \param [in] modulename The name of the module to be associated with \p modulekey
          */
         void AddKey(const std::string & modulekey, const std::string & modulename);
 
 
         /*! \brief Associates or re-associates a key with a given module name
          * 
-         * Will overwrite if the key already exists
+         * Will overwrite if the key already exists. If it doesn't exist, it will
+         * be added.
          *
          * \throw bpmodule::exception::ModuleManagerException
          *        if a module with the given name doesn't exist
          *
          * \param [in] modulekey The key to be used
-         * \param [in] modulename The name of the module to be associated with \p key
+         * \param [in] modulename The name of the module to be associated with \p modulekey
          */
         void ReplaceKey(const std::string & modulekey, const std::string & modulename);
 
@@ -137,7 +139,7 @@ class ModuleManager
 
 
 
-        /*! \brief Return a new module object wrapped in an RAII-style scoping object
+        /*! \brief Create a new module as a wrapped C++ object
          *
          * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist in the database
@@ -147,10 +149,12 @@ class ModuleManager
          *
          * \exbasic
          * \todo make strong?
+         * \todo might be interesting to make extern template at some point
          *
          * \param [in] modulekey A module key
+         * \param [in] parentid ID of the parent module (that this will be a child of)
          *
-         * \return A ScopedModule for an object of the requested type
+         * \return A wrapped C++ object of the requested type
          */
         template<typename T>
         ModulePtr<T> GetModule(const std::string & modulekey, unsigned long parentid)
@@ -210,6 +214,9 @@ class ModuleManager
 
 
         /*! \brief Adds/inserts a module creator to the database
+         * 
+         * The supermodule is loaded via a handler, and then info
+         * for the module is extracted from the supermodule information.
          *
          * \throw bpmodule::exception::ModuleLoaderException if the key
          *        already exists in the database or if \p mc doesn't
@@ -218,8 +225,7 @@ class ModuleManager
          *  \note We pass all module creation funcs. This is so we
          *        don't need to export IMPL holders to pybind11 
          *
-         * \param [in] mc Functions for creating modules
-         * \param [in] mi Information about the module
+         * \param [in] minfo Information about the module
          */
         void LoadModuleFromModuleInfo(const ModuleInfo & minfo);
 
@@ -238,17 +244,17 @@ class ModuleManager
 
         /*! \brief Handlers for different module types
          */   
-        std::unordered_map<std::string, std::unique_ptr<ModuleLoaderBase>> loadhandlers_;
+        std::map<std::string, std::unique_ptr<SupermoduleLoaderBase>> loadhandlers_;
 
 
         /*! \brief Actual storage object - maps module names to creation functions
          */
-        std::unordered_map<std::string, StoreEntry> store_;
+        std::map<std::string, StoreEntry> store_;
 
 
         /*! \brief Stores map of keys to module names
          */
-        std::unordered_map<std::string, std::string> keymap_;
+        std::map<std::string, std::string> keymap_;
 
 
         /*! \brief Map for storing created module information
@@ -262,7 +268,7 @@ class ModuleManager
          *
          * \todo replace with something?
          */
-        std::unordered_map<unsigned long, datastore::ModuleGraphNode> mgraphmap_;
+        std::map<unsigned long, datastore::ModuleGraphNode> mgraphmap_;
 
 
         //! The id to assign to the next created module
@@ -273,7 +279,7 @@ class ModuleManager
          *
          * The key is a combination of the module name and version
          */
-        std::unordered_map<std::string, datastore::CacheData> cachemap_;
+        std::map<std::string, datastore::CacheData> cachemap_;
 
 
         /*! \brief Obtain the module name for a key or throw an exception
@@ -284,7 +290,7 @@ class ModuleManager
         std::string GetOrThrowKey_(const std::string & modulekey) const;
 
 
-        /*! \brief Obtain stored internal info for a module (via name) or throw an exception
+        /*! \brief Obtain stored internal info for a module (via module name) or throw an exception
          *
          * \throw bpmodule::exception::ModuleManagerException
          *        if the name doesn't exist
@@ -299,7 +305,7 @@ class ModuleManager
         StoreEntry & GetOrThrowName_(const std::string & modulename);
 
 
-        /*! \brief Obtain stored internal info for a module (via key) or throw an exception
+        /*! \brief Obtain stored internal info for a module (via module key) or throw an exception
          *
          * \throw bpmodule::exception::ModuleManagerException
          *        if the key or name doesn't exist

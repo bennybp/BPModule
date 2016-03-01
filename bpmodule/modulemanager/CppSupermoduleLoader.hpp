@@ -5,12 +5,12 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__CPPMODULELOADER_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__CPPMODULELOADER_HPP_
+#ifndef BPMODULE_GUARD_MODULEMANAGER__CPPSUPERMODULELOADER_HPP_
+#define BPMODULE_GUARD_MODULEMANAGER__CPPSUPERMODULELOADER_HPP_
 
-#include <unordered_map>
+#include <map>
 
-#include "bpmodule/modulemanager/ModuleLoaderBase.hpp"
+#include "bpmodule/modulemanager/SupermoduleLoaderBase.hpp"
 #include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
 
 
@@ -24,24 +24,24 @@ namespace modulemanager {
  * shared object module (.so) file. Handles and creation functions
  * are cached and closed at destruction.
  */
-class CppModuleLoader : public ModuleLoaderBase
+class CppSupermoduleLoader : public SupermoduleLoaderBase
 {
     public:
 
-        CppModuleLoader() = default;
+        CppSupermoduleLoader() = default;
 
 
         /*! Destructor
          *
          * Deletes all objects and closes all SO file handles
          */
-        virtual ~CppModuleLoader();
+        virtual ~CppSupermoduleLoader();
 
 
-        CppModuleLoader(const CppModuleLoader &)             = delete;
-        CppModuleLoader & operator=(const CppModuleLoader &) = delete;
-        CppModuleLoader(CppModuleLoader &&)                  = default;
-        CppModuleLoader & operator=(CppModuleLoader &&)      = default;
+        CppSupermoduleLoader(const CppSupermoduleLoader &)             = delete;
+        CppSupermoduleLoader & operator=(const CppSupermoduleLoader &) = delete;
+        CppSupermoduleLoader(CppSupermoduleLoader &&)                  = default;
+        CppSupermoduleLoader & operator=(CppSupermoduleLoader &&)      = default;
 
 
         virtual const ModuleCreationFuncs & LoadSupermodule(const std::string & spath);
@@ -56,7 +56,7 @@ class CppModuleLoader : public ModuleLoaderBase
         };
 
         //! Stores handles and creation funcs to open SO files
-        std::unordered_map<std::string, SOInfo> soinfo_;
+        std::map<std::string, SOInfo> soinfo_;
 };
 
 } // close namespace modulemanager

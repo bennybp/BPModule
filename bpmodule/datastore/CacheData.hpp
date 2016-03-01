@@ -8,8 +8,6 @@
 #ifndef BPMODULE_GUARD_DATASTORE__CACHEDATA_HPP_
 #define BPMODULE_GUARD_DATASTORE__CACHEDATA_HPP_
 
-#include <unordered_map>
-
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/datastore/GenericHolder.hpp"
 #include "bpmodule/python/Convert.hpp"
@@ -260,7 +258,7 @@ class CacheData
 
 
         //! The container to use to store the data
-        std::unordered_multimap<std::string, CacheDataEntry> cmap_;
+        std::multimap<std::string, CacheDataEntry> cmap_;
 
 
 

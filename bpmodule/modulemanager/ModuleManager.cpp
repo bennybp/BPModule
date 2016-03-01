@@ -10,21 +10,11 @@
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 
-////////////
-// Handlers
-////////////
-#include "bpmodule/modulemanager/CppModuleLoader.hpp"
-#include "bpmodule/modulemanager/PyModuleLoader.hpp"
-
-//////////////////////////////////////////////
-//! \todo can probably be removed when graph inheritance is done
-#include "bpmodule/basisset/BasisSet.hpp"
-#include "bpmodule/system/Molecule.hpp"
-#include "bpmodule/tensor/Matrix.hpp"
-using bpmodule::system::Molecule;
-using bpmodule::basisset::BasisSet;
-using bpmodule::tensor::DistMatrixD;
-//////////////////////////////////////////////
+////////////////////////
+// Supermodule Handlers
+////////////////////////
+#include "bpmodule/modulemanager/CppSupermoduleLoader.hpp"
+#include "bpmodule/modulemanager/PySupermoduleLoader.hpp"
 
 
 using bpmodule::datastore::ModuleGraphNodeData;
@@ -45,19 +35,19 @@ ModuleManager::ModuleManager()
     : curid_(100) // reserve some for my use
 {
     // add the handlers
-    loadhandlers_.emplace("c_module", std::unique_ptr<ModuleLoaderBase>(new CppModuleLoader()));
-    loadhandlers_.emplace("python_module", std::unique_ptr<ModuleLoaderBase>(new PyModuleLoader()));
+    loadhandlers_.emplace("c_module", std::unique_ptr<SupermoduleLoaderBase>(new CppSupermoduleLoader()));
+    loadhandlers_.emplace("python_module", std::unique_ptr<SupermoduleLoaderBase>(new PySupermoduleLoader()));
 }
 
 
 ModuleManager::~ModuleManager()
 {
     /*
-       WARNING WARNING WARNING
+       WARNING WARNING WARNING WARNING WARNING
        Clearing the cache and store MUST be done BEFORE unloading
        the modules or else deleting elements will cause a segfault.
-       The GenericHolder is a template, so the code for
-       the destructors exists in the modules
+       Reason: The GenericHolder is a template, so the code for
+               the destructors exists in the modules
     */
     cachemap_.clear();
     keymap_.clear();
@@ -71,10 +61,10 @@ ModuleManager::~ModuleManager()
 void ModuleManager::AddKey(const std::string & modulekey, const std::string & modulename)
 {
     if(!HasName(modulename))
-        throw ModuleManagerException("Cannot add key: The given name doesn't exist",
+        throw ModuleManagerException("Cannot add key: The given module name doesn't exist",
                                      "modulekey", modulekey, "modulename", modulename);
     if(HasKey(modulekey))
-        throw ModuleManagerException("Cannot add key: Already exists",
+        throw ModuleManagerException("Cannot add key: Key already exists",
                                      "modulekey", modulekey, "modulename", modulename);
 
     keymap_.emplace(modulekey, modulename);
@@ -84,10 +74,10 @@ void ModuleManager::AddKey(const std::string & modulekey, const std::string & mo
 void ModuleManager::ReplaceKey(const std::string & modulekey, const std::string & modulename)
 {
     if(!HasName(modulename))
-        throw ModuleManagerException("Cannot add key: The given name doesn't exist",
+        throw ModuleManagerException("Cannot add key: The given module name doesn't exist",
                                      "modulekey", modulekey, "modulename", modulename);
 
-    keymap_.erase(modulekey); // ok if it doesn't exist
+    keymap_.erase(modulekey); // ok if the key doesn't exist
     AddKey(modulekey, modulename);
 }
 
@@ -110,17 +100,16 @@ bool ModuleManager::HasName(const std::string & modulename) const
 }
 
 
-
 ModuleInfo ModuleManager::ModuleKeyInfo(const std::string & modulekey) const
 {
     return GetOrThrow_(modulekey).mi;
 }
 
+
 ModuleInfo ModuleManager::ModuleNameInfo(const std::string & modulename) const
 {
     return GetOrThrowName_(modulename).mi;
 }
-
 
 
 void ModuleManager::PrintInfo(void) const
@@ -132,6 +121,7 @@ void ModuleManager::PrintInfo(void) const
 
 void ModuleManager::TestAll(void)
 {
+    //! \todo needs rewriting and cleanup
     output::Debug("Testing all modules\n");
     for(const auto & it : store_)
     {
@@ -185,6 +175,7 @@ ModuleManager::StoreEntry & ModuleManager::GetOrThrowName_(const std::string & m
         throw ModuleManagerException("Missing module name in ModuleManager", "modulename", modulename);
 }
 
+
 const ModuleManager::StoreEntry & ModuleManager::GetOrThrowName_(const std::string & modulename) const
 {
     if(HasName(modulename))
@@ -199,6 +190,7 @@ ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string & modul
     return GetOrThrowName_(GetOrThrowKey_(modulekey));
 }
 
+
 const ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string & modulekey) const
 {
     return GetOrThrowName_(GetOrThrowKey_(modulekey));
@@ -210,14 +202,14 @@ const ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string &
 /////////////////////////////////////////
 void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo)
 {
-    // path set?
+    // path set in the module info?
     if(minfo.path.size() == 0)
         throw ModuleLoadException("Cannot load module: Empty path",
                                   "modulepath", minfo.path, "modulename", minfo.name);
 
     // check for duplicates
     if(store_.count(minfo.name))
-        throw ModuleLoadException("Cannot load module: duplicate name",
+        throw ModuleLoadException("Cannot load module: duplicate module name",
                                   "modulepath", minfo.path, "modulename", minfo.name);
 
     // Using the handler, load the module
@@ -225,15 +217,15 @@ void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo)
         throw ModuleLoadException("Cannot load module: unknown module type",
                                   "modulepath", minfo.path, "modulename", minfo.name, "type", minfo.type);
 
-    // may throw an exception
+    // may throw an exception. Exception should be a ModuleLoadException
     const ModuleCreationFuncs & mcf = loadhandlers_.at(minfo.type)->LoadSupermodule(minfo.path);
 
-    // does this module actually create a module with this name
+    // See if this supermodule actually create a module with this name
     if(!mcf.HasCreator(minfo.name))
         throw ModuleLoadException("Creators from this supermodule cannot create a module with this name",
                                   "path", minfo.path, "modulename", minfo.name);
 
-    // add to store
+    // add to store with the given module name
     store_.emplace(minfo.name, StoreEntry{minfo, mcf.GetCreator(minfo.name)});
 }
 
@@ -247,12 +239,14 @@ void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo)
 std::unique_ptr<detail::ModuleIMPLHolder>
 ModuleManager::CreateModule_(const std::string & modulekey, unsigned long parentid)
 {
-    // obtain the creator
+    // obtain the information for this key
     const StoreEntry & se = GetOrThrow_(modulekey);
 
-    // create
+    // actually create the module
     std::unique_ptr<detail::ModuleIMPLHolder> umbptr;
+
     try {
+      // calls the creation function within the loaded supermodule
       umbptr = std::unique_ptr<detail::ModuleIMPLHolder>(se.mc(curid_));
     }
     catch(const std::exception & ex)
@@ -288,13 +282,13 @@ ModuleManager::CreateModule_(const std::string & modulekey, unsigned long parent
     }
 
 
-    // set the info
+    // set the info for the module
+    // (set via C++ functions)
     ModuleBase * p = umbptr->CppPtr();
-
     p->SetMManager_(this);
     p->SetGraphNode_(&(mgraphmap_.at(curid_)));
 
-    // get this modules cache
+    // get this module's cache
     // no need to use .at() -- we need it created if it doesn't exist already
     std::string mbstr = p->Name() + "_v" + p->Version();
     p->SetCache_(&(cachemap_[mbstr]));
