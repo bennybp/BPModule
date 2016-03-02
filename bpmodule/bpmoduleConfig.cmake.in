@@ -7,7 +7,8 @@ set(BPMODULE_EXTERNAL_DIR "${CMAKE_CURRENT_LIST_DIR}/external")
 list(APPEND CMAKE_PREFIX_PATH "${BPMODULE_EXTERNAL_DIR}/pybind11")
 list(APPEND CMAKE_PREFIX_PATH "${BPMODULE_EXTERNAL_DIR}/memwatch")
 list(APPEND CMAKE_PREFIX_PATH "${BPMODULE_EXTERNAL_DIR}/libelemental")
-list(APPEND CMAKE_PREFIX_PATH "${BPMODULE_EXTERNAL_DIR}/madness")
+list(APPEND CMAKE_PREFIX_PATH "${BPMODULE_EXTERNAL_DIR}/libtaskforce")
+list(APPEND CMAKE_PREFIX_PATH "${BPMODULE_EXTERNAL_DIR}/tensor")
 
 # And the find macros
 list(APPEND CMAKE_MODULE_PATH "${BPMODULE_EXTERNAL_DIR}/cmake")
@@ -17,7 +18,8 @@ list(APPEND CMAKE_MODULE_PATH "${BPMODULE_EXTERNAL_DIR}/cmake")
 find_package(memwatch REQUIRED)
 find_package(libelemental REQUIRED)
 find_package(pybind11 REQUIRED)
-find_package(MADNESS REQUIRED CONFIG COMPONENTS world)
+find_package(libtaskforce REQUIRED)
+find_package(tensor REQUIRED)
 
 # Create the target to link against
 add_library(bpmodule INTERFACE)
