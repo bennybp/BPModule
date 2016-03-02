@@ -4,13 +4,17 @@
 ################################################################################
 include(ExternalProject)
 
-find_package(LIBTASKFORCE QUIET)
+find_package(tensor QUIET)
 
-if(NOT LIBTASKFORCE_FOUND)
-   message(STATUS "We will build libtaskforce for you")
-ExternalProject_Add(libtaskforce_external
-   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libtaskforce-source
-   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/libtaskforce
+if(NOT TENSOR_FOUND)
+   message(STATUS "We will build libtensor for you")
+#Add the path to madness, assuming libtaskforce was built
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/external/libtaskforce/external/madness)
+
+message(STATUS "${CMAKE_PREFIX_PATH}")
+ExternalProject_Add(libtensor_external
+   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tensor-source
+   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/tensor
    -DPYTHON_LIBRARY=${PYTHON_LIBRARY}
    -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR}
    -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
@@ -21,10 +25,11 @@ ExternalProject_Add(libtaskforce_external
    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
    -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
    -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
-   -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/external/madness
    CMAKE_CACHE_ARGS -DLAPACK_LIBRARIES:STRING=${BPMODULE_MATH_LIBS}
+                    -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
    INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${CMAKE_BINARY_DIR}/stage
 )
+   add_dependencies(libtensor_external libtaskforce_external)
 else()
-   add_library(libtaskforce_external INTERFACE)
+   add_library(libtensor_external INTERFACE)
 endif()
