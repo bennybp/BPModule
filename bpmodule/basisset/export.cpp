@@ -6,6 +6,7 @@
 
 
 #include "bpmodule/python/Pybind11.hpp"
+#include "bpmodule/python/Pybind11_functional.hpp"
 #include "bpmodule/basisset/BasisSet.hpp"
 #include "bpmodule/basisset/BasisShell.hpp"
 #include "bpmodule/basisset/Creators.hpp"
@@ -50,6 +51,10 @@ PYBIND11_PLUGIN(basisset)
 
     // BasisSetShell class
     pybind11::class_<BasisSetShell>(m, "BasisSetShell", bshell)
+    .def(pybind11::init<ShellType, int, bool, unsigned long, unsigned long, double, double, double>())
+    .def(pybind11::init<const BasisShell &, unsigned long, unsigned long, double, double, double>())
+    .def(pybind11::init<ShellType, int, bool, unsigned long, unsigned long, std::array<double, 3>>())
+    .def(pybind11::init<const BasisShell &, unsigned long, unsigned long, std::array<double, 3>>())
     .def("ID", &BasisSetShell::ID)
     .def("Center", &BasisSetShell::Center)
     .def("GetCoords", &BasisSetShell::GetCoords)
@@ -68,6 +73,7 @@ PYBIND11_PLUGIN(basisset)
     .def("MaxAM", &BasisSet::MaxAM)
     .def("MaxNCartesian", &BasisSet::MaxNCartesian)
     .def("MaxNFunctions", &BasisSet::MaxNFunctions)
+    .def("Transform", &BasisSet::Transform)
     ;
 
 

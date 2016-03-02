@@ -2,6 +2,7 @@
 #define BPMODULE_GUARD_BASISSET__BASISSET_HPP_
 
 #include <vector>
+#include <functional>
 
 #include "bpmodule/basisset/BasisSetShell.hpp"
 
@@ -44,6 +45,8 @@ class BasisSet
         //! \todo make a printer class?
         void Print(void) const;
 
+        BasisSet Transform(std::function<BasisSetShell(const BasisSetShell &)> transformer) const;
+
         // iterate over shells
         const_iterator begin(void) const;
         const_iterator end(void) const;
@@ -51,6 +54,8 @@ class BasisSet
     private:
         unsigned long curid_;
         std::vector<BasisSetShell> shells_;
+
+        void AddShell_(const BasisSetShell & bsshell);
 };
 
 

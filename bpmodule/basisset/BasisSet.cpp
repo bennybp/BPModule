@@ -18,8 +18,14 @@ void BasisSet::AddShell(const BasisShell & bshell,
                         unsigned long center,
                         const BasisSetShell::CoordType & xyz)
 {
-    shells_.push_back(BasisSetShell(bshell, curid_++, center, xyz));
+    AddShell_(BasisSetShell(bshell, curid_++, center, xyz));
 }
+
+void BasisSet::AddShell_(const BasisSetShell & bsshell)
+{
+    shells_.push_back(bsshell);
+}
+
 
 int BasisSet::NShell(void) const noexcept
 {
@@ -85,6 +91,14 @@ BasisSet::const_iterator BasisSet::begin(void) const
 BasisSet::const_iterator BasisSet::end(void) const
 {
     return shells_.end();
+}
+
+BasisSet BasisSet::Transform(std::function<BasisSetShell(const BasisSetShell &)> transformer) const
+{
+    BasisSet bs;
+    for(const auto & shell : *this)
+        bs.AddShell_(transformer(shell));
+    return bs;
 }
 
 

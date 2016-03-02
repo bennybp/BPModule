@@ -7,15 +7,32 @@ namespace bpmodule {
 namespace basisset {
 
 
-// for friend class
-class BasisSet;
-
 
 // To be stored in the BasisSet object
 class BasisSetShell : public BasisShell
 {
     public:
         typedef std::array<double, 3> CoordType;
+
+        BasisSetShell(const BasisShell & bshell, unsigned long id,
+                      unsigned long center, double x, double y, double z)
+            : BasisShell(bshell), id_(id), center_(center), xyz_{x,y,z}
+        { }
+
+        BasisSetShell(ShellType type, int am, bool cart, unsigned long id,
+                      unsigned long center, double x, double y, double z)
+            : BasisShell(type, am, cart), id_(id), center_(center), xyz_{x,y,z}
+        { }
+
+        BasisSetShell(const BasisShell & bshell, unsigned long id,
+                      unsigned long center, const CoordType & xyz)
+            : BasisShell(bshell), id_(id), center_(center), xyz_(xyz)
+        { }
+
+        BasisSetShell(ShellType type, int am, bool cart, unsigned long id,
+                      unsigned long center, const CoordType & xyz)
+            : BasisShell(type, am, cart), id_(id), center_(center), xyz_(xyz)
+        { }
 
 
 
@@ -44,15 +61,6 @@ class BasisSetShell : public BasisShell
 
             PRAGMA_WARNING_POP
         }
-
-
-    protected:
-        friend class BasisSet;
-
-        BasisSetShell(const BasisShell & bshell, unsigned long id,
-                      unsigned long center, const CoordType & xyz)
-            : BasisShell(bshell), id_(id), center_(center), xyz_(xyz)
-        { }
 
 
     private:
