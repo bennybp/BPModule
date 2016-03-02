@@ -3,7 +3,7 @@
      - [What is a Module?](#what-is-a-module?)
      - [Why a Framework?](#why-a-framework?)
      - [Benefits](#benefits)
-  2. [Compiling](#compiling-instructions)
+  2. [Compiling](#compiliation-instructions)
      - [Requirements](#requirements)
      - [Compiling The Core](#compile-the-core)
      - [Compiling Modules](#compiling-modules)
@@ -101,20 +101,18 @@ You must have the following already compiled and available:
 The following are our current dependencies (and their dependencies).  If we can
 not locate them on your system they will be built for you using the settings
 provided to the main project.
-    * PyBind11 [Link on GitHub] (https://github.com/wjakob/pybind11.git)
-       - Light-weight, higher-capability replacement for boost::python
-       - Library is header only except for the tests
-    * LibTaskForce [Link on GitHub] (https://github.com/ryanmrichard/LibTaskForce.git)
-       - Library designed to offer task-based parallelism using both shared and
-         distributed computing paradigms
-        * Depends on Madness [Link on GitHub] (https://github.com/m-a-d-n-e-s-s/madness.git)
-    * Tensor [Link on GitHub] (https://github.com/ryanmrichard/Tensor.git)
-       - Data-based pair for LibTaskForce aimed at hybrid parallelism of tensor
-         equations
-        * Tiled Array [Link on GitHub] (https://github.com/ValeevGroup/tiledarray.git)
-            * Used to implement the guts of Tensor
-            * Also depends on Madness
-            * Depends on Eigen [Link on Bitbucket] (https://bitbucket.org/eigen/eigen/) 
+  * PyBind11 [Link on GitHub] (https://github.com/wjakob/pybind11.git)
+    * Light-weight, higher-capability replacement for boost::python
+    * Library is header only except for the tests
+  * LibTaskForce [Link on GitHub] (https://github.com/ryanmrichard/LibTaskForce.git)
+    * Library designed to offer task-based parallelism using both shared an distributed computing paradigms
+    * Depends on Madness [Link on GitHub] (https://github.com/m-a-d-n-e-s-s/madness.git)
+  * Tensor [Link on GitHub] (https://github.com/ryanmrichard/Tensor.git)
+    * Data-based pair for LibTaskForce aimed at hybrid parallelism of tensor equations
+    * Tiled Array [Link on GitHub] (https://github.com/ValeevGroup/tiledarray.git)
+      * Used to implement the guts of Tensor
+      * Also depends on Madness
+      * Depends on Eigen [Link on Bitbucket] (https://bitbucket.org/eigen/eigen/) 
 
 ## Compile the core
 
