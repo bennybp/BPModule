@@ -35,7 +35,7 @@ def Run():
 
         bp.output.Output("Number of shells: %1%\n", bs.NShell())
         for i in range(0, bs.NShell()):
-           gs = bs.Shell(i)
+           gs = bs.GetShell(i)
            print("ID={}  Cart={}   NPrim={}   {}".format(gs.ID(), gs.IsCartesian(), gs.NPrim(), gs.GetCoords()))
            for j in range(0, gs.NPrim()):
              print("      Prim {:<4} :  {:<10}    {:<10}".format(j, gs.Alpha(j), gs.Coef(j)))

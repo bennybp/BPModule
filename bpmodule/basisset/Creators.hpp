@@ -12,7 +12,7 @@ namespace basisset {
 
 namespace detail {
 
-typedef std::map<int, ShellVector> BasisMap;
+typedef std::map<int, BasisShellInfoVector> BasisMap;
 
 BasisMap ReadBasisFile(ShellType type, const std::string & path);
 

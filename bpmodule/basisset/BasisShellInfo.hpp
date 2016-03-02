@@ -1,5 +1,5 @@
-#ifndef BPMODULE_GUARD_BASISSET__BASISSHELL_HPP_
-#define BPMODULE_GUARD_BASISSET__BASISSHELL_HPP_
+#ifndef BPMODULE_GUARD_BASISSET__BASISSHELLINFO_HPP_
+#define BPMODULE_GUARD_BASISSET__BASISSHELLINFO_HPP_
 
 #include <map>
 #include <string>
@@ -22,19 +22,19 @@ enum class ShellType
 
 
 // Meant to be stored with the molecule
-class BasisShell
+class BasisShellInfo
 {
     public:
-        BasisShell(ShellType type, int am, bool cart)
+        BasisShellInfo(ShellType type, int am, bool cart)
             : type_(type), am_(am), cart_(cart)
         { }
 
 
         // compiler generated ok
-        BasisShell(const BasisShell &)             = default;
-        BasisShell(BasisShell &&)                  = default;
-        BasisShell & operator=(const BasisShell &) = default;
-        BasisShell & operator=(BasisShell &&)      = default;
+        BasisShellInfo(const BasisShellInfo &)             = default;
+        BasisShellInfo(BasisShellInfo &&)                  = default;
+        BasisShellInfo & operator=(const BasisShellInfo &) = default;
+        BasisShellInfo & operator=(BasisShellInfo &&)      = default;
 
 
         ShellType GetType(void) const { return type_; }
@@ -65,7 +65,7 @@ class BasisShell
             coefs_.push_back(coef);
         }
 
-        bool operator==(const BasisShell & rhs) const
+        bool operator==(const BasisShellInfo & rhs) const
         {
             PRAGMA_WARNING_PUSH
             PRAGMA_WARNING_IGNORE_FP_EQUALITY
@@ -90,8 +90,8 @@ class BasisShell
 };
 
 
-typedef std::vector<BasisShell> ShellVector;
-typedef std::map<std::string, ShellVector> ShellMap;
+typedef std::vector<BasisShellInfo> BasisShellInfoVector;
+typedef std::map<std::string, BasisShellInfoVector> BasisShellInfoMap;
 
 
 } // close namespace basisset

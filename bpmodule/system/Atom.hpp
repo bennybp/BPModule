@@ -3,7 +3,7 @@
 
 #include "bpmodule/math/Point.hpp"
 #include "bpmodule/math/Cast.hpp"
-#include "bpmodule/basisset/BasisShell.hpp"
+#include "bpmodule/basisset/BasisShellInfo.hpp"
 
 
 namespace bpmodule {
@@ -28,7 +28,7 @@ class Atom : public math::Point
         double multiplicity_;
         double nelectrons_;
 
-        basisset::ShellMap bshells_; //!< Basis functions associated with this atom/center
+        basisset::BasisShellInfoMap bshells_; //!< Basis functions associated with this atom/center
 
     public:
         typedef math::Point::CoordType CoordType;
@@ -46,6 +46,13 @@ class Atom : public math::Point
             SetMultiplicity(multiplicity);
             SetNElectrons(nelectrons);
         }
+
+
+
+        Atom(const Atom &)             = default;
+        Atom & operator=(const Atom &) = default;
+        Atom(Atom &&)                  = default;
+        Atom & operator=(Atom &&)      = default;
 
 
 
@@ -78,10 +85,10 @@ class Atom : public math::Point
         double GetNElectrons(void) const noexcept { return nelectrons_; }
         void SetNElectrons(double n) noexcept { nelectrons_ = n; }
 
-        basisset::ShellMap GetAllShells(void) const { return bshells_; }
-        basisset::ShellVector GetShells(const std::string & label) const { return bshells_.at(label); } //! \todo exceptions
-        void SetShells(const std::string & label, const basisset::ShellVector & shells) { bshells_[label] = shells; }
-        void AddShell(const std::string & label, const basisset::BasisShell & shell) { bshells_[label].push_back(shell); }
+        basisset::BasisShellInfoMap GetAllShells(void) const { return bshells_; }
+        basisset::BasisShellInfoVector GetShells(const std::string & label) const { return bshells_.at(label); } //! \todo exceptions
+        void SetShells(const std::string & label, const basisset::BasisShellInfoVector & shells) { bshells_[label] = shells; }
+        void AddShell(const std::string & label, const basisset::BasisShellInfo & shell) { bshells_[label].push_back(shell); }
 
 
         bool operator==(const Atom & rhs) const;

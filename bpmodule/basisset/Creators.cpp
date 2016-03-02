@@ -29,7 +29,7 @@ BasisMap ReadBasisFile(ShellType type, const std::string & path)
 
     std::string line;
 
-    std::vector<BasisShell> gsv;
+    std::vector<BasisShellInfo> gsv;
     std::string sym;
 
     // cartesian or spherical basis
@@ -65,8 +65,8 @@ BasisMap ReadBasisFile(ShellType type, const std::string & path)
 
             if(am == "SP")
             {
-                BasisShell gs_s(type, 0, iscart); 
-                BasisShell gs_p(type, 1, iscart); 
+                BasisShellInfo gs_s(type, 0, iscart); 
+                BasisShellInfo gs_p(type, 1, iscart); 
 
                 for(int i = 0; i < nprim; i++)
                 {
@@ -85,7 +85,7 @@ BasisMap ReadBasisFile(ShellType type, const std::string & path)
             else
             {
                 int iam = StringToAM(am);
-                BasisShell gs(type, iam, iscart); 
+                BasisShellInfo gs(type, iam, iscart); 
 
                 for(int i = 0; i < nprim; i++)
                 {

@@ -25,14 +25,14 @@ class BasisSet
         BasisSet & operator=(const BasisSet & rhs) = default;
         BasisSet & operator=(BasisSet && rhs)      = default;
 
-        void AddShell(const BasisShell & bshell,
+        void AddShell(const BasisShellInfo & bshell,
                       unsigned long center,
                       const BasisSetShell::CoordType & xyz);
 
 
         int NShell(void) const noexcept;
 
-        BasisSetShell Shell(int i) const;
+        const BasisSetShell & GetShell(int i) const;
 
         int NPrim(void) const;
         int NCartesian(void) const;

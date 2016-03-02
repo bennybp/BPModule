@@ -14,7 +14,7 @@ BasisSet::BasisSet(void)
 { }
 
 
-void BasisSet::AddShell(const BasisShell & bshell,
+void BasisSet::AddShell(const BasisShellInfo & bshell,
                         unsigned long center,
                         const BasisSetShell::CoordType & xyz)
 {
@@ -33,7 +33,7 @@ int BasisSet::NShell(void) const noexcept
 }
 
 
-BasisSetShell BasisSet::Shell(int i) const
+const BasisSetShell & BasisSet::GetShell(int i) const
 {
     if(static_cast<size_t>(i) < shells_.size() )
         return shells_[i];
@@ -112,7 +112,7 @@ void BasisSet::Print(void) const
 
     for(int i = 0; i < nshell; i++)
     {
-        const auto shell = Shell(i);
+        const auto & shell = GetShell(i);
         output::Output("Shell %1%  AM=%2%  Cart=%3%  NPrim=%4%\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim());
         for(int j = 0; j < shell.NPrim(); ++j)
             output::Output("    %1%    %2%\n", shell.Alpha(j), shell.Coef(j));

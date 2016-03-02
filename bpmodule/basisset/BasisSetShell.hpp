@@ -1,7 +1,7 @@
 #ifndef BPMODULE_GUARD_BASISSET__BASISSETSHELL_HPP_
 #define BPMODULE_GUARD_BASISSET__BASISSETSHELL_HPP_
 
-#include "bpmodule/basisset/BasisShell.hpp"
+#include "bpmodule/basisset/BasisShellInfo.hpp"
 
 namespace bpmodule {
 namespace basisset {
@@ -9,29 +9,29 @@ namespace basisset {
 
 
 // To be stored in the BasisSet object
-class BasisSetShell : public BasisShell
+class BasisSetShell : public BasisShellInfo
 {
     public:
         typedef std::array<double, 3> CoordType;
 
-        BasisSetShell(const BasisShell & bshell, unsigned long id,
+        BasisSetShell(const BasisShellInfo & bshell, unsigned long id,
                       unsigned long center, double x, double y, double z)
-            : BasisShell(bshell), id_(id), center_(center), xyz_{x,y,z}
+            : BasisShellInfo(bshell), id_(id), center_(center), xyz_{x,y,z}
         { }
 
         BasisSetShell(ShellType type, int am, bool cart, unsigned long id,
                       unsigned long center, double x, double y, double z)
-            : BasisShell(type, am, cart), id_(id), center_(center), xyz_{x,y,z}
+            : BasisShellInfo(type, am, cart), id_(id), center_(center), xyz_{x,y,z}
         { }
 
-        BasisSetShell(const BasisShell & bshell, unsigned long id,
+        BasisSetShell(const BasisShellInfo & bshell, unsigned long id,
                       unsigned long center, const CoordType & xyz)
-            : BasisShell(bshell), id_(id), center_(center), xyz_(xyz)
+            : BasisShellInfo(bshell), id_(id), center_(center), xyz_(xyz)
         { }
 
         BasisSetShell(ShellType type, int am, bool cart, unsigned long id,
                       unsigned long center, const CoordType & xyz)
-            : BasisShell(type, am, cart), id_(id), center_(center), xyz_(xyz)
+            : BasisShellInfo(type, am, cart), id_(id), center_(center), xyz_(xyz)
         { }
 
 
@@ -54,7 +54,7 @@ class BasisSetShell : public BasisShell
             PRAGMA_WARNING_IGNORE_FP_EQUALITY
 
             return (
-                    static_cast<const BasisShell>(*this) == static_cast<const BasisShell>(rhs) &&
+                    static_cast<const BasisShellInfo>(*this) == static_cast<const BasisShellInfo>(rhs) &&
                     id_ == rhs.id_ &&
                     xyz_ == rhs.xyz_
                    );

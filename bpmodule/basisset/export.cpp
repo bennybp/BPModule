@@ -8,7 +8,7 @@
 #include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/python/Pybind11_functional.hpp"
 #include "bpmodule/basisset/BasisSet.hpp"
-#include "bpmodule/basisset/BasisShell.hpp"
+#include "bpmodule/basisset/BasisShellInfo.hpp"
 #include "bpmodule/basisset/Creators.hpp"
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 
@@ -32,29 +32,29 @@ PYBIND11_PLUGIN(basisset)
     ;
 
 
-    // BasisShell class
-    pybind11::class_<BasisShell> bshell(m, "BasisShell");
+    // BasisShellInfo class
+    pybind11::class_<BasisShellInfo> bshell(m, "BasisShellInfo");
     bshell.def(pybind11::init<ShellType, int, bool>())
-          .def("GetType", &BasisShell::GetType)
-          .def("AM", &BasisShell::AM)
-          .def("NPrim", &BasisShell::NPrim)
-          .def("NCartesian", &BasisShell::NCartesian)
-          .def("NSpherical", &BasisShell::NSpherical)
-          .def("NFunctions", &BasisShell::NFunctions)
-          .def("IsCartesian", &BasisShell::IsCartesian)
-          .def("IsSpherical", &BasisShell::IsSpherical)
-          .def("Alphas", &BasisShell::Alphas)
-          .def("Coefs", &BasisShell::Coefs)
-          .def("Alpha", &BasisShell::Alpha)
-          .def("Coef", &BasisShell::Coef)
-          .def("AddPrimitive", &BasisShell::AddPrimitive);
+          .def("GetType", &BasisShellInfo::GetType)
+          .def("AM", &BasisShellInfo::AM)
+          .def("NPrim", &BasisShellInfo::NPrim)
+          .def("NCartesian", &BasisShellInfo::NCartesian)
+          .def("NSpherical", &BasisShellInfo::NSpherical)
+          .def("NFunctions", &BasisShellInfo::NFunctions)
+          .def("IsCartesian", &BasisShellInfo::IsCartesian)
+          .def("IsSpherical", &BasisShellInfo::IsSpherical)
+          .def("Alphas", &BasisShellInfo::Alphas)
+          .def("Coefs", &BasisShellInfo::Coefs)
+          .def("Alpha", &BasisShellInfo::Alpha)
+          .def("Coef", &BasisShellInfo::Coef)
+          .def("AddPrimitive", &BasisShellInfo::AddPrimitive);
 
     // BasisSetShell class
     pybind11::class_<BasisSetShell>(m, "BasisSetShell", bshell)
     .def(pybind11::init<ShellType, int, bool, unsigned long, unsigned long, double, double, double>())
-    .def(pybind11::init<const BasisShell &, unsigned long, unsigned long, double, double, double>())
+    .def(pybind11::init<const BasisShellInfo &, unsigned long, unsigned long, double, double, double>())
     .def(pybind11::init<ShellType, int, bool, unsigned long, unsigned long, std::array<double, 3>>())
-    .def(pybind11::init<const BasisShell &, unsigned long, unsigned long, std::array<double, 3>>())
+    .def(pybind11::init<const BasisShellInfo &, unsigned long, unsigned long, std::array<double, 3>>())
     .def("ID", &BasisSetShell::ID)
     .def("Center", &BasisSetShell::Center)
     .def("GetCoords", &BasisSetShell::GetCoords)
@@ -65,7 +65,7 @@ PYBIND11_PLUGIN(basisset)
     .def("Print", &BasisSet::Print)
     .def("AddShell", &BasisSet::AddShell)
     .def("NShell", &BasisSet::NShell)
-    .def("Shell", &BasisSet::Shell)
+    .def("GetShell", &BasisSet::GetShell, pybind11::return_value_policy::reference_internal)
     .def("NPrim", &BasisSet::NPrim)
     .def("NCartesian", &BasisSet::NCartesian)
     .def("NFunctions", &BasisSet::NFunctions)
