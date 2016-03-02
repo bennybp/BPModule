@@ -93,7 +93,7 @@ BasisSet::const_iterator BasisSet::end(void) const
     return shells_.end();
 }
 
-BasisSet BasisSet::Transform(std::function<BasisSetShell(const BasisSetShell &)> transformer) const
+BasisSet BasisSet::Transform(BasisSet::TransformerFunc transformer) const
 {
     BasisSet bs;
     for(const auto & shell : *this)

@@ -15,6 +15,7 @@ class BasisSet
     public:
         typedef std::vector<BasisSetShell>::iterator iterator;
         typedef std::vector<BasisSetShell>::const_iterator const_iterator;
+        typedef std::function<BasisSetShell(const BasisSetShell &)> TransformerFunc;
 
         BasisSet(void);
 
@@ -45,7 +46,7 @@ class BasisSet
         //! \todo make a printer class?
         void Print(void) const;
 
-        BasisSet Transform(std::function<BasisSetShell(const BasisSetShell &)> transformer) const;
+        BasisSet Transform(TransformerFunc transformer) const;
 
         // iterate over shells
         const_iterator begin(void) const;
