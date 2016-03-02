@@ -116,9 +116,10 @@ BasisMap ReadBasisFile(ShellType type, const std::string & path)
 
 system::Molecule SimpleCreator(const std::string & basispath,
                                const Molecule & mol,
+                               const ShellType type,
                                const std::string & basislabel)
 {
-    detail::BasisMap bm = detail::ReadBasisFile(basispath);
+    detail::BasisMap bm = detail::ReadBasisFile(type, basispath);
 
     output::Output("Basis read with %1% elements\n", bm.size());
 

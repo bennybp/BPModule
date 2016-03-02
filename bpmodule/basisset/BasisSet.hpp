@@ -23,8 +23,9 @@ class BasisSet
         BasisSet & operator=(const BasisSet & rhs) = default;
         BasisSet & operator=(BasisSet && rhs)      = default;
 
-        // note - pass by copy
-        void AddShell(BasisSetShell gs);
+        void AddShell(const BasisShell & bshell,
+                      unsigned long center,
+                      const BasisSetShell::CoordType & xyz);
 
 
         int NShell(void) const noexcept;

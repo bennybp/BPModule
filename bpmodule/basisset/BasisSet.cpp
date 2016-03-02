@@ -14,11 +14,11 @@ BasisSet::BasisSet(void)
 { }
 
 
-void BasisSet::AddShell(BasisSetShell gs)
+void BasisSet::AddShell(const BasisShell & bshell,
+                        unsigned long center,
+                        const BasisSetShell::CoordType & xyz)
 {
-    gs.SetID(curid_);
-    curid_++;
-    shells_.push_back(gs);
+    shells_.push_back(BasisSetShell(bshell, curid_++, center, xyz));
 }
 
 int BasisSet::NShell(void) const noexcept

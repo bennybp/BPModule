@@ -1,4 +1,5 @@
 #include "bpmodule/system/Molecule.hpp"
+#include "bpmodule/basisset/BasisSet.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 
 
@@ -114,6 +115,16 @@ math::Point Molecule::CenterOfMass(void) const
 math::Point Molecule::CenterOfNuclearCharge(void) const
 {
     return math::WeightedPointsCenter<math::Point>(*this, &Atom::GetZ);
+}
+
+basisset::BasisSet Molecule::GetBasisSet(const std::string & basislabel) const
+{
+    basisset::BasisSet bs;
+    for(const auto & atom : *this)
+        for(const auto & bshell : atom.GetShells(basislabel))
+            bs.AddShell(bshell, atom.GetIdx(), atom.GetCoords());
+
+    return bs;
 }
 
 

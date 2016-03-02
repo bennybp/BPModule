@@ -11,6 +11,12 @@ extern template class bpmodule::math::Universe<bpmodule::system::Atom>;
 extern template class bpmodule::math::MathSet<bpmodule::system::Atom>;
 
 
+// forward declare
+namespace bpmodule {
+namespace basisset {
+class BasisSet;
+}}
+
 
 namespace bpmodule {
 namespace system {
@@ -86,6 +92,10 @@ class Molecule
         Molecule Union(const Molecule & rhs) const;
         Molecule Difference(const Molecule & rhs) const;
         
+
+        // Basis set stuff
+        basisset::BasisSet GetBasisSet(const std::string & basislabel) const;
+
 
         // Manipulations
         template<typename VectorType>

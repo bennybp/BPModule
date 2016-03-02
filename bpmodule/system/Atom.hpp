@@ -34,7 +34,7 @@ class Atom : public math::Point
         typedef math::Point::CoordType CoordType;
 
         // constructor
-        Atom(size_t idx, CoordType xyz, int Z, int isonum,
+        Atom(size_t idx,  CoordType xyz, int Z, int isonum,
              double charge, double multiplicity, double nelectrons)
         {
             // we do it this way in case we change where the info is stored
@@ -102,11 +102,11 @@ std::ostream& operator<<(std::ostream& os,const Atom& A);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(size_t idx,Atom::CoordType xyz, int Z);
+Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z);
 
 
 /*! \copydocs CreateAtom(size_t,size_t, Atom::CoordType, int) */
-Atom CreateAtom(size_t idx,double x, double y, double z, int Z);
+Atom CreateAtom(size_t idx, double x, double y, double z, int Z);
 
 
 
@@ -114,11 +114,11 @@ Atom CreateAtom(size_t idx,double x, double y, double z, int Z);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(size_t idx,Atom::CoordType xyz, int Z, int isonum);
+Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, int isonum);
 
 
 /*! \copydocs CreateAtom(size_t,size_t, Atom::CoordType, int, int) */
-Atom CreateAtom(size_t idx,double x, double y, double z, int Z, int isonum);
+Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum);
 
 
 

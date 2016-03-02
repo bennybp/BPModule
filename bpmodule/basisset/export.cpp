@@ -50,13 +50,9 @@ PYBIND11_PLUGIN(basisset)
 
     // BasisSetShell class
     pybind11::class_<BasisSetShell>(m, "BasisSetShell", bshell)
-    .def(pybind11::init<ShellType, int, bool, unsigned long, unsigned long, double, double, double>())
-    .def(pybind11::init<const BasisShell &, unsigned long, unsigned long, double, double, double>())
-    .def(pybind11::init<ShellType, int, bool, unsigned long, unsigned long, std::array<double, 3>>())
-    .def(pybind11::init<const BasisShell &, unsigned long, unsigned long, std::array<double, 3>>())
     .def("ID", &BasisSetShell::ID)
     .def("Center", &BasisSetShell::Center)
-    .def("Coordinates", &BasisSetShell::Coordinates)
+    .def("GetCoords", &BasisSetShell::GetCoords)
     ;
 
     pybind11::class_<BasisSet>(m, "BasisSet")

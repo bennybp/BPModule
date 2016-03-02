@@ -14,7 +14,7 @@ namespace detail {
 
 typedef std::map<int, ShellVector> BasisMap;
 
-BasisMap ReadBasisFile(const std::string & path);
+BasisMap ReadBasisFile(ShellType type, const std::string & path);
 
 }
 
@@ -23,6 +23,7 @@ BasisMap ReadBasisFile(const std::string & path);
 
 system::Molecule SimpleCreator(const std::string & basispath,
                                const system::Molecule & mol,
+                               ShellType type,
                                const std::string & basislabel);
 
 

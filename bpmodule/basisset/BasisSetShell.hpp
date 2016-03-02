@@ -18,26 +18,6 @@ class BasisSetShell : public BasisShell
         typedef std::array<double, 3> CoordType;
 
 
-        //! \todo construct from python list
-        BasisSetShell(const BasisShell & bshell, unsigned long id,
-                      unsigned long center, double x, double y, double z)
-            : BasisShell(bshell), id_(id), center_(center), xyz_{x,y,z}
-        { }
-
-        BasisSetShell(ShellType type, int am, bool cart, unsigned long id,
-                      unsigned long center, double x, double y, double z)
-            : BasisShell(type, am, cart), id_(id), center_(center), xyz_{x,y,z}
-        { }
-
-        BasisSetShell(const BasisShell & bshell, unsigned long id,
-                      unsigned long center, const CoordType & xyz)
-            : BasisShell(bshell), id_(id), center_(center), xyz_(xyz)
-        { }
-
-        BasisSetShell(ShellType type, int am, bool cart, unsigned long id,
-                      unsigned long center, const CoordType & xyz)
-            : BasisShell(type, am, cart), id_(id), center_(center), xyz_(xyz)
-        { }
 
         // compiler generated ok
         BasisSetShell(const BasisSetShell & rhs)             = default;
@@ -48,7 +28,7 @@ class BasisSetShell : public BasisShell
         unsigned long ID(void) const noexcept { return id_; }
         unsigned long Center(void) const noexcept { return center_; }
 
-        CoordType Coordinates(void) const { return xyz_; }
+        CoordType GetCoords(void) const { return xyz_; }
 
 
         bool operator==(const BasisSetShell & rhs) const
@@ -69,7 +49,10 @@ class BasisSetShell : public BasisShell
     protected:
         friend class BasisSet;
 
-        void SetID(unsigned long id) { id_ = id; }
+        BasisSetShell(const BasisShell & bshell, unsigned long id,
+                      unsigned long center, const CoordType & xyz)
+            : BasisShell(bshell), id_(id), center_(center), xyz_(xyz)
+        { }
 
 
     private:

@@ -10,6 +10,7 @@
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/system/Molecule.hpp"
+#include "bpmodule/basisset/BasisSet.hpp"
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/math/RegisterMathSet.hpp"
@@ -114,6 +115,7 @@ PYBIND11_PLUGIN(system)
     .def("GetAtom", &Molecule::GetAtom)
     .def("GetCharge",&Molecule::GetCharge)
     .def("GetNElectrons",&Molecule::GetNElectrons)
+    .def("GetBasisSet", &Molecule::GetBasisSet)
     .def("Translate", &Molecule::Translate<std::array<double, 3>>)
     .def("Rotate", &Molecule::Rotate<std::array<double, 9>>)
     .def("CenterOfMass", &Molecule::CenterOfMass)
