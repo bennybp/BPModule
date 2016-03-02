@@ -11,7 +11,6 @@ if(NOT TENSOR_FOUND)
 #Add the path to madness, assuming libtaskforce was built
 list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/external/libtaskforce/external/madness)
 
-message(STATUS "${CMAKE_PREFIX_PATH}")
 ExternalProject_Add(libtensor_external
    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/tensor-source
    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/tensor
