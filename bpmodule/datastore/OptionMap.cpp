@@ -154,12 +154,12 @@ void OptionMap::Validate(void) const
 }
 
 
-std::vector<std::string> OptionMap::AllMissingReq(void) const
+KeySet OptionMap::AllMissingReq(void) const
 {
-    std::vector<std::string> req;
+    KeySet req;
     for(const auto & it : opmap_)
         if(!it.second->IsSetIfRequired())
-            req.push_back(it.first);
+            req.insert(it.first);
 
     return req;
 }
@@ -209,11 +209,11 @@ bool OptionMap::HasIssues(void) const
 
 bool OptionMap::Compare(const OptionMap & rhs) const
 {
-    std::vector<std::string> keys1, keys2;
+    KeySet keys1, keys2;
     for(const auto & it : opmap_)
-        keys1.push_back(it.first);
+        keys1.insert(it.first);
     for(const auto & it : rhs.opmap_)
-        keys2.push_back(it.first);
+        keys2.insert(it.first);
     if(keys1 != keys2)
         return false;
 
@@ -225,7 +225,7 @@ bool OptionMap::Compare(const OptionMap & rhs) const
 }
 
 
-bool OptionMap::CompareSelect(const OptionMap & rhs, const std::vector<std::string> & selection) const
+bool OptionMap::CompareSelect(const OptionMap & rhs, const KeySet & selection) const
 {
     //! \todo Too strict or not strict enough? What if one doesn't have it but the other doesn't have a value?
     for(const auto & it : selection)

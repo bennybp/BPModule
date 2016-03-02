@@ -17,22 +17,26 @@ import bpmodule as bp
 
 def Run():
     try:
+        bspath = os.path.join(thispath, "../", "basis")
+        bspath = os.path.realpath(bspath)
+        bstype = bp.basisset.ShellType.Gaussian
 
         tester = bp.testing.Tester("Testing BasisSet class")
         tester.PrintHeader()
 
-        mol = bp.system.Molecule()
-        mol.AddAtom(1, [0.0, 0.0, 0.0] )
-        mol.AddAtom(1, [1.0, 0.0, 0.0] )
-        mol.AddAtom(8, [0.0, 1.0, 0.0] )
+        molu = bp.system.AtomSetUniverse()
+        molu.append(bp.system.CreateAtom(0, [ 0.000000000000,     0.000000000000,     0.000000000000], 1))
+        molu.append(bp.system.CreateAtom(1, [ 1.000000000000,     0.000000000000,     0.000000000000], 1))
+        molu.append(bp.system.CreateAtom(2, [ 0.000000000000,     1.000000000000,     0.000000000000], 8))
 
-
-        bs = bp.basisset.SimpleCreator("/home/ben/programming/BPModule/install/basis/sto-3g.gbs", mol);
+        mol = bp.system.Molecule(molu, True)
+        molwithbs = bp.basisset.SimpleCreator(os.path.join(bspath, "sto-3g.gbs"), mol, bstype, "primary");
+        bs = molwithbs.GetBasisSet("primary")
 
         bp.output.Output("Number of shells: %1%\n", bs.NShell())
         for i in range(0, bs.NShell()):
-           gs = bs.Shell(i)
-           print("ID={}  Cart={}   NPrim={}   {}".format(gs.ID(), gs.IsCartesian(), gs.NPrim(), gs.Coordinates()))
+           gs = bs.GetShell(i)
+           print("ID={}  Cart={}   NPrim={}   {}".format(gs.ID(), gs.IsCartesian(), gs.NPrim(), gs.GetCoords()))
            for j in range(0, gs.NPrim()):
              print("      Prim {:<4} :  {:<10}    {:<10}".format(j, gs.Alpha(j), gs.Coef(j)))
 

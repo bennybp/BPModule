@@ -12,16 +12,19 @@ namespace basisset {
 
 namespace detail {
 
-typedef std::map<int, std::vector<GaussianBasisShell>> BasisMap;
+typedef std::map<int, BasisShellInfoVector> BasisMap;
 
-BasisMap ReadBasisFile(const std::string & path);
+BasisMap ReadBasisFile(ShellType type, const std::string & path);
 
 }
 
 
 
 
-BasisSet SimpleCreator(const std::string & basispath, const system::Molecule & mol);
+system::Molecule SimpleCreator(const std::string & basispath,
+                               const system::Molecule & mol,
+                               ShellType type,
+                               const std::string & basislabel);
 
 
 

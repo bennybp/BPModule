@@ -9,6 +9,8 @@
 
 
 using bpmodule::system::AtomicZNumberFromSym;
+using bpmodule::system::Atom;
+using bpmodule::system::Molecule;
 
 namespace bpmodule {
 namespace basisset {
@@ -16,7 +18,7 @@ namespace basisset {
 
 namespace detail {
 
-BasisMap ReadBasisFile(const std::string & path)
+BasisMap ReadBasisFile(ShellType type, const std::string & path)
 {
     BasisMap bm;
 
@@ -27,7 +29,7 @@ BasisMap ReadBasisFile(const std::string & path)
 
     std::string line;
 
-    std::vector<GaussianBasisShell> gsv;
+    std::vector<BasisShellInfo> gsv;
     std::string sym;
 
     // cartesian or spherical basis
@@ -63,8 +65,8 @@ BasisMap ReadBasisFile(const std::string & path)
 
             if(am == "SP")
             {
-                GaussianBasisShell gs_s(0, iscart); 
-                GaussianBasisShell gs_p(1, iscart); 
+                BasisShellInfo gs_s(type, 0, iscart); 
+                BasisShellInfo gs_p(type, 1, iscart); 
 
                 for(int i = 0; i < nprim; i++)
                 {
@@ -83,7 +85,7 @@ BasisMap ReadBasisFile(const std::string & path)
             else
             {
                 int iam = StringToAM(am);
-                GaussianBasisShell gs(iam, iscart); 
+                BasisShellInfo gs(type, iam, iscart); 
 
                 for(int i = 0; i < nprim; i++)
                 {
@@ -112,21 +114,20 @@ BasisMap ReadBasisFile(const std::string & path)
 
 
 
-BasisSet SimpleCreator(const std::string & basispath, const system::Molecule & mol)
+system::Molecule SimpleCreator(const std::string & basispath,
+                               const Molecule & mol,
+                               const ShellType type,
+                               const std::string & basislabel)
 {
-    detail::BasisMap bm = detail::ReadBasisFile(basispath);
+    detail::BasisMap bm = detail::ReadBasisFile(type, basispath);
 
     output::Output("Basis read with %1% elements\n", bm.size());
-    BasisSet bs;
 
-    for(const auto & atom : mol)
-    {
-        auto gsv = bm.at(atom.GetZ());
-        //for(const auto & gb : gsv)
-        //    bs.AddShell(GaussianShell(gb, 0, atom.id, atom.xyz));
-    }
-
-    return bs;
+    return mol.Transform([& bm, & basislabel](const Atom & atom) { 
+        Atom a(atom);  // copy the atom
+        a.SetShells(basislabel, bm.at(atom.GetZ())); // set is basis set for this label
+        return a;
+    });
 }
 
 

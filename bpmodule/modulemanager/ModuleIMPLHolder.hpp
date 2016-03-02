@@ -9,7 +9,6 @@
 #define BPMODULE_GUARD_MODULEMANAGER__MODULEIMPLHOLDER_HPP_
 
 #include "bpmodule/python/Convert.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
 
 // Split into hpp and cpp files so we don't have to
 // include ModuleBase.hpp here
@@ -44,8 +43,11 @@ class ModuleIMPLHolder
         ModuleIMPLHolder & operator=(ModuleIMPLHolder &&) = delete;
 
         /*! \brief Return a C++ pointer to the module base interface
+         * 
+         * Ownership remains the responsibility of thie IMPLHolder
          */ 
         virtual modulebase::ModuleBase * CppPtr(void) const = 0;
+
 
         /*! \brief Return a python object representing the module
          * 
@@ -65,7 +67,8 @@ class ModuleIMPLHolder
         {
             using namespace bpmodule::exception;
 
-            Assert<GeneralException>(CppPtr() != nullptr, "Null pointer in ModuleIMPLHolder");
+            if(CppPtr() == nullptr)
+                throw GeneralException("Null pointer in ModuleIMPLHolder");
 
             T * ptr = dynamic_cast<T *>(CppPtr());
 
@@ -96,7 +99,8 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
         virtual modulebase::ModuleBase * CppPtr(void) const
         {
             using namespace bpmodule::exception;
-            Assert<GeneralException>((bool)mod_, "Null pointer in CppModuleIMPLHolder");
+            if(!mod_)
+                throw GeneralException("Null pointer in CppModuleIMPLHolder");
             return mod_.get(); 
         }
 
@@ -104,11 +108,13 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
         virtual pybind11::object PythonObject(void) const
         {
             using namespace bpmodule::exception;
-            Assert<GeneralException>((bool)mod_, "Null pointer in CppModuleIMPLHolder");
+            if(!mod_)
+              throw GeneralException("Null pointer in CppModuleIMPLHolder");
             T * ptr = mod_.get();
             pybind11::object o = python::ConvertToPy(ptr, pybind11::return_value_policy::reference);
 
-            Assert<GeneralException>(o, "Null python object in CppModuleIMPLHolder");
+            if(!o)
+                throw GeneralException("Null python object in CppModuleIMPLHolder");
 
             return o;
         } 

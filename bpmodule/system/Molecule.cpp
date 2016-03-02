@@ -1,4 +1,5 @@
 #include "bpmodule/system/Molecule.hpp"
+#include "bpmodule/basisset/BasisSet.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 
 
@@ -14,18 +15,28 @@ namespace bpmodule {
 namespace system {
 
 
+void Molecule::SetDefaults_(void)
+{
+    charge_ = GetSumCharge();
+    nelectrons_ = GetSumNElectrons();
+
+    //! \todo default multiplicity
+    multiplicity_ = 1.0;
+}
+
 
 
 Molecule::Molecule(const AtomSet & atoms)
     : atoms_(atoms)
 {
+    SetDefaults_();
 }
 
 
 Molecule::Molecule(std::shared_ptr<const AtomSetUniverse> universe, bool fill)
     : atoms_(universe, fill)
 {
-    // empty for now, but stuff may be added in the future
+    SetDefaults_();
 }
 
 
@@ -52,49 +63,48 @@ int Molecule::NAtoms(void) const
     return atoms_.size();
 }
 
-Molecule::TagsType Molecule::GetAllTags(void) const
-{
-    std::set<std::string> tags;
-    for(const auto & it : *this)
-    {
-        TagsType atomtags = it.GetTags();
-        tags.insert(atomtags.begin(), atomtags.end());
-    }
-    return tags;
-}
-
-Molecule Molecule::GetFragment(const std::string & tag) const
-{
-    Molecule ret = this->Partition([tag](const Atom & a) { return a.HasTag(tag); });
-    if(ret.NAtoms() == 0)
-        throw SystemException("This molecule does not have atoms with this tag",
-                              "tag", tag);
-    return ret;
-}
-
-Molecule::FragMapType Molecule::GetAllFragments(void) const
-{
-    FragMapType ret;
-    TagsType alltags = GetAllTags();
-
-    for(const auto & tag : alltags)
-        ret.emplace(tag, GetFragment(tag));
-    return ret;
-}
-
-
-double Molecule::GetCharge(void) const
+double Molecule::GetSumCharge(void) const
 {
     return std::accumulate(this->begin(), this->end(), static_cast<double>(0.0),
                            [](double sum, const Atom & a) { return sum + a.GetCharge(); });
 }
 
-
-double Molecule::GetNElectrons(void) const
+double Molecule::GetSumNElectrons(void) const
 {
     return std::accumulate(this->begin(), this->end(), static_cast<double>(0.0),
                            [](double sum, const Atom & a) { return sum + a.GetNElectrons(); });
 }
+
+double Molecule::GetCharge(void) const
+{
+    return charge_;
+}
+
+void Molecule::SetCharge(double charge)
+{
+    charge_ = charge;
+}
+
+double Molecule::GetNElectrons(void) const
+{
+    return nelectrons_;
+}
+
+void Molecule::SetNElectrons(double nelectrons)
+{
+    nelectrons_ = nelectrons;
+}
+
+double Molecule::GetMultiplicity(void) const
+{
+    return multiplicity_;
+}
+
+void Molecule::SetMultiplicity(double m)
+{
+    multiplicity_ = m;
+}
+
 
 Molecule Molecule::Partition(Molecule::SelectorFunc selector) const
 {
@@ -145,6 +155,16 @@ math::Point Molecule::CenterOfMass(void) const
 math::Point Molecule::CenterOfNuclearCharge(void) const
 {
     return math::WeightedPointsCenter<math::Point>(*this, &Atom::GetZ);
+}
+
+basisset::BasisSet Molecule::GetBasisSet(const std::string & basislabel) const
+{
+    basisset::BasisSet bs;
+    for(const auto & atom : *this)
+        for(const auto & bshell : atom.GetShells(basislabel))
+            bs.AddShell(bshell, atom.GetIdx(), atom.GetCoords());
+
+    return bs;
 }
 
 

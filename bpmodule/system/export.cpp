@@ -5,9 +5,12 @@
  */ 
 
 
+#include "bpmodule/python/Pybind11_stl.hpp"
+#include "bpmodule/python/Pybind11_functional.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/system/Molecule.hpp"
+#include "bpmodule/basisset/BasisSet.hpp"
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/math/RegisterMathSet.hpp"
@@ -75,27 +78,30 @@ PYBIND11_PLUGIN(system)
     .def("SetZ", &Atom::SetZ)
     .def("GetIsonum", &Atom::GetIsonum)
     .def("SetIsonum", &Atom::SetIsonum)
+    .def("GetMass", &Atom::GetMass)
+    .def("SetMass", &Atom::SetMass)
+    .def("GetIsotopeMass", &Atom::GetIsotopeMass)
+    .def("SetIsotopeMass", &Atom::SetIsotopeMass)
     .def("GetCharge", &Atom::GetCharge)
     .def("SetCharge", &Atom::SetCharge)
     .def("GetMultiplicity", &Atom::GetMultiplicity)
     .def("SetMultiplicity", &Atom::SetMultiplicity)
     .def("GetNElectrons", &Atom::GetNElectrons)
     .def("SetNElectrons", &Atom::SetNElectrons)
-    .def("GetMass", &Atom::GetMass)
-    .def("GetIsotopeMass", &Atom::GetIsotopeMass)
+    .def("GetAllShells", &Atom::GetAllShells)
+    .def("GetShells", &Atom::GetShells)
+    .def("SetShells", &Atom::SetShells)
+    .def("AddShell", &Atom::AddShell)
     .def("GetName", &Atom::GetName)
     .def("GetSymbol", &Atom::GetSymbol)
-    .def("GetTags", &Atom::GetTags)
-    .def("SetTags", &Atom::SetTags)
-    .def("HasTag", &Atom::HasTag)
     ;
    
 
     // Atom creators
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int, const Atom::TagsType &)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int, int, const Atom::TagsType &)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int, const Atom::TagsType &)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int, int, const Atom::TagsType &)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int, int)>(CreateAtom));
 
     // Export AtomSet, etc
     math::RegisterMathSet<Atom>(m, "AtomSetUniverse", "AtomSet");
@@ -109,9 +115,7 @@ PYBIND11_PLUGIN(system)
     .def("GetAtom", &Molecule::GetAtom)
     .def("GetCharge",&Molecule::GetCharge)
     .def("GetNElectrons",&Molecule::GetNElectrons)
-    .def("GetAllTags", &Molecule::GetAllTags)
-    .def("GetAllFragments", &Molecule::GetAllFragments)
-    .def("GetFragment", &Molecule::GetFragment)
+    .def("GetBasisSet", &Molecule::GetBasisSet)
     .def("Translate", &Molecule::Translate<std::array<double, 3>>)
     .def("Rotate", &Molecule::Rotate<std::array<double, 9>>)
     .def("CenterOfMass", &Molecule::CenterOfMass)

@@ -8,15 +8,6 @@ namespace bpmodule {
 //    Set_t util::Enumeration<system::AtomProperty>::Enums_=Set_t();
 namespace system {
 
-double Atom::GetMass(void) const
-{
-    return AtomicMassFromZ(GetZ());
-}
-
-double Atom::GetIsotopeMass(void) const
-{
-    return IsotopeMassFromZ(GetZ(), GetIsonum());
-}
 
 std::string Atom::GetName(void) const
 {
@@ -35,12 +26,18 @@ bool Atom::operator==(const Atom & rhs) const
     PRAGMA_WARNING_PUSH
     PRAGMA_WARNING_IGNORE_FP_EQUALITY
 
+
+    // order by the parts that are most likely to be different, since
+    //   this should short-circuit on the first false comparison
     return GetZ() == rhs.GetZ() &&
+           static_cast<const math::Point>(*this) == static_cast<const math::Point>(rhs) &&
+           GetAllShells() == rhs.GetAllShells() &&
            GetIsonum() == rhs.GetIsonum() &&
+           GetMass() == rhs.GetMass() &&
+           GetIsotopeMass() == rhs.GetIsotopeMass() &&
            GetCharge() == rhs.GetCharge() &&
            GetMultiplicity() == rhs.GetMultiplicity() &&
-           GetNElectrons() == rhs.GetNElectrons() &&
-           static_cast<math::Point>(*this) == static_cast<math::Point>(rhs)
+           GetNElectrons() == rhs.GetNElectrons()
            ;
              
     PRAGMA_WARNING_POP
@@ -58,14 +55,14 @@ std::ostream& operator<<(std::ostream& os,const Atom& A)
 }
 
 
-Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, const Atom::TagsType & tags)
+Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z)
 {
     int isonum = MostCommonIsotopeFromZ(Z);
-    return CreateAtom(idx, xyz, Z, isonum, tags);
+    return CreateAtom(idx, xyz, Z, isonum);
 
 }
 
-Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, int isonum, const Atom::TagsType & tags)
+Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, int isonum)
 {
     return Atom(idx,
                 xyz,
@@ -73,88 +70,19 @@ Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, int isonum, const Atom::
                 isonum,
                 0,  //! \todo default charge
                 math::numeric_cast<double>(AtomicMultiplicityFromZ(Z)),
-                math::numeric_cast<double>(Z),  //! 0 charge, nelectrons = Z
-                tags);
+                math::numeric_cast<double>(Z));  //! 0 charge, nelectrons = Z
 }
 
-Atom CreateAtom(size_t idx, double x, double y, double z, int Z, const Atom::TagsType & tags)
+Atom CreateAtom(size_t idx, double x, double y, double z, int Z)
 {
-    return CreateAtom(idx, {x,y,z}, Z, tags);
+    return CreateAtom(idx, {x,y,z}, Z);
 }
 
-Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum, const Atom::TagsType & tags)
+Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum)
 {
-    return CreateAtom(idx, {x,y,z}, Z, isonum, tags);
+    return CreateAtom(idx, {x,y,z}, Z, isonum);
 }
 
-
-/*
-size_t DefaultMult(size_t Z){
-    switch(Z){
-        case 0 :{return 1;}
-        case 1:{return 2;}
-        case 2:{return 1;}
-        case 3:{return 2;}
-        case 4:{return 1;}
-        case 5:{return 2;}
-        case 6:{return 3;}
-        case 7:{return 4;}
-        case 8:{return 3;}
-        case 9:{return 2;}
-        case 10:{return 1;}
-        default:{return 0;}
-    }
-}    
-
-
-
-
-const AtomProperty AtomProperty::Mass("MASS");
-const AtomProperty AtomProperty::Z("ATOMIC NUMBER");
-const AtomProperty AtomProperty::Charge("CHARGE");
-const AtomProperty AtomProperty::Mult("MULTIPLICITY");
-const AtomProperty AtomProperty::NElec("NUMBER OF ELECTRONS");
-
-
-std::string Atom::Symbol() const{
-    return AtomicSymFromZ((int)Z());
-}
-
-Atom::Atom(size_t ZIn,double x,double y,double z):
-    Base_t(x,y,z){
-        AddWeight(AtomProperty::Z,(double)ZIn);
-        SetMass(AtomicMassFromZ((int)ZIn));
-        SetChargeAndMult(0.0,DefaultMult((int)ZIn));
-        SetNElec((double)ZIn);
-}
-
-bool Atom::operator==(const Atom& RHS)const{
-            if(Z()!=RHS.Z())return false;
-            if((*this)[0]!=RHS[0]||
-               (*this)[1]!=RHS[1]||
-               (*this)[2]!=RHS[2])return false;
-            if(NElec()!=RHS.NElec()||Charge()!=RHS.NElec())return false;
-            if(Mass()!=RHS.Mass())return false;
-            return true;
-}
-
-*/
-    
-
-/*
-double & Atom::Mass(void)
-{
-    return Point_t.Weight(AtomWeights::Mass);
-}
-
-
-const double & Atom::Mass(void) const
-{
-    return Point_t.Weight(AtomWeights::Mass);
-}
-
-
-*/
 
 } // close namespace system
 } // close namespace bpmodule

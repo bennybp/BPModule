@@ -2,8 +2,9 @@
 #define BPMODULE_GUARD_BASISSET__BASISSET_HPP_
 
 #include <vector>
+#include <functional>
 
-#include "bpmodule/basisset/GaussianShell.hpp"
+#include "bpmodule/basisset/BasisSetShell.hpp"
 
 namespace bpmodule {
 namespace basisset {
@@ -12,8 +13,9 @@ namespace basisset {
 class BasisSet
 {
     public:
-        typedef std::vector<GaussianShell>::iterator iterator;
-        typedef std::vector<GaussianShell>::const_iterator const_iterator;
+        typedef std::vector<BasisSetShell>::iterator iterator;
+        typedef std::vector<BasisSetShell>::const_iterator const_iterator;
+        typedef std::function<BasisSetShell(const BasisSetShell &)> TransformerFunc;
 
         BasisSet(void);
 
@@ -23,13 +25,14 @@ class BasisSet
         BasisSet & operator=(const BasisSet & rhs) = default;
         BasisSet & operator=(BasisSet && rhs)      = default;
 
-        // note - pass by copy
-        void AddShell(GaussianShell gs);
+        void AddShell(const BasisShellInfo & bshell,
+                      unsigned long center,
+                      const BasisSetShell::CoordType & xyz);
 
 
         int NShell(void) const noexcept;
 
-        GaussianShell Shell(int i) const;
+        const BasisSetShell & GetShell(int i) const;
 
         int NPrim(void) const;
         int NCartesian(void) const;
@@ -43,13 +46,17 @@ class BasisSet
         //! \todo make a printer class?
         void Print(void) const;
 
+        BasisSet Transform(TransformerFunc transformer) const;
+
         // iterate over shells
         const_iterator begin(void) const;
         const_iterator end(void) const;
 
     private:
         unsigned long curid_;
-        std::vector<GaussianShell> shells_;
+        std::vector<BasisSetShell> shells_;
+
+        void AddShell_(const BasisSetShell & bsshell);
 };
 
 

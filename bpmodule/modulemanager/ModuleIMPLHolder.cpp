@@ -19,7 +19,8 @@ PyModuleIMPLHolder::PyModuleIMPLHolder(const pybind11::object & mod)
 { 
     using namespace bpmodule::exception;
 
-    Assert<GeneralException>(mod_, "PyModuleIMPLHolder given a null object");
+    if(!mod)
+        throw GeneralException("PyModuleIMPLHolder given a null object");
 }
 
 modulebase::ModuleBase * PyModuleIMPLHolder::CppPtr(void) const

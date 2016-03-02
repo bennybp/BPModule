@@ -6,7 +6,9 @@
 
 
 #include "bpmodule/python/Pybind11.hpp"
+#include "bpmodule/python/Pybind11_functional.hpp"
 #include "bpmodule/basisset/BasisSet.hpp"
+#include "bpmodule/basisset/BasisShellInfo.hpp"
 #include "bpmodule/basisset/Creators.hpp"
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 
@@ -23,37 +25,47 @@ PYBIND11_PLUGIN(basisset)
 
     datastore::RegisterUIDPointer<BasisSet>(m, "BasisSet");
 
-    pybind11::class_<GaussianBasisShell> gbs(m, "GaussianBasisShell");
-    gbs.def(pybind11::init<int, bool>())
-       .def("AM", &GaussianShell::AM)
-       .def("NPrim", &GaussianShell::NPrim)
-       .def("NCartesian", &GaussianShell::NCartesian)
-       .def("NSpherical", &GaussianShell::NSpherical)
-       .def("NFunctions", &GaussianShell::NFunctions)
-       .def("IsCartesian", &GaussianShell::IsCartesian)
-       .def("IsSpherical", &GaussianShell::IsSpherical)
-       .def("Alphas", &GaussianShell::Alphas)
-       .def("Coefs", &GaussianShell::Coefs)
-       .def("Alpha", &GaussianShell::Alpha)
-       .def("Coef", &GaussianShell::Coef)
-       .def("AddPrimitive", &GaussianShell::AddPrimitive);
-
-
-    pybind11::class_<GaussianShell>(m, "GaussianShell", gbs)
-    .def(pybind11::init<int, bool, unsigned long, unsigned long, double, double, double>())
-    .def(pybind11::init<const GaussianBasisShell &, unsigned long, unsigned long, double, double, double>())
-    .def("ID", &GaussianShell::ID)
-    .def("Center", &GaussianShell::Center)
-    .def("Coordinates", &GaussianShell::Coordinates)
+    // Enumeration for basis set shell types
+    pybind11::enum_<ShellType>(m, "ShellType")
+    .value("Gaussian", ShellType::Gaussian)
+    .value("Slater", ShellType::Slater)
     ;
 
+
+    // BasisShellInfo class
+    pybind11::class_<BasisShellInfo> bshell(m, "BasisShellInfo");
+    bshell.def(pybind11::init<ShellType, int, bool>())
+          .def("GetType", &BasisShellInfo::GetType)
+          .def("AM", &BasisShellInfo::AM)
+          .def("NPrim", &BasisShellInfo::NPrim)
+          .def("NCartesian", &BasisShellInfo::NCartesian)
+          .def("NSpherical", &BasisShellInfo::NSpherical)
+          .def("NFunctions", &BasisShellInfo::NFunctions)
+          .def("IsCartesian", &BasisShellInfo::IsCartesian)
+          .def("IsSpherical", &BasisShellInfo::IsSpherical)
+          .def("Alphas", &BasisShellInfo::Alphas)
+          .def("Coefs", &BasisShellInfo::Coefs)
+          .def("Alpha", &BasisShellInfo::Alpha)
+          .def("Coef", &BasisShellInfo::Coef)
+          .def("AddPrimitive", &BasisShellInfo::AddPrimitive);
+
+    // BasisSetShell class
+    pybind11::class_<BasisSetShell>(m, "BasisSetShell", bshell)
+    .def(pybind11::init<ShellType, int, bool, unsigned long, unsigned long, double, double, double>())
+    .def(pybind11::init<const BasisShellInfo &, unsigned long, unsigned long, double, double, double>())
+    .def(pybind11::init<ShellType, int, bool, unsigned long, unsigned long, std::array<double, 3>>())
+    .def(pybind11::init<const BasisShellInfo &, unsigned long, unsigned long, std::array<double, 3>>())
+    .def("ID", &BasisSetShell::ID)
+    .def("Center", &BasisSetShell::Center)
+    .def("GetCoords", &BasisSetShell::GetCoords)
+    ;
 
     pybind11::class_<BasisSet>(m, "BasisSet")
     .def(pybind11::init<>())
     .def("Print", &BasisSet::Print)
     .def("AddShell", &BasisSet::AddShell)
     .def("NShell", &BasisSet::NShell)
-    .def("Shell", &BasisSet::Shell)
+    .def("GetShell", &BasisSet::GetShell, pybind11::return_value_policy::reference_internal)
     .def("NPrim", &BasisSet::NPrim)
     .def("NCartesian", &BasisSet::NCartesian)
     .def("NFunctions", &BasisSet::NFunctions)
@@ -61,6 +73,7 @@ PYBIND11_PLUGIN(basisset)
     .def("MaxAM", &BasisSet::MaxAM)
     .def("MaxNCartesian", &BasisSet::MaxNCartesian)
     .def("MaxNFunctions", &BasisSet::MaxNFunctions)
+    .def("Transform", &BasisSet::Transform)
     ;
 
 

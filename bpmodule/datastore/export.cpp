@@ -15,7 +15,6 @@
 
 
 
-using bpmodule::basisset::BasisSet;
 using bpmodule::system::Molecule;
 using bpmodule::datastore::Wavefunction;
 using bpmodule::tensor::DistMatrixD;
@@ -127,7 +126,6 @@ PYBIND11_PLUGIN(datastore)
     pybind11::class_<Wavefunction>(m, "Wavefunction") //! \todo python init for wfn?
     .def(pybind11::init<>())
     .def("UniqueString", &Wavefunction::UniqueString)
-    .def_readwrite("basis", &Wavefunction::basis)
     .def_readwrite("system", &Wavefunction::system)
     .def_readwrite("cmat", &Wavefunction::cmat)
     .def_readwrite("epsilon", &Wavefunction::epsilon)

@@ -14,12 +14,18 @@ BasisSet::BasisSet(void)
 { }
 
 
-void BasisSet::AddShell(GaussianShell gs)
+void BasisSet::AddShell(const BasisShellInfo & bshell,
+                        unsigned long center,
+                        const BasisSetShell::CoordType & xyz)
 {
-    gs.SetID(curid_);
-    curid_++;
-    shells_.push_back(gs);
+    AddShell_(BasisSetShell(bshell, curid_++, center, xyz));
 }
+
+void BasisSet::AddShell_(const BasisSetShell & bsshell)
+{
+    shells_.push_back(bsshell);
+}
+
 
 int BasisSet::NShell(void) const noexcept
 {
@@ -27,7 +33,7 @@ int BasisSet::NShell(void) const noexcept
 }
 
 
-GaussianShell BasisSet::Shell(int i) const
+const BasisSetShell & BasisSet::GetShell(int i) const
 {
     if(static_cast<size_t>(i) < shells_.size() )
         return shells_[i];
@@ -39,31 +45,31 @@ GaussianShell BasisSet::Shell(int i) const
 int BasisSet::NPrim(void) const
 {
     return std::accumulate(this->begin(), this->end(), 0,
-                           [](int sum, const GaussianShell & sh) { return sum + sh.NPrim(); } );
+                           [](int sum, const BasisSetShell & sh) { return sum + sh.NPrim(); } );
 }
 
 int BasisSet::MaxNPrim(void) const
 {
     return std::max_element(this->begin(), this->end(), 
-                    [](const GaussianShell & lhs, const GaussianShell & rhs) { return lhs.NPrim() < rhs.NPrim(); })->NPrim();
+                    [](const BasisSetShell & lhs, const BasisSetShell & rhs) { return lhs.NPrim() < rhs.NPrim(); })->NPrim();
 }
 
 int BasisSet::MaxAM(void) const
 {
     return std::max_element(this->begin(), this->end(), 
-                    [](const GaussianShell & lhs, const GaussianShell & rhs) { return lhs.AM() < rhs.AM(); })->AM();
+                    [](const BasisSetShell & lhs, const BasisSetShell & rhs) { return lhs.AM() < rhs.AM(); })->AM();
 }
 
 int BasisSet::NCartesian(void) const
 {
     return std::accumulate(this->begin(), this->end(), 0,
-                           [](int sum, const GaussianShell & sh) { return sum + sh.NCartesian(); } );
+                           [](int sum, const BasisSetShell & sh) { return sum + sh.NCartesian(); } );
 }
 
 int BasisSet::NFunctions(void) const
 {
     return std::accumulate(this->begin(), this->end(), 0,
-                           [](int sum, const GaussianShell & sh) { return sum + sh.NFunctions(); } );
+                           [](int sum, const BasisSetShell & sh) { return sum + sh.NFunctions(); } );
 }
 
 int BasisSet::MaxNCartesian(void) const
@@ -74,7 +80,7 @@ int BasisSet::MaxNCartesian(void) const
 int BasisSet::MaxNFunctions(void) const
 {
     return std::max_element(this->begin(), this->end(), 
-                    [](const GaussianShell & lhs, const GaussianShell & rhs) { return lhs.NFunctions() < rhs.NFunctions(); })->NFunctions();
+                    [](const BasisSetShell & lhs, const BasisSetShell & rhs) { return lhs.NFunctions() < rhs.NFunctions(); })->NFunctions();
 }
 
 BasisSet::const_iterator BasisSet::begin(void) const
@@ -85,6 +91,14 @@ BasisSet::const_iterator BasisSet::begin(void) const
 BasisSet::const_iterator BasisSet::end(void) const
 {
     return shells_.end();
+}
+
+BasisSet BasisSet::Transform(BasisSet::TransformerFunc transformer) const
+{
+    BasisSet bs;
+    for(const auto & shell : *this)
+        bs.AddShell_(transformer(shell));
+    return bs;
 }
 
 
@@ -98,7 +112,7 @@ void BasisSet::Print(void) const
 
     for(int i = 0; i < nshell; i++)
     {
-        const auto shell = Shell(i);
+        const auto & shell = GetShell(i);
         output::Output("Shell %1%  AM=%2%  Cart=%3%  NPrim=%4%\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim());
         for(int j = 0; j < shell.NPrim(); ++j)
             output::Output("    %1%    %2%\n", shell.Alpha(j), shell.Coef(j));

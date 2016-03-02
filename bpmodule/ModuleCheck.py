@@ -7,10 +7,6 @@ from  importlib.machinery import SourceFileLoader
 from bpmodule import output
 from bpmodule.exception import GeneralException
 
-sys.path.insert(0, "/home/ben/programming/BPModule/install/modules")
-
-
-validtypes = ["int", "float", "bool", "str", "listint", "listfloat", "listbool", "liststr"]
 
 indent = "    "
 indent1 = indent*1
@@ -207,6 +203,13 @@ def CheckSupermodule(supermodule):
 
     if not os.path.isfile(mfile):
         output.Error(" -> " + "\"{}\" does not exist or is not a file\n".format(mfile))
+
+    output.Warning(indent1 + "REST OF CHECKSUPERMODULE NOT YET IMPLEMENTED")
+    return
+
+
+
+
 
 
     mod = SourceFileLoader("testload", mfile).load_module()

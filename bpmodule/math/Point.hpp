@@ -48,10 +48,13 @@ class PointT
         
 
         CoordType GetCoords(void) const { return coords_; }
+        double GetCoord(int i) const { return coords_.at(i); }
+        void SetCoord(int i, double val) const { coords_.at(i) = val; }
 
         void SetCoords(const CoordType & coords) { coords_ = coords; }
-
         void SetCoords(T x, T y, T z) { coords_ = CoordType{x,y,z}; }
+
+        
 
     private:
         CoordType coords_;

@@ -5,7 +5,7 @@
  */
 
 
-#include "bpmodule/modulemanager/PyModuleLoader.hpp"
+#include "bpmodule/modulemanager/PySupermoduleLoader.hpp"
 #include "bpmodule/util/Filesystem.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
@@ -19,7 +19,7 @@ namespace bpmodule {
 namespace modulemanager {
 
 
-PyModuleLoader::~PyModuleLoader()
+PySupermoduleLoader::~PySupermoduleLoader()
 {
     // delete creator functions
     for(auto & it : objmap_)
@@ -45,7 +45,7 @@ PyModuleLoader::~PyModuleLoader()
 }
 
 
-const ModuleCreationFuncs & PyModuleLoader::LoadSupermodule(const std::string & spath)
+const ModuleCreationFuncs & PySupermoduleLoader::LoadSupermodule(const std::string & spath)
 {
     if(spath.size() == 0)
         throw ModuleLoadException("Cannot open python supermodule - path not given");
@@ -104,7 +104,7 @@ const ModuleCreationFuncs & PyModuleLoader::LoadSupermodule(const std::string & 
     }
 
     // just to be safe
-    Assert<ModuleLoadException>(objmap_.count(spath) == 1, "PyModuleLoader PyModInfo doesn't have this information...");
+    Assert<ModuleLoadException>(objmap_.count(spath) == 1, "PySupermoduleLoader PyModInfo doesn't have this information...");
 
     return objmap_.at(spath).creators;
 }

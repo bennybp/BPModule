@@ -1,5 +1,5 @@
-#ifndef BPMODULE_GUARD_MOLECULE__MOLECULE_HPP_
-#define BPMODULE_GUARD_MOLECULE__MOLECULE_HPP_
+#ifndef BPMODULE_GUARD_SYSTEM__MOLECULE_HPP_
+#define BPMODULE_GUARD_SYSTEM__MOLECULE_HPP_
 
 #include <map>
 #include "bpmodule/system/Atom.hpp"
@@ -10,6 +10,12 @@
 extern template class bpmodule::math::Universe<bpmodule::system::Atom>;
 extern template class bpmodule::math::MathSet<bpmodule::system::Atom>;
 
+
+// forward declare
+namespace bpmodule {
+namespace basisset {
+class BasisSet;
+}}
 
 
 namespace bpmodule {
@@ -31,10 +37,16 @@ class Molecule
         // For use from transformations, etc
         Molecule(const AtomSet & atoms);
 
+        double charge_;
+        double multiplicity_;
+        double nelectrons_;
+
+        // Sets charge, multiplicity, and nelectrons to ones
+        // determined from the Atoms in this set
+        void SetDefaults_(void);
 
     public:
         typedef Atom::CoordType CoordType;
-        typedef Atom::TagsType TagsType;
         typedef std::map<std::string, Molecule> FragMapType;
         typedef AtomSet::value_type value_type;
         typedef AtomSet::const_iterator const_iterator;
@@ -58,8 +70,17 @@ class Molecule
 
         // Some molecule properties
         int NAtoms(void) const;
+
         double GetCharge(void) const;
+        double GetSumCharge(void) const;
+        void SetCharge(double charge);
+
         double GetNElectrons(void) const;
+        double GetSumNElectrons(void) const;
+        void SetNElectrons(double nelectrons);
+
+        double GetMultiplicity(void) const;
+        void SetMultiplicity(double m);
 
         // Get an atom
         bool HasAtom(size_t atomidx) const;
@@ -74,11 +95,6 @@ class Molecule
         const_iterator end(void) const { return atoms_.end(); }
 
 
-        // Fragments
-        TagsType GetAllTags(void) const;
-        FragMapType GetAllFragments(void) const;
-        Molecule GetFragment(const std::string & tag) const;
-
         // Centers
         math::Point CenterOfMass(void) const;
         math::Point CenterOfNuclearCharge(void) const;
@@ -92,6 +108,10 @@ class Molecule
         Molecule Union(const Molecule & rhs) const;
         Molecule Difference(const Molecule & rhs) const;
         
+
+        // Basis set stuff
+        basisset::BasisSet GetBasisSet(const std::string & basislabel) const;
+
 
         // Manipulations
         template<typename VectorType>

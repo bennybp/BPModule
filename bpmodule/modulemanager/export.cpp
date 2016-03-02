@@ -4,11 +4,9 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+#include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/python/Pybind11_functional.hpp"
-
-#include "bpmodule/modulebase/ModuleBase.hpp"
-
-using bpmodule::modulebase::ModuleBase;
+#include "bpmodule/modulemanager/ModuleManager.hpp"
 
 
 namespace bpmodule {
@@ -43,19 +41,19 @@ PYBIND11_PLUGIN(modulemanager)
     //////////////////////////
     pybind11::class_<ModuleManager>(m, "ModuleManager")
     .def(pybind11::init<>())
-    .def("LoadModuleFromModuleInfo", &ModuleManager::LoadModuleFromModuleInfo)
     .def("Size", &ModuleManager::Size)
-    .def("AddKey", &ModuleManager::AddKey)
-    .def("ReplaceKey", &ModuleManager::ReplaceKey)
     .def("ModuleKeyInfo", &ModuleManager::ModuleKeyInfo)
     .def("ModuleNameInfo", &ModuleManager::ModuleNameInfo)
     .def("PrintInfo", &ModuleManager::PrintInfo)
     .def("HasKey", &ModuleManager::HasKey)
     .def("HasName", &ModuleManager::HasName)
+    .def("AddKey", &ModuleManager::AddKey)
+    .def("ReplaceKey", &ModuleManager::ReplaceKey)
     .def("TestAll", &ModuleManager::TestAll)
     .def("GetModule", &ModuleManager::GetModulePy)
     .def("ChangeOption", &ModuleManager::ChangeOptionPy)
     .def("DotGraph", &ModuleManager::DotGraph)
+    .def("LoadModuleFromModuleInfo", &ModuleManager::LoadModuleFromModuleInfo)
     ;
 
 
@@ -65,7 +63,6 @@ PYBIND11_PLUGIN(modulemanager)
     pybind11::class_<PyModulePtr>(m, "ModulePtr")
     .def("__getattr__", &PyModulePtr::Py__getattr__)
     ;
-
 
 
     ///////////////////////////////

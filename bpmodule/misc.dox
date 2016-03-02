@@ -3,7 +3,7 @@
  */
 
 /*! \namespace bpmodule::modulemanager
- *  \brief Classes and functions for module loading and storage, and the module database
+ *  \brief Classes and functions for module loading, storage, and creation
  */
 
 /*! \namespace bpmodule::basisset

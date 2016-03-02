@@ -9,7 +9,6 @@
 #define BPMODULE_GUARD_MODULEMANAGER__MODULECREATIONFUNCS_HPP_
 
 #include <functional>
-#include <unordered_map>
 
 #include "bpmodule/modulemanager/ModuleIMPLHolder.hpp"
 #include "bpmodule/python/Call.hpp"
@@ -21,14 +20,16 @@ namespace modulemanager {
         
 /*! \brief Stores creation functions for modules within a supermodule
  *
- * This gets returned from a loaded supermodule and contains a map
- * of module names to creation functions. These functions are then
- * used to create modules.
+ * This object contains a map of module names to functions that create
+ * an object by that name. When a module is loaded, a
+ * ModuleCreationFuncs object gets returned from the InsertSupermodule
+ * function. The ModuleManager then uses the information stored within
+ * to populate its module creation map.
  */
 class ModuleCreationFuncs
 {
     public:
-        //! Creation function for a single module. Only argument is its id
+        //! Creation function for a single module
         typedef std::function<detail::ModuleIMPLHolder * (unsigned long)> Func;
 
 
@@ -47,7 +48,7 @@ class ModuleCreationFuncs
         template<typename T>
         void AddCppCreator(const std::string & modulename)
         {
-            Func cc = std::bind(&ModuleCreationFuncs::CppConstructorWrapper<T>, std::placeholders::_1);
+            Func cc = std::bind(&ModuleCreationFuncs::CppConstructorWrapper_<T>, std::placeholders::_1);
             creators_.emplace(modulename, cc);
         }
 
@@ -55,16 +56,17 @@ class ModuleCreationFuncs
         /*! \brief Add a creator for a python module
          * 
          * \param [in] modulename The name of the module
-         * \param [in] cls The module to add (a python class).
+         * \param [in] cls The module to add. This should be a python class.
          */ 
         void AddPyCreator(const std::string & modulename, const pybind11::object & cls)
         {
-            Func m = std::bind(&ModuleCreationFuncs::PyConstructorWrapper, cls, std::placeholders::_1);
+            //! \todo check if it is a class?
+            Func m = std::bind(&ModuleCreationFuncs::PyConstructorWrapper_, cls, std::placeholders::_1);
             creators_.emplace(modulename, m);
         }
 
 
-        /*! \brief See if this object can create a module of the given name
+        /*! \brief Check to see if this object can create a module of the given name
          *
          * \param [in] modulename The name of the module to query
          * \return True if this object can create a module with name \p modulename
@@ -104,28 +106,36 @@ class ModuleCreationFuncs
     private:
 
         //! Storage of all the creation functions
-        std::unordered_map<std::string, Func> creators_;
+        std::map<std::string, Func> creators_;
 
 
         /*! \brief Wrap construction of a C++ object
+         *
+         * \tparam T Full type of the module (not the base type) 
+         * \param [in] id The ID of the newly-created module
          */ 
         template<typename T>
         static
         detail::ModuleIMPLHolder *
-        CppConstructorWrapper(unsigned long i)
+        CppConstructorWrapper_(unsigned long id)
         {
-            std::unique_ptr<typename T::BaseType> p(new T(i));
+            // T::BaseType is the module base type (ie, TwoElectronIntegral, etc)
+            // defined in the base type class.
+            std::unique_ptr<typename T::BaseType> p(new T(id));
             return new detail::CppModuleIMPLHolder<typename T::BaseType>(std::move(p));
         }
 
 
         /*! \brief Wrap construction of a python object (class)
+         * 
+         * \param [in] cls Python class
+         * \param [in] id The ID of the newly-created module
          */ 
         static
         detail::ModuleIMPLHolder *
-        PyConstructorWrapper(const pybind11::object & cls, unsigned long i)
+        PyConstructorWrapper_(const pybind11::object & cls, unsigned long id)
         {
-            pybind11::object o = python::CallPyFunc<pybind11::object>(cls, i);
+            pybind11::object o = python::CallPyFunc<pybind11::object>(cls, id);
             return new detail::PyModuleIMPLHolder(std::move(o));
         }
 };

@@ -22,7 +22,7 @@ namespace modulemanager {
  * Functions of the contained module are called via the -> operator,
  * similar to a smart pointer.
  *
- * \tparam T Type of module held (a module base class)
+ * \tparam T Base type of module held (a module base class)
  */
 template<typename T>
 class ModulePtr
@@ -36,12 +36,14 @@ class ModulePtr
             using namespace bpmodule::exception;
 
             // check before getting Cpp pointer
-            Assert<GeneralException>((bool)holder_, "ModulePtr given a null pointer");
-
-            ptr_ = dynamic_cast<T *>(holder_->CppPtr());
+            if(!holder_)
+                throw GeneralException("ModulePtr given a null pointer");
 
             // Attempt to convert to the proper pointer type
-            Assert<GeneralException>(ptr_ != nullptr, "ModulePtr not given a holder of the right type");
+            ptr_ = dynamic_cast<T *>(holder_->CppPtr());
+
+            if(ptr_ == nullptr)
+                throw GeneralException("ModulePtr not given a holder of the right type");
         }
 
 
@@ -90,7 +92,7 @@ class ModulePtr
  * allowing python to access attributes/members of the held object.
  *
  * See \ref python_smart_pointer
- */
+*/
 class PyModulePtr
 {
     public:
@@ -107,10 +109,12 @@ class PyModulePtr
             using namespace bpmodule::exception;
 
             // check before getting the python object
-            Assert<GeneralException>((bool)holder_, "PyModulePtr given a null pointer");
+            if(!holder_)
+                throw GeneralException("PyModulePtr given a null pointer");
             obj_ = holder_->PythonObject();
 
-            Assert<GeneralException>((bool)obj_, "Module given to PyModulePtr could not be converted to python object");
+            if(!obj_)
+                throw GeneralException("Module given to PyModulePtr could not be converted to python object");
         }
 
         PyModulePtr(PyModulePtr &&) = default;

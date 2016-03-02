@@ -20,9 +20,9 @@ namespace modulemanager {
 struct ModuleInfo
 {
     std::string name;                  //!< Some descriptive name for the module
-    std::string type;                  //!< Type of the module (c_module, python_module, etc)
-    std::string path;                  //!< Full path for the module (including the filename for an SO file)
-    std::string version;               //!< Arbitrary version string
+    std::string type;                  //!< Type of the supermodule (c_module, python_module, etc)
+    std::string path;                  //!< Full path for the supermodule (including the filename for an SO file)
+    std::string version;               //!< Arbitrary version string of the supermodule
     std::string description;           //!< A description of the module
     std::vector<std::string> authors;  //!< Authors of the module
     std::vector<std::string> refs;     //!< References for the module (articles, web pages, etc)
