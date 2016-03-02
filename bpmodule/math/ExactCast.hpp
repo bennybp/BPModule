@@ -2,9 +2,9 @@
 #define BPMODULE_GUARD_MATH__EXACTCAST_HPP_
 
 #include <limits>
-#include <cmath>
 
 #include "bpmodule/pragma.h"
+#include "bpmodule/math/Checking.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/util/Mangle.hpp"
 
@@ -159,16 +159,13 @@ struct ExactCast
         else if(std::is_floating_point<Source>::value && std::is_integral<Target>::value)
         {
             // Check validity (ie does the FP source have exactly an integer?)
-            PRAGMA_WARNING_PUSH
-            PRAGMA_WARNING_IGNORE_FP_EQUALITY
-            if(std::fmod(s, static_cast<Source>(1.0)) != static_cast<Source>(0))
+            if(!IsInteger(s))
                 throw exception::MathException("Error in numeric_cast",
                                                "desc", "Floating point conversion to integer results in loss of information",
                                                "fpfrom", util::DemangleCppType<Source>(),
                                                "ito", util::DemangleCppType<Target>());
             else
                 return static_cast<Target>(s);
-            PRAGMA_WARNING_POP
         }
 
         else if(std::is_integral<Source>::value && std::is_floating_point<Target>::value)
@@ -176,15 +173,15 @@ struct ExactCast
             // Can the floating point handle the integer?
             Target t = static_cast<Target>(s);
 
-            PRAGMA_WARNING_PUSH
-            PRAGMA_WARNING_IGNORE_FP_EQUALITY
-            if(std::fmod(s, static_cast<Source>(1.0)) != static_cast<Source>(0))
+            if(!IsInteger(s))
                 throw exception::MathException("Error in numeric_cast",
                                                "desc", "Floating point type cannot exactly handle this integer",
                                                "ifrom", util::DemangleCppType<Source>(),
                                                "fpto", util::DemangleCppType<Target>());
 
             Source s2 = static_cast<Source>(s);
+            PRAGMA_WARNING_PUSH
+            PRAGMA_WARNING_IGNORE_FP_EQUALITY
             if(s != s2)
                 throw exception::MathException("Error in numeric_cast",
                                                "desc", "Floating point type cannot exactly handle this integer",
