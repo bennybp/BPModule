@@ -37,6 +37,13 @@ class Molecule
         // For use from transformations, etc
         Molecule(const AtomSet & atoms);
 
+        double charge_;
+        double multiplicity_;
+        double nelectrons_;
+
+        // Sets charge, multiplicity, and nelectrons to ones
+        // determined from the Atoms in this set
+        void SetDefaults_(void);
 
     public:
         typedef Atom::CoordType CoordType;
@@ -63,8 +70,17 @@ class Molecule
 
         // Some molecule properties
         int NAtoms(void) const;
+
         double GetCharge(void) const;
+        double GetSumCharge(void) const;
+        void SetCharge(double charge);
+
         double GetNElectrons(void) const;
+        double GetSumNElectrons(void) const;
+        void SetNElectrons(double nelectrons);
+
+        double GetMultiplicity(void) const;
+        void SetMultiplicity(double m);
 
         // Get an atom
         bool HasAtom(size_t atomidx) const;
