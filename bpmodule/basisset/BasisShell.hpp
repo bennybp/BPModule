@@ -1,6 +1,8 @@
 #ifndef BPMODULE_GUARD_BASISSET__BASISSHELL_HPP_
 #define BPMODULE_GUARD_BASISSET__BASISSHELL_HPP_
 
+#include <map>
+#include <string>
 #include <array>
 #include <vector>
 #include "bpmodule/pragma.h"
@@ -9,6 +11,7 @@
 
 namespace bpmodule {
 namespace basisset {
+
 
 
 enum class ShellType
@@ -86,6 +89,9 @@ class BasisShell
         std::vector<double> coefs_; //!< Exponents
 };
 
+
+typedef std::vector<BasisShell> ShellVector;
+typedef std::map<std::string, ShellVector> ShellMap;
 
 
 } // close namespace basisset
