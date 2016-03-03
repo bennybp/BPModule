@@ -115,6 +115,18 @@ PYBIND11_PLUGIN(modulebase)
     .def("GetBuf", &TwoElectronIntegral::GetBufPy)
     ;
 */
+    ///////////////////////
+    // Method base class
+    ///////////////////////
+    pybind11::class_<Method, ModuleBasePtr<Method>> 
+            method(m, "Method", mbase);
+    method.alias<Method>()
+            .def(pybind11::init<unsigned long>())
+            .def("Deriv", &Method::Deriv)
+            .def("Energy",&Method::Energy)
+            .def("Gradient",&Method::Gradient)
+            .def("Hessian",&Method::Hessian)
+            ;
 
     return m.ptr();
 }

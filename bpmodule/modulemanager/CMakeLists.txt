@@ -11,7 +11,8 @@ set(BPMODULE_MODULEMANAGER_FILES
 ADD_COREMODULE(modulemanager
            "${BPMODULE_MODULEMANAGER_FILES}"
            ""
-           ""
+           "taskforce"
            "")
 
 INSTALL_COREMODULE(modulemanager)
+

@@ -17,4 +17,6 @@
 #include "bpmodule/modulebase/TwoElectronIntegralIMPL.hpp"
 //#include "bpmodule/modulebase/TwoElectronIntegral.hpp"
 
+#include "bpmodule/modulebase/Method.hpp"
+
 #endif

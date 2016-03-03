@@ -39,6 +39,11 @@ Molecule::Molecule(std::shared_ptr<const AtomSetUniverse> universe, bool fill)
     SetDefaults_();
 }
 
+Molecule::Molecule(const AtomSetUniverse& universe,bool fill):
+Molecule(std::shared_ptr<AtomSetUniverse>(new AtomSetUniverse(universe)),fill)
+{
+    
+}
 
 bool Molecule::HasAtom(size_t atomidx) const
 {

@@ -7,9 +7,9 @@ set(BPMODULE_PARALLEL_FILES
 ADD_COREMODULE(parallel
            "${BPMODULE_PARALLEL_FILES}"
            ""
-           "MADworld"
+           "taskforce"
            "")
 
 INSTALL_COREMODULE(parallel)
 
-set_target_properties(parallel PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/external/madness/lib")
+set_target_properties(parallel PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/external/libtaskforce/lib")

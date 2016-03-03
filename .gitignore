@@ -1,5 +1,6 @@
 docs
 build
 install
+nbproject
 *.swp
 __pycache__

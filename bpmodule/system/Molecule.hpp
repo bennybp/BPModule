@@ -58,6 +58,7 @@ class Molecule
          * \param [in] fill Make this molecule contain all the elements of the universe
          */
         Molecule(std::shared_ptr<const AtomSetUniverse> universe, bool fill);
+        Molecule(const AtomSetUniverse& universe,bool fill);
 
         // compiler generated ok
         // Copies will share storage in the AtomSet, but have their
@@ -130,6 +131,9 @@ class Molecule
 
 };
 
+inline std::ostream& operator<<(std::ostream& os,const Molecule& Mol){
+    return os<<Mol.ToString();
+}
 
 
 } // close namespace system

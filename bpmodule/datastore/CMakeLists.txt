@@ -12,7 +12,8 @@ set(BPMODULE_DATASTORE_FILES
 ADD_COREMODULE(datastore
            "${BPMODULE_DATASTORE_FILES}"
            ""
-           ""
+           "taskforce"
            "")
 
 INSTALL_COREMODULE(datastore)
+
