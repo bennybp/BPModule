@@ -1,8 +1,9 @@
 INPUT += dox/basic.dox \
+         dox/sofiles.dox \
+         dox/modulebasics.dox \
          dox/exception.dox \
          dox/options.dox \
          dox/output.dox \
-         dox/modulebasics.dox \
          dox/graphandcache.dox \
          dox/philosophy.dox \
          dox/python.dox \
