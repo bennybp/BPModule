@@ -5,7 +5,7 @@
  */
 
 #include "bpmodule/modulebase/Method.hpp"
-//#include "bpmodule/math/FiniteDiff.hpp"
+#include "bpmodule/math/FiniteDiff.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/system/Molecule.hpp"
 #include "bpmodule/modulemanager/ModulePtr.hpp"
@@ -16,7 +16,7 @@ namespace modulebase {
 
     typedef std::vector<system::Atom> AtomV_t;
     typedef modulemanager::ModuleManager MM_t;
-class FDFunctor{
+class FDFunctor:public math::FDiffVisitor<double,std::vector<double>>{
     private:
         size_t Order_;
         const AtomV_t& Atoms_;
@@ -24,6 +24,7 @@ class FDFunctor{
         std::string Key_;
         unsigned long ID_;
     public:
+        using math::FDiffVisitor<double,std::vector<double>>::operator();
         //Returns the i-th Cartesian coordinate of our molecule
         double operator()(size_t i)const{
             return Atoms_[(i-i%3)/3][i%3];
@@ -43,6 +44,7 @@ class FDFunctor{
             return NewMode->Deriv(Order_-1);
             //Make new module
         }
+        
         FDFunctor(size_t Order,
                   const AtomV_t& Atoms,
                   MM_t& MM,
@@ -60,8 +62,14 @@ std::vector<double> Method::Deriv(size_t Order){
     std::cout<<Comm<<std::endl;
     std::cout<<Mol<<std::endl;
     
-    //math::CentralDiff<double,double> FD(Comm.Split());
-    //FD.Run(FDFunctor(Order,Atoms,MManager(),ID(),Key()));
+    /*math::CentralDiff<double,std::vector<double>> FD(Comm.Split());
+    FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),ID(),Key());
+    std::vector<std::vector<double>> TempDeriv=
+    FD.Run(Thing2Run,Mol.NAtoms(),0.02,3);
+    //TempDeriv[0] is the first element of our deriv, so just add to it
+    for(size_t i=1;i<TempDeriv.size();++i)
+       for(double j :  TempDeriv[i])TempDeriv[0].push_back(j);
+    return TempDeriv[0];*/
     return std::vector<double>(2);
 }
     

@@ -2,12 +2,11 @@ set(BPMODULE_PARALLEL_FILES
             InitFinalize.cpp
             export.cpp
    )
-  
-
+ 
 ADD_COREMODULE(parallel
            "${BPMODULE_PARALLEL_FILES}"
            ""
-           "taskforce"
+           "libtaskforce"
            "")
 
 INSTALL_COREMODULE(parallel)

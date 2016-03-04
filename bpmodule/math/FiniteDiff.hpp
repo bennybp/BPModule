@@ -9,24 +9,62 @@ namespace math{
 
 /** \brief Abstract base class for an object meeting the requirements of
  *  a visitor that provides the minimal functionality to be used with the
- *  finite difference algorithm
+ *  finite difference algorithm.
  * 
- *  \param[in] VarType The type of each variable.  Must:
- *    - Have an assignment operator (operator=)
- *    - Support addition via the plus operator
- *  \param[in] ResultType The type that goes into the final derivative. Must:
- *    - Have an assignment operator (operator=)
+
+ *  We need your help  doing five tasks:
+ * 
+ *  1. Give us the \f$i\f$-th of the \f$N\f$ variables
+ *     - Handled by operator()(size_t i)const
+ *  2. Update the coordinate we give you
+ *     - operator()(const VarType&,const VarType&,double)const
+ *  3. Compute a ResultType given the new coord for the i-th variable
+ *     - operator()(size_t,const VarType&)
+ *  4. Scale a ResultType by a double
+ *     - operator()(ResultType&,double)
+ *  5. Update the result
+ *     - operator()(ResultType&,ResultType&,size_t,const VarType&)const
+ * 
+ *  You can use the predefined functions in this class if VarType supports
+ *  addition by the plus operator, multiplication from the right by a double, 
+ *  and division from the right by its type.  ResultType must contain iterators
+ *  and an insert operator.  Basically we assume that ResultType is an
+ *  std::vector<VarType> and VarType is a simple type like double.  It should be
+ *  possible, via inheritance, to use more complicated types though.
+ * 
+ *  \param[in] VarType The type of each variable.
+ *  \param[in] ResultType The type that goes into the final derivative.
  */
 template<typename VarType,typename ResultType=VarType>    
-struct FDiffVisitor{    
+struct FDiffVisitor{
+    ///Makes sure the compiler doesn't complain
+    virtual ~FDiffVisitor()=default;    
     ///Returns variable i
-    VarType operator(size_t i)const=0;
+    virtual VarType operator()(size_t i)const=0;
+    
+    ///Return Old+H*Shift
+    virtual VarType operator()(const VarType& Old,
+                             const VarType& H,
+                             double Shift)const{
+        return Old+H*Shift;
+    }
     
     ///Instructs you to run your function with the i-th variable set to NewVar
-    ResultType operator(size_t i, VarType NewVar)const=0;
+    virtual ResultType operator()(size_t i, const VarType& NewVar)const=0;
     
     ///Instructs you to scale Result by coef
-    ResultType operator(ResultType& Result,double Coef)const=0;
+    void operator()(ResultType& Result,double Coef)const{
+        for(auto & i :Result) i*=Coef;
+    }
+    
+    ///Instructs you to set the i-th element of Result to Element/H
+    ///(You may assume that i will go in order)
+    void operator()(ResultType& Result,
+                  ResultType& Element,
+                  size_t i,
+                  const VarType& H)const{
+        for(auto & j:Element)Result.insert(Result.back(),j/H);
+    }
 };    
     
     
@@ -47,9 +85,6 @@ struct FDiffVisitor{
  *  \f$\lbrace 0.5,-0.5\f$ and
  *  \f$\lbrace 0.08333,-0.666666,0.66666,-0.08333\rbrace\f$ respectively.
  *  Note that these coefficients include the denominator already.
- *
- *
- *
  */
  std::vector<double> Coefs(const std::vector<double>& Stencil,size_t Deriv=1);
 
@@ -64,140 +99,19 @@ struct FDiffVisitor{
  *  \f[
  *    f_X=\frac{\Gamma_h[f](X)}{h}.
  *  \f]
- *  Note that if f is actually the gradient of some other function \f$g(X)\f$,
- *  then \f$f_X\f$ is actually the Hessian, etc. for higher order derivatives.
- *  This means one may obtain an arbitrary order derivative by nesting calls.
- *  This class actually computes:
- *  \f[
- *    f_xh=\Gamma_h[f]
- *  \f]
- *  so you will need to scale your resulting array by one over \f$h\f$ to
- *  recover the derivative.  This may seem odd, but it allows for finite
- *  differences to be performed in other coordinate systems beside for
- *  Cartesian, see below for more details.
- *
-  * \todo update this section
-  * 
+  
  *  Eventually one wants to perform finite difference in other coordinates
- *  than Cartesians, in particular internal coordinates.  Internal coordinates
- *  are difficult to work with, but we can get a feel for how one would
- *  implement them by considering the simpler problem of using this class
- *  to perform a finite difference calculation in polar coordinates.
- *
- *  In polar coordinates we define a class (detailed description
- *  follows):
- *  \code
- *     class PolarCoordinate{
- *        private:
- *           double r_;
- *           double theta_;
- *        public:
- *           //Traditional Constructor
- *           PolarCoordinate(double r=0,double theta=0):
- *              r_(r),theta_(theta){}
- *           //Copy Constructor
- *           PolarCoordinate(const PolarCoordinate& other):
- *              r_(other.r_),theta_(other.theta_){}
- *           //Assignment operator, note check for self-assignment
- *           const PolarCoordinate& operator=(const PolarCoordinate& other){
- *               if(this==&other)return *this;
- *               this->r_=other.r_;
- *               this->theta_=other.theta_;
- *               return *this;
- *           }
- *           //Projected addition
- *           PolarCoordinate operator+(const PolarCoordinate& Other){
- *                PolarCoordinate Result(*this);
- *                if(this->r!=0.0)Result.r+=Other.r;
- *                if(this->theta!=0.0)Result.theta+=Other.theta;
- *                return Result;
- *           }
- *           //Scaling
- *           PolarCoordinate operator*(const double& c){
- *              PolarCoordinate Result(*this);
- *              Result.r*=c;
- *              Result.theta*=c;
- *              return Result;
- *           }
- *     };
- *  \endcode
- *  and let VarType=PolarCoordinate.  Say we have an \f$N\f$ point system
- *  and we want to compute the gradient.  The gradient will be a \f$2N\f$
- *  element long array (we have a derivative with respect to r and theta at
- *  each point).  Our input to this class is then an
- *  array of \f$2N\f$ PolarCoordinate objects, each being either the r or
- *  the theta component of one of the points (this is completely analogous
- *  to our Cartesian case where each of the \f$N\f$ points has 3 coordinates
- *  and so our input was a \f$3N\f$ element array).  Our perturbation will
- *  also be a PolarCoordinate object, except it will have both an r and theta
- *  component.
- *
- *  After some internal setup, this class will then start running tasks.
- *  Say the first coordinate is the r component of point 1.  Thus it's
- *  internal state looks something like:\f$\lbrace r_1,0.0\rbrace\f$. If we
- *  are doing central difference we first shift it forward by the r component
- *  in our perturbation.  The next calculation shifts it backward by the r
- *  component.  Both shifts occur via the addition operator, which is why
- *  we have defined it as projected addition and not component wise addition.
- *  We then move onto the next coordinate, which logically is likely to
- *  be the theta component of point 1, although it doesn't need to be.
- *  Assuming it is, we then shift forward and backwards by the theta component
- *  of the perturbation.  Again, the projected addition takes care of
- *  this.
- *
- *  The description above would be repeated for each component and
- *  each shift.  The end result would be the derivative with each component
- *  scaled by its perturbation.  Assuming your polar components were in the
- *  order r of point 1, theta of point 1, r of point 2, etc.  You would
- *  have to divide the even components of your vector by the r component of
- *  the perturbation and the odd components by theta (odd/even following from
- *  C++ starting at 0).  I suspect in most cases the derivative will
- *  just be an array of doubles and hence each component would not be able
- *  to discern which component it needs to be divided by.  I could enforce
- *  an ordering, or place other restrictions on ResultType, but I'd rather
- *  not and hence it is up to you to scale each component correctly as you
- *  presumably know what order you gave me the components in...
- *
- *
- *  To use this class to compute the gradient, using a shift of 0.02 a.u.
- *  (technically whatever units your coords are in, but they SHOULD be in
- *  a.u.), the code would be:
- *  \code
- *     double* Molecule=FxnReturnsCoordinates();
- *     size_t NAtoms=FxnReturnsNumberOfAtoms();
- *     CentralDiff<double,double> FD(Molecule,3*NAtoms,0.02,1);
- *     //This also works because we assume the size of ReturnType is 1
- *     CentralDiff<double> FD(Molecule,3*NAtoms,0.02);
- *
- *     //Finally get the gradient, and scale it by 1/h
- *     std::vector<double> Gradient=FD.Run(Energy);
- *
- *     for(double Gi : Gradient)Gi*=50; // Note: 1/0.02=50
- *  \endcode
- *  where Energy is a callable object that has the signature:
- *  \code
- *     double* Energy(double*,size_t);
- *  \endcode
- *  Arguably the most straightforward and C++ way to accomplish this
- *  is via a functor:
- *  \code
- *  class EnergyFunctor{
- *     public:
- *        double* operator()(double* Coords,size_t NAtoms){
- *           return FxnThatComputesEnergyOfGeometryAndReturnsIt(Coords,NAtoms);
- *        }
- *  };
- *  \endcode
- *  Unfortunately, operators can't be static so the code above needs to
- *  create an instance of an EnergyFunctor.
- *
- *
+ *  than Cartesians, in particular internal coordinates.  The visitor class
+ *  puts you in control of each math step that involves your objects, thus it
+ *  should be possible to use any objects you want by defining the visitor's
+ *  fxns appropriately.
  */
 template<typename VarType,typename ResultType=VarType>
 class FiniteDiff{
    private:
       //The communicator in charge of this FDiff
       LibTaskForce::Communicator& Comm_;
+      typedef FiniteDiff<VarType,ResultType> My_t;
    protected:
       ///Function to generate the coefs, minor tweaks for backwards and central
       virtual std::vector<double> GetCoefs(size_t NPoints)const{
@@ -218,6 +132,11 @@ class FiniteDiff{
       virtual ~FiniteDiff()=default;
       ///No default initialization b/c we want the communicator
       FiniteDiff()=delete;
+      ///Really don't see why you want to copy/move this, it's use as needed and
+      ///comm's dont move/copy
+      FiniteDiff(const My_t&)=delete;
+      FiniteDiff(const My_t&&)=delete;
+      My_t operator=(const My_t&)=delete;
       
       ///Communicator on which to run the tasks
       FiniteDiff(LibTaskForce::Communicator& Comm):Comm_(Comm){}
@@ -227,11 +146,14 @@ class FiniteDiff{
        *   \param[in] Fxn2Run The visitor that we will be using to run the
        *                      finite difference.  See FDVisitor class for
        *                       requirements
+       *    \param[in] NVars  The number of variables
        *    \param[in] H      The perturbation from the point
        *    \param[in] NPoint How many points are in the stencil
+       *    \return your derivative
        */ 
       template<typename Fxn_t>
       std::vector<ResultType> Run(Fxn_t Fxn2Run,
+                                  size_t NVars,
                                   const VarType& H,
                                   size_t NPoint=3);
 };
@@ -335,8 +257,7 @@ class CentralDiff:public FiniteDiff<VarType,ReturnType>{
 /************Implementations***************/
 template<typename VarType,typename ResultType>
 template<typename Fxn_t>
-std::vector<ResultType> 
-   FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
+std::vector<ResultType> FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
                                         size_t NVars,
                                        const VarType& H,
                                        size_t NPoints){
@@ -364,21 +285,21 @@ std::vector<ResultType>
     for(size_t i=0;i<NVars;++i){//Loop over variables
         VarType Old=Fxn2Diff(i);
         for(size_t j=0;j<NCalcs(NPoints);++j){//Loop over calcs per variable
-            VarType Coord=Old + H*Shift(j,NPoints);
             Deriv_.push_back(
-               Comm_.AddTask(FDWrapper(Fxn2Run,Coefs[j]),Coord,i)
+               Comm_.AddTask(
+                   FDWrapper(Fxn2Run,Coefs[j]),
+                   Fxn2Diff(Old,H,Shift(j,NPoints)),
+                   i
+               )
             );
         }
     }
     
     std::vector<ResultType> Result(NVars);
-    //Will deref the futures now
-    for(size_t i=0;i<NVars;++i)Result[i]=Deriv_[i];
+    //Will deref the futures now, in order we added them
+    for(size_t i=0;i<NVars;++i)Fxn2Diff(ResultType[i],Deriv_[i],i,H);
     return Result;
 }
 
-}}
-
-
-
-#endif /* SRC_LIB_LIBCADGER_LIBALGORITHM_FINITEDIFF_H_ */
+}}//End namespaces
+#endif
