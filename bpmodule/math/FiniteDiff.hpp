@@ -24,6 +24,9 @@ struct FDiffVisitor{
     
     ///Instructs you to run your function with the i-th variable set to NewVar
     ResultType operator(size_t i, VarType NewVar)const=0;
+    
+    ///Instructs you to scale Result by coef
+    ResultType operator(ResultType& Result,double Coef)const=0;
 };    
     
     
@@ -73,44 +76,8 @@ struct FDiffVisitor{
  *  differences to be performed in other coordinate systems beside for
  *  Cartesian, see below for more details.
  *
- *  In general, we assume \f$f\f$ takes an array of variables of type VarType
- *  and returns an array of variables of type ResultType.
- *  That is your function has the signature:
- *  \code
- *  ResultType* f(VarType* Input,size_t NVars);
- *  \endcode
- *  We include the length of the array for your convenience, but it is
- *  guaranteed to be whatever you passed at class instantiation.  After
- *  returning, f no longer owns the memory pointed to by ResultType.
- *
- *  For a typical energy calculation VarType would be double, where the array
- *  has a length of 3N corresponding to the coordinates of each atom and
- *  returns an array containing a single double so ReturnType would also be
- *  double.
- *  The type of this object would then be:
- *  \code
- *     FiniteDiff<double,double>;
- *     //Also acceptable because ReturnType defaults to double
- *     FiniteDiff<double>;
- *  \endcode
- *
- *  The VarType type must be copy constructable and assignable; it also
- *  must define:
- *  \code
- *    VarType operator+(const VarType&);
- *    VarType operator*(double);
- *  \endcode
- *
- *  ReturnType must be assignable and serializable for parallel applications
- *  as well as define the functions:
- *  \code
- *      const ReturnType& operator+=(const ReturnType&);
- *      ReturnType operator*(const double&);
- *  \endcode
- *  Note ReturnType==VarType==double trivially satisfies all of these criteria.
- *  Presently I have justified the slightly more complicated description of
- *  ReturnType by assuming that it will likely always be double.
- *
+  * \todo update this section
+  * 
  *  Eventually one wants to perform finite difference in other coordinates
  *  than Cartesians, in particular internal coordinates.  Internal coordinates
  *  are difficult to work with, but we can get a feel for how one would
@@ -178,23 +145,7 @@ struct FDiffVisitor{
  *  of the perturbation.  Again, the projected addition takes care of
  *  this.
  *
- *  Begin slight aside about good coding practices, that is not relevant
- *  for the current description....
- *
- *  This description is meant to be illustrative and not complete, hence
- *  defining addition to be projected addition is likely not a good idea.
- *  This is likely not a good idea because it is counterintuitive.  To avoid
- *  such a problem one could define a base class say PolarComponent from
- *  which PolarCoordinate derives.  The PolarComponent addition operator
- *  would then only add the same component.  This means each component would
- *  know whether it is r or theta and only grab the corresponding component.
- *  In this case VarType would be PolarComponent and the perturbation would be
- *  passed polymorphically as the base class.  Note that internally
- *  we add the perturbation to the component ensuring that this will work.
- *
- *  End slight aside
- *
- *  The description above the aside would be repeated for each component and
+ *  The description above would be repeated for each component and
  *  each shift.  The end result would be the derivative with each component
  *  scaled by its perturbation.  Assuming your polar components were in the
  *  order r of point 1, theta of point 1, r of point 2, etc.  You would
@@ -245,12 +196,10 @@ struct FDiffVisitor{
 template<typename VarType,typename ResultType=VarType>
 class FiniteDiff{
    private:
-
       //The communicator in charge of this FDiff
       LibTaskForce::Communicator& Comm_;
-
    protected:
-      ///Function to generate the coefs
+      ///Function to generate the coefs, minor tweaks for backwards and central
       virtual std::vector<double> GetCoefs(size_t NPoints)const{
         std::vector<double> x(NPoints);
         for(size_t i=0;i<NPoints;i++)x[i]=Shift(i);
@@ -258,16 +207,29 @@ class FiniteDiff{
       }
 
       ///Returns the number of calculations per variable when user requests
-      ///an NPoints long stencil
+      ///an NPoints long stencil (tweaked by central)
       virtual size_t NCalcs(size_t NPoints)const{return NPoints;}
 
-      ///Returns the shift for the i-th calculation of a NPoint FDiff
+      ///Returns the shift for the i-th calculation of an NPoint FDiff
       virtual double Shift(size_t I,size_t NPoint)const=0;
       
    public:
+      ///Default destructor is fine
       virtual ~FiniteDiff()=default;
+      ///No default initialization b/c we want the communicator
       FiniteDiff()=delete;
+      
+      ///Communicator on which to run the tasks
       FiniteDiff(LibTaskForce::Communicator& Comm):Comm_(Comm){}
+      
+      /** \brief Computes the actual finite difference
+       * 
+       *   \param[in] Fxn2Run The visitor that we will be using to run the
+       *                      finite difference.  See FDVisitor class for
+       *                       requirements
+       *    \param[in] H      The perturbation from the point
+       *    \param[in] NPoint How many points are in the stencil
+       */ 
       template<typename Fxn_t>
       std::vector<ResultType> Run(Fxn_t Fxn2Run,
                                   const VarType& H,
@@ -289,6 +251,7 @@ class FiniteDiff{
 template<typename VarType,typename ReturnType=VarType>
 class ForwardDiff: public FiniteDiff<VarType,ReturnType>{
    private:
+       ///Type of the base class
        typedef FiniteDiff<VarType,ReturnType> Base_t;
       ///Just casts to double 
       double Shift(size_t I,size_t)const{return static_cast<double>(I);}
@@ -313,9 +276,10 @@ class ForwardDiff: public FiniteDiff<VarType,ReturnType>{
 template<typename VarType,typename ReturnType=VarType>
 class BackwardDiff: public FiniteDiff<VarType,ReturnType>{
    private:
+       ///Type of the base class
       typedef FiniteDiff<VarType,ReturnType> Base_t;
       
-      ///Negates the shift
+      ///Negates the shift and casts to double
       double Shift(size_t I,size_t)const{return -1.0*static_cast<double>(I);}
       
       ///Negates the normal coeffs
@@ -386,8 +350,10 @@ std::vector<ResultType>
         public:
             FDWrapper(Fxn_t& Fxn,double Coef):Fxn_(Fxn):Coef_(Coef){}
             ResultType operator()(VarType Coord,size_t i){
+                //Have it compute the fxn's value at the new point
                 ResultType result=Fxn_(i,Coord);
-                result*=Coef_;
+                //Have it scale the result
+                result=Fxn_(result,Coef_);
                 return result;
             }
     };

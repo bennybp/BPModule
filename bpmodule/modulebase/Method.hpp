@@ -25,7 +25,8 @@ namespace modulebase {
  * 
  *  As long as your derived class calls the base class's Deriv function for
  *  derivative orders higher than you have coded, this class will take care of
- *  all necessary finite difference computations.
+ *  all necessary finite difference computations.  Obviously, we can not
+ *  finite difference the energy for you....
  *
  */
 class Method : public ModuleBase
@@ -35,7 +36,7 @@ class Method : public ModuleBase
         
         //Method(PyObject * self, unsigned long id): ModuleBase(self, id){ }
         
-        /** This is the function you overload.  For all orders that you haven't
+        /** This is the function you override.  For all orders that you haven't
          *  implemented you should defer to the base class's Deriv() function,
          *  e.g. for example if you only have gradients:
          * 

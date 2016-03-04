@@ -8,12 +8,14 @@
 //#include "bpmodule/math/FiniteDiff.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/system/Molecule.hpp"
+#include "bpmodule/modulemanager/ModulePtr.hpp"
+#include "bpmodule/modulemanager/ModuleManager.hpp"
 
 namespace bpmodule {
 namespace modulebase {
 
     typedef std::vector<system::Atom> AtomV_t;
-    typedef modulemanager::ModuleManger MM_t;
+    typedef modulemanager::ModuleManager MM_t;
 class FDFunctor{
     private:
         size_t Order_;
@@ -24,7 +26,7 @@ class FDFunctor{
     public:
         //Returns the i-th Cartesian coordinate of our molecule
         double operator()(size_t i)const{
-            return Atoms_[i-i%3][i%3];
+            return Atoms_[(i-i%3)/3][i%3];
         }
         
         std::vector<double> operator()(size_t i,double newcoord){
@@ -34,7 +36,7 @@ class FDFunctor{
                 NewU<<Atoms_[j];
                 if(j==atom)NewU[j][i%3]=newcoord;
             }
-            ModulePtr<Method> NewMod=
+            modulemanager::ModulePtr<Method> NewMode=
                     MM_.GetModule<Method>(Key_,ID_);
             system::Molecule NewMol(NewU,true);
             NewMode->Wfn().system.Set(NewMol);
