@@ -81,7 +81,7 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
         char const * error; // for dlerror
 
         output::Debug("Supermodule not yet loaded. Looking to open C++ supermodule SO file: %1%\n", spath);
-        handle = dlopen(spath.c_str(), RTLD_NOW | RTLD_GLOBAL);
+        handle = dlopen(spath.c_str(), RTLD_NOW | RTLD_LOCAL);
 
         // open the module
         if(!handle)
