@@ -11,6 +11,9 @@
 //#include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/modulebase/Test_Base.hpp"
 
+// System stuff
+#include "bpmodule/modulebase/SystemFragmenter.hpp"
+
 // Integrals
 #include "bpmodule/modulebase/OneElectronIntegralIMPL.hpp"
 //#include "bpmodule/modulebase/OneElectronIntegral.hpp"

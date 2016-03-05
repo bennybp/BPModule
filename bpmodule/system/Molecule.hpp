@@ -275,10 +275,11 @@ class Molecule
         }
 
         ///@}
-
-
 };
 
+
+//! A map of molecules (fragments, etc)
+typedef std::map<std::string, Molecule> MoleculeMap;
 
 
 } // close namespace system

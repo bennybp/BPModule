@@ -61,6 +61,16 @@ PYBIND11_PLUGIN(modulebase)
 
 
     /////////////////////////
+    // System Fragmenters
+    /////////////////////////
+    pybind11::class_<SystemFragmenter_Py, ModuleBasePtr<SystemFragmenter>> sysfrag(m, "SystemFragmenter", mbase);
+    sysfrag.alias<SystemFragmenter>()
+            .def(pybind11::init<unsigned long>())
+            .def("Fragmentize", &SystemFragmenter::Fragmentize)
+    ;
+
+
+    /////////////////////////
     // One electron integral implementation
     /////////////////////////
     //! \todo Don't know about from Calculate to python

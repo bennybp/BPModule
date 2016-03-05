@@ -26,9 +26,9 @@ from . import parallel
 from . import datastore
 from . import math
 from . import tensor
+from . import system
 from . import modulebase
 from . import modulemanager
-from . import system
 from . import basisset
 
 from . import testing
