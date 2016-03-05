@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Python exports for the system library
+ * \brief Python exports for the molecule/system library
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 

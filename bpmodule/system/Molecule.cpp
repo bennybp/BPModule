@@ -1,3 +1,9 @@
+/*\file
+ *
+ * \brief The molecule class (source)
+*/
+
+
 #include "bpmodule/system/Molecule.hpp"
 #include "bpmodule/basisset/BasisSet.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
@@ -53,9 +59,9 @@ Atom Molecule::GetAtom(size_t atomidx) const
     for(const auto & it : atoms_)
         if(it.GetIdx() == atomidx)
             return it;
+
     throw SystemException("This molecule doesn't have an atom with this index",
                           "atomidx", atomidx);
-    
 }
 
 int Molecule::NAtoms(void) const
@@ -155,6 +161,15 @@ math::Point Molecule::CenterOfMass(void) const
 math::Point Molecule::CenterOfNuclearCharge(void) const
 {
     return math::WeightedPointsCenter<math::Point>(*this, &Atom::GetZ);
+}
+
+bool Molecule::HasBasisSet(const std::string & basislabel) const
+{
+    for(const auto & atom : *this)
+        if(atom.HasShells(basislabel))
+            return true;
+    return false;
+
 }
 
 basisset::BasisSet Molecule::GetBasisSet(const std::string & basislabel) const

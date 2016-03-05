@@ -1,3 +1,9 @@
+/*\file
+ *
+ * \brief Functionality for getting experimental/empirical atomic data (header)
+*/
+
+
 #ifndef BPMODULE_GUARD_SYSTEM__ATOMICINFO_HPP_
 #define BPMODULE_GUARD_SYSTEM__ATOMICINFO_HPP_
 
@@ -7,7 +13,7 @@
 namespace bpmodule {
 namespace system {
 
-
+/*! \brief Information about a particular elemental isotope */
 struct IsotopeData
 {
     int isonum;           //! Isotope number (Z + number of neutrons)
@@ -21,6 +27,7 @@ struct IsotopeData
 };
 
 
+/*! \brief Information about an atom/element */
 struct AtomicData
 {
     int Z;                //! Atomic Z-number (number of protons)
@@ -32,10 +39,7 @@ struct AtomicData
     double mass_low;      //! Lower bound on the mass of the element
     double mass_high;     //! Upper bound on the mass of the element
 
-                         
-
-    // All isotope information for this atom
-    std::vector<IsotopeData> isotopes;
+    std::vector<IsotopeData> isotopes; //!< All isotope information for this atom
 };
 
 
