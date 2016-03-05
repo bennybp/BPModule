@@ -22,7 +22,7 @@ namespace python {
  * \param [in] obj The python object to call
  */
 template<typename Ret, typename... Targs>
-Ret CallPyFunc(const pybind11::object & obj, Targs... Fargs)
+Ret CallPyFunc(const pybind11::object & obj, Targs &&... Fargs)
 {
     using bpmodule::exception::PythonCallException;
     using bpmodule::exception::PythonConvertException;
@@ -42,7 +42,7 @@ Ret CallPyFunc(const pybind11::object & obj, Targs... Fargs)
 
 
     try {
-        ret = obj.call(Fargs...);
+        ret = obj.call(std::forward<Targs>(Fargs)...);
     }
     catch(const std::exception &)
     {
@@ -80,7 +80,7 @@ Ret CallPyFunc(const pybind11::object & obj, Targs... Fargs)
  * \param [in] attribute The attribute to call
  */
 template<typename Ret, typename... Targs>
-Ret CallPyFuncAttr(const pybind11::object & obj, const char * attribute, Targs... Fargs)
+Ret CallPyFuncAttr(const pybind11::object & obj, const char * attribute, Targs &&... Fargs)
 {
     using bpmodule::exception::PythonCallException;
     using bpmodule::exception::GeneralException;
@@ -96,7 +96,7 @@ Ret CallPyFuncAttr(const pybind11::object & obj, const char * attribute, Targs..
                                   "nargs", nargs);
     
     pybind11::object objattr = obj.attr(attribute);
-    return CallPyFunc<Ret>(objattr, Fargs...); 
+    return CallPyFunc<Ret>(objattr, std::forward<Targs>(Fargs)...); 
 }
 
 
