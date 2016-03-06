@@ -19,38 +19,23 @@ namespace bpmodule {
 namespace math {
 
 
-/*! \brief Registers a MathSet and Universe for use from python
+/*! \brief Registers a MathSet
  *
  * To be called from within a python export block
  *
+ * \warning Don't forget to register the universe also!
+ *
  * \tparam T The type being held within the math set
  */
-template<typename T, typename U = std::vector<T>>
+template<typename MathSet_t>
 void RegisterMathSet(pybind11::module & m,
-                     const char * universename, const char * mathsetname)
+                     const char * mathsetname)
 {
-    typedef Universe<T, U> Universe_t;
-    typedef MathSet<T, U> MathSet_t;
-
-    // Register the universe
-    pybind11::class_<Universe_t,std::shared_ptr<Universe_t>>(m, universename)
-    .def(pybind11::init<>())
-    .def("append",&Universe_t::operator<<,"Adds a new universe to the set")
-    .def("__iadd__",&Universe_t::operator+=,"Makes this the union of this and other")
-    .def("__isub__",&Universe_t::operator-=,
-         "Makes this the set difference of this and other")
-    .def("__idiv__",&Universe_t::operator/=,
-         "Makes this the intersection of this and other")
-    .def("__add__",&Universe_t::operator+,"Returns union of this and other")
-    .def("__sub__",&Universe_t::operator-,"Returns set-difference of this and other")
-    .def("__div__",&Universe_t::operator/,
-         "Returns the intersection of this and other")
-    .def("__str__",&Universe_t::ToString,"Prints out the universe");
-
+    // register MathSet
     pybind11::class_<MathSet_t>(m, mathsetname)
-    .def(pybind11::init<std::shared_ptr<Universe_t>, bool>())
+    .def(pybind11::init<std::shared_ptr<typename MathSet_t::Universe_t>, bool>())
     .def(pybind11::init<const MathSet_t &>())
-    .def("append",(MathSet_t& (MathSet_t::*)(const T&)) 
+    .def("append",(MathSet_t& (MathSet_t::*)(const typename MathSet_t::value_type &)) 
                   &MathSet_t::operator<<,"Adds a new element to the set")
     .def("append",(MathSet_t& (MathSet_t::*)(size_t)) 
                   &MathSet_t::operator<<,"Adds a new element to the set")
@@ -69,6 +54,27 @@ void RegisterMathSet(pybind11::module & m,
          "Returns the intersection of this and other")
     .def("Complement",&MathSet_t::Complement,"Returns the complement of this")
     .def("__str__",&MathSet_t::ToString,"Prints out the set");
+}
+
+
+template<typename Universe_t>
+void RegisterUniverse(pybind11::module & m,
+                      const char * universename)
+{
+    // Register the universe
+    pybind11::class_<Universe_t,std::shared_ptr<Universe_t>>(m, universename)
+    .def(pybind11::init<>())
+    .def("append",&Universe_t::operator<<,"Adds a new universe to the set")
+    .def("__iadd__",&Universe_t::operator+=,"Makes this the union of this and other")
+    .def("__isub__",&Universe_t::operator-=,
+         "Makes this the set difference of this and other")
+    .def("__idiv__",&Universe_t::operator/=,
+         "Makes this the intersection of this and other")
+    .def("__add__",&Universe_t::operator+,"Returns union of this and other")
+    .def("__sub__",&Universe_t::operator-,"Returns set-difference of this and other")
+    .def("__div__",&Universe_t::operator/,
+         "Returns the intersection of this and other")
+    .def("__str__",&Universe_t::ToString,"Prints out the universe");
 }
 
 

@@ -103,8 +103,9 @@ PYBIND11_PLUGIN(system)
     m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int)>(CreateAtom));
     m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int, int)>(CreateAtom));
 
-    // Export AtomSet, etc
-    math::RegisterMathSet<Atom>(m, "AtomSetUniverse", "AtomSet");
+    // Export AtomSetUniverse
+    // No need to export AtomSet (at the moment)
+    math::RegisterUniverse<AtomSetUniverse>(m, "AtomSetUniverse");
 
     // Main molecule class 
     pybind11::class_<Molecule>(m,"Molecule")
