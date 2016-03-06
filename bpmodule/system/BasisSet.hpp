@@ -4,10 +4,10 @@
 #include <vector>
 #include <functional>
 
-#include "bpmodule/basisset/BasisSetShell.hpp"
+#include "bpmodule/system/BasisSetShell.hpp"
 
 namespace bpmodule {
-namespace basisset {
+namespace system {
 
 
 class BasisSet
@@ -60,7 +60,7 @@ class BasisSet
 };
 
 
-} // close namespace basisset
+} // close namespace system
 } // close namespace bpmodule
 
 

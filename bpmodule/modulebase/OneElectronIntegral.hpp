@@ -9,7 +9,7 @@
 #define BPMODULE_GUARD_MODULEBASE__ONEELECTRONINTEGRAL_HPP_
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/basisset/BasisSet.hpp"
+#include "bpmodule/system/BasisSet.hpp"
 
 namespace bpmodule {
 namespace modulebase {
@@ -29,8 +29,8 @@ class OneElectronIntegral : public ModuleBase
          * 
          * \param [in] ncenter The number of centers for the integrals (ie, 3-center, 2-center)
          */
-        void SetBases(const datastore::UIDPointer<basisset::BasisSet> & bs1,
-                      const datastore::UIDPointer<basisset::BasisSet> & bs2)
+        void SetBases(const datastore::UIDPointer<system::BasisSet> & bs1,
+                      const datastore::UIDPointer<system::BasisSet> & bs2)
         {
             return ModuleBase::CallFunction(&OneElectronIntegral::SetBases_, bs1, bs2);
         }
@@ -66,8 +66,8 @@ class OneElectronIntegral : public ModuleBase
         // To be implemented by derived classes
         /////////////////////////////////////////
         //! \copydoc SetBases
-        virtual void SetBases_(const datastore::UIDPointer<basisset::BasisSet> & bs1,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs2)
+        virtual void SetBases_(const datastore::UIDPointer<system::BasisSet> & bs1,
+                               const datastore::UIDPointer<system::BasisSet> & bs2)
         {
             ModuleBase::CallPyMethod<void>("SetBases_", bs1, bs2);
         }

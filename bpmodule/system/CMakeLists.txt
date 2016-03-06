@@ -1,16 +1,21 @@
-set(BPMODULE_MOLECULE_FILES
+set(BPMODULE_SYSTEM_FILES
     AtomicInfo.cpp
     AtomicInfo_LUT.cpp
     Atom.hpp
     Atom.cpp
     Molecule.hpp
     Molecule.cpp
+
+    BasisSet.cpp
+    BasisSetCreators.cpp
+    AMConvert.cpp
+
     export.cpp
    )
   
 
 ADD_COREMODULE(system
-           "${BPMODULE_MOLECULE_FILES}"
+           "${BPMODULE_SYSTEM_FILES}"
            ""
            ""
            "")

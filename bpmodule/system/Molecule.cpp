@@ -5,7 +5,7 @@
 
 
 #include "bpmodule/system/Molecule.hpp"
-#include "bpmodule/basisset/BasisSet.hpp"
+#include "bpmodule/system/BasisSet.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 
 
@@ -172,9 +172,9 @@ bool Molecule::HasBasisSet(const std::string & basislabel) const
 
 }
 
-basisset::BasisSet Molecule::GetBasisSet(const std::string & basislabel) const
+BasisSet Molecule::GetBasisSet(const std::string & basislabel) const
 {
-    basisset::BasisSet bs;
+    BasisSet bs;
     for(const auto & atom : *this)
         for(const auto & bshell : atom.GetShells(basislabel))
             bs.AddShell(bshell, atom.GetIdx(), atom.GetCoords());

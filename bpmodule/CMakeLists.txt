@@ -61,7 +61,6 @@ add_subdirectory(datastore)
 add_subdirectory(modulebase)
 add_subdirectory(modulemanager)
 add_subdirectory(system)
-add_subdirectory(basisset)
 add_subdirectory(testing)
 
 

@@ -1,19 +1,16 @@
 #include <fstream>
 #include <sstream>
 
-#include "bpmodule/basisset/Creators.hpp"
-#include "bpmodule/basisset/AMConvert.hpp"
+#include "bpmodule/system/BasisSetCreators.hpp"
+#include "bpmodule/system/AMConvert.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/output/Output.hpp"
 
 
-using bpmodule::system::AtomicZNumberFromSym;
-using bpmodule::system::Atom;
-using bpmodule::system::Molecule;
 
 namespace bpmodule {
-namespace basisset {
+namespace system {
 
 
 namespace detail {
@@ -114,10 +111,10 @@ BasisMap ReadBasisFile(ShellType type, const std::string & path)
 
 
 
-system::Molecule SimpleCreator(const std::string & basispath,
-                               const Molecule & mol,
-                               const ShellType type,
-                               const std::string & basislabel)
+Molecule CreateSimpleBasisSet(const std::string & basispath,
+                              const Molecule & mol,
+                              const ShellType type,
+                              const std::string & basislabel)
 {
     detail::BasisMap bm = detail::ReadBasisFile(type, basispath);
 
@@ -131,6 +128,6 @@ system::Molecule SimpleCreator(const std::string & basispath,
 }
 
 
-} // close namespace basisset
+} // close namespace system
 } // close namespace bpmodule
 

@@ -1,10 +1,10 @@
 #ifndef BPMODULE_GUARD_BASISSET__BASISSETSHELL_HPP_
 #define BPMODULE_GUARD_BASISSET__BASISSETSHELL_HPP_
 
-#include "bpmodule/basisset/BasisShellInfo.hpp"
+#include "bpmodule/system/BasisShellInfo.hpp"
 
 namespace bpmodule {
-namespace basisset {
+namespace system {
 
 
 
@@ -71,7 +71,7 @@ class BasisSetShell : public BasisShellInfo
 };
 
 
-} // close namespace basisset
+} // close namespace system
 } // close namespace bpmodule
 
 

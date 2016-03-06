@@ -4,11 +4,11 @@
 #include <map>
 #include <vector>
 
-#include "bpmodule/basisset/BasisSet.hpp"
+#include "bpmodule/system/BasisSet.hpp"
 #include "bpmodule/system/Molecule.hpp"
 
 namespace bpmodule {
-namespace basisset {
+namespace system {
 
 namespace detail {
 
@@ -21,14 +21,14 @@ BasisMap ReadBasisFile(ShellType type, const std::string & path);
 
 
 
-system::Molecule SimpleCreator(const std::string & basispath,
-                               const system::Molecule & mol,
-                               ShellType type,
-                               const std::string & basislabel);
+Molecule CreateSimpleBasisSet(const std::string & basispath,
+                              const Molecule & mol,
+                              ShellType type,
+                              const std::string & basislabel);
 
 
 
-} // close namespace basisset
+} // close namespace system
 } // close namespace bpmodule
 
 

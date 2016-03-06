@@ -19,7 +19,7 @@ extern template class bpmodule::math::MathSet<bpmodule::system::Atom>;
 
 // forward declare
 namespace bpmodule {
-namespace basisset {
+namespace system {
 class BasisSet;
 }}
 
@@ -239,7 +239,7 @@ class Molecule
 
         /*! \brief Obtain a basis set with the given label
          */
-        basisset::BasisSet GetBasisSet(const std::string & basislabel) const;
+        BasisSet GetBasisSet(const std::string & basislabel) const;
 
         ///@}
 

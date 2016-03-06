@@ -4,7 +4,7 @@
 #include <string>
 
 namespace bpmodule {
-namespace basisset {
+namespace system {
 
 
 /*! \brief Converts a string ("s", "p", etc) to an integer angular momentum
@@ -27,7 +27,7 @@ std::string AMToString(int am);
 
 
 
-} // close namespace basisset
+} // close namespace system
 } // close namespace bpmodule
 
 #endif

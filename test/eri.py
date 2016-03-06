@@ -18,7 +18,7 @@ def Run(mm):
     try:
         bspath = os.path.join(thispath, "../", "basis")
         bspath = os.path.realpath(bspath)
-        bstype = bp.basisset.ShellType.Gaussian
+        bstype = bp.system.ShellType.Gaussian
   
         # Load the python modules
         #             supermodule      module name      key
@@ -33,7 +33,7 @@ def Run(mm):
         molu.append(bp.system.CreateAtom(2, [-1.638036840407,  1.136548822547, -0.000000000000], 1))
         mol = bp.system.Molecule(molu, True)
   
-        molwithbs = bp.basisset.SimpleCreator(os.path.join(bspath, "sto-3g.gbs"), mol, bstype, "primary");
+        molwithbs = bp.system.CreateSimpleBasisSet(os.path.join(bspath, "sto-3g.gbs"), mol, bstype, "primary");
         bs = molwithbs.GetBasisSet("primary")
         bs.Print()
   

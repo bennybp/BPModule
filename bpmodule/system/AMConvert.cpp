@@ -1,6 +1,6 @@
 #include <map>
 
-#include "bpmodule/basisset/AMConvert.hpp"
+#include "bpmodule/system/AMConvert.hpp"
 #include "bpmodule/util/StringUtil.hpp" // for case insensitive compare
 #include "bpmodule/exception/Exceptions.hpp"
 
@@ -36,7 +36,7 @@ static const std::map<int, std::string> tostr_{ {  0, "s"},
 
 
 namespace bpmodule {
-namespace basisset {
+namespace system {
 
 
 int StringToAM(const std::string & s)
@@ -58,6 +58,6 @@ std::string AMToString(int am)
 
 
 
-} // close namespace basisset
+} // close namespace system
 } // close namespace bpmodule
 

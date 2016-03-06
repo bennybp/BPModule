@@ -19,7 +19,7 @@ def Run():
     try:
         bspath = os.path.join(thispath, "../", "basis")
         bspath = os.path.realpath(bspath)
-        bstype = bp.basisset.ShellType.Gaussian
+        bstype = bp.system.ShellType.Gaussian
 
         tester = bp.testing.Tester("Testing BasisSet class")
         tester.PrintHeader()
@@ -30,7 +30,7 @@ def Run():
         molu.append(bp.system.CreateAtom(2, [ 0.000000000000,     1.000000000000,     0.000000000000], 8))
 
         mol = bp.system.Molecule(molu, True)
-        molwithbs = bp.basisset.SimpleCreator(os.path.join(bspath, "sto-3g.gbs"), mol, bstype, "primary");
+        molwithbs = bp.system.CreateSimpleBasisSet(os.path.join(bspath, "sto-3g.gbs"), mol, bstype, "primary");
         bs = molwithbs.GetBasisSet("primary")
 
         bp.output.Output("Number of shells: %1%\n", bs.NShell())

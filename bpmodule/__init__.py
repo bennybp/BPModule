@@ -30,7 +30,6 @@ from . import math
 from . import tensor
 from . import datastore
 from . import system
-from . import basisset
 from . import modulebase
 from . import modulemanager
 

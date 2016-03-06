@@ -10,8 +10,8 @@
 
 namespace bpmodule {
 
-//    typedef std::set<const util::Enumeration<system::AtomProperty>*> Set_t;
-//    Set_t util::Enumeration<system::AtomProperty>::Enums_=Set_t();
+//    typedef std::set<const util::Enumeration<AtomProperty>*> Set_t;
+//    Set_t util::Enumeration<AtomProperty>::Enums_=Set_t();
 namespace system {
 
 

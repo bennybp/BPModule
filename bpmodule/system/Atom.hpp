@@ -8,7 +8,7 @@
 #define BPMODULE_GUARD_SYSTEM__ATOM_HPP_
 
 #include "bpmodule/math/Point.hpp"
-#include "bpmodule/basisset/BasisShellInfo.hpp"
+#include "bpmodule/system/BasisShellInfo.hpp"
 
 
 namespace bpmodule {
@@ -46,7 +46,7 @@ class Atom : public math::Point
         double multiplicity_;   //!< Electronic multiplicity
         double nelectrons_;     //!< Number of assigned electrons
 
-        basisset::BasisShellInfoMap bshells_; //!< Basis functions associated with this atom/center
+        BasisShellInfoMap bshells_; //!< Basis functions associated with this atom/center
 
     public:
         typedef math::Point::CoordType CoordType;
@@ -222,7 +222,7 @@ class Atom : public math::Point
          * 
          * Returns all the shells for all the different assigned basis sets
          */
-        basisset::BasisShellInfoMap GetAllShells(void) const
+        BasisShellInfoMap GetAllShells(void) const
         {
             return bshells_;
         }
@@ -232,26 +232,26 @@ class Atom : public math::Point
          * If a basis set with the given label doesn't exist on this center, an
          * empty BasisShellInfoVector is returned
          */
-        basisset::BasisShellInfoVector GetShells(const std::string & label) const
+        BasisShellInfoVector GetShells(const std::string & label) const
         {
             if(HasShells(label))
                 return bshells_.at(label);
             else
-                return basisset::BasisShellInfoVector();
+                return BasisShellInfoVector();
         }
 
         /*! \brief Set all the shells for a basis set with a given label
          * 
          * Existing basis set information (for that label) is overwritten
          */
-        void SetShells(const std::string & label, const basisset::BasisShellInfoVector & shells)
+        void SetShells(const std::string & label, const BasisShellInfoVector & shells)
         {
             bshells_[label] = shells;
         }
 
         /*! \brief Append a shell to a basis set with a given label
          */
-        void AddShell(const std::string & label, const basisset::BasisShellInfo & shell)
+        void AddShell(const std::string & label, const BasisShellInfo & shell)
         {
             bshells_[label].push_back(shell);
         }

@@ -6,11 +6,11 @@
 #include <array>
 #include <vector>
 #include "bpmodule/pragma.h"
-#include "bpmodule/basisset/NCartesian.hpp"
+#include "bpmodule/system/NCartesian.hpp"
 
 
 namespace bpmodule {
-namespace basisset {
+namespace system {
 
 
 
@@ -94,7 +94,7 @@ typedef std::vector<BasisShellInfo> BasisShellInfoVector;
 typedef std::map<std::string, BasisShellInfoVector> BasisShellInfoMap;
 
 
-} // close namespace basisset
+} // close namespace system
 } // close namespace bpmodule
 
 

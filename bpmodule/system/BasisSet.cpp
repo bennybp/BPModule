@@ -1,13 +1,13 @@
 #include <algorithm>
 
-#include "bpmodule/basisset/BasisSet.hpp"
-#include "bpmodule/basisset/NCartesian.hpp"
+#include "bpmodule/system/BasisSet.hpp"
+#include "bpmodule/system/NCartesian.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 
 
 namespace bpmodule {
-namespace basisset {
+namespace system {
 
 BasisSet::BasisSet(void)
     : curid_(0)
@@ -121,5 +121,5 @@ void BasisSet::Print(void) const
 }
 
 
-} // close namespace basisset
+} // close namespace system
 } // close namespace bpmodule
