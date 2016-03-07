@@ -1,8 +1,13 @@
+/*\file
+ *
+ * \brief Atoms and atomic centers (header)
+*/
+
+
 #ifndef BPMODULE_GUARD_SYSTEM__ATOM_HPP_
 #define BPMODULE_GUARD_SYSTEM__ATOM_HPP_
 
 #include "bpmodule/math/Point.hpp"
-#include "bpmodule/math/Cast.hpp"
 #include "bpmodule/basisset/BasisShellInfo.hpp"
 
 
@@ -12,7 +17,20 @@ namespace system {
 
 
 /*! \brief A center in a molecule
- * 
+ *
+ * Atoms contain a unique index, which must be set on construction.
+ * This would generally be the input ordering, but is otherwise arbitrary.
+ *
+ * Generally, Atoms would be created by one of the CreateAtom
+ * free functions, which fill in much of the information with defaults
+ * given a Z number (and optionally an isotope number).
+ *
+ * Many values which are traditionally integers are instead represented
+ * as doubles, which allows for fractional occupation.
+ *
+ * Data is stored within the Atom object, therefore copying will not
+ * create aliases.
+ *
  * Follows PointConcept via derivation from math::Point
  */
 class Atom : public math::Point
@@ -22,18 +40,19 @@ class Atom : public math::Point
         int Z_;        //!< Atomic Z number (as integer. Also stored as a (double) weight)
         int isonum_;   //!< Isotope number
 
-        double mass_;
-        double isotopemass_;
-        double charge_;
-        double multiplicity_;
-        double nelectrons_;
+        double mass_;           //!< Atomic mass (abundance-weighted isotope masses)
+        double isotopemass_;    //!< Mass of the selected isotope
+        double charge_;         //!< Charge on the center
+        double multiplicity_;   //!< Electronic multiplicity
+        double nelectrons_;     //!< Number of assigned electrons
 
         basisset::BasisShellInfoMap bshells_; //!< Basis functions associated with this atom/center
 
     public:
         typedef math::Point::CoordType CoordType;
 
-        // constructor
+        /*! \brief Constructor
+         */
         Atom(size_t idx,  CoordType xyz, int Z, int isonum,
              double charge, double multiplicity, double nelectrons)
         {
@@ -48,13 +67,29 @@ class Atom : public math::Point
         }
 
 
-
         Atom(const Atom &)             = default;
         Atom & operator=(const Atom &) = default;
         Atom(Atom &&)                  = default;
         Atom & operator=(Atom &&)      = default;
 
 
+        /* \brief Equality comparison
+         *
+         * This compares all components individually
+         */
+        bool operator==(const Atom & rhs) const;
+
+        /* \brief Inequality comparison
+         *
+         * This compares all components individually
+         */
+        bool operator!=(const Atom & rhs) const;
+
+
+
+        /*! \name General properties
+         */ 
+        ///@{ 
 
         /*
          * I'm aware that a class with lots of getters/setters is bad
@@ -62,46 +97,170 @@ class Atom : public math::Point
          * such as storing the data elsewhere
          */
 
-        size_t GetIdx(void) const noexcept { return idx_; }
+        /*! \brief Get the unique index of this atom
+         *
+         * Typically, the index will represent the input ordering
+         */
+        size_t GetIdx(void) const noexcept
+        {
+            return idx_;
+        }
 
-        int GetZ(void) const noexcept { return Z_; }
-        void SetZ(int Z) noexcept { Z_ = Z; }
+        /*! \brief Get the atomic Z number (number of protons) */
+        int GetZ(void) const noexcept
+        {
+            return Z_;
+        }
 
-        int GetIsonum(void) const noexcept { return isonum_; }
-        void SetIsonum(int isonum) noexcept { isonum_ = isonum; }
-
-        double GetMass(void) const { return mass_; }
-        void SetMass(double mass) { mass_ = mass; };
-
-        double GetIsotopeMass(void) const { return isotopemass_; }
-        void SetIsotopeMass(double isotopemass) { isotopemass_ = isotopemass; };
-
-        double GetCharge(void) const noexcept { return charge_; }
-        void SetCharge(double charge) noexcept { charge_ = charge; }
-
-        double GetMultiplicity(void) const noexcept { return charge_; }
-        void SetMultiplicity(double m) noexcept { multiplicity_ = m; }
-
-        double GetNElectrons(void) const noexcept { return nelectrons_; }
-        void SetNElectrons(double n) noexcept { nelectrons_ = n; }
-
-        basisset::BasisShellInfoMap GetAllShells(void) const { return bshells_; }
-        basisset::BasisShellInfoVector GetShells(const std::string & label) const { return bshells_.at(label); } //! \todo exceptions
-        void SetShells(const std::string & label, const basisset::BasisShellInfoVector & shells) { bshells_[label] = shells; }
-        void AddShell(const std::string & label, const basisset::BasisShellInfo & shell) { bshells_[label].push_back(shell); }
+        /*! \brief Set the atomic Z number (number of protons) */
+        void SetZ(int Z) noexcept
+        {
+            Z_ = Z;
+        }
 
 
-        bool operator==(const Atom & rhs) const;
-        bool operator!=(const Atom & rhs) const;
+        /*! \brief Get the isotope number (number of protons + neutrons) */
+        int GetIsonum(void) const noexcept
+        {
+            return isonum_;
+        }
+
+        /*! \brief Set the isotope number (number of protons + neutrons) */
+        void SetIsonum(int isonum) noexcept
+        {
+            isonum_ = isonum;
+        }
 
 
-        //! Name of the element
+        /*! \brief Get the atomic mass (isotope masses weighted by abundance) */
+        double GetMass(void) const
+        {
+            return mass_;
+        }
+
+        /*! \brief Set the atomic mass (isotope masses weighted by abundance) */
+        void SetMass(double mass)
+        {
+            mass_ = mass;
+        };
+
+
+        /*! \brief Get the mass of the isotope */
+        double GetIsotopeMass(void) const
+        {
+            return isotopemass_;
+        }
+
+        /*! \brief Set the mass of the isotope */
+        void SetIsotopeMass(double isotopemass)
+        {
+            isotopemass_ = isotopemass;
+        };
+
+
+        /*! \brief Get the charge on this atom/center */
+        double GetCharge(void) const noexcept
+        {
+            return charge_;
+        }
+
+        /*! \brief Set the charge on this atom/center */
+        void SetCharge(double charge) noexcept
+        {
+            charge_ = charge;
+        }
+
+
+        /*! \brief Get the electronic multiplicity of this atom/center  */
+        double GetMultiplicity(void) const noexcept
+        {
+            return charge_;
+        }
+
+        /*! \brief Set the electronic multiplicity of this atom/center  */
+        void SetMultiplicity(double m) noexcept
+        {
+            multiplicity_ = m;
+        }
+
+
+        /*! \brief Get the number of electrons assigned to this atom/center */
+        double GetNElectrons(void) const noexcept
+        {
+            return nelectrons_;
+        }
+
+        /*! \brief Set the number of electrons assigned to this atom/center */
+        void SetNElectrons(double n) noexcept
+        {
+            nelectrons_ = n;
+        }
+
+        /*! \brief Get the name of the element */
         std::string GetName(void) const;
 
-        //! Symbol of the element;
+        /*! \brief Get the symbol of the element */
         std::string GetSymbol(void) const;
+
+
+        ///@}
+
+
+
+        /*! \name Basis Set information
+         */ 
+        ///@{ 
+
+        /*! \brief See is this atom has a basis set assigned with the given label
+         */
+        bool HasShells(const std::string & label) const
+        {
+            return bshells_.count(label);
+        }
+
+        /*! \brief Get all basis set information for this atom
+         * 
+         * Returns all the shells for all the different assigned basis sets
+         */
+        basisset::BasisShellInfoMap GetAllShells(void) const
+        {
+            return bshells_;
+        }
+
+        /*! \brief Get information for a particular assigned basis set
+         * 
+         * If a basis set with the given label doesn't exist on this center, an
+         * empty BasisShellInfoVector is returned
+         */
+        basisset::BasisShellInfoVector GetShells(const std::string & label) const
+        {
+            if(HasShells(label))
+                return bshells_.at(label);
+            else
+                return basisset::BasisShellInfoVector();
+        }
+
+        /*! \brief Set all the shells for a basis set with a given label
+         * 
+         * Existing basis set information (for that label) is overwritten
+         */
+        void SetShells(const std::string & label, const basisset::BasisShellInfoVector & shells)
+        {
+            bshells_[label] = shells;
+        }
+
+        /*! \brief Append a shell to a basis set with a given label
+         */
+        void AddShell(const std::string & label, const basisset::BasisShellInfo & shell)
+        {
+            bshells_[label].push_back(shell);
+        }
+
+        ///@}
+
 };
 
+//! \todo What to do about printing
 std::ostream& operator<<(std::ostream& os,const Atom& A);
 
 

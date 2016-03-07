@@ -40,7 +40,8 @@ PYBIND11_PLUGIN(math)
     m.def("Double2nm1FactorialF", Double2nm1FactorialF); 
     m.def("Double2nm1FactorialD", Double2nm1FactorialD);
 
-    RegisterMathSet<std::string>(m, "StringSetUniverse", "StringSet"); 
+    RegisterUniverse<Universe<std::string>>(m, "StringSetUniverse"); 
+    RegisterMathSet<MathSet<std::string>>(m, "StringSet"); 
 
 
     pybind11::class_<Point>(m, "Point")

@@ -1,3 +1,9 @@
+/*\file
+ *
+ * \brief Functionality for getting experimental/empirical atomic data (source)
+*/
+
+
 #include <algorithm>
 
 #include "bpmodule/system/AtomicInfo.hpp"

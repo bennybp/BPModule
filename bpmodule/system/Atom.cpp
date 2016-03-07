@@ -1,3 +1,9 @@
+/*\file
+ *
+ * \brief Atoms and atomic centers (source)
+*/
+
+
 #include "bpmodule/system/Atom.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/math/Cast.hpp"
@@ -54,6 +60,10 @@ std::ostream& operator<<(std::ostream& os,const Atom& A)
     return os;
 }
 
+
+////////////////////////////////
+// Free functions
+////////////////////////////////
 
 Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z)
 {

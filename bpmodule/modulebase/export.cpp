@@ -21,9 +21,6 @@ namespace modulebase {
 namespace export_python {
 
 
-template<typename T>
-using ModuleBasePtr = std::shared_ptr<T>;
-
 
 PYBIND11_PLUGIN(modulebase)
 {
@@ -33,7 +30,7 @@ PYBIND11_PLUGIN(modulebase)
     // Module Base classes
     ///////////////////////
     // CallFunc doesn't need to be exported 
-    pybind11::class_<ModuleBase, ModuleBasePtr<ModuleBase>> mbase(m, "ModuleBase");
+    pybind11::class_<ModuleBase> mbase(m, "ModuleBase");
     mbase.def("ID", &ModuleBase::ID)
          .def("Key", &ModuleBase::Key)
          .def("Name", &ModuleBase::Name)
@@ -49,7 +46,7 @@ PYBIND11_PLUGIN(modulebase)
     /////////////////////////
     // Test class
     /////////////////////////
-    pybind11::class_<Test_Base_Py, ModuleBasePtr<Test_Base>> testbase(m, "Test_Base", mbase);
+    pybind11::class_<Test_Base_Py> testbase(m, "Test_Base", mbase);
     testbase.alias<Test_Base>()
             .def(pybind11::init<unsigned long>())
             .def("Cache", &Test_Base_Py::Cache, pybind11::return_value_policy::reference_internal)
@@ -61,10 +58,20 @@ PYBIND11_PLUGIN(modulebase)
 
 
     /////////////////////////
+    // System Fragmenters
+    /////////////////////////
+    pybind11::class_<SystemFragmenter_Py> sysfrag(m, "SystemFragmenter", mbase);
+    sysfrag.alias<SystemFragmenter>()
+            .def(pybind11::init<unsigned long>())
+            .def("Fragmentize", &SystemFragmenter::Fragmentize)
+    ;
+
+
+    /////////////////////////
     // One electron integral implementation
     /////////////////////////
     //! \todo Don't know about from Calculate to python
-    pybind11::class_<OneElectronIntegralIMPL_Py, ModuleBasePtr<OneElectronIntegralIMPL>> oneelimpl(m, "OneElectronIntegralIMPL", mbase);
+    pybind11::class_<OneElectronIntegralIMPL_Py> oneelimpl(m, "OneElectronIntegralIMPL", mbase);
     oneelimpl.alias<OneElectronIntegralIMPL>()
             .def(pybind11::init<unsigned long>())
             .def("Cache", &OneElectronIntegralIMPL_Py::Cache, pybind11::return_value_policy::reference_internal)
@@ -92,7 +99,7 @@ PYBIND11_PLUGIN(modulebase)
     /////////////////////////
     // Two electron integral implementation
     /////////////////////////
-    pybind11::class_<TwoElectronIntegralIMPL_Py, ModuleBasePtr<TwoElectronIntegralIMPL>> twoelimpl(m, "TwoElectronIntegralIMPL", mbase);
+    pybind11::class_<TwoElectronIntegralIMPL_Py> twoelimpl(m, "TwoElectronIntegralIMPL", mbase);
     twoelimpl.alias<TwoElectronIntegralIMPL>()
             .def(pybind11::init<unsigned long>())
             .def("Cache", &TwoElectronIntegralIMPL_Py::Cache, pybind11::return_value_policy::reference_internal)

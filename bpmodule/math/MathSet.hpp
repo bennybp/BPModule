@@ -88,6 +88,8 @@ namespace bpmodule {
             typedef std::function<bool(const T &)> SelectorFunc;
             typedef std::function<T(const T &)> TransformerFunc;
 
+            typedef Universe<T, U> Universe_t;
+
             ///Makes a set that is part of the given universe
             // fill = Make this set a set of all elements in the universe
             MathSet(std::shared_ptr<const Base_t> AUniverse, bool fill) : Universe_(AUniverse)

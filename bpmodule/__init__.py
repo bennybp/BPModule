@@ -12,24 +12,27 @@ import importlib
 olddl = sys.getdlopenflags()
 sys.setdlopenflags(os.RTLD_LAZY | os.RTLD_GLOBAL)
 
-# Standalone (don't depend on other core modules)
+
+###############################################
+# Some slight ordering of importing
+# Despite using RTLD_LAZY, the
+# PyInit_** functions may require some
+# symbols to be loaded when they are called
+###############################################
+
 from . import exception
-
-
-# TODO - can we get some order that will work with RTLD_NOW?
-# Probably not - there are circular dependencies
-# (modulemanager and modulebase, for example)
-from . import python
 from . import util
 from . import output
 from . import parallel
-from . import datastore
+from . import python
 from . import math
+
 from . import tensor
-from . import modulebase
-from . import modulemanager
+from . import datastore
 from . import system
 from . import basisset
+from . import modulebase
+from . import modulemanager
 
 from . import testing
 

@@ -11,7 +11,7 @@
  */
 
 /*! \namespace bpmodule::system
- *  \brief Classes and functions for the moleule and atoms
+ *  \brief Classes and functions for the molecules, atoms, and systems
  */
 
 /*! \namespace bpmodule::output
