@@ -4,12 +4,14 @@
  * and open the template in the editor.
  */
 
-#include "bpmodule/modulebase/Method.hpp"
+#include "bpmodule/modulebase/EnergyMethod.hpp"
 #include "bpmodule/math/FiniteDiff.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/system/Molecule.hpp"
 #include "bpmodule/modulemanager/ModulePtr.hpp"
 #include "bpmodule/modulemanager/ModuleManager.hpp"
+#include "bpmodule/parallel/InitFinalize.hpp"
+#include "LibTaskForce.hpp"
 
 namespace bpmodule {
 namespace modulebase {
@@ -37,8 +39,8 @@ class FDFunctor:public math::FDiffVisitor<double,std::vector<double>>{
                 NewU<<Atoms_[j];
                 if(j==atom)NewU[j][i%3]=newcoord;
             }
-            modulemanager::ModulePtr<Method> NewMode=
-                    MM_.GetModule<Method>(Key_,ID_);
+            modulemanager::ModulePtr<EnergyMethod> NewMode=
+                    MM_.GetModule<EnergyMethod>(Key_,ID_);
             system::Molecule NewMol(NewU,true);
             NewMode->Wfn().system.Set(NewMol);
             return NewMode->Deriv(Order_-1);
@@ -54,11 +56,11 @@ class FDFunctor:public math::FDiffVisitor<double,std::vector<double>>{
 };    
     
  
-std::vector<double> Method::Deriv(size_t Order){
+std::vector<double> EnergyMethod::Deriv(size_t Order){
     //if(Order==0)//Throw error
     const system::Molecule& Mol=*Wfn().system;
     //std::vector<system::Atom> Atoms(Mol.begin(),Mol.end());
-    const LibTaskForce::Communicator& Comm=*Wfn().comm;
+    const LibTaskForce::Communicator& Comm=parallel::GetEnv().Comm();
     std::cout<<Comm<<std::endl;
     std::cout<<Mol<<std::endl;
     
@@ -66,7 +68,7 @@ std::vector<double> Method::Deriv(size_t Order){
     FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),ID(),Key());
     std::vector<std::vector<double>> TempDeriv=
     FD.Run(Thing2Run,Mol.NAtoms(),0.02,3);
-    //TempDeriv[0] is the first element of our deriv, so just add to it
+    //Need to flatten the array, abuse that TempDeriv[0] is the first deriv comp    
     for(size_t i=1;i<TempDeriv.size();++i)
        for(double j :  TempDeriv[i])TempDeriv[0].push_back(j);
     return TempDeriv[0];*/

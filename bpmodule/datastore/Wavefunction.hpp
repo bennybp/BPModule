@@ -12,10 +12,6 @@
 #include "bpmodule/tensor/Matrix.hpp"
 #include "bpmodule/datastore/UIDPointer.hpp"
 
-//Needed for parallel hack, needs tweaked after agreement on how stuff works
-//and wrapping of LibTaskForce in python
-#include "bpmodule/parallel/InitFinalize.hpp"
-#include "LibParallel.hpp"
 
 
 // forward declarations
@@ -31,14 +27,13 @@ namespace datastore {
 class Wavefunction
 {
 public:
-    Wavefunction(void):comm(parallel::Env_->Comm()){}
+    Wavefunction(void)=default;
     Wavefunction(const Wavefunction &) = default;
     Wavefunction & operator=(const Wavefunction &) = default;
     Wavefunction(Wavefunction &&) = default;
     Wavefunction & operator=(Wavefunction &&) = default;
 
     UIDPointer<system::Molecule> system;
-    UIDPointer<LibTaskForce::Communicator> comm;
     UIDPointer<tensor::DistMatrixD> cmat; //! \todo REPLACE ME WITH TENSOR<2> or <3>
     UIDPointer<tensor::DistMatrixD> epsilon; //! \todo REPLACE ME WITH TENSOR<1> or <2>
 

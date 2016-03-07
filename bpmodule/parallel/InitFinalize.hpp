@@ -8,26 +8,22 @@
 #ifndef BPMODULE_GUARD_PARALLEL__INITFINALIZE_HPP_
 #define BPMODULE_GUARD_PARALLEL__INITFINALIZE_HPP_
 
-#include <memory>//For unique ptr
-
 //! \todo We need to store multiple communicators, etc
 
 namespace LibTaskForce{
     class Environment;
 }
 
-
-
-
 namespace bpmodule {
 namespace parallel {
 
-//For the moment we have a global environment (basically the top-level MPI_COMM)
-extern std::unique_ptr<LibTaskForce::Environment> Env_;    
+//Returns the current environment
+const LibTaskForce::Environment& GetEnv();    
     
 /*! \brief Initialize the parallelization functionality
  *
- * This is meant to be called from python
+ * This is meant to be called from python at the start of the program
+ * \todo Make an overload that takes an MPI_COMM instance
  */
 void Init(void);
 

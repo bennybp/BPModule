@@ -17,10 +17,10 @@ import bpmodule as bp
 
 def Run(mm):
     try:
-        mm.LoadModule("CoreModules","Method","Method")
+        mm.LoadModule("core","BPModule_ModuleManager","EnergyMethod")
         # bunch more of these
 
-        MyMod=mm.GetModule("Method",0)
+        MyMod=mm.GetModule("EnergyMethod",0)
         wfn=bp.datastore.Wavefunction()
         molu = bp.system.AtomSetUniverse()
         molu.append(bp.system.CreateAtom(0, [ 0.000000000000, -0.143225816552,  0.000000000000], 8))

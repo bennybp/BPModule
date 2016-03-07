@@ -11,4 +11,4 @@ ADD_COREMODULE(parallel
 
 INSTALL_COREMODULE(parallel)
 
-set_target_properties(parallel PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/external/libtaskforce/lib")
+set_target_properties(parallel PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/external/libtaskforce/lib;${CMAKE_INSTALL_PREFIX}/external/libtaskforce/external/madness/lib")

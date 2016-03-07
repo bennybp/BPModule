@@ -7,8 +7,8 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_MODULEBASE__METHOD_HPP_
-#define BPMODULE_GUARD_MODULEBASE__METHOD_HPP_
+#ifndef BPMODULE_GUARD_MODULEBASE__ENERGYMETHOD_HPP_
+#define BPMODULE_GUARD_MODULEBASE__ENERGYMETHOD_HPP_
 
 #include <vector>
 #include "bpmodule/modulebase/ModuleBase.hpp"
@@ -29,12 +29,10 @@ namespace modulebase {
  *  finite difference the energy for you....
  *
  */
-class Method : public ModuleBase
+class EnergyMethod : public ModuleBase
 {
     public:
-        Method(unsigned long id): ModuleBase(id,"Method"){ }
-        
-        //Method(PyObject * self, unsigned long id): ModuleBase(self, id){ }
+        EnergyMethod(unsigned long id): ModuleBase(id,"EnergyMethod"){ }
         
         /** This is the function you override.  For all orders that you haven't
          *  implemented you should defer to the base class's Deriv() function,
@@ -59,17 +57,9 @@ class Method : public ModuleBase
         ///Returns the nuclear Hessian of this method
         std::vector<double> Hessian(){return Deriv(2);}
         ///@}
-
-
-    /*private:
-        virtual boost::python::object MoveToPyObject_(
-            std::function<void(modulebase::ModuleBase *)> deleter){
-            return ModuleBase::MoveToPyObjectHelper_<Method>(deleter, this);
-        }*/
-
 };
 
 } // close namespace modulebase
 } // close namespace bpmodule
 
-#endif /* BPMODULE_GUARD_MODULEBASE__METHOD_HPP_ */
+#endif /* BPMODULE_GUARD_MODULEBASE__ENERGYMETHOD_HPP_ */
