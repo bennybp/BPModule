@@ -7,6 +7,7 @@ set(BPMODULE_SYSTEM_FILES
     Molecule.cpp
 
     BasisSet.cpp
+    BasisShellBase.cpp
     BasisShellInfo.cpp
     BasisSetShell.cpp
     AMConvert.cpp

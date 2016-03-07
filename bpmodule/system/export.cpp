@@ -48,30 +48,42 @@ PYBIND11_PLUGIN(system)
 
 
     // BasisShellInfo class
-    pybind11::class_<BasisShellInfo> bshell(m, "BasisShellInfo");
-    bshell.def(pybind11::init<ShellType, int, bool, int, int>())
-          .def("GetType", &BasisShellInfo::GetType)
-          .def("AM", &BasisShellInfo::AM)
-          .def("NPrim", &BasisShellInfo::NPrim)
-          .def("NGeneral", &BasisShellInfo::NGeneral)
-          .def("NCartesian", &BasisShellInfo::NCartesian)
-          .def("NSpherical", &BasisShellInfo::NSpherical)
-          .def("NFunctions", &BasisShellInfo::NFunctions)
-          .def("IsCombiendAM", &BasisShellInfo::IsCombinedAM)
-          .def("IsCartesian", &BasisShellInfo::IsCartesian)
-          .def("IsSpherical", &BasisShellInfo::IsSpherical)
-          .def("GetAlphas", &BasisShellInfo::GetAlphas)
-          .def("SetAlphas", &BasisShellInfo::SetAlphas)
-          .def("GetCoefs", &BasisShellInfo::GetCoefs)
-          .def("SetCoefs", &BasisShellInfo::SetCoefs)
-          .def("GetAllCoefs", &BasisShellInfo::GetAllCoefs)
-          .def("GetAlpha", &BasisShellInfo::GetAlpha)
-          .def("SetAlpha", &BasisShellInfo::SetAlpha)
-          .def("GetCoef", &BasisShellInfo::GetCoef)
-          .def("SetCoef", &BasisShellInfo::SetCoef)
-          .def("SetPrimitive", static_cast<void (BasisShellInfo::*)(int, double, double)>(&BasisShellInfo::SetPrimitive))
-          .def("SetPrimitive", static_cast<void (BasisShellInfo::*)(int, double, const std::vector<double> &)>(&BasisShellInfo::SetPrimitive))
+    pybind11::class_<BasisShellBase> bshellbase(m, "BasisShellBase");
+    bshellbase.def("GetType", &BasisShellBase::GetType)
+              .def("AM", &BasisShellBase::AM)
+              .def("NPrim", &BasisShellBase::NPrim)
+              .def("NGeneral", &BasisShellBase::NGeneral)
+              .def("NCartesian", &BasisShellBase::NCartesian)
+              .def("NSpherical", &BasisShellBase::NSpherical)
+              .def("NFunctions", &BasisShellBase::NFunctions)
+              .def("IsCombiendAM", &BasisShellBase::IsCombinedAM)
+              .def("IsCartesian", &BasisShellBase::IsCartesian)
+              .def("IsSpherical", &BasisShellBase::IsSpherical)
+
+              .def("Alpha", static_cast<double &(BasisShellBase::*)(int)>(&BasisShellBase::Alpha))
+              .def("Coef", static_cast<double &(BasisShellBase::*)(int)>(&BasisShellBase::Alpha))
+
+              .def("GetAlpha", &BasisShellBase::GetAlpha)
+              .def("SetAlpha", &BasisShellBase::SetAlpha)
+              .def("GetCoef", &BasisShellBase::GetCoef)
+              .def("SetCoef", &BasisShellBase::SetCoef)
+
+              .def("GetAlphas", &BasisShellBase::GetAlphas)
+              .def("SetAlphas", &BasisShellBase::SetAlphas)
+              .def("GetCoefs", &BasisShellBase::GetCoefs)
+              .def("SetCoefs", &BasisShellBase::SetCoefs)
+              .def("GetAllCoefs", &BasisShellBase::GetAllCoefs)
+
+              .def("SetPrimitive", static_cast<void (BasisShellBase::*)(int, double, double)>(&BasisShellBase::SetPrimitive))
+              .def("SetPrimitive", static_cast<void (BasisShellBase::*)(int, double, const std::vector<double> &)>(&BasisShellBase::SetPrimitive))
     ;
+
+
+    // BasisShellInfo class
+    pybind11::class_<BasisShellInfo> bshell(m, "BasisShellInfo", bshellbase);
+    bshell.def(pybind11::init<ShellType, int, bool, int, int>())
+    ;
+    
 
     // BasisSetShell class
     pybind11::class_<BasisSetShell>(m, "BasisSetShell", bshell)
