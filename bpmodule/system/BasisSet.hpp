@@ -5,6 +5,7 @@
 #include <functional>
 
 #include "bpmodule/system/BasisSetShell.hpp"
+#include "bpmodule/system/BasisShellInfo.hpp"
 
 namespace bpmodule {
 namespace system {
@@ -15,9 +16,9 @@ class BasisSet
     public:
         typedef std::vector<BasisSetShell>::iterator iterator;
         typedef std::vector<BasisSetShell>::const_iterator const_iterator;
-        typedef std::function<BasisSetShell(const BasisSetShell &)> TransformerFunc;
+        typedef std::function<BasisSetShell (const BasisSetShell &)> TransformerFunc;
 
-        BasisSet(void);
+        BasisSet(size_t nprim, size_t ncoef);
 
         // compiler generated ok
         BasisSet(const BasisSet & rhs)             = default;
@@ -25,16 +26,12 @@ class BasisSet
         BasisSet & operator=(const BasisSet & rhs) = default;
         BasisSet & operator=(BasisSet && rhs)      = default;
 
-        void AddShell(const BasisShellInfo & bshell,
-                      unsigned long center,
-                      const BasisSetShell::CoordType & xyz);
-
-
         int NShell(void) const noexcept;
 
         const BasisSetShell & GetShell(int i) const;
 
         int NPrim(void) const;
+        int NCoef(void) const;
         int NCartesian(void) const;
         int NFunctions(void) const;
 
@@ -42,6 +39,11 @@ class BasisSet
         int MaxAM(void) const;
         int MaxNCartesian(void) const;
         int MaxNFunctions(void) const;
+
+        void AddShell(const BasisShellInfo & bshell,
+                      unsigned long center,
+                      const BasisSetShell::CoordType & xyz);
+
 
         //! \todo make a printer class?
         void Print(void) const;
@@ -55,8 +57,15 @@ class BasisSet
     private:
         unsigned long curid_;
         std::vector<BasisSetShell> shells_;
+        std::vector<double> storage_; // storage for alpha and coef
 
-        void AddShell_(const BasisSetShell & bsshell);
+        // for filling
+        size_t nprim_;
+        size_t alpha_pos_;
+        size_t coef_pos_;
+
+        void ValidateAddition_(const BasisShellBase & bshell) const;
+        void AddShell_(const BasisSetShell & bshell);
 };
 
 

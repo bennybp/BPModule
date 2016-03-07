@@ -5,17 +5,25 @@ namespace bpmodule {
 namespace system {
 
 
-
-
-BasisSetShell::BasisSetShell(unsigned long id, const BasisShellInfo & bshell,
-                             unsigned long center, double x, double y, double z)
-    : BasisShellInfo(bshell), id_(id), center_(center), xyz_{x,y,z}
+BasisSetShell::BasisSetShell(const BasisSetShell & bshell,
+                             double * alphaptr, double * coefptr)
+    : BasisSetShell(bshell.ID(), alphaptr, coefptr, bshell, bshell.Center(), bshell.GetCoords())
 { }
 
-BasisSetShell::BasisSetShell(unsigned long id, const BasisShellInfo & bshell,
+
+BasisSetShell::BasisSetShell(unsigned long id, double * alphaptr, double * coefptr,
+                             const BasisShellBase & bshell,
                              unsigned long center, const CoordType & xyz)
-    : BasisShellInfo(bshell), id_(id), center_(center), xyz_(xyz)
-{ }
+    : BasisShellBase(bshell.GetType(), bshell.AM(), bshell.IsCartesian(),
+                     bshell.NPrim(), bshell.NGeneral()),
+      id_(id), center_(center), xyz_(xyz)
+{
+    BasisShellBase::SetPtrs_(alphaptr, coefptr); 
+
+    //! \todo inefficient copy. Consider rvalue refs in base class
+    BasisShellBase::SetAlphas(bshell.GetAlphas());
+    BasisShellBase::SetAllCoefs(bshell.GetAllCoefs());
+}
 
 
 unsigned long BasisSetShell::ID(void) const noexcept
@@ -35,16 +43,9 @@ BasisSetShell::CoordType BasisSetShell::GetCoords(void) const
 
 bool BasisSetShell::operator==(const BasisSetShell & rhs) const
 {
-    PRAGMA_WARNING_PUSH
-    PRAGMA_WARNING_IGNORE_FP_EQUALITY
-
-    return (
-               static_cast<const BasisShellInfo>(*this) == static_cast<const BasisShellInfo>(rhs) &&
-               id_ == rhs.id_ &&
-               xyz_ == rhs.xyz_
-           );
-
-    PRAGMA_WARNING_POP
+    // this is done manually (rather than "using")
+    // prevent implicit comparison between one type and another
+    return static_cast<BasisShellBase>(*this) == static_cast<BasisShellBase>(rhs);
 }
 
 

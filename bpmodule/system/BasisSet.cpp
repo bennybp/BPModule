@@ -9,22 +9,67 @@
 namespace bpmodule {
 namespace system {
 
-BasisSet::BasisSet(void)
-    : curid_(0)
-{ }
+BasisSet::BasisSet(size_t nprim, size_t ncoef)
+    : curid_(0), nprim_(nprim)
+{
+    size_t totalstorage = nprim * ncoef;
+
+    storage_.resize(totalstorage);
+    std::fill(storage_.begin(), storage_.end(), 0.0);
+
+    alpha_pos_ = 0;
+    coef_pos_ = nprim_;
+}
+
+
+void BasisSet::ValidateAddition_(const BasisShellBase & bshell) const
+{
+    // Does this fit?
+    if(alpha_pos_ + bshell.NPrim() > nprim_)
+        throw exception::BasisSetException("Not enough storage for this shell: too may primitives",
+                                           "nprim", nprim_,
+                                           "current", alpha_pos_, "toadd", bshell.NPrim());  
+
+    if(coef_pos_ + bshell.NCoef() > storage_.size())
+        throw exception::BasisSetException("Not enough storage for this shell: too many coefficients",
+                                           "nprim", nprim_,
+                                           "current", coef_pos_, "toadd", bshell.NCoef());  
+}
+
+void BasisSet::AddShell_(const BasisSetShell & bshell)
+{
+    ValidateAddition_(bshell);
+
+    BasisSetShell newshell(bshell,
+                           storage_.data() + alpha_pos_,
+                           storage_.data() + coef_pos_);
+
+    shells_.push_back(std::move(newshell));
+
+    alpha_pos_ += bshell.NPrim();
+    coef_pos_ += bshell.NCoef();
+}
 
 
 void BasisSet::AddShell(const BasisShellInfo & bshell,
                         unsigned long center,
                         const BasisSetShell::CoordType & xyz)
 {
-    AddShell_(BasisSetShell(curid_++, bshell, center, xyz));
+    ValidateAddition_(bshell);
+
+    BasisSetShell newshell(curid_++,
+                           storage_.data() + alpha_pos_,
+                           storage_.data() + coef_pos_,
+                           bshell, center, xyz);
+
+    shells_.push_back(std::move(newshell));
+
+    alpha_pos_ += bshell.NPrim();
+    coef_pos_ += bshell.NCoef();
+
 }
 
-void BasisSet::AddShell_(const BasisSetShell & bsshell)
-{
-    shells_.push_back(bsshell);
-}
+
 
 
 int BasisSet::NShell(void) const noexcept
@@ -46,6 +91,12 @@ int BasisSet::NPrim(void) const
 {
     return std::accumulate(this->begin(), this->end(), 0,
                            [](int sum, const BasisSetShell & sh) { return sum + sh.NPrim(); } );
+}
+
+int BasisSet::NCoef(void) const
+{
+    return std::accumulate(this->begin(), this->end(), 0,
+                           [](int sum, const BasisSetShell & sh) { return sum + sh.NCoef(); } );
 }
 
 int BasisSet::MaxNPrim(void) const
@@ -96,8 +147,8 @@ BasisSet::const_iterator BasisSet::end(void) const
 
 BasisSet BasisSet::Transform(BasisSet::TransformerFunc transformer) const
 {
-    BasisSet bs;
-    for(const auto & shell : *this)
+    BasisSet bs(NPrim(), NCoef());
+    for(auto shell : bs.shells_)
         bs.AddShell_(transformer(shell));
     return bs;
 }

@@ -174,7 +174,21 @@ bool Molecule::HasBasisSet(const std::string & basislabel) const
 
 BasisSet Molecule::GetBasisSet(const std::string & basislabel) const
 {
-    BasisSet bs;
+    // get the number of primitives and storage needed in basis set
+    size_t nprim = 0;
+    size_t ncoef = 0;
+
+    for(const auto & atom : *this)
+        for(const auto & bshell : atom.GetShells(basislabel))
+        {
+            nprim += bshell.NPrim();
+            ncoef += bshell.NCoef();
+        }
+
+
+    BasisSet bs(nprim, ncoef);
+
+    // now add them
     for(const auto & atom : *this)
         for(const auto & bshell : atom.GetShells(basislabel))
             bs.AddShell(bshell, atom.GetIdx(), atom.GetCoords());

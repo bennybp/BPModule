@@ -1,22 +1,24 @@
 #ifndef BPMODULE_GUARD_SYSTEM__BASISSETSHELL_HPP_
 #define BPMODULE_GUARD_SYSTEM__BASISSETSHELL_HPP_
 
-#include "bpmodule/system/BasisShellInfo.hpp"
+#include <array>
+#include "bpmodule/system/BasisShellBase.hpp"
 
 namespace bpmodule {
 namespace system {
 
 
 // To be stored in the BasisSet object
-class BasisSetShell : public BasisShellInfo
+class BasisSetShell : public BasisShellBase
 {
     public:
         typedef std::array<double, 3> CoordType;
 
-        BasisSetShell(unsigned long id, const BasisShellInfo & bshell,
-                      unsigned long center, double x, double y, double z);
+        BasisSetShell(const BasisSetShell & bshell, double * alphaptr, double * coefptr);
 
-        BasisSetShell(unsigned long id, const BasisShellInfo & bshell,
+        BasisSetShell(unsigned long id,
+                      double * alphaptr, double * coefptr,
+                      const BasisShellBase & bshell,  
                       unsigned long center, const CoordType & xyz);
 
 

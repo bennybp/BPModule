@@ -69,6 +69,11 @@ int BasisShellBase::NPrim(void) const noexcept
     return nprim_;
 }
 
+int BasisShellBase::NCoef(void) const noexcept
+{
+    return ngen_*nprim_;
+}
+
 int BasisShellBase::NGeneral(void) const noexcept
 {
     return ngen_;
@@ -245,6 +250,13 @@ void BasisShellBase::SetCoefs(int n, const std::vector<double> & coefs)
 std::vector<double> BasisShellBase::GetAllCoefs(void) const
 {
     return std::vector<double>(coefs_, coefs_+ngen_*nprim_);
+}
+
+void BasisShellBase::SetAllCoefs(const std::vector<double> & coefs)
+{
+    if(static_cast<int>(coefs.size()) != nprim_*ngen_)
+        throw BasisSetException("Incompatible dimensions for coefficients", "nprim", nprim_, "ngen", ngen_, "given", coefs.size());
+    std::copy(coefs.begin(), coefs.end(), coefs_);
 }
 
 

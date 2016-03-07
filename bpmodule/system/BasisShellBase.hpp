@@ -38,6 +38,7 @@ class BasisShellBase
         int AM(void) const noexcept;
 
         int NPrim(void) const noexcept;
+        int NCoef(void) const noexcept;
         int NGeneral(void) const noexcept;
         int NCartesian(void) const noexcept;
         int NSpherical(void) const noexcept;
@@ -87,6 +88,7 @@ class BasisShellBase
         void SetCoefs(int n, const std::vector<double> & coefs);
 
         std::vector<double> GetAllCoefs(void) const;
+        void SetAllCoefs(const std::vector<double> & coefs);
 
         void SetPrimitive(int i, double alpha, double coef);
         void SetPrimitive(int i, double alpha, const std::vector<double> & coefs);
