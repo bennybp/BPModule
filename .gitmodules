@@ -16,3 +16,6 @@
 [submodule "external/libtaskforce/libtaskforce-source"]
 	path = external/libtaskforce/libtaskforce-source
 	url = git@github.com:ryanmrichard/LibTaskForce.git
+[submodule "wiki"]
+	path = wiki
+	url = https://github.com/bennybp/BPModule.wiki.git

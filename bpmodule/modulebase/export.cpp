@@ -118,14 +118,14 @@ PYBIND11_PLUGIN(modulebase)
     ///////////////////////
     // Method base class
     ///////////////////////
-    pybind11::class_<Method, ModuleBasePtr<Method>> 
-            method(m, "Method", mbase);
-    method.alias<Method>()
+    pybind11::class_<EnergyMethod, ModuleBasePtr<EnergyMethod>> 
+            energymethod(m, "EnergyMethod", mbase);
+    energymethod.alias<EnergyMethod>()
             .def(pybind11::init<unsigned long>())
-            .def("Deriv", &Method::Deriv)
-            .def("Energy",&Method::Energy)
-            .def("Gradient",&Method::Gradient)
-            .def("Hessian",&Method::Hessian)
+            .def("Deriv", &EnergyMethod::Deriv)
+            .def("Energy",&EnergyMethod::Energy)
+            .def("Gradient",&EnergyMethod::Gradient)
+            .def("Hessian",&EnergyMethod::Hessian)
             ;
 
     return m.ptr();
