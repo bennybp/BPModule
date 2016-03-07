@@ -8,6 +8,7 @@
 #include "bpmodule/python/Pybind11_stl.hpp"
 #include "bpmodule/python/Pybind11_functional.hpp"
 #include "bpmodule/python/Convert.hpp"
+#include "bpmodule/system/AMConvert.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/system/Molecule.hpp"
 #include "bpmodule/system/BasisSet.hpp"
@@ -28,6 +29,12 @@ PYBIND11_PLUGIN(system)
     pybind11::module m("system", "Molecular system specification");
 
     ///////////////
+    // Angular momentum
+    ///////////////
+    m.def("StringToAM", StringToAM);
+    m.def("AMToString", AMToString);
+
+    ///////////////
     // Basis set
     ///////////////
 
@@ -42,27 +49,34 @@ PYBIND11_PLUGIN(system)
 
     // BasisShellInfo class
     pybind11::class_<BasisShellInfo> bshell(m, "BasisShellInfo");
-    bshell.def(pybind11::init<ShellType, int, bool>())
+    bshell.def(pybind11::init<ShellType, int, bool, int, int>())
           .def("GetType", &BasisShellInfo::GetType)
           .def("AM", &BasisShellInfo::AM)
           .def("NPrim", &BasisShellInfo::NPrim)
+          .def("NGeneral", &BasisShellInfo::NGeneral)
           .def("NCartesian", &BasisShellInfo::NCartesian)
           .def("NSpherical", &BasisShellInfo::NSpherical)
           .def("NFunctions", &BasisShellInfo::NFunctions)
+          .def("IsCombiendAM", &BasisShellInfo::IsCombinedAM)
           .def("IsCartesian", &BasisShellInfo::IsCartesian)
           .def("IsSpherical", &BasisShellInfo::IsSpherical)
-          .def("Alphas", &BasisShellInfo::Alphas)
-          .def("Coefs", &BasisShellInfo::Coefs)
-          .def("Alpha", &BasisShellInfo::Alpha)
-          .def("Coef", &BasisShellInfo::Coef)
-          .def("AddPrimitive", &BasisShellInfo::AddPrimitive);
+          .def("GetAlphas", &BasisShellInfo::GetAlphas)
+          .def("SetAlphas", &BasisShellInfo::SetAlphas)
+          .def("GetCoefs", &BasisShellInfo::GetCoefs)
+          .def("SetCoefs", &BasisShellInfo::SetCoefs)
+          .def("GetAllCoefs", &BasisShellInfo::GetAllCoefs)
+          .def("GetAlpha", &BasisShellInfo::GetAlpha)
+          .def("SetAlpha", &BasisShellInfo::SetAlpha)
+          .def("GetCoef", &BasisShellInfo::GetCoef)
+          .def("SetCoef", &BasisShellInfo::SetCoef)
+          .def("SetPrimitive", static_cast<void (BasisShellInfo::*)(int, double, double)>(&BasisShellInfo::SetPrimitive))
+          .def("SetPrimitive", static_cast<void (BasisShellInfo::*)(int, double, const std::vector<double> &)>(&BasisShellInfo::SetPrimitive))
+    ;
 
     // BasisSetShell class
     pybind11::class_<BasisSetShell>(m, "BasisSetShell", bshell)
-    .def(pybind11::init<ShellType, int, bool, unsigned long, unsigned long, double, double, double>())
-    .def(pybind11::init<const BasisShellInfo &, unsigned long, unsigned long, double, double, double>())
-    .def(pybind11::init<ShellType, int, bool, unsigned long, unsigned long, std::array<double, 3>>())
-    .def(pybind11::init<const BasisShellInfo &, unsigned long, unsigned long, std::array<double, 3>>())
+    .def(pybind11::init<unsigned long, const BasisShellInfo &, unsigned long, double, double, double>())
+    .def(pybind11::init<unsigned long, const BasisShellInfo &, unsigned long, std::array<double, 3>>())
     .def("ID", &BasisSetShell::ID)
     .def("Center", &BasisSetShell::Center)
     .def("GetCoords", &BasisSetShell::GetCoords)
@@ -86,9 +100,6 @@ PYBIND11_PLUGIN(system)
     .def("Transform", &BasisSet::Transform)
     ;
 
-
-    // Creators
-    m.def("CreateSimpleBasisSet", CreateSimpleBasisSet);
 
     ////////////////////
     // Molecule, etc

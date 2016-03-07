@@ -7,33 +7,17 @@ namespace bpmodule {
 namespace system {
 
 
-
 // To be stored in the BasisSet object
 class BasisSetShell : public BasisShellInfo
 {
     public:
         typedef std::array<double, 3> CoordType;
 
-        BasisSetShell(const BasisShellInfo & bshell, unsigned long id,
-                      unsigned long center, double x, double y, double z)
-            : BasisShellInfo(bshell), id_(id), center_(center), xyz_{x,y,z}
-        { }
+        BasisSetShell(unsigned long id, const BasisShellInfo & bshell,
+                      unsigned long center, double x, double y, double z);
 
-        BasisSetShell(ShellType type, int am, bool cart, unsigned long id,
-                      unsigned long center, double x, double y, double z)
-            : BasisShellInfo(type, am, cart), id_(id), center_(center), xyz_{x,y,z}
-        { }
-
-        BasisSetShell(const BasisShellInfo & bshell, unsigned long id,
-                      unsigned long center, const CoordType & xyz)
-            : BasisShellInfo(bshell), id_(id), center_(center), xyz_(xyz)
-        { }
-
-        BasisSetShell(ShellType type, int am, bool cart, unsigned long id,
-                      unsigned long center, const CoordType & xyz)
-            : BasisShellInfo(type, am, cart), id_(id), center_(center), xyz_(xyz)
-        { }
-
+        BasisSetShell(unsigned long id, const BasisShellInfo & bshell,
+                      unsigned long center, const CoordType & xyz);
 
 
         // compiler generated ok
@@ -42,25 +26,13 @@ class BasisSetShell : public BasisShellInfo
         BasisSetShell & operator=(const BasisSetShell & rhs) = default;
         BasisSetShell & operator=(BasisSetShell && rhs)      = default;
         
-        unsigned long ID(void) const noexcept { return id_; }
-        unsigned long Center(void) const noexcept { return center_; }
+        unsigned long ID(void) const noexcept;
+        unsigned long Center(void) const noexcept;
 
-        CoordType GetCoords(void) const { return xyz_; }
+        CoordType GetCoords(void) const;
 
 
-        bool operator==(const BasisSetShell & rhs) const
-        {
-            PRAGMA_WARNING_PUSH
-            PRAGMA_WARNING_IGNORE_FP_EQUALITY
-
-            return (
-                    static_cast<const BasisShellInfo>(*this) == static_cast<const BasisShellInfo>(rhs) &&
-                    id_ == rhs.id_ &&
-                    xyz_ == rhs.xyz_
-                   );
-
-            PRAGMA_WARNING_POP
-        }
+        bool operator==(const BasisSetShell & rhs) const;
 
 
     private:

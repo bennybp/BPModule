@@ -16,9 +16,10 @@ import bpmodule as bp
 
 def Run(mm):
     try:
-        bspath = os.path.join(thispath, "../", "basis")
+        bspath = os.path.join(thispath, "../", "basis", "sto-3g.gbs")
         bspath = os.path.realpath(bspath)
         bstype = bp.system.ShellType.Gaussian
+        bsmap = bp.system.ReadBasisFile(bstype, bspath)
   
         # Load the python modules
         #             supermodule      module name      key
@@ -26,15 +27,20 @@ def Run(mm):
         mm.PrintInfo()
         mm.SanityCheck()
   
-  
+        atoms = [ bp.system.CreateAtom(0, [ 0.000000000000, -0.143225816552,  0.000000000000], 8),
+                  bp.system.CreateAtom(1, [ 1.638036840407,  1.136548822547, -0.000000000000], 1),
+                  bp.system.CreateAtom(2, [-1.638036840407,  1.136548822547, -0.000000000000], 1)
+                ]  
+
+        for a in atoms:
+            a.SetShells("primary", bsmap[a.GetZ()])
+
         molu = bp.system.AtomSetUniverse()
-        molu.append(bp.system.CreateAtom(0, [ 0.000000000000, -0.143225816552,  0.000000000000], 8))
-        molu.append(bp.system.CreateAtom(1, [ 1.638036840407,  1.136548822547, -0.000000000000], 1))
-        molu.append(bp.system.CreateAtom(2, [-1.638036840407,  1.136548822547, -0.000000000000], 1))
+        for a in atoms:
+            molu.append(a)
+
         mol = bp.system.Molecule(molu, True)
-  
-        molwithbs = bp.system.CreateSimpleBasisSet(os.path.join(bspath, "sto-3g.gbs"), mol, bstype, "primary");
-        bs = molwithbs.GetBasisSet("primary")
+        bs = mol.GetBasisSet("primary")
         bs.Print()
   
   

@@ -3,10 +3,7 @@
 
 #include <map>
 #include <string>
-#include <array>
 #include <vector>
-#include "bpmodule/pragma.h"
-#include "bpmodule/system/NCartesian.hpp"
 
 
 namespace bpmodule {
@@ -25,9 +22,7 @@ enum class ShellType
 class BasisShellInfo
 {
     public:
-        BasisShellInfo(ShellType type, int am, bool cart)
-            : type_(type), am_(am), cart_(cart)
-        { }
+        BasisShellInfo(ShellType type, int am, bool cart, int nprim, int ngen);
 
 
         // compiler generated ok
@@ -37,56 +32,54 @@ class BasisShellInfo
         BasisShellInfo & operator=(BasisShellInfo &&)      = default;
 
 
-        ShellType GetType(void) const { return type_; }
+        ShellType GetType(void) const;
 
-        int AM(void) const noexcept { return am_; }
+        int AM(void) const noexcept;
 
-        int NPrim(void) const noexcept { return static_cast<int>(alphas_.size()); }
-        int NCartesian(void) const noexcept { return NCARTESIAN(am_); }
-        int NSpherical(void) const noexcept { return NSPHERICAL(am_); }
-        int NFunctions(void) const noexcept { return (cart_ ? NCartesian() : NSpherical()); } 
+        int NPrim(void) const noexcept;
+        int NGeneral(void) const noexcept;
+        int NCartesian(void) const noexcept;
+        int NSpherical(void) const noexcept;
+        int NFunctions(void) const noexcept;
 
-        bool IsCartesian(void) const noexcept { return cart_; }
-        bool IsSpherical(void) const noexcept { return !cart_; }
-
-
-        //! \todo check if zero nprim?
-        std::vector<double> Alphas(void) const noexcept { return alphas_; }
-        std::vector<double> Coefs(void) const noexcept { return coefs_; }
+        bool IsCombinedAM(void) const noexcept;
+        bool IsCartesian(void) const noexcept;
+        bool IsSpherical(void) const noexcept;
 
 
-        //! \todo wrap exceptions
-        double Alpha(int i) const { return alphas_.at(i); }
-        double Coef(int i) const { return coefs_.at(i); }
+        std::vector<double> GetAlphas(void) const;
+        void SetAlphas(const std::vector<double> & alphas);
 
-        void AddPrimitive(double alpha, double coef)
-        {
-            alphas_.push_back(alpha);
-            coefs_.push_back(coef);
-        }
+        std::vector<double> GetCoefs(int n) const;
+        void SetCoefs(int n, const std::vector<double> & coefs);
 
-        bool operator==(const BasisShellInfo & rhs) const
-        {
-            PRAGMA_WARNING_PUSH
-            PRAGMA_WARNING_IGNORE_FP_EQUALITY
+        std::vector<double> GetAllCoefs(void) const;
 
-            return (
-                     type_ == rhs.type_ &&
-                     am_ == rhs.am_ &&
-                     cart_ == rhs.cart_ &&
-                     alphas_ == rhs.alphas_ &&
-                     coefs_ == rhs.coefs_
-                   ); 
 
-            PRAGMA_WARNING_POP
-        }
+        double GetAlpha(int i) const;
+        void SetAlpha(int i, double alpha);
+        double GetCoef(int n, int i) const;
+        void SetCoef(int n, int i, double coef);
+
+        void SetPrimitive(int i, double alpha, double coef);
+        void SetPrimitive(int i, double alpha, const std::vector<double> & coefs);
+
+        bool operator==(const BasisShellInfo & rhs) const;
+
 
     private:
-        ShellType type_;
-        int am_;                    //!< Angular momentum
-        bool cart_;                 //!< Is cartesian?
+        ShellType type_;             //!< Gaussian, Slater, etc
+        int am_;                     //!< Angular momentum
+        bool cart_;                  //!< Is cartesian?
+        int nprim_;                  //!< Number of primitives
+        int ngen_;                   //!< Number of general contractions
         std::vector<double> alphas_; //!< Exponents
-        std::vector<double> coefs_; //!< Exponents
+        std::vector<double> coefs_;  //!< Coefficients
+
+
+        
+        void ValidateInput_(int n, int i) const;
+        void ValidateInput_(int i) const;
 };
 
 

@@ -13,7 +13,15 @@
 //////////////////////////////
 inline int NCARTESIAN(int am)
 {
-    return NCARTESIAN_(am);
+    if(am >= 0) // "Normal" angular momentum
+        return NCARTESIAN_(am);
+    else // "Special" combination (sp, spd, etc)
+    {
+        int ncart = 0;
+        for(int i = 0; i >= am; --i)
+            ncart += NCARTESIAN_(-i);
+        return ncart;
+    }
 }
 
 
@@ -32,7 +40,15 @@ int NCARTESIAN(const std::array<int, N> & v)
 //////////////////////////////
 inline int NSPHERICAL(int am)
 {
-    return NSPHERICAL_(am);
+    if(am >= 0) // "Normal" angular momentum
+        return NSPHERICAL_(am);
+    else // "Special" combination (sp, spd, etc)
+    {
+        int ncart = 0;
+        for(int i = 0; i >= am; --i)
+            ncart += NSPHERICAL_(-i);
+        return ncart;
+    }
 }
 
 

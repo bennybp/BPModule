@@ -4,7 +4,6 @@
 import os
 import sys
 import argparse
-import copy
 import traceback 
 
 # Add the bpmodule path
@@ -17,28 +16,29 @@ import bpmodule as bp
 
 def Run():
     try:
-        bspath = os.path.join(thispath, "../", "basis")
+        bspath = os.path.join(thispath, "../", "basis", "sto-3g.gbs")
         bspath = os.path.realpath(bspath)
         bstype = bp.system.ShellType.Gaussian
+        bsmap = bp.system.ReadBasisFile(bstype, bspath)
 
         tester = bp.testing.Tester("Testing BasisSet class")
         tester.PrintHeader()
 
+        atoms = [ bp.system.CreateAtom(0, [ 0.000000000000,     0.000000000000,     0.000000000000], 1),
+                  bp.system.CreateAtom(1, [ 1.000000000000,     0.000000000000,     0.000000000000], 1),
+                  bp.system.CreateAtom(2, [ 0.000000000000,     1.000000000000,     0.000000000000], 8)
+                ]
+
+        for a in atoms:
+            a.SetShells("primary", bsmap[a.GetZ()])
+
         molu = bp.system.AtomSetUniverse()
-        molu.append(bp.system.CreateAtom(0, [ 0.000000000000,     0.000000000000,     0.000000000000], 1))
-        molu.append(bp.system.CreateAtom(1, [ 1.000000000000,     0.000000000000,     0.000000000000], 1))
-        molu.append(bp.system.CreateAtom(2, [ 0.000000000000,     1.000000000000,     0.000000000000], 8))
+        for a in atoms:
+            molu.append(a)
 
         mol = bp.system.Molecule(molu, True)
-        molwithbs = bp.system.CreateSimpleBasisSet(os.path.join(bspath, "sto-3g.gbs"), mol, bstype, "primary");
-        bs = molwithbs.GetBasisSet("primary")
-
-        bp.output.Output("Number of shells: %1%\n", bs.NShell())
-        for i in range(0, bs.NShell()):
-           gs = bs.GetShell(i)
-           print("ID={}  Cart={}   NPrim={}   {}".format(gs.ID(), gs.IsCartesian(), gs.NPrim(), gs.GetCoords()))
-           for j in range(0, gs.NPrim()):
-             print("      Prim {:<4} :  {:<10}    {:<10}".format(j, gs.Alpha(j), gs.Coef(j)))
+        bs = mol.GetBasisSet("primary")
+        bs.Print()
 
 
         tester.PrintResults() 

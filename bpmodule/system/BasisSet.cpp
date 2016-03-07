@@ -18,7 +18,7 @@ void BasisSet::AddShell(const BasisShellInfo & bshell,
                         unsigned long center,
                         const BasisSetShell::CoordType & xyz)
 {
-    AddShell_(BasisSetShell(bshell, curid_++, center, xyz));
+    AddShell_(BasisSetShell(curid_++, bshell, center, xyz));
 }
 
 void BasisSet::AddShell_(const BasisSetShell & bsshell)
@@ -56,8 +56,9 @@ int BasisSet::MaxNPrim(void) const
 
 int BasisSet::MaxAM(void) const
 {
-    return std::max_element(this->begin(), this->end(), 
-                    [](const BasisSetShell & lhs, const BasisSetShell & rhs) { return lhs.AM() < rhs.AM(); })->AM();
+    int max = std::max_element(this->begin(), this->end(), 
+                    [](const BasisSetShell & lhs, const BasisSetShell & rhs) { return std::abs(lhs.AM()) < std::abs(rhs.AM()); })->AM();
+    return std::abs(max);
 }
 
 int BasisSet::NCartesian(void) const
@@ -113,9 +114,14 @@ void BasisSet::Print(void) const
     for(int i = 0; i < nshell; i++)
     {
         const auto & shell = GetShell(i);
-        output::Output("Shell %1%  AM=%2%  Cart=%3%  NPrim=%4%\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim());
+        output::Output("Shell %1%  AM=%2%  Cart=%3%  NPrim=%4% NGen=%5%\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim(), shell.NGeneral());
         for(int j = 0; j < shell.NPrim(); ++j)
-            output::Output("    %1%    %2%\n", shell.Alpha(j), shell.Coef(j));
+        {
+            output::Output("    %1%", shell.GetAlpha(j));
+            for(int n = 0; n < shell.NGeneral(); n++)
+                output::Output("    %1%", shell.GetCoef(n, j));
+            output::Output("\n");
+        }
     }
     output::Output("\n");
 }
