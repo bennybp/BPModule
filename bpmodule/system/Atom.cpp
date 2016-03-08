@@ -65,14 +65,14 @@ std::ostream& operator<<(std::ostream& os,const Atom& A)
 // Free functions
 ////////////////////////////////
 
-Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z)
+Atom CreateAtom(size_t idx, CoordType xyz, int Z)
 {
     int isonum = MostCommonIsotopeFromZ(Z);
     return CreateAtom(idx, xyz, Z, isonum);
 
 }
 
-Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, int isonum)
+Atom CreateAtom(size_t idx, CoordType xyz, int Z, int isonum)
 {
     return Atom(idx,
                 xyz,

@@ -97,7 +97,7 @@ PYBIND11_PLUGIN(system)
 
     // Main BasisSet class
     pybind11::class_<BasisSet>(m, "BasisSet")
-    .def(pybind11::init<size_t, size_t>())
+    .def(pybind11::init<size_t, size_t, size_t>())
     .def("Print", &BasisSet::Print)
     .def("AddShell", &BasisSet::AddShell)
     .def("NShell", &BasisSet::NShell)
@@ -112,7 +112,7 @@ PYBIND11_PLUGIN(system)
     .def("MaxNCartesian", &BasisSet::MaxNCartesian)
     .def("MaxNFunctions", &BasisSet::MaxNFunctions)
     .def("Transform", &BasisSet::Transform)
-    .def("Shrink", &BasisSet::Shrink)
+    .def("ShrinkFit", &BasisSet::ShrinkFit)
     ;
 
 
@@ -184,6 +184,8 @@ PYBIND11_PLUGIN(system)
     .def("GetAllShells", &Atom::GetAllShells)
     .def("GetShells", &Atom::GetShells)
     .def("SetShells", &Atom::SetShells)
+    .def("HasShells", &Atom::HasShells)
+    .def("NShell", &Atom::NShell)
     .def("AddShell", &Atom::AddShell)
     .def("GetName", &Atom::GetName)
     .def("GetSymbol", &Atom::GetSymbol)
@@ -191,8 +193,8 @@ PYBIND11_PLUGIN(system)
    
 
     // Atom creators
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, CoordType, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, CoordType, int, int)>(CreateAtom));
     m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int)>(CreateAtom));
     m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int, int)>(CreateAtom));
 

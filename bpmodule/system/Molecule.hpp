@@ -72,7 +72,6 @@ class Molecule
         void SetDefaults_(void);
 
     public:
-        typedef Atom::CoordType CoordType;
         typedef AtomSet::value_type value_type;
         typedef AtomSet::const_iterator const_iterator;
 

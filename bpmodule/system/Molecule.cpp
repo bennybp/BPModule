@@ -177,9 +177,12 @@ BasisSet Molecule::GetBasisSet(const std::string & basislabel) const
     // get the number of primitives and storage needed in basis set
     size_t nprim = 0;
     size_t ncoef = 0;
+    size_t nshell = 0;
 
     for(const auto & atom : *this)
     {
+        nshell += atom.NShell(basislabel);
+
         for(const auto & bshell : atom.GetShells(basislabel))
         {
             nprim += bshell.NPrim();
@@ -187,7 +190,7 @@ BasisSet Molecule::GetBasisSet(const std::string & basislabel) const
         }
     }
 
-    BasisSet bs(nprim, ncoef);
+    BasisSet bs(nshell, nprim, ncoef);
 
     // now add them
     for(const auto & atom : *this)
@@ -195,9 +198,7 @@ BasisSet Molecule::GetBasisSet(const std::string & basislabel) const
             bs.AddShell(bshell, atom.GetIdx(), atom.GetCoords());
 
     // shrink the basis set
-    bs.Shrink();
-
-    return bs;
+    return bs.ShrinkFit();
 }
 
 

@@ -8,6 +8,7 @@
 #define BPMODULE_GUARD_SYSTEM__ATOM_HPP_
 
 #include "bpmodule/math/Point.hpp"
+#include "bpmodule/system/CoordType.hpp"
 #include "bpmodule/system/BasisShellInfo.hpp"
 
 
@@ -49,8 +50,6 @@ class Atom : public math::Point
         BasisShellInfoMap bshells_; //!< Basis functions associated with this atom/center
 
     public:
-        typedef math::Point::CoordType CoordType;
-
         /*! \brief Constructor
          */
         Atom(size_t idx,  CoordType xyz, int Z, int isonum,
@@ -218,6 +217,15 @@ class Atom : public math::Point
             return bshells_.count(label);
         }
 
+        /*! \brief Number of shells with this label on this atom
+         */
+        int NShell(const std::string & label) const
+        {
+            if(!HasShells(label))
+                return 0;
+            return bshells_.at(label).size();
+        }
+
         /*! \brief Get all basis set information for this atom
          * 
          * Returns all the shells for all the different assigned basis sets
@@ -268,10 +276,10 @@ std::ostream& operator<<(std::ostream& os,const Atom& A);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z);
+Atom CreateAtom(size_t idx, CoordType xyz, int Z);
 
 
-/*! \copydocs CreateAtom(size_t,size_t, Atom::CoordType, int) */
+/*! \copydocs CreateAtom(size_t,size_t, CoordType, int) */
 Atom CreateAtom(size_t idx, double x, double y, double z, int Z);
 
 
@@ -280,10 +288,10 @@ Atom CreateAtom(size_t idx, double x, double y, double z, int Z);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, int isonum);
+Atom CreateAtom(size_t idx, CoordType xyz, int Z, int isonum);
 
 
-/*! \copydocs CreateAtom(size_t,size_t, Atom::CoordType, int, int) */
+/*! \copydocs CreateAtom(size_t,size_t, CoordType, int, int) */
 Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum);
 
 

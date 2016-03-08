@@ -18,7 +18,7 @@ class BasisSet
         typedef std::vector<BasisSetShell>::const_iterator const_iterator;
         typedef std::function<BasisSetShell (const BasisSetShell &)> TransformerFunc;
 
-        BasisSet(size_t nprim, size_t ncoef);
+        BasisSet(size_t nshells, size_t nprim, size_t ncoef);
 
         BasisSet(const BasisSet & rhs);
         BasisSet & operator=(const BasisSet & rhs);
@@ -41,13 +41,13 @@ class BasisSet
 
         void AddShell(const BasisShellInfo & bshell,
                       unsigned long center,
-                      const BasisSetShell::CoordType & xyz);
+                      const CoordType & xyz);
 
 
         //! \todo make a printer class?
         void Print(void) const;
 
-        void Shrink(void);
+        BasisSet ShrinkFit(void) const;
 
         BasisSet Transform(TransformerFunc transformer) const;
 
@@ -61,11 +61,19 @@ class BasisSet
         std::vector<double> storage_; // storage for alpha and coef
 
         // for filling
-        size_t nprim_;
+        size_t max_nxyz_;
+        size_t max_nalpha_;
+        size_t max_ncoef_;
+        double * xyz_base_ptr_;
+        double * alpha_base_ptr_;
+        double * coef_base_ptr_;
+
+        size_t xyz_pos_;
         size_t alpha_pos_;
         size_t coef_pos_;
 
-        void ValidateAddition_(const BasisShellBase & bshell) const;
+        void AddShell_(const BasisShellBase & bshell, unsigned long id,
+                       unsigned long center, const CoordType & xyz);
         void AddShell_(const BasisSetShell & bshell);
 };
 

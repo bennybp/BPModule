@@ -307,6 +307,9 @@ void BasisShellBase::SetPrimitive(int i, double alpha, const std::vector<double>
 
 bool BasisShellBase::operator==(const BasisShellBase & rhs) const
 {
+    if(this == &rhs)
+        return true;
+
     PRAGMA_WARNING_PUSH
     PRAGMA_WARNING_IGNORE_FP_EQUALITY
 

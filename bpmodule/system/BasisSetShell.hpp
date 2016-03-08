@@ -3,6 +3,7 @@
 
 #include <array>
 #include "bpmodule/system/BasisShellBase.hpp"
+#include "bpmodule/system/CoordType.hpp"
 
 namespace bpmodule {
 namespace system {
@@ -12,14 +13,12 @@ namespace system {
 class BasisSetShell : public BasisShellBase
 {
     public:
-        typedef std::array<double, 3> CoordType;
-
-        BasisSetShell(const BasisSetShell & bshell, double * alphaptr, double * coefptr);
+        BasisSetShell(const BasisSetShell & bshell,
+                     double * alphaptr, double * coefptr, double * xyzptr);
 
         BasisSetShell(const BasisShellBase & bshell,
-                      double * alphaptr, double * coefptr,
-                      unsigned long id,
-                      unsigned long center, const CoordType & xyz);
+                      double * alphaptr, double * coefptr, double * xyzptr,
+                      unsigned long id, unsigned long center);
 
 
         // compiler generated ok
@@ -30,9 +29,14 @@ class BasisSetShell : public BasisShellBase
         
         unsigned long GetID(void) const noexcept;
         unsigned long GetCenter(void) const noexcept;
-
         CoordType GetCoords(void) const;
 
+
+        ///@{ Raw, unsafe, fast
+
+        const double * CoordsPtr(void) const noexcept;
+
+        ///@}
 
         bool operator==(const BasisSetShell & rhs) const;
 
@@ -40,7 +44,7 @@ class BasisSetShell : public BasisShellBase
     private:
         unsigned long id_;          //!< Unique id for this shell
         unsigned long center_;      //!< ID of the center
-        CoordType xyz_;             //!< XYZ coordindates of this center
+        double * xyz_;              //!< XYZ coordindates of this center
     
 };
 

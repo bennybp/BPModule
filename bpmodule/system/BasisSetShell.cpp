@@ -6,26 +6,21 @@ namespace system {
 
 
 BasisSetShell::BasisSetShell(const BasisSetShell & bshell,
-                             double * alphaptr, double * coefptr)
-    : BasisSetShell(bshell, alphaptr, coefptr,
-                    bshell.GetID(), bshell.GetCenter(), bshell.GetCoords())
+                             double * alphaptr, double * coefptr, double * xyzptr)
+    : BasisSetShell(bshell, alphaptr, coefptr, xyzptr,
+                    bshell.GetID(), bshell.GetCenter())
 {
 }
 
 
 BasisSetShell::BasisSetShell(const BasisShellBase & bshell,
-                             double * alphaptr, double * coefptr,
+                             double * alphaptr, double * coefptr, double * xyzptr,
                              unsigned long id, 
-                             unsigned long center, const CoordType & xyz)
-    : BasisShellBase(bshell),
-      id_(id), center_(center), xyz_(xyz)
+                             unsigned long center)
+    : BasisShellBase(bshell), id_(id), center_(center)
 {
     BasisShellBase::SetPtrs_(alphaptr, coefptr); 
-
-    double const * const src_alpha = bshell.AlphaPtr();
-    double const * const src_coef = bshell.AllCoefsPtr();
-    std::copy(src_alpha, src_alpha + NPrim(), alphaptr); 
-    std::copy(src_coef, src_coef + NCoef(), coefptr); 
+    xyz_ = xyzptr;
 }
 
 
@@ -39,17 +34,29 @@ unsigned long BasisSetShell::GetCenter(void) const noexcept
     return center_;
 }
 
-BasisSetShell::CoordType BasisSetShell::GetCoords(void) const
+CoordType BasisSetShell::GetCoords(void) const
+{
+    return CoordType{*xyz_, *(xyz_+1), *(xyz_+2)};
+}
+
+const double * BasisSetShell::CoordsPtr(void) const noexcept
 {
     return xyz_;
 }
 
-
 bool BasisSetShell::operator==(const BasisSetShell & rhs) const
 {
+    if(this == &rhs)
+        return true;
+
     // this is done manually (rather than "using")
     // prevent implicit comparison between one type and another
-    return BasisShellBase::operator==(rhs);
+    return (
+              id_ == rhs.id_ &&
+              center_ == rhs.center_ &&
+              std::equal(xyz_, xyz_+3, rhs.xyz_) &&
+              BasisShellBase::operator==(rhs)
+           );
 }
 
 

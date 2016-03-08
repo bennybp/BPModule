@@ -48,9 +48,6 @@ def Run():
         bs = mol.GetBasisSet("primary")
         bs.Print()
 
-        bs.Shrink()
-        bs.Print()
-
         tester.PrintResults() 
 
 
