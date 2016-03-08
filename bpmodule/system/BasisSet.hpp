@@ -1,7 +1,6 @@
 #ifndef BPMODULE_GUARD_SYSTEM__BASISSET_HPP_
 #define BPMODULE_GUARD_SYSTEM__BASISSET_HPP_
 
-#include <vector>
 #include <functional>
 
 #include "bpmodule/system/BasisSetShell.hpp"

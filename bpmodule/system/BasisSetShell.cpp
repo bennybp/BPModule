@@ -1,4 +1,3 @@
-#include "bpmodule/pragma.h"
 #include "bpmodule/system/BasisSetShell.hpp"
 
 namespace bpmodule {

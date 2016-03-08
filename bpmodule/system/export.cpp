@@ -12,7 +12,6 @@
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/system/Molecule.hpp"
 #include "bpmodule/system/BasisSet.hpp"
-#include "bpmodule/system/BasisSetCreators.hpp"
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/math/RegisterMathSet.hpp"

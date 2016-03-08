@@ -1,7 +1,6 @@
 #ifndef BPMODULE_GUARD_SYSTEM__BASISSETSHELL_HPP_
 #define BPMODULE_GUARD_SYSTEM__BASISSETSHELL_HPP_
 
-#include <array>
 #include "bpmodule/system/BasisShellBase.hpp"
 #include "bpmodule/system/CoordType.hpp"
 

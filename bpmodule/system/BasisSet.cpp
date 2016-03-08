@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #include "bpmodule/system/BasisSet.hpp"
 #include "bpmodule/system/NCartesian.hpp"
 #include "bpmodule/output/Output.hpp"

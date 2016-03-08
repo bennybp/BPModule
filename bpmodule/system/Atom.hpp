@@ -7,7 +7,6 @@
 #ifndef BPMODULE_GUARD_SYSTEM__ATOM_HPP_
 #define BPMODULE_GUARD_SYSTEM__ATOM_HPP_
 
-#include "bpmodule/math/Point.hpp"
 #include "bpmodule/system/CoordType.hpp"
 #include "bpmodule/system/BasisShellInfo.hpp"
 

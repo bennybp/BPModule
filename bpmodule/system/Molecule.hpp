@@ -7,7 +7,6 @@
 #ifndef BPMODULE_GUARD_SYSTEM__MOLECULE_HPP_
 #define BPMODULE_GUARD_SYSTEM__MOLECULE_HPP_
 
-#include <map>
 #include "bpmodule/system/Atom.hpp"
 #include "bpmodule/math/MathSet.hpp"
 #include "bpmodule/math/PointManipulation.hpp"

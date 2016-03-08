@@ -1,4 +1,3 @@
-#include "bpmodule/pragma.h"
 #include "bpmodule/exception/Assert.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/system/BasisShellBase.hpp"
