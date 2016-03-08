@@ -167,7 +167,7 @@ int BasisSet::NShell(void) const noexcept
 }
 
 
-const BasisSetShell & BasisSet::GetShell(int i) const
+const BasisSetShell & BasisSet::Shell(int i) const
 {
     if(static_cast<size_t>(i) < shells_.size() )
         return shells_[i];
@@ -299,7 +299,7 @@ void BasisSet::Print(void) const
 
     for(int i = 0; i < nshell; i++)
     {
-        const auto & shell = GetShell(i);
+        const auto & shell = Shell(i);
         output::Output("Shell %1%  AM=%2%  Cart=%3%  NPrim=%4% NGen=%5%\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim(), shell.NGeneral());
         output::Output("Coordinates: %1% %2% %3%\n", shell.GetCoords()[0], shell.GetCoords()[1], shell.GetCoords()[2]);
         for(int j = 0; j < shell.NPrim(); ++j)

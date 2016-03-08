@@ -27,7 +27,7 @@ class BasisSet
 
         int NShell(void) const noexcept;
 
-        const BasisSetShell & GetShell(int i) const;
+        const BasisSetShell & Shell(int i) const;
 
         int NPrim(void) const;
         int NCoef(void) const;
