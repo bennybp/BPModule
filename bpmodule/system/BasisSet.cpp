@@ -132,7 +132,9 @@ void BasisSet::AddShell_(const BasisShellBase & bshell,
         double * const my_coef = coef_base_ptr_ + coef_pos_;
         std::copy(old_alphaptr, old_alphaptr+bshell.NPrim(), my_alpha);
         std::copy(old_coefptr, old_coefptr+bshell.NCoef(), my_coef);
-        
+
+        // the index of this new shell will be shells_.size()
+        unique_shells_.push_back(shells_.size());
         shells_.push_back(BasisSetShell(bshell, my_alpha, my_coef, my_xyz, id, center));
 
         // advance these
@@ -156,12 +158,21 @@ void BasisSet::AddShell(const BasisShellInfo & bshell,
     AddShell_(bshell, curid_++, center, xyz);
 }
 
+bool BasisSet::IsUniqueShell_(size_t i) const
+{
+    return (std::find(unique_shells_.begin(), unique_shells_.end(), i) != unique_shells_.end());
+}
 
 
 
 int BasisSet::NShell(void) const noexcept
 {
     return static_cast<int>(shells_.size());
+}
+
+int BasisSet::NUniqueShell(void) const noexcept
+{
+    return static_cast<int>(unique_shells_.size());
 }
 
 
@@ -171,7 +182,16 @@ const BasisSetShell & BasisSet::Shell(int i) const
         return shells_[i];
     else
         throw BasisSetException("Shell index out of range",
-                                           "index", i, "nshells", shells_.size());
+                                "index", i, "nshells", shells_.size());
+}
+
+const BasisSetShell & BasisSet::UniqueShell(int i) const
+{
+    if(static_cast<size_t>(i) < unique_shells_.size() )
+        return Shell(unique_shells_.at(i));
+    else
+        throw BasisSetException("Unique shell index out of range",
+                                "index", i, "nshells", unique_shells_.size());
 }
 
 int BasisSet::NPrim(void) const
@@ -235,8 +255,22 @@ BasisSet::const_iterator BasisSet::end(void) const
 BasisSet BasisSet::Transform(BasisSet::TransformerFunc transformer) const
 {
     BasisSet bs(NShell(), NPrim(), NCoef());
-    for(auto shell : bs.shells_)
+    for(const auto & shell : shells_)
         bs.AddShell_(transformer(shell));
+    return bs;
+}
+
+BasisSet BasisSet::TransformUnique(BasisSet::TransformerFunc transformer) const
+{
+    BasisSet bs(NShell(), NPrim(), NCoef());
+    for(size_t i = 0; i < shells_.size(); i++)
+    {
+        const auto & shell = shells_[i];
+        if(IsUniqueShell_(i))
+            bs.AddShell_(transformer(shell));
+        else
+            bs.AddShell_(shell);
+    }
     return bs;
 }
 

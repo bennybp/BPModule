@@ -25,8 +25,10 @@ class BasisSet
         BasisSet & operator=(BasisSet && rhs)      = default;
 
         int NShell(void) const noexcept;
+        int NUniqueShell(void) const noexcept;
 
         const BasisSetShell & Shell(int i) const;
+        const BasisSetShell & UniqueShell(int i) const;
 
         int NPrim(void) const;
         int NCoef(void) const;
@@ -49,6 +51,7 @@ class BasisSet
         BasisSet ShrinkFit(void) const;
 
         BasisSet Transform(TransformerFunc transformer) const;
+        BasisSet TransformUnique(TransformerFunc transformer) const;
 
         // iterate over shells
         const_iterator begin(void) const;
@@ -57,6 +60,7 @@ class BasisSet
     private:
         unsigned long curid_;
         std::vector<BasisSetShell> shells_;
+        std::vector<size_t> unique_shells_;
         std::vector<double> storage_; // storage for alpha and coef
 
         // for filling
@@ -74,6 +78,8 @@ class BasisSet
         void AddShell_(const BasisShellBase & bshell, unsigned long id,
                        unsigned long center, const CoordType & xyz);
         void AddShell_(const BasisSetShell & bshell);
+
+        bool IsUniqueShell_(size_t i) const;
 };
 
 
