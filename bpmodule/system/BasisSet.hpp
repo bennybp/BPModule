@@ -20,10 +20,9 @@ class BasisSet
 
         BasisSet(size_t nprim, size_t ncoef);
 
-        // compiler generated ok
-        BasisSet(const BasisSet & rhs)             = default;
+        BasisSet(const BasisSet & rhs);
+        BasisSet & operator=(const BasisSet & rhs);
         BasisSet(BasisSet && rhs)                  = default;
-        BasisSet & operator=(const BasisSet & rhs) = default;
         BasisSet & operator=(BasisSet && rhs)      = default;
 
         int NShell(void) const noexcept;

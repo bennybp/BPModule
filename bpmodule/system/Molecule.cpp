@@ -179,12 +179,13 @@ BasisSet Molecule::GetBasisSet(const std::string & basislabel) const
     size_t ncoef = 0;
 
     for(const auto & atom : *this)
+    {
         for(const auto & bshell : atom.GetShells(basislabel))
         {
             nprim += bshell.NPrim();
             ncoef += bshell.NCoef();
         }
-
+    }
 
     BasisSet bs(nprim, ncoef);
 

@@ -16,9 +16,9 @@ class BasisSetShell : public BasisShellBase
 
         BasisSetShell(const BasisSetShell & bshell, double * alphaptr, double * coefptr);
 
-        BasisSetShell(unsigned long id,
+        BasisSetShell(const BasisShellBase & bshell,
                       double * alphaptr, double * coefptr,
-                      const BasisShellBase & bshell,  
+                      unsigned long id,
                       unsigned long center, const CoordType & xyz);
 
 
@@ -28,8 +28,8 @@ class BasisSetShell : public BasisShellBase
         BasisSetShell & operator=(const BasisSetShell & rhs) = default;
         BasisSetShell & operator=(BasisSetShell && rhs)      = default;
         
-        unsigned long ID(void) const noexcept;
-        unsigned long Center(void) const noexcept;
+        unsigned long GetID(void) const noexcept;
+        unsigned long GetCenter(void) const noexcept;
 
         CoordType GetCoords(void) const;
 

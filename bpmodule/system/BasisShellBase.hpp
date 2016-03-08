@@ -23,16 +23,10 @@ enum class ShellType
 class BasisShellBase
 {
     public:
-
-        // compiler generated ok
-        BasisShellBase(const BasisShellBase &)             = default;
-        BasisShellBase(BasisShellBase &&)                  = default;
-        BasisShellBase & operator=(const BasisShellBase &) = default;
-        BasisShellBase & operator=(BasisShellBase &&)      = default;
-
         virtual ~BasisShellBase() = default;
 
-
+        /*! \name General properties */
+        ///@{ 
         ShellType GetType(void) const noexcept;
 
         int AM(void) const noexcept;
@@ -49,7 +43,7 @@ class BasisShellBase
         bool IsSpherical(void) const noexcept;
 
         bool operator==(const BasisShellBase & rhs) const;
-
+        ///@}
 
         /*! \name Raw, fast, unsafe access */
         ///@{ 
@@ -98,6 +92,12 @@ class BasisShellBase
     protected:
         BasisShellBase(ShellType type, int am, bool cart, int nprim, int ngen);
 
+        // compiler generated ok
+        BasisShellBase(const BasisShellBase &)             = default;
+        BasisShellBase(BasisShellBase &&)                  = default;
+        BasisShellBase & operator=(const BasisShellBase &) = default;
+        BasisShellBase & operator=(BasisShellBase &&)      = default;
+
 
         void SetPtrs_(double * alphaptr, double * coefptr);
 
@@ -112,8 +112,11 @@ class BasisShellBase
         double * coefs_;             //!< Coefficients
 
 
-        void ValidateInput_(int n, int i) const;
-        void ValidateInput_(int i) const;
+        void AssertPtrs_(void) const;
+        void AssertPrimIdx_(int i) const;
+        void AssertGenIdx_(int n) const;
+        void ValidatePrimIdx_(int i) const;
+        void ValidateGenIdx_(int n) const;
 };
 
 

@@ -4,7 +4,10 @@
 #include "bpmodule/system/NCartesian.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
+#include "bpmodule/exception/Assert.hpp"
 
+using bpmodule::exception::Assert;
+using bpmodule::exception::BasisSetException;
 
 namespace bpmodule {
 namespace system {
@@ -12,7 +15,7 @@ namespace system {
 BasisSet::BasisSet(size_t nprim, size_t ncoef)
     : curid_(0), nprim_(nprim)
 {
-    size_t totalstorage = nprim * ncoef;
+    size_t totalstorage = nprim + ncoef;
 
     storage_.resize(totalstorage);
     std::fill(storage_.begin(), storage_.end(), 0.0);
@@ -21,17 +24,54 @@ BasisSet::BasisSet(size_t nprim, size_t ncoef)
     coef_pos_ = nprim_;
 }
 
+BasisSet::BasisSet(const BasisSet & rhs)
+    : curid_(rhs.curid_),
+      storage_(rhs.storage_),
+      nprim_(rhs.nprim_)
+{
+    alpha_pos_ = 0;
+    coef_pos_ = nprim_;
+
+    // storage has been copied   
+    // but all the pointers in shells_ would be incorrect
+    // so we have to rebuild them
+
+    // This should leave all the IDs as they are, so we
+    // copy curid_ above
+    for(const auto & it : rhs)
+        AddShell_(it);
+
+    // double check
+    if(alpha_pos_ != rhs.alpha_pos_ || coef_pos_ != rhs.coef_pos_)
+        throw BasisSetException("Developer error. Inconsistent basis set copying");
+
+    // triple check
+    Assert<BasisSetException>(shells_ == rhs.shells_, "Developer error. Inconsistent basis set copying");
+}
+
+BasisSet & BasisSet::operator=(const BasisSet & rhs)
+{
+    using std::swap;
+
+    if(this == &rhs)
+        return *this;
+
+    BasisSet tmp(rhs);
+    swap(*this, tmp);
+    return *this;
+}
+
 
 void BasisSet::ValidateAddition_(const BasisShellBase & bshell) const
 {
     // Does this fit?
     if(alpha_pos_ + bshell.NPrim() > nprim_)
-        throw exception::BasisSetException("Not enough storage for this shell: too may primitives",
+        throw BasisSetException("Not enough storage for this shell: too may primitives",
                                            "nprim", nprim_,
                                            "current", alpha_pos_, "toadd", bshell.NPrim());  
 
     if(coef_pos_ + bshell.NCoef() > storage_.size())
-        throw exception::BasisSetException("Not enough storage for this shell: too many coefficients",
+        throw BasisSetException("Not enough storage for this shell: too many coefficients",
                                            "nprim", nprim_,
                                            "current", coef_pos_, "toadd", bshell.NCoef());  
 }
@@ -40,11 +80,9 @@ void BasisSet::AddShell_(const BasisSetShell & bshell)
 {
     ValidateAddition_(bshell);
 
-    BasisSetShell newshell(bshell,
-                           storage_.data() + alpha_pos_,
-                           storage_.data() + coef_pos_);
-
-    shells_.push_back(std::move(newshell));
+    shells_.push_back(BasisSetShell(bshell,
+                                    storage_.data() + alpha_pos_,
+                                    storage_.data() + coef_pos_));
 
     alpha_pos_ += bshell.NPrim();
     coef_pos_ += bshell.NCoef();
@@ -57,16 +95,14 @@ void BasisSet::AddShell(const BasisShellInfo & bshell,
 {
     ValidateAddition_(bshell);
 
-    BasisSetShell newshell(curid_++,
-                           storage_.data() + alpha_pos_,
-                           storage_.data() + coef_pos_,
-                           bshell, center, xyz);
+    shells_.push_back(BasisSetShell(bshell,
+                                    storage_.data() + alpha_pos_,
+                                    storage_.data() + coef_pos_,
+                                    curid_++, center, xyz));
 
-    shells_.push_back(std::move(newshell));
 
     alpha_pos_ += bshell.NPrim();
     coef_pos_ += bshell.NCoef();
-
 }
 
 
@@ -83,7 +119,7 @@ const BasisSetShell & BasisSet::GetShell(int i) const
     if(static_cast<size_t>(i) < shells_.size() )
         return shells_[i];
     else
-        throw exception::BasisSetException("Shell index out of range",
+        throw BasisSetException("Shell index out of range",
                                            "index", i, "nshells", shells_.size());
 }
 

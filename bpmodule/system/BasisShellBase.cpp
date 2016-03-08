@@ -23,29 +23,42 @@ BasisShellBase::BasisShellBase(ShellType type, int am, bool cart, int nprim, int
                                            "am", am, "expected_ngen", ((-am)+1));
 }
 
-
-void BasisShellBase::ValidateInput_(int n, int i) const
+void BasisShellBase::ValidatePrimIdx_(int i) const
 {
-    ValidateInput_(i);
-
-    if(n >= ngen_ || n < 0)
-        throw BasisSetException("Attempt to access general contraction that does not exist",
-                                           "igen", n, "ngen", ngen_);
-}
-
-void BasisShellBase::ValidateInput_(int i) const
-{
-    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
     if(i >= nprim_ || i < 0)
         throw BasisSetException("Attempt to access primitive that does not exist",
-                                           "iprim", i, "nprim", nprim_);
+                                "iprim", i, "nprim", nprim_);
+}
+
+void BasisShellBase::ValidateGenIdx_(int n) const
+{
+    if(n >= ngen_ || n < 0)
+        throw BasisSetException("Attempt to access general contraction that does not exist",
+                                "igen", n, "ngen", ngen_);
+}
+
+void BasisShellBase::AssertPrimIdx_(int i) const
+{
+    Assert<BasisSetException>(i < nprim_ && i >= 0, "Attempt to access primitive that does not exist",
+                                                   "iprim", i, "nprim", nprim_);
+}
+
+void BasisShellBase::AssertGenIdx_(int n) const
+{
+    Assert<BasisSetException>(n < ngen_ && n >= 0, "Attempt to access general contraction that does not exist",
+                                                   "igen", n, "ngen", ngen_);
+}
+
+void BasisShellBase::AssertPtrs_(void) const
+{
+    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
 }
 
 void BasisShellBase::SetPtrs_(double * alphaptr, double * coefptr)
 {
     alphas_ = alphaptr;
     coefs_ = coefptr;
-    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
+    AssertPtrs_();
 }
 
 
@@ -117,69 +130,69 @@ bool BasisShellBase::IsSpherical(void) const noexcept
 ///////////////////////////////////
 const double & BasisShellBase::Alpha(int i) const
 {
-    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
-    Assert<BasisSetException>(i < nprim_ && i >= 0, "Primitive index out of range", "idx", i, "nprim", nprim_);
+    AssertPtrs_();
+    AssertPrimIdx_(i);
     return alphas_[i]; 
 }
 
 double & BasisShellBase::Alpha(int i)
 {
-    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
-    Assert<BasisSetException>(i < nprim_ && i >= 0, "Primitive index out of range", "idx", i, "nprim", nprim_);
+    AssertPtrs_();
+    AssertPrimIdx_(i);
     return alphas_[i]; 
 }
 
 const double & BasisShellBase::Coef(int n, int i) const
 {
-    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
-    Assert<BasisSetException>(i < nprim_ && i >= 0, "Primitive index out of range", "idx", i, "nprim", nprim_);
-    Assert<BasisSetException>(n < ngen_ && n >= 0, "General contraction index out of range", "idx", i, "nprim", nprim_);
+    AssertPtrs_();
+    AssertPrimIdx_(i);
+    AssertGenIdx_(n);
     return coefs_[n*nprim_+i]; 
 }
 
 double & BasisShellBase::Coef(int n, int i)
 {
-    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
-    Assert<BasisSetException>(i < nprim_ && i >= 0, "Primitive index out of range", "idx", i, "nprim", nprim_);
-    Assert<BasisSetException>(n < ngen_ && n >= 0, "General contraction index out of range", "idx", i, "nprim", nprim_);
+    AssertPtrs_();
+    AssertPrimIdx_(i);
+    AssertGenIdx_(n);
     return coefs_[n*nprim_+i]; 
 }
 
 double const * BasisShellBase::AlphaPtr(void) const
 {
-    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
+    AssertPtrs_();
     return alphas_;
 }
 
 double * BasisShellBase::AlphaPtr(void)
 {
-    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
+    AssertPtrs_();
     return alphas_;
 }
 
 double const * BasisShellBase::CoefPtr(int n) const
 {
-    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
-    Assert<BasisSetException>(n < ngen_ && n >= 0, "General contraction index out of range", "idx", n, "ngen", ngen_);
+    AssertPtrs_();
+    AssertGenIdx_(n);
     return coefs_ + n*nprim_;
 }
 
 double * BasisShellBase::CoefPtr(int n)
 {
-    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
-    Assert<BasisSetException>(n < ngen_ && n >= 0, "General contraction index out of range", "idx", n, "ngen", ngen_);
+    AssertPtrs_();
+    AssertGenIdx_(n);
     return coefs_ + n*nprim_;
 }
 
 double const * BasisShellBase::AllCoefsPtr(void) const
 {
-    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
+    AssertPtrs_();
     return coefs_;
 }
 
 double * BasisShellBase::AllCoefsPtr(void)
 {
-    Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
+    AssertPtrs_();
     return coefs_;
 }
 
@@ -189,35 +202,44 @@ double * BasisShellBase::AllCoefsPtr(void)
 //////////////////////////////////////////
 double BasisShellBase::GetAlpha(int i) const
 {
-    ValidateInput_(i);
+    AssertPtrs_();
+    ValidatePrimIdx_(i);
     return Alpha(i);
 }
 
 void BasisShellBase::SetAlpha(int i, double alpha)
 {
-    ValidateInput_(i);
+    AssertPtrs_();
+    ValidatePrimIdx_(i);
     Alpha(i) = alpha;
 }
 
 double BasisShellBase::GetCoef(int n, int i) const
 {
-    ValidateInput_(n, i);
+    AssertPtrs_();
+    ValidatePrimIdx_(i);
+    ValidateGenIdx_(n);
     return Coef(n, i);
 }
 
 void BasisShellBase::SetCoef(int n, int i, double coef)
 {
-    ValidateInput_(n, i);
+    AssertPtrs_();
+    ValidatePrimIdx_(i);
+    ValidateGenIdx_(n);
     Coef(n, i) = coef;
 }
 
 std::vector<double> BasisShellBase::GetAlphas(void) const
 {
+    AssertPtrs_();
     return std::vector<double>(alphas_, alphas_+nprim_);
 }
 
 void BasisShellBase::SetAlphas(const std::vector<double> & alphas)
 {
+    AssertPtrs_();
+
     if(static_cast<int>(alphas.size()) != nprim_)
         throw BasisSetException("Incompatible dimensions for alphas", "nprim", nprim_, "given", alphas.size());
 
@@ -227,9 +249,8 @@ void BasisShellBase::SetAlphas(const std::vector<double> & alphas)
 
 std::vector<double> BasisShellBase::GetCoefs(int n) const
 {
-    if(n >= ngen_ || n < 0)
-        throw BasisSetException("Attempt to access general contraction that does not exist",
-                                "igen", n, "ngen", ngen_);
+    AssertPtrs_();
+    ValidateGenIdx_(n);
 
     return std::vector<double>(coefs_+n*nprim_,
                                coefs_+(n+1)*nprim_);
@@ -237,9 +258,8 @@ std::vector<double> BasisShellBase::GetCoefs(int n) const
 
 void BasisShellBase::SetCoefs(int n, const std::vector<double> & coefs)
 {
-    if(n >= ngen_ || n < 0)
-        throw BasisSetException("Attempt to access general contraction that does not exist",
-                                "igen", n, "ngen", ngen_);
+    AssertPtrs_();
+    ValidateGenIdx_(n);
 
     if(static_cast<int>(coefs.size()) != nprim_)
         throw BasisSetException("Incompatible dimensions for coefficients", "nprim", nprim_, "given", coefs.size());
@@ -249,12 +269,14 @@ void BasisShellBase::SetCoefs(int n, const std::vector<double> & coefs)
 
 std::vector<double> BasisShellBase::GetAllCoefs(void) const
 {
-    return std::vector<double>(coefs_, coefs_+ngen_*nprim_);
+    AssertPtrs_();
+    return std::vector<double>(coefs_, coefs_ + NCoef());
 }
 
 void BasisShellBase::SetAllCoefs(const std::vector<double> & coefs)
 {
-    if(static_cast<int>(coefs.size()) != nprim_*ngen_)
+    AssertPtrs_();
+    if(static_cast<int>(coefs.size()) != NCoef())
         throw BasisSetException("Incompatible dimensions for coefficients", "nprim", nprim_, "ngen", ngen_, "given", coefs.size());
     std::copy(coefs.begin(), coefs.end(), coefs_);
 }
@@ -268,7 +290,8 @@ void BasisShellBase::SetPrimitive(int i, double alpha, double coef)
 
 void BasisShellBase::SetPrimitive(int i, double alpha, const std::vector<double> & coefs)
 {
-    ValidateInput_(i);
+    AssertPtrs_();
+    ValidatePrimIdx_(i);
 
     const int ncoefs = static_cast<int>(coefs.size());
 
@@ -298,7 +321,7 @@ bool BasisShellBase::operator==(const BasisShellBase & rhs) const
                type_ == rhs.type_ &&
                cart_ == rhs.cart_ &&
                ( (alphas_ == rhs.alphas_) || std::equal(alphas_, alphas_+nprim_, rhs.alphas_) ) &&
-               ( (coefs_ == rhs.coefs_) || std::equal(coefs_, coefs_+nprim_*ngen_, rhs.coefs_) )
+               ( (coefs_ == rhs.coefs_) || std::equal(coefs_, coefs_ + NCoef(), rhs.coefs_) )
            );
 
     PRAGMA_WARNING_POP

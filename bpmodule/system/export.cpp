@@ -89,8 +89,8 @@ PYBIND11_PLUGIN(system)
 
     // BasisSetShell class
     pybind11::class_<BasisSetShell>(m, "BasisSetShell", bshell)
-    .def("ID", &BasisSetShell::ID)
-    .def("Center", &BasisSetShell::Center)
+    .def("GetID", &BasisSetShell::GetID)
+    .def("GetCenter", &BasisSetShell::GetCenter)
     .def("GetCoords", &BasisSetShell::GetCoords)
     ;
 
