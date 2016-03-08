@@ -8,6 +8,8 @@
 #ifndef BPMODULE_GUARD_PARALLEL__INITFINALIZE_HPP_
 #define BPMODULE_GUARD_PARALLEL__INITFINALIZE_HPP_
 
+#include <cstddef> //For size_t
+
 //! \todo We need to store multiple communicators, etc
 
 namespace LibTaskForce{
@@ -23,9 +25,13 @@ const LibTaskForce::Environment& GetEnv();
 /*! \brief Initialize the parallelization functionality
  *
  * This is meant to be called from python at the start of the program
+ * 
+ * \param[in] NThreads The maximum number of threads the program may use
+ * 
+ * 
  * \todo Make an overload that takes an MPI_COMM instance
  */
-void Init(void);
+void Init(size_t NThreads);
 
 
 /*! \brief Finalize parallelization functionality

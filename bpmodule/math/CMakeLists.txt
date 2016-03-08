@@ -1,5 +1,6 @@
 set(BPMODULE_MATH_FILES
             Factorial_LUT.cpp
+            FiniteDiff.cpp
             WeightType.cpp
             export.cpp
    )

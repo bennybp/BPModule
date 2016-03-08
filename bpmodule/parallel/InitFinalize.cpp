@@ -19,13 +19,9 @@ const Env_t& GetEnv(){return *Env_;}
  
 
 
-void Init(void)
+void Init(size_t NThreads)
 {
     output::Output("Calling MPI Init\n");
-    //In theory this will allow the user to tweak number of threads
-    //for the moment we set it to 0, which is a special value that means use
-    //all the threads available.
-    size_t NThreads=1;
     Env_=std::unique_ptr<Env_t>(new Env_t(NThreads));
     
     //madness::initialize(*(util::GetArgc()), *(util::GetArgv()));

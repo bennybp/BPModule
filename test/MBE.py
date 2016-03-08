@@ -8,33 +8,32 @@ import traceback
 # Add the bpmodule path
 thispath = os.path.dirname(os.path.realpath(__file__))
 bppath = os.path.join(os.path.dirname(thispath), "modules")
+bspath = os.path.join(os.path.dirname(thispath), "basis")
 sys.path.insert(0, bppath)
-
-print(bppath)
 
 import bpmodule as bp
 
 
 def Run(mm):
     try:
-        mm.LoadModule("core","BPModule_ModuleManager","EnergyMethod")
+        mm.LoadModule("MBE","MBE","MBE")
         # bunch more of these
 
-        MyMod=mm.GetModule("EnergyMethod",0)
+        MyMod=mm.GetModule("MBE",0)
         wfn=bp.datastore.Wavefunction()
         molu = bp.system.AtomSetUniverse()
         molu.append(bp.system.CreateAtom(0, [ 0.000000000000, -0.143225816552,  0.000000000000], 8))
         molu.append(bp.system.CreateAtom(1, [ 1.638036840407,  1.136548822547, -0.000000000000], 1))
         molu.append(bp.system.CreateAtom(2, [-1.638036840407,  1.136548822547, -0.000000000000], 1))
         mol = bp.system.Molecule(molu, True)
+        bstype = bp.basisset.ShellType.Gaussian
         molwithbs = bp.basisset.SimpleCreator(os.path.join(bspath, "sto-3g.gbs"), mol, bstype, "primary");
         bs = molwithbs.GetBasisSet("primary")
 
-        wfn.molecule.Set(molwithbs)
-        wfn.basis.Set(bs)
-        MyMod.Wfn=wfn
+        wfn.system.Set(molwithbs)
+        MyMod.SetWfn(wfn)
         
-        MyMod.Deriv(0)
+        print(MyMod.Deriv(0))
       
     except Exception as e:
       bp.output.Output("Caught exception in main handler\n")

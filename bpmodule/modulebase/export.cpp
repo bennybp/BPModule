@@ -38,6 +38,7 @@ PYBIND11_PLUGIN(modulebase)
          .def("Print", &ModuleBase::Print)
          .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), pybind11::return_value_policy::reference_internal)
          .def("Wfn", static_cast<datastore::Wavefunction &(ModuleBase::*)(void)>(&ModuleBase::Wfn), pybind11::return_value_policy::reference_internal) 
+         .def("SetWfn",&ModuleBase::SetWfn)
          .def("CreateChildModule", &ModuleBase::CreateChildModulePy)
          //.def("MManager", static_cast<ModuleManager &(ModuleBase::*)(void) const>(&ModuleBase::MManager), pybind11::return_value_policy::reference_internal) 
          ;
@@ -125,8 +126,8 @@ PYBIND11_PLUGIN(modulebase)
     ///////////////////////
     // Method base class
     ///////////////////////
-    pybind11::class_<EnergyMethod, ModuleBasePtr<EnergyMethod>> 
-            energymethod(m, "EnergyMethod", mbase);
+
+    pybind11::class_<EnergyMethod_Py> energymethod(m, "EnergyMethod", mbase);
     energymethod.alias<EnergyMethod>()
             .def(pybind11::init<unsigned long>())
             .def("Deriv", &EnergyMethod::Deriv)
@@ -134,11 +135,8 @@ PYBIND11_PLUGIN(modulebase)
             .def("Gradient",&EnergyMethod::Gradient)
             .def("Hessian",&EnergyMethod::Hessian)
             ;
-
     return m.ptr();
 }
-
-
 } // close namespace export_python
 } // close namespace modulebase
 } // close namespace bpmodule

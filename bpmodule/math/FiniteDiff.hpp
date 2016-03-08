@@ -2,7 +2,7 @@
 #define SRC_LIB_LIBCADGER_LIBALGORITHM_FINITEDIFF_H_
 
 #include<vector>
-#include "LibParallel.hpp" 
+#include "LibTaskForce.hpp" 
 
 namespace bpmodule{
 namespace math{
@@ -63,7 +63,7 @@ struct FDiffVisitor{
                   ResultType& Element,
                   size_t i,
                   const VarType& H)const{
-        for(auto & j:Element)Result.insert(Result.back(),j/H);
+        for(auto & j:Element)Result.insert(Result.end(),j/H);
     }
 };    
     
@@ -116,7 +116,7 @@ class FiniteDiff{
       ///Function to generate the coefs, minor tweaks for backwards and central
       virtual std::vector<double> GetCoefs(size_t NPoints)const{
         std::vector<double> x(NPoints);
-        for(size_t i=0;i<NPoints;i++)x[i]=Shift(i);
+        for(size_t i=0;i<NPoints;i++)x[i]=Shift(i,NPoints);
         return Coefs(x);
       }
 
@@ -269,26 +269,26 @@ std::vector<ResultType> FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
             Fxn_t& Fxn_;
             double Coef_;
         public:
-            FDWrapper(Fxn_t& Fxn,double Coef):Fxn_(Fxn):Coef_(Coef){}
+            FDWrapper(Fxn_t& Fxn,double Coef):Fxn_(Fxn),Coef_(Coef){}
             ResultType operator()(VarType Coord,size_t i){
                 //Have it compute the fxn's value at the new point
                 ResultType result=Fxn_(i,Coord);
                 //Have it scale the result
-                result=Fxn_(result,Coef_);
+                Fxn_(result,Coef_);
                 return result;
             }
     };
     //Will store our derivatives
-    LibTaskForce::TaskResults<ResultType> Deriv_;
+    LibTaskForce::TaskResults<ResultType> Deriv_(Comm_);
     
     //Complete loop before assigning results
     for(size_t i=0;i<NVars;++i){//Loop over variables
-        VarType Old=Fxn2Diff(i);
+        VarType Old=Fxn2Run(i);
         for(size_t j=0;j<NCalcs(NPoints);++j){//Loop over calcs per variable
             Deriv_.push_back(
                Comm_.AddTask(
                    FDWrapper(Fxn2Run,Coefs[j]),
-                   Fxn2Diff(Old,H,Shift(j,NPoints)),
+                   Fxn2Run(Old,H,Shift(j,NPoints)),
                    i
                )
             );
@@ -297,7 +297,7 @@ std::vector<ResultType> FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
     
     std::vector<ResultType> Result(NVars);
     //Will deref the futures now, in order we added them
-    for(size_t i=0;i<NVars;++i)Fxn2Diff(ResultType[i],Deriv_[i],i,H);
+    for(size_t i=0;i<NVars;++i)Fxn2Run(Result[i],Deriv_[i],i,H);
     return Result;
 }
 

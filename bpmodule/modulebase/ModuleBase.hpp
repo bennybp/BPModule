@@ -128,6 +128,9 @@ class ModuleBase
          * \throw std::logic_error if there is a severe developer error
          */
         datastore::Wavefunction & Wfn(void);
+        
+        ///Allows you to set the wavefunction
+        void SetWfn(const datastore::Wavefunction& Wfn);
 
 
         /*! \brief Create a module that is a child of this one

@@ -16,63 +16,66 @@
 namespace bpmodule {
 namespace modulebase {
 
-    typedef std::vector<system::Atom> AtomV_t;
+    using system::Atom;
+    typedef std::vector<Atom> AtomV_t;
     typedef modulemanager::ModuleManager MM_t;
-class FDFunctor:public math::FDiffVisitor<double,std::vector<double>>{
+    typedef std::vector<double> Return_t;
+    using system::Molecule;
+    using system::AtomSetUniverse;
+    using LibTaskForce::Communicator;
+    
+class FDFunctor:public math::FDiffVisitor<double,Return_t>{
     private:
+        typedef  math::FDiffVisitor<double,Return_t> Base_t;
+        typedef modulemanager::ModulePtr<EnergyMethod> Module_t;
         size_t Order_;
         const AtomV_t& Atoms_;
         MM_t& MM_;
         std::string Key_;
         unsigned long ID_;
     public:
-        using math::FDiffVisitor<double,std::vector<double>>::operator();
-        //Returns the i-th Cartesian coordinate of our molecule
-        double operator()(size_t i)const{
-            return Atoms_[(i-i%3)/3][i%3];
-        }
+        //Base class operators are fine in all but two cases
+        using Base_t::operator();
         
-        std::vector<double> operator()(size_t i,double newcoord){
-            system::AtomSetUniverse NewU;
-            size_t atom=(i-i%3)/3;
+        //Returns the i-th Cartesian coordinate of our molecule
+        double operator()(size_t i)const{return Atoms_[(i-i%3)/3][i%3];}
+        
+        Return_t operator()(size_t i,const double& newcoord)const{
+            AtomSetUniverse NewU;
             for(size_t j=0;j<Atoms_.size();++j){
                 NewU<<Atoms_[j];
-                if(j==atom)NewU[j][i%3]=newcoord;
+                if(j==(i-i%3)/3)NewU[j][i%3]=newcoord;
             }
-            modulemanager::ModulePtr<EnergyMethod> NewMode=
-                    MM_.GetModule<EnergyMethod>(Key_,ID_);
-            system::Molecule NewMol(NewU,true);
-            NewMode->Wfn().system.Set(NewMol);
-            return NewMode->Deriv(Order_-1);
-            //Make new module
+            Module_t NewModule=MM_.GetModule<EnergyMethod>(Key_,ID_);
+            NewModule->Wfn().system.Set(Molecule(NewU,true));
+            return NewModule->Deriv(Order_-1);
         }
         
-        FDFunctor(size_t Order,
-                  const AtomV_t& Atoms,
-                  MM_t& MM,
-                  std::string& Key,
-                  unsigned long ID):
+        FDFunctor(size_t Order,const AtomV_t& Atoms,
+                  MM_t& MM,std::string Key,unsigned long ID):
             Order_(Order),Atoms_(Atoms),MM_(MM),Key_(Key),ID_(ID){}
 };    
     
  
-std::vector<double> EnergyMethod::Deriv(size_t Order){
+Return_t EnergyMethod::Deriv_(size_t Order){
     //if(Order==0)//Throw error
-    const system::Molecule& Mol=*Wfn().system;
-    //std::vector<system::Atom> Atoms(Mol.begin(),Mol.end());
-    const LibTaskForce::Communicator& Comm=parallel::GetEnv().Comm();
-    std::cout<<Comm<<std::endl;
+    const Molecule& Mol=*Wfn().system;
+    std::vector<Atom> Atoms;
+    //I don't know why the fill constructor is not working...
+    for(const Atom& AnAtom: Mol)
+          Atoms.push_back(AnAtom);
+    const Communicator& Comm=parallel::GetEnv().Comm();
+    Communicator NewComm=Comm.Split(1,1);
+    std::cout<<NewComm<<std::endl;
     std::cout<<Mol<<std::endl;
     
-    /*math::CentralDiff<double,std::vector<double>> FD(Comm.Split());
-    FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),ID(),Key());
-    std::vector<std::vector<double>> TempDeriv=
-    FD.Run(Thing2Run,Mol.NAtoms(),0.02,3);
-    //Need to flatten the array, abuse that TempDeriv[0] is the first deriv comp    
+    math::CentralDiff<double,Return_t> FD(NewComm);
+    FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),Key(),ID());
+    std::vector<Return_t> TempDeriv=FD.Run(Thing2Run,Mol.NAtoms(),0.02,3);
+    //Flatten the array & abuse fact that TempDeriv[0] is the first comp    
     for(size_t i=1;i<TempDeriv.size();++i)
        for(double j :  TempDeriv[i])TempDeriv[0].push_back(j);
-    return TempDeriv[0];*/
-    return std::vector<double>(2);
+    return TempDeriv[0];
 }
     
 }}

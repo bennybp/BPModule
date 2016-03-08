@@ -45,6 +45,10 @@ class ConstSetItr{
         ConstSetItr(Itr_t CurrIdx,const U& Set):
             CurrIdx_(CurrIdx),Set_(&Set){}
     public:
+        ConstSetItr(const ConstSetItr&)=default;
+        ConstSetItr& operator=(const ConstSetItr&)=default;
+        ~ConstSetItr()=default;
+        
         ///Returns true if this iterator is equal to RHS
         bool operator==(const My_t& RHS)const{
             return (CurrIdx_==RHS.CurrIdx_);

@@ -1,4 +1,4 @@
-#include "FiniteDiff.h"
+#include "FiniteDiff.hpp"
 namespace bpmodule {
 namespace math {
 

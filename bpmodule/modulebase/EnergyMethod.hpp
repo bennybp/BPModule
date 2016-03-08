@@ -32,7 +32,14 @@ namespace modulebase {
 class EnergyMethod : public ModuleBase
 {
     public:
+        typedef EnergyMethod BaseType;
+        
         EnergyMethod(unsigned long id): ModuleBase(id,"EnergyMethod"){ }
+        
+        ///The call users use
+        std::vector<double> Deriv(size_t Order){
+            return ModuleBase::CallFunction(&EnergyMethod::Deriv_,Order);
+        }
         
         /** This is the function you override.  For all orders that you haven't
          *  implemented you should defer to the base class's Deriv() function,
@@ -46,8 +53,8 @@ class EnergyMethod : public ModuleBase
          *   }
          * \endcode
          */ 
-        virtual std::vector<double> Deriv(size_t Order);
-        
+        virtual std::vector<double> Deriv_(size_t Order);
+
         ///@{
         ///Convenience functions
         ///Returns the energy of this method
@@ -57,6 +64,18 @@ class EnergyMethod : public ModuleBase
         ///Returns the nuclear Hessian of this method
         std::vector<double> Hessian(){return Deriv(2);}
         ///@}
+};
+
+///Specialization so that Python calls the right virtual function
+class EnergyMethod_Py : public EnergyMethod{
+    public:
+        using EnergyMethod::EnergyMethod;
+        MODULEBASE_FORWARD_PROTECTED_TO_PY
+                
+        virtual std::vector<double> Deriv_(size_t Order){
+            return CallPyOverride<std::vector<double>>("Deriv_",Order);
+        }
+    
 };
 
 } // close namespace modulebase
