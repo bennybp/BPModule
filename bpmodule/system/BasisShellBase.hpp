@@ -43,6 +43,9 @@ class BasisShellBase
         bool IsSpherical(void) const noexcept;
 
         bool operator==(const BasisShellBase & rhs) const;
+
+        bool BaseCompare(const BasisShellBase & rhs) const;
+
         ///@}
 
         /*! \name Raw, fast, unsafe access */

@@ -112,6 +112,7 @@ PYBIND11_PLUGIN(system)
     .def("MaxNCartesian", &BasisSet::MaxNCartesian)
     .def("MaxNFunctions", &BasisSet::MaxNFunctions)
     .def("Transform", &BasisSet::Transform)
+    .def("Shrink", &BasisSet::Shrink)
     ;
 
 

@@ -328,6 +328,12 @@ bool BasisShellBase::operator==(const BasisShellBase & rhs) const
 }
 
 
+bool BasisShellBase::BaseCompare(const BasisShellBase & rhs) const
+{
+    return (*this) == rhs;
+}
+
+
 } // close namespace system
 } // close namespace bpmodule
 

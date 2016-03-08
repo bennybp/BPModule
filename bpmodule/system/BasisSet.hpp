@@ -47,6 +47,8 @@ class BasisSet
         //! \todo make a printer class?
         void Print(void) const;
 
+        void Shrink(void);
+
         BasisSet Transform(TransformerFunc transformer) const;
 
         // iterate over shells

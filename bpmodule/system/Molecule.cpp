@@ -194,6 +194,9 @@ BasisSet Molecule::GetBasisSet(const std::string & basislabel) const
         for(const auto & bshell : atom.GetShells(basislabel))
             bs.AddShell(bshell, atom.GetIdx(), atom.GetCoords());
 
+    // shrink the basis set
+    bs.Shrink();
+
     return bs;
 }
 
