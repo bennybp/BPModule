@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Python exports for the molecule/system library
+ * \brief Python exports for the system/system library
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -10,7 +10,7 @@
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/system/AMConvert.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
-#include "bpmodule/system/Molecule.hpp"
+#include "bpmodule/system/System.hpp"
 #include "bpmodule/system/BasisSet.hpp"
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/python/Convert.hpp"
@@ -116,9 +116,9 @@ PYBIND11_PLUGIN(system)
 
 
     ////////////////////
-    // Molecule, etc
+    // System, etc
     ////////////////////
-    datastore::RegisterUIDPointer<Molecule>(m, "Molecule");
+    datastore::RegisterUIDPointer<System>(m, "System");
 
 
     pybind11::class_<IsotopeData>(m, "IsotopeData")
@@ -201,29 +201,29 @@ PYBIND11_PLUGIN(system)
     // No need to export AtomSet (at the moment)
     math::RegisterUniverse<AtomSetUniverse>(m, "AtomSetUniverse");
 
-    // Main molecule class 
-    pybind11::class_<Molecule>(m,"Molecule")
+    // Main system class 
+    pybind11::class_<System>(m,"System")
     .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
-    .def(pybind11::init<const Molecule &>())
-    .def("NAtoms",&Molecule::NAtoms)
-    .def("HasAtom", &Molecule::HasAtom)
-    .def("GetAtom", &Molecule::GetAtom)
-    .def("GetCharge",&Molecule::GetCharge)
-    .def("GetNElectrons",&Molecule::GetNElectrons)
-    .def("GetBasisSet", &Molecule::GetBasisSet)
-    .def("Translate", &Molecule::Translate<std::array<double, 3>>)
-    .def("Rotate", &Molecule::Rotate<std::array<double, 9>>)
-    .def("CenterOfMass", &Molecule::CenterOfMass)
-    .def("CenterOfNuclearCharge", &Molecule::CenterOfNuclearCharge)
-    .def("ToString", &Molecule::ToString)
-    .def("Transform", &Molecule::Transform)
-    .def("Insert", &Molecule::Insert)
-    .def("Partition", &Molecule::Partition)
-    .def("Complement", &Molecule::Complement)
-    .def("Intersection", &Molecule::Intersection)
-    .def("Union", &Molecule::Union)
-    .def("Difference", &Molecule::Difference)
-    .def("__str__", &Molecule::ToString)
+    .def(pybind11::init<const System &>())
+    .def("NAtoms",&System::NAtoms)
+    .def("HasAtom", &System::HasAtom)
+    .def("GetAtom", &System::GetAtom)
+    .def("GetCharge",&System::GetCharge)
+    .def("GetNElectrons",&System::GetNElectrons)
+    .def("GetBasisSet", &System::GetBasisSet)
+    .def("Translate", &System::Translate<std::array<double, 3>>)
+    .def("Rotate", &System::Rotate<std::array<double, 9>>)
+    .def("CenterOfMass", &System::CenterOfMass)
+    .def("CenterOfNuclearCharge", &System::CenterOfNuclearCharge)
+    .def("ToString", &System::ToString)
+    .def("Transform", &System::Transform)
+    .def("Insert", &System::Insert)
+    .def("Partition", &System::Partition)
+    .def("Complement", &System::Complement)
+    .def("Intersection", &System::Intersection)
+    .def("Union", &System::Union)
+    .def("Difference", &System::Difference)
+    .def("__str__", &System::ToString)
     ;
 
         

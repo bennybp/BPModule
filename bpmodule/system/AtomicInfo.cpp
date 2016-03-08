@@ -29,7 +29,7 @@ int AtomicZNumberFromSym(const std::string & sym)
     if(atomic_sym_Z_.count(sym))
         return atomic_sym_Z_.at(sym);
     else
-        throw exception::MoleculeException("No Z number for this atomic symbol",
+        throw exception::SystemException("No Z number for this atomic symbol",
                                            "symbol", sym);
 }
 
@@ -40,7 +40,7 @@ std::string AtomicSymFromZ(int Z)
     if(atomic_Z_sym_.count(Z))
         return atomic_Z_sym_.at(Z);
     else
-        throw exception::MoleculeException("No symbol for this Z number",
+        throw exception::SystemException("No symbol for this Z number",
                                            "Z", Z);
 }
 
@@ -51,7 +51,7 @@ const AtomicData & AtomicInfoFromZ(int Z)
     if(atomic_Z_data_.count(Z))
         return atomic_Z_data_.at(Z);
     else
-        throw exception::MoleculeException("No atomic data for this Z number",
+        throw exception::SystemException("No atomic data for this Z number",
                                            "Z", Z);
 }
 
@@ -72,7 +72,7 @@ const IsotopeData & IsotopeInfoFromZ(int Z, int isonum)
         if(it.isonum == isonum)
             return it;
 
-    throw exception::MoleculeException("No isotope data for this Z and isotope number",
+    throw exception::SystemException("No isotope data for this Z and isotope number",
                                            "Z", Z,
                                            "isotope", isonum);
 }
@@ -89,7 +89,7 @@ int MostCommonIsotopeFromZ(int Z)
 {
     const AtomicData & ad = AtomicInfoFromZ(Z);
     if(ad.isotopes.size() == 0)
-        throw exception::MoleculeException("Developer error: No isotopes for this Z number?",
+        throw exception::SystemException("Developer error: No isotopes for this Z number?",
                                            "Z", Z);
 
     auto maxit = std::max_element(ad.isotopes.begin(), ad.isotopes.end(),

@@ -3,8 +3,8 @@ set(BPMODULE_SYSTEM_FILES
     AtomicInfo_LUT.cpp
     Atom.hpp
     Atom.cpp
-    Molecule.hpp
-    Molecule.cpp
+    System.hpp
+    System.cpp
 
     BasisSet.cpp
     BasisShellBase.cpp

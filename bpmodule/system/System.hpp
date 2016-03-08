@@ -1,11 +1,11 @@
 /*\file
  *
- * \brief The molecule class (header)
+ * \brief The system class (header)
 */
 
 
-#ifndef BPMODULE_GUARD_SYSTEM__MOLECULE_HPP_
-#define BPMODULE_GUARD_SYSTEM__MOLECULE_HPP_
+#ifndef BPMODULE_GUARD_SYSTEM__SYSTEM_HPP_
+#define BPMODULE_GUARD_SYSTEM__SYSTEM_HPP_
 
 #include "bpmodule/system/Atom.hpp"
 #include "bpmodule/math/MathSet.hpp"
@@ -27,45 +27,45 @@ namespace bpmodule {
 namespace system {
 
 
-/*! \brief All atoms that may be used in a group of Molecules */
+/*! \brief All atoms that may be used in a group of Systems */
 typedef math::Universe<Atom> AtomSetUniverse;
 
 
 
 /*! \brief A collection of Atoms
  *
- * Once atoms are placed in a Molecule (or AtomSetUniverse), they
+ * Once atoms are placed in a System (or AtomSetUniverse), they
  * cannot be changed in any way. This allows for consistency when
- * atoms are shared among may Molecule objects (via the universe).
+ * atoms are shared among may System objects (via the universe).
  * Changing the Atoms themselves require making copies of the Atom.
- * This can be accomplished easily through the Molecule::Transform function,
- * which returns a new Molecule containing a new universe. This new molecule
+ * This can be accomplished easily through the System::Transform function,
+ * which returns a new System containing a new universe. This new system
  * is completely divorced from the original and does not share any resources
  * with it.
  *
- * The only thing modifiable about a non-const Molecule is which Atoms (from
+ * The only thing modifiable about a non-const System is which Atoms (from
  * of its universe) it contains.
- * Assignment and copy construction will result in Molecules sharing the
+ * Assignment and copy construction will result in Systems sharing the
  * universe, but with separate lists of atoms they contain.
  *
- * This Molecule object will behave like a MathSet, allowing for
+ * This System object will behave like a MathSet, allowing for
  * unions, intersections, complements, etc.
  */
-class Molecule
+class System
 {
     private:
-        //! How atoms are actually stored in the Molecule
+        //! How atoms are actually stored in the System
         typedef math::MathSet<Atom> AtomSet;
 
         //! Actual storage of all the atoms
         AtomSet atoms_;
 
         // For use from transformations, etc
-        Molecule(const AtomSet & atoms);
+        System(const AtomSet & atoms);
 
-        double charge_;       //!< Total charge on this molecule
-        double multiplicity_; //!< Total multiplicity of the molecule
-        double nelectrons_;   //!< Total number of electrons in the molecule 
+        double charge_;       //!< Total charge on this system
+        double multiplicity_; //!< Total multiplicity of the system
+        double nelectrons_;   //!< Total number of electrons in the system 
 
         /* \brief Sets charge, multiplicity, and nelectrons as determined from the Atoms in this set */
         void SetDefaults_(void);
@@ -74,73 +74,73 @@ class Molecule
         typedef AtomSet::value_type value_type;
         typedef AtomSet::const_iterator const_iterator;
 
-        /*! A function or functor that selects Atoms from this Molecule
+        /*! A function or functor that selects Atoms from this System
          * 
          * Takes a `const Atom &` as an argument and returns true if it
-         * should be included in a new Molecule
+         * should be included in a new System
          */
         typedef AtomSet::SelectorFunc SelectorFunc;
 
-        /*! A function or functor that transforms Atoms from this Molecule
+        /*! A function or functor that transforms Atoms from this System
          * 
          * Takes a `const Atom &` as an argument and returns a new Atom
          */
         typedef AtomSet::TransformerFunc TransformerFunc;
 
 
-        /*! \brief Construct a molecule given a universe
+        /*! \brief Construct a system given a universe
          * 
-         * \param [in] fill Make this molecule contain all the elements of the universe
+         * \param [in] fill Make this system contain all the elements of the universe
          */
-        Molecule(std::shared_ptr<const AtomSetUniverse> universe, bool fill);
+        System(std::shared_ptr<const AtomSetUniverse> universe, bool fill);
 
         // compiler generated ok
         // Copies will share storage in the AtomSet, but have their
         // own sets of contained atoms
-        Molecule(const Molecule & rhs)             = default;
-        Molecule(Molecule && rhs)                  = default;
-        Molecule & operator=(const Molecule & rhs) = default;
-        Molecule & operator=(Molecule && rhs)      = default;
+        System(const System & rhs)             = default;
+        System(System && rhs)                  = default;
+        System & operator=(const System & rhs) = default;
+        System & operator=(System && rhs)      = default;
 
 
-        /*! \name General Molecule properties
+        /*! \name General System properties
          */ 
         ///@{ 
 
-        /*! \brief Return the number of Atoms in the Molecule (NOT the Universe) */
+        /*! \brief Return the number of Atoms in the System (NOT the Universe) */
         int NAtoms(void) const;
 
-        /*! \brief Get the charge of the molecule */
+        /*! \brief Get the charge of the system */
         double GetCharge(void) const;
 
-        /*! \brief Get the charge of the molecule as determined by summing
+        /*! \brief Get the charge of the system as determined by summing
          *         the charges on all atoms */
         double GetSumCharge(void) const;
 
-        /*! \brief Set the charge of the molecule */
+        /*! \brief Set the charge of the system */
         void SetCharge(double charge);
 
-        /*! \brief Get the number of electrons in the molecule */
+        /*! \brief Get the number of electrons in the system */
         double GetNElectrons(void) const;
 
-        /*! \brief Get the number of electrons in the molecule as
+        /*! \brief Get the number of electrons in the system as
          *         determined by summing the number of electrons for all atoms*/
         double GetSumNElectrons(void) const;
 
-        /*! \brief Set the number of electrons in the molecule */
+        /*! \brief Set the number of electrons in the system */
         void SetNElectrons(double nelectrons);
 
-        /*! \brief Get the multiplicity of the Molecule */
+        /*! \brief Get the multiplicity of the System */
         double GetMultiplicity(void) const;
 
-        /*! \brief Set the multiplicity of the Molecule */
+        /*! \brief Set the multiplicity of the System */
         void SetMultiplicity(double m);
 
 
-        /*! \brief Does this molecule have an atom with the given index
+        /*! \brief Does this system have an atom with the given index
          * 
          * \note The index refers to the unique index of the atom (typically
-         *       input ordering), NOT its order within this molecule.
+         *       input ordering), NOT its order within this system.
          */
         bool HasAtom(size_t atomidx) const;
 
@@ -148,10 +148,10 @@ class Molecule
         /*! \brief Obtain an atom with the given index
          * 
          * \note The index refers to the unique index of the atom (typically
-         *       input ordering), NOT its order within this molecule.
+         *       input ordering), NOT its order within this system.
          *
          * \throw bpmodule::exception::SystemException If an atom with the given index
-         *        is not part of this Molecule
+         *        is not part of this System
          */
         Atom GetAtom(size_t atomidx) const;
 
@@ -169,10 +169,10 @@ class Molecule
         ///@{
 
 
-        /*! \brief Return an iterator to the beginning of this molecule (first atom) */
+        /*! \brief Return an iterator to the beginning of this system (first atom) */
         const_iterator begin(void) const { return atoms_.begin(); }
 
-        /*! \brief Return an iterator to the end of this molecule (just past the last atom) */
+        /*! \brief Return an iterator to the end of this system (just past the last atom) */
         const_iterator end(void) const { return atoms_.end(); }
 
         ///@}
@@ -197,28 +197,28 @@ class Molecule
          */
         ///@{ 
 
-        /*! \brief Insert an atom into this molecule
+        /*! \brief Insert an atom into this system
          * 
-         * The Atom must already be a part of this Molecule's universe
+         * The Atom must already be a part of this System's universe
          *
          * \todo Exceptions from MathSet
          */
         void Insert(const Atom & atom);
 
-        /*! \brief Return a subset of atoms in the molecule */
-        Molecule Partition(SelectorFunc selector) const;
+        /*! \brief Return a subset of atoms in the system */
+        System Partition(SelectorFunc selector) const;
 
-        /*! \brief Return all atoms that are in the universe but not in this molecule */
-        Molecule Complement(void) const;
+        /*! \brief Return all atoms that are in the universe but not in this system */
+        System Complement(void) const;
 
-        /*! \brief Return atoms that are in both this molecule and \p rhs */
-        Molecule Intersection(const Molecule & rhs) const;
+        /*! \brief Return atoms that are in both this system and \p rhs */
+        System Intersection(const System & rhs) const;
 
-        /*! \brief Return atoms that are in either this molecule and \p rhs */
-        Molecule Union(const Molecule & rhs) const;
+        /*! \brief Return atoms that are in either this system and \p rhs */
+        System Union(const System & rhs) const;
 
-        /*! \brief Return atoms that are in this molecule but not in \p rhs */
-        Molecule Difference(const Molecule & rhs) const;
+        /*! \brief Return atoms that are in this system but not in \p rhs */
+        System Difference(const System & rhs) const;
         
 
         ///@}
@@ -228,7 +228,7 @@ class Molecule
          */
         ///@{
 
-        /*! \brief See if this molecule has a particular basis set
+        /*! \brief See if this system has a particular basis set
          * 
          * Returns false if no atoms have the basis set
          */ 
@@ -244,30 +244,30 @@ class Molecule
 
         /*! \name General Manipulations
          * 
-         * These all return a new Molecule
+         * These all return a new System
          */
         ///@{
 
-        /*! \brief Perform a generic transformation to atoms in the molecule */
-        Molecule Transform(TransformerFunc transformer) const;
+        /*! \brief Perform a generic transformation to atoms in the system */
+        System Transform(TransformerFunc transformer) const;
 
 
-        /*! \brief Translate the molecule
+        /*! \brief Translate the system
          * 
          * \tparam VectorType A type corresponding to a VectorConcept
          */ 
         template<typename VectorType>
-        Molecule Translate(const VectorType & vec) const
+        System Translate(const VectorType & vec) const
         {
             return Transform(std::bind(math::TranslatePoint_Copy<Atom, VectorType>, std::placeholders::_1, vec));
         }
 
-        /*! \brief Rotate the molecule
+        /*! \brief Rotate the system
          * 
          * \tparam VectorType A type corresponding to a MatrixConcept
          */ 
         template<typename MatrixType>
-        Molecule Rotate(const MatrixType & mat) const
+        System Rotate(const MatrixType & mat) const
         {
             return Transform(std::bind(math::RotatePoint_Copy<Atom, MatrixType>, std::placeholders::_1, mat));
         }
@@ -276,8 +276,8 @@ class Molecule
 };
 
 
-//! A map of molecules (fragments, etc)
-typedef std::map<std::string, Molecule> MoleculeMap;
+//! A map of systems (fragments, etc)
+typedef std::map<std::string, System> SystemMap;
 
 
 } // close namespace system

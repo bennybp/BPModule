@@ -11,7 +11,7 @@ namespace system {
 
 
 
-// Meant to be stored with the molecule
+// Meant to be stored with the system
 class BasisShellInfo : public BasisShellBase
 {
     public:

@@ -49,7 +49,7 @@ struct AtomicData
 
 /*! \brief Get atomic data by Z number
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        data does not exist for this Z number
  */
 const AtomicData & AtomicInfoFromZ(int Z);
@@ -59,7 +59,7 @@ const AtomicData & AtomicInfoFromZ(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        data does not exist for this symbol
  */
 const AtomicData & AtomicInfoFromSym(const std::string & sym);
@@ -68,7 +68,7 @@ const AtomicData & AtomicInfoFromSym(const std::string & sym);
 
 /*! \brief Get isotope data by Z number and isotope number
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        data does not exist for this Z number and isotope number.
  */
 const IsotopeData & IsotopeInfoFromZ(int Z, int isonum);
@@ -79,7 +79,7 @@ const IsotopeData & IsotopeInfoFromZ(int Z, int isonum);
  *
  * Symbol is not case sensitive
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        data does not exist for this symbol and isotope number.
  */
 const IsotopeData & IsotopeInfoFromSym(const std::string & sym, int isonum);
@@ -88,7 +88,7 @@ const IsotopeData & IsotopeInfoFromSym(const std::string & sym, int isonum);
 
 /*! \brief Get the most common isotope by Z number
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        data does not exist for this Z number and isotope number.
  */
 int MostCommonIsotopeFromZ(int Z); 
@@ -99,7 +99,7 @@ int MostCommonIsotopeFromZ(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        data does not exist for this symbol and isotope number.
  */
 int MostCommonIsotopeFromSym(const std::string & sym); 
@@ -108,7 +108,7 @@ int MostCommonIsotopeFromSym(const std::string & sym);
 
 /*! \brief Look up an atomic mass by Z number
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        data does not exist for this Z number
  */
 double AtomicMassFromZ(int Z);
@@ -119,7 +119,7 @@ double AtomicMassFromZ(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        data does not exist for this symbol
  */
 double AtomicMassFromSym(const std::string & sym);
@@ -128,7 +128,7 @@ double AtomicMassFromSym(const std::string & sym);
 
 /*! \brief Look up an isotope mass by Z number and isotope number
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        data does not exist for this Z number and isotope number.
  */
 double IsotopeMassFromZ(int Z, int isonum);
@@ -139,7 +139,7 @@ double IsotopeMassFromZ(int Z, int isonum);
  *
  * Symbol is not case sensitive
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        data does not exist for this symbol and isotope number
  */
 double IsotopeMassFromSym(const std::string & sym, int isonum);
@@ -155,7 +155,7 @@ std::string AtomicSymFromZ(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        symbol is not defined for this Z number
  */
 int AtomicZNumberFromSym(const std::string & sym);
@@ -164,7 +164,7 @@ int AtomicZNumberFromSym(const std::string & sym);
 
 /*! Look up an atomic name by Z number
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        name is not defined for this Z number
  */
 std::string AtomicNameFromZ(int Z);
@@ -175,7 +175,7 @@ std::string AtomicNameFromZ(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        name is not defined for this symbol
  */
 std::string AtomicNameFromSym(const std::string & sym);
@@ -184,7 +184,7 @@ std::string AtomicNameFromSym(const std::string & sym);
 
 /*! \brief Look up an atomic ground-state multiplicity by Z number
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        name is not defined for this Z number
  */
 int AtomicMultiplicityFromZ(int Z);
@@ -195,7 +195,7 @@ int AtomicMultiplicityFromZ(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw bpmodule::exception::MoleculeException if the
+ * \throw bpmodule::exception::SystemException if the
  *        name is not defined for this symbol
  */
 int AtomicMultiplicityFromSym(const std::string & sym);

@@ -1,10 +1,10 @@
 /*\file
  *
- * \brief The molecule class (source)
+ * \brief The system class (source)
 */
 
 
-#include "bpmodule/system/Molecule.hpp"
+#include "bpmodule/system/System.hpp"
 #include "bpmodule/system/BasisSet.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 
@@ -21,7 +21,7 @@ namespace bpmodule {
 namespace system {
 
 
-void Molecule::SetDefaults_(void)
+void System::SetDefaults_(void)
 {
     charge_ = GetSumCharge();
     nelectrons_ = GetSumNElectrons();
@@ -32,21 +32,21 @@ void Molecule::SetDefaults_(void)
 
 
 
-Molecule::Molecule(const AtomSet & atoms)
+System::System(const AtomSet & atoms)
     : atoms_(atoms)
 {
     SetDefaults_();
 }
 
 
-Molecule::Molecule(std::shared_ptr<const AtomSetUniverse> universe, bool fill)
+System::System(std::shared_ptr<const AtomSetUniverse> universe, bool fill)
     : atoms_(universe, fill)
 {
     SetDefaults_();
 }
 
 
-bool Molecule::HasAtom(size_t atomidx) const
+bool System::HasAtom(size_t atomidx) const
 {
     for(const auto & it : atoms_)
         if(it.GetIdx() == atomidx)
@@ -54,116 +54,116 @@ bool Molecule::HasAtom(size_t atomidx) const
     return false;
 }
 
-Atom Molecule::GetAtom(size_t atomidx) const
+Atom System::GetAtom(size_t atomidx) const
 {
     for(const auto & it : atoms_)
         if(it.GetIdx() == atomidx)
             return it;
 
-    throw SystemException("This molecule doesn't have an atom with this index",
+    throw SystemException("This system doesn't have an atom with this index",
                           "atomidx", atomidx);
 }
 
-int Molecule::NAtoms(void) const
+int System::NAtoms(void) const
 {
     return atoms_.size();
 }
 
-double Molecule::GetSumCharge(void) const
+double System::GetSumCharge(void) const
 {
     return std::accumulate(this->begin(), this->end(), static_cast<double>(0.0),
                            [](double sum, const Atom & a) { return sum + a.GetCharge(); });
 }
 
-double Molecule::GetSumNElectrons(void) const
+double System::GetSumNElectrons(void) const
 {
     return std::accumulate(this->begin(), this->end(), static_cast<double>(0.0),
                            [](double sum, const Atom & a) { return sum + a.GetNElectrons(); });
 }
 
-double Molecule::GetCharge(void) const
+double System::GetCharge(void) const
 {
     return charge_;
 }
 
-void Molecule::SetCharge(double charge)
+void System::SetCharge(double charge)
 {
     charge_ = charge;
 }
 
-double Molecule::GetNElectrons(void) const
+double System::GetNElectrons(void) const
 {
     return nelectrons_;
 }
 
-void Molecule::SetNElectrons(double nelectrons)
+void System::SetNElectrons(double nelectrons)
 {
     nelectrons_ = nelectrons;
 }
 
-double Molecule::GetMultiplicity(void) const
+double System::GetMultiplicity(void) const
 {
     return multiplicity_;
 }
 
-void Molecule::SetMultiplicity(double m)
+void System::SetMultiplicity(double m)
 {
     multiplicity_ = m;
 }
 
 
-Molecule Molecule::Partition(Molecule::SelectorFunc selector) const
+System System::Partition(System::SelectorFunc selector) const
 {
-    return Molecule(atoms_.Partition(selector));
+    return System(atoms_.Partition(selector));
 }
 
-Molecule Molecule::Transform(Molecule::TransformerFunc transformer) const
+System System::Transform(System::TransformerFunc transformer) const
 {
-    return Molecule(atoms_.Transform(transformer));
+    return System(atoms_.Transform(transformer));
 }
 
-Molecule Molecule::Complement(void) const
+System System::Complement(void) const
 {
-    return Molecule(atoms_.Complement());
+    return System(atoms_.Complement());
 }
 
-void Molecule::Insert(const Atom & atom)
+void System::Insert(const Atom & atom)
 {
     //! \todo Named functions in MathSet
     atoms_ << atom;
 }
 
-Molecule Molecule::Intersection(const Molecule & rhs) const
+System System::Intersection(const System & rhs) const
 {
     //! \todo Named functions in MathSet
-    return Molecule(atoms_ / rhs.atoms_);
+    return System(atoms_ / rhs.atoms_);
 }
 
-Molecule Molecule::Union(const Molecule & rhs) const
+System System::Union(const System & rhs) const
 {
     //! \todo Named functions in MathSet
-    return Molecule(atoms_ + rhs.atoms_);
+    return System(atoms_ + rhs.atoms_);
 }
 
-Molecule Molecule::Difference(const Molecule & rhs) const
+System System::Difference(const System & rhs) const
 {
     //! \todo Named functions in MathSet
-    return Molecule(atoms_ - rhs.atoms_);
+    return System(atoms_ - rhs.atoms_);
 }
 
 
-math::Point Molecule::CenterOfMass(void) const
+math::Point System::CenterOfMass(void) const
 {
     return math::WeightedPointsCenter<math::Point>(*this, &Atom::GetMass);
 }
 
 
-math::Point Molecule::CenterOfNuclearCharge(void) const
+math::Point System::CenterOfNuclearCharge(void) const
 {
     return math::WeightedPointsCenter<math::Point>(*this, &Atom::GetZ);
 }
 
-bool Molecule::HasBasisSet(const std::string & basislabel) const
+bool System::HasBasisSet(const std::string & basislabel) const
 {
     for(const auto & atom : *this)
         if(atom.HasShells(basislabel))
@@ -172,7 +172,7 @@ bool Molecule::HasBasisSet(const std::string & basislabel) const
 
 }
 
-BasisSet Molecule::GetBasisSet(const std::string & basislabel) const
+BasisSet System::GetBasisSet(const std::string & basislabel) const
 {
     // get the number of primitives and storage needed in basis set
     size_t nprim = 0;
@@ -202,7 +202,7 @@ BasisSet Molecule::GetBasisSet(const std::string & basislabel) const
 }
 
 
-std::string Molecule::ToString()const{
+std::string System::ToString()const{
     std::stringstream ss;
     for(const auto & it : *this)
         ss<<it<<"\n";

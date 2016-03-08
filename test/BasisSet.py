@@ -44,7 +44,7 @@ def Run():
         for a in atoms:
             molu.append(a)
 
-        mol = bp.system.Molecule(molu, True)
+        mol = bp.system.System(molu, True)
         bs = mol.GetBasisSet("primary")
         bs.Print()
 

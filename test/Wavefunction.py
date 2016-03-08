@@ -21,7 +21,7 @@ def Run():
         tester = bp.testing.Tester("Testing Wavefunction")
         tester.PrintHeader()
 
-        mol = bp.system.Molecule()
+        mol = bp.system.System()
         mol.AddAtom(1, [0.0, 0.0, 0.0] )
         mol.AddAtom(1, [1.0, 0.0, 0.0] )
         mol.AddAtom(8, [0.0, 1.0, 0.0] )

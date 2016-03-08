@@ -19,7 +19,7 @@ def Run():
         O=bp.system.Atom(8,0.0,0.0,0.0)
         H1=bp.system.Atom(1,0.0,0.0,0.89)
         H2=bp.system.Atom(1,0.0,0.89,0.0)
-        Water=bp.system.Molecule
+        Water=bp.system.System
         Water.AddAtom(O)
         Water.AddAtom(H1)
         Water.AddAtom(H2)

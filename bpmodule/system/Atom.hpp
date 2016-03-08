@@ -16,7 +16,7 @@ namespace system {
 
 
 
-/*! \brief A center in a molecule
+/*! \brief A center in a system
  *
  * Atoms contain a unique index, which must be set on construction.
  * This would generally be the input ordering, but is otherwise arbitrary.
