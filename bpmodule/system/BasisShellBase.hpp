@@ -42,6 +42,8 @@ class BasisShellBase
         bool IsCartesian(void) const noexcept;
         bool IsSpherical(void) const noexcept;
 
+        std::string GetDesc(void) const;
+
         bool operator==(const BasisShellBase & rhs) const;
 
         bool BaseCompare(const BasisShellBase & rhs) const;
@@ -93,7 +95,8 @@ class BasisShellBase
         ///@}
 
     protected:
-        BasisShellBase(ShellType type, int am, bool cart, int nprim, int ngen);
+        BasisShellBase(ShellType type, int am, bool cart, int nprim,
+                       int ngen, const std::string & desc);
 
         // compiler generated ok
         BasisShellBase(const BasisShellBase &)             = default;
@@ -114,6 +117,7 @@ class BasisShellBase
         double * alphas_;            //!< Exponents
         double * coefs_;             //!< Coefficients
 
+        std::string desc_;           //!< Short description of where this came from
 
         void AssertPtrs_(void) const;
         void AssertPrimIdx_(int i) const;

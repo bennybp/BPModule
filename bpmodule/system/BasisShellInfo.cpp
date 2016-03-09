@@ -10,8 +10,9 @@ using bpmodule::exception::BasisSetException;
 namespace bpmodule {
 namespace system {
 
-BasisShellInfo::BasisShellInfo(ShellType type, int am, bool cart, int nprim, int ngen)
-    : BasisShellBase(type, am, cart, nprim, ngen)
+BasisShellInfo::BasisShellInfo(ShellType type, int am, bool cart,
+                               int nprim, int ngen, const std::string & desc)
+    : BasisShellBase(type, am, cart, nprim, ngen, desc)
 {
     alphas_.resize(NPrim());
     coefs_.resize(NCoef());
