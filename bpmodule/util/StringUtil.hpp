@@ -27,11 +27,12 @@ std::string Join(const T & container, const std::string & j)
     if(container.size() == 0)
         return std::string();
 
-    std::string str = container.begin();
 
-    for(const auto it = container.begin() + 1,
-        it != container.end(),
-        ++it)
+    auto it = container.begin();
+    std::string str = *it;
+    std::advance(it, 1);
+
+    for(; it != container.end(); ++it)
     {
         str.append(j);
         str.append(*it);
