@@ -15,14 +15,34 @@
 #include "bpmodule/python/Pybind11.hpp"
 
 
+
 namespace {
 
-std::ostream * out_ = nullptr;
+
+// "Global" variables for this file
+std::streambuf * coutbuf_ = nullptr;
 std::unique_ptr<std::ofstream> file_;
 std::string filepath_;
 bool usefile_ = false;
 bool color_ = false;
 bool debug_ = false;
+
+
+void SetCoutBuf_(std::streambuf * buf)
+{
+    if(coutbuf_ == nullptr)
+        coutbuf_ = std::cout.rdbuf();
+    std::cout.rdbuf(buf);
+}
+
+void ResetCoutBuf_(void)
+{
+    //! \todo exceptions if coutbuf_ == nullptr?
+    if(coutbuf_ != nullptr)
+        std::cout.rdbuf(coutbuf_);
+}
+
+
 
 }
 
@@ -31,10 +51,9 @@ namespace bpmodule {
 namespace output {
 
 
-
 void SetOut_Stdout(void)
 {
-    out_ = &std::cout;
+    ResetCoutBuf_();
     usefile_ = false;
     file_.reset();
 }
@@ -43,9 +62,16 @@ void SetOut_Stdout(void)
 
 void SetOut_Stderr(void)
 {
-    out_ = &std::cerr;
+    SetCoutBuf_(std::cerr.rdbuf());
     usefile_ = false;
     file_.reset();
+}
+
+
+
+StringTeeGuard TeeToString(std::string * str)
+{
+    return StringTeeGuard(&std::cout, str); 
 }
 
 
@@ -62,7 +88,7 @@ bool SetOut_File(const std::string & filepath)
     }
     else
     {
-        out_ = file_.get();
+        SetCoutBuf_(file_->rdbuf());
         usefile_ = true;
         filepath_ = filepath;
         return true;
@@ -74,7 +100,7 @@ bool SetOut_File(const std::string & filepath)
 void Flush(void)
 {
     if(Valid())
-        GetOut().flush();    
+        std::cout.flush();    
 }
 
 
@@ -97,36 +123,17 @@ void SetDebug(bool debug) noexcept
 bool Valid(void)
 {
     assert(!usefile_ || file_);
-    if(out_ == nullptr)
-        return false;
 
     if(usefile_ && !file_->good())
         return false;
 
-    if(!out_->good())
+    if(!(std::cout.good()))
         return false;
 
     else
         return true;
 }
 
-std::ostream & GetOut(void)
-{
-    assert(!usefile_ || file_);
-
-    if(out_ == nullptr)
-    {
-        out_ = &std::cerr;
-        Error("General output destination is a null pointer. Using stderr");
-    }
-    else if(usefile_ && !file_->good())
-    {
-        out_ = &std::cerr;
-        Error("General output file %1% no longer \"good\". Using stderr", filepath_);
-    }
-
-    return *out_;
-}
 
 
 
