@@ -11,23 +11,6 @@
 namespace bpmodule {
 namespace util {
 
-std::string Join(const std::vector<std::string> & vec, const std::string & j)
-{
-    if(vec.size() == 0)
-        return std::string();
-
-    std::string str = vec[0];
-
-    for(size_t i = 1; i < vec.size(); ++i)
-    {
-        str.append(j);
-        str.append(vec[i]);
-    }
-
-    return str;
-
-}
-
 
 void ToLower(std::string & str)
 {
@@ -41,11 +24,53 @@ std::string ToLowerCopy(std::string str)
     return str;
 }
 
+void LeftTrim(std::string & s)
+{
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+}
+
+void RightTrim(std::string & s)
+{
+    s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+}
+
+void Trim(std::string & s)
+{
+    RightTrim(s);
+    LeftTrim(s);
+}
+
+std::string LeftTrim_Copy(std::string s)
+{
+    LeftTrim(s);
+    return s;
+}
+
+std::string RightTrim_Copy(std::string s)
+{
+    RightTrim(s);
+    return s;
+}
+
+std::string Trim_Copy(std::string s)
+{
+    Trim(s);
+    return s;
+}
+
 
 bool CaseInsensitiveCompare::operator()(std::string lhs, std::string rhs) const
 {
     ToLower(lhs);
     ToLower(rhs);
+    std::less<std::string> comp;
+    return comp(lhs, rhs);
+}
+
+bool CaseInsensitiveTrimCompare::operator()(std::string lhs, std::string rhs) const
+{
+    Trim(rhs);    Trim(rhs);
+    ToLower(lhs); ToLower(rhs);
     std::less<std::string> comp;
     return comp(lhs, rhs);
 }
