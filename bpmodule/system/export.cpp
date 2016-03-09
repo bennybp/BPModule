@@ -82,7 +82,7 @@ PYBIND11_PLUGIN(system)
 
     // BasisShellInfo class
     pybind11::class_<BasisShellInfo> bshell(m, "BasisShellInfo", bshellbase);
-    bshell.def(pybind11::init<ShellType, int, bool, int, int, const std::string &>())
+    bshell.def(pybind11::init<ShellType, int, bool, int, int>())
     ;
     
 

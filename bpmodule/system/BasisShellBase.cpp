@@ -11,10 +11,9 @@ namespace bpmodule {
 namespace system {
 
 
-BasisShellBase::BasisShellBase(ShellType type, int am, bool cart,
-                               int nprim, int ngen, const std::string & desc)
+BasisShellBase::BasisShellBase(ShellType type, int am, bool cart, int nprim, int ngen)
     : type_(type), am_(am), cart_(cart), nprim_(nprim), ngen_(ngen),
-      alphas_(nullptr), coefs_(nullptr), desc_(desc)
+      alphas_(nullptr), coefs_(nullptr)
 {
     // If this is sp, spd, spdf, etc, then ngen
     // must be exactly 2, 3, 4 respectively
@@ -123,10 +122,6 @@ bool BasisShellBase::IsSpherical(void) const noexcept
     return !cart_;
 }
 
-std::string BasisShellBase::GetDesc(void) const
-{
-    return desc_;
-}
 
 ///////////////////////////////////
 // Raw, fast, unsafe

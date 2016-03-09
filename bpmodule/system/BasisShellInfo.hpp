@@ -15,8 +15,7 @@ namespace system {
 class BasisShellInfo : public BasisShellBase
 {
     public:
-        BasisShellInfo(ShellType type, int am, bool cart,
-                       int nprim, int ngen, const std::string & desc);
+        BasisShellInfo(ShellType type, int am, bool cart, int nprim, int ngen);
 
 
         // compiler generated ok
