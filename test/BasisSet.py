@@ -38,7 +38,7 @@ def Run():
                 ]
 
         for a in atoms:
-            a.SetShells("primary", bsmap[a.GetZ()])
+            a.SetShells("primary", "sto-3g", bsmap[a.GetZ()])
 
         molu = bp.system.AtomSetUniverse()
         for a in atoms:

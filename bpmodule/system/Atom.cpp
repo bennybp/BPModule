@@ -37,7 +37,7 @@ bool Atom::operator==(const Atom & rhs) const
     //   this should short-circuit on the first false comparison
     return GetZ() == rhs.GetZ() &&
            static_cast<const math::Point>(*this) == static_cast<const math::Point>(rhs) &&
-           GetAllShells() == rhs.GetAllShells() &&
+           bshells_ == rhs.bshells_ &&
            GetIsonum() == rhs.GetIsonum() &&
            GetMass() == rhs.GetMass() &&
            GetIsotopeMass() == rhs.GetIsotopeMass() &&

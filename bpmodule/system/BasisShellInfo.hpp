@@ -1,8 +1,6 @@
 #ifndef BPMODULE_GUARD_SYSTEM__BASISSHELLINFO_HPP_
 #define BPMODULE_GUARD_SYSTEM__BASISSHELLINFO_HPP_
 
-#include <map>
-
 #include "bpmodule/system/BasisShellBase.hpp"
 
 namespace bpmodule {
@@ -34,7 +32,6 @@ class BasisShellInfo : public BasisShellBase
 
 
 typedef std::vector<BasisShellInfo> BasisShellInfoVector;
-typedef std::map<std::string, BasisShellInfoVector> BasisShellInfoMap;
 
 
 } // close namespace system

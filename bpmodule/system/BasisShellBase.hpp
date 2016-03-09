@@ -1,7 +1,6 @@
 #ifndef BPMODULE_GUARD_SYSTEM__BASISSHELLBASE_HPP_
 #define BPMODULE_GUARD_SYSTEM__BASISSHELLBASE_HPP_
 
-#include <string>
 #include <vector>
 
 
