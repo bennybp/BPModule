@@ -48,6 +48,17 @@ from .ModuleAdministrator import *
 
 
 
+##########################################
+# Set some paths
+##########################################
+thispath = os.path.dirname(os.path.realpath(__file__))
+toppath = os.path.realpath(os.path.join(thispath, "../../"))
+
+bpmodule_paths = { "base": thispath,
+                   "basis": [ os.path.join(toppath, "basis") ]
+                 }
+
+
 def Init(argv, out = "stdout", color = True, debug = False):
   """Initializes the BPModule core
 

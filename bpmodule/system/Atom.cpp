@@ -7,6 +7,9 @@
 #include "bpmodule/system/Atom.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/math/Cast.hpp"
+#include "bpmodule/output/Output.hpp"
+
+using namespace bpmodule::output;
 
 namespace bpmodule {
 
@@ -53,6 +56,13 @@ bool Atom::operator!=(const Atom & rhs) const
 {
     return !((*this) == rhs);
 }
+
+
+void Atom::Print(std::ostream & os, size_t) // level ignored
+{
+    Output(os, "%1%    %2%  %3%  %4%\n", GetSymbol(), GetCoords()[0], GetCoords()[1], GetCoords()[2]);
+}
+
 
 std::ostream& operator<<(std::ostream& os,const Atom& A)
 {

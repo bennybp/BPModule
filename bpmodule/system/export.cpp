@@ -166,6 +166,7 @@ PYBIND11_PLUGIN(system)
     // Atom structure
     // Atom class
     pybind11::class_<Atom>(m, "Atom", pybind11::base<math::Point>())
+    .def(pybind11::init<const Atom &>())
     .def("GetIdx", &Atom::GetIdx)
     .def("GetZ", &Atom::GetZ)
     .def("SetZ", &Atom::SetZ)

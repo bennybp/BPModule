@@ -19,6 +19,25 @@ BasisShellInfo::BasisShellInfo(ShellType type, int am, bool cart, int nprim, int
     BasisShellBase::SetPtrs_(alphas_.data(), coefs_.data());
 }
 
+BasisShellInfo::BasisShellInfo(const BasisShellInfo & rhs)
+    : BasisShellBase(rhs),
+      alphas_(rhs.alphas_),
+      coefs_(rhs.coefs_)
+{
+    BasisShellBase::SetPtrs_(alphas_.data(), coefs_.data());
+}
+
+BasisShellInfo & BasisShellInfo::operator=(const BasisShellInfo & rhs)
+{
+    using std::swap;
+
+    if(this == &rhs)
+        return *this;
+
+    BasisShellInfo tmp(rhs);
+    swap(*this, tmp);
+    return *this;
+}
 
 bool BasisShellInfo::operator==(const BasisShellInfo & rhs) const
 {

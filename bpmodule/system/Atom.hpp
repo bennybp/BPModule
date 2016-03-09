@@ -6,7 +6,7 @@
 
 #ifndef BPMODULE_GUARD_SYSTEM__ATOM_HPP_
 #define BPMODULE_GUARD_SYSTEM__ATOM_HPP_
-
+#include <iostream>
 #include <set>
 #include <map>
 
@@ -311,6 +311,15 @@ class Atom : public math::Point
 
 
         ///@}
+
+
+        /*! \name Printing */
+        ///@{
+
+        void Print(std::ostream & os, size_t level);
+
+        ///@}
+
 
 };
 

@@ -16,11 +16,6 @@ import bpmodule as bp
 
 def Run():
     try:
-        bspath = os.path.join(thispath, "../", "basis", "sto-3g.gbs")
-        bspath = os.path.realpath(bspath)
-        bstype = bp.system.ShellType.Gaussian
-        bsmap = bp.system.ReadBasisFile(bstype, bspath)
-
         tester = bp.testing.Tester("Testing BasisSet class")
         tester.PrintHeader()
 
@@ -37,14 +32,13 @@ def Run():
                   bp.system.CreateAtom(2, [ 0.000000000000,     1.000000000000,     0.000000000000], 8),
                 ]
 
-        for a in atoms:
-            a.SetShells("primary", "sto-3g", bsmap[a.GetZ()])
-
         molu = bp.system.AtomSetUniverse()
         for a in atoms:
             molu.append(a)
 
+
         mol = bp.system.System(molu, True)
+        mol = bp.system.ApplySingleBasis(bp.system.ShellType.Gaussian, "primary", "sto-3g", mol)
         bs = mol.GetBasisSet("primary")
         bs.Print()
 

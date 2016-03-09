@@ -16,10 +16,13 @@ class BasisShellInfo : public BasisShellBase
         BasisShellInfo(ShellType type, int am, bool cart, int nprim, int ngen);
 
 
-        // compiler generated ok
-        BasisShellInfo(const BasisShellInfo &)             = default;
+        // compiler generated NOT ok
+        // Will leave dangling pointers in the base class
+        BasisShellInfo(const BasisShellInfo &);
+        BasisShellInfo & operator=(const BasisShellInfo &);
+
+        // These are ok though
         BasisShellInfo(BasisShellInfo &&)                  = default;
-        BasisShellInfo & operator=(const BasisShellInfo &) = default;
         BasisShellInfo & operator=(BasisShellInfo &&)      = default;
 
         bool operator==(const BasisShellInfo & rhs) const;
