@@ -33,7 +33,7 @@ def Run(mm):
         wfn.system.Set(molwithbs)
         MyMod.SetWfn(wfn)
         
-        print(MyMod.Deriv(0))
+        print(MyMod.Deriv(1))
       
     except Exception as e:
       bp.output.Output("Caught exception in main handler\n")

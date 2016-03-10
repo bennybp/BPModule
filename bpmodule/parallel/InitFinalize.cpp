@@ -32,7 +32,8 @@ void Init(size_t NThreads)
 void Finalize(void)
 {
     output::Output("Finalizing Process %1% of %2%\n", GetProcID(), GetNProc());
-    madness::finalize();
+    Env_.reset();
+    //madness::finalize();
 }
 
 

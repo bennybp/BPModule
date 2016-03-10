@@ -52,18 +52,27 @@ struct FDiffVisitor{
     ///Instructs you to run your function with the i-th variable set to NewVar
     virtual ResultType operator()(size_t i, const VarType& NewVar)const=0;
     
-    ///Instructs you to scale Result by coef
+    ///Instructs you to scale Result by coef (Result has been initialized)
     void operator()(ResultType& Result,double Coef)const{
-        for(auto & i :Result) i*=Coef;
+        for(auto & i :Result)i*=Coef;
     }
     
     ///Instructs you to set the i-th element of Result to Element/H
-    ///(You may assume that i will go in order)
+    ///(Result may not have been initialized)
     void operator()(ResultType& Result,
                   ResultType& Element,
-                  size_t i,
+                  size_t,
                   const VarType& H)const{
-        for(auto & j:Element)Result.insert(Result.end(),j/H);
+        if(Result.size()==0){
+            for(size_t i=0;i<Element.size();++i)
+                Result.push_back(Element[i]/H);
+        }
+        else{
+            for(size_t i=0;i<Result.size();++i)
+                Result[i]+=Element[i]/H;
+        }
+        for(auto i : Result)
+            std::cout<<i<<std::endl;
     }
 };    
     
@@ -280,7 +289,6 @@ std::vector<ResultType> FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
     };
     //Will store our derivatives
     LibTaskForce::TaskResults<ResultType> Deriv_(Comm_);
-    
     //Complete loop before assigning results
     for(size_t i=0;i<NVars;++i){//Loop over variables
         VarType Old=Fxn2Run(i);
@@ -296,8 +304,11 @@ std::vector<ResultType> FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
     }
     
     std::vector<ResultType> Result(NVars);
+    Deriv_.Synch();
     //Will deref the futures now, in order we added them
-    for(size_t i=0;i<NVars;++i)Fxn2Run(Result[i],Deriv_[i],i,H);
+    for(size_t i=0;i<NVars;++i)
+        for(size_t j=0;j<NCalcs(NPoints);++j)
+            Fxn2Run(Result[i],Deriv_[i*NCalcs(NPoints)+j],i,H);
     return Result;
 }
 

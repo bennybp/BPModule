@@ -61,6 +61,7 @@ Return_t EnergyMethod::Deriv_(size_t Order){
     //if(Order==0)//Throw error
     const Molecule& Mol=*Wfn().system;
     std::vector<Atom> Atoms;
+    std::vector<Return_t> TempDeriv;
     //I don't know why the fill constructor is not working...
     for(const Atom& AnAtom: Mol)
           Atoms.push_back(AnAtom);
@@ -70,11 +71,16 @@ Return_t EnergyMethod::Deriv_(size_t Order){
     std::cout<<Mol<<std::endl;
     
     math::CentralDiff<double,Return_t> FD(NewComm);
+
     FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),Key(),ID());
-    std::vector<Return_t> TempDeriv=FD.Run(Thing2Run,Mol.NAtoms(),0.02,3);
+    TempDeriv=FD.Run(Thing2Run,3*Mol.NAtoms(),0.02,3);
+    std::cout<<"Deriv computed"<<std::endl;
     //Flatten the array & abuse fact that TempDeriv[0] is the first comp    
     for(size_t i=1;i<TempDeriv.size();++i)
-       for(double j :  TempDeriv[i])TempDeriv[0].push_back(j);
+       for(double j :  TempDeriv[i])
+           TempDeriv[0].push_back(j);
+
+    std::cout<<"About to return"<<std::endl;
     return TempDeriv[0];
 }
     
