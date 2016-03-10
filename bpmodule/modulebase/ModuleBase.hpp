@@ -12,6 +12,7 @@
 
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/modulemanager/ModuleManager.hpp"
+#include "bpmodule/output/Output.hpp"
 #include "bpmodule/util/FormatString.hpp"
 #include "bpmodule/python/Call.hpp"
 
@@ -123,11 +124,16 @@ class ModuleBase
         const datastore::ModuleGraphNode * MyNode(void) const;
 
 
-        /*! \brief Get the wavefunction for this graph node
+        /*! \brief Get the wavefunction from this module's graph node
          *
          * \throw std::logic_error if there is a severe developer error
          */
         datastore::Wavefunction & Wfn(void);
+
+
+        /*! \brief Get the output from this module's graph node
+         */
+        std::string GetOutput(void) const; 
 
 
         /*! \brief Create a module that is a child of this one
@@ -184,6 +190,11 @@ class ModuleBase
             //////////////////////////////////////////////////////////////////
             // So you think you like pointers and templates?
             //////////////////////////////////////////////////////////////////
+
+            // Tee the output to the graph node
+            // (Will stop when teeguard is destructed)
+            auto teeguard = output::TeeToString(&GraphData().output);
+
             try {
                 static_assert(std::is_base_of<ModuleBase, P>::value, "Cannot call function of unrelated class");
 
@@ -209,6 +220,7 @@ class ModuleBase
                                                   "from", s);
             }
         }
+
 
 
 

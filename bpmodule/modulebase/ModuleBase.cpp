@@ -93,6 +93,12 @@ const ModuleGraphNode * ModuleBase::MyNode(void) const
 }
 
 
+std::string ModuleBase::GetOutput(void) const
+{
+    return GraphData().output;
+}
+
+
 ////////////////////////////////
 // Protected functions
 ////////////////////////////////
