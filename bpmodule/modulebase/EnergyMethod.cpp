@@ -67,20 +67,16 @@ Return_t EnergyMethod::Deriv_(size_t Order){
           Atoms.push_back(AnAtom);
     const Communicator& Comm=parallel::GetEnv().Comm();
     Communicator NewComm=Comm.Split(1,1);
-    std::cout<<NewComm<<std::endl;
-    std::cout<<Mol<<std::endl;
     
     math::CentralDiff<double,Return_t> FD(NewComm);
 
     FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),Key(),ID());
     TempDeriv=FD.Run(Thing2Run,3*Mol.NAtoms(),0.02,3);
-    std::cout<<"Deriv computed"<<std::endl;
     //Flatten the array & abuse fact that TempDeriv[0] is the first comp    
     for(size_t i=1;i<TempDeriv.size();++i)
        for(double j :  TempDeriv[i])
            TempDeriv[0].push_back(j);
 
-    std::cout<<"About to return"<<std::endl;
     return TempDeriv[0];
 }
     

@@ -71,8 +71,6 @@ struct FDiffVisitor{
             for(size_t i=0;i<Result.size();++i)
                 Result[i]+=Element[i]/H;
         }
-        for(auto i : Result)
-            std::cout<<i<<std::endl;
     }
 };    
     
