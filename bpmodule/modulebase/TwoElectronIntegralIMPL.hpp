@@ -44,23 +44,23 @@ class TwoElectronIntegralIMPL : public ModuleBase
 
         long Calculate(int deriv, int shell1, int shell2, int shell3, int shell4)
         {
-            return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::Calculate_, deriv, 
-                                                                                  shell1,
-                                                                                  shell2,
-                                                                                  shell3,
-                                                                                  shell4);
+            return ModuleBase::FastCallFunction(&TwoElectronIntegralIMPL::Calculate_, deriv, 
+                                                                                      shell1,
+                                                                                      shell2,
+                                                                                      shell3,
+                                                                                      shell4);
         }
 
 
         const double * GetBuf(void)
         {
-            return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::GetBuf_);
+            return ModuleBase::FastCallFunction(&TwoElectronIntegralIMPL::GetBuf_);
         }
 
 
         long GetIntegralCount(void)
         {
-            return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::GetIntegralCount_);
+            return ModuleBase::FastCallFunction(&TwoElectronIntegralIMPL::GetIntegralCount_);
         }
 
 

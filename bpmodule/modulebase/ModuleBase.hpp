@@ -171,10 +171,13 @@ class ModuleBase
 
 
 
-        /*! \brief Call a function, catching exceptions
-         * 
+        /*! \brief Quickly call a function, catching exceptions
+         *
          * Meant to be used to call virtual functions that are
          * implemented in a the derived class.
+         *
+         * This version is "fast" - it performs minimal other steps
+         * around the call to the other function.
          *
          * \tparam R Return type
          * \tparam P Derived class type
@@ -185,7 +188,7 @@ class ModuleBase
          * \param [in] args Arguments to forward
          */
         template<typename R, typename P, typename ... Targs1, typename ... Targs2>
-        R CallFunction( R(P::*func)(Targs1...), Targs2 &&... args)
+        R FastCallFunction( R(P::*func)(Targs1...), Targs2 &&... args)
         {
             //////////////////////////////////////////////////////////////////
             // So you think you like pointers and templates?
@@ -223,12 +226,43 @@ class ModuleBase
 
 
 
+        /*! \brief Call a function, catching exceptions
+         * 
+         * Meant to be used to call virtual functions that are
+         * implemented in a the derived class.
+         *
+         * This version sets up the output tee and does some other processing
+         *
+         * \tparam R Return type
+         * \tparam P Derived class type
+         * \tparam Targs1 Arguments types for the function
+         * \tparam Targs2 Arguments types actually passed in
+         *
+         * \param [in] func Pointer to member function of class P and returning R
+         * \param [in] args Arguments to forward
+         */
+        template<typename R, typename P, typename ... Targs1, typename ... Targs2>
+        R CallFunction( R(P::*func)(Targs1...), Targs2 &&... args)
+        {
+            // Tee the output to the graph node
+            // (Will stop when teeguard is destructed)
+            auto teeguard = output::TeeToString(&GraphData().output);
+
+            return FastCallFunction<R>(func, std::forward<Targs1>(args)...);
+        }
+
+
+
 
         /*! \brief Calls a python function that overrides a virtual function
          */ 
         template<typename R, typename ... Targs>
         R CallPyOverride(const char * name, Targs &&... args)
         {
+            // Tee the output to the graph node
+            // (Will stop when teeguard is destructed)
+            auto teeguard = output::TeeToString(&GraphData().output);
+
             pybind11::gil_scoped_acquire gil;
             pybind11::function overload = pybind11::get_overload(this, name);
             if(overload)
