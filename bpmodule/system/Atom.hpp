@@ -78,18 +78,9 @@ class Atom : public math::Point
     public:
         /*! \brief Constructor
          */
-        Atom(size_t idx,  CoordType xyz, int Z, int isonum,
-             double charge, double multiplicity, double nelectrons)
-        {
-            // we do it this way in case we change where the info is stored
-            idx_ = idx;
-            SetCoords(xyz);
-            SetZ(Z);
-            SetIsonum(isonum);
-            SetCharge(charge);
-            SetMultiplicity(multiplicity);
-            SetNElectrons(nelectrons);
-        }
+        Atom(size_t idx,  CoordType xyz, int Z, int isonum, double mass,
+             double isotopemass, double charge, double multiplicity,
+             double nelectrons);
 
 
         Atom(const Atom &)             = default;

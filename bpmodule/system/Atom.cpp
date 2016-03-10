@@ -18,6 +18,22 @@ namespace bpmodule {
 namespace system {
 
 
+Atom::Atom(size_t idx, CoordType xyz, int Z, int isonum, double mass,
+           double isotopemass, double charge, double multiplicity,
+           double nelectrons)
+{
+    // we do it this way in case we change where the info is stored
+    idx_ = idx;
+    SetCoords(xyz);
+    SetZ(Z);
+    SetIsonum(isonum);
+    SetMass(mass);
+    SetIsotopeMass(isotopemass);
+    SetCharge(charge);
+    SetMultiplicity(multiplicity);
+    SetNElectrons(nelectrons);
+}
+
 std::string Atom::GetName(void) const
 {
     return AtomicNameFromZ(GetZ());
@@ -88,6 +104,8 @@ Atom CreateAtom(size_t idx, CoordType xyz, int Z, int isonum)
                 xyz,
                 Z,
                 isonum,
+                AtomicMassFromZ(Z),
+                IsotopeMassFromZ(Z, isonum),
                 0,  //! \todo default charge
                 math::numeric_cast<double>(AtomicMultiplicityFromZ(Z)),
                 math::numeric_cast<double>(Z));  //! 0 charge, nelectrons = Z
