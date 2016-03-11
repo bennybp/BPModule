@@ -15,3 +15,4 @@ ADD_COREMODULE(modulemanager
            "")
 
 INSTALL_COREMODULE(modulemanager)
+

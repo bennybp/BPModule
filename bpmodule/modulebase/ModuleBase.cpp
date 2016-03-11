@@ -142,6 +142,10 @@ Wavefunction & ModuleBase::Wfn(void)
     return GraphData().wfn;
 }
 
+void ModuleBase::SetWfn(const Wavefunction& wfn){
+    GraphData().wfn=wfn;
+}
+
 pybind11::object ModuleBase::CreateChildModulePy(const std::string & key) const
 {
     return mlocator_->GetModulePy(key, id_);

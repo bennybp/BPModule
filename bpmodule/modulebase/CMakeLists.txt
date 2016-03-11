@@ -1,4 +1,5 @@
 set(BPMODULE_MODULEBASE_FILES
+            EnergyMethod.cpp
             ModuleBase.cpp
             export.cpp
    )

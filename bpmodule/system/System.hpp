@@ -93,6 +93,7 @@ class System
          * \param [in] fill Make this system contain all the elements of the universe
          */
         System(std::shared_ptr<const AtomSetUniverse> universe, bool fill);
+        System(const AtomSetUniverse& universe,bool fill);
 
         // compiler generated ok
         // Copies will share storage in the AtomSet, but have their
@@ -275,6 +276,15 @@ class System
         ///@}
 };
 
+///Returns the distance between each pair of atoms in sys
+std::vector<double> GetDistance(const System& sys);
+
+///Returns connectivity data
+//std::map<Atom,std::vector<Atom>> GetConns(const System& sys,double CutOff);
+
+inline std::ostream& operator<<(std::ostream& os,const System& Mol){
+    return os<<Mol.ToString();
+}
 
 //! A map of systems (fragments, etc)
 typedef std::map<std::string, System> SystemMap;

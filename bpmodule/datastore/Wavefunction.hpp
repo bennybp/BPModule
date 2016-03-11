@@ -13,6 +13,7 @@
 #include "bpmodule/datastore/UIDPointer.hpp"
 
 
+
 // forward declarations
 namespace bpmodule {
 namespace system {
@@ -20,14 +21,13 @@ class System;
 }
 }
 
-
 namespace bpmodule {
 namespace datastore {
 
 class Wavefunction
 {
 public:
-    Wavefunction(void) = default;
+    Wavefunction(void)=default;
     Wavefunction(const Wavefunction &) = default;
     Wavefunction & operator=(const Wavefunction &) = default;
     Wavefunction(Wavefunction &&) = default;

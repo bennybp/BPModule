@@ -2360,6 +2360,6 @@ DOT_CLEANUP            = YES
 
 
 # Include other doxygen configuration
-@INCLUDE = dox/developers.doxcfg
+@INCLUDE = wiki/developers.doxcfg
 
 

@@ -16,3 +16,4 @@ ADD_COREMODULE(datastore
            "")
 
 INSTALL_COREMODULE(datastore)
+

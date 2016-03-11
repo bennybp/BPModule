@@ -45,6 +45,11 @@ System::System(std::shared_ptr<const AtomSetUniverse> universe, bool fill)
     SetDefaults_();
 }
 
+System::System(const AtomSetUniverse& universe,bool fill):
+System(std::shared_ptr<AtomSetUniverse>(new AtomSetUniverse(universe)),fill)
+{
+    
+}
 
 bool System::HasAtom(size_t atomidx) const
 {
@@ -208,6 +213,33 @@ std::string System::ToString()const{
         ss<<it<<"\n";
     return ss.str();
 }
+
+
+///Returns the distance between each pair of atoms in sys
+std::vector<double> GetDistance(const System& sys){
+    size_t NAtoms=sys.NAtoms();
+    std::vector<double> DM(NAtoms*NAtoms,0.0);
+    //Loop over the lower triangle of the matrix, setting upper as well
+    size_t I=0;
+    for(const Atom& atomI : sys){
+        size_t J=0;
+        for(const Atom& atomJ : sys){
+            if(atomJ==atomI)break;
+            for(double xi : atomI.GetCoords())
+                for(double yi: atomJ.GetCoords())
+                    DM[I*NAtoms+J]+=(xi-yi)*(xi-yi);
+            DM[I*NAtoms+J]=DM[J*NAtoms+I]=sqrt(DM[I*NAtoms+J]);
+        }
+    }
+    return DM;
+}
+
+/*std::map<Atom,std::set<Atom>> GetConns(const System& sys,double CutOff){
+    std::map<Atom,std::set<Atom>> Conns;
+    std::vector<double> Dist=GetDistance(sys);
+    for(const Atom&)
+}*/
+
 
 
 } // close namespace system

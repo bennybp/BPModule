@@ -20,4 +20,6 @@
 #include "bpmodule/modulebase/TwoElectronIntegralIMPL.hpp"
 //#include "bpmodule/modulebase/TwoElectronIntegral.hpp"
 
+#include "bpmodule/modulebase/EnergyMethod.hpp"
+
 #endif

@@ -59,7 +59,7 @@ bpmodule_paths = { "base": thispath,
                  }
 
 
-def Init(argv, out = "stdout", color = True, debug = False):
+def Init(argv, out = "stdout", color = True, debug = False,nthreads=1):
   """Initializes the BPModule core
 
   Initializes MPI, tensor libraries, etc, as well as the
@@ -78,7 +78,7 @@ def Init(argv, out = "stdout", color = True, debug = False):
   util.SetCmdline(argv)
 
   # Initialize Parallel
-  parallel.Init()
+  parallel.Init(nthreads)
 
   # Initialize tensor
   tensor.Init()
