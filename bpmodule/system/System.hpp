@@ -276,6 +276,12 @@ class System
         ///@}
 };
 
+///Returns the distance between each pair of atoms in sys
+std::vector<double> GetDistance(const System& sys);
+
+///Returns connectivity data
+//std::map<Atom,std::vector<Atom>> GetConns(const System& sys,double CutOff);
+
 inline std::ostream& operator<<(std::ostream& os,const System& Mol){
     return os<<Mol.ToString();
 }

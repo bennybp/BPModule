@@ -13,21 +13,22 @@ sys.path.insert(0, bppath)
 
 import bpmodule as bp
 
+def ApplyBasis(syst,bsname,bslabel="primary",bstype=bp.system.ShellType.Gaussian):
+    return bp.system.ApplySingleBasis(bstype,bslabel,bsname,syst)
 
 def Run(mm):
     try:
         mm.LoadModule("MBE","MBE","MBE")
-        # bunch more of these
 
         MyMod=mm.GetModule("MBE",0)
+        mol=bp.system.MakeSystem("""
+        0 1
+        O .000000000000 -0.143225816552  0.000000000000
+        H 1.638036840407  1.136548822547 -0.000000000000
+        H -1.638036840407,  1.136548822547, -0.000000000000
+        """)
+        mol = ApplyBasis(mol,"sto-3g")
         wfn=bp.datastore.Wavefunction()
-        molu = bp.system.AtomSetUniverse()
-        molu.append(bp.system.CreateAtom(0, [ 0.000000000000, -0.143225816552,  0.000000000000], 8))
-        molu.append(bp.system.CreateAtom(1, [ 1.638036840407,  1.136548822547, -0.000000000000], 1))
-        molu.append(bp.system.CreateAtom(2, [-1.638036840407,  1.136548822547, -0.000000000000], 1))
-        mol = bp.system.System(molu, True)
-        mol = bp.system.ApplySingleBasis(bp.system.ShellType.Gaussian,"primary","sto-3g",mol)
-
         wfn.system.Set(mol)
         MyMod.SetWfn(wfn)
         
