@@ -17,7 +17,7 @@
 // forward declarations
 namespace bpmodule {
 namespace system {
-class Molecule;
+class System;
 }
 }
 
@@ -33,7 +33,7 @@ public:
     Wavefunction(Wavefunction &&) = default;
     Wavefunction & operator=(Wavefunction &&) = default;
 
-    UIDPointer<system::Molecule> system;
+    UIDPointer<system::System> system;
     UIDPointer<tensor::DistMatrixD> cmat; //! \todo REPLACE ME WITH TENSOR<2> or <3>
     UIDPointer<tensor::DistMatrixD> epsilon; //! \todo REPLACE ME WITH TENSOR<1> or <2>
 

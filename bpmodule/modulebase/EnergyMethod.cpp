@@ -7,7 +7,7 @@
 #include "bpmodule/modulebase/EnergyMethod.hpp"
 #include "bpmodule/math/FiniteDiff.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
-#include "bpmodule/system/Molecule.hpp"
+#include "bpmodule/system/System.hpp"
 #include "bpmodule/modulemanager/ModulePtr.hpp"
 #include "bpmodule/modulemanager/ModuleManager.hpp"
 #include "bpmodule/parallel/InitFinalize.hpp"
@@ -20,7 +20,7 @@ namespace modulebase {
     typedef std::vector<Atom> AtomV_t;
     typedef modulemanager::ModuleManager MM_t;
     typedef std::vector<double> Return_t;
-    using system::Molecule;
+    using system::System;
     using system::AtomSetUniverse;
     using LibTaskForce::Communicator;
     
@@ -47,7 +47,7 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
                 if(j==(i-i%3)/3)NewU[j][i%3]=newcoord;
             }
             Module_t NewModule=MM_.GetModule<EnergyMethod>(Key_,ID_);
-            NewModule->Wfn().system.Set(Molecule(NewU,true));
+            NewModule->Wfn().system.Set(System(NewU,true));
             return NewModule->Deriv(Order_-1);
         }
         
@@ -59,7 +59,7 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
  
 Return_t EnergyMethod::Deriv_(size_t Order){
     //if(Order==0)//Throw error
-    const Molecule& Mol=*Wfn().system;
+    const System& Mol=*Wfn().system;
     std::vector<Atom> Atoms;
     std::vector<Return_t> TempDeriv;
     //I don't know why the fill constructor is not working...

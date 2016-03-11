@@ -25,12 +25,10 @@ def Run(mm):
         molu.append(bp.system.CreateAtom(0, [ 0.000000000000, -0.143225816552,  0.000000000000], 8))
         molu.append(bp.system.CreateAtom(1, [ 1.638036840407,  1.136548822547, -0.000000000000], 1))
         molu.append(bp.system.CreateAtom(2, [-1.638036840407,  1.136548822547, -0.000000000000], 1))
-        mol = bp.system.Molecule(molu, True)
-        bstype = bp.basisset.ShellType.Gaussian
-        molwithbs = bp.basisset.SimpleCreator(os.path.join(bspath, "sto-3g.gbs"), mol, bstype, "primary");
-        bs = molwithbs.GetBasisSet("primary")
+        mol = bp.system.System(molu, True)
+        mol = bp.system.ApplySingleBasis(bp.system.ShellType.Gaussian,"primary","sto-3g",mol)
 
-        wfn.system.Set(molwithbs)
+        wfn.system.Set(mol)
         MyMod.SetWfn(wfn)
         
         print(MyMod.Deriv(1))

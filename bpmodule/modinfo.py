@@ -1,10 +1,8 @@
-#!/usr/bin/env python3
-
-minfo = { "BPModuleCore" :
+minfo = { "BPModule_System" :
   {
     "type"        : "core",
     "version"     : "0.1a",
-    "description" : "Core functions and classes for BPModule",
+    "description" : "System class for BPModule",
     "authors"     : [],
     "refs"        : [],
     "options"     : {}

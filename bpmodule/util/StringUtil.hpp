@@ -8,19 +8,38 @@
 #ifndef BPMODULE_GUARD_UTIL__STRINGUTIL_HPP_
 #define BPMODULE_GUARD_UTIL__STRINGUTIL_HPP_
 
-#include <vector>
 #include <string>
+
 
 namespace bpmodule {
 namespace util {
 
-/*! \brief Joins each element of a vector of strings
+/*! \brief Joins each element of a container of strings
  *
- * \param [in] vec A vector of strings to join
- * \param [in] j   What to put in between each string
- * \return A string with each element of \p vec joined with \p j in between
+ * \tparam A container type (vector, set) of strings
+ * \param [in] container A container of strings to join
+ * \param [in] j         What to put in between each string
+ * \return A string with each element of \p container joined with \p j in between
  */
-std::string Join(const std::vector<std::string> & vec, const std::string & j);
+template<typename T>
+std::string Join(const T & container, const std::string & j)
+{
+    if(container.size() == 0)
+        return std::string();
+
+
+    auto it = container.begin();
+    std::string str = *it;
+    std::advance(it, 1);
+
+    for(; it != container.end(); ++it)
+    {
+        str.append(j);
+        str.append(*it);
+    }
+
+    return str;
+}
 
 
 /*! \brief Transform a string to lower case
@@ -38,6 +57,51 @@ void ToLower(std::string & str);
 std::string ToLowerCopy(std::string str);
 
 
+/*! \brief Trim a string (beginning)
+ * 
+ * \param [in] s String to trim
+ */
+void LeftTrim(std::string & s);
+
+
+/*! \brief Trim a string (ending)
+ * 
+ * \param [in] s String to trim
+ */
+void RightTrim(std::string & s);
+
+
+/*! \brief Trim a string (beginning and ending)
+ * 
+ * \param [in] s String to trim
+ */
+void Trim(std::string & s);
+
+
+/*! \brief Trim a string (beginning)
+ * 
+ * \param [in] s String to trim
+ * \return Copy of s with leading whitespace removed
+ */
+std::string LeftTrim_Copy(std::string s);
+
+
+/*! \brief Trim a string _Copy(ending)
+ * 
+ * \param [in] s String to trim
+ * \return Copy of s with trailing whitespace removed
+ */
+std::string RightTrim_Copy(std::string s);
+
+
+/*! \brief Trim a string _Copy(beginning and ending)
+ * 
+ * \param [in] s String to trim
+ * \return Copy of s with leading and trailing whitespace removed
+ */
+std::string Trim_Copy(std::string s);
+
+
 
 /*! \brief Comparison of a case-insensitive string
  *
@@ -49,6 +113,16 @@ struct CaseInsensitiveCompare
     bool operator()(std::string lhs, std::string rhs) const;
 }; 
 
+
+/*! \brief Comparison of a case-insensitive string, trimming leading and trailing whitespace
+ *
+ * Useful for containers (maps) where the key is
+ * case insensitive
+ */
+struct CaseInsensitiveTrimCompare
+{
+    bool operator()(std::string lhs, std::string rhs) const;
+}; 
 
 
 /*! \brief Create a line of characters

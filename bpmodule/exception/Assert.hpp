@@ -1,6 +1,8 @@
 #ifndef BPMODULE_GUARD_EXCEPTION__ASSERT_HPP_
 #define BPMODULE_GUARD_EXCEPTION__ASSERT_HPP_
 
+#include <string>
+
 #include "bpmodule/pragma.h"
 
 namespace bpmodule {

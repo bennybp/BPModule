@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Python exports for the molecule/system library
+ * \brief Python exports for the system/system library
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -8,9 +8,10 @@
 #include "bpmodule/python/Pybind11_stl.hpp"
 #include "bpmodule/python/Pybind11_functional.hpp"
 #include "bpmodule/python/Convert.hpp"
+#include "bpmodule/system/AMConvert.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
-#include "bpmodule/system/Molecule.hpp"
-#include "bpmodule/basisset/BasisSet.hpp"
+#include "bpmodule/system/System.hpp"
+#include "bpmodule/system/BasisSet.hpp"
 #include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/math/RegisterMathSet.hpp"
@@ -26,7 +27,98 @@ PYBIND11_PLUGIN(system)
 {
     pybind11::module m("system", "Molecular system specification");
 
-    datastore::RegisterUIDPointer<Molecule>(m, "Molecule");
+    ///////////////
+    // Angular momentum
+    ///////////////
+    m.def("StringToAM", StringToAM);
+    m.def("AMToString", AMToString);
+
+    ///////////////
+    // Basis set
+    ///////////////
+
+    datastore::RegisterUIDPointer<BasisSet>(m, "BasisSet");
+
+    // Enumeration for basis set shell types
+    pybind11::enum_<ShellType>(m, "ShellType")
+    .value("Gaussian", ShellType::Gaussian)
+    .value("Slater", ShellType::Slater)
+    ;
+
+
+    // BasisShellInfo class
+    pybind11::class_<BasisShellBase> bshellbase(m, "BasisShellBase");
+    bshellbase.def("GetType", &BasisShellBase::GetType)
+              .def("AM", &BasisShellBase::AM)
+              .def("NPrim", &BasisShellBase::NPrim)
+              .def("NCoef", &BasisShellBase::NCoef)
+              .def("NGeneral", &BasisShellBase::NGeneral)
+              .def("NCartesian", &BasisShellBase::NCartesian)
+              .def("NSpherical", &BasisShellBase::NSpherical)
+              .def("NFunctions", &BasisShellBase::NFunctions)
+              .def("IsCombiendAM", &BasisShellBase::IsCombinedAM)
+              .def("IsCartesian", &BasisShellBase::IsCartesian)
+              .def("IsSpherical", &BasisShellBase::IsSpherical)
+
+              .def("Alpha", static_cast<double &(BasisShellBase::*)(int)>(&BasisShellBase::Alpha))
+              .def("Coef", static_cast<double &(BasisShellBase::*)(int)>(&BasisShellBase::Alpha))
+
+              .def("GetAlpha", &BasisShellBase::GetAlpha)
+              .def("SetAlpha", &BasisShellBase::SetAlpha)
+              .def("GetCoef", &BasisShellBase::GetCoef)
+              .def("SetCoef", &BasisShellBase::SetCoef)
+
+              .def("GetAlphas", &BasisShellBase::GetAlphas)
+              .def("SetAlphas", &BasisShellBase::SetAlphas)
+              .def("GetCoefs", &BasisShellBase::GetCoefs)
+              .def("SetCoefs", &BasisShellBase::SetCoefs)
+              .def("GetAllCoefs", &BasisShellBase::GetAllCoefs)
+              .def("SetAllCoefs", &BasisShellBase::SetAllCoefs)
+
+              .def("SetPrimitive", static_cast<void (BasisShellBase::*)(int, double, double)>(&BasisShellBase::SetPrimitive))
+              .def("SetPrimitive", static_cast<void (BasisShellBase::*)(int, double, const std::vector<double> &)>(&BasisShellBase::SetPrimitive))
+    ;
+
+
+    // BasisShellInfo class
+    pybind11::class_<BasisShellInfo> bshell(m, "BasisShellInfo", bshellbase);
+    bshell.def(pybind11::init<ShellType, int, bool, int, int>())
+    ;
+    
+
+    // BasisSetShell class
+    pybind11::class_<BasisSetShell>(m, "BasisSetShell", bshell)
+    .def("GetID", &BasisSetShell::GetID)
+    .def("GetCenter", &BasisSetShell::GetCenter)
+    .def("GetCoords", &BasisSetShell::GetCoords)
+    ;
+
+
+    // Main BasisSet class
+    pybind11::class_<BasisSet>(m, "BasisSet")
+    .def(pybind11::init<size_t, size_t, size_t>())
+    .def("Print", &BasisSet::Print)
+    .def("AddShell", &BasisSet::AddShell)
+    .def("NShell", &BasisSet::NShell)
+    .def("Shell", &BasisSet::Shell, pybind11::return_value_policy::reference_internal)
+    .def("NPrim", &BasisSet::NPrim)
+    .def("NCoef", &BasisSet::NCoef)
+    .def("NCoef", &BasisSet::NCoef)
+    .def("NCartesian", &BasisSet::NCartesian)
+    .def("NFunctions", &BasisSet::NFunctions)
+    .def("MaxNPrim", &BasisSet::MaxNPrim)
+    .def("MaxAM", &BasisSet::MaxAM)
+    .def("MaxNCartesian", &BasisSet::MaxNCartesian)
+    .def("MaxNFunctions", &BasisSet::MaxNFunctions)
+    .def("Transform", &BasisSet::Transform)
+    .def("ShrinkFit", &BasisSet::ShrinkFit)
+    ;
+
+
+    ////////////////////
+    // System, etc
+    ////////////////////
+    datastore::RegisterUIDPointer<System>(m, "System");
 
 
     pybind11::class_<IsotopeData>(m, "IsotopeData")
@@ -74,6 +166,8 @@ PYBIND11_PLUGIN(system)
     // Atom structure
     // Atom class
     pybind11::class_<Atom>(m, "Atom", pybind11::base<math::Point>())
+    .def(pybind11::init<const Atom &>())
+    .def("GetIdx", &Atom::GetIdx)
     .def("GetZ", &Atom::GetZ)
     .def("SetZ", &Atom::SetZ)
     .def("GetIsonum", &Atom::GetIsonum)
@@ -88,18 +182,21 @@ PYBIND11_PLUGIN(system)
     .def("SetMultiplicity", &Atom::SetMultiplicity)
     .def("GetNElectrons", &Atom::GetNElectrons)
     .def("SetNElectrons", &Atom::SetNElectrons)
-    .def("GetAllShells", &Atom::GetAllShells)
+    .def("GetName", &Atom::GetName)
+    .def("GetSymbol", &Atom::GetSymbol)
+    .def("HasShells", &Atom::HasShells)
+    .def("NShell", &Atom::NShell)
+    .def("GetAllBasisLabels", &Atom::GetAllBasisLabels)
+    .def("GetBasisDescription", &Atom::GetBasisDescription)
     .def("GetShells", &Atom::GetShells)
     .def("SetShells", &Atom::SetShells)
     .def("AddShell", &Atom::AddShell)
-    .def("GetName", &Atom::GetName)
-    .def("GetSymbol", &Atom::GetSymbol)
     ;
    
 
     // Atom creators
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, Atom::CoordType, int, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, CoordType, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(size_t, CoordType, int, int)>(CreateAtom));
     m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int)>(CreateAtom));
     m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int, int)>(CreateAtom));
 
@@ -107,29 +204,29 @@ PYBIND11_PLUGIN(system)
     // No need to export AtomSet (at the moment)
     math::RegisterUniverse<AtomSetUniverse>(m, "AtomSetUniverse");
 
-    // Main molecule class 
-    pybind11::class_<Molecule>(m,"Molecule")
+    // Main system class 
+    pybind11::class_<System>(m,"System")
     .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
-    .def(pybind11::init<const Molecule &>())
-    .def("NAtoms",&Molecule::NAtoms)
-    .def("HasAtom", &Molecule::HasAtom)
-    .def("GetAtom", &Molecule::GetAtom)
-    .def("GetCharge",&Molecule::GetCharge)
-    .def("GetNElectrons",&Molecule::GetNElectrons)
-    .def("GetBasisSet", &Molecule::GetBasisSet)
-    .def("Translate", &Molecule::Translate<std::array<double, 3>>)
-    .def("Rotate", &Molecule::Rotate<std::array<double, 9>>)
-    .def("CenterOfMass", &Molecule::CenterOfMass)
-    .def("CenterOfNuclearCharge", &Molecule::CenterOfNuclearCharge)
-    .def("ToString", &Molecule::ToString)
-    .def("Transform", &Molecule::Transform)
-    .def("Insert", &Molecule::Insert)
-    .def("Partition", &Molecule::Partition)
-    .def("Complement", &Molecule::Complement)
-    .def("Intersection", &Molecule::Intersection)
-    .def("Union", &Molecule::Union)
-    .def("Difference", &Molecule::Difference)
-    .def("__str__", &Molecule::ToString)
+    .def(pybind11::init<const System &>())
+    .def("NAtoms",&System::NAtoms)
+    .def("HasAtom", &System::HasAtom)
+    .def("GetAtom", &System::GetAtom)
+    .def("GetCharge",&System::GetCharge)
+    .def("GetNElectrons",&System::GetNElectrons)
+    .def("GetBasisSet", &System::GetBasisSet)
+    .def("Translate", &System::Translate<std::array<double, 3>>)
+    .def("Rotate", &System::Rotate<std::array<double, 9>>)
+    .def("CenterOfMass", &System::CenterOfMass)
+    .def("CenterOfNuclearCharge", &System::CenterOfNuclearCharge)
+    .def("ToString", &System::ToString)
+    .def("Transform", &System::Transform)
+    .def("Insert", &System::Insert)
+    .def("Partition", &System::Partition)
+    .def("Complement", &System::Complement)
+    .def("Intersection", &System::Intersection)
+    .def("Union", &System::Union)
+    .def("Difference", &System::Difference)
+    .def("__str__", &System::ToString)
     ;
 
         

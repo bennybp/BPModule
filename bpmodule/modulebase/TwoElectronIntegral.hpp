@@ -9,7 +9,7 @@
 #define BPMODULE_GUARD_MODULEBASE__TWOELECTRONINTEGRAL_HPP_
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/basisset/BasisSet.hpp"
+#include "bpmodule/system/BasisSet.hpp"
 
 
 namespace bpmodule {
@@ -31,10 +31,10 @@ class TwoElectronIntegral : public ModuleBase
          * \param [in] ncenter The number of centers for the integrals (ie, 3-center, 2-center)
          */
         void SetBases(int ncenter,
-                      const datastore::UIDPointer<basisset::BasisSet> & bs1,
-                      const datastore::UIDPointer<basisset::BasisSet> & bs2,
-                      const datastore::UIDPointer<basisset::BasisSet> & bs3,
-                      const datastore::UIDPointer<basisset::BasisSet> & bs4)
+                      const datastore::UIDPointer<system::BasisSet> & bs1,
+                      const datastore::UIDPointer<system::BasisSet> & bs2,
+                      const datastore::UIDPointer<system::BasisSet> & bs3,
+                      const datastore::UIDPointer<system::BasisSet> & bs4)
         {
             return ModuleBase::CallFunction(&TwoElectronIntegral::SetBases_, ncenter, bs1, bs2, bs3, bs4);
         }
@@ -74,10 +74,10 @@ class TwoElectronIntegral : public ModuleBase
         /////////////////////////////////////////
         //! \copydoc SetBases
         virtual void SetBases_(int ncenter,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs1,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs2,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs3,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs4)
+                               const datastore::UIDPointer<system::BasisSet> & bs1,
+                               const datastore::UIDPointer<system::BasisSet> & bs2,
+                               const datastore::UIDPointer<system::BasisSet> & bs3,
+                               const datastore::UIDPointer<system::BasisSet> & bs4)
         {
             ModuleBase::CallPyMethod<void>("SetBases_", ncenter, bs1, bs2, bs3, bs4);
         }

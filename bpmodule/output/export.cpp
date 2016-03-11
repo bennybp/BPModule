@@ -29,7 +29,7 @@ void OutputPy_(std::ostream & os, detail::OutputType type, const std::string & f
  */
 void Output_Wrap_Output(const std::string & fmt, const std::vector<std::string> & args)
 {
-    OutputPy_(output::GetOut(), detail::OutputType::Output, fmt, args);
+    OutputPy_(std::cout, detail::OutputType::Output, fmt, args);
 }
 
 
@@ -41,7 +41,7 @@ void Output_Wrap_Output(const std::string & fmt, const std::vector<std::string> 
  */
 void Output_Wrap_Success(const std::string & fmt, const std::vector<std::string> & args)
 {
-    OutputPy_(output::GetOut(), detail::OutputType::Success, fmt, args);
+    OutputPy_(std::cout, detail::OutputType::Success, fmt, args);
 }
 
 
@@ -53,7 +53,7 @@ void Output_Wrap_Success(const std::string & fmt, const std::vector<std::string>
  */
 void Output_Wrap_Changed(const std::string & fmt, const std::vector<std::string> & args)
 {
-    OutputPy_(output::GetOut(), detail::OutputType::Changed, fmt, args);
+    OutputPy_(std::cout, detail::OutputType::Changed, fmt, args);
 }
 
 
@@ -65,7 +65,7 @@ void Output_Wrap_Changed(const std::string & fmt, const std::vector<std::string>
  */
 void Output_Wrap_Warning(const std::string & fmt, const std::vector<std::string> & args)
 {
-    OutputPy_(output::GetOut(), detail::OutputType::Warning, fmt, args);
+    OutputPy_(std::cout, detail::OutputType::Warning, fmt, args);
 }
 
 
@@ -77,7 +77,7 @@ void Output_Wrap_Warning(const std::string & fmt, const std::vector<std::string>
  */
 void Output_Wrap_Error(const std::string & fmt, const std::vector<std::string> & args)
 {
-    OutputPy_(output::GetOut(), detail::OutputType::Error, fmt, args);
+    OutputPy_(std::cout, detail::OutputType::Error, fmt, args);
 }
 
 
@@ -89,7 +89,7 @@ void Output_Wrap_Error(const std::string & fmt, const std::vector<std::string> &
  */
 void Output_Wrap_Debug(const std::string & fmt, const std::vector<std::string> & args)
 {
-    OutputPy_(output::GetOut(), detail::OutputType::Debug, fmt, args);
+    OutputPy_(std::cout, detail::OutputType::Debug, fmt, args);
 }
 
 

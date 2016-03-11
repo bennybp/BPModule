@@ -6,10 +6,6 @@
  *  \brief Classes and functions for module loading, storage, and creation
  */
 
-/*! \namespace bpmodule::basisset
- *  \brief Classes and functions for the basis set and basis functions
- */
-
 /*! \namespace bpmodule::system
  *  \brief Classes and functions for the molecules, atoms, and systems
  */

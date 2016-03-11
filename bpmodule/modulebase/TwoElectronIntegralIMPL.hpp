@@ -9,7 +9,7 @@
 #define BPMODULE_GUARD_MODULEBASE__TWOELECTRONINTEGRALIMPL_HPP_
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/basisset/BasisSet.hpp"
+#include "bpmodule/system/BasisSet.hpp"
 
 
 namespace bpmodule {
@@ -33,10 +33,10 @@ class TwoElectronIntegralIMPL : public ModuleBase
          * \param [in] ncenter The number of centers for the integrals (ie, 3-center, 2-center)
          */
         void SetBases(int ncenter,
-                      const datastore::UIDPointer<basisset::BasisSet> & bs1,
-                      const datastore::UIDPointer<basisset::BasisSet> & bs2,
-                      const datastore::UIDPointer<basisset::BasisSet> & bs3,
-                      const datastore::UIDPointer<basisset::BasisSet> & bs4)
+                      const datastore::UIDPointer<system::BasisSet> & bs1,
+                      const datastore::UIDPointer<system::BasisSet> & bs2,
+                      const datastore::UIDPointer<system::BasisSet> & bs3,
+                      const datastore::UIDPointer<system::BasisSet> & bs4)
         {
             return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::SetBases_, ncenter, bs1, bs2, bs3, bs4);
         }
@@ -44,23 +44,23 @@ class TwoElectronIntegralIMPL : public ModuleBase
 
         long Calculate(int deriv, int shell1, int shell2, int shell3, int shell4)
         {
-            return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::Calculate_, deriv, 
-                                                                                  shell1,
-                                                                                  shell2,
-                                                                                  shell3,
-                                                                                  shell4);
+            return ModuleBase::FastCallFunction(&TwoElectronIntegralIMPL::Calculate_, deriv, 
+                                                                                      shell1,
+                                                                                      shell2,
+                                                                                      shell3,
+                                                                                      shell4);
         }
 
 
         const double * GetBuf(void)
         {
-            return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::GetBuf_);
+            return ModuleBase::FastCallFunction(&TwoElectronIntegralIMPL::GetBuf_);
         }
 
 
         long GetIntegralCount(void)
         {
-            return ModuleBase::CallFunction(&TwoElectronIntegralIMPL::GetIntegralCount_);
+            return ModuleBase::FastCallFunction(&TwoElectronIntegralIMPL::GetIntegralCount_);
         }
 
 
@@ -76,10 +76,10 @@ class TwoElectronIntegralIMPL : public ModuleBase
         /////////////////////////////////////////
         //! \copydoc SetBases
         virtual void SetBases_(int ncenter,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs1,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs2,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs3,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs4) = 0;
+                               const datastore::UIDPointer<system::BasisSet> & bs1,
+                               const datastore::UIDPointer<system::BasisSet> & bs2,
+                               const datastore::UIDPointer<system::BasisSet> & bs3,
+                               const datastore::UIDPointer<system::BasisSet> & bs4) = 0;
 
 
         //! \copydoc Calculate
@@ -102,10 +102,10 @@ class TwoElectronIntegralIMPL_Py : public TwoElectronIntegralIMPL
         MODULEBASE_FORWARD_PROTECTED_TO_PY
     
         virtual void SetBases_(int ncenter,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs1,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs2,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs3,
-                               const datastore::UIDPointer<basisset::BasisSet> & bs4)
+                               const datastore::UIDPointer<system::BasisSet> & bs1,
+                               const datastore::UIDPointer<system::BasisSet> & bs2,
+                               const datastore::UIDPointer<system::BasisSet> & bs3,
+                               const datastore::UIDPointer<system::BasisSet> & bs4)
 
         {
             return CallPyOverride<void>("SetBases_", ncenter, bs1, bs2, bs3, bs4);

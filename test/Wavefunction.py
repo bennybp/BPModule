@@ -21,13 +21,13 @@ def Run():
         tester = bp.testing.Tester("Testing Wavefunction")
         tester.PrintHeader()
 
-        mol = bp.system.Molecule()
+        mol = bp.system.System()
         mol.AddAtom(1, [0.0, 0.0, 0.0] )
         mol.AddAtom(1, [1.0, 0.0, 0.0] )
         mol.AddAtom(8, [0.0, 1.0, 0.0] )
 
 
-        bs = bp.basisset.SimpleCreator("/home/ben/programming/BPModule/install/basis/sto-3g.gbs", mol);
+        bs = bp.system.CreateSimpleBasisSet("/home/ben/programming/BPModule/install/basis/sto-3g.gbs", mol);
 
         wfn = bp.datastore.Wavefunction()
         wfn.basis.Set(bs)

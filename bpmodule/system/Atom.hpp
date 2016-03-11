@@ -6,17 +6,20 @@
 
 #ifndef BPMODULE_GUARD_SYSTEM__ATOM_HPP_
 #define BPMODULE_GUARD_SYSTEM__ATOM_HPP_
+#include <iostream>
+#include <set>
+#include <map>
 
-#include "bpmodule/math/Point.hpp"
-#include "bpmodule/basisset/BasisShellInfo.hpp"
-
+#include "bpmodule/system/CoordType.hpp"
+#include "bpmodule/system/BasisShellInfo.hpp"
+#include "bpmodule/util/StringUtil.hpp"
 
 namespace bpmodule {
 namespace system {
 
 
 
-/*! \brief A center in a molecule
+/*! \brief A center in a system
  *
  * Atoms contain a unique index, which must be set on construction.
  * This would generally be the input ordering, but is otherwise arbitrary.
@@ -46,25 +49,38 @@ class Atom : public math::Point
         double multiplicity_;   //!< Electronic multiplicity
         double nelectrons_;     //!< Number of assigned electrons
 
-        basisset::BasisShellInfoMap bshells_; //!< Basis functions associated with this atom/center
+
+        //! Information stored about the basis set on the atom
+        struct BasisInfo_
+        {
+            // Stores string that are unique when whitespace is trimmed and
+            // string are compared case insensitive
+            typedef std::set<std::string, util::CaseInsensitiveTrimCompare> SetType_;
+
+            SetType_ description;             //!< Description of basis
+            BasisShellInfoVector  shells;     //!< Actual basis
+
+            bool operator==(const BasisInfo_ & rhs) const
+            {
+                // compare case-insensitive and trimmed strings
+                // note we have to check sizes first for std::equal 
+                return (
+                        shells == rhs.shells &&
+                        description.size() == rhs.description.size() &&
+                        std::equal(description.begin(), description.end(),
+                                   rhs.description.begin(), util::CaseInsensitiveTrimCompare())
+                       );
+            }
+        };
+
+        std::map<std::string, BasisInfo_> bshells_; //!< Basis functions associated with this atom/center
 
     public:
-        typedef math::Point::CoordType CoordType;
-
         /*! \brief Constructor
          */
-        Atom(size_t idx,  CoordType xyz, int Z, int isonum,
-             double charge, double multiplicity, double nelectrons)
-        {
-            // we do it this way in case we change where the info is stored
-            idx_ = idx;
-            SetCoords(xyz);
-            SetZ(Z);
-            SetIsonum(isonum);
-            SetCharge(charge);
-            SetMultiplicity(multiplicity);
-            SetNElectrons(nelectrons);
-        }
+        Atom(size_t idx,  CoordType xyz, int Z, int isonum, double mass,
+             double isotopemass, double charge, double multiplicity,
+             double nelectrons);
 
 
         Atom(const Atom &)             = default;
@@ -218,45 +234,83 @@ class Atom : public math::Point
             return bshells_.count(label);
         }
 
-        /*! \brief Get all basis set information for this atom
-         * 
-         * Returns all the shells for all the different assigned basis sets
+        /*! \brief Number of shells with this label on this atom
          */
-        basisset::BasisShellInfoMap GetAllShells(void) const
+        int NShell(const std::string & label) const
         {
-            return bshells_;
+            if(!HasShells(label))
+                return 0;
+            return bshells_.at(label).shells.size();
         }
+
+
+        /*! \brief Get a set of all the basis set labels on this atom
+         */
+        std::set<std::string> GetAllBasisLabels(void) const
+        {
+            std::set<std::string> ret;
+            for(const auto & it : bshells_)
+                ret.insert(it.first);
+            return ret;
+        }
+
+        /*! \brief Get the description of the shells in a basis set
+         * 
+         * Typically used to store the basis set name (6-31G, etc)
+         */
+        std::string GetBasisDescription(const std::string & label) const
+        {
+            if(!HasShells(label))
+                return "none";
+            else
+                return util::Join(bshells_.at(label).description, ", ");
+        }
+
 
         /*! \brief Get information for a particular assigned basis set
          * 
          * If a basis set with the given label doesn't exist on this center, an
          * empty BasisShellInfoVector is returned
          */
-        basisset::BasisShellInfoVector GetShells(const std::string & label) const
+        BasisShellInfoVector GetShells(const std::string & label) const
         {
             if(HasShells(label))
-                return bshells_.at(label);
+                return bshells_.at(label).shells;
             else
-                return basisset::BasisShellInfoVector();
+                return BasisShellInfoVector();
         }
 
         /*! \brief Set all the shells for a basis set with a given label
          * 
          * Existing basis set information (for that label) is overwritten
          */
-        void SetShells(const std::string & label, const basisset::BasisShellInfoVector & shells)
+        void SetShells(const std::string & label, const std::string & shelldesc, const BasisShellInfoVector & shells)
         {
-            bshells_[label] = shells;
+            // Braces around shelldesc = convert to a set of strings
+            bshells_[label] = BasisInfo_{ {shelldesc}, shells};
         }
+
 
         /*! \brief Append a shell to a basis set with a given label
          */
-        void AddShell(const std::string & label, const basisset::BasisShellInfo & shell)
+        void AddShell(const std::string & label, const std::string & shelldesc, const BasisShellInfo & shell)
         {
-            bshells_[label].push_back(shell);
+            bshells_[label].shells.push_back(shell);
+            bshells_[label].description.insert(shelldesc);
         }
 
+
+
         ///@}
+
+
+        /*! \name Printing */
+        ///@{
+
+        void Print(std::ostream & os, size_t level);
+
+        ///@}
+
 
 };
 
@@ -268,10 +322,10 @@ std::ostream& operator<<(std::ostream& os,const Atom& A);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z);
+Atom CreateAtom(size_t idx, CoordType xyz, int Z);
 
 
-/*! \copydocs CreateAtom(size_t,size_t, Atom::CoordType, int) */
+/*! \copydocs CreateAtom(size_t idx, size_t,size_t, CoordType, int) */
 Atom CreateAtom(size_t idx, double x, double y, double z, int Z);
 
 
@@ -280,10 +334,10 @@ Atom CreateAtom(size_t idx, double x, double y, double z, int Z);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(size_t idx, Atom::CoordType xyz, int Z, int isonum);
+Atom CreateAtom(size_t idx, CoordType xyz, int Z, int isonum);
 
 
-/*! \copydocs CreateAtom(size_t,size_t, Atom::CoordType, int, int) */
+/*! \copydocs CreateAtom(size_t idx, size_t,size_t, CoordType, int, int) */
 Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum);
 
 

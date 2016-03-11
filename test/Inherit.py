@@ -29,13 +29,13 @@ def Run(mm):
 
 
       # Create the molecule/basis set
-      mol = bp.system.Molecule()
+      mol = bp.system.System()
       mol.AddAtom(1, [0.0, 0.0, 0.0] )
       mol.AddAtom(1, [1.0, 0.0, 0.0] )
       mol.AddAtom(8, [0.0, 1.0, 0.0] )
 
 
-      bs = bp.basisset.SimpleCreator("/home/ben/programming/BPModule/install/basis/sto-3g.gbs", mol);
+      bs = bp.system.CreateSimpleBasisSet("/home/ben/programming/BPModule/install/basis/sto-3g.gbs", mol);
 
       bp.output.Output("Number of shells: %1%\n", bs.NShell())
       for i in range(0, bs.NShell()):

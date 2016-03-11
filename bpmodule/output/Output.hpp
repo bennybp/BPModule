@@ -18,7 +18,6 @@ namespace bpmodule {
 namespace output {
 
 
-
 namespace detail {
 
 /*! The type of information being output
@@ -47,9 +46,138 @@ enum class OutputType
  */
 void Output_(std::ostream & out, OutputType type, const std::string & str);
 
+
+
+
+/*! \brief Stream buffer that tees output to a string
+ *
+ * Output will go to the streambuf, as well as the given string
+ */ 
+class TeeBufToString : public std::streambuf
+{
+    public:
+        /*! \brief Constructor
+         *
+         * \param [in] sb The streambuf to tee from
+         * \param [in] str The string to copy output to
+         */ 
+        TeeBufToString(std::streambuf * sb, std::string * str) noexcept
+            : sb_(sb), str_(str)
+        { }
+
+        TeeBufToString & operator=(TeeBufToString &&)      = default;
+        TeeBufToString(TeeBufToString &&)                  = default;
+        TeeBufToString(const TeeBufToString &)             = delete;
+        TeeBufToString & operator=(const TeeBufToString &) = delete;
+
+    protected:
+        virtual std::streamsize xsputn(const char * s, std::streamsize n)
+        {
+            std::streamsize n1 = sb_->sputn(s, n);
+            str_->append(s, n);
+    
+            return n1;
+        }   
+        
+        virtual int overflow(int c)
+        {
+            if (c == EOF)
+            {
+                return !EOF;
+            }   
+            else
+            {
+                str_->append(1, static_cast<char>(c));
+                return sb_->sputc(static_cast<char>(c));
+            }   
+        }   
+        
+        
+        virtual int sync()
+        {
+            return sb_->pubsync();
+        }   
+        
+    private:
+        std::streambuf * sb_;
+        std::string * str_;
+};      
+
+
+/*! \brief Guards a change to an ostream buffer via RAII
+ *
+ * The internal buffer of the given ostream is changed.
+ * On destruction, the stream is given its original buffer back.
+ */
+class OstreamBufGuard
+{
+    public:
+        /*! \brief Constructor
+         *
+         * \param [in] os The stream to manupulate
+         * \param [in] str The buffer to use in \p os
+         */ 
+        OstreamBufGuard(std::ostream * os, std::streambuf * newbuf) noexcept
+            : os_(os), origbuf_(os->rdbuf())
+        {
+            os_->rdbuf(newbuf);
+        }
+
+        /*! \brief Sets the buffer of the ostream to its original buffer
+         */
+        virtual ~OstreamBufGuard()
+        {
+            os_->rdbuf(origbuf_);
+        }
+
+        OstreamBufGuard & operator=(OstreamBufGuard &&)      = default;
+        OstreamBufGuard(OstreamBufGuard &&)                  = default;
+        OstreamBufGuard(const OstreamBufGuard &)             = delete;
+        OstreamBufGuard & operator=(const OstreamBufGuard &) = delete;
+
+    private:
+        std::ostream * os_;
+        std::streambuf * origbuf_;
+};
+
+
 } // close namespace detail
 
 
+
+/*! \brief Tees output of a stream to a string, and resets the buffer on destruction
+ *
+ * The buffer of os is changed to one that tees output to the given string. 
+ * On destruction, the stream is given its original buffer back.
+ */
+class StringTeeGuard
+{
+    public:
+        /*! \brief Constructor
+         *
+         * \param [in] os The stream to tee from
+         * \param [in] str The string to copy output to
+         */ 
+        StringTeeGuard(std::ostream * os, std::string * str) noexcept
+            : tee_(os->rdbuf(), str),
+              guard_(os, &tee_)
+        {
+        }
+
+
+        /*! \brief Sets the buffer of the ostream to its original buffer
+         */
+        ~StringTeeGuard() = default; // everything handled in guard_ destructor
+
+        StringTeeGuard & operator=(StringTeeGuard &&)      = default;
+        StringTeeGuard(StringTeeGuard &&)                  = default;
+        StringTeeGuard(const StringTeeGuard &)             = delete;
+        StringTeeGuard & operator=(const StringTeeGuard &) = delete;
+
+    private:
+        detail::TeeBufToString tee_;
+        detail::OstreamBufGuard guard_;
+};
 
 
 
@@ -64,6 +192,8 @@ bool Valid(void);
 
 /*! \brief Sets the output to stdout
  *
+ * Will reset any string tees
+ *
  * \see \ref developer_output_page
  */
 void SetOut_Stdout(void);
@@ -71,12 +201,16 @@ void SetOut_Stdout(void);
 
 /*! \brief Sets the output to stderr
  *
+ * Will reset any string tees
+ *
  * \see \ref developer_output_page
  */
 void SetOut_Stderr(void);
 
 
 /*! \brief Sets the output to a file
+ *
+ * Will reset any string tees
  *
  * \see \ref developer_output_page
  *
@@ -117,15 +251,15 @@ void SetDebug(bool debug) noexcept;
 void Flush(void);
 
 
-/*! \brief Get the current output stream
+/*! \brief Tees output to the given string
  *
- * \return Reference to the current output stream
+ * A guard object is returned. On destruction, this object
+ * sets the output back to its original state.
+ *
+ * The given string must exist until the returned object is destructed,
+ * for obvious reasons.
  */
-std::ostream & GetOut(void);
-
-
-
-
+StringTeeGuard TeeToString(std::string * str);
 
 
 
@@ -170,7 +304,7 @@ void Output(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void Output(const std::string & fmt, const Targs&... Fargs)
 {
-    Output(GetOut(), fmt, Fargs...);
+    Output(std::cout, fmt, Fargs...);
 }
 
 
@@ -196,7 +330,7 @@ void Changed(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void Changed(const std::string & fmt, const Targs&... Fargs)
 {
-    Changed(GetOut(), fmt, Fargs...);
+    Changed(std::cout, fmt, Fargs...);
 }
 
 
@@ -221,7 +355,7 @@ void Error(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void Error(const std::string & fmt, const Targs&... Fargs)
 {
-    Error(GetOut(), fmt, Fargs...);
+    Error(std::cout, fmt, Fargs...);
 }
 
 
@@ -245,7 +379,7 @@ void Warning(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void Warning(const std::string & fmt, const Targs&... Fargs)
 {
-    Warning(GetOut(), fmt, Fargs...);
+    Warning(std::cout, fmt, Fargs...);
 }
 
 
@@ -270,7 +404,7 @@ void Success(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void Success(const std::string & fmt, const Targs&... Fargs)
 {
-    Success(GetOut(), fmt, Fargs...);
+    Success(std::cout, fmt, Fargs...);
 }
 
 
@@ -296,7 +430,7 @@ void Debug(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void Debug(const std::string & fmt, const Targs&... Fargs)
 {
-    Debug(GetOut(), fmt, Fargs...);
+    Debug(std::cout, fmt, Fargs...);
 }
 
 

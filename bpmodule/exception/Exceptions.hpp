@@ -254,7 +254,7 @@ class ModuleLoadException : public GeneralException
 /*! \brief An exception thrown when there is a problem with
  *         molecule/system operations
  */
-class MoleculeException : public GeneralException
+class SystemException : public GeneralException
 {
     public:
         using GeneralException::GeneralException;
@@ -285,16 +285,6 @@ class PythonCallException : public GeneralException
  *         converting to and from python data types
  */
 class PythonConvertException : public GeneralException
-{
-    public:
-        using GeneralException::GeneralException;
-};
-
-
-/*! \brief An exception thrown when there is a problem with
- *         molecules, systems, etc
- */
-class SystemException : public GeneralException
 {
     public:
         using GeneralException::GeneralException;

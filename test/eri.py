@@ -16,25 +16,24 @@ import bpmodule as bp
 
 def Run(mm):
     try:
-        bspath = os.path.join(thispath, "../", "basis")
-        bspath = os.path.realpath(bspath)
-        bstype = bp.basisset.ShellType.Gaussian
-  
         # Load the python modules
         #             supermodule      module name      key
         mm.LoadModule("LibERD",        "LibERD_ERI",   "ERI")
         mm.PrintInfo()
         mm.SanityCheck()
   
-  
+        atoms = [ bp.system.CreateAtom(0, [ 0.000000000000, -0.143225816552,  0.000000000000], 8),
+                  bp.system.CreateAtom(1, [ 1.638036840407,  1.136548822547, -0.000000000000], 1),
+                  bp.system.CreateAtom(2, [-1.638036840407,  1.136548822547, -0.000000000000], 1)
+                ]  
+
         molu = bp.system.AtomSetUniverse()
-        molu.append(bp.system.CreateAtom(0, [ 0.000000000000, -0.143225816552,  0.000000000000], 8))
-        molu.append(bp.system.CreateAtom(1, [ 1.638036840407,  1.136548822547, -0.000000000000], 1))
-        molu.append(bp.system.CreateAtom(2, [-1.638036840407,  1.136548822547, -0.000000000000], 1))
-        mol = bp.system.Molecule(molu, True)
-  
-        molwithbs = bp.basisset.SimpleCreator(os.path.join(bspath, "sto-3g.gbs"), mol, bstype, "primary");
-        bs = molwithbs.GetBasisSet("primary")
+        for a in atoms:
+            molu.append(a)
+
+        mol = bp.system.System(molu, True)
+        mol = bp.system.ApplySingleBasis(bp.system.ShellType.Gaussian, "primary", "sto-3g", mol)
+        bs = mol.GetBasisSet("primary")
         bs.Print()
   
   

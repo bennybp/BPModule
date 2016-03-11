@@ -9,7 +9,7 @@
 #define BPMODULE_GUARD_MATH__MATHSET_HPP_
 
 #include <vector> //For default set container
-#include <algorithm> //For set operations
+//#include <algorithm> //For set operations
 #include "bpmodule/exception/Assert.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/math/Universe.hpp"

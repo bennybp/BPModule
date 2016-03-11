@@ -30,7 +30,6 @@ from . import math
 from . import tensor
 from . import datastore
 from . import system
-from . import basisset
 from . import modulebase
 from . import modulemanager
 
@@ -47,6 +46,17 @@ sys.setdlopenflags(olddl)
 from .ModuleCheck import *
 from .ModuleAdministrator import *
 
+
+
+##########################################
+# Set some paths
+##########################################
+thispath = os.path.dirname(os.path.realpath(__file__))
+toppath = os.path.realpath(os.path.join(thispath, "../../"))
+
+bpmodule_paths = { "base": thispath,
+                   "basis": [ os.path.join(toppath, "basis") ]
+                 }
 
 
 def Init(argv, out = "stdout", color = True, debug = False,nthreads=1):

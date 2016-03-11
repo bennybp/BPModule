@@ -1,10 +1,10 @@
-#ifndef BPMODULE_GUARD_BASISSET__AMCONVERT_HPP_
-#define BPMODULE_GUARD_BASISSET__AMCONVERT_HPP_
+#ifndef BPMODULE_GUARD_SYSTEM__AMCONVERT_HPP_
+#define BPMODULE_GUARD_SYSTEM__AMCONVERT_HPP_
 
 #include <string>
 
 namespace bpmodule {
-namespace basisset {
+namespace system {
 
 
 /*! \brief Converts a string ("s", "p", etc) to an integer angular momentum
@@ -27,7 +27,7 @@ std::string AMToString(int am);
 
 
 
-} // close namespace basisset
+} // close namespace system
 } // close namespace bpmodule
 
 #endif

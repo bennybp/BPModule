@@ -9,12 +9,12 @@
 #define BPMODULE_GUARD_MODULEBASE__SYSTEMFRAGMENTER_HPP_
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/system/Molecule.hpp"
+#include "bpmodule/system/System.hpp"
 
 namespace bpmodule {
 namespace modulebase {
 
-/*! \brief A module that fragments a molecule
+/*! \brief A module that fragments a system
  */
 class SystemFragmenter : public ModuleBase
 {
@@ -27,9 +27,9 @@ class SystemFragmenter : public ModuleBase
         { }
 
 
-        /*! \brief Fragment the molecule
+        /*! \brief Fragment the system
          */
-        system::MoleculeMap Fragmentize(const system::Molecule & mol)
+        system::SystemMap Fragmentize(const system::System & mol)
         {
             return ModuleBase::CallFunction(&SystemFragmenter::Fragmentize_, mol);
         }
@@ -42,7 +42,7 @@ class SystemFragmenter : public ModuleBase
          * 
          * \note To be implemented by derived classes
          */ 
-        virtual system::MoleculeMap Fragmentize_(const system::Molecule & mol) = 0;
+        virtual system::SystemMap Fragmentize_(const system::System & mol) = 0;
 };
 
 
@@ -56,9 +56,9 @@ class SystemFragmenter_Py : public SystemFragmenter
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
     
-        virtual system::MoleculeMap Fragmentize_(const system::Molecule & mol)
+        virtual system::SystemMap Fragmentize_(const system::System & mol)
         {
-            return CallPyOverride<system::MoleculeMap>("Fragmentize_", mol);
+            return CallPyOverride<system::SystemMap>("Fragmentize_", mol);
         }
 
 };

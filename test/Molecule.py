@@ -23,7 +23,7 @@ def PrintMol(mol):
 def Run():
     try:
 
-        tester = bp.testing.Tester("Testing Molecule class")
+        tester = bp.testing.Tester("Testing System class")
         tester.PrintHeader()
 
 
@@ -47,7 +47,7 @@ def Run():
         molu.append(bp.system.CreateAtom(13, [ 0.992704533138,  3.669971842687,  1.294083033167 ], 1))
 
 
-        mol = bp.system.Molecule(molu, True)
+        mol = bp.system.System(molu, True)
         PrintMol(mol)
 
         mol2 = mol.Translate( [ 2.0, 3.0, 4.0 ] )
