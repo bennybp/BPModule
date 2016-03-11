@@ -321,10 +321,10 @@ void BasisSet::Print(void) const
 {
     int nshell = NShell();
 
-    output::Output("Basis set with %1% shells\n", nshell);
-    output::Output("NCart = %1% , MaxAM = %2%\n", NCartesian(), MaxAM());
-    output::Output("MaxNCart = %1% , MaxNPrim = %2%\n", MaxNCartesian(), MaxNPrim());
-    output::Debug("Space usage: XYZ: %1%/%2%  Alpha: %3%/%4%  Coef %5%/%6%\n", xyz_pos_, max_nxyz_,
+    output::GlobalOutput("Basis set with %1% shells\n", nshell);
+    output::GlobalOutput("NCart = %1% , MaxAM = %2%\n", NCartesian(), MaxAM());
+    output::GlobalOutput("MaxNCart = %1% , MaxNPrim = %2%\n", MaxNCartesian(), MaxNPrim());
+    output::GlobalDebug("Space usage: XYZ: %1%/%2%  Alpha: %3%/%4%  Coef %5%/%6%\n", xyz_pos_, max_nxyz_,
                                                                                alpha_pos_, max_nalpha_,
                                                                                coef_pos_, max_ncoef_);
 
@@ -332,17 +332,17 @@ void BasisSet::Print(void) const
     for(int i = 0; i < nshell; i++)
     {
         const auto & shell = Shell(i);
-        output::Output("Shell %1%  AM=%2%  Cart=%3%  NPrim=%4% NGen=%5%\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim(), shell.NGeneral());
-        output::Output("Coordinates: %1% %2% %3%\n", shell.GetCoords()[0], shell.GetCoords()[1], shell.GetCoords()[2]);
+        output::GlobalOutput("Shell %1%  AM=%2%  Cart=%3%  NPrim=%4% NGen=%5%\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim(), shell.NGeneral());
+        output::GlobalOutput("Coordinates: %1% %2% %3%\n", shell.GetCoords()[0], shell.GetCoords()[1], shell.GetCoords()[2]);
         for(int j = 0; j < shell.NPrim(); ++j)
         {
-            output::Output("    %1%", shell.GetAlpha(j));
+            output::GlobalOutput("    %1%", shell.GetAlpha(j));
             for(int n = 0; n < shell.NGeneral(); n++)
-                output::Output("    %1%", shell.GetCoef(n, j));
-            output::Output("\n");
+                output::GlobalOutput("    %1%", shell.GetCoef(n, j));
+            output::GlobalOutput("\n");
         }
     }
-    output::Output("\n");
+    output::GlobalOutput("\n");
 }
 
 

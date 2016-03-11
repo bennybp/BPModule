@@ -122,25 +122,25 @@ void ModuleManager::PrintInfo(void) const
 void ModuleManager::TestAll(void)
 {
     //! \todo needs rewriting and cleanup
-    output::Debug("Testing all modules\n");
+    output::GlobalDebug("Testing all modules\n");
     for(const auto & it : store_)
     {
-        output::Debug("Testing %1% (%2%)...\n", it.first, it.second.mi.name);
+        output::GlobalDebug("Testing %1% (%2%)...\n", it.first, it.second.mi.name);
 
         if(!it.second.mi.options.AllReqSet())
         {
-            output::Error("Error - module %1% [key %2%]\" failed options test - required options are missing", it.second.mi.name, it.first);
+            output::GlobalError("Error - module %1% [key %2%]\" failed options test - required options are missing", it.second.mi.name, it.first);
 
             auto missingreq = it.second.mi.options.AllMissingReq();
             for(const auto & optit : missingreq)
-                output::Error("    Missing \"%1%\"\n", optit);
+                output::GlobalError("    Missing \"%1%\"\n", optit);
         }
 
 
-        output::Debug("Test of %1% OK\n", it.first);
+        output::GlobalDebug("Test of %1% OK\n", it.first);
     }
 
-    output::Debug("Testing getting of modules\n");
+    output::GlobalDebug("Testing getting of modules\n");
     for(const auto & it : keymap_)
     {
         try {
@@ -148,13 +148,13 @@ void ModuleManager::TestAll(void)
         }
         catch(std::exception & ex)
         {
-            output::Error("Error - module %1% [key %2%]\" failed test loading!\n", it.second, it.first);
+            output::GlobalError("Error - module %1% [key %2%]\" failed test loading!\n", it.second, it.first);
             throw GeneralException(ex, "location", "TestAll");
         }
     }
 
 
-    output::Debug("Testing done!\n");
+    output::GlobalDebug("Testing done!\n");
 }
 
 

@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #include <boost/format.hpp>
 

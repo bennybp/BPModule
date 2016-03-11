@@ -155,6 +155,15 @@ class ModuleBase
 
 
     protected:
+        /*! \brief Out tee string buffer
+         */
+        output::TeeBufToString tbts_;
+
+        /*! \brief Our output stream
+         */
+        output::OutputStream out;
+
+
         /*! \brief Get the internal ModuleManager that is in charge of this module
          *
          * \throw std::logic_error if it hasn't been set
@@ -194,10 +203,6 @@ class ModuleBase
             // So you think you like pointers and templates?
             //////////////////////////////////////////////////////////////////
 
-            // Tee the output to the graph node
-            // (Will stop when teeguard is destructed)
-            auto teeguard = output::TeeToString(&GraphData().output);
-
             try {
                 static_assert(std::is_base_of<ModuleBase, P>::value, "Cannot call function of unrelated class");
 
@@ -231,8 +236,6 @@ class ModuleBase
          * Meant to be used to call virtual functions that are
          * implemented in a the derived class.
          *
-         * This version sets up the output tee and does some other processing
-         *
          * \tparam R Return type
          * \tparam P Derived class type
          * \tparam Targs1 Arguments types for the function
@@ -244,10 +247,6 @@ class ModuleBase
         template<typename R, typename P, typename ... Targs1, typename ... Targs2>
         R CallFunction( R(P::*func)(Targs1...), Targs2 &&... args)
         {
-            // Tee the output to the graph node
-            // (Will stop when teeguard is destructed)
-            auto teeguard = output::TeeToString(&GraphData().output);
-
             return FastCallFunction<R>(func, std::forward<Targs1>(args)...);
         }
 
@@ -259,10 +258,6 @@ class ModuleBase
         template<typename R, typename ... Targs>
         R CallPyOverride(const char * name, Targs &&... args)
         {
-            // Tee the output to the graph node
-            // (Will stop when teeguard is destructed)
-            auto teeguard = output::TeeToString(&GraphData().output);
-
             pybind11::gil_scoped_acquire gil;
             pybind11::function overload = pybind11::get_overload(this, name);
             if(overload)
@@ -374,7 +369,8 @@ class ModuleBase
  *         can access them
  */
 #define MODULEBASE_FORWARD_PROTECTED_TO_PY \
-    using ModuleBase::Cache; 
+    using ModuleBase::Cache; \
+    using ModuleBase::out;
 
 
 } // close namespace modulebase

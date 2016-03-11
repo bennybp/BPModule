@@ -6,9 +6,7 @@ from .testing import *
 # Tester class
 from .tester import *
 
-# For output
-from bpmodule.output import Output, Error, Warning, Success, Debug
-
+from bpmodule.output import GlobalOutput, GlobalError, GlobalSuccess, GlobalDebug
 
 ##################
 # For testing on the python side

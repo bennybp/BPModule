@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-
+#include <vector>
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/python/Pybind11_stl.hpp"
@@ -13,85 +13,6 @@
 namespace bpmodule {
 namespace output {
 namespace export_python {
-
-/*! \brief Print from a vector of strings (converted from python)
- */
-void OutputPy_(std::ostream & os, detail::OutputType type, const std::string & fmt, const std::vector<std::string> & args)
-{
-    detail::Output_(os, type, util::FormatString(fmt, args));
-}
-
-
-/*! \brief Wrap general output for use from python
- *
- * \param [in] fmt Format string to use
- * \param [in] args Arguments to the format string
- */
-void Output_Wrap_Output(const std::string & fmt, const std::vector<std::string> & args)
-{
-    OutputPy_(std::cout, detail::OutputType::Output, fmt, args);
-}
-
-
-
-/*! \brief Wrap 'success' output for use from python
- *
- * \param [in] fmt Format string to use
- * \param [in] args Arguments to the format string
- */
-void Output_Wrap_Success(const std::string & fmt, const std::vector<std::string> & args)
-{
-    OutputPy_(std::cout, detail::OutputType::Success, fmt, args);
-}
-
-
-
-/*! \brief Wrap 'changed' output for use from python
- *
- * \param [in] fmt Format string to use
- * \param [in] args Arguments to the format string
- */
-void Output_Wrap_Changed(const std::string & fmt, const std::vector<std::string> & args)
-{
-    OutputPy_(std::cout, detail::OutputType::Changed, fmt, args);
-}
-
-
-
-/*! \brief Wrap 'warning' output for use from python
- *
- * \param [in] fmt Format string to use
- * \param [in] args Arguments to the format string
- */
-void Output_Wrap_Warning(const std::string & fmt, const std::vector<std::string> & args)
-{
-    OutputPy_(std::cout, detail::OutputType::Warning, fmt, args);
-}
-
-
-
-/*! \brief Wrap 'error' output for use from python
- *
- * \param [in] fmt Format string to use
- * \param [in] args Arguments to the format string
- */
-void Output_Wrap_Error(const std::string & fmt, const std::vector<std::string> & args)
-{
-    OutputPy_(std::cout, detail::OutputType::Error, fmt, args);
-}
-
-
-
-/*! \brief Wrap 'debug' output for use from python
- *
- * \param [in] fmt Format string to use
- * \param [in] args Arguments to the format string
- */
-void Output_Wrap_Debug(const std::string & fmt, const std::vector<std::string> & args)
-{
-    OutputPy_(std::cout, detail::OutputType::Debug, fmt, args);
-}
-
 
 
 ////////////////////////////
@@ -102,6 +23,28 @@ PYBIND11_PLUGIN(output)
 {
     pybind11::module m("output", "Output functionality");
 
+    // Enumeration for output types
+    pybind11::enum_<OutputType>(m, "OutputType")
+    .value("Output", OutputType::Output)
+    .value("Changed", OutputType::Changed)
+    .value("Error", OutputType::Error)
+    .value("Warning", OutputType::Warning)
+    .value("Success", OutputType::Success)
+    .value("Debug", OutputType::Debug)
+    ;
+
+
+    pybind11::class_<OutputStream>(m, "OutputStream")
+    .def("Output_",  &OutputStream::Output<std::vector<std::string>>)
+    .def("Changed_", &OutputStream::Changed<std::vector<std::string>>)
+    .def("Error_",   &OutputStream::Error<std::vector<std::string>>)
+    .def("Warning_", &OutputStream::Warning<std::vector<std::string>>)
+    .def("Success_", &OutputStream::Success<std::vector<std::string>>)
+    .def("Debug_",   &OutputStream::Debug<std::vector<std::string>>)
+    ;
+    
+
+
     m.def("SetOut_Stdout", SetOut_Stdout);
     m.def("SetOut_Stderr", SetOut_Stderr);
     m.def("SetOut_File", SetOut_File);
@@ -111,12 +54,13 @@ PYBIND11_PLUGIN(output)
     m.def("Flush", Flush);
 
     // printing to output
-    m.def("Output_", Output_Wrap_Output);
-    m.def("Success_", Output_Wrap_Success);
-    m.def("Warning_", Output_Wrap_Warning);
-    m.def("Error_", Output_Wrap_Error);
-    m.def("Changed_", Output_Wrap_Changed);
-    m.def("Debug_", Output_Wrap_Debug);
+    m.def("GlobalOutput_",   output::GlobalOutput<std::vector<std::string>>); 
+    m.def("GlobalChanged_",  output::GlobalChanged<std::vector<std::string>>); 
+    m.def("GlobalError_",    output::GlobalError<std::vector<std::string>>); 
+    m.def("GlobalWarning_",  output::GlobalWarning<std::vector<std::string>>); 
+    m.def("GlobalSuccess_",  output::GlobalSuccess<std::vector<std::string>>); 
+    m.def("GlobalDebug_",    output::GlobalDebug<std::vector<std::string>>); 
+    ;
 
     return m.ptr();
 }

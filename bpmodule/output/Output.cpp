@@ -69,21 +69,14 @@ void SetOut_Stderr(void)
 
 
 
-StringTeeGuard TeeToString(std::string * str)
-{
-    return StringTeeGuard(&std::cout, str); 
-}
-
-
-
 bool SetOut_File(const std::string & filepath)
 {
     file_ = std::unique_ptr<std::ofstream>(new std::ofstream(filepath.c_str()));
     if(!file_->is_open())
     {
         SetOut_Stdout();
-        Error("Error opening file: %1%", filepath);
-        Error("Using stdout instead!");
+        GlobalError("Error opening file: %1%", filepath);
+        GlobalError("Using stdout instead!");
         return false;
     }
     else
@@ -115,7 +108,7 @@ void SetColor(bool usecolor) noexcept
 void SetDebug(bool debug) noexcept
 {
     debug_ = debug;
-    Debug("Debugging now: %1%\n", debug ? "On" : "Off");
+    GlobalDebug("Debugging now: %1%\n", debug ? "On" : "Off");
 }
 
 

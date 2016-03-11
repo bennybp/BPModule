@@ -15,15 +15,15 @@ namespace parallel {
 
 void Init(void)
 {
-    output::Output("Calling MPI Init");
+    output::GlobalOutput("Calling MPI Init");
     madness::initialize(*(util::GetArgc()), *(util::GetArgv()));
-    output::Output("Initialized Process %1% of %2%\n", GetProcID(), GetNProc());
+    output::GlobalOutput("Initialized Process %1% of %2%\n", GetProcID(), GetNProc());
 }
 
 
 void Finalize(void)
 {
-    output::Output("Finalizing Process %1% of %2%\n", GetProcID(), GetNProc());
+    output::GlobalOutput("Finalizing Process %1% of %2%\n", GetProcID(), GetNProc());
     madness::finalize();
 }
 

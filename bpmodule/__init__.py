@@ -95,10 +95,10 @@ def Init(argv, out = "stdout", color = True, debug = False):
 
 
 def Finalize():
-  output.Output("Finalizing tensors\n")
+  output.GlobalOutput("Finalizing tensors\n")
   tensor.Finalize()
 
-  output.Output("Finalizing parallelization\n")
+  output.GlobalOutput("Finalizing parallelization\n")
   parallel.Finalize()
 
   util.ClearCmdline()

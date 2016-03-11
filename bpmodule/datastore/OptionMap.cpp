@@ -122,23 +122,23 @@ void OptionMap::Validate(void) const
     bool throwme = false;
 
     if(omi.toplevel.size() || omi.optissues.size())
-        output::Warning("OptionMap has some issues\n");
+        output::GlobalWarning("OptionMap has some issues\n");
 
     if(omi.toplevel.size())
     {
         throwme = true;
-        output::Warning("    OptionMap top level issues:\n");
+        output::GlobalWarning("    OptionMap top level issues:\n");
         for(const auto & it : omi.toplevel)
-            output::Warning("        %1%", it);
+            output::GlobalWarning("        %1%", it);
     }
     if(omi.optissues.size())
     {
-        output::Warning("    Individual option issues:\n");
+        output::GlobalWarning("    Individual option issues:\n");
         for(const auto & it : omi.optissues)
         {
-            output::Warning("        %1%\n", it.first);
+            output::GlobalWarning("        %1%\n", it.first);
             for(const auto & it2 : it.second)
-                output::Warning("            %1%\n", it2);
+                output::GlobalWarning("            %1%\n", it2);
         }
         throwme = true;
     }
@@ -146,7 +146,7 @@ void OptionMap::Validate(void) const
     if(throwme)
     {
         if(expert_)
-            output::Warning("Expert mode is set for the OptionMap. You're on you're own\n");
+            output::GlobalWarning("Expert mode is set for the OptionMap. You're on you're own\n");
         else
             throw exception::OptionException("OptionMap is in an invalid state. See above for errors",
                                               "modulekey", modulekey_);
@@ -286,16 +286,16 @@ void OptionMap::Print(void) const
     size_t nopt = Size();
     if(nopt > 0)
     {
-        Output("\n");
+        GlobalOutput("\n");
         std::string s20(20, '-');
         std::string s10(10, '-');
-        Output("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", "Option", "Type", "Value", "Default", "Required", "Description");
-        Output("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", s20, s20, s20, s20, s10, s20);
+        GlobalOutput("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", "Option", "Type", "Value", "Default", "Required", "Description");
+        GlobalOutput("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", s20, s20, s20, s20, s10, s20);
 
         for(const auto & it : opmap_)
             it.second->Print();
     }
-    Output("\n");
+    GlobalOutput("\n");
 }
 
 

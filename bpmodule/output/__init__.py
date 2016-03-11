@@ -5,44 +5,44 @@ from .output import *
 
 # for output:
 # package args into a list then pass to SO file
-def Output(s, *args):
+def GlobalOutput(s, *args):
     if(len(args)) > 0:
-      Output_(s, [ str(x) for x in list(args) ] )
+      GlobalOutput_(s, [ str(x) for x in list(args) ] )
     else:
-      Output_(s, [])
+      GlobalOutput_(s, [])
 
 
-def Success(s, *args):
+def GlobalSuccess(s, *args):
     if(len(args)) > 0:
-      Success_(s, [ str(x) for x in list(args) ] )
+      GlobalSuccess_(s, [ str(x) for x in list(args) ] )
     else:
-      Success_(s, [])
+      GlobalSuccess_(s, [])
 
 
-def Warning(s, *args):
+def GlobalWarning(s, *args):
     if(len(args)) > 0:
-      Warning_(s, [ str(x) for x in list(args) ] )
+      GlobalWarning_(s, [ str(x) for x in list(args) ] )
     else:
-      Warning_(s, [])
+      GlobalWarning_(s, [])
 
 
-def Error(s, *args):
+def GlobalError(s, *args):
     if(len(args)) > 0:
-      Error_(s, [ str(x) for x in list(args) ] )
+      GlobalError_(s, [ str(x) for x in list(args) ] )
     else:
-      Error_(s, [])
+      GlobalError_(s, [])
 
 
-def Debug(s, *args):
+def GlobalDebug(s, *args):
     if(len(args)) > 0:
-      Debug_(s, [ str(x) for x in list(args) ] )
+      GlobalDebug_(s, [ str(x) for x in list(args) ] )
     else:
-      Debug_(s, [])
+      GlobalDebug_(s, [])
 
 
-def Changed(s, *args):
+def GlobalChanged(s, *args):
     if(len(args)) > 0:
-      Changed_(s, [ str(x) for x in list(args) ] )
+      GlobalChanged_(s, [ str(x) for x in list(args) ] )
     else:
-      Changed_(s, [])
+      GlobalChanged_(s, [])
 
