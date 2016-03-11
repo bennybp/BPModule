@@ -11,7 +11,7 @@ class Tester:
 
     def PrintHeader(self):
         GlobalOutput(Line("="))
-        GlobalOutput("%1%\n", self.desc)
+        GlobalOutput("{}\n".format(self.desc))
         GlobalOutput(Line("="))
 
 
@@ -20,11 +20,11 @@ class Tester:
         GlobalOutput("\n\n")
         if self.nfailed > 0:
             GlobalOutput(Line("="))
-            GlobalError("RESULTS: %1% failed\n", self.nfailed)
+            GlobalError("RESULTS: {} failed\n".format(self.nfailed))
             GlobalOutput(Line("="))
         else:
             GlobalOutput(Line("="))
-            GlobalSuccess("RESULTS: %1% failed\n", self.nfailed)
+            GlobalSuccess("RESULTS: {} failed\n".format(self.nfailed))
             GlobalOutput(Line("="))
         GlobalOutput("\n\n")
 
@@ -40,13 +40,12 @@ class Tester:
         """
         failed = func(*args)
         
-        fmt = "%|1$5| : %|2$-5|  %|3$-5|  %|4$-9|  : %5%\n"
+        fmt = "{:5} : {:<5}  {:<5}  {:<9}   : {}\n"
         
         passed=(failed==expected)
         
         
-        GlobalOutput(fmt, self.ntest , expected , passed ,\
-                "GlobalSuccess" if passed else "FAILED", desc)
+        GlobalOutput(fmt.format(self.ntest , expected , passed , "Success" if passed else "FAILED", desc))
         if not passed:
             self.nfailed+=1
         

@@ -17,8 +17,8 @@ import bpmodule as bp
 
 def Run():
     try:
-        bp.output.Output("\n")
-        bp.output.Output(bp.util.Line('-'))
+        bp.output.GlobalOutput("\n")
+        bp.output.GlobalOutput(bp.util.Line('-'))
 
         # The limits on various integer types
         intlimitdict = { "sshort"             : bp.testing.Limits_sshort(),
@@ -46,9 +46,9 @@ def Run():
 
  
         for k,v in intlimitdict.items():
-            bp.output.Output("Limit for %|1$-18| : [ %|2$-21| , %|3$-21| ]\n", k, v[0], v[1])
-        bp.output.Output(bp.util.Line('-'))
-        bp.output.Output("\n")
+            bp.output.GlobalOutput("Limit for %|1$-18| : [ %|2$-21| , %|3$-21| ]\n", k, v[0], v[1])
+        bp.output.GlobalOutput(bp.util.Line('-'))
+        bp.output.GlobalOutput("\n")
 
 
         tester = bp.testing.Tester("Testing passing and getting large numbers, etc, from OptionMap objects")
@@ -91,11 +91,11 @@ def Run():
 
 
     except Exception as e:
-      bp.output.Output("Caught exception in main handler. Contact the developers\n")
+      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.Error("\n")
-      bp.output.Error(str(e))
-      bp.output.Error("\n")
+      bp.output.GlobalError("\n")
+      bp.output.GlobalError(str(e))
+      bp.output.GlobalError("\n")
 
 
 

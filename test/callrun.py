@@ -32,24 +32,24 @@ def Run(mm):
       b2 = mm.GetModule("TESTPYMOD1", 0)
 
       b1.CallRunTest("TESTMOD1")
-      bp.output.Output("\n")
+      bp.output.GlobalOutput("\n")
       b1.CallRunTest("TESTPYMOD1")
-      bp.output.Output("\n")
+      bp.output.GlobalOutput("\n")
       b2.CallRunTest("TESTMOD1")
-      bp.output.Output("\n")
+      bp.output.GlobalOutput("\n")
       b2.CallRunTest("TESTPYMOD1")
-      bp.output.Output("\n")
+      bp.output.GlobalOutput("\n")
     
     
-      bp.output.Output("\nDone testing\n")
+      bp.output.GlobalOutput("\nDone testing\n")
 
 
     except Exception as e:
-      bp.output.Output("Caught exception in main handler\n")
+      bp.output.GlobalOutput("Caught exception in main handler\n")
       traceback.print_exc()
-      bp.output.Error("\n")
-      bp.output.Error(str(e))
-      bp.output.Error("\n")
+      bp.output.GlobalError("\n")
+      bp.output.GlobalError(str(e))
+      bp.output.GlobalError("\n")
 
 
 

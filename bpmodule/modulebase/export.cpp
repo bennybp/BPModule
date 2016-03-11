@@ -39,7 +39,6 @@ PYBIND11_PLUGIN(modulebase)
          .def("Options", static_cast<OptionMap &(ModuleBase::*)(void)>(&ModuleBase::Options), pybind11::return_value_policy::reference_internal)
          .def("Wfn", static_cast<datastore::Wavefunction &(ModuleBase::*)(void)>(&ModuleBase::Wfn), pybind11::return_value_policy::reference_internal) 
          .def("CreateChildModule", &ModuleBase::CreateChildModulePy)
-         //.def("MManager", static_cast<ModuleManager &(ModuleBase::*)(void) const>(&ModuleBase::MManager), pybind11::return_value_policy::reference_internal) 
          ;
 
 

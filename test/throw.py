@@ -33,27 +33,27 @@ def Run(mm):
 
       try:
         b1.TestThrow()
-        bp.output.Output("\n")
+        bp.output.GlobalOutput("\n")
       except Exception as e:
-        bp.output.Warning(str(e))
-        bp.output.Output("\n\n")
+        bp.output.GlobalWarning(str(e))
+        bp.output.GlobalOutput("\n\n")
    
       try:
         b2.TestThrow()
-        bp.output.Output("\n")
+        bp.output.GlobalOutput("\n")
       except Exception as e:
-        bp.output.Warning(str(e))
-        bp.output.Output("\n\n")
+        bp.output.GlobalWarning(str(e))
+        bp.output.GlobalOutput("\n\n")
     
-      bp.output.Output("\nDone testing\n")
+      bp.output.GlobalOutput("\nDone testing\n")
 
 
     except Exception as e:
-      bp.output.Output("Caught exception in main handler\n")
+      bp.output.GlobalOutput("Caught exception in main handler\n")
       traceback.print_exc()
-      bp.output.Error("\n")
-      #bp.output.Error(str(e))
-      bp.output.Error("\n")
+      bp.output.GlobalError("\n")
+      #bp.output.GlobalError(str(e))
+      bp.output.GlobalError("\n")
 
 
 

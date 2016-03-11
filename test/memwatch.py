@@ -16,22 +16,22 @@ import bpmodule as bp
 
 def Run(mm):
 
-    bp.output.Output("\n\n----------------------------------------\n")
+    bp.output.GlobalOutput("\n\n----------------------------------------\n")
     isrun = bp.util.Memwatch_running()
-    bp.output.Output("Memwatch is running? %1%\n", isrun)
+    bp.output.GlobalOutput("Memwatch is running? %1%\n", isrun)
 
     mem = bp.util.Memwatch_allocated()
-    bp.output.Output("Allocated memory so far: %1%\n", mem)
+    bp.output.GlobalOutput("Allocated memory so far: %1%\n", mem)
 
     maxmem = bp.util.Memwatch_getlimit()
-    bp.output.Output("Maximum memory to be used: %1%\n", maxmem)
+    bp.output.GlobalOutput("Maximum memory to be used: %1%\n", maxmem)
 
 
     bp.util.Memwatch_setlimit(10485760)
     maxmem = bp.util.Memwatch_getlimit()
-    bp.output.Output("Maximum memory to be used: %1%\n", maxmem)
+    bp.output.GlobalOutput("Maximum memory to be used: %1%\n", maxmem)
 
-    bp.output.Output("----------------------------------------\n\n")
+    bp.output.GlobalOutput("----------------------------------------\n\n")
 
 
 

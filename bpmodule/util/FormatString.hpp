@@ -114,19 +114,6 @@ std::string FormatString(const std::string & fmt, const Targs&... Fargs)
 }
 
 
-
-
-/*! \brief Create a format string using a vector of strings
- *
- * \throw bpmodule::exception::GeneralException for malformed inputs, etc
- * \param [in] fmt Format string to use
- * \param [in] args Arguments to the format string
- */
-std::string FormatString(const std::string & fmt, const std::vector<std::string> & args);
-
-
-
-
 } // close namespace util
 } // close namespace bpmodule
 

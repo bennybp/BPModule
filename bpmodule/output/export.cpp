@@ -35,12 +35,14 @@ PYBIND11_PLUGIN(output)
 
 
     pybind11::class_<OutputStream>(m, "OutputStream")
-    .def("Output_",  &OutputStream::Output<std::vector<std::string>>)
-    .def("Changed_", &OutputStream::Changed<std::vector<std::string>>)
-    .def("Error_",   &OutputStream::Error<std::vector<std::string>>)
-    .def("Warning_", &OutputStream::Warning<std::vector<std::string>>)
-    .def("Success_", &OutputStream::Success<std::vector<std::string>>)
-    .def("Debug_",   &OutputStream::Debug<std::vector<std::string>>)
+    .def("SetType",   &OutputStream::SetType)
+    .def("ResetType", &OutputStream::ResetType)
+    .def("Output_",   &OutputStream::Output<std::string>)
+    .def("Changed_",  &OutputStream::Changed<std::string>)
+    .def("Error_",    &OutputStream::Error<std::string>)
+    .def("Warning_",  &OutputStream::Warning<std::string>)
+    .def("Success_",  &OutputStream::Success<std::string>)
+    .def("Debug_",    &OutputStream::Debug<std::string>)
     ;
     
 
@@ -54,12 +56,15 @@ PYBIND11_PLUGIN(output)
     m.def("Flush", Flush);
 
     // printing to output
-    m.def("GlobalOutput_",   output::GlobalOutput<std::vector<std::string>>); 
-    m.def("GlobalChanged_",  output::GlobalChanged<std::vector<std::string>>); 
-    m.def("GlobalError_",    output::GlobalError<std::vector<std::string>>); 
-    m.def("GlobalWarning_",  output::GlobalWarning<std::vector<std::string>>); 
-    m.def("GlobalSuccess_",  output::GlobalSuccess<std::vector<std::string>>); 
-    m.def("GlobalDebug_",    output::GlobalDebug<std::vector<std::string>>); 
+    // Python is expected to just give us a string, which
+    // would correspond to the "format". Therefore, the
+    // variadic template is empty (hence, <>)
+    m.def("GlobalOutput",   output::GlobalOutput<>); 
+    m.def("GlobalChanged",  output::GlobalChanged<>); 
+    m.def("GlobalError",    output::GlobalError<>); 
+    m.def("GlobalWarning",  output::GlobalWarning<>); 
+    m.def("GlobalSuccess",  output::GlobalSuccess<>); 
+    m.def("GlobalDebug",    output::GlobalDebug<>); 
     ;
 
     return m.ptr();

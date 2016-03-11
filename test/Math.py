@@ -21,17 +21,17 @@ def Run():
         tester.PrintHeader()
 
         for i in range(1, 10):
-            bp.output.Output("I = %1%\n", i)
-            bp.output.Output("%1%   %2%\n", str(type(bp.math.Factorial(i))), bp.math.Factorial(i))
-            bp.output.Output("%1%   %2%\n", str(type(bp.math.FactorialF(i))), bp.math.FactorialF(i))
-            bp.output.Output("%1%   %2%\n", str(type(bp.math.FactorialD(i))), bp.math.FactorialD(i))
-            bp.output.Output("%1%   %2%\n", str(type(bp.math.DoubleFactorial(i))), bp.math.DoubleFactorial(i))
-            bp.output.Output("%1%   %2%\n", str(type(bp.math.DoubleFactorialF(i))), bp.math.DoubleFactorialF(i))
-            bp.output.Output("%1%   %2%\n", str(type(bp.math.DoubleFactorialD(i))), bp.math.DoubleFactorialD(i))
-            bp.output.Output("%1%   %2%\n", str(type(bp.math.Double2nm1Factorial(i))), bp.math.Double2nm1Factorial(i))
-            bp.output.Output("%1%   %2%\n", str(type(bp.math.Double2nm1FactorialF(i))), bp.math.Double2nm1FactorialF(i))
-            bp.output.Output("%1%   %2%\n", str(type(bp.math.Double2nm1FactorialD(i))), bp.math.Double2nm1FactorialD(i))
-            bp.output.Output("\n")
+            bp.output.GlobalOutput("I = %1%\n", i)
+            bp.output.GlobalOutput("%1%   %2%\n", str(type(bp.math.Factorial(i))), bp.math.Factorial(i))
+            bp.output.GlobalOutput("%1%   %2%\n", str(type(bp.math.FactorialF(i))), bp.math.FactorialF(i))
+            bp.output.GlobalOutput("%1%   %2%\n", str(type(bp.math.FactorialD(i))), bp.math.FactorialD(i))
+            bp.output.GlobalOutput("%1%   %2%\n", str(type(bp.math.DoubleFactorial(i))), bp.math.DoubleFactorial(i))
+            bp.output.GlobalOutput("%1%   %2%\n", str(type(bp.math.DoubleFactorialF(i))), bp.math.DoubleFactorialF(i))
+            bp.output.GlobalOutput("%1%   %2%\n", str(type(bp.math.DoubleFactorialD(i))), bp.math.DoubleFactorialD(i))
+            bp.output.GlobalOutput("%1%   %2%\n", str(type(bp.math.Double2nm1Factorial(i))), bp.math.Double2nm1Factorial(i))
+            bp.output.GlobalOutput("%1%   %2%\n", str(type(bp.math.Double2nm1FactorialF(i))), bp.math.Double2nm1FactorialF(i))
+            bp.output.GlobalOutput("%1%   %2%\n", str(type(bp.math.Double2nm1FactorialD(i))), bp.math.Double2nm1FactorialD(i))
+            bp.output.GlobalOutput("\n")
 
         MyUniverse=bp.math.StringSetUniverse()
         Alphabet="abcdefghijklmnopqrstuvwxyz"
@@ -82,11 +82,11 @@ def Run():
 
 
     except Exception as e:
-      bp.output.Output("Caught exception in main handler. Contact the developers\n")
+      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.Error("\n")
-      bp.output.Error(str(e))
-      bp.output.Error("\n")
+      bp.output.GlobalError("\n")
+      bp.output.GlobalError(str(e))
+      bp.output.GlobalError("\n")
 
 
 

@@ -40,6 +40,7 @@ int TestFunc(T func, Targs... Fargs)
     catch(std::exception & ex)
     {
         GlobalDebug(ex.what());
+        GlobalDebug("\n");
         return 1;
     }   
     catch(...)
@@ -78,6 +79,7 @@ int TestBoolFunc(T func, Targs... Fargs)
     catch(std::exception & ex)
     {
         GlobalDebug(ex.what());
+        GlobalDebug("\n");
         return 1;
     }   
     catch(...)
@@ -110,6 +112,7 @@ int TestConstruct(Targs... Fargs)
     catch(std::exception & ex)
     {
         GlobalDebug(ex.what());
+        GlobalDebug("\n");
         return 1;
     }   
     catch(...)

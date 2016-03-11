@@ -27,7 +27,7 @@ class ModuleAdministrator(modulemanager.ModuleManager):
 
 
     def LoadModule(self, supermodule, modulename, modulekey):
-        output.GlobalOutput("Importing %1% module from supermodule %2% under key %3%\n", modulename, supermodule, modulekey)
+        output.GlobalOutput("Importing {} module from supermodule {} under key {}\n".format(modulename, supermodule, modulekey))
 
         try:
             # update the paths
@@ -72,7 +72,7 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         minfo = m.minfo[modulename]
 
         output.GlobalOutput("\n")
-        output.GlobalOutput("Loading module %1% v%2%\n", modulename, minfo["version"])
+        output.GlobalOutput("Loading module {} v{}\n".format(modulename, minfo["version"]))
 
         # Create a c++ moduleinfo structure
         # And fill it
@@ -100,11 +100,11 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         # Now we can actually load it
         super(ModuleAdministrator, self).LoadModuleFromModuleInfo(cppminfo)
 
-        output.GlobalDebug("Imported module name %1% from %2%\n", modulename, supermodule)
+        output.GlobalDebug("Imported module name {} from {}\n".format(modulename, supermodule))
 
         super(ModuleAdministrator, self).AddKey(modulekey, modulename)
 
-        output.GlobalDebug("Associated key %1% with module %2%\n", modulekey, supermodule)
+        output.GlobalDebug("Associated key {} with module {}\n".format(modulekey, supermodule))
         output.GlobalOutput("\n")
 
 

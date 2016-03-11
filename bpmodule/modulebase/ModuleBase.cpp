@@ -33,11 +33,11 @@ ModuleBase::ModuleBase(unsigned long id, const char * modtype)
 
 ModuleBase::~ModuleBase()
 {
+    out.Debug("Module [%1%] : Output size: %1%\n", ID());
     out.Debug("Destructed module [%1%] : %2% v%3%\n", ID(), Name(), Version());
-    out.Debug("Output size: %1%\n", GetOutput().length());
-    out.Debug("*****\n");
-    out.Warning(GetOutput());
-    out.Debug("*****\n");
+    //out.Debug("*****\n");
+    //out.Warning(GetOutput());
+    //out.Debug("*****\n");
 }
 
 
