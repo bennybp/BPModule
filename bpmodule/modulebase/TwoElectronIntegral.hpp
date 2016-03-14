@@ -9,7 +9,6 @@
 #define BPMODULE_GUARD_MODULEBASE__TWOELECTRONINTEGRAL_HPP_
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/system/BasisSet.hpp"
 
 
 namespace bpmodule {
@@ -21,14 +20,20 @@ namespace modulebase {
 class TwoElectronIntegral : public ModuleBase
 {
     public:
+        typedef TwoElectronIntegral BaseType;
+
         TwoElectronIntegral(unsigned long id)
-            : ModuleBase(id)
+            : ModuleBase(id, "TwoElectronIntegral")
         { }
 
 
         /*! \brief Set the basis sets for the integrals
          * 
          * \param [in] ncenter The number of centers for the integrals (ie, 3-center, 2-center)
+         * \param [in] bs1 Basis set on the first center
+         * \param [in] bs2 Basis set on the second center
+         * \param [in] bs3 Basis set on the third center
+         * \param [in] bs4 Basis set on the fourth center
          */
         void SetBases(int ncenter,
                       const datastore::UIDPointer<system::BasisSet> & bs1,
@@ -40,28 +45,40 @@ class TwoElectronIntegral : public ModuleBase
         }
 
 
+        /*! \brief Calculate an integral
+         *
+         * \param [in] deriv Derivative to calculate
+         * \param [in] shell1 Shell index on the first center
+         * \param [in] shell2 Shell index on the second center
+         * \param [in] shell3 Shell index on the third center
+         * \param [in] shell4 Shell index on the fourth center
+         * \return Number of integrals calculated
+         */
         long Calculate(int deriv, int shell1, int shell2, int shell3, int shell4)
         {
-            return ModuleBase::CallFunction(&TwoElectronIntegral::Calculate_, deriv, 
-                                                                                  shell1,
-                                                                                  shell2,
-                                                                                  shell3,
-                                                                                  shell4);
+            return ModuleBase::FastCallFunction(&TwoElectronIntegral::Calculate_, deriv, 
+                                                                                      shell1,
+                                                                                      shell2,
+                                                                                      shell3,
+                                                                                      shell4);
         }
 
 
+        /*! \brief Obtain the buffer to the stored integrals */
         const double * GetBuf(void)
         {
-            return ModuleBase::CallFunction(&TwoElectronIntegral::GetBuf_);
+            return ModuleBase::FastCallFunction(&TwoElectronIntegral::GetBuf_);
         }
 
 
+        /*! \brief Obtain how many integrals were last calculated */
         long GetIntegralCount(void)
         {
-            return ModuleBase::CallFunction(&TwoElectronIntegral::GetIntegralCount_);
+            return ModuleBase::FastCallFunction(&TwoElectronIntegral::GetIntegralCount_);
         }
 
 
+        /*! \brief Obtain a copy of the buffer of stored integrals (for python) */
         pybind11::object GetBufPy(void)
         {
             return python::ConvertToPy(GetBuf(), GetIntegralCount());  
@@ -77,30 +94,56 @@ class TwoElectronIntegral : public ModuleBase
                                const datastore::UIDPointer<system::BasisSet> & bs1,
                                const datastore::UIDPointer<system::BasisSet> & bs2,
                                const datastore::UIDPointer<system::BasisSet> & bs3,
-                               const datastore::UIDPointer<system::BasisSet> & bs4)
-        {
-            ModuleBase::CallPyMethod<void>("SetBases_", ncenter, bs1, bs2, bs3, bs4);
-        }
+                               const datastore::UIDPointer<system::BasisSet> & bs4) = 0;
 
 
         //! \copydoc Calculate
+        virtual long Calculate_(int deriv, int shell1, int shell2, int shell3, int shell4) = 0;
+
+        //! \copydoc GetBuf
+        virtual const double * GetBuf_(void) = 0;
+
+        //! \copydoc GetIntegralCount
+        virtual long GetIntegralCount_(void) = 0;
+        
+};
+
+
+class TwoElectronIntegral_Py : public TwoElectronIntegral
+{
+    public:
+        using TwoElectronIntegral::TwoElectronIntegral;
+
+        MODULEBASE_FORWARD_PROTECTED_TO_PY
+    
+        virtual void SetBases_(int ncenter,
+                               const datastore::UIDPointer<system::BasisSet> & bs1,
+                               const datastore::UIDPointer<system::BasisSet> & bs2,
+                               const datastore::UIDPointer<system::BasisSet> & bs3,
+                               const datastore::UIDPointer<system::BasisSet> & bs4)
+
+        {
+            return CallPyOverride<void>("SetBases_", ncenter, bs1, bs2, bs3, bs4);
+        }
+
+
         virtual long Calculate_(int deriv, int shell1, int shell2, int shell3, int shell4)
         {
-            return ModuleBase::CallPyMethod<long>("Calculate_", deriv, shell1, shell2, shell3, shell4);
+            return CallPyOverride<long>("Calculate_", deriv, shell1, shell2, shell3, shell4);
         }
 
 
         virtual const double * GetBuf_(void)
         {
-            return ModuleBase::CallPyMethod<const double *>("GetBuf_");
+            return CallPyOverride<double *>("GetBuf_");
         }
 
 
         virtual long GetIntegralCount_(void)
         {
-            return ModuleBase::CallPyMethod<long>("GetIntegralCount_");
+            return CallPyOverride<long>("GetIntegralCount_");
         }
-        
+
 };
 
 } // close namespace modulebase

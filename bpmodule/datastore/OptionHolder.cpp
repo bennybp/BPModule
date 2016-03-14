@@ -76,9 +76,9 @@ static OptionIssues ValidatorWrapper_(pybind11::object & valobj, const std::stri
 ///////////////////////////////////////////////////
 template<OptionType OPTTYPE>
 OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
-                              bool required, const pybind11::object & validator,
-                              const std::string & help,
-                              typename OptionHolder<OPTTYPE>::stored_type * def)
+                                    bool required, const pybind11::object & validator,
+                                    const std::string & help,
+                                    stored_type * def)
     : OptionBase(key, required, help), default_(def)
 {
     validator_ = std::bind(ValidatorWrapper_<OPTTYPE>, validator, Key(), std::placeholders::_1);
@@ -97,9 +97,9 @@ OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
 
 template<OptionType OPTTYPE>
 OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
-                              bool required, const pybind11::object & validator,
-                              const std::string & help,
-                              const typename OptionHolder<OPTTYPE>::stored_type & def)
+                                    bool required, const pybind11::object & validator,
+                                    const std::string & help,
+                                    const stored_type & def)
     : OptionHolder(key, required, validator, help, new stored_type(def))
 {
     if(required)
@@ -125,7 +125,7 @@ OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
 
 
 template<OptionType OPTTYPE>
-OptionHolder<OPTTYPE>::OptionHolder(const OptionHolder<OPTTYPE> & oph)
+OptionHolder<OPTTYPE>::OptionHolder(const OptionHolder & oph)
     : OptionBase(oph),
       validator_(oph.validator_)
 {
@@ -138,7 +138,7 @@ OptionHolder<OPTTYPE>::OptionHolder(const OptionHolder<OPTTYPE> & oph)
 
 
 template<OptionType OPTTYPE>
-void OptionHolder<OPTTYPE>::Change(const typename OptionHolder<OPTTYPE>::stored_type & value)
+void OptionHolder<OPTTYPE>::Change(const stored_type & value)
 {
     value_ = std::unique_ptr<stored_type>(new stored_type(value));
 }

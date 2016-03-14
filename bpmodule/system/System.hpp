@@ -89,7 +89,8 @@ class System
 
 
         /*! \brief Construct a system given a universe
-         * 
+         *
+         * \param [in] universe The universe this system should use 
          * \param [in] fill Make this system contain all the elements of the universe
          */
         System(std::shared_ptr<const AtomSetUniverse> universe, bool fill);

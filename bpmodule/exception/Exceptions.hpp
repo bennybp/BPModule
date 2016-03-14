@@ -53,7 +53,7 @@ class GeneralException : public std::exception
          *
          * Can be used to append additional information
          *
-         * \param [in] gex Exception to copy
+         * \param [in] ex Exception to copy
          * \param [in] exinfo Additional information. Must be an even number of strings
          */
         template<typename... Targs>

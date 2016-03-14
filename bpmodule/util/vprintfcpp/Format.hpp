@@ -66,6 +66,7 @@ void Format_(std::ostream & os, FormatInfo & fi, const std::string & str);
  *        if the format string is badly formed
  *
  * \param [in] os The ostream used to build the string
+ * \param [in] fi The format information struct to use
  * \param [in] str String (possibly with format string specification)
  * \param [in] arg Substitution for the first format specification found
  * \param [in] args Additional arguments for later format specifications

@@ -8,10 +8,6 @@
 #ifndef BPMODULE_GUARD_UTIL__FORMAT_HPP_
 #define BPMODULE_GUARD_UTIL__FORMAT_HPP_
 
-#include <iostream>
-#include <sstream>
-#include <vector>
-
 #include "bpmodule/util/vprintfcpp/Format.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 
@@ -56,6 +52,7 @@ void FormatStream(std::ostream & os, const std::string & fmt,
  *
  * \param [in] fmt The format string to use
  * \param [in] Fargs The arguments to the format string
+ * \return a Formatted string
  */
 template<typename... Targs>
 std::string FormatString(const std::string & fmt, const Targs&... Fargs)

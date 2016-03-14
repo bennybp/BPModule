@@ -325,7 +325,7 @@ std::ostream& operator<<(std::ostream& os,const Atom& A);
 Atom CreateAtom(size_t idx, CoordType xyz, int Z);
 
 
-/*! \copydocs CreateAtom(size_t idx, size_t,size_t, CoordType, int) */
+/*! \copydoc CreateAtom(size_t idx, CoordType xyz, int Z) */
 Atom CreateAtom(size_t idx, double x, double y, double z, int Z);
 
 
@@ -337,7 +337,7 @@ Atom CreateAtom(size_t idx, double x, double y, double z, int Z);
 Atom CreateAtom(size_t idx, CoordType xyz, int Z, int isonum);
 
 
-/*! \copydocs CreateAtom(size_t idx, size_t,size_t, CoordType, int, int) */
+/*! \copydoc CreateAtom(size_t idx, CoordType xyz, int Z, int isonum) */ 
 Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum);
 
 

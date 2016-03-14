@@ -20,6 +20,7 @@ namespace python {
  * \throw bpmodule::exception::PythonCallException if there is an error (including conversion error)
  *
  * \param [in] obj The python object to call
+ * \param [in] Fargs Arguments to call the function with
  */
 template<typename Ret, typename... Targs>
 Ret CallPyFunc(const pybind11::object & obj, Targs &&... Fargs)
@@ -78,6 +79,7 @@ Ret CallPyFunc(const pybind11::object & obj, Targs &&... Fargs)
  *
  * \param [in] obj The object with the attribute
  * \param [in] attribute The attribute to call
+ * \param [in] Fargs Arguments to call the function with
  */
 template<typename Ret, typename... Targs>
 Ret CallPyFuncAttr(const pybind11::object & obj, const char * attribute, Targs &&... Fargs)

@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Output and printing functionality (source)
+ * \brief Basic output and printing functionality (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 

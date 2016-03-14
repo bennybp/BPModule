@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <string>
-
+#include <stdexcept>
 
 namespace bpmodule {
 namespace output {
@@ -18,19 +18,26 @@ namespace output {
 
 /*! \brief Stream buffer that tees output to a string
  *
- * Output will go to the streambuf, as well as the given string
+ * Output will go to the given streambuf, as well as the given string.
+ *
+ * The string pointer can be null, in which case output only goes to the streambuf. 
+ * If the streambuf is set to null, an exception is thrown.
  */ 
 class TeeBufToString : public std::streambuf
 {
     public:
         /*! \brief Constructor
          *
+         * \throw runtime_error If \p sb is null
          * \param [in] sb The streambuf to tee from
          * \param [in] str The string to copy output to
          */ 
         TeeBufToString(std::streambuf * sb, std::string * str) noexcept
             : sb_(sb), str_(str)
-        { }
+        {
+            if(sb == nullptr)
+                throw std::runtime_error("TeeBufToString given a null pointer to sb. Contact a developer!"); 
+        }
 
         TeeBufToString & operator=(TeeBufToString &&)      = default;
         TeeBufToString(TeeBufToString &&)                  = default;
@@ -56,9 +63,7 @@ class TeeBufToString : public std::streambuf
         virtual int overflow(int c)
         {
             if (c == EOF)
-            {
                 return !EOF;
-            }   
             else
             {
                 if(str_ != nullptr)

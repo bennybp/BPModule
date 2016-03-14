@@ -13,8 +13,6 @@ namespace output {
 
 
 /*! The type of information being output
- *
- * \warning Internal use only
  */
 enum class OutputType
 {

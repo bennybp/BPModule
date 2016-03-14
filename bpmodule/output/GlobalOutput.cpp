@@ -5,12 +5,10 @@
  */ 
 
 
-#include <fstream>
+#include <iostream>
 #include <memory>
 
-
 #include "bpmodule/output/GlobalOutput.hpp"
-
 
 
 namespace {
@@ -21,7 +19,6 @@ using namespace bpmodule::output;
 
 bool usecolor_ = false;
 
-// "Global" variables for this file
 //std::unique_ptr<std::ofstream> file_;
 //std::string filepath_;
 std::unique_ptr<OutputStream> globalout_;
