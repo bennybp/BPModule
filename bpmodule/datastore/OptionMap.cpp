@@ -129,16 +129,16 @@ void OptionMap::Validate(void) const
         throwme = true;
         output::GlobalWarning("    OptionMap top level issues:\n");
         for(const auto & it : omi.toplevel)
-            output::GlobalWarning("        %1%", it);
+            output::GlobalWarning("        %?", it);
     }
     if(omi.optissues.size())
     {
         output::GlobalWarning("    Individual option issues:\n");
         for(const auto & it : omi.optissues)
         {
-            output::GlobalWarning("        %1%\n", it.first);
+            output::GlobalWarning("        %?\n", it.first);
             for(const auto & it2 : it.second)
-                output::GlobalWarning("            %1%\n", it2);
+                output::GlobalWarning("            %?\n", it2);
         }
         throwme = true;
     }
@@ -289,8 +289,8 @@ void OptionMap::Print(void) const
         GlobalOutput("\n");
         std::string s20(20, '-');
         std::string s10(10, '-');
-        GlobalOutput("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", "Option", "Type", "Value", "Default", "Required", "Description");
-        GlobalOutput("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n", s20, s20, s20, s20, s10, s20);
+        GlobalOutput("          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n", "Option", "Type", "Value", "Default", "Required", "Description");
+        GlobalOutput("          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n", s20, s20, s20, s20, s10, s20);
 
         for(const auto & it : opmap_)
             it.second->Print();

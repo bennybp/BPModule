@@ -27,14 +27,14 @@ ModuleBase::ModuleBase(unsigned long id, const char * modtype)
       out(&tbts_),
       id_(id), modtype_(modtype), mlocator_(nullptr), graphnode_(nullptr)
 {
-    out.Debug("Constructed %1% module [%2%]\n", modtype, id);
+    out.Debug("Constructed %? module [%?]\n", modtype, id);
 }
 
 
 ModuleBase::~ModuleBase()
 {
-    out.Debug("Module [%1%] : Output size: %1%\n", ID());
-    out.Debug("Destructed module [%1%] : %2% v%3%\n", ID(), Name(), Version());
+    out.Debug("Module [%?] : Output size: %?\n", ID(), GetOutput().size());
+    out.Debug("Destructed module [%?] : %? v%?\n", ID(), Name(), Version());
     //out.Debug("*****\n");
     //out.Warning(GetOutput());
     //out.Debug("*****\n");

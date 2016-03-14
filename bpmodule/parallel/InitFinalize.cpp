@@ -25,13 +25,13 @@ void Init(size_t NThreads)
     Env_=std::unique_ptr<Env_t>(new Env_t(NThreads));
     
     //madness::initialize(*(util::GetArgc()), *(util::GetArgv()));
-    output::Output("Initialized Process %1% of %2%\n", GetProcID(), GetNProc());
+    output::GlobalOutput("Initialized Process %? of %?\n", GetProcID(), GetNProc());
 }
 
 
 void Finalize(void)
 {
-    output::GlobalOutput("Finalizing Process %1% of %2%\n", GetProcID(), GetNProc());
+    output::GlobalOutput("Finalizing Process %? of %?\n", GetProcID(), GetNProc());
     Env_.reset();
     //madness::finalize();
 }

@@ -125,19 +125,19 @@ void ModuleManager::TestAll(void)
     output::GlobalDebug("Testing all modules\n");
     for(const auto & it : store_)
     {
-        output::GlobalDebug("Testing %1% (%2%)...\n", it.first, it.second.mi.name);
+        output::GlobalDebug("Testing %? (%?)...\n", it.first, it.second.mi.name);
 
         if(!it.second.mi.options.AllReqSet())
         {
-            output::GlobalError("Error - module %1% [key %2%]\" failed options test - required options are missing", it.second.mi.name, it.first);
+            output::GlobalError("Error - module %? [key %?]\" failed options test - required options are missing", it.second.mi.name, it.first);
 
             auto missingreq = it.second.mi.options.AllMissingReq();
             for(const auto & optit : missingreq)
-                output::GlobalError("    Missing \"%1%\"\n", optit);
+                output::GlobalError("    Missing \"%?\"\n", optit);
         }
 
 
-        output::GlobalDebug("Test of %1% OK\n", it.first);
+        output::GlobalDebug("Test of %? OK\n", it.first);
     }
 
     output::GlobalDebug("Testing getting of modules\n");
@@ -148,7 +148,7 @@ void ModuleManager::TestAll(void)
         }
         catch(std::exception & ex)
         {
-            output::GlobalError("Error - module %1% [key %2%]\" failed test loading!\n", it.second, it.first);
+            output::GlobalError("Error - module %? [key %?]\" failed test loading!\n", it.second, it.first);
             throw GeneralException(ex, "location", "TestAll");
         }
     }

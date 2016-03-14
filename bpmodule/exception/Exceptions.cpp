@@ -43,7 +43,7 @@ void GeneralException::AppendInfo(const std::string & key, const std::string & v
     }
 
 
-    // escape the boost::format percent signs
+    // escape the formatting percent signs
     std::string escaped;
 
     for(const auto & it : ss.str())

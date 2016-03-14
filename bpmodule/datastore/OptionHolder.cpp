@@ -307,7 +307,7 @@ void OptionHolder<OPTTYPE>::ChangePy(const pybind11::object & obj)
 template<typename T>
 static std::vector<std::string> OptToString_(const T & opt)
 {
-    return {FormatString("%|1$-12.8|", opt)};
+    return {FormatString("%-12.8?", opt)};
 }
 
 /*! \brief Converts an option value to a string
@@ -388,14 +388,14 @@ void OptionHolder<OPTTYPE>::Print(void) const
 
     // print the first line
     std::vector<std::string> optlines;
-    optlines.push_back(FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+    optlines.push_back(FormatString("          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n",
                                     Key(), Type(), val[0], def[0], req,  Help()));
 
 
     // now other lines
     for(size_t i = 1; i < m; i++)
     {
-        optlines.push_back(FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+        optlines.push_back(FormatString("          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n",
                                         "", "", val[i], def[i], "", ""));
     }
    

@@ -321,10 +321,10 @@ void BasisSet::Print(void) const
 {
     int nshell = NShell();
 
-    output::GlobalOutput("Basis set with %1% shells\n", nshell);
-    output::GlobalOutput("NCart = %1% , MaxAM = %2%\n", NCartesian(), MaxAM());
-    output::GlobalOutput("MaxNCart = %1% , MaxNPrim = %2%\n", MaxNCartesian(), MaxNPrim());
-    output::GlobalDebug("Space usage: XYZ: %1%/%2%  Alpha: %3%/%4%  Coef %5%/%6%\n", xyz_pos_, max_nxyz_,
+    output::GlobalOutput("Basis set with %? shells\n", nshell);
+    output::GlobalOutput("NCart = %? , MaxAM = %?\n", NCartesian(), MaxAM());
+    output::GlobalOutput("MaxNCart = %? , MaxNPrim = %?\n", MaxNCartesian(), MaxNPrim());
+    output::GlobalDebug("Space usage: XYZ: %?/%?  Alpha: %?/%?  Coef %?/%?\n", xyz_pos_, max_nxyz_,
                                                                                alpha_pos_, max_nalpha_,
                                                                                coef_pos_, max_ncoef_);
 
@@ -332,13 +332,13 @@ void BasisSet::Print(void) const
     for(int i = 0; i < nshell; i++)
     {
         const auto & shell = Shell(i);
-        output::GlobalOutput("Shell %1%  AM=%2%  Cart=%3%  NPrim=%4% NGen=%5%\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim(), shell.NGeneral());
-        output::GlobalOutput("Coordinates: %1% %2% %3%\n", shell.GetCoords()[0], shell.GetCoords()[1], shell.GetCoords()[2]);
+        output::GlobalOutput("Shell %?  AM=%?  Cart=%?  NPrim=%? NGen=%?\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim(), shell.NGeneral());
+        output::GlobalOutput("Coordinates: %? %? %?\n", shell.GetCoords()[0], shell.GetCoords()[1], shell.GetCoords()[2]);
         for(int j = 0; j < shell.NPrim(); ++j)
         {
-            output::GlobalOutput("    %1%", shell.GetAlpha(j));
+            output::GlobalOutput("    %?", shell.GetAlpha(j));
             for(int n = 0; n < shell.NGeneral(); n++)
-                output::GlobalOutput("    %1%", shell.GetCoef(n, j));
+                output::GlobalOutput("    %?", shell.GetCoef(n, j));
             output::GlobalOutput("\n");
         }
     }

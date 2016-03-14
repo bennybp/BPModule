@@ -75,7 +75,7 @@ bool SetOut_File(const std::string & filepath)
     if(!file_->is_open())
     {
         SetOut_Stdout();
-        GlobalError("Error opening file: %1%", filepath);
+        GlobalError("Error opening file: %?", filepath);
         GlobalError("Using stdout instead!");
         return false;
     }
@@ -108,7 +108,7 @@ void SetColor(bool usecolor) noexcept
 void SetDebug(bool debug) noexcept
 {
     debug_ = debug;
-    GlobalDebug("Debugging now: %1%\n", debug ? "On" : "Off");
+    GlobalDebug("Debugging now: %?\n", debug ? "On" : "Off");
 }
 
 

@@ -34,23 +34,23 @@ CppSupermoduleLoader::~CppSupermoduleLoader()
     {
         void * handle = it.second.handle;
 
-        output::GlobalOutput("Looking to close C++ supermodule %1%\n", it.first);
+        output::GlobalOutput("Looking to close C++ supermodule %?\n", it.first);
         FinalizeFunc ffn = reinterpret_cast<FinalizeFunc>(dlsym(handle, "FinalizeSupermodule"));
 
         // it's ok if it doesn't exist
         char const * error;
         if((error = dlerror()) != NULL)
-            output::GlobalDebug("Supermodule %1% doesn't have finalization function. Skipping\n", it.first);
+            output::GlobalDebug("Supermodule %? doesn't have finalization function. Skipping\n", it.first);
         else
         {
-            output::GlobalDebug("Running finalization function in %1%\n", it.first);
+            output::GlobalDebug("Running finalization function in %?\n", it.first);
             ffn();
         }
 
         // close the so
         dlclose(handle);
 
-        output::GlobalOutput("Closed supermodule %1%\n", it.first);
+        output::GlobalOutput("Closed supermodule %?\n", it.first);
     }
 
     // soinfo_ is cleared via its destructor
@@ -70,7 +70,7 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
     if(spath.size() == 0)
         throw ModuleLoadException("Cannot open supermodule SO file - path not given");
 
-    output::GlobalDebug("Loading supermodule %1%\n", spath);
+    output::GlobalDebug("Loading supermodule %?\n", spath);
 
     if(soinfo_.count(spath) == 0)
     {
@@ -80,7 +80,7 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
         void * handle;
         char const * error; // for dlerror
 
-        output::GlobalDebug("Supermodule not yet loaded. Looking to open C++ supermodule SO file: %1%\n", spath);
+        output::GlobalDebug("Supermodule not yet loaded. Looking to open C++ supermodule SO file: %?\n", spath);
         handle = dlopen(spath.c_str(), RTLD_NOW | RTLD_LOCAL);
 
         // open the module
@@ -89,7 +89,7 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
                                       "path", spath,
                                       "dlerror", std::string(dlerror()));
 
-        output::GlobalSuccess("Successfully opened supermodule %1%\n", spath);
+        output::GlobalSuccess("Successfully opened supermodule %?\n", spath);
 
         // Check for the InsertSupermodule function first (before initializing)
         GeneratorFunc fn = reinterpret_cast<GeneratorFunc>(dlsym(handle, "InsertSupermodule"));
@@ -105,10 +105,10 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
         InitializeFunc ifn = reinterpret_cast<InitializeFunc>(dlsym(handle, "InitializeSupermodule"));
 
         if((error = dlerror()) != NULL) // it's ok if it doesn't exist
-            output::GlobalDebug("SO file %1% doesn't have initialization function. Skipping\n", spath);
+            output::GlobalDebug("SO file %? doesn't have initialization function. Skipping\n", spath);
         else
         {
-            output::GlobalDebug("Running initialization function for supermodule %1%\n", spath);
+            output::GlobalDebug("Running initialization function for supermodule %?\n", spath);
             ifn();
         }
         
@@ -117,10 +117,10 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
         // and put them in the map, under the key for this supermodule
         soinfo_.emplace(spath, SOInfo{std::move(handle), fn()});  // only line that modifies the object
 
-        output::GlobalDebug("Finished loading supermodule %1%\n", spath);
+        output::GlobalDebug("Finished loading supermodule %?\n", spath);
     }
     else
-        output::GlobalDebug("Supermodule %1% has already been loaded\n", spath);
+        output::GlobalDebug("Supermodule %? has already been loaded\n", spath);
 
     // just to be safe
     Assert<ModuleManagerException>(soinfo_.count(spath) == 1, "CppSupermoduleLoader SOInfo doesn't this information...");

@@ -76,7 +76,7 @@ bool Atom::operator!=(const Atom & rhs) const
 
 void Atom::Print(std::ostream & os, size_t) // level ignored
 {
-    Output(os, "%1%    %2%  %3%  %4%\n", GetSymbol(), GetCoords()[0], GetCoords()[1], GetCoords()[2]);
+    Output(os, "%?    %?  %?  %?\n", GetSymbol(), GetCoords()[0], GetCoords()[1], GetCoords()[2]);
 }
 
 

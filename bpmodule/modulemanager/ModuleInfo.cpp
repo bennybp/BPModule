@@ -16,22 +16,22 @@ namespace modulemanager {
 void ModuleInfo::Print(void) const
 {
     output::GlobalOutput("\n");
-    output::GlobalOutput("  ++ Module: %1%\n", name);
-    output::GlobalOutput("         Version: %1%\n", version);
-    output::GlobalOutput("            Type: %1%\n", type);
-    output::GlobalOutput("            Path: %1%\n", path);
+    output::GlobalOutput("  ++ Module: %?\n", name);
+    output::GlobalOutput("         Version: %?\n", version);
+    output::GlobalOutput("            Type: %?\n", type);
+    output::GlobalOutput("            Path: %?\n", path);
 
-    output::GlobalOutput("     Description: %1%\n", description);
+    output::GlobalOutput("     Description: %?\n", description);
 
-    output::GlobalOutput("         Authors: %1%\n", (authors.size() ? authors[0] : ""));
+    output::GlobalOutput("         Authors: %?\n", (authors.size() ? authors[0] : ""));
     for(size_t i = 1; i < authors.size(); i++)
-        output::GlobalOutput("                  %1%\n", authors[i]);
+        output::GlobalOutput("                  %?\n", authors[i]);
 
-    output::GlobalOutput("      References: %1%\n", (refs.size() ? refs[0] : ""));
+    output::GlobalOutput("      References: %?\n", (refs.size() ? refs[0] : ""));
     for(size_t i = 1; i < refs.size(); i++)
-        output::GlobalOutput("                  %1%\n", refs[i]);
+        output::GlobalOutput("                  %?\n", refs[i]);
 
-    output::GlobalOutput("         Options: %1%\n", options.Size());
+    output::GlobalOutput("         Options: %?\n", options.Size());
     options.Print();
 }
 
