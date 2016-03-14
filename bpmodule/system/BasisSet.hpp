@@ -46,7 +46,7 @@ class BasisSet
 
 
         //! \todo make a printer class?
-        void Print(void) const;
+        void Print(std::ostream & os) const;
 
         BasisSet ShrinkFit(void) const;
 

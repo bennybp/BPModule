@@ -206,7 +206,7 @@ class OptionMap
 
         /*! \brief Dumps the options to the output
         */
-        void Print(void) const;
+        void Print(std::ostream & os) const;
 
 
 

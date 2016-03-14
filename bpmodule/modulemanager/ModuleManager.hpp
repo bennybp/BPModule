@@ -77,7 +77,7 @@ class ModuleManager
         
         /*! \brief Prints all the information about the loaded modules
          */
-        void PrintInfo(void) const;
+        void Print(std::ostream & os) const;
 
 
         /*! \brief Returns true if a module with the given module key exists in the database

@@ -138,7 +138,7 @@ class OptionBase
 
         /*! \brief Print out information about this option
          */
-        virtual void Print(void) const = 0;
+        virtual void Print(std::ostream & os) const = 0;
 
 
 

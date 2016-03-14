@@ -112,10 +112,10 @@ ModuleInfo ModuleManager::ModuleNameInfo(const std::string & modulename) const
 }
 
 
-void ModuleManager::PrintInfo(void) const
+void ModuleManager::Print(std::ostream & os) const
 {
     for(const auto & it : store_)
-        it.second.mi.Print();
+        it.second.mi.Print(os);
 }
 
 

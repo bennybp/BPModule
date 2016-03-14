@@ -13,26 +13,28 @@ namespace bpmodule {
 namespace modulemanager {
 
 
-void ModuleInfo::Print(void) const
+void ModuleInfo::Print(std::ostream & os) const
 {
-    output::GlobalOutput("\n");
-    output::GlobalOutput("  ++ Module: %?\n", name);
-    output::GlobalOutput("         Version: %?\n", version);
-    output::GlobalOutput("            Type: %?\n", type);
-    output::GlobalOutput("            Path: %?\n", path);
+    using namespace output;
 
-    output::GlobalOutput("     Description: %?\n", description);
+    Output(os, "\n");
+    Output(os, "  ++ Module: %?\n", name);
+    Output(os, "         Version: %?\n", version);
+    Output(os, "            Type: %?\n", type);
+    Output(os, "            Path: %?\n", path);
 
-    output::GlobalOutput("         Authors: %?\n", (authors.size() ? authors[0] : ""));
+    Output(os, "     Description: %?\n", description);
+
+    Output(os, "         Authors: %?\n", (authors.size() ? authors[0] : ""));
     for(size_t i = 1; i < authors.size(); i++)
-        output::GlobalOutput("                  %?\n", authors[i]);
+        Output(os, "                  %?\n", authors[i]);
 
-    output::GlobalOutput("      References: %?\n", (refs.size() ? refs[0] : ""));
+    Output(os, "      References: %?\n", (refs.size() ? refs[0] : ""));
     for(size_t i = 1; i < refs.size(); i++)
-        output::GlobalOutput("                  %?\n", refs[i]);
+        Output(os, "                  %?\n", refs[i]);
 
-    output::GlobalOutput("         Options: %?\n", options.Size());
-    options.Print();
+    Output(os, "         Options: %?\n", options.Size());
+    //options.Print();
 }
 
 

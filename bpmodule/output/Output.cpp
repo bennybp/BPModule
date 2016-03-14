@@ -11,7 +11,6 @@
 
 
 #include "bpmodule/output/Output.hpp"
-//#include "bpmodule/python/Convert.hpp"
 #include "bpmodule/python/Pybind11.hpp"
 
 
@@ -19,29 +18,20 @@
 namespace {
 
 
+using namespace bpmodule::output;
+
 // "Global" variables for this file
-std::streambuf * coutbuf_ = nullptr;
-std::unique_ptr<std::ofstream> file_;
-std::string filepath_;
-bool usefile_ = false;
+//std::unique_ptr<std::ofstream> file_;
+//std::string filepath_;
+std::unique_ptr<OutputStream> globalout_;
 bool color_ = false;
 bool debug_ = false;
 
 
-void SetCoutBuf_(std::streambuf * buf)
+void CreateGlobalOut_(void)
 {
-    if(coutbuf_ == nullptr)
-        coutbuf_ = std::cout.rdbuf();
-    std::cout.rdbuf(buf);
+    globalout_ = std::unique_ptr<OutputStream>(new OutputStream(std::cout.rdbuf()));
 }
-
-void ResetCoutBuf_(void)
-{
-    //! \todo exceptions if coutbuf_ == nullptr?
-    if(coutbuf_ != nullptr)
-        std::cout.rdbuf(coutbuf_);
-}
-
 
 
 }
@@ -51,24 +41,26 @@ namespace bpmodule {
 namespace output {
 
 
+OutputStream & GetGlobalOut(void)
+{
+    if(!globalout_)
+        CreateGlobalOut_();
+    return *globalout_;
+}
+
 void SetOut_Stdout(void)
 {
-    ResetCoutBuf_();
-    usefile_ = false;
-    file_.reset();
+    if(globalout_)
+    {
+        globalout_->flush();
+        globalout_.reset();
+    }
+
+    CreateGlobalOut_();
 }
 
 
-
-void SetOut_Stderr(void)
-{
-    SetCoutBuf_(std::cerr.rdbuf());
-    usefile_ = false;
-    file_.reset();
-}
-
-
-
+/*
 bool SetOut_File(const std::string & filepath)
 {
     file_ = std::unique_ptr<std::ofstream>(new std::ofstream(filepath.c_str()));
@@ -87,13 +79,17 @@ bool SetOut_File(const std::string & filepath)
         return true;
     }
 }
-
+*/
 
 
 void Flush(void)
 {
     if(Valid())
-        std::cout.flush();    
+    {
+        std::cout.flush();
+        if(globalout_)
+            globalout_->flush();
+    }
 }
 
 
@@ -115,6 +111,7 @@ void SetDebug(bool debug) noexcept
 
 bool Valid(void)
 {
+    /*
     assert(!usefile_ || file_);
 
     if(usefile_ && !file_->good())
@@ -122,9 +119,13 @@ bool Valid(void)
 
     if(!(std::cout.good()))
         return false;
+    if(globalout_ && !globalout_->good())
+        return false;
 
     else
         return true;
+    */
+    return true;
 }
 
 

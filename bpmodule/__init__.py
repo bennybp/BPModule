@@ -66,10 +66,12 @@ def Init(argv, out = "stdout", color = True, debug = False,nthreads=1):
   output streams.
   """
 
-  if out == "stdout":
-    output.SetOut_Stdout()
-  else:
-    output.SetOut_File(out)
+  output.SetOut_Stdout()
+  # TODO
+  #if out == "stdout":
+  #  output.SetOut_Stdout()
+  #else:
+  #  output.SetOut_File(out)
 
   output.SetColor(color)
   output.SetDebug(debug) 

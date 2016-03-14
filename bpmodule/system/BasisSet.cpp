@@ -317,32 +317,34 @@ BasisSet BasisSet::ShrinkFit(void) const
 }
 
 
-void BasisSet::Print(void) const
+void BasisSet::Print(std::ostream & os) const
 {
+    using namespace bpmodule::output;
+
     int nshell = NShell();
 
-    output::GlobalOutput("Basis set with %? shells\n", nshell);
-    output::GlobalOutput("NCart = %? , MaxAM = %?\n", NCartesian(), MaxAM());
-    output::GlobalOutput("MaxNCart = %? , MaxNPrim = %?\n", MaxNCartesian(), MaxNPrim());
-    output::GlobalDebug("Space usage: XYZ: %?/%?  Alpha: %?/%?  Coef %?/%?\n", xyz_pos_, max_nxyz_,
-                                                                               alpha_pos_, max_nalpha_,
-                                                                               coef_pos_, max_ncoef_);
+    Output(os, "Basis set with %? shells\n", nshell);
+    Output(os, "NCart = %? , MaxAM = %?\n", NCartesian(), MaxAM());
+    Output(os, "MaxNCart = %? , MaxNPrim = %?\n", MaxNCartesian(), MaxNPrim());
+    Debug(os, "Space usage: XYZ: %?/%?  Alpha: %?/%?  Coef %?/%?\n", xyz_pos_, max_nxyz_,
+                                                                 alpha_pos_, max_nalpha_,
+                                                                 coef_pos_, max_ncoef_);
 
 
     for(int i = 0; i < nshell; i++)
     {
         const auto & shell = Shell(i);
-        output::GlobalOutput("Shell %?  AM=%?  Cart=%?  NPrim=%? NGen=%?\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim(), shell.NGeneral());
-        output::GlobalOutput("Coordinates: %? %? %?\n", shell.GetCoords()[0], shell.GetCoords()[1], shell.GetCoords()[2]);
+        Output(os, "Shell %?  AM=%?  Cart=%?  NPrim=%? NGen=%?\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim(), shell.NGeneral());
+        Output(os, "Coordinates: % 16.8? % 16.8? % 16.8?\n", shell.GetCoords()[0], shell.GetCoords()[1], shell.GetCoords()[2]);
         for(int j = 0; j < shell.NPrim(); ++j)
         {
-            output::GlobalOutput("    %?", shell.GetAlpha(j));
+            Output(os, "    % 16.8?", shell.GetAlpha(j));
             for(int n = 0; n < shell.NGeneral(); n++)
-                output::GlobalOutput("    %?", shell.GetCoef(n, j));
-            output::GlobalOutput("\n");
+                Output(os, "    % 16.8?", shell.GetCoef(n, j));
+            Output(os, "\n");
         }
     }
-    output::GlobalOutput("\n");
+    Output(os, "\n");
 }
 
 

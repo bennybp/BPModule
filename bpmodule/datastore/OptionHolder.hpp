@@ -134,7 +134,7 @@ class OptionHolder : public OptionBase
 
         virtual void ResetToDefault(void) noexcept;
 
-        virtual void Print(void) const;
+        virtual void Print(std::ostream & os) const;
 
         virtual OptionIssues GetIssues(void) const;
 

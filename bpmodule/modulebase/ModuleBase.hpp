@@ -114,7 +114,7 @@ class ModuleBase
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        void Print(void) const;
+        void Print(std::ostream & os) const;
 
 
         /*! \brief Return a pointer to my node on the graph

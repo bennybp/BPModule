@@ -17,6 +17,10 @@
 namespace bpmodule {
 namespace output {
 
+// forward declare
+class OutputStream;
+
+
 
 /*! The type of information being output
  *
@@ -127,25 +131,12 @@ bool Valid(void);
 
 /*! \brief Sets the output to stdout
  *
- * Will reset any string tees
- *
  * \see \ref developer_output_page
  */
 void SetOut_Stdout(void);
 
 
-/*! \brief Sets the output to stderr
- *
- * Will reset any string tees
- *
- * \see \ref developer_output_page
- */
-void SetOut_Stderr(void);
-
-
 /*! \brief Sets the output to a file
- *
- * Will reset any string tees
  *
  * \see \ref developer_output_page
  *
@@ -154,7 +145,7 @@ void SetOut_Stderr(void);
  *
  * \param [in] filepath Path to an output file.
  */
-bool SetOut_File(const std::string & filepath);
+//bool SetOut_File(const std::string & filepath);
 
 
 /*! \brief Enables or disables the use of colorized output
@@ -185,6 +176,12 @@ void SetDebug(bool debug) noexcept;
  */
 void Flush(void);
 
+
+/*! \brief Get the current output stream
+ *
+ * \see \ref developer_output_page
+ */
+OutputStream & GetGlobalOut(void);
 
 
 
@@ -229,7 +226,7 @@ void Output(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void GlobalOutput(const std::string & fmt, const Targs&... Fargs)
 {
-    Output(std::cout, fmt, Fargs...);
+    Output(GetGlobalOut(), fmt, Fargs...);
 }
 
 
@@ -255,7 +252,7 @@ void Changed(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void GlobalChanged(const std::string & fmt, const Targs&... Fargs)
 {
-    Changed(std::cout, fmt, Fargs...);
+    Changed(GetGlobalOut(), fmt, Fargs...);
 }
 
 
@@ -280,7 +277,7 @@ void Error(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void GlobalError(const std::string & fmt, const Targs&... Fargs)
 {
-    Error(std::cout, fmt, Fargs...);
+    Error(GetGlobalOut(), fmt, Fargs...);
 }
 
 
@@ -304,7 +301,7 @@ void Warning(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void GlobalWarning(const std::string & fmt, const Targs&... Fargs)
 {
-    Warning(std::cout, fmt, Fargs...);
+    Warning(GetGlobalOut(), fmt, Fargs...);
 }
 
 
@@ -329,7 +326,7 @@ void Success(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void GlobalSuccess(const std::string & fmt, const Targs&... Fargs)
 {
-    Success(std::cout, fmt, Fargs...);
+    Success(GetGlobalOut(), fmt, Fargs...);
 }
 
 
@@ -355,7 +352,7 @@ void Debug(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void GlobalDebug(const std::string & fmt, const Targs&... Fargs)
 {
-    Debug(std::cout, fmt, Fargs...);
+    Debug(GetGlobalOut(), fmt, Fargs...);
 }
 
 

@@ -16,10 +16,12 @@ import bpmodule as bp
 
 def Run(mm):
     try:
+        out = bp.output.GetGlobalOut()
+
         # Load the python modules
         #             supermodule      module name      key
         mm.LoadModule("LibERD",        "LibERD_ERI",   "ERI")
-        mm.PrintInfo()
+        mm.Print(out)
         mm.SanityCheck()
   
         atoms = [ bp.system.CreateAtom(0, [ 0.000000000000, -0.143225816552,  0.000000000000], 8),

@@ -165,6 +165,9 @@ class System
         std::string ToString(void) const;
 
 
+        void Print(std::ostream & os) const;
+
+
         /*! \name Iteration over atoms
          */ 
         ///@{

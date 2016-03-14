@@ -367,7 +367,7 @@ static std::vector<std::string> OptToString_(const std::set<T> & opt)
  * option is not the default, the Changed() output is used.
  */
 template<OptionType OPTTYPE>
-void OptionHolder<OPTTYPE>::Print(void) const
+void OptionHolder<OPTTYPE>::Print(std::ostream & os) const
 {
     std::vector<std::string> val = {"(none)"};
     std::vector<std::string> def = {"(none)"};
@@ -403,11 +403,11 @@ void OptionHolder<OPTTYPE>::Print(void) const
     for(const auto & it : optlines)
     {
         if(!IsSetIfRequired())
-            output::GlobalError(it);
+            output::Error(os, it);
         else if(!IsDefault())
-            output::GlobalChanged(it);
+            output::Changed(os, it);
         else
-            output::GlobalOutput(it);
+            output::Output(os, it);
     }
 }
 

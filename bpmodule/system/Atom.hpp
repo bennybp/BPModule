@@ -307,7 +307,7 @@ class Atom : public math::Point
         /*! \name Printing */
         ///@{
 
-        void Print(std::ostream & os, size_t level);
+        void Print(std::ostream & os) const;
 
         ///@}
 

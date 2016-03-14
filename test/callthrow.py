@@ -16,6 +16,7 @@ import bpmodule as bp
 
 def Run(mm):
     try:
+      out = bp.output.GetGlobalOut()
 
       # Load the python modules
       #             supermodule      module name      key
@@ -24,7 +25,7 @@ def Run(mm):
 
       mm.ChangeOption("TESTMOD1", "double_opt_def", 1.111)
       mm.ChangeOption("TESTMOD1", "int_opt_def", 55 )
-      mm.PrintInfo()
+      mm.Print(out)
       mm.SanityCheck()
 
 

@@ -281,21 +281,21 @@ void OptionMap::ChangePy(const std::string & key, const pybind11::object & obj)
 //////////////////////////////////////
 // Printing of options
 /////////////////////////////////////
-void OptionMap::Print(void) const
+void OptionMap::Print(std::ostream & os) const
 {
     size_t nopt = Size();
     if(nopt > 0)
     {
-        GlobalOutput("\n");
+        Output(os, "\n");
         std::string s20(20, '-');
         std::string s10(10, '-');
-        GlobalOutput("          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n", "Option", "Type", "Value", "Default", "Required", "Description");
-        GlobalOutput("          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n", s20, s20, s20, s20, s10, s20);
+        Output(os, "          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n", "Option", "Type", "Value", "Default", "Required", "Description");
+        Output(os, "          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n", s20, s20, s20, s20, s10, s20);
 
         for(const auto & it : opmap_)
-            it.second->Print();
+            it.second->Print(os);
     }
-    GlobalOutput("\n");
+    Output(os, "\n");
 }
 
 

@@ -85,9 +85,9 @@ datastore::OptionMap & ModuleBase::Options(void)
 }
 
 
-void ModuleBase::Print(void) const
+void ModuleBase::Print(std::ostream & os) const
 {
-    MInfo_().Print();
+    MInfo_().Print(os);
 }
 
 const ModuleGraphNode * ModuleBase::MyNode(void) const

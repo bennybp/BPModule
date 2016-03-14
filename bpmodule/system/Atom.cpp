@@ -74,15 +74,16 @@ bool Atom::operator!=(const Atom & rhs) const
 }
 
 
-void Atom::Print(std::ostream & os, size_t) // level ignored
+void Atom::Print(std::ostream & os) const
 {
-    Output(os, "%?    %?  %?  %?\n", GetSymbol(), GetCoords()[0], GetCoords()[1], GetCoords()[2]);
+    Output(os, "%-5?    %16.8?  %16.8?  %16.8?\n",
+           GetSymbol(), GetCoords()[0], GetCoords()[1], GetCoords()[2]);
 }
 
 
 std::ostream& operator<<(std::ostream& os,const Atom& A)
 {
-    os<<A.GetSymbol()<<" "<<A[0]<<" "<<A[1]<<" "<<A[2];
+    A.Print(os);
     return os;
 }
 
