@@ -403,11 +403,11 @@ void OptionHolder<OPTTYPE>::Print(void) const
     for(const auto & it : optlines)
     {
         if(!IsSetIfRequired())
-            output::Error(it);
+            output::GlobalError(it);
         else if(!IsDefault())
-            output::Changed(it);
+            output::GlobalChanged(it);
         else
-            output::Output(it);
+            output::GlobalOutput(it);
     }
 }
 

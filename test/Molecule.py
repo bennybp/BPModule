@@ -16,9 +16,9 @@ import bpmodule as bp
 
 
 def PrintMol(mol):
-    bp.output.Output("Number of atoms: {}\n".format(mol.NAtoms()))
+    bp.output.GlobalOutput("Number of atoms: {}\n".format(mol.NAtoms()))
     print(mol)
-    bp.output.Output("Center of Mass: %1%\n", mol.CenterOfMass().GetCoords())
+    bp.output.GlobalOutput("Center of Mass: {}\n".format(mol.CenterOfMass().GetCoords()))
 
 def Run():
     try:
@@ -62,11 +62,11 @@ def Run():
 
 
     except Exception as e:
-      bp.output.Output("Caught exception in main handler. Contact the developers\n")
+      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.Error("\n")
-      bp.output.Error(str(e))
-      bp.output.Error("\n")
+      bp.output.GlobalError("\n")
+      bp.output.GlobalError(str(e))
+      bp.output.GlobalError("\n")
 
 
 

@@ -96,7 +96,7 @@ def Run(mm):
 
 
         for m in allmod:
-            bp.output.Output("Got module key %|1$-20| %|2$-20| v%3%\n", m[0].Key(), m[0].Name(), m[0].Version())
+            bp.output.GlobalOutput("Got module key %|1$-20| %|2$-20| v%3%\n", m[0].Key(), m[0].Name(), m[0].Version())
 
 
         nfailed = 0
@@ -133,11 +133,11 @@ def Run(mm):
 
 
     except Exception as e:
-          bp.output.Output("Caught exception in main handler\n")
+          bp.output.GlobalOutput("Caught exception in main handler\n")
           traceback.print_exc()
-          bp.output.Error("\n")
-          bp.output.Error(str(e))
-          bp.output.Error("\n")
+          bp.output.GlobalError("\n")
+          bp.output.GlobalError(str(e))
+          bp.output.GlobalError("\n")
 
 
 

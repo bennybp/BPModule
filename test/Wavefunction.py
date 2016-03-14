@@ -31,19 +31,19 @@ def Run():
 
         wfn = bp.datastore.Wavefunction()
         wfn.basis.Set(bs)
-        bp.output.Output("Basis object: %1%\n", str(wfn.basis))
-        bp.output.Output("NShell: %1%\n", wfn.basis.NShell())
+        bp.output.GlobalOutput("Basis object: %1%\n", str(wfn.basis))
+        bp.output.GlobalOutput("NShell: %1%\n", wfn.basis.NShell())
 
 
         tester.PrintResults() 
 
 
     except Exception as e:
-      bp.output.Output("Caught exception in main handler. Contact the developers\n")
+      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.Error("\n")
-      bp.output.Error(str(e))
-      bp.output.Error("\n")
+      bp.output.GlobalError("\n")
+      bp.output.GlobalError(str(e))
+      bp.output.GlobalError("\n")
 
 
 

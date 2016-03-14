@@ -22,21 +22,21 @@ def Run():
         tester.PrintHeader()
 
         for i in range(1, 20):
-            bp.output.Output("Z = %1%\n", i)
-            bp.output.Output("      Name: %1%\n", bp.system.AtomicNameFromZ(i))
-            bp.output.Output("    Symbol: %1%\n", bp.system.AtomicSymFromZ(i))
-            bp.output.Output("      Mass: %1%\n", bp.system.AtomicMassFromZ(i))
+            bp.output.GlobalOutput("Z = %1%\n", i)
+            bp.output.GlobalOutput("      Name: %1%\n", bp.system.AtomicNameFromZ(i))
+            bp.output.GlobalOutput("    Symbol: %1%\n", bp.system.AtomicSymFromZ(i))
+            bp.output.GlobalOutput("      Mass: %1%\n", bp.system.AtomicMassFromZ(i))
             ad = bp.system.AtomicInfoFromZ(i)
 
-            bp.output.Output("  Isotopes: %1%\n", len(ad.isotopes))
+            bp.output.GlobalOutput("  Isotopes: %1%\n", len(ad.isotopes))
 
             for iso in ad.isotopes:
-                bp.output.Output("        Number: %1%\n", iso.isonum)
-                bp.output.Output("                Mass: %1%\n", iso.mass)
-                bp.output.Output("           Abundance: %1%\n", iso.abund)
-                bp.output.Output("\n")
+                bp.output.GlobalOutput("        Number: %1%\n", iso.isonum)
+                bp.output.GlobalOutput("                Mass: %1%\n", iso.mass)
+                bp.output.GlobalOutput("           Abundance: %1%\n", iso.abund)
+                bp.output.GlobalOutput("\n")
 
-            bp.output.Output("\n")
+            bp.output.GlobalOutput("\n")
 
 
 
@@ -45,11 +45,11 @@ def Run():
 
 
     except Exception as e:
-      bp.output.Output("Caught exception in main handler. Contact the developers\n")
+      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.Error("\n")
-      bp.output.Error(str(e))
-      bp.output.Error("\n")
+      bp.output.GlobalError("\n")
+      bp.output.GlobalError(str(e))
+      bp.output.GlobalError("\n")
 
 
 

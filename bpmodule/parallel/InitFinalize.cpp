@@ -3,7 +3,7 @@
  * \brief Parallelization functionality (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
-#include<memory>
+#include <memory>
 #include "bpmodule/parallel/InitFinalize.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/util/Cmdline.hpp"
@@ -21,7 +21,7 @@ const Env_t& GetEnv(){return *Env_;}
 
 void Init(size_t NThreads)
 {
-    output::Output("Calling MPI Init\n");
+    output::GlobalOutput("Calling MPI Init\n");
     Env_=std::unique_ptr<Env_t>(new Env_t(NThreads));
     
     //madness::initialize(*(util::GetArgc()), *(util::GetArgv()));
@@ -31,7 +31,7 @@ void Init(size_t NThreads)
 
 void Finalize(void)
 {
-    output::Output("Finalizing Process %1% of %2%\n", GetProcID(), GetNProc());
+    output::GlobalOutput("Finalizing Process %1% of %2%\n", GetProcID(), GetNProc());
     Env_.reset();
     //madness::finalize();
 }

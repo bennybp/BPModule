@@ -1,5 +1,5 @@
 # For output
-from bpmodule.output import Output, Error, Warning, Success, Debug
+from bpmodule.output import GlobalOutput, GlobalError, GlobalSuccess, GlobalDebug
 from bpmodule.util import Line
 
 class Tester:
@@ -10,23 +10,23 @@ class Tester:
 
 
     def PrintHeader(self):
-        Output(Line("="))
-        Output("%1%\n", self.desc)
-        Output(Line("="))
+        GlobalOutput(Line("="))
+        GlobalOutput("{}\n".format(self.desc))
+        GlobalOutput(Line("="))
 
 
 
     def PrintResults(self):
-        Output("\n\n")
+        GlobalOutput("\n\n")
         if self.nfailed > 0:
-            Output(Line("="))
-            Error("RESULTS: %1% failed\n", self.nfailed)
-            Output(Line("="))
+            GlobalOutput(Line("="))
+            GlobalError("RESULTS: {} failed\n".format(self.nfailed))
+            GlobalOutput(Line("="))
         else:
-            Output(Line("="))
-            Success("RESULTS: %1% failed\n", self.nfailed)
-            Output(Line("="))
-        Output("\n\n")
+            GlobalOutput(Line("="))
+            GlobalSuccess("RESULTS: {} failed\n".format(self.nfailed))
+            GlobalOutput(Line("="))
+        GlobalOutput("\n\n")
 
 
     def Test(self, desc, expected, func, *args):
@@ -40,13 +40,12 @@ class Tester:
         """
         failed = func(*args)
         
-        fmt = "%|1$5| : %|2$-5|  %|3$-5|  %|4$-9|  : %5%\n"
+        fmt = "{:5} : {:<5}  {:<5}  {:<9}   : {}\n"
         
         passed=(failed==expected)
         
         
-        Output(fmt, self.ntest , expected , passed ,\
-                "Success" if passed else "FAILED", desc)
+        GlobalOutput(fmt.format(self.ntest , expected , passed , "Success" if passed else "FAILED", desc))
         if not passed:
             self.nfailed+=1
         

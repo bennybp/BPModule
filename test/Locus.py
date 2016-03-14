@@ -24,14 +24,14 @@ def Run():
         Water.AddAtom(H1)
         Water.AddAtom(H2)
 
-        bp.output.Output("%1%\n",str(Water))
+        bp.output.GlobalOutput("%1%\n",str(Water))
 
     except Exception as e:
-      bp.output.Output("Caught exception in main handler. Contact the developers\n")
+      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.Error("\n")
-      bp.output.Error(str(e))
-      bp.output.Error("\n")
+      bp.output.GlobalError("\n")
+      bp.output.GlobalError(str(e))
+      bp.output.GlobalError("\n")
 
 bp.Init(sys.argv, out = "stdout", color = True, debug = True)
 Run()

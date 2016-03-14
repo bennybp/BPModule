@@ -42,13 +42,13 @@ def Run(mm):
         ubs = bp.datastore.MakeUIDPointer(bs)
         eri.SetBases(4, ubs, ubs, ubs, ubs)
         n = eri.Calculate(1, 0, 0, 0, 0)
-        bp.output.Output("Calculated %1% integrals\n", n)
-        bp.output.Output("%1%\n", str(eri.GetBuf()))
+        bp.output.GlobalOutput("Calculated %1% integrals\n", n)
+        bp.output.GlobalOutput("%1%\n", str(eri.GetBuf()))
       
 
 
     except Exception as e:
-      bp.output.Output("Caught exception in main handler\n")
+      bp.output.GlobalOutput("Caught exception in main handler\n")
       traceback.print_exc()
 
 

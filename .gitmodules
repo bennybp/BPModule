@@ -10,9 +10,6 @@
 [submodule "external/madness/madness-source"]
 	path = external/madness/madness-source
 	url = https://github.com/m-a-d-n-e-s-s/madness
-[submodule "external/LibTaskForce/LibTaskForce-source"]
-	path = external/LibTaskForce/LibTaskForce-source
-	url = git@github.com:ryanmrichard/LibTaskForce.git
 [submodule "external/libtaskforce/libtaskforce-source"]
 	path = external/libtaskforce/libtaskforce-source
 	url = git@github.com:ryanmrichard/LibTaskForce.git

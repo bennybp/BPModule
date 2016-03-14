@@ -18,8 +18,6 @@ namespace bpmodule {
 namespace output {
 
 
-namespace detail {
-
 /*! The type of information being output
  *
  * \warning Internal use only
@@ -33,20 +31,6 @@ enum class OutputType
     Error,   //!< Something is very wrong
     Debug    //!< For developers
 };
-
-
-/*! \brief Output to a stream
- *
- * \throwno Throws boost exceptions for malformed inputs, etc
- * \warning Internal use only
- *
- * \param [in] out The stream to print to
- * \param [in] type The type of output (output, debug, etc)
- * \param [in] str A string to output
- */
-void Output_(std::ostream & out, OutputType type, const std::string & str);
-
-
 
 
 /*! \brief Stream buffer that tees output to a string
@@ -70,11 +54,18 @@ class TeeBufToString : public std::streambuf
         TeeBufToString(const TeeBufToString &)             = delete;
         TeeBufToString & operator=(const TeeBufToString &) = delete;
 
+        void SetString(std::string * str) noexcept
+        {
+            str_ = str;
+        }
+
     protected:
         virtual std::streamsize xsputn(const char * s, std::streamsize n)
         {
             std::streamsize n1 = sb_->sputn(s, n);
-            str_->append(s, n);
+
+            if(str_ != nullptr)
+                str_->append(s, n);
     
             return n1;
         }   
@@ -87,7 +78,8 @@ class TeeBufToString : public std::streambuf
             }   
             else
             {
-                str_->append(1, static_cast<char>(c));
+                if(str_ != nullptr)
+                    str_->append(1, static_cast<char>(c));
                 return sb_->sputc(static_cast<char>(c));
             }   
         }   
@@ -104,82 +96,25 @@ class TeeBufToString : public std::streambuf
 };      
 
 
-/*! \brief Guards a change to an ostream buffer via RAII
+
+namespace detail {
+
+
+
+/*! \brief Output to a stream
  *
- * The internal buffer of the given ostream is changed.
- * On destruction, the stream is given its original buffer back.
+ * \throwno Throws boost exceptions for malformed inputs, etc
+ * \warning Internal use only
+ *
+ * \param [in] out The stream to print to
+ * \param [in] type The type of output (output, debug, etc)
+ * \param [in] str A string to output
  */
-class OstreamBufGuard
-{
-    public:
-        /*! \brief Constructor
-         *
-         * \param [in] os The stream to manupulate
-         * \param [in] str The buffer to use in \p os
-         */ 
-        OstreamBufGuard(std::ostream * os, std::streambuf * newbuf) noexcept
-            : os_(os), origbuf_(os->rdbuf())
-        {
-            os_->rdbuf(newbuf);
-        }
+void Output_(std::ostream & out, OutputType type, const std::string & str);
 
-        /*! \brief Sets the buffer of the ostream to its original buffer
-         */
-        virtual ~OstreamBufGuard()
-        {
-            os_->rdbuf(origbuf_);
-        }
-
-        OstreamBufGuard & operator=(OstreamBufGuard &&)      = default;
-        OstreamBufGuard(OstreamBufGuard &&)                  = default;
-        OstreamBufGuard(const OstreamBufGuard &)             = delete;
-        OstreamBufGuard & operator=(const OstreamBufGuard &) = delete;
-
-    private:
-        std::ostream * os_;
-        std::streambuf * origbuf_;
-};
 
 
 } // close namespace detail
-
-
-
-/*! \brief Tees output of a stream to a string, and resets the buffer on destruction
- *
- * The buffer of os is changed to one that tees output to the given string. 
- * On destruction, the stream is given its original buffer back.
- */
-class StringTeeGuard
-{
-    public:
-        /*! \brief Constructor
-         *
-         * \param [in] os The stream to tee from
-         * \param [in] str The string to copy output to
-         */ 
-        StringTeeGuard(std::ostream * os, std::string * str) noexcept
-            : tee_(os->rdbuf(), str),
-              guard_(os, &tee_)
-        {
-        }
-
-
-        /*! \brief Sets the buffer of the ostream to its original buffer
-         */
-        ~StringTeeGuard() = default; // everything handled in guard_ destructor
-
-        StringTeeGuard & operator=(StringTeeGuard &&)      = default;
-        StringTeeGuard(StringTeeGuard &&)                  = default;
-        StringTeeGuard(const StringTeeGuard &)             = delete;
-        StringTeeGuard & operator=(const StringTeeGuard &) = delete;
-
-    private:
-        detail::TeeBufToString tee_;
-        detail::OstreamBufGuard guard_;
-};
-
-
 
 
 
@@ -251,16 +186,6 @@ void SetDebug(bool debug) noexcept;
 void Flush(void);
 
 
-/*! \brief Tees output to the given string
- *
- * A guard object is returned. On destruction, this object
- * sets the output back to its original state.
- *
- * The given string must exist until the returned object is destructed,
- * for obvious reasons.
- */
-StringTeeGuard TeeToString(std::string * str);
-
 
 
 /////////////////////
@@ -282,7 +207,7 @@ StringTeeGuard TeeToString(std::string * str);
 template<typename... Targs>
 void Output(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(out, detail::OutputType::Output, util::FormatString(fmt, Fargs...));
+    detail::Output_(out, OutputType::Output, util::FormatString(fmt, Fargs...));
 }
 
 
@@ -302,7 +227,7 @@ void Output(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
  * \param [in] Fargs The arguments to the format string
  */
 template<typename... Targs>
-void Output(const std::string & fmt, const Targs&... Fargs)
+void GlobalOutput(const std::string & fmt, const Targs&... Fargs)
 {
     Output(std::cout, fmt, Fargs...);
 }
@@ -320,7 +245,7 @@ void Output(const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void Changed(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(out, detail::OutputType::Changed, util::FormatString(fmt, Fargs...));
+    detail::Output_(out, OutputType::Changed, util::FormatString(fmt, Fargs...));
 }
 
 
@@ -328,7 +253,7 @@ void Changed(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
  * \copydetails Output(const std::string &, Targs...)
  */
 template<typename... Targs>
-void Changed(const std::string & fmt, const Targs&... Fargs)
+void GlobalChanged(const std::string & fmt, const Targs&... Fargs)
 {
     Changed(std::cout, fmt, Fargs...);
 }
@@ -345,7 +270,7 @@ void Changed(const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void Error(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(out, detail::OutputType::Error, util::FormatString(fmt, Fargs...));
+    detail::Output_(out, OutputType::Error, util::FormatString(fmt, Fargs...));
 }
 
 
@@ -353,7 +278,7 @@ void Error(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
  * \copydetails Output(const std::string &, Targs...)
  */
 template<typename... Targs>
-void Error(const std::string & fmt, const Targs&... Fargs)
+void GlobalError(const std::string & fmt, const Targs&... Fargs)
 {
     Error(std::cout, fmt, Fargs...);
 }
@@ -369,7 +294,7 @@ void Error(const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void Warning(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(out, detail::OutputType::Warning, util::FormatString(fmt, Fargs...));
+    detail::Output_(out, OutputType::Warning, util::FormatString(fmt, Fargs...));
 }
 
 
@@ -377,7 +302,7 @@ void Warning(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
  * \copydetails Output(const std::string &, Targs...)
  */
 template<typename... Targs>
-void Warning(const std::string & fmt, const Targs&... Fargs)
+void GlobalWarning(const std::string & fmt, const Targs&... Fargs)
 {
     Warning(std::cout, fmt, Fargs...);
 }
@@ -394,7 +319,7 @@ void Warning(const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void Success(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(out, detail::OutputType::Success, util::FormatString(fmt, Fargs...));
+    detail::Output_(out, OutputType::Success, util::FormatString(fmt, Fargs...));
 }
 
 
@@ -402,7 +327,7 @@ void Success(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
  * \copydetails Output(const std::string &, Targs...)
  */
 template<typename... Targs>
-void Success(const std::string & fmt, const Targs&... Fargs)
+void GlobalSuccess(const std::string & fmt, const Targs&... Fargs)
 {
     Success(std::cout, fmt, Fargs...);
 }
@@ -420,7 +345,7 @@ void Success(const std::string & fmt, const Targs&... Fargs)
 template<typename... Targs>
 void Debug(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(out, detail::OutputType::Debug, util::FormatString(fmt, Fargs...));
+    detail::Output_(out, OutputType::Debug, util::FormatString(fmt, Fargs...));
 }
 
 
@@ -428,7 +353,7 @@ void Debug(std::ostream & out, const std::string & fmt, const Targs&... Fargs)
  * \copydetails Output(const std::string &, Targs...)
  */
 template<typename... Targs>
-void Debug(const std::string & fmt, const Targs&... Fargs)
+void GlobalDebug(const std::string & fmt, const Targs&... Fargs)
 {
     Debug(std::cout, fmt, Fargs...);
 }
@@ -436,24 +361,79 @@ void Debug(const std::string & fmt, const Targs&... Fargs)
 
 
 
+////////////////////////////
+// Classes, etc, for output
+////////////////////////////
 
 
-namespace export_python {
-
-/*! \brief Wrap printing functions for use from python
- *
- * This function takes a python list rather than the parameter pack
- *
- * \param [in] os Output stream to send the output to
- * \param [in] type The type of output
- * \param [in] fmt Format string to use
- * \param [in] args Arguments to the format string
+/*! \brief A stream object with some output helpers
  */
-void Output(std::ostream & os, detail::OutputType type,
-            const std::string & fmt, const std::vector<std::string> & args);
+class OutputStream : public std::ostream
+{
+    public:
+        OutputStream(std::streambuf * sb)
+            : std::ostream(sb), curtype_(OutputType::Output)
+        { }
 
-} // close namespace export_python
+        template<typename... Targs>
+        void Output(const std::string & fmt, const Targs&... Fargs)
+        {
+            output::Output(*this, fmt, Fargs...);
+        }
 
+        template<typename... Targs>
+        void Changed(const std::string & fmt, const Targs&... Fargs)
+        {
+            output::Changed(*this, fmt, Fargs...);
+        }
+
+        template<typename... Targs>
+        void Error(const std::string & fmt, const Targs&... Fargs)
+        {
+            output::Error(*this, fmt, Fargs...);
+        }
+
+        template<typename... Targs>
+        void Warning(const std::string & fmt, const Targs&... Fargs)
+        {
+            output::Warning(*this, fmt, Fargs...);
+        }
+
+        template<typename... Targs>
+        void Success(const std::string & fmt, const Targs&... Fargs)
+        {
+            output::Success(*this, fmt, Fargs...);
+        }
+
+        template<typename... Targs>
+        void Debug(const std::string & fmt, const Targs&... Fargs)
+        {
+            output::Debug(*this, fmt, Fargs...);
+        }
+
+        void ResetType(void) noexcept
+        {
+            curtype_ = OutputType::Output;
+        }
+
+        OutputType SetType(OutputType type) noexcept
+        {
+            OutputType old = curtype_;
+            curtype_ = type;
+            return old;
+        }
+
+    private:
+        OutputType curtype_;
+
+};
+
+
+inline OutputStream & operator<<(OutputStream & os, OutputType type)
+{
+    os.SetType(type);
+    return os;
+}
 
 
 

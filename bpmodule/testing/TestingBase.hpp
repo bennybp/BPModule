@@ -13,9 +13,9 @@
 #include "bpmodule/output/Output.hpp"
 
 
-using bpmodule::output::Output;
-using bpmodule::output::Error;
-using bpmodule::output::Debug;
+using bpmodule::output::GlobalOutput;
+using bpmodule::output::GlobalError;
+using bpmodule::output::GlobalDebug;
 
 namespace bpmodule {
 namespace testing {
@@ -39,12 +39,13 @@ int TestFunc(T func, Targs... Fargs)
     }
     catch(std::exception & ex)
     {
-        Debug(ex.what());
+        GlobalDebug(ex.what());
+        GlobalDebug("\n");
         return 1;
     }   
     catch(...)
     {
-        Debug("Caught unknown exception\n");
+        GlobalDebug("Caught unknown exception\n");
         return 1;
     }   
 
@@ -77,12 +78,13 @@ int TestBoolFunc(T func, Targs... Fargs)
     }
     catch(std::exception & ex)
     {
-        Debug(ex.what());
+        GlobalDebug(ex.what());
+        GlobalDebug("\n");
         return 1;
     }   
     catch(...)
     {
-        Debug("Caught unknown exception\n");
+        GlobalDebug("Caught unknown exception\n");
         return 1;
     }   
 
@@ -109,12 +111,13 @@ int TestConstruct(Targs... Fargs)
     }
     catch(std::exception & ex)
     {
-        Debug(ex.what());
+        GlobalDebug(ex.what());
+        GlobalDebug("\n");
         return 1;
     }   
     catch(...)
     {
-        Debug("Caught unknown exception\n");
+        GlobalDebug("Caught unknown exception\n");
         return 1;
     }   
 

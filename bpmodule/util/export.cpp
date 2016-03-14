@@ -20,9 +20,6 @@ PYBIND11_PLUGIN(util)
 {
     pybind11::module m("util", "Miscellaneous utilities");
 
-    // format string
-    m.def("FormatString_", static_cast<std::string(*)(const std::string &, const std::vector<std::string> &)>(util::FormatString));
-
     // command line
     m.def("SetCmdline", SetCmdline);
     m.def("ClearCmdline", ClearCmdline);

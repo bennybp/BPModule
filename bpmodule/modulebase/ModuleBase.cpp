@@ -23,15 +23,21 @@ namespace modulebase {
 
 
 ModuleBase::ModuleBase(unsigned long id, const char * modtype)
-    : id_(id), modtype_(modtype), mlocator_(nullptr), graphnode_(nullptr)
+    : tbts_(std::cout.rdbuf(), nullptr),  // by default, go to cout only
+      out(&tbts_),
+      id_(id), modtype_(modtype), mlocator_(nullptr), graphnode_(nullptr)
 {
-    output::Debug("Constructed %1% module [%2%]\n", modtype, id);
+    out.Debug("Constructed %1% module [%2%]\n", modtype, id);
 }
 
 
 ModuleBase::~ModuleBase()
 {
-    output::Debug("Destructed module [%1%] : %2% v%3%\n", ID(), Name(), Version());
+    out.Debug("Module [%1%] : Output size: %1%\n", ID());
+    out.Debug("Destructed module [%1%] : %2% v%3%\n", ID(), Name(), Version());
+    //out.Debug("*****\n");
+    //out.Warning(GetOutput());
+    //out.Debug("*****\n");
 }
 
 
@@ -166,6 +172,9 @@ void ModuleBase::SetMManager_(modulemanager::ModuleManager * mloc) noexcept
 void ModuleBase::SetGraphNode_(datastore::ModuleGraphNode * node) noexcept
 {
     graphnode_ = node;
+
+    // tee the output to the graph
+    tbts_.SetString(&(GraphData().output));
 }
 
 datastore::ModuleGraphNode * ModuleBase::GetGraphNode_(void) const noexcept

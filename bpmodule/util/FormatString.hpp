@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #include <boost/format.hpp>
 
@@ -111,19 +112,6 @@ std::string FormatString(const std::string & fmt, const Targs&... Fargs)
     FormatStream(ss, fmt, Fargs...);
     return ss.str();
 }
-
-
-
-
-/*! \brief Create a format string using a vector of strings
- *
- * \throw bpmodule::exception::GeneralException for malformed inputs, etc
- * \param [in] fmt Format string to use
- * \param [in] args Arguments to the format string
- */
-std::string FormatString(const std::string & fmt, const std::vector<std::string> & args);
-
-
 
 
 } // close namespace util

@@ -26,16 +26,16 @@ def Run(mm):
       b1 = mm.GetModule("TESTEXTLIB", 0)
 
       b1.RunTest()
-      bp.output.Output("\n")
+      bp.output.GlobalOutput("\n")
 
-      bp.output.Output("\nDone testing\n")
+      bp.output.GlobalOutput("\nDone testing\n")
 
     except Exception as e:
-      bp.output.Output("Caught exception in main handler\n")
+      bp.output.GlobalOutput("Caught exception in main handler\n")
       traceback.print_exc()
-      bp.output.Error("\n")
-      bp.output.Error(str(e))
-      bp.output.Error("\n")
+      bp.output.GlobalError("\n")
+      bp.output.GlobalError(str(e))
+      bp.output.GlobalError("\n")
 
 
 

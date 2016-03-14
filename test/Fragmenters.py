@@ -16,9 +16,9 @@ import bpmodule as bp
 
 
 def PrintMol(mol):
-    bp.output.Output("Number of atoms: {}\n".format(mol.NAtoms()))
+    bp.output.GlobalOutput("Number of atoms: {}\n".format(mol.NAtoms()))
     print(mol)
-    bp.output.Output("Center of Mass: %1%\n", mol.CenterOfMass().GetCoords())
+    bp.output.GlobalOutput("Center of Mass: %1%\n", mol.CenterOfMass().GetCoords())
 
 def Run(mm):
     try:
@@ -66,19 +66,19 @@ def Run(mm):
 
         # Should convert to a dict
         frags = f.Fragmentize(mol)
-        bp.output.Output("Number of fragments: %1%\n", len(frags))
+        bp.output.GlobalOutput("Number of fragments: %1%\n", len(frags))
         for k,v in frags.items():
-            bp.output.Output("Key: %1%   NAtoms: %2%\n", k, v.NAtoms())
+            bp.output.GlobalOutput("Key: %1%   NAtoms: %2%\n", k, v.NAtoms())
 
         tester.PrintResults() 
 
 
     except Exception as e:
-      bp.output.Output("Caught exception in main handler. Contact the developers\n")
+      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.Error("\n")
-      bp.output.Error(str(e))
-      bp.output.Error("\n")
+      bp.output.GlobalError("\n")
+      bp.output.GlobalError(str(e))
+      bp.output.GlobalError("\n")
 
 
 
