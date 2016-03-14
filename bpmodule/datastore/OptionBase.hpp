@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <ostream>
 
 #include "bpmodule/python/Pybind11_fwd.hpp"
 

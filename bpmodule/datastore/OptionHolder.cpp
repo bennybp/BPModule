@@ -376,6 +376,7 @@ void OptionHolder<OPTTYPE>::Print(std::ostream & os) const
 
     if(default_)
         def = OptToString_(*default_);
+
     if(value_)
         val = OptToString_(*value_);
     else if(default_)
@@ -401,7 +402,7 @@ void OptionHolder<OPTTYPE>::Print(std::ostream & os) const
                                         "", "", val[i], def[i], "", ""));
     }
    
-    // now print 
+    // now actually print 
     for(const auto & it : optlines)
     {
         OutputType type = OutputType::Output;
