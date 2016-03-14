@@ -54,6 +54,8 @@ PYBIND11_PLUGIN(modulemanager)
     .def("ChangeOption", &ModuleManager::ChangeOptionPy)
     .def("DotGraph", &ModuleManager::DotGraph)
     .def("LoadModuleFromModuleInfo", &ModuleManager::LoadModuleFromModuleInfo)
+    .def("EnableDebug", &ModuleManager::EnableDebug)
+    .def("EnableDebugAll", &ModuleManager::EnableDebugAll)
     ;
 
 

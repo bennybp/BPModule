@@ -89,6 +89,17 @@ void ModuleBase::Print(std::ostream & os) const
     MInfo_().Print(os);
 }
 
+
+void ModuleBase::EnableDebug(bool debug) noexcept
+{
+    out.EnableDebug(debug);
+}
+
+bool ModuleBase::DebugEnabled(void) const noexcept
+{
+    return out.DebugEnabled();
+}
+
 const ModuleGraphNode * ModuleBase::MyNode(void) const
 {
     if(mlocator_ == nullptr)

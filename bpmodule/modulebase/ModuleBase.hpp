@@ -118,6 +118,17 @@ class ModuleBase
         void Print(std::ostream & os) const;
 
 
+        /*! \brief Enable debug output for this module
+         */
+        void EnableDebug(bool debug) noexcept; 
+
+
+        /*! \brief Is debug output enabled for this module
+         */
+        bool DebugEnabled(void) const noexcept; 
+
+
+
         /*! \brief Return a pointer to my node on the graph
          *
          * \throw std::logic_error if there is a severe developer error

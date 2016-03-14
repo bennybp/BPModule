@@ -40,6 +40,8 @@ PYBIND11_PLUGIN(modulebase)
          .def("Wfn", static_cast<datastore::Wavefunction &(ModuleBase::*)(void)>(&ModuleBase::Wfn), pybind11::return_value_policy::reference_internal) 
          .def("SetWfn",&ModuleBase::SetWfn)
          .def("CreateChildModule", &ModuleBase::CreateChildModulePy)
+         .def("EnableDebug", &ModuleBase::EnableDebug)
+         .def("DebugEnabled", &ModuleBase::DebugEnabled)
          ;
 
 
@@ -49,6 +51,7 @@ PYBIND11_PLUGIN(modulebase)
     pybind11::class_<Test_Base_Py> testbase(m, "Test_Base", mbase);
     testbase.alias<Test_Base>()
             .def(pybind11::init<unsigned long>())
+            .def_readonly("out", &Test_Base_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &Test_Base_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("RunTest", &Test_Base::RunTest)
             .def("CallRunTest", &Test_Base::CallRunTest)
@@ -63,6 +66,8 @@ PYBIND11_PLUGIN(modulebase)
     pybind11::class_<SystemFragmenter_Py> sysfrag(m, "SystemFragmenter", mbase);
     sysfrag.alias<SystemFragmenter>()
             .def(pybind11::init<unsigned long>())
+            .def_readonly("out", &SystemFragmenter_Py::out, pybind11::return_value_policy::reference_internal) 
+            .def("Cache", &SystemFragmenter_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("Fragmentize", &SystemFragmenter::Fragmentize)
     ;
 
@@ -74,6 +79,7 @@ PYBIND11_PLUGIN(modulebase)
     pybind11::class_<OneElectronIntegralIMPL_Py> oneelimpl(m, "OneElectronIntegralIMPL", mbase);
     oneelimpl.alias<OneElectronIntegralIMPL>()
             .def(pybind11::init<unsigned long>())
+            .def_readonly("out", &OneElectronIntegralIMPL_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &OneElectronIntegralIMPL_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("SetBases", &OneElectronIntegralIMPL::SetBases)
             .def("Calculate", &OneElectronIntegralIMPL::Calculate)
@@ -102,6 +108,7 @@ PYBIND11_PLUGIN(modulebase)
     pybind11::class_<TwoElectronIntegralIMPL_Py> twoelimpl(m, "TwoElectronIntegralIMPL", mbase);
     twoelimpl.alias<TwoElectronIntegralIMPL>()
             .def(pybind11::init<unsigned long>())
+            .def_readonly("out", &TwoElectronIntegralIMPL_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &TwoElectronIntegralIMPL_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
             .def("Calculate", &TwoElectronIntegralIMPL::Calculate)
@@ -129,6 +136,8 @@ PYBIND11_PLUGIN(modulebase)
     pybind11::class_<EnergyMethod_Py> energymethod(m, "EnergyMethod", mbase);
     energymethod.alias<EnergyMethod>()
             .def(pybind11::init<unsigned long>())
+            .def_readonly("out", &EnergyMethod_Py::out, pybind11::return_value_policy::reference_internal) 
+            .def("Cache", &EnergyMethod_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("Deriv", &EnergyMethod::Deriv)
             .def("Energy",&EnergyMethod::Energy)
             .def("Gradient",&EnergyMethod::Gradient)

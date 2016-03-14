@@ -230,6 +230,18 @@ class ModuleManager
         void LoadModuleFromModuleInfo(const ModuleInfo & minfo);
 
 
+        /*! \brief Enable debugging for a specific key
+         * 
+         * The key doesn't have to exist -- it will be used if it is ever loaded
+         */ 
+        void EnableDebug(const std::string & modulekey, bool debug); 
+
+
+        /*! \brief Enable debug printing on all modules
+         */
+        void EnableDebugAll(bool debug) noexcept; 
+
+
 
     private:
 
@@ -255,6 +267,14 @@ class ModuleManager
         /*! \brief Stores map of keys to module names
          */
         std::map<std::string, std::string> keymap_;
+
+
+        /*! \brief List of keys with debugging info enabled */
+        std::set<std::string> keydebug_;
+
+
+        /*! \brief Debug for all? */
+        bool debugall_;
 
 
         /*! \brief Map for storing created module information

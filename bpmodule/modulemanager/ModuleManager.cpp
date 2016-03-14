@@ -32,7 +32,8 @@ namespace modulemanager {
 
 
 ModuleManager::ModuleManager()
-    : curid_(100) // reserve some for my use
+    : debugall_(false),
+      curid_(100)
 {
     // add the handlers
     loadhandlers_.emplace("c_module", std::unique_ptr<SupermoduleLoaderBase>(new CppSupermoduleLoader()));
@@ -197,6 +198,22 @@ const ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string &
 }
 
 
+void ModuleManager::EnableDebug(const std::string & modulekey, bool debug)
+{
+    if(debug)
+        keydebug_.insert(modulekey);
+    else
+        keydebug_.erase(modulekey); // ok if it doesn't exist
+}
+
+
+void ModuleManager::EnableDebugAll(bool debug) noexcept
+{
+    debugall_ = debug;
+}
+
+
+
 /////////////////////////////////////////
 // Module Loading
 /////////////////////////////////////////
@@ -286,7 +303,11 @@ ModuleManager::CreateModule_(const std::string & modulekey, unsigned long parent
     // (set via C++ functions)
     ModuleBase * p = umbptr->CppPtr();
     p->SetMManager_(this);
-    p->SetGraphNode_(&(mgraphmap_.at(curid_)));
+    p->SetGraphNode_(&(mgraphmap_.at(curid_))); // also sets up output tee
+
+    // Debugging?
+    if(debugall_ || keydebug_.count(modulekey))
+        p->EnableDebug(true);
 
     // get this module's cache
     // no need to use .at() -- we need it created if it doesn't exist already
