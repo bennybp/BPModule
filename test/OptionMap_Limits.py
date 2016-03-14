@@ -46,7 +46,7 @@ def Run():
 
  
         for k,v in intlimitdict.items():
-            bp.output.GlobalOutput("Limit for %|1$-18| : [ %|2$-21| , %|3$-21| ]\n", k, v[0], v[1])
+            bp.output.GlobalOutput("Limit for {:<18} : [ {:<21} , {:<21} ]\n".format(k, v[0], v[1]))
         bp.output.GlobalOutput(bp.util.Line('-'))
         bp.output.GlobalOutput("\n")
 

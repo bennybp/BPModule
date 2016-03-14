@@ -24,7 +24,7 @@ def Run():
         Water.AddAtom(H1)
         Water.AddAtom(H2)
 
-        bp.output.GlobalOutput("%1%\n",str(Water))
+        bp.output.GlobalOutput("{}\n".format(str(Water)))
 
     except Exception as e:
       bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")

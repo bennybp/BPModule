@@ -18,18 +18,18 @@ def Run(mm):
 
     bp.output.GlobalOutput("\n\n----------------------------------------\n")
     isrun = bp.util.Memwatch_running()
-    bp.output.GlobalOutput("Memwatch is running? %1%\n", isrun)
+    bp.output.GlobalOutput("Memwatch is running? {}\n".format(isrun))
 
     mem = bp.util.Memwatch_allocated()
-    bp.output.GlobalOutput("Allocated memory so far: %1%\n", mem)
+    bp.output.GlobalOutput("Allocated memory so far: {}\n".format(mem))
 
     maxmem = bp.util.Memwatch_getlimit()
-    bp.output.GlobalOutput("Maximum memory to be used: %1%\n", maxmem)
+    bp.output.GlobalOutput("Maximum memory to be used: {}\n".format(maxmem))
 
 
     bp.util.Memwatch_setlimit(10485760)
     maxmem = bp.util.Memwatch_getlimit()
-    bp.output.GlobalOutput("Maximum memory to be used: %1%\n", maxmem)
+    bp.output.GlobalOutput("Maximum memory to be used: {}\n".format(maxmem))
 
     bp.output.GlobalOutput("----------------------------------------\n\n")
 

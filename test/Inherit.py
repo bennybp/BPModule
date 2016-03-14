@@ -37,7 +37,7 @@ def Run(mm):
 
       bs = bp.system.CreateSimpleBasisSet("/home/ben/programming/BPModule/install/basis/sto-3g.gbs", mol);
 
-      bp.output.GlobalOutput("Number of shells: %1%\n", bs.NShell())
+      bp.output.GlobalOutput("Number of shells: {}\n".format(bs.NShell()))
       for i in range(0, bs.NShell()):
          gs = bs.Shell(i)
          print("ID={}  Cart={}   NPrim={}   {}".format(gs.ID(), gs.IsCartesian(), gs.NPrim(), gs.Coordinates()))

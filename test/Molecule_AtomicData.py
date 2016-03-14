@@ -22,18 +22,18 @@ def Run():
         tester.PrintHeader()
 
         for i in range(1, 20):
-            bp.output.GlobalOutput("Z = %1%\n", i)
-            bp.output.GlobalOutput("      Name: %1%\n", bp.system.AtomicNameFromZ(i))
-            bp.output.GlobalOutput("    Symbol: %1%\n", bp.system.AtomicSymFromZ(i))
-            bp.output.GlobalOutput("      Mass: %1%\n", bp.system.AtomicMassFromZ(i))
+            bp.output.GlobalOutput("Z = {}\n".format(i))
+            bp.output.GlobalOutput("      Name: {}\n".format(bp.system.AtomicNameFromZ(i)))
+            bp.output.GlobalOutput("    Symbol: {}\n".format(bp.system.AtomicSymFromZ(i)))
+            bp.output.GlobalOutput("      Mass: {}\n".format(bp.system.AtomicMassFromZ(i)))
             ad = bp.system.AtomicInfoFromZ(i)
 
-            bp.output.GlobalOutput("  Isotopes: %1%\n", len(ad.isotopes))
+            bp.output.GlobalOutput("  Isotopes: {}\n".format(len(ad.isotopes)))
 
             for iso in ad.isotopes:
-                bp.output.GlobalOutput("        Number: %1%\n", iso.isonum)
-                bp.output.GlobalOutput("                Mass: %1%\n", iso.mass)
-                bp.output.GlobalOutput("           Abundance: %1%\n", iso.abund)
+                bp.output.GlobalOutput("        Number: {}\n".format(iso.isonum))
+                bp.output.GlobalOutput("                Mass: {}\n".format(iso.mass))
+                bp.output.GlobalOutput("           Abundance: {}\n".format(iso.abund))
                 bp.output.GlobalOutput("\n")
 
             bp.output.GlobalOutput("\n")

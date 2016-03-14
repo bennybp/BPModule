@@ -18,7 +18,7 @@ import bpmodule as bp
 def PrintMol(mol):
     bp.output.GlobalOutput("Number of atoms: {}\n".format(mol.NAtoms()))
     print(mol)
-    bp.output.GlobalOutput("Center of Mass: %1%\n", mol.CenterOfMass().GetCoords())
+    bp.output.GlobalOutput("Center of Mass: {}\n".format(mol.CenterOfMass().GetCoords()))
 
 def Run(mm):
     try:
@@ -66,9 +66,9 @@ def Run(mm):
 
         # Should convert to a dict
         frags = f.Fragmentize(mol)
-        bp.output.GlobalOutput("Number of fragments: %1%\n", len(frags))
+        bp.output.GlobalOutput("Number of fragments: {}\n".format(len(frags)))
         for k,v in frags.items():
-            bp.output.GlobalOutput("Key: %1%   NAtoms: %2%\n", k, v.NAtoms())
+            bp.output.GlobalOutput("Key: {}   NAtoms: {}\n".format(k, v.NAtoms()))
 
         tester.PrintResults() 
 
