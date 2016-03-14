@@ -12,7 +12,7 @@
 #include <atomic>
 
 #include "bpmodule/python/Convert.hpp"
-#include "bpmodule/output/Output.hpp"
+#include "bpmodule/output/GlobalOutput.hpp"
 
 
 namespace bpmodule {

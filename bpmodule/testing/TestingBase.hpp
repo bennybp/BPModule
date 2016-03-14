@@ -10,7 +10,7 @@
 
 #include <functional>
 
-#include "bpmodule/output/Output.hpp"
+#include "bpmodule/output/GlobalOutput.hpp"
 
 
 using bpmodule::output::GlobalOutput;

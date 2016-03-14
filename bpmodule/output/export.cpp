@@ -5,9 +5,9 @@
  */ 
 
 #include <vector>
-#include "bpmodule/output/Output.hpp"
+#include "bpmodule/output/OutputStream.hpp"
+#include "bpmodule/output/GlobalOutput.hpp"
 #include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/python/Pybind11_stl.hpp"
 
 
 namespace bpmodule {
@@ -38,37 +38,32 @@ PYBIND11_PLUGIN(output)
     pybind11::class_<std::ostream> os(m, "OSTREAM_INTERNAL");
 
     pybind11::class_<OutputStream>(m, "OutputStream", os)
-    .def("SetType",   &OutputStream::SetType)
-    .def("ResetType", &OutputStream::ResetType)
-    .def("Output",   &OutputStream::Output<>)
-    .def("Changed",  &OutputStream::Changed<>)
-    .def("Error",    &OutputStream::Error<>)
-    .def("Warning",  &OutputStream::Warning<>)
-    .def("Success",  &OutputStream::Success<>)
-    .def("Debug",    &OutputStream::Debug<>)
+    .def("GeneralOutput",  &OutputStream::Output<>)
+    .def("Output",         &OutputStream::Output<>)
+    .def("Changed",        &OutputStream::Changed<>)
+    .def("Error",          &OutputStream::Error<>)
+    .def("Warning",        &OutputStream::Warning<>)
+    .def("Success",        &OutputStream::Success<>)
+    .def("Debug",          &OutputStream::Debug<>)
+    .def("DebugEnabled",   &OutputStream::DebugEnabled)
+    .def("EnableDebug",    &OutputStream::EnableDebug)
     ;
     
 
+    m.def("ColorEnabled", ColorEnabled);
+    m.def("EnableColor", EnableColor);
 
     m.def("GetGlobalOut", GetGlobalOut, pybind11::return_value_policy::reference);
-    m.def("SetOut_Stdout", SetOut_Stdout);
+    m.def("SetGlobalOut_Stdout", SetGlobalOut_Stdout);
     //m.def("SetOut_File", SetOut_File);
-    m.def("SetColor", SetColor);
-    m.def("SetDebug", SetDebug);
-    m.def("Valid", Valid);
-    m.def("Flush", Flush);
 
-    // printing directly to output
-    // Python is expected to just give us a string, which
-    // would correspond to the "format". Therefore, the
-    // variadic template is empty (hence, <>)
-    m.def("GlobalOutput",   output::GlobalOutput<>); 
-    m.def("GlobalChanged",  output::GlobalChanged<>); 
-    m.def("GlobalError",    output::GlobalError<>); 
-    m.def("GlobalWarning",  output::GlobalWarning<>); 
-    m.def("GlobalSuccess",  output::GlobalSuccess<>); 
-    m.def("GlobalDebug",    output::GlobalDebug<>); 
-    ;
+    m.def("GlobalGeneralOutput",  GlobalGeneralOutput<>);
+    m.def("GlobalOutput",  GlobalOutput<>);
+    m.def("GlobalChanged", GlobalChanged<>);
+    m.def("GlobalError",   GlobalError<>);
+    m.def("GlobalWarning", GlobalWarning<>);
+    m.def("GlobalSuccess", GlobalSuccess<>);
+    m.def("GlobalDebug",   GlobalDebug<>);
 
     return m.ptr();
 }

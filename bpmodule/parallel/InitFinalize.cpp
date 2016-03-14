@@ -5,7 +5,7 @@
  */ 
 #include <memory>
 #include "bpmodule/parallel/InitFinalize.hpp"
-#include "bpmodule/output/Output.hpp"
+#include "bpmodule/output/GlobalOutput.hpp"
 #include "bpmodule/util/Cmdline.hpp"
 #include "LibTaskForce.hpp"
 

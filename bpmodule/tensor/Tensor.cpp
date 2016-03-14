@@ -1,8 +1,4 @@
 #include "bpmodule/tensor/Tensor.hpp"
-#include "bpmodule/output/Output.hpp"
-
-#include <memory>
-
 
 namespace {
 

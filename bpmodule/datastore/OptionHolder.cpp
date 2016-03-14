@@ -369,6 +369,8 @@ static std::vector<std::string> OptToString_(const std::set<T> & opt)
 template<OptionType OPTTYPE>
 void OptionHolder<OPTTYPE>::Print(std::ostream & os) const
 {
+    using namespace bpmodule::output;
+
     std::vector<std::string> val = {"(none)"};
     std::vector<std::string> def = {"(none)"};
 
@@ -402,12 +404,14 @@ void OptionHolder<OPTTYPE>::Print(std::ostream & os) const
     // now print 
     for(const auto & it : optlines)
     {
+        OutputType type = OutputType::Output;
+
         if(!IsSetIfRequired())
-            output::Error(os, it);
+            type = OutputType::Error;
         else if(!IsDefault())
-            output::Changed(os, it);
-        else
-            output::Output(os, it);
+            type = OutputType::Changed;
+
+        GeneralOutput(os, type, it);
     }
 }
 

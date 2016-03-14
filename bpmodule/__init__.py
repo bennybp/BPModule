@@ -66,15 +66,11 @@ def Init(argv, out = "stdout", color = True, debug = False,nthreads=1):
   output streams.
   """
 
-  output.SetOut_Stdout()
-  # TODO
-  #if out == "stdout":
-  #  output.SetOut_Stdout()
-  #else:
-  #  output.SetOut_File(out)
+  output.SetGlobalOut_Stdout()
+  output.EnableColor(color)
 
-  output.SetColor(color)
-  output.SetDebug(debug) 
+  gout = output.GetGlobalOut()
+  gout.EnableDebug(debug)
 
   # Set the command line
   util.SetCmdline(argv)

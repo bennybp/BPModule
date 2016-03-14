@@ -8,7 +8,7 @@
 
 
 #include "bpmodule/datastore/OptionMap.hpp"
-#include "bpmodule/output/Output.hpp"
+#include "bpmodule/output/GlobalOutput.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 
 

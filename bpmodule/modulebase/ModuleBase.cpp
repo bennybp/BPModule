@@ -7,7 +7,6 @@
 
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
-#include "bpmodule/output/Output.hpp"
 
 using bpmodule::modulemanager::ModuleManager;
 using bpmodule::modulemanager::ModuleInfo;

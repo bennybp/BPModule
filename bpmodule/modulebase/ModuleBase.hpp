@@ -12,7 +12,8 @@
 
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/modulemanager/ModuleManager.hpp"
-#include "bpmodule/output/Output.hpp"
+#include "bpmodule/output/OutputStream.hpp"
+#include "bpmodule/output/TeeBufToString.hpp"
 #include "bpmodule/util/Format.hpp"
 #include "bpmodule/python/Call.hpp"
 
