@@ -6,13 +6,13 @@
 	url = https://github.com/elemental/Elemental.git
 [submodule "external/tensor/tensor-source"]
 	path = external/tensor/tensor-source
-	url = git@github.com:ryanmrichard/Tensor.git
+	url = https://github.com:ryanmrichard/Tensor.git
 [submodule "external/madness/madness-source"]
 	path = external/madness/madness-source
 	url = https://github.com/m-a-d-n-e-s-s/madness
 [submodule "external/libtaskforce/libtaskforce-source"]
 	path = external/libtaskforce/libtaskforce-source
-	url = git@github.com:ryanmrichard/LibTaskForce.git
+	url = https://github.com:ryanmrichard/LibTaskForce.git
 [submodule "wiki"]
 	path = wiki
 	url = https://github.com/bennybp/BPModule.wiki.git
