@@ -1,0 +1,14 @@
+INPUT+= wiki/Developer/Basic-Layout.md \
+        wiki/Developer/Creating-A-Module.md \
+        wiki/Developer/Developers.md \
+        wiki/Developer/Exceptions-and-Error-Handling.md \
+        wiki/Developer/Graph-and-Cache.md \
+        wiki/Developer/Module-Basics.md \
+        wiki/Developer/Options.md \
+        wiki/Developer/Output.md \
+        wiki/Developer/Philosophy.md \
+        wiki/Developer/Program-Flow.md \
+        wiki/Developer/Python.md \
+        wiki/Developer/Shared-Object.md
+
+INPUT += wiki/mainpage.dox
