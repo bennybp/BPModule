@@ -150,7 +150,7 @@ extern const std::map<int, std::string> atomic_Z_sym_{
 }; // close atomic_Z_sym_
 
 
-extern const std::map<std::string, int, util::CaseInsensitiveCompare> atomic_sym_Z_{
+extern const std::map<std::string, int, util::CaseInsensitiveLess> atomic_sym_Z_{
   { "Gho" , 0 },
   { "H" , 1 },
   { "He" , 2 },

@@ -315,7 +315,7 @@ bool BasisShellBase::operator==(const BasisShellBase & rhs) const
     // ordered by what is most likely to fail first (takes advantage
     // of short circuiting). When we get to alphas, we check to see if the pointers
     // are the same first. If they are different, we compare elementwise. This should
-    // be save, since nprim_ and ngen_ are already shown to be equal
+    // be safe, since nprim_ and ngen_ are already shown to be equal
     return (
                am_ == rhs.am_ &&
                ngen_ == rhs.ngen_ &&

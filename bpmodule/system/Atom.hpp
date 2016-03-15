@@ -55,7 +55,7 @@ class Atom : public math::Point
         {
             // Stores string that are unique when whitespace is trimmed and
             // string are compared case insensitive
-            typedef std::set<std::string, util::CaseInsensitiveTrimCompare> SetType_;
+            typedef std::set<std::string, util::CaseInsensitiveTrimLess> SetType_;
 
             SetType_ description;             //!< Description of basis
             BasisShellInfoVector  shells;     //!< Actual basis
@@ -68,7 +68,7 @@ class Atom : public math::Point
                         shells == rhs.shells &&
                         description.size() == rhs.description.size() &&
                         std::equal(description.begin(), description.end(),
-                                   rhs.description.begin(), util::CaseInsensitiveTrimCompare())
+                                   rhs.description.begin(), util::CaseInsensitiveTrimEquality())
                        );
             }
         };

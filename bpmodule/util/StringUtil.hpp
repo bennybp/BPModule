@@ -103,23 +103,42 @@ std::string Trim_Copy(std::string s);
 
 
 
-/*! \brief Comparison of a case-insensitive string
+/*! \brief Less-than comparison of a case-insensitive string
  *
  * Useful for containers (maps) where the key is
  * case insensitive
  */
-struct CaseInsensitiveCompare
+struct CaseInsensitiveLess
 {
     bool operator()(std::string lhs, std::string rhs) const;
 }; 
 
 
-/*! \brief Comparison of a case-insensitive string, trimming leading and trailing whitespace
+/*! \brief Less-than comparison of a case-insensitive string, trimming leading and trailing whitespace
  *
  * Useful for containers (maps) where the key is
  * case insensitive
  */
-struct CaseInsensitiveTrimCompare
+struct CaseInsensitiveTrimLess
+{
+    bool operator()(std::string lhs, std::string rhs) const;
+}; 
+
+
+/*! \brief Equality comparison of a case-insensitive string
+ *
+ * Useful for containers (maps) where the key is
+ * case insensitive
+ */
+struct CaseInsensitiveEquality
+{
+    bool operator()(std::string lhs, std::string rhs) const;
+}; 
+
+
+/*! \brief Equality comparison of a case-insensitive string, trimming leading and trailing whitespace
+ */
+struct CaseInsensitiveTrimEquality
 {
     bool operator()(std::string lhs, std::string rhs) const;
 }; 
