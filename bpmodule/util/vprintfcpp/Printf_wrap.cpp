@@ -178,6 +178,7 @@ DECLARE_TEMPLATE_HANDLEPRINTF(long double)
 
 DECLARE_TEMPLATE_HANDLEPRINTF(void const *)
 
+#undef DECLARE_TEMPLATE_HANDLEPRINTF
 
 } // close namespace detail
 } // close namespace vprintfcpp

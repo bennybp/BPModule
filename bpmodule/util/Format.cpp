@@ -62,6 +62,9 @@ DECLARE_TEMPLATE_FORMAT_2(double, unsigned long)
 DECLARE_TEMPLATE_FORMAT_2(double, double)
 
 
+#undef DECLARE_TEMPLATE_FORMAT_1
+#undef DECLARE_TEMPLATE_FORMAT_2
+
 
 } // close namespace util
 } // close namespace bpmodule

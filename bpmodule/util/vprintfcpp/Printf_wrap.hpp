@@ -63,7 +63,7 @@ DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(long double)
 
 DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(void const *)
 
-
+#undef DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF
 
 /////////////////////////////////////////
 // To be used from the outside
