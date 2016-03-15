@@ -1,4 +1,5 @@
 set(BPMODULE_UTIL_FILES
+            Format.cpp
             Memwatch.cpp
             Cmdline.cpp
             StringUtil.cpp 

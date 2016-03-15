@@ -13,7 +13,7 @@ namespace detail {
 /////////////////////////////////////
 template<typename T>
 void HandlePrintf_Internal_(std::string & fmt, const char * length,
-                                   char spec, T subst);
+                            char spec, T subst);
 
 // For pointer types - convert to void *
 template<typename T>

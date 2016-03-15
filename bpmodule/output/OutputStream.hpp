@@ -33,6 +33,11 @@ class OutputStream : public std::ostream
         { }
         
 
+        ////////////////////////////////////////////////////////////////////////////
+        // We call Output_ directly to help reduce variadic template instantiations
+        // and, hopefully, compile times
+        ////////////////////////////////////////////////////////////////////////////
+
         /*! \brief Print formatted text this stream
          *
          * \throw bpmodule::exception::GeneralException with malformed formats,
@@ -49,7 +54,7 @@ class OutputStream : public std::ostream
         {
             if(type == OutputType::Debug && !debug_)
                 return;
-            output::GeneralOutput(*this, type, util::FormatString(fmt, Fargs...));
+            detail::Output_(*this, type, util::FormatString(fmt, Fargs...));
         }
 
 
@@ -66,7 +71,7 @@ class OutputStream : public std::ostream
         template<typename... Targs>
         void Output(const std::string & fmt, const Targs&... Fargs)
         {
-            output::Output(*this, fmt, Fargs...);
+            detail::Output_(*this, OutputType::Output, util::FormatString(fmt, Fargs...));
         }
 
 
@@ -76,7 +81,7 @@ class OutputStream : public std::ostream
         template<typename... Targs>
         void Changed(const std::string & fmt, const Targs&... Fargs)
         {
-            output::Changed(*this, fmt, Fargs...);
+            detail::Output_(*this, OutputType::Changed, util::FormatString(fmt, Fargs...));
         }
 
 
@@ -86,7 +91,7 @@ class OutputStream : public std::ostream
         template<typename... Targs>
         void Error(const std::string & fmt, const Targs&... Fargs)
         {
-            output::Error(*this, fmt, Fargs...);
+            detail::Output_(*this, OutputType::Error, util::FormatString(fmt, Fargs...));
         }
 
 
@@ -96,7 +101,7 @@ class OutputStream : public std::ostream
         template<typename... Targs>
         void Warning(const std::string & fmt, const Targs&... Fargs)
         {
-            output::Warning(*this, fmt, Fargs...);
+            detail::Output_(*this, OutputType::Warning, util::FormatString(fmt, Fargs...));
         }
 
 
@@ -106,7 +111,7 @@ class OutputStream : public std::ostream
         template<typename... Targs>
         void Success(const std::string & fmt, const Targs&... Fargs)
         {
-            output::Success(*this, fmt, Fargs...);
+            detail::Output_(*this, OutputType::Success, util::FormatString(fmt, Fargs...));
         }
 
 
@@ -120,7 +125,7 @@ class OutputStream : public std::ostream
         void Debug(const std::string & fmt, const Targs&... Fargs)
         {
             if(debug_)
-                output::Debug(*this, fmt, Fargs...);
+                detail::Output_(*this, OutputType::Debug, util::FormatString(fmt, Fargs...));
         }
 
 
