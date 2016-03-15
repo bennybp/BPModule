@@ -7,6 +7,7 @@
 
 #include "bpmodule/python/Pybind11_stl.hpp"
 #include "bpmodule/python/Pybind11_functional.hpp"
+#include "bpmodule/python/Pybind11_operators.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/system/AMConvert.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
@@ -83,6 +84,7 @@ PYBIND11_PLUGIN(system)
     // BasisShellInfo class
     pybind11::class_<BasisShellInfo> bshell(m, "BasisShellInfo", bshellbase);
     bshell.def(pybind11::init<ShellType, int, bool, int, int>())
+    .def(pybind11::self == pybind11::self)
     ;
     
 
@@ -91,6 +93,7 @@ PYBIND11_PLUGIN(system)
     .def("GetID", &BasisSetShell::GetID)
     .def("GetCenter", &BasisSetShell::GetCenter)
     .def("GetCoords", &BasisSetShell::GetCoords)
+    .def(pybind11::self == pybind11::self)
     ;
 
 
@@ -191,6 +194,7 @@ PYBIND11_PLUGIN(system)
     .def("GetShells", &Atom::GetShells)
     .def("SetShells", &Atom::SetShells)
     .def("AddShell", &Atom::AddShell)
+    .def(pybind11::self == pybind11::self)
     ;
    
 
@@ -218,7 +222,6 @@ PYBIND11_PLUGIN(system)
     .def("Rotate", &System::Rotate<std::array<double, 9>>)
     .def("CenterOfMass", &System::CenterOfMass)
     .def("CenterOfNuclearCharge", &System::CenterOfNuclearCharge)
-    .def("ToString", &System::ToString)
     .def("Transform", &System::Transform)
     .def("Insert", &System::Insert)
     .def("Partition", &System::Partition)
@@ -226,6 +229,8 @@ PYBIND11_PLUGIN(system)
     .def("Intersection", &System::Intersection)
     .def("Union", &System::Union)
     .def("Difference", &System::Difference)
+    .def("Print", &System::Print)
+    .def("ToString", &System::ToString)
     .def("__str__", &System::ToString)
     ;
 

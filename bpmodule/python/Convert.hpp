@@ -84,6 +84,7 @@ T ConvertToCpp(const pybind11::object & obj)
  *
  * \tparam T The C++ type to convert from
  * \param [in] obj The python object to convert
+ * \param [in] pol The policy to use for the resulting cast
  */
 template<typename T>
 pybind11::object ConvertToPy(const T & obj,

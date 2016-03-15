@@ -15,13 +15,13 @@ sys.path.insert(0, bppath)
 import bpmodule as bp
 
 
-def PrintMol(mol):
-    bp.output.GlobalOutput("Number of atoms: {}\n".format(mol.NAtoms()))
-    print(mol)
+def PrintMol(mol, out):
+    mol.Print(out)
     bp.output.GlobalOutput("Center of Mass: {}\n".format(mol.CenterOfMass().GetCoords()))
 
 def Run():
     try:
+        out = bp.output.GetGlobalOut()
 
         tester = bp.testing.Tester("Testing System class")
         tester.PrintHeader()
@@ -48,15 +48,15 @@ def Run():
 
 
         mol = bp.system.System(molu, True)
-        PrintMol(mol)
+        PrintMol(mol, out)
 
         mol2 = mol.Translate( [ 2.0, 3.0, 4.0 ] )
-        PrintMol(mol2)
+        PrintMol(mol2, out)
 
         mol2 = mol.Rotate( [ 0.0, 1.0, 0.0,
                              0.0, 0.0, 1.0,
                              1.0, 0.0, 0.0 ] )
-        PrintMol(mol2)
+        PrintMol(mol2, out)
 
         tester.PrintResults() 
 

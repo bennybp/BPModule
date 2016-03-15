@@ -4,9 +4,9 @@
 #include "bpmodule/util/StringUtil.hpp" // for case insensitive compare
 #include "bpmodule/exception/Exceptions.hpp"
 
-using bpmodule::util::CaseInsensitiveCompare;
+using bpmodule::util::CaseInsensitiveLess;
 
-static const std::map<std::string, int, CaseInsensitiveCompare> toi_{ { "spdf", -3},
+static const std::map<std::string, int, CaseInsensitiveLess> toi_{ { "spdf", -3},
                                                                       { "spd",  -2},
                                                                       { "sp",   -1},
                                                                       { "s",     0 },

@@ -59,7 +59,7 @@ std::string Trim_Copy(std::string s)
 }
 
 
-bool CaseInsensitiveCompare::operator()(std::string lhs, std::string rhs) const
+bool CaseInsensitiveLess::operator()(std::string lhs, std::string rhs) const
 {
     ToLower(lhs);
     ToLower(rhs);
@@ -67,13 +67,33 @@ bool CaseInsensitiveCompare::operator()(std::string lhs, std::string rhs) const
     return comp(lhs, rhs);
 }
 
-bool CaseInsensitiveTrimCompare::operator()(std::string lhs, std::string rhs) const
+
+bool CaseInsensitiveTrimLess::operator()(std::string lhs, std::string rhs) const
 {
-    Trim(rhs);    Trim(rhs);
+    Trim(lhs);    Trim(rhs);
     ToLower(lhs); ToLower(rhs);
     std::less<std::string> comp;
     return comp(lhs, rhs);
 }
+
+
+bool CaseInsensitiveEquality::operator()(std::string lhs, std::string rhs) const
+{
+    ToLower(lhs);
+    ToLower(rhs);
+    std::equal_to<std::string> comp;
+    return comp(lhs, rhs);
+}
+
+
+bool CaseInsensitiveTrimEquality::operator()(std::string lhs, std::string rhs) const
+{
+    Trim(lhs);    Trim(rhs);
+    ToLower(lhs); ToLower(rhs);
+    std::equal_to<std::string> comp;
+    return comp(lhs, rhs);
+}
+
 
 
 std::string Line(char c, int n)

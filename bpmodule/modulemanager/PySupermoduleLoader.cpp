@@ -7,12 +7,13 @@
 
 #include "bpmodule/modulemanager/PySupermoduleLoader.hpp"
 #include "bpmodule/util/Filesystem.hpp"
-#include "bpmodule/output/Output.hpp"
+#include "bpmodule/output/GlobalOutput.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/exception/Assert.hpp"
 #include "bpmodule/python/Call.hpp"
 
 using namespace bpmodule::exception;
+using namespace bpmodule::output;
 
 
 namespace bpmodule {
@@ -28,17 +29,17 @@ PySupermoduleLoader::~PySupermoduleLoader()
     // close all the handles
     for(auto & it : objmap_)
     {
-        output::GlobalOutput("Looking to close python supermodule %1%\n", it.first);
+        GlobalOutput("Looking to close python supermodule %?\n", it.first);
 
         if(python::HasCallableAttr(it.second.mod, "FinalizeSupermodule"))
         {
-            output::GlobalDebug("Running finalization function in %1%\n", it.first); 
+            GlobalDebug("Running finalization function in %?\n", it.first); 
             python::CallPyFuncAttr<void>(it.second.mod, "FinalizeSupermodule");
         }
         else
-            output::GlobalDebug("Supermodule %1% doesn't have finalization function. Skipping\n", it.first); 
+            GlobalDebug("Supermodule %? doesn't have finalization function. Skipping\n", it.first); 
 
-        output::GlobalOutput("Closed supermodule %1%\n", it.first);
+        GlobalOutput("Closed supermodule %?\n", it.first);
     }
 
     // objmap_ is cleared via its destructor
@@ -50,12 +51,12 @@ const ModuleCreationFuncs & PySupermoduleLoader::LoadSupermodule(const std::stri
     if(spath.size() == 0)
         throw ModuleLoadException("Cannot open python supermodule - path not given");
 
-    output::GlobalDebug("Loading python supermodule %1%\n", spath);
+    GlobalDebug("Loading python supermodule %?\n", spath);
 
  
     if(!objmap_.count(spath))
     {
-        output::GlobalDebug("Supermodule not yet loaded. Looking to import python supermodule: %1%\n", spath);
+        GlobalDebug("Supermodule not yet loaded. Looking to import python supermodule: %?\n", spath);
 
         // Need a few packages
         pybind11::module mod_sys = pybind11::module::import("sys");
@@ -65,7 +66,7 @@ const ModuleCreationFuncs & PySupermoduleLoader::LoadSupermodule(const std::stri
         // we need the directory above that
         std::pair<std::string, std::string> splitpath = util::SplitPath(spath);
 
-        output::GlobalDebug("Importing %1%  from  %2%\n", splitpath.first, splitpath.second);
+        GlobalDebug("Importing %?  from  %?\n", splitpath.first, splitpath.second);
 
         // update the python search paths
         pybind11::object oldpaths = mod_sys.attr("path");
@@ -77,7 +78,7 @@ const ModuleCreationFuncs & PySupermoduleLoader::LoadSupermodule(const std::stri
         mod_sys.attr("path") = oldpaths;
 
 
-        output::GlobalSuccess("Successfully imported supermodule %1%\n", spath);
+        GlobalSuccess("Successfully imported supermodule %?\n", spath);
 
 
         // Check for the InsertSupermodule function first (before initializing)
@@ -89,11 +90,11 @@ const ModuleCreationFuncs & PySupermoduleLoader::LoadSupermodule(const std::stri
         // Now initialize if the function exists
         if(python::HasCallableAttr(mod, "InitializeSupermodule"))
         {
-            output::GlobalDebug("Running initialization function for supermodule %1%\n", spath);
+            GlobalDebug("Running initialization function for supermodule %?\n", spath);
             python::CallPyFuncAttr<void>(mod, "InitializeSupermodule");
         }
         else
-            output::GlobalDebug("Supermodule %1% doesn't have initialization function. Skipping\n", spath);
+            GlobalDebug("Supermodule %? doesn't have initialization function. Skipping\n", spath);
 
 
         // get the module creation functions

@@ -44,7 +44,7 @@ PYBIND11_PLUGIN(modulemanager)
     .def("Size", &ModuleManager::Size)
     .def("ModuleKeyInfo", &ModuleManager::ModuleKeyInfo)
     .def("ModuleNameInfo", &ModuleManager::ModuleNameInfo)
-    .def("PrintInfo", &ModuleManager::PrintInfo)
+    .def("Print", &ModuleManager::Print)
     .def("HasKey", &ModuleManager::HasKey)
     .def("HasName", &ModuleManager::HasName)
     .def("AddKey", &ModuleManager::AddKey)
@@ -54,6 +54,8 @@ PYBIND11_PLUGIN(modulemanager)
     .def("ChangeOption", &ModuleManager::ChangeOptionPy)
     .def("DotGraph", &ModuleManager::DotGraph)
     .def("LoadModuleFromModuleInfo", &ModuleManager::LoadModuleFromModuleInfo)
+    .def("EnableDebug", &ModuleManager::EnableDebug)
+    .def("EnableDebugAll", &ModuleManager::EnableDebugAll)
     ;
 
 

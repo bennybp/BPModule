@@ -31,7 +31,7 @@ struct ModuleInfo
 
     /*! \brief Print out this info
     */
-    void Print(void) const;
+    void Print(std::ostream & os) const;
 };
 
 

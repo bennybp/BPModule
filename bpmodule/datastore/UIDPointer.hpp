@@ -12,7 +12,7 @@
 #include <atomic>
 
 #include "bpmodule/python/Convert.hpp"
-#include "bpmodule/output/Output.hpp"
+#include "bpmodule/output/GlobalOutput.hpp"
 
 
 namespace bpmodule {
@@ -216,7 +216,7 @@ private:
         }
         catch(exception::PythonConvertException &)
         {
-            output::GlobalDebug("Object can't be converted to python object: %1% -- don't use from python!\n", util::DemangleCppType<T>());
+            output::GlobalDebug("Object can't be converted to python object: %? -- don't use from python!\n", util::DemangleCppType<T>());
         }
     }
 };

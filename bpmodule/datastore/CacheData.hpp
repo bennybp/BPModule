@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Storage of cache data
+ * \brief Storage of cache data (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -10,8 +10,8 @@
 
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/datastore/GenericHolder.hpp"
-#include "bpmodule/python/Convert.hpp"
 #include "bpmodule/datastore/OptionMap.hpp"
+#include "bpmodule/python/Pybind11.hpp"
 
 
 
@@ -36,7 +36,6 @@ namespace datastore {
  * in python.
  *
  * \todo thread safety
- * \todo printing
  */
 class CacheData
 {
@@ -56,10 +55,7 @@ class CacheData
         * There may be multiple objects stored, since a key can
         * be stored for several options.
         */
-        size_t CountKey(const std::string & key) const
-        {
-            return cmap_.count(key);
-        }
+        size_t CountKey(const std::string & key) const;
 
 
         /*! \brief Determine if this object contains data for a key
@@ -70,15 +66,8 @@ class CacheData
          * \return True if the key exists, false otherwise
          */
         bool HasData(const std::string & key,
-                    const OptionMap & opt = OptionMap(),
-                    const KeySet & sigopt = KeySet()) const
-        {
-            auto range = cmap_.equal_range(key);
-            for(auto it = range.first; it != range.second; ++it)
-                if(opt.CompareSelect(it->second.options, sigopt))
-                        return true; 
-            return false;
-        }
+                     const OptionMap & opt = OptionMap(),
+                     const KeySet & sigopt = KeySet()) const;
 
 
 
@@ -91,10 +80,7 @@ class CacheData
          */
         bool HasDataPy(const std::string & key,
                       const OptionMap & opt = OptionMap(),
-                      pybind11::list sigopt = pybind11::list()) const
-        {
-            return HasData(key, opt, python::ConvertToCpp<KeySet>(sigopt));
-        }
+                      pybind11::list sigopt = pybind11::list()) const;
 
 
 
@@ -103,13 +89,7 @@ class CacheData
          * 
          * \return A vector of strings containing all the keys
          */
-        KeySet GetKeys(void) const
-        {
-            KeySet v;
-            for(auto & it : cmap_)
-                v.insert(it.first);
-            return v;
-        }
+        KeySet GetKeys(void) const;
 
 
 
@@ -119,10 +99,7 @@ class CacheData
          *
          * \return Number of elements in this container
          */
-        size_t Size(void) const noexcept
-        {
-            return cmap_.size();
-        }
+        size_t Size(void) const noexcept;
 
 
 
@@ -166,12 +143,8 @@ class CacheData
          * \return A copy of the data
          */
         pybind11::object GetPy(const std::string & key,
-                                   const OptionMap & opt = OptionMap(),
-                                   pybind11::list sigopt = pybind11::list()) const
-        {
-            return Get<pybind11::object>(key, opt,
-                                         python::ConvertToCpp<KeySet>(sigopt));
-        }
+                               const OptionMap & opt = OptionMap(),
+                               pybind11::list sigopt = pybind11::list()) const;
 
 
 
@@ -205,10 +178,7 @@ class CacheData
          * \param [in] value The data to store
          */
         void SetPy(const std::string & key, pybind11::object value,
-                   const OptionMap & opt = OptionMap())
-        {
-            Set(key, value, opt);
-        }
+                   const OptionMap & opt = OptionMap());
 
 
 
@@ -232,13 +202,13 @@ class CacheData
          * \param [in] key The key to the data
          * \return The number of elements removed
          */
-        size_t Erase(const std::string & key)
-        {
-            return cmap_.erase(key);
-        }
+        size_t Erase(const std::string & key);
 
 
 
+        /*! \brief Print information about the cache
+         */
+        void Print(std::ostream & os, size_t level) const;
 
 
     private:
@@ -278,27 +248,7 @@ class CacheData
          */ 
         const CacheDataEntry & GetOrThrow_(const std::string & key,
                                            const OptionMap & opt,
-                                           const KeySet & sigopt) const
-        {
-            if(cmap_.count(key))
-            {
-                auto range = cmap_.equal_range(key);
-                for(auto it = range.first; it != range.second; ++it)
-                {
-                    if(sigopt.size() == 0 && opt.Compare(it->second.options))
-                        return it->second;
-                    
-                    if(sigopt.size() && opt.CompareSelect(it->second.options, sigopt))
-                        return it->second;
-                }
-
-                // if you got here, it was not found
-                throw exception::DataStoreException("Key with these options not found in CacheData", "key", key);
-            }
-            else
-                throw exception::DataStoreException("Key not found in CacheData", "key", key);
-        }
-
+                                           const KeySet & sigopt) const;
 
 
 
@@ -335,11 +285,7 @@ class CacheData
          * \param [in] value Pointer to the data to set
          * \param [in] opt Options to be associated with the data
          */ 
-        void Set_(const std::string & key, std::unique_ptr<detail::GenericBase> && value, const OptionMap & opt)
-        {
-            // emplace has strong exception guarantee
-            cmap_.emplace(key, CacheDataEntry{opt, std::move(value)});
-        }
+        void Set_(const std::string & key, std::unique_ptr<detail::GenericBase> && value, const OptionMap & opt);
 
 
 };

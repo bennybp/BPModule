@@ -12,8 +12,9 @@
 
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/modulemanager/ModuleManager.hpp"
-#include "bpmodule/output/Output.hpp"
-#include "bpmodule/util/FormatString.hpp"
+#include "bpmodule/output/OutputStream.hpp"
+#include "bpmodule/output/TeeBufToString.hpp"
+#include "bpmodule/util/Format.hpp"
 #include "bpmodule/python/Call.hpp"
 
 
@@ -114,7 +115,18 @@ class ModuleBase
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        void Print(void) const;
+        void Print(std::ostream & os) const;
+
+
+        /*! \brief Enable debug output for this module
+         */
+        void EnableDebug(bool debug) noexcept; 
+
+
+        /*! \brief Is debug output enabled for this module
+         */
+        bool DebugEnabled(void) const noexcept; 
+
 
 
         /*! \brief Return a pointer to my node on the graph
@@ -214,19 +226,19 @@ class ModuleBase
             }
             catch(exception::GeneralException & ex)
             {
-                std::string s = util::FormatString("[%1%] (%2%) %3% v%4%", ID(), Key(), Name(), Version());
+                std::string s = util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
                 ex.AppendInfo("from", s);
                 throw;
             }
             catch(std::exception & ex)
             {
-                std::string s = util::FormatString("[%1%] (%2%) %3% v%4%", ID(), Key(), Name(), Version());
+                std::string s = util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
                 throw exception::GeneralException(ex, "what", ex.what(),
                                                   "from", s);
             }
             catch(...)
             {
-                std::string s = util::FormatString("[%1%] (%2%) %3% v%4%", ID(), Key(), Name(), Version());
+                std::string s = util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
                 throw exception::GeneralException("Caught unknown exception. Get your debugger warmed up.",
                                                   "from", s);
             }

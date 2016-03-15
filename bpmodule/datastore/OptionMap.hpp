@@ -206,7 +206,7 @@ class OptionMap
 
         /*! \brief Dumps the options to the output
         */
-        void Print(void) const;
+        void Print(std::ostream & os) const;
 
 
 
@@ -339,7 +339,7 @@ class OptionMap
         bool lockvalid_;
 
         //! Holds the options
-        std::map<std::string, std::unique_ptr<OptionBase>, util::CaseInsensitiveCompare> opmap_;
+        std::map<std::string, std::unique_ptr<OptionBase>, util::CaseInsensitiveLess> opmap_;
 
 
         //!< Validates the whole options container

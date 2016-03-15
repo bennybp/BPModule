@@ -16,6 +16,7 @@ import bpmodule as bp
 
 def Run():
     try:
+        out = bp.output.GetGlobalOut()
         tester = bp.testing.Tester("Testing BasisSet class")
         tester.PrintHeader()
 
@@ -40,7 +41,7 @@ def Run():
         mol = bp.system.System(molu, True)
         mol = bp.system.ApplySingleBasis(bp.system.ShellType.Gaussian, "primary", "sto-3g", mol)
         bs = mol.GetBasisSet("primary")
-        bs.Print()
+        bs.Print(out)
 
         tester.PrintResults() 
 

@@ -76,9 +76,9 @@ static OptionIssues ValidatorWrapper_(pybind11::object & valobj, const std::stri
 ///////////////////////////////////////////////////
 template<OptionType OPTTYPE>
 OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
-                              bool required, const pybind11::object & validator,
-                              const std::string & help,
-                              typename OptionHolder<OPTTYPE>::stored_type * def)
+                                    bool required, const pybind11::object & validator,
+                                    const std::string & help,
+                                    stored_type * def)
     : OptionBase(key, required, help), default_(def)
 {
     validator_ = std::bind(ValidatorWrapper_<OPTTYPE>, validator, Key(), std::placeholders::_1);
@@ -97,9 +97,9 @@ OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
 
 template<OptionType OPTTYPE>
 OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
-                              bool required, const pybind11::object & validator,
-                              const std::string & help,
-                              const typename OptionHolder<OPTTYPE>::stored_type & def)
+                                    bool required, const pybind11::object & validator,
+                                    const std::string & help,
+                                    const stored_type & def)
     : OptionHolder(key, required, validator, help, new stored_type(def))
 {
     if(required)
@@ -125,7 +125,7 @@ OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
 
 
 template<OptionType OPTTYPE>
-OptionHolder<OPTTYPE>::OptionHolder(const OptionHolder<OPTTYPE> & oph)
+OptionHolder<OPTTYPE>::OptionHolder(const OptionHolder & oph)
     : OptionBase(oph),
       validator_(oph.validator_)
 {
@@ -138,7 +138,7 @@ OptionHolder<OPTTYPE>::OptionHolder(const OptionHolder<OPTTYPE> & oph)
 
 
 template<OptionType OPTTYPE>
-void OptionHolder<OPTTYPE>::Change(const typename OptionHolder<OPTTYPE>::stored_type & value)
+void OptionHolder<OPTTYPE>::Change(const stored_type & value)
 {
     value_ = std::unique_ptr<stored_type>(new stored_type(value));
 }
@@ -307,7 +307,7 @@ void OptionHolder<OPTTYPE>::ChangePy(const pybind11::object & obj)
 template<typename T>
 static std::vector<std::string> OptToString_(const T & opt)
 {
-    return {FormatString("%|1$-12.8|", opt)};
+    return {FormatString("%-12.8?", opt)};
 }
 
 /*! \brief Converts an option value to a string
@@ -367,13 +367,16 @@ static std::vector<std::string> OptToString_(const std::set<T> & opt)
  * option is not the default, the Changed() output is used.
  */
 template<OptionType OPTTYPE>
-void OptionHolder<OPTTYPE>::Print(void) const
+void OptionHolder<OPTTYPE>::Print(std::ostream & os) const
 {
+    using namespace bpmodule::output;
+
     std::vector<std::string> val = {"(none)"};
     std::vector<std::string> def = {"(none)"};
 
     if(default_)
         def = OptToString_(*default_);
+
     if(value_)
         val = OptToString_(*value_);
     else if(default_)
@@ -388,26 +391,28 @@ void OptionHolder<OPTTYPE>::Print(void) const
 
     // print the first line
     std::vector<std::string> optlines;
-    optlines.push_back(FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+    optlines.push_back(FormatString("          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n",
                                     Key(), Type(), val[0], def[0], req,  Help()));
 
 
     // now other lines
     for(size_t i = 1; i < m; i++)
     {
-        optlines.push_back(FormatString("          %|1$-20|      %|2$-20|      %|3$-20|      %|4$-20|     %|5$-10|       %6%\n",
+        optlines.push_back(FormatString("          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n",
                                         "", "", val[i], def[i], "", ""));
     }
    
-    // now print 
+    // now actually print 
     for(const auto & it : optlines)
     {
+        OutputType type = OutputType::Output;
+
         if(!IsSetIfRequired())
-            output::GlobalError(it);
+            type = OutputType::Error;
         else if(!IsDefault())
-            output::GlobalChanged(it);
-        else
-            output::GlobalOutput(it);
+            type = OutputType::Changed;
+
+        GeneralOutput(os, type, it);
     }
 }
 

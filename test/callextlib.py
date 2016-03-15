@@ -16,11 +16,12 @@ import bpmodule as bp
 
 def Run(mm):
     try:
+      out = bp.output.GetGlobalOut()
 
       # Load the python modules
       #             supermodule      module name      key
       mm.LoadModule("TestModules",   "TestExtLib",   "TESTEXTLIB")
-      mm.PrintInfo()
+      mm.Print(out)
       mm.SanityCheck()
 
       b1 = mm.GetModule("TESTEXTLIB", 0)

@@ -25,10 +25,10 @@ for supermodule in paths:
     try:
         # will raise exception with a problem
         CheckSupermodule(supermodule)
-        GlobalOutputSuccess("    Successfully checked supermodule %1%\n\n", supermodule)
+        GlobalOutputSuccess("    Successfully checked supermodule {}\n\n".format(supermodule))
 
     except PyGeneralException as e:
-        output.GlobalError("Checking of supermodule %1% failed. See above for errors\n\n", supermodule)
+        output.GlobalError("Checking of supermodule {} failed. See above for errors\n\n".format(supermodule))
         allok = False
     
 

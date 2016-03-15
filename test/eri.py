@@ -16,10 +16,12 @@ import bpmodule as bp
 
 def Run(mm):
     try:
+        out = bp.output.GetGlobalOut()
+
         # Load the python modules
         #             supermodule      module name      key
         mm.LoadModule("LibERD",        "LibERD_ERI",   "ERI")
-        mm.PrintInfo()
+        mm.Print(out)
         mm.SanityCheck()
   
         atoms = [ bp.system.CreateAtom(0, [ 0.000000000000, -0.143225816552,  0.000000000000], 8),
@@ -42,8 +44,9 @@ def Run(mm):
         ubs = bp.datastore.MakeUIDPointer(bs)
         eri.SetBases(4, ubs, ubs, ubs, ubs)
         n = eri.Calculate(1, 0, 0, 0, 0)
-        bp.output.GlobalOutput("Calculated %1% integrals\n", n)
-        bp.output.GlobalOutput("%1%\n", str(eri.GetBuf()))
+        bp.output.GlobalOutput("Calculated {} integrals\n".format(n))
+        bp.output.GlobalOutput(str(eri.GetBuf()))
+        bp.output.GlobalOutput("\n")
       
 
 

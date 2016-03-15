@@ -16,6 +16,7 @@ import bpmodule as bp
 
 def Run(mm):
     try:
+      out = bp.output.GetGlobalOut()
 
       # Load the python modules
       #             supermodule      module name      key
@@ -24,7 +25,7 @@ def Run(mm):
 
       mm.ChangeOption("TESTMOD1", "double_opt_def", 1.111)
       mm.ChangeOption("TESTMOD1", "int_opt_def", 55 )
-      mm.PrintInfo()
+      mm.Print(out)
       mm.SanityCheck()
 
 
@@ -37,7 +38,7 @@ def Run(mm):
 
       bs = bp.system.CreateSimpleBasisSet("/home/ben/programming/BPModule/install/basis/sto-3g.gbs", mol);
 
-      bp.output.GlobalOutput("Number of shells: %1%\n", bs.NShell())
+      bp.output.GlobalOutput("Number of shells: {}\n".format(bs.NShell()))
       for i in range(0, bs.NShell()):
          gs = bs.Shell(i)
          print("ID={}  Cart={}   NPrim={}   {}".format(gs.ID(), gs.IsCartesian(), gs.NPrim(), gs.Coordinates()))

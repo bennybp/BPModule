@@ -11,6 +11,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <ostream>
 
 #include "bpmodule/python/Pybind11_fwd.hpp"
 
@@ -138,7 +139,7 @@ class OptionBase
 
         /*! \brief Print out information about this option
          */
-        virtual void Print(void) const = 0;
+        virtual void Print(std::ostream & os) const = 0;
 
 
 

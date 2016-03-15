@@ -207,10 +207,15 @@ BasisSet System::GetBasisSet(const std::string & basislabel) const
 }
 
 
+void System::Print(std::ostream & os) const
+{
+    for(const auto & it : *this)
+        it.Print(os);
+}
+
 std::string System::ToString()const{
     std::stringstream ss;
-    for(const auto & it : *this)
-        ss<<it<<"\n";
+    Print(ss);
     return ss.str();
 }
 

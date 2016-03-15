@@ -4,10 +4,14 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "bpmodule/output/Output.hpp"
 #include <cstring>
+
 #include "bpmodule/util/Cmdline.hpp"
+#include "bpmodule/output/GlobalOutput.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
+
+using namespace bpmodule::output;
+
 
 namespace {
   int argc_;
@@ -41,9 +45,9 @@ void SetCmdline(const std::vector<std::string> & argv)
         ClearCmdline();
 
     argc_ = static_cast<int>(argv.size());
-    bpmodule::output::GlobalDebug("Command line has %1% args\n", argc_);
+    GlobalDebug("Command line has %? args\n", argc_);
     for(const auto & it : argv)
-        bpmodule::output::GlobalDebug("   %1%\n", it);
+        GlobalDebug("   %?\n", it);
 
     // copy argv
     // argv[argc] should always be NULL

@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "bpmodule/util/FormatString.hpp"
+#include "bpmodule/util/Format.hpp"
 #include "bpmodule/util/Cmdline.hpp"
 #include "bpmodule/util/Memwatch.hpp"
 #include "bpmodule/python/Pybind11.hpp"

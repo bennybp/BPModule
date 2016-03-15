@@ -32,7 +32,8 @@ namespace modulemanager {
 
 
 ModuleManager::ModuleManager()
-    : curid_(100) // reserve some for my use
+    : debugall_(false),
+      curid_(100)
 {
     // add the handlers
     loadhandlers_.emplace("c_module", std::unique_ptr<SupermoduleLoaderBase>(new CppSupermoduleLoader()));
@@ -112,10 +113,10 @@ ModuleInfo ModuleManager::ModuleNameInfo(const std::string & modulename) const
 }
 
 
-void ModuleManager::PrintInfo(void) const
+void ModuleManager::Print(std::ostream & os) const
 {
     for(const auto & it : store_)
-        it.second.mi.Print();
+        it.second.mi.Print(os);
 }
 
 
@@ -125,19 +126,19 @@ void ModuleManager::TestAll(void)
     output::GlobalDebug("Testing all modules\n");
     for(const auto & it : store_)
     {
-        output::GlobalDebug("Testing %1% (%2%)...\n", it.first, it.second.mi.name);
+        output::GlobalDebug("Testing %? (%?)...\n", it.first, it.second.mi.name);
 
         if(!it.second.mi.options.AllReqSet())
         {
-            output::GlobalError("Error - module %1% [key %2%]\" failed options test - required options are missing", it.second.mi.name, it.first);
+            output::GlobalError("Error - module %? [key %?]\" failed options test - required options are missing", it.second.mi.name, it.first);
 
             auto missingreq = it.second.mi.options.AllMissingReq();
             for(const auto & optit : missingreq)
-                output::GlobalError("    Missing \"%1%\"\n", optit);
+                output::GlobalError("    Missing \"%?\"\n", optit);
         }
 
 
-        output::GlobalDebug("Test of %1% OK\n", it.first);
+        output::GlobalDebug("Test of %? OK\n", it.first);
     }
 
     output::GlobalDebug("Testing getting of modules\n");
@@ -148,7 +149,7 @@ void ModuleManager::TestAll(void)
         }
         catch(std::exception & ex)
         {
-            output::GlobalError("Error - module %1% [key %2%]\" failed test loading!\n", it.second, it.first);
+            output::GlobalError("Error - module %? [key %?]\" failed test loading!\n", it.second, it.first);
             throw GeneralException(ex, "location", "TestAll");
         }
     }
@@ -195,6 +196,22 @@ const ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string &
 {
     return GetOrThrowName_(GetOrThrowKey_(modulekey));
 }
+
+
+void ModuleManager::EnableDebug(const std::string & modulekey, bool debug)
+{
+    if(debug)
+        keydebug_.insert(modulekey);
+    else
+        keydebug_.erase(modulekey); // ok if it doesn't exist
+}
+
+
+void ModuleManager::EnableDebugAll(bool debug) noexcept
+{
+    debugall_ = debug;
+}
+
 
 
 /////////////////////////////////////////
@@ -286,7 +303,11 @@ ModuleManager::CreateModule_(const std::string & modulekey, unsigned long parent
     // (set via C++ functions)
     ModuleBase * p = umbptr->CppPtr();
     p->SetMManager_(this);
-    p->SetGraphNode_(&(mgraphmap_.at(curid_)));
+    p->SetGraphNode_(&(mgraphmap_.at(curid_))); // also sets up output tee
+
+    // Debugging?
+    if(debugall_ || keydebug_.count(modulekey))
+        p->EnableDebug(true);
 
     // get this module's cache
     // no need to use .at() -- we need it created if it doesn't exist already

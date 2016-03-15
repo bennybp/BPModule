@@ -31,8 +31,8 @@ def Run():
 
         wfn = bp.datastore.Wavefunction()
         wfn.basis.Set(bs)
-        bp.output.GlobalOutput("Basis object: %1%\n", str(wfn.basis))
-        bp.output.GlobalOutput("NShell: %1%\n", wfn.basis.NShell())
+        bp.output.GlobalOutput("Basis object: {}\n".format(str(wfn.basis)))
+        bp.output.GlobalOutput("NShell: {}\n".format(wfn.basis.NShell()))
 
 
         tester.PrintResults() 

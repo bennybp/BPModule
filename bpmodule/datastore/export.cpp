@@ -150,6 +150,7 @@ PYBIND11_PLUGIN(datastore)
     .def("Size", &CacheData::Size)
     .def("GetKeys", &CacheData::GetKeys)
     .def("Erase", &CacheData::Erase)
+    .def("Print", &CacheData::Print)
     .def("HasData", &CacheData::HasData,
                    "See if the cache has some data",
                    pybind11::arg("key"),

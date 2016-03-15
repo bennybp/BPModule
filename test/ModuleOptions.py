@@ -96,7 +96,7 @@ def Run(mm):
 
 
         for m in allmod:
-            bp.output.GlobalOutput("Got module key %|1$-20| %|2$-20| v%3%\n", m[0].Key(), m[0].Name(), m[0].Version())
+            bp.output.GlobalOutput("Got module key {:<20} {:<20} v{}\n".format(m[0].Key(), m[0].Name(), m[0].Version()))
 
 
         nfailed = 0

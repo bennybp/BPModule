@@ -55,7 +55,7 @@ class Atom : public math::Point
         {
             // Stores string that are unique when whitespace is trimmed and
             // string are compared case insensitive
-            typedef std::set<std::string, util::CaseInsensitiveTrimCompare> SetType_;
+            typedef std::set<std::string, util::CaseInsensitiveTrimLess> SetType_;
 
             SetType_ description;             //!< Description of basis
             BasisShellInfoVector  shells;     //!< Actual basis
@@ -68,7 +68,7 @@ class Atom : public math::Point
                         shells == rhs.shells &&
                         description.size() == rhs.description.size() &&
                         std::equal(description.begin(), description.end(),
-                                   rhs.description.begin(), util::CaseInsensitiveTrimCompare())
+                                   rhs.description.begin(), util::CaseInsensitiveTrimEquality())
                        );
             }
         };
@@ -307,7 +307,7 @@ class Atom : public math::Point
         /*! \name Printing */
         ///@{
 
-        void Print(std::ostream & os, size_t level);
+        void Print(std::ostream & os) const;
 
         ///@}
 
@@ -325,7 +325,7 @@ std::ostream& operator<<(std::ostream& os,const Atom& A);
 Atom CreateAtom(size_t idx, CoordType xyz, int Z);
 
 
-/*! \copydocs CreateAtom(size_t idx, size_t,size_t, CoordType, int) */
+/*! \copydoc CreateAtom(size_t idx, CoordType xyz, int Z) */
 Atom CreateAtom(size_t idx, double x, double y, double z, int Z);
 
 
@@ -337,7 +337,7 @@ Atom CreateAtom(size_t idx, double x, double y, double z, int Z);
 Atom CreateAtom(size_t idx, CoordType xyz, int Z, int isonum);
 
 
-/*! \copydocs CreateAtom(size_t idx, size_t,size_t, CoordType, int, int) */
+/*! \copydoc CreateAtom(size_t idx, CoordType xyz, int Z, int isonum) */ 
 Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum);
 
 

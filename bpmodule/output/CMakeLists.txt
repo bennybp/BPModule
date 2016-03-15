@@ -1,4 +1,5 @@
 set(BPMODULE_OUTPUT_FILES
+            GlobalOutput.cpp
             Output.cpp 
             export.cpp
    )
