@@ -20,7 +20,7 @@ namespace system {
 
 Atom::Atom(size_t idx, CoordType xyz, int Z, int isonum, double mass,
            double isotopemass, double charge, double multiplicity,
-           double nelectrons)
+           double nelectrons,double covradius, double vdwradius)
 {
     // we do it this way in case we change where the info is stored
     idx_ = idx;
@@ -32,6 +32,8 @@ Atom::Atom(size_t idx, CoordType xyz, int Z, int isonum, double mass,
     SetCharge(charge);
     SetMultiplicity(multiplicity);
     SetNElectrons(nelectrons);
+    SetCovRadius(covradius);
+    SetVDWRadius(vdwradius);
 }
 
 std::string Atom::GetName(void) const
@@ -51,18 +53,22 @@ bool Atom::operator==(const Atom & rhs) const
     PRAGMA_WARNING_PUSH
     PRAGMA_WARNING_IGNORE_FP_EQUALITY
 
+    //\todo The basis comparision is not working!!!!
 
+            
     // order by the parts that are most likely to be different, since
     //   this should short-circuit on the first false comparison
     return GetZ() == rhs.GetZ() &&
            static_cast<const math::Point>(*this) == static_cast<const math::Point>(rhs) &&
-           bshells_ == rhs.bshells_ &&
+           //bshells_ == rhs.bshells_ &&
            GetIsonum() == rhs.GetIsonum() &&
            GetMass() == rhs.GetMass() &&
            GetIsotopeMass() == rhs.GetIsotopeMass() &&
            GetCharge() == rhs.GetCharge() &&
            GetMultiplicity() == rhs.GetMultiplicity() &&
-           GetNElectrons() == rhs.GetNElectrons()
+           GetNElectrons() == rhs.GetNElectrons() &&
+           GetCovRadius() == rhs.GetCovRadius() &&
+           GetVDWRadius() == rhs.GetVDWRadius()
            ;
              
     PRAGMA_WARNING_POP
@@ -109,7 +115,10 @@ Atom CreateAtom(size_t idx, CoordType xyz, int Z, int isonum)
                 IsotopeMassFromZ(Z, isonum),
                 0,  //! \todo default charge
                 math::numeric_cast<double>(AtomicMultiplicityFromZ(Z)),
-                math::numeric_cast<double>(Z));  //! 0 charge, nelectrons = Z
+                math::numeric_cast<double>(Z),
+                CovRadiusFromZ(Z),
+                VDWRadiusFromZ(Z)
+                );  //! 0 charge, nelectrons = Z
 }
 
 Atom CreateAtom(size_t idx, double x, double y, double z, int Z)

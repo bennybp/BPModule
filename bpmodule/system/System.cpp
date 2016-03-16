@@ -230,20 +230,39 @@ std::vector<double> GetDistance(const System& sys){
         size_t J=0;
         for(const Atom& atomJ : sys){
             if(atomJ==atomI)break;
-            for(double xi : atomI.GetCoords())
-                for(double yi: atomJ.GetCoords())
-                    DM[I*NAtoms+J]+=(xi-yi)*(xi-yi);
+            for(size_t xi=0;xi<3;++xi)
+                DM[I*NAtoms+J]+=(atomI[xi]-atomJ[xi])*(atomI[xi]-atomJ[xi]);
             DM[I*NAtoms+J]=DM[J*NAtoms+I]=sqrt(DM[I*NAtoms+J]);
+            ++J;
         }
+        ++I;
     }
     return DM;
 }
 
-/*std::map<Atom,std::set<Atom>> GetConns(const System& sys,double CutOff){
-    std::map<Atom,std::set<Atom>> Conns;
+typedef std::unordered_map<Atom,std::unordered_set<Atom>> Conn_t;
+
+Conn_t GetConns(const System& sys,double Tolerance){
+    Conn_t Conns;
+    for(const Atom& AtomI : sys)Conns[AtomI]=std::unordered_set<Atom>();
     std::vector<double> Dist=GetDistance(sys);
-    for(const Atom&)
-}*/
+    size_t I=0,NAtoms=sys.NAtoms();
+    for(const Atom& AtomI : sys){
+        size_t J=0;
+        double Irad=AtomI.GetCovRadius();
+        for(const Atom& AtomJ: sys){
+            if(AtomI==AtomJ)break;
+            double Jrad=AtomJ.GetCovRadius();
+            if(Dist[I*NAtoms+J]<Tolerance*(Irad+Jrad)){
+                Conns[AtomI].insert(AtomJ);
+                Conns[AtomJ].insert(AtomI);
+            }
+            ++J;
+        }
+        ++I;
+    }
+    return Conns;
+}
 
 
 

@@ -38,7 +38,9 @@ struct AtomicData
     double mass;          //! Mass of the element (isotope masses weighted by abundance)
     double mass_low;      //! Lower bound on the mass of the element
     double mass_high;     //! Upper bound on the mass of the element
-
+    double covradius;     //! Covalent radius in a.u.
+    double vdwradius;     //! VDW radius in a.u.
+    
     std::vector<IsotopeData> isotopes; //!< All isotope information for this atom
 };
 
@@ -200,7 +202,10 @@ int AtomicMultiplicityFromZ(int Z);
  */
 int AtomicMultiplicityFromSym(const std::string & sym);
 
-
+double CovRadiusFromZ(int Z);
+double CovRadiusFroSym(const std::string & sym);
+double VDWRadiusFromZ(int Z);
+double VDWRadiusFroSym(const std::string & sym);
 } // closing namespace system
 } // closing namespace bpmodule
 

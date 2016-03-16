@@ -160,7 +160,25 @@ int AtomicMultiplicityFromSym(const std::string & sym)
     return AtomicInfoFromSym(sym).multiplicity;
 }
 
+double CovRadiusFromZ(int Z)
+{
+    return AtomicInfoFromZ(Z).covradius;
+}
 
+double CovRadiusFroSym(const std::string & sym)
+{
+    return AtomicInfoFromSym(sym).covradius;
+}
+
+double VDWRadiusFromZ(int Z)
+{
+    return AtomicInfoFromZ(Z).vdwradius;
+}
+
+double VDWRadiusFroSym(const std::string & sym)
+{
+    return AtomicInfoFromSym(sym).vdwradius;
+}
 
 } // closing namespace system
 } // closing namespace bpmodule

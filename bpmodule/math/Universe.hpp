@@ -15,67 +15,79 @@
 #include <sstream> //For printing
 
 namespace bpmodule {
-namespace math{
-    
+namespace math {
+
 // Forward declarations for friends
-template<typename T,typename U>
+template<typename T, typename U>
 class Universe;
-template<typename T,typename U>
+template<typename T, typename U>
 class MathSet;
-    
+
 /** An iterator to go with the universe class, returns actual objects
  *
  * The iterator only allows accessing the data, not modifying. That is,
  * this only behaves like a const_iterator
  */
-template<typename T,typename U>
-class ConstSetItr{
-    private:
-        ///My type
-        typedef ConstSetItr<T,U> My_t;
-        ///Type of the iterator to the Indices in the universe
-        typedef std::set<size_t>::const_iterator Itr_t;
-        ///The index I currently point to
-        Itr_t CurrIdx_;
-        ///The universe I am tied to
-        const U* Set_;
-        ///Let universe play with my private parts
-        friend Universe<T,U>;
-        ///Only universe can make a working iterator
-        ConstSetItr(Itr_t CurrIdx,const U& Set):
-            CurrIdx_(CurrIdx),Set_(&Set){}
-    public:
-        ConstSetItr(const ConstSetItr&)=default;
-        ConstSetItr& operator=(const ConstSetItr&)=default;
-        ~ConstSetItr()=default;
-        
-        ///Returns true if this iterator is equal to RHS
-        bool operator==(const My_t& RHS)const{
-            return (CurrIdx_==RHS.CurrIdx_);
-        }
-        ///Returns true if this iterator is not equal to RHS
-        bool operator!=(const My_t& RHS)const{
-            return !this->operator ==(RHS);
-        }
-        ///Returns a reference to the current element
-        const T & operator*()const{
-            return (*Set_)[*CurrIdx_];
-        }
+template<typename T, typename U>
+class ConstSetItr {
+private:
+    ///My type
+    typedef ConstSetItr<T, U> My_t;
+    ///Type of the iterator to the Indices in the universe
+    typedef std::set<size_t>::const_iterator Itr_t;
+    ///The index I currently point to
+    Itr_t CurrIdx_;
+    ///The universe I am tied to
+    const U* Set_;
+    ///Let universe play with my private parts
+    friend Universe<T, U>;
+    ///Only universe can make a working iterator
 
-        ///Prefix increment operator
-        const My_t& operator++(){
-            ++CurrIdx_;
-            return *this;
-        }
-        ///Postfix increment operator
-        const My_t& operator++(int){
-            My_t ret(*this);
-            ++CurrIdx_;
-            return ret;
-        }
-        
+    ConstSetItr(Itr_t CurrIdx, const U& Set) :
+    CurrIdx_(CurrIdx), Set_(&Set)
+    {
+    }
+public:
+    ConstSetItr(const ConstSetItr&) = default;
+    ConstSetItr& operator=(const ConstSetItr&) = default;
+    ~ConstSetItr() = default;
+
+    ///Returns true if this iterator is equal to RHS
+
+    bool operator==(const My_t& RHS)const
+    {
+        return (CurrIdx_ == RHS.CurrIdx_);
+    }
+    ///Returns true if this iterator is not equal to RHS
+
+    bool operator!=(const My_t& RHS)const
+    {
+        return !this->operator==(RHS);
+    }
+    ///Returns a reference to the current element
+
+    const T & operator*()const
+    {
+        return (*Set_)[*CurrIdx_];
+    }
+
+    ///Prefix increment operator
+
+    const My_t& operator++()
+    {
+        ++CurrIdx_;
+        return *this;
+    }
+    ///Postfix increment operator
+
+    const My_t& operator++(int)
+    {
+        My_t ret(*this);
+        ++CurrIdx_;
+        return ret;
+    }
+
 };
-
 
 /** \brief A class that implements a mathematical (ordered) set that is a
  *  universe.  Order is defined as that in which the elements are inserted.
@@ -107,98 +119,114 @@ class ConstSetItr{
  *            copied a lot.  Must be default constructable and comparable with
  *            the less operator.
  *   \param U The type of the storage class.  This is a class that will hold the
- *            actual memory for the elements.  Must minimally have an interface:
- *            \code
- *            class SetStorage{
- *            public:
- *               //Function that returns an iterator to the first element
- *               iterator begin();
- *               //Function that returns an iterator just past the last element
- *               iterator end();
- *               //Function that inserts an element, Elem, 
- *               //given end()'s iterator
- *               iterator insert(iterator,const T& Elem);
- *               //returns a copy of Elem i
- *               T operator[](size_t i)const;
- *            }
- *            \endcode
+ *            actual memory for the elements.  
  *            Note that std::vector satisfies these requests and is the default
- */    
-template<typename T,typename U=std::vector<T>>
-class Universe{
+ */
+template<typename T, typename U = std::vector<T>>
+class Universe {
 protected:
-    friend MathSet<T,U>;
+    friend MathSet<T, U>;
 
     ///My type
-    typedef Universe<T,U> My_t;
+    typedef Universe<T, U> My_t;
     ///The storage class
     std::shared_ptr<U> Storage_;
     ///The elements in this set
     std::set<size_t> Elems_;
 
     ///For iterating over MathSet and other derived classes
-    virtual ConstSetItr<T,U> MakeIterator(std::set<size_t>::const_iterator elemit) const
+
+    virtual ConstSetItr<T, U> MakeIterator(std::set<size_t>::const_iterator elemit) const
     {
-        return ConstSetItr<T,U>(elemit, *Storage_);
+        return ConstSetItr<T, U>(elemit, *Storage_);
     }
 
 public:
     typedef T value_type;
 
     ///An iterator to const versions of the elements in this set
-    typedef ConstSetItr<T,U> const_iterator;
-    
+    typedef ConstSetItr<T, U> const_iterator;
+
     ///Deep copies the universe
-    Universe(const My_t& RHS) : Storage_(new U(*RHS.Storage_)), Elems_(RHS.Elems_){
+
+    Universe(const My_t& RHS) : Storage_(new U(*RHS.Storage_)), Elems_(RHS.Elems_)
+    {
     }
-        
-    
+
+
     ///Deep copies during assignment
-    My_t& operator=(const My_t & RHS){
+
+    My_t& operator=(const My_t & RHS)
+    {
         using std::swap;
-        if(this != &RHS)
-        {
+        if (this != &RHS) {
             My_t tmp(RHS);
             swap(*this, tmp);
         }
         return *this;
     }
-   
 
+    ///Move assignment
     My_t & operator=(My_t &&) = default;
+    ///Move construct
     Universe(My_t &&) = default;
 
- 
-    ///Makes a empty universe
-    Universe() : Storage_(new U) { };
-    
+    ///Makes an empty universe
+
+    Universe() : Storage_(new U)
+    {
+    };
+
     ///No special memory clean-up
     // Cannot be =default due to compiler bugs
-    virtual ~Universe() { };
-    
+
+    virtual ~Universe()
+    {
+    };
+
     ///@{
     ///Basic accessors
     ///Returns the cardinality of the universe (i.e. the number of elements)
-    size_t size()const noexcept{return Elems_.size();}
-    ///Returns an iterator to a const version of the 
-    virtual const_iterator begin()const{
-        return const_iterator(Elems_.begin(),*Storage_);
+
+    size_t size()const noexcept
+    {
+        return Elems_.size();
     }
+
+    ///Returns a const iterator to the beginning of the universe 
+
+    virtual const_iterator begin()const
+    {
+        return const_iterator(Elems_.begin(), *Storage_);
+    }
+
     ///Returns an iterator just past a const version of the last element
-    virtual const_iterator end()const{
-        return const_iterator(Elems_.end(),*Storage_);
+
+    virtual const_iterator end()const
+    {
+        return const_iterator(Elems_.end(), *Storage_);
     }
 
 
     ///Returns the index of an Elem in Storage_
-    virtual size_t Idx(const T& Elem)const{
+
+    virtual size_t Idx(const T& Elem)const
+    {
         return std::distance(
                 Storage_->begin(),
-                std::find(Storage_->begin(),Storage_->end(),Elem)
-        );
+                std::find(Storage_->begin(), Storage_->end(), Elem)
+                );
     }
-    T& operator[](size_t EI){return (*Storage_)[EI];}
-    const T& operator[](size_t EI)const{return (*Storage_)[EI];}
+
+    T& operator[](size_t EI)
+    {
+        return (*Storage_)[EI];
+    }
+
+    const T& operator[](size_t EI)const
+    {
+        return (*Storage_)[EI];
+    }
     ///@}
 
     /** \brief Adds an element to this set, returns this
@@ -211,22 +239,27 @@ public:
      * Note: calling this function invalidates all iterators that are
      * out
      */
-    virtual My_t& operator<<(const T& Elem){
-        if(!Storage_)Storage_=std::shared_ptr<U>(new U);
+    virtual My_t& operator<<(const T& Elem)
+    {
+        if (!Storage_)Storage_ = std::shared_ptr<U>(new U);
         Elems_.insert(Storage_->size());
-        Storage_->insert(Storage_->end(),Elem);
+        Storage_->insert(Storage_->end(), Elem);
         return *this;
     }
 
     ///Returns true if this set contains Elem, comparison occurs via
     ///Elem's operator==
-    bool Contains(const T& Elem)const{
+
+    bool Contains(const T& Elem)const
+    {
         return Contains(Idx(Elem));
     }
-    bool Contains(size_t EI)const{
-        return Elems_.count(EI)==1;
+
+    bool Contains(size_t EI)const
+    {
+        return Elems_.count(EI) == 1;
     }
-    
+
     /** \brief Makes this the union of this and RHS
      * 
      *  We do not want to sort the data in Storage_, so we can not use 
@@ -236,79 +269,180 @@ public:
      *  in the order they appear in RHS.  If this isn't good enough you likely
      *  will have to merge the sets manually.
      */
-    const My_t& operator+=(const My_t& RHS){
-        for(const T & EI : RHS)
-            if(!this->Contains(EI))(*this)<<EI;
+    const My_t& operator+=(const My_t& RHS)
+    {
+        for (const T & EI : RHS)
+            if (!this->Contains(EI))(*this) << EI;
         return *this;
     }
-    
+
     ///Returns a new universe (not linked to this one) that is union of this and
     ///RHS
-    My_t operator+(const My_t& RHS)const{
-        return My_t(*this)+=RHS;
+
+    My_t operator+(const My_t& RHS)const
+    {
+        return My_t(*this) += RHS;
     }
-    
+
     /** \brief Makes this the intersection of this and RHS
      * 
      *  Again, we don't want to sort and so we can't use std::set_intersection.
      *  The elements contained in this after the operation, will be in the same
      *  order they were  originally.
      */
-    const My_t& operator/=(const My_t& RHS){
+    const My_t& operator/=(const My_t& RHS)
+    {
         std::shared_ptr<U> Temp(new U);
         std::set<size_t> TempElems;
-        for(const T & Elem : *this)
-            if(RHS.Contains(Elem)){
+        for (const T & Elem : * this)
+            if (RHS.Contains(Elem)) {
                 TempElems.insert(Temp->size());
-                Temp->insert(Temp->end(),Elem);
+                Temp->insert(Temp->end(), Elem);
             }
-        Storage_=std::move(Temp);
-        Elems_=std::move(TempElems);
+        Storage_ = std::move(Temp);
+        Elems_ = std::move(TempElems);
         return *this;
     }
-    
+
     ///Returns a new universe, (not linked to this one) that is the intersection
-    My_t operator/(const My_t& RHS)const{
-        return My_t(*this)/=RHS;
+
+    My_t operator/(const My_t& RHS)const
+    {
+        return My_t(*this) /= RHS;
     }
-    
+
     /** \brief Makes this the set difference of this and RHS
      * 
      *  Again, we can't sort Storage_, so we can't use std::set_difference. As
      *  with intersection, the final order is the same as it was orginally
      * 
      */
-    const My_t& operator-=(const My_t& RHS){
+    const My_t& operator-=(const My_t& RHS)
+    {
         std::shared_ptr<U> Temp(new U);
         std::set<size_t> TempElems;
-        for(const T & EI : *this)
-            if(!RHS.Contains(EI)){
+        for (const T & EI : * this)
+            if (!RHS.Contains(EI)) {
                 TempElems.insert(Temp->size());
-                Temp->insert(Temp->end(),EI);
+                Temp->insert(Temp->end(), EI);
             }
-        Storage_=std::move(Temp);
-        Elems_=std::move(TempElems);
+        Storage_ = std::move(Temp);
+        Elems_ = std::move(TempElems);
         return *this;
     }
-    
+
     ///Returns a new universe (not linked to this one) that is the set-differnce
-    My_t operator-(const My_t& RHS)const{
-        return My_t(*this)-=RHS;
+
+    My_t operator-(const My_t& RHS)const
+    {
+        return My_t(*this) -= RHS;
     }
-    
+    ///@{ \brief Set comparison operators
+
+    /** \brief Returns true if this set equals other
+     * 
+     *   We define equality of universe as having the same elements in
+     *   storage (by value) and the same elements
+     * 
+     *   \param[in] RHS The other MathSet to compare to
+     *   \return True if this set equals other
+     */
+    bool operator==(const My_t& RHS)const
+    {
+        return (*Storage_ == *RHS.Storage_ && Elems_ == RHS.Elems_);
+    }
+
+    /** \brief Returns true if this does not equal other
+     * 
+     *   Literally just negates the result of operator==()
+     * 
+     *   \param[in] RHS The other MathSet
+     *   \return True if the sets are different
+     */
+    bool operator!=(const My_t& RHS)const
+    {
+        return !(*this == RHS);
+    }
+
+    /** \brief Returns true if this is a proper subset of other
+     * 
+     *   This is a proper subset of RHS if
+     *   all elements in this are in RHS, and there is at least one
+     *   element in RHS that is not in this
+     *  
+     *   \todo Implement early abort instead of using intersection
+     * 
+     *   \param[in] RHS The set to comapre to
+     *   \return True if this is a proper subset of other
+     *
+     */
+    bool operator<(const My_t& RHS)const
+    {
+        if (*this == RHS)return false;
+        My_t IntSec = *this / RHS;
+        return (IntSec == *this);
+    }
+
+    /** \brief Returns true if this is a subset of other
+     * 
+     *   This is a subset of RHS if all elements in this are in RHS
+     *  
+     *   \todo Avoid two equality checks (there's one in operator<)
+     * 
+     *   \param[in] RHS The set to comapre to
+     *   \return True if this is a subset of other
+     *
+     */
+    bool operator<=(const My_t& RHS)const
+    {
+        if (*this == RHS)return true;
+        return *this<RHS;
+    }
+
+    /** \brief Returns true if this is a proper superset of other
+     * 
+     *  This is a proper superset of other, iff other is a proper subset
+     *  of this.
+     * 
+     *  \param[in] Set to compare to
+     *  \return True if this is a proper superset of other
+     *
+     */
+    bool operator>(const My_t& RHS)const
+    {
+        return RHS<*this;
+    }
+
+    /** \brief Returns true if this is a superset of other
+     * 
+     *  This is a superset of other iff other is a subset of this
+     * 
+     *  \param[in] Set to compare to
+     *  \return true if this is a superset of other
+     *  
+     */
+    bool operator>=(const My_t& RHS)const
+    {
+        return RHS <= *this;
+    }
+    ///@}
+
     ///Helpful printing function
-    virtual std::string ToString()const{
+
+    virtual std::string ToString()const
+    {
         std::stringstream ss;
-        for(const T & EI: *this)ss<<EI<<" ";
+        for (const T & EI : * this)ss << EI << " ";
         return ss.str();
     }
 };
 
-template<typename T,typename U>
-std::ostream& operator<<(std::ostream& os, const Universe<T,U>& AUniv){
-    return os<<AUniv.ToString();
+template<typename T, typename U>
+std::ostream& operator<<(std::ostream& os, const Universe<T, U>& AUniv)
+{
+    return os << AUniv.ToString();
 }
-    
+
 }
 }//End namespaces
 #endif /* BPMODULE_GUARD_Universe_HPP_ */

@@ -7,6 +7,8 @@
 #ifndef BPMODULE_GUARD_SYSTEM__SYSTEM_HPP_
 #define BPMODULE_GUARD_SYSTEM__SYSTEM_HPP_
 
+#include <unordered_map>
+#include <unordered_set>
 #include "bpmodule/system/Atom.hpp"
 #include "bpmodule/math/MathSet.hpp"
 #include "bpmodule/math/PointManipulation.hpp"
@@ -283,8 +285,9 @@ class System
 ///Returns the distance between each pair of atoms in sys
 std::vector<double> GetDistance(const System& sys);
 
-///Returns connectivity data
-//std::map<Atom,std::vector<Atom>> GetConns(const System& sys,double CutOff);
+///Returns connectivity data of sys, using covalent radii.  Atoms are considered
+///bonded if Tolerance*sum of covRaddii is greater than distance
+std::unordered_map<Atom,std::unordered_set<Atom>> GetConns(const System& sys,double Tolerance=1.20);
 
 inline std::ostream& operator<<(std::ostream& os,const System& Mol){
     return os<<Mol.ToString();

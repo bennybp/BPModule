@@ -25,7 +25,8 @@ namespace util{
  *  To declare a set of enums called MyEnums, with values: Value1,Value2, and
  *  Value3 do in a header file MyEnums.hpp:
  *  \code
- *  class MyEnums: public Enumeration<MyEnums>{
+ *  class MyEnums
+ *       : public Enumeration<MyEnums>{
  *     private:
  *        MyEnums(const std::string& Name):Enumeration<MyEnums>(Name){}
  *     public:

@@ -15,240 +15,354 @@
 #include "bpmodule/math/Universe.hpp"
 
 namespace bpmodule {
-    namespace math {
+namespace math {
 
-        /** \brief A class for performing set manipulations efficiently relative to
-         *   some universe.
-         * 
-         *   With the universe class all of the operations are deep copies or involve
-         *   copying the actual elements over.  Now that we know what our universe is,
-         *   we can do these operations much more efficiently by mapping each element
-         *   to an integer in the range 0 to the size of our universe and performing
-         *   the operations on those integers.  That's what this class does.  Thus
-         *   by default operations with this class are shallow copies.  It is entirely
-         *   possible to simply use the Universe class for set manipulations (barring
-         *   complement), it will just not be as efficient.
-         *   
-         *   Because a MathSet derives from Universe it is perfectly capable of being
-         *   itself used as a universe.  Note that the privateness of the Universe
-         *   base class means you can't pass this class by it's base class to anything
-         *   other than this class.  All classes that intend to use MathSet should
-         *   derive from it.
-         * 
-         *   Developer note:  I originally thought we could get away without the
-         *   shared_ptr to the Universe_.  When we link to a Universe, we just set
-         *   the Storage_ in the base class to that of the one in Universe we are
-         *   linking to.  Then we can use the base class's interface to do everything.
-         *   This works fine if we don't ever intend to use a MathSet as a universe, but
-         *   we do.  Imagine we have:
-         *   \code
-         *    Universe U;
-         *    MathSet A(U);
-         *    MathSet B(A);
-         *   \endcode
-         *   where we assume the objects are actually declared and setup correctly,
-         *   additionally we assume A is a proper subset of U. Now how do we know if an
-         *   element is in B's Universe?  For A we just had to check if it was in
-         *   Storage_, but for B this won't work because Storage_ hasn't changed to
-         *   represent the reduced subspace (we could do this, but then we'd have to
-         *   copy and the point of this class is to avoid that (the Universe class
-         *   would have taken that route)).  However, by storing a pointer to A, we
-         *   need only compare against A's Elems_.
-         *   
-         */
-        template<typename T, typename U = std::vector<T>>
-        class MathSet : private Universe<T, U> {
-        private:
-            ///Base class's type
-            typedef Universe<T, U> Base_t;
-            ///This class's type
-            typedef MathSet<T, U> My_t;
+/** \brief A class for performing set manipulations efficiently relative to
+ *   some universe.
+ * 
+ *   With the universe class all of the operations are deep copies or involve
+ *   copying the actual elements over.  Now that we know what our universe is,
+ *   we can do these operations much more efficiently by mapping each element
+ *   to an integer in the range 0 to the size of our universe and performing
+ *   the operations on those integers.  That's what this class does.  Thus
+ *   by default operations with this class are shallow copies.  It is entirely
+ *   possible to simply use the Universe class for set manipulations (barring
+ *   complement), it will just not be as efficient.
+ *   
+ *   Because a MathSet derives from Universe it is perfectly capable of being
+ *   itself used as a universe.  Note that the privateness of the Universe
+ *   base class means you can't pass this class by it's base class to anything
+ *   other than this class.  All classes that intend to use MathSet should
+ *   derive from it.
+ * 
+ *   Developer note:  I originally thought we could get away without the
+ *   shared_ptr to the Universe_.  When we link to a Universe, we just set
+ *   the Storage_ in the base class to that of the one in Universe we are
+ *   linking to.  Then we can use the base class's interface to do everything.
+ *   This works fine if we don't ever intend to use a MathSet as a universe, but
+ *   we do.  Imagine we have:
+ *   \code
+ *    Universe U;
+ *    MathSet A(U);
+ *    MathSet B(A);
+ *   \endcode
+ *   where we assume the objects are actually declared and setup correctly,
+ *   additionally we assume A is a proper subset of U. Now how do we know if an
+ *   element is in B's Universe?  For A we just had to check if it was in
+ *   Storage_, but for B this won't work because Storage_ hasn't changed to
+ *   represent the reduced subspace (we could do this, but then we'd have to
+ *   copy and the point of this class is to avoid that (the Universe class
+ *   would have taken that route)).  However, by storing a pointer to A, we
+ *   need only compare against A's Elems_.
+ * 
+ *   \param T The type of the object in the set
+     \param U The type of the container holding the objects
+ *   
+ */
+template<typename T, typename U = std::vector<T>>
+class MathSet : private Universe<T, U> {
+private:
+    ///Base class's type
+    typedef Universe<T, U> Base_t;
+    ///This class's type
+    typedef MathSet<T, U> My_t;
 
-            std::shared_ptr<const Base_t> Universe_;
+    std::shared_ptr<const Base_t> Universe_;
 
-            ///Checks if Elem (either as type T or as size_t) is in the universe
-            template<typename V>
-            void InUniverse(const V& Elem)const {
-                if(!Universe_->Contains(Elem))
-                    throw exception::ValueOutOfRange("Requested element is not in the universe for this set");
-            }
+    ///Checks if Elem (either as type T or as size_t) is in the universe
 
-            MathSet(std::shared_ptr<const Base_t> Universe, const std::set<size_t> & Elems)
-                : Universe_(Universe)
-            {
-                this->Elems_ = Elems;
-            }
-
-
-
-        public:
-            typedef ConstSetItr<T, U> const_iterator;
-            typedef T value_type;
-            typedef U store_type;
-            typedef std::function<bool(const T &)> SelectorFunc;
-            typedef std::function<T(const T &)> TransformerFunc;
-
-            typedef Universe<T, U> Universe_t;
-
-            ///Makes a set that is part of the given universe
-            // fill = Make this set a set of all elements in the universe
-            MathSet(std::shared_ptr<const Base_t> AUniverse, bool fill) : Universe_(AUniverse)
-            {
-                //!\todo replace with getting a set of indicies from the universe? Would probably be safer
-                if(fill)
-                {
-                    for(size_t i = 0; i < AUniverse->size(); i++) this->Elems_.insert(i);
-                }
-            }
-
-
-            ///Deep copies elements, shallow copies Universe_ and Storage_
-            MathSet(const My_t&) = default;
-            MathSet(My_t&&) = default;
-            MathSet & operator=(My_t&&) = default;
-
-            ///Returns a deep copy of everything
-            virtual My_t Clone()const {
-                return My_t(std::shared_ptr<Base_t>(new Base_t(*Universe_)), this->Elems_);
-                //                                         ^^ Deep copy universe, copy elements
-            }
-
-
-            size_t size(void)const noexcept {
-                return this->Elems_.size();
-            }
-
-            virtual size_t Idx(const T& Elem)const {
-                return Universe_->Idx(Elem);
-            }
-
-
-            ///Same as copy constructor, but for assignment
-            My_t& operator=(const My_t &) = default;
-
-            ///For adding an element, if you know its index in the universe
-            My_t& operator<<(size_t Idx) {
-                InUniverse(Idx);
-                this->Elems_.insert(Idx);
-                return *this;
-            }
-
-            ///Unlike the base class, we just add the index
-            virtual My_t& operator<<(const T& Elem) {
-                InUniverse(Elem);
-                return (*this) << Universe_->Idx(Elem);
-            }
-
-            ///Makes this the union of this and other
-            const My_t& operator+=(const My_t& RHS) {
-                for (const size_t& EI : RHS.Elems_)
-                    this->Elems_.insert(EI);
-                return *this;
-            }
-
-            ///Returns the union of this and other (result shares same resources)
-            My_t operator+(const My_t& RHS)const {
-                return My_t(*this) += RHS;
-            }
-
-            ///Makes this the intersection of this and other
-            const My_t& operator/=(const My_t& RHS) {
-                std::set<size_t> Temp(std::move(this->Elems_));
-                this->Elems_ = std::set<size_t>();
-                std::set_intersection(Temp.begin(), Temp.end(),
-                        RHS.Elems_.begin(), RHS.Elems_.end(),
-                        std::inserter<std::set < size_t >> (
-                        this->Elems_, this->Elems_.begin()));
-                return *this;
-            }
-
-            ///Returns the intersection of this and other
-            My_t operator/(const My_t& RHS)const {
-                return My_t(*this) /= RHS;
-            }
-
-            ///Makes this the set-difference of this and other
-            const My_t operator-=(const My_t& RHS) {
-                std::set<size_t> Temp(std::move(this->Elems_));
-                this->Elems_ = std::set<size_t>();
-                std::set_difference(Temp.begin(), Temp.end(),
-                        RHS.Elems_.begin(), RHS.Elems_.end(),
-                        std::inserter<std::set < size_t >> (
-                        this->Elems_, this->Elems_.begin()));
-                return *this;
-            }
-
-            ///Returns the set-difference of this and other
-            My_t operator-(const My_t& RHS)const {
-                return My_t(*this) -= RHS;
-            }
-
-            ///Returns the complement of this
-            My_t Complement()const {
-                My_t Temp(Universe_, {});
-                for (const T& EI : *Universe_) {
-                    if (!this->Contains(EI))Temp << EI;
-                }
-                return Temp;
-            }
-
-            virtual std::string ToString()const {
-                std::stringstream ss;
-                for (const size_t& EI : this->Elems_)
-                    ss << (*Universe_)[EI] << " ";
-                return ss.str();
-            }
-
-
-            My_t Transform(TransformerFunc transformer)const
-            {
-                //! \todo better way to do this function?
-                //  This makes some assumptions about the ordering of elements
-                std::shared_ptr<Base_t> newuniverse(new Base_t);
-
-                for(size_t i = 0; i < Universe_->size(); ++i)
-                {
-                    const auto & it = (*Universe_)[i];
-
-                    if(this->Elems_.count(i) > 0)
-                        (*newuniverse) << transformer(it);
-                    else
-                        (*newuniverse) << it;
-                }
-                    
-                return My_t(newuniverse, this->Elems_);
-            }
-
-
-            My_t Partition(SelectorFunc selector) const
-            {
-                std::set<size_t> newelems;
-                for(const auto & idx : this->Elems_)
-                {
-                    const auto & el = (*Universe_)[idx];
-                    if(selector(el))
-                        newelems.insert(idx);
-                }
-
-                return My_t(Universe_, newelems);
-            }
-
-            ///@{
-
-            
-            const_iterator begin() const {
-                return const_iterator(Universe_->MakeIterator(this->Elems_.begin()));
-            }
-
-            const_iterator end() const { 
-                return const_iterator(Universe_->MakeIterator(this->Elems_.end()));
-            }
-
-
-            ///@}
-        };
-
+    template<typename V>
+    void InUniverse(const V& Elem)const
+    {
+        if (!Universe_->Contains(Elem))
+            throw exception::ValueOutOfRange("Requested element is not in the universe for this set");
     }
+
+    MathSet(std::shared_ptr<const Base_t> Universe, const std::set<size_t> & Elems)
+    : Universe_(Universe)
+    {
+        this->Elems_ = Elems;
+    }
+
+
+
+public:
+    typedef ConstSetItr<T, U> const_iterator;
+    typedef T value_type;
+    typedef U store_type;
+    typedef std::function<bool(const T &) > SelectorFunc;
+    typedef std::function<T(const T &)> TransformerFunc;
+
+    typedef Universe<T, U> Universe_t;
+
+    ///Makes a set that is part of the given universe
+    // fill = Make this set a set of all elements in the universe
+
+    MathSet(std::shared_ptr<const Base_t> AUniverse, bool fill) : Universe_(AUniverse)
+    {
+        //!\todo replace with getting a set of indicies from the universe? Would probably be safer
+        if (fill) {
+            for (size_t i = 0; i < AUniverse->size(); i++) this->Elems_.insert(i);
+        }
+    }
+
+
+    ///Deep copies elements, shallow copies Universe_ and Storage_
+    MathSet(const My_t&) = default;
+    MathSet(My_t&&) = default;
+    MathSet & operator=(My_t&&) = default;
+
+    ///Returns a deep copy of everything
+
+    virtual My_t Clone()const
+    {
+        return My_t(std::shared_ptr<Base_t>(new Base_t(*Universe_)), this->Elems_);
+        //                                         ^^ Deep copy universe, copy elements
+    }
+
+    size_t size(void)const noexcept
+    {
+        return this->Elems_.size();
+    }
+
+    virtual size_t Idx(const T& Elem)const
+    {
+        return Universe_->Idx(Elem);
+    }
+
+
+    ///Same as copy constructor, but for assignment
+    My_t& operator=(const My_t &) = default;
+
+    ///For adding an element, if you know its index in the universe
+
+    My_t& operator<<(size_t Idx)
+    {
+        InUniverse(Idx);
+        this->Elems_.insert(Idx);
+        return *this;
+    }
+
+    ///Unlike the base class, we just add the index
+
+    virtual My_t& operator<<(const T& Elem)
+    {
+        InUniverse(Elem);
+        return (*this) << Universe_->Idx(Elem);
+    }
+
+    ///Makes this the union of this and other
+
+    const My_t& operator+=(const My_t& RHS)
+    {
+        for (const size_t& EI : RHS.Elems_)
+            this->Elems_.insert(EI);
+        return *this;
+    }
+
+    ///Returns the union of this and other (result shares same resources)
+
+    My_t operator+(const My_t& RHS)const
+    {
+        return My_t(*this) += RHS;
+    }
+
+    ///Makes this the intersection of this and other
+
+    const My_t& operator/=(const My_t& RHS)
+    {
+        std::set<size_t> Temp(std::move(this->Elems_));
+        this->Elems_ = std::set<size_t>();
+        std::set_intersection(Temp.begin(), Temp.end(),
+                RHS.Elems_.begin(), RHS.Elems_.end(),
+                std::inserter<std::set < size_t >> (
+                this->Elems_, this->Elems_.begin()));
+        return *this;
+    }
+
+    ///Returns the intersection of this and other
+
+    My_t operator/(const My_t& RHS)const
+    {
+        return My_t(*this) /= RHS;
+    }
+
+    ///Makes this the set-difference of this and other
+
+    const My_t operator-=(const My_t& RHS)
+    {
+        std::set<size_t> Temp(std::move(this->Elems_));
+        this->Elems_ = std::set<size_t>();
+        std::set_difference(Temp.begin(), Temp.end(),
+                RHS.Elems_.begin(), RHS.Elems_.end(),
+                std::inserter<std::set < size_t >> (
+                this->Elems_, this->Elems_.begin()));
+        return *this;
+    }
+
+    ///Returns the set-difference of this and other
+
+    My_t operator-(const My_t& RHS)const
+    {
+        return My_t(*this) -= RHS;
+    }
+
+    ///Returns the complement of this
+
+    My_t Complement()const
+    {
+        My_t Temp(Universe_,{});
+        for (const T& EI : *Universe_) {
+            if (!this->Contains(EI))Temp << EI;
+        }
+        return Temp;
+    }
+
+    /** \brief Returns true if this set equals other
+     * 
+     *   We define equality as having literally the same universe,
+     *   i.e. the pointers to the Universes have to be the same, and
+     *   having the same elements.
+     * 
+     *   \param[in] RHS The other MathSet to compare to
+     *   \return True if this set equals other
+     */
+    bool operator==(const My_t& RHS)const
+    {
+        return (Universe_ == RHS.Universe_ && this->Elems_ == RHS.Elems_);
+    }
+
+    /** \brief Returns true if this does not equal other
+     * 
+     *   Literally just negates the result of operator==()
+     * 
+     *   \param[in] RHS The other MathSet
+     *   \return True if the sets are different
+     * 
+     */
+    bool operator!=(const My_t& RHS)const
+    {
+        return !(*this == RHS);
+    }
+
+    /** \brief Returns true if this is a proper subset of other
+     * 
+     *   This is a proper subset of RHS if they have the same universe,
+     *   all elements in this are in RHS, and there is at least one
+     *   element in RHS that is not in this
+     *  
+     *   \todo Implement early abort instead of using intersection
+     * 
+     *   \param[in] RHS The set to comapre to
+     *   \return True if this is a proper subset of other
+     *
+     */
+    bool operator<(const My_t& RHS)const
+    {
+        if (*this == RHS)return false;
+        My_t Intsec = *this / RHS;
+        return Intsec == *this;
+    }
+
+    /** \brief Returns true if this is a subset of other
+     * 
+     *   This is a subset of RHS if they have the same universe,
+     *   and all elements in this are in RHS
+     *  
+     *   \todo Avoid two equality checks (there's one in operator<)
+     * 
+     *   \param[in] RHS The set to comapre to
+     *   \return True if this is a subset of other
+     *
+     */
+    bool operator<=(const My_t& RHS)const
+    {
+        if (*this == RHS)return true;
+        return *this<RHS;
+    }
+
+    /** \brief Returns true if this is a proper superset of other
+     * 
+     *  This is a proper superset of other, iff other is a proper subset
+     *  of this.
+     * 
+     *  \param[in] Set to compare to
+     *  \return True if this is a proper superset of other
+     *
+     */
+    bool operator>(const My_t& RHS)const
+    {
+        return RHS<*this;
+    }
+
+    /** \brief Returns true if this is a superset of other
+     * 
+     *  This is a superset of other iff other is a subset of this
+     * 
+     *  \param[in] Set to compare to
+     *  \return true if this is a superset of other
+     *  
+     */
+    bool operator>=(const My_t& RHS)const
+    {
+        return RHS <= *this;
+    }
+
+    virtual std::string ToString()const
+    {
+        std::stringstream ss;
+        for (const size_t& EI : this->Elems_)
+            ss << (*Universe_)[EI] << " ";
+        return ss.str();
+    }
+
+    My_t Transform(TransformerFunc transformer)const
+    {
+        //! \todo better way to do this function?
+        //  This makes some assumptions about the ordering of elements
+        std::shared_ptr<Base_t> newuniverse(new Base_t);
+
+        for (size_t i = 0; i < Universe_->size(); ++i) {
+            const auto & it = (*Universe_)[i];
+
+            if (this->Elems_.count(i) > 0)
+                (*newuniverse) << transformer(it);
+            else
+                (*newuniverse) << it;
+        }
+
+        return My_t(newuniverse, this->Elems_);
+    }
+
+    My_t Partition(SelectorFunc selector) const
+    {
+        std::set<size_t> newelems;
+        for (const auto & idx : this->Elems_) {
+            const auto & el = (*Universe_)[idx];
+            if (selector(el))
+                newelems.insert(idx);
+        }
+
+        return My_t(Universe_, newelems);
+    }
+
+    ///@{
+
+    const_iterator begin() const
+    {
+        return const_iterator(Universe_->MakeIterator(this->Elems_.begin()));
+    }
+
+    const_iterator end() const
+    {
+        return const_iterator(Universe_->MakeIterator(this->Elems_.end()));
+    }
+
+
+    ///@}
+};
+
+}
 }//End namespaces
 
 #endif /* BPMODULE_GUARD_MATHSET_HPP_ */

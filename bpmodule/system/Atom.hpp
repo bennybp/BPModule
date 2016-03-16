@@ -17,7 +17,10 @@
 namespace bpmodule {
 namespace system {
 
-
+///Macro to define getter/setters and reduce code duplication
+#define GetSetX(PFxnName,PName,PType)\
+PType Get##PFxnName(void) const noexcept{return PName ##_;}\
+void Set##PFxnName(PType value)noexcept{PName##_ =value;}   
 
 /*! \brief A center in a system
  *
@@ -48,6 +51,8 @@ class Atom : public math::Point
         double charge_;         //!< Charge on the center
         double multiplicity_;   //!< Electronic multiplicity
         double nelectrons_;     //!< Number of assigned electrons
+        double covradius_;      //!< The covalent radius
+        double vdwradius_;      //!< The van der waals radius
 
 
         //! Information stored about the basis set on the atom
@@ -80,7 +85,7 @@ class Atom : public math::Point
          */
         Atom(size_t idx,  CoordType xyz, int Z, int isonum, double mass,
              double isotopemass, double charge, double multiplicity,
-             double nelectrons);
+             double nelectrons,double covradius,double vdwradius);
 
 
         Atom(const Atom &)             = default;
@@ -121,104 +126,39 @@ class Atom : public math::Point
         {
             return idx_;
         }
-
-        /*! \brief Get the atomic Z number (number of protons) */
-        int GetZ(void) const noexcept
-        {
-            return Z_;
-        }
-
-        /*! \brief Set the atomic Z number (number of protons) */
-        void SetZ(int Z) noexcept
-        {
-            Z_ = Z;
-        }
-
-
-        /*! \brief Get the isotope number (number of protons + neutrons) */
-        int GetIsonum(void) const noexcept
-        {
-            return isonum_;
-        }
-
-        /*! \brief Set the isotope number (number of protons + neutrons) */
-        void SetIsonum(int isonum) noexcept
-        {
-            isonum_ = isonum;
-        }
-
-
-        /*! \brief Get the atomic mass (isotope masses weighted by abundance) */
-        double GetMass(void) const
-        {
-            return mass_;
-        }
-
-        /*! \brief Set the atomic mass (isotope masses weighted by abundance) */
-        void SetMass(double mass)
-        {
-            mass_ = mass;
-        };
-
-
-        /*! \brief Get the mass of the isotope */
-        double GetIsotopeMass(void) const
-        {
-            return isotopemass_;
-        }
-
-        /*! \brief Set the mass of the isotope */
-        void SetIsotopeMass(double isotopemass)
-        {
-            isotopemass_ = isotopemass;
-        };
-
-
-        /*! \brief Get the charge on this atom/center */
-        double GetCharge(void) const noexcept
-        {
-            return charge_;
-        }
-
-        /*! \brief Set the charge on this atom/center */
-        void SetCharge(double charge) noexcept
-        {
-            charge_ = charge;
-        }
-
-
-        /*! \brief Get the electronic multiplicity of this atom/center  */
-        double GetMultiplicity(void) const noexcept
-        {
-            return charge_;
-        }
-
-        /*! \brief Set the electronic multiplicity of this atom/center  */
-        void SetMultiplicity(double m) noexcept
-        {
-            multiplicity_ = m;
-        }
-
-
-        /*! \brief Get the number of electrons assigned to this atom/center */
-        double GetNElectrons(void) const noexcept
-        {
-            return nelectrons_;
-        }
-
-        /*! \brief Set the number of electrons assigned to this atom/center */
-        void SetNElectrons(double n) noexcept
-        {
-            nelectrons_ = n;
-        }
-
+        
         /*! \brief Get the name of the element */
         std::string GetName(void) const;
 
         /*! \brief Get the symbol of the element */
         std::string GetSymbol(void) const;
 
+        /*! \brief Get/Set the atomic Z number (number of protons) */
+        GetSetX(Z,Z,int)
+        
+        /*! \brief Get/Set the isotope number (number of protons + neutrons) */
+        GetSetX(Isonum,isonum,int)
 
+        /*! \brief Get/Set the atomic mass (isotope masses weighted by abundance) */
+        GetSetX(Mass,mass,double)
+
+        /*! \brief Get/Set the mass of the isotope */
+        GetSetX(IsotopeMass,isotopemass,double)
+
+        /*! \brief Get/Set the charge on this atom/center */
+        GetSetX(Charge,charge,double)
+
+        /*! \brief Get/Set the electronic multiplicity of this atom/center  */
+        GetSetX(Multiplicity,multiplicity,double)
+
+        /*! \brief Get/Set the number of electrons assigned to this atom/center */
+        GetSetX(NElectrons,nelectrons,double)
+
+        /*! \brief Get/Set the covalent radius of the atom*/
+        GetSetX(CovRadius,covradius,double)
+        
+        /*! \brief Get/Set the van der Waals radius of the atom*/
+        GetSetX(VDWRadius,vdwradius,double)
         ///@}
 
 
@@ -318,6 +258,8 @@ class Atom : public math::Point
 std::ostream& operator<<(std::ostream& os,const Atom& A);
 
 
+
+
 /* \brief Create an atom given an ID, coordinates, and atomic number
  *
  * The rest of the data is filled in automatically
@@ -340,11 +282,21 @@ Atom CreateAtom(size_t idx, CoordType xyz, int Z, int isonum);
 /*! \copydoc CreateAtom(size_t idx, CoordType xyz, int Z, int isonum) */ 
 Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum);
 
-
+#undef GetSetX
 
 
 } // close namespace system
 } // close namespace bpmodule
+
+///Allows atoms to be hashed
+namespace std{
+    template<> struct hash<bpmodule::system::Atom>
+    {
+        size_t operator()(const bpmodule::system::Atom& atom)const{
+            return atom.GetIdx();
+        }
+    };
+}
 
 #endif
 

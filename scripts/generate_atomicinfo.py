@@ -28,6 +28,8 @@ for l in open(os.path.join(datadir, "ElementNames.txt")).readlines():
                       "mult": 0,
                       "termsym": "x",
                       "mass": (0.0, 0.0, 0.0),
+                      "covradius":0.0,
+                      "vdwradius":0.0,
                       "isos" : {}
                     }
 
@@ -40,6 +42,21 @@ for l in open(os.path.join(datadir, "CIAAW-MASSES.formatted.txt")).readlines()[5
 
   atomicinfo[z]["mass"] = ( mid, low, high )
 
+#Read in Covalent Radii
+for l in open(os.path.join(datadir,"CovRadii.txt")).readlines()[1:]:
+  l.strip()
+  z,r,unit=l.split()
+  z=int(z)
+  r=float(r)
+  atomicinfo[z]["covradius"]=r/52.917721067 #conversion from generate_constants
+
+#Read in van der waal Radii
+for l in open(os.path.join(datadir,"VanDerWaalRadius.txt")).readlines()[1:]:
+  l.strip()
+  z,r,unit=l.split()
+  z=int(z)
+  r=float(r)
+  atomicinfo[z]["vdwradius"]=r/52.917721067 #conversion from generate_constants
 
 
 # Read in isotop masses
@@ -126,7 +143,8 @@ with bp_common.HeaderSourceFiles(outbase, "LUTs for Atomic Information",
         src.f.write("             {},\n".format(v["mass"][0]))
         src.f.write("             {},\n".format(v["mass"][1]))
         src.f.write("             {},\n".format(v["mass"][2]))
-
+        src.f.write("             {},\n".format(v["covradius"]))
+        src.f.write("             {},\n".format(v["vdwradius"]))
         # isotope info
         src.f.write("              {\n")
         for ki,vi in sorted(v["isos"].items()):
@@ -138,6 +156,7 @@ with bp_common.HeaderSourceFiles(outbase, "LUTs for Atomic Information",
                                                                                       vi["abundance"][1],
                                                                                       vi["abundance"][2]))
         src.f.write("              },\n")  # Closes isotope vector
+
         src.f.write("           },\n")  # Closes atomic data
         src.f.write("  },\n\n")  # closes map pair
     src.f.write("}; // close atomic_Z_data_\n\n\n")
