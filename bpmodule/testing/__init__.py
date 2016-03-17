@@ -15,7 +15,7 @@ def PyTestFunc(func, *args):
     try:
        func(*args)
     except Exception as e:
-        Debug(str(e) + "\n")
+        GlobalDebug(str(e) + "\n")
         return 1
     except:
         return 1
@@ -32,7 +32,7 @@ def PyTestBoolFunc(func, *args):
             return 1
 
     except Exception as e:
-        Debug(str(e) + "\n")
+        GlobalDebug(str(e) + "\n")
         return 0
 
     except:

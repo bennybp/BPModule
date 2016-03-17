@@ -10,6 +10,10 @@
 
 
 #include <cstdint>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
 
 #include "bpmodule/math/Cast.hpp"
 #include "bpmodule/math/Cast_stl.hpp"
@@ -38,43 +42,15 @@ enum class OptionType
 {
     Int, Float, Bool, String,
     SetInt, SetFloat, SetBool, SetString,
-    ListInt, ListFloat, ListBool, ListString
+    ListInt, ListFloat, ListBool, ListString,
+    DictIntInt, DictIntFloat, DictIntBool, DictIntString,
+    DictStringInt, DictStringFloat, DictStringBool, DictStringString
 };
 
 
 
-inline const char * OptionTypeToString(OptionType ot)
-{
-    switch(ot)
-    {
-        case OptionType::Int:
-            return "Int";
-        case OptionType::Float:
-            return "Float";
-        case OptionType::Bool:
-            return "Bool";
-        case OptionType::String:
-            return "String";
-        case OptionType::ListInt:
-            return "ListInt";
-        case OptionType::ListFloat:
-            return "ListFloat";
-        case OptionType::ListBool:
-            return "ListBool";
-        case OptionType::ListString:
-            return "ListString";
-        case OptionType::SetInt:
-            return "SetInt";
-        case OptionType::SetFloat:
-            return "SetFloat";
-        case OptionType::SetBool:
-            return "SetBool";
-        case OptionType::SetString:
-            return "SetString";
-        default:
-            throw std::logic_error("Undefined OptionType");
-    }
-}
+const char * OptionTypeToString(OptionType ot);
+
 
 
 
@@ -86,6 +62,10 @@ template<OptionType T> struct OptionTypeInfo { };
 #define MAKEOPTIONTYPE(OPTTYPE, STOREDTYPE) \
         template<> struct OptionTypeInfo<OptionType::OPTTYPE> { \
         typedef STOREDTYPE stored_type; };
+
+#define MAKEOPTIONMAPTYPE(OPTTYPE, STOREDKEYTYPE, STOREDMAPPEDTYPE) \
+        template<> struct OptionTypeInfo<OptionType::OPTTYPE> { \
+        typedef std::map<STOREDKEYTYPE, STOREDMAPPEDTYPE> stored_type; };
 
 MAKEOPTIONTYPE(Int,         OptionInt)
 MAKEOPTIONTYPE(Float,       OptionFloat)
@@ -100,8 +80,21 @@ MAKEOPTIONTYPE(ListString,  std::vector<std::string>)
 MAKEOPTIONTYPE(SetInt,      std::set<OptionInt>)
 MAKEOPTIONTYPE(SetFloat,    std::set<OptionFloat>)
 MAKEOPTIONTYPE(SetBool,     std::set<bool>)
-MAKEOPTIONTYPE(SetString,   std::set<std::string>)
+MAKEOPTIONTYPE(SetString,   std::set<std::string>);
 
+
+MAKEOPTIONMAPTYPE(DictIntInt,       OptionInt,   OptionInt)
+MAKEOPTIONMAPTYPE(DictIntFloat,     OptionInt,   OptionFloat)
+MAKEOPTIONMAPTYPE(DictIntBool,      OptionInt,   bool)
+MAKEOPTIONMAPTYPE(DictIntString,    OptionInt,   std::string)
+
+MAKEOPTIONMAPTYPE(DictStringInt,    std::string, OptionInt)
+MAKEOPTIONMAPTYPE(DictStringFloat,  std::string, OptionFloat)
+MAKEOPTIONMAPTYPE(DictStringBool,   std::string, bool)
+MAKEOPTIONMAPTYPE(DictStringString, std::string, std::string)
+
+#undef MAKEOPTIONTYPE
+#undef MAKEOPTIONMAPTYPE
 
 
 ////////////////////////////////////////
@@ -141,6 +134,7 @@ MAPTOOPTIONTYPE(long double,         Float)
 MAPTOOPTIONTYPE(std::string,         String)
 
 
+#undef MAPTOOPTIONTYPE
 
 
 /////////////////////////////
@@ -183,6 +177,22 @@ struct OptionCast<std::set<std::string>, std::set<std::string>>
     static std::set<std::string> Cast(const std::set<std::string> & s)   {  return s; }
 };
 
+
+/*! \brief Converts an option value to/from its stored type
+ *
+ * Override for map types
+ */
+template<typename K1, typename M1, typename K2, typename M2>
+struct OptionCast<std::map<K1, M1>, std::map<K2, M2>>
+{
+    static std::map<K1, M1> Cast(const std::map<K2, M2> & s)
+    {
+        std::map<K1, M1> target;
+        for(const auto & it : s)
+            target.emplace(OptionCast<K1>(it.first), OptionCast<M1>(it.second));
+        return target;
+    }
+};
 
 
 
