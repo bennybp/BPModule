@@ -10,6 +10,11 @@
 
 
 #include <cstdint>
+#include <set>
+#include <map>
+#include <string>
+#include <vector>
+#include <algorithm>
 
 #include "bpmodule/math/Cast.hpp"
 #include "bpmodule/math/Cast_stl.hpp"
@@ -38,109 +43,177 @@ enum class OptionType
 {
     Int, Float, Bool, String,
     SetInt, SetFloat, SetBool, SetString,
-    ListInt, ListFloat, ListBool, ListString
+    ListInt, ListFloat, ListBool, ListString,
+    DictIntInt, DictIntFloat, DictIntBool, DictIntString,
+    DictStringInt, DictStringFloat, DictStringBool, DictStringString
 };
 
 
 
-inline const char * OptionTypeToString(OptionType ot)
-{
-    switch(ot)
-    {
-        case OptionType::Int:
-            return "Int";
-        case OptionType::Float:
-            return "Float";
-        case OptionType::Bool:
-            return "Bool";
-        case OptionType::String:
-            return "String";
-        case OptionType::ListInt:
-            return "ListInt";
-        case OptionType::ListFloat:
-            return "ListFloat";
-        case OptionType::ListBool:
-            return "ListBool";
-        case OptionType::ListString:
-            return "ListString";
-        case OptionType::SetInt:
-            return "SetInt";
-        case OptionType::SetFloat:
-            return "SetFloat";
-        case OptionType::SetBool:
-            return "SetBool";
-        case OptionType::SetString:
-            return "SetString";
-        default:
-            throw std::logic_error("Undefined OptionType");
-    }
-}
+/*! \brief Returns a descriptive string for an OptionType */
+const char * OptionTypeToString(OptionType ot);
+
 
 
 
 ///////////////////////////////////////
 // Information about an OptionType
+// This maps an option type to its stored type
 ///////////////////////////////////////
 template<OptionType T> struct OptionTypeInfo { };
 
-#define MAKEOPTIONTYPE(OPTTYPE, STOREDTYPE) \
+// For most options
+#define MAKE_OPTION_TYPE(OPTTYPE, STOREDTYPE) \
         template<> struct OptionTypeInfo<OptionType::OPTTYPE> { \
         typedef STOREDTYPE stored_type; };
 
-MAKEOPTIONTYPE(Int,         OptionInt)
-MAKEOPTIONTYPE(Float,       OptionFloat)
-MAKEOPTIONTYPE(Bool,        bool)
-MAKEOPTIONTYPE(String,      std::string)
+// for dicts/maps
+#define MAKE_OPTION_DICT_TYPE(OPTTYPE, STOREDKEYTYPE, STOREDMAPPEDTYPE) \
+        template<> struct OptionTypeInfo<OptionType::OPTTYPE> { \
+        typedef std::map<STOREDKEYTYPE, STOREDMAPPEDTYPE> stored_type; };
 
-MAKEOPTIONTYPE(ListInt,     std::vector<OptionInt>)
-MAKEOPTIONTYPE(ListFloat,   std::vector<OptionFloat>)
-MAKEOPTIONTYPE(ListBool,    std::vector<bool>)
-MAKEOPTIONTYPE(ListString,  std::vector<std::string>)
+MAKE_OPTION_TYPE(Int,         OptionInt)
+MAKE_OPTION_TYPE(Float,       OptionFloat)
+MAKE_OPTION_TYPE(Bool,        bool)
+MAKE_OPTION_TYPE(String,      std::string)
 
-MAKEOPTIONTYPE(SetInt,      std::set<OptionInt>)
-MAKEOPTIONTYPE(SetFloat,    std::set<OptionFloat>)
-MAKEOPTIONTYPE(SetBool,     std::set<bool>)
-MAKEOPTIONTYPE(SetString,   std::set<std::string>)
+MAKE_OPTION_TYPE(ListInt,     std::vector<OptionInt>)
+MAKE_OPTION_TYPE(ListFloat,   std::vector<OptionFloat>)
+MAKE_OPTION_TYPE(ListBool,    std::vector<bool>)
+MAKE_OPTION_TYPE(ListString,  std::vector<std::string>)
+
+MAKE_OPTION_TYPE(SetInt,      std::set<OptionInt>)
+MAKE_OPTION_TYPE(SetFloat,    std::set<OptionFloat>)
+MAKE_OPTION_TYPE(SetBool,     std::set<bool>)
+MAKE_OPTION_TYPE(SetString,   std::set<std::string>);
+
+
+MAKE_OPTION_DICT_TYPE(DictIntInt,       OptionInt,   OptionInt)
+MAKE_OPTION_DICT_TYPE(DictIntFloat,     OptionInt,   OptionFloat)
+MAKE_OPTION_DICT_TYPE(DictIntBool,      OptionInt,   bool)
+MAKE_OPTION_DICT_TYPE(DictIntString,    OptionInt,   std::string)
+
+MAKE_OPTION_DICT_TYPE(DictStringInt,    std::string, OptionInt)
+MAKE_OPTION_DICT_TYPE(DictStringFloat,  std::string, OptionFloat)
+MAKE_OPTION_DICT_TYPE(DictStringBool,   std::string, bool)
+MAKE_OPTION_DICT_TYPE(DictStringString, std::string, std::string)
+
+#undef MAKE_OPTION_TYPE
+#undef MAKE_OPTION_DICT_TYPE
+
+
+////////////////////////////////////
+// Mapping of a single type to its
+// List and Set counterparts
+////////////////////////////////////
+template<OptionType OPTTYPE> struct ContainerMap { };
+
+#define MAKE_CONTAINER_TYPE(OPTTYPE, SETTYPE, LISTTYPE) \
+    template<> struct ContainerMap<OptionType::OPTTYPE> { \
+       static constexpr OptionType set_type = OptionType::SETTYPE; \
+       static constexpr OptionType list_type = OptionType::LISTTYPE; \
+    };
+
+MAKE_CONTAINER_TYPE(Int,    SetInt,    ListInt)
+MAKE_CONTAINER_TYPE(Float,  SetFloat,  ListFloat)
+MAKE_CONTAINER_TYPE(Bool,   SetBool,   ListBool)
+MAKE_CONTAINER_TYPE(String, SetString, ListString)
+
+#undef MAKE_CONTAINER_TYPE
+
+
+
+//////////////////////////////
+// For map/dictionary types
+// we need two separate values
+//////////////////////////////
+template<OptionType KEYTYPE, OptionType VALTYPE> struct ContainerMap_Dict { };
+
+#define MAKE_CONTAINER_TYPE_DICT(KEYTYPE, VALTYPE, DICTTYPE) \
+    template<> struct ContainerMap_Dict<KEYTYPE, VALTYPE> { \
+       static constexpr OptionType dict_type = DICTTYPE; \
+    };
+
+MAKE_CONTAINER_TYPE_DICT(OptionType::Int,    OptionType::Int,    OptionType::DictIntInt) 
+MAKE_CONTAINER_TYPE_DICT(OptionType::Int,    OptionType::Float,  OptionType::DictIntFloat) 
+MAKE_CONTAINER_TYPE_DICT(OptionType::Int,    OptionType::Bool,   OptionType::DictIntBool) 
+MAKE_CONTAINER_TYPE_DICT(OptionType::Int,    OptionType::String, OptionType::DictIntString) 
+MAKE_CONTAINER_TYPE_DICT(OptionType::String, OptionType::Int,    OptionType::DictStringInt) 
+MAKE_CONTAINER_TYPE_DICT(OptionType::String, OptionType::Float,  OptionType::DictStringFloat) 
+MAKE_CONTAINER_TYPE_DICT(OptionType::String, OptionType::Bool,   OptionType::DictStringBool) 
+MAKE_CONTAINER_TYPE_DICT(OptionType::String, OptionType::String, OptionType::DictStringString) 
+
+#undef MAKE_CONTAINER_TYPE_DICT
 
 
 
 ////////////////////////////////////////
-// Mapping of types to the option type
-// Kind of long. Could be replaced with some
-// tag dispatch, but this is probably easier
-// and not that many more lines
+// Mapping of POD to their corresponding
+// option types
 ////////////////////////////////////////
-template<typename T> struct OptionTypeMap { static constexpr bool valid = false; };
-
-#define MAPTOOPTIONTYPE(TYPE, OPTTYPE) \
-        template<> struct OptionTypeMap<TYPE> { \
-        static constexpr OptionType opt_type = OptionType::OPTTYPE; \
-        static constexpr bool valid = true; }; \
-        template<> struct OptionTypeMap<std::vector<TYPE>> { \
-        static constexpr OptionType opt_type = OptionType::List##OPTTYPE; \
-        static constexpr bool valid = true; }; \
-        template<> struct OptionTypeMap<std::set<TYPE>> { \
-        static constexpr OptionType opt_type = OptionType::Set##OPTTYPE; \
-        static constexpr bool valid = true; }; \
+template<typename T,
+         bool = std::is_integral<T>::value,
+         bool = std::is_floating_point<T>::value>
+struct OptionTypeMap {  };
 
 
-MAPTOOPTIONTYPE(bool,                Bool)
-MAPTOOPTIONTYPE(unsigned char,       Int)
-MAPTOOPTIONTYPE(signed   char,       Int)
-MAPTOOPTIONTYPE(unsigned short,      Int)
-MAPTOOPTIONTYPE(signed   short,      Int)
-MAPTOOPTIONTYPE(unsigned int,        Int)
-MAPTOOPTIONTYPE(signed   int,        Int)
-MAPTOOPTIONTYPE(unsigned long,       Int)
-MAPTOOPTIONTYPE(signed   long,       Int)
-MAPTOOPTIONTYPE(unsigned long long,  Int)
-MAPTOOPTIONTYPE(signed   long long,  Int)
-MAPTOOPTIONTYPE(float,               Float)
-MAPTOOPTIONTYPE(double,              Float)
-MAPTOOPTIONTYPE(long double,         Float)
-MAPTOOPTIONTYPE(std::string,         String)
+// Integral types
+template<typename T>
+struct OptionTypeMap<T, true, false> 
+{
+    static constexpr OptionType opt_type = OptionType::Int;
+};
 
+// Floating point types
+template<typename T>
+struct OptionTypeMap<T, false, true> 
+{
+    static constexpr OptionType opt_type = OptionType::Float;
+};
 
+// Bool is special
+template<>
+struct OptionTypeMap<bool>
+{
+    static constexpr OptionType opt_type = OptionType::Bool;
+};
+
+// So is string
+template<>
+struct OptionTypeMap<std::string>
+{
+    static constexpr OptionType opt_type = OptionType::String;
+};
+                                  
+
+//////////////////////////
+// Containers
+//////////////////////////
+// Sets
+
+template<typename T>
+struct OptionTypeMap<std::set<T>, false, false>
+{
+    static constexpr OptionType inner_type = OptionTypeMap<T>::opt_type;
+    static constexpr OptionType opt_type = ContainerMap<inner_type>::set_type;
+};
+
+// Lists/vectors
+template<typename T>
+struct OptionTypeMap<std::vector<T>, false, false>
+{
+    static constexpr OptionType inner_type = OptionTypeMap<T>::opt_type;
+    static constexpr OptionType opt_type = ContainerMap<inner_type>::list_type;
+};
+
+// Maps
+template<typename T, typename U>
+struct OptionTypeMap<std::map<T, U>, false, false>
+{
+    static constexpr OptionType inner_key_type = OptionTypeMap<T>::opt_type;
+    static constexpr OptionType inner_val_type = OptionTypeMap<U>::opt_type;
+    static constexpr OptionType opt_type = ContainerMap_Dict<inner_key_type, inner_val_type>::dict_type;
+};
 
 
 /////////////////////////////
@@ -155,7 +228,6 @@ template<typename Target, typename Source>
 struct OptionCast
 {
     // normally we just use numeric_cast
-    // will work for vector types, etc
     static Target Cast(const Source & s)   {  return math::numeric_cast<Target, Source>(s);  }
 };
 
@@ -163,7 +235,7 @@ struct OptionCast
 
 /*! \brief Converts an option value to/from its stored type
  *
- * Override for string types
+ * Specialization for string types
  */
 template<>
 struct OptionCast<std::string, std::string>
@@ -171,18 +243,53 @@ struct OptionCast<std::string, std::string>
     static std::string Cast(const std::string & s)   {  return s; }
 };
 
-template<>
-struct OptionCast<std::vector<std::string>, std::vector<std::string>>
+
+/*! \brief Converts vectors of a given type to/from its stored type */
+template<typename Target, typename Source>
+struct OptionCast<std::vector<Target>, std::vector<Source>>
 {
-    static std::vector<std::string> Cast(const std::vector<std::string> & s)   {  return s; }
+    static std::vector<Target> Cast(const std::vector<Source> & s)
+    {
+        std::vector<Target> t;
+        std::transform(s.begin(), s.end(), std::back_inserter(t),
+                       OptionCast<Target, Source>::Cast);
+        return t;
+    }
 };
 
-template<>
-struct OptionCast<std::set<std::string>, std::set<std::string>>
+
+/*! \brief Converts an option value to/from its stored type
+ *
+ * Specialization for set types
+ */
+template<typename Target, typename Source>
+struct OptionCast<std::set<Target>, std::set<Source>>
 {
-    static std::set<std::string> Cast(const std::set<std::string> & s)   {  return s; }
+    static std::set<Target> Cast(const std::set<Source> & s)
+    {
+        std::set<Target> t;
+        std::transform(s.begin(), s.end(), std::inserter(t),
+                       OptionCast<Target, Source>::Cast);
+        return t;
+    }
 };
 
+
+/*! \brief Converts an option value to/from its stored type
+ *
+ * Specialization for map types
+ */
+template<typename K1, typename M1, typename K2, typename M2>
+struct OptionCast<std::map<K1, M1>, std::map<K2, M2>>
+{
+    static std::map<K1, M1> Cast(const std::map<K2, M2> & s)
+    {
+        std::map<K1, M1> target;
+        for(const auto & it : s)
+            target.emplace(OptionCast<K1, K2>::Cast(it.first), OptionCast<M1, M2>::Cast(it.second));
+        return target;
+    }
+};
 
 
 

@@ -27,14 +27,26 @@ template class OptionHolder<OptionType::Int>;
 template class OptionHolder<OptionType::Float>;
 template class OptionHolder<OptionType::Bool>;
 template class OptionHolder<OptionType::String>;
+
 template class OptionHolder<OptionType::ListInt>;
 template class OptionHolder<OptionType::ListFloat>;
 template class OptionHolder<OptionType::ListBool>;
 template class OptionHolder<OptionType::ListString>;
+
 template class OptionHolder<OptionType::SetInt>;
 template class OptionHolder<OptionType::SetFloat>;
 template class OptionHolder<OptionType::SetBool>;
 template class OptionHolder<OptionType::SetString>;
+
+template class OptionHolder<OptionType::DictIntInt>;
+template class OptionHolder<OptionType::DictIntFloat>;
+template class OptionHolder<OptionType::DictIntBool>;
+template class OptionHolder<OptionType::DictIntString>;
+
+template class OptionHolder<OptionType::DictStringInt>;
+template class OptionHolder<OptionType::DictStringFloat>;
+template class OptionHolder<OptionType::DictStringBool>;
+template class OptionHolder<OptionType::DictStringString>;
 
 
 

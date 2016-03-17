@@ -414,8 +414,9 @@ class OptionMap
         template<typename T>
         static void CheckType_(void) noexcept
         {
-            static_assert( OptionTypeMap<T>::valid,
-                           "Invalid type for an option given to OptionMap");
+            /*! \todo - check types for better compilation error messages */
+            //static_assert( OptionTypeMap<T>::valid,
+            //               "Invalid type for an option given to OptionMap");
         }
 };
 

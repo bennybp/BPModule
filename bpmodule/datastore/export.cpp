@@ -75,6 +75,15 @@ PYBIND11_PLUGIN(datastore)
     .value("SetFloat", OptionType::SetFloat)
     .value("SetBool", OptionType::SetBool)
     .value("SetString", OptionType::SetString)
+
+    .value("DictIntInt", OptionType::DictIntInt)
+    .value("DictIntFloat", OptionType::DictIntFloat)
+    .value("DictIntBool", OptionType::DictIntBool)
+    .value("DictIntString", OptionType::DictIntString)
+    .value("DictStringInt", OptionType::DictStringInt)
+    .value("DictStringFloat", OptionType::DictStringFloat)
+    .value("DictStringBool", OptionType::DictStringBool)
+    .value("DictStringString", OptionType::DictStringString)
     ;
 
 
@@ -95,6 +104,15 @@ PYBIND11_PLUGIN(datastore)
     RegisterOptionHolder<OptionType::SetFloat>(m, ohbase);
     RegisterOptionHolder<OptionType::SetBool>(m, ohbase);
     RegisterOptionHolder<OptionType::SetString>(m, ohbase);
+
+    RegisterOptionHolder<OptionType::DictIntInt>(m, ohbase);
+    RegisterOptionHolder<OptionType::DictIntFloat>(m, ohbase);
+    RegisterOptionHolder<OptionType::DictIntBool>(m, ohbase);
+    RegisterOptionHolder<OptionType::DictIntString>(m, ohbase);
+    RegisterOptionHolder<OptionType::DictStringInt>(m, ohbase);
+    RegisterOptionHolder<OptionType::DictStringFloat>(m, ohbase);
+    RegisterOptionHolder<OptionType::DictStringBool>(m, ohbase);
+    RegisterOptionHolder<OptionType::DictStringString>(m, ohbase);
 
 
     /////////////////////////
