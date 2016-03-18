@@ -37,33 +37,48 @@ void HandlePrintf_Internal_(std::string & fmt, const char * length,
                             char spec, const char * subst);
 
 
-////////////////////////////
-// Explicitly instantiated
-// Only handles basic types
-////////////////////////////
-#define DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(type) \
-    extern template void HandlePrintf_Internal_<type>(std::string &, const char *, char, type);
+/////////////////////////////////////////////////////////
+// Valid arguments are explicitly instantiated
+// and marked as valid with the ValidPrintfArg trait
+// structure.
+/////////////////////////////////////////////////////////
 
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(bool)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(char)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(unsigned char)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(signed char)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(unsigned short)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(signed short)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(unsigned int)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(signed int)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(unsigned long)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(signed long)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(unsigned long long)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(signed long long)
+template<typename T> struct ValidPrintfArg : public std::false_type { };
 
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(float)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(double)
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(long double)
+#define DECLARE_VALID_PRINTF(type) \
+    extern template void HandlePrintf_Internal_<type>(std::string &, const char *, char, type); \
+    template<> struct ValidPrintfArg<type> : public std::true_type { };
 
-DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF(void const *)
+DECLARE_VALID_PRINTF(bool)
+DECLARE_VALID_PRINTF(char)
+DECLARE_VALID_PRINTF(unsigned char)
+DECLARE_VALID_PRINTF(signed char)
+DECLARE_VALID_PRINTF(unsigned short)
+DECLARE_VALID_PRINTF(signed short)
+DECLARE_VALID_PRINTF(unsigned int)
+DECLARE_VALID_PRINTF(signed int)
+DECLARE_VALID_PRINTF(unsigned long)
+DECLARE_VALID_PRINTF(signed long)
+DECLARE_VALID_PRINTF(unsigned long long)
+DECLARE_VALID_PRINTF(signed long long)
 
-#undef DECLARE_EXTERN_TEMPLATE_HANDLEPRINTF
+DECLARE_VALID_PRINTF(float)
+DECLARE_VALID_PRINTF(double)
+DECLARE_VALID_PRINTF(long double)
+
+DECLARE_VALID_PRINTF(void const *)
+
+#undef DECLARE_VALID_PRINTF
+
+
+// And mark the overloads as valid
+template<> struct ValidPrintfArg<std::string> : public std::true_type { };
+template<> struct ValidPrintfArg<char *> : public std::true_type { };
+template<> struct ValidPrintfArg<const char *> : public std::true_type { };
+
+// pointers
+template<typename T> struct ValidPrintfArg<T *> : public std::true_type { };
+
 
 /////////////////////////////////////////
 // To be used from the outside
@@ -73,6 +88,7 @@ void HandlePrintf_(std::string & fmt, const char * length, char spec, T subst)
 {
     return HandlePrintf_Internal_(fmt, length, spec, static_cast<typename std::decay<T>::type>(subst));
 }
+
 
 } // close namespace detail
 } // close namespace vprintfcpp

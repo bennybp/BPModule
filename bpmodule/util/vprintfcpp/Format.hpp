@@ -75,6 +75,9 @@ template<typename T, typename... Targs>
 void Format_(std::ostream & os, FormatInfo & fi,
              const std::string & str, const T & arg, const Targs&... args)
 {
+    static_assert(detail::ValidPrintfArg<typename std::decay<T>::type>::value == true,
+                  "Invalid argument type passed to Format");
+
     if(GetNextFormat_(fi, str)) 
     {
         // after this, fi.format has been overwritten

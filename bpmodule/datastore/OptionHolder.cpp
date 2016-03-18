@@ -372,6 +372,17 @@ static std::vector<std::string> OptToString_(const std::set<T> & opt)
     return r;
 }
 
+
+template<typename T, typename U>
+static std::vector<std::string> OptToString_(const std::map<T, U> & opt)
+{
+    //! \todo write this (and probably clean up the rest)
+    if(opt.size() == 0)
+        return {"(empty)"};
+    else
+        return {"(map)"};
+}
+
 /*! \brief Prints a line corresponding to an option
  *
  * Will print its key, type, etc. If there is a problem
