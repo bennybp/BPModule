@@ -1,7 +1,6 @@
 set(BPMODULE_MODULEBASE_FILES
             EnergyMethod.cpp
             ModuleBase.cpp
-            SystemFragmenter.cpp
             export.cpp
    )
 

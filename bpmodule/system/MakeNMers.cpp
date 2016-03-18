@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-#include "bpmodule/modulebase/SystemFragmenter.hpp"
+#include "bpmodule/system/System.hpp"
 #include "bpmodule/math/Point.hpp"
 #include "bpmodule/math/CombItr.hpp"
 
@@ -16,7 +16,7 @@ using bpmodule::math::Point;
 typedef typename SystemMap::value_type Frag_t;
 
 namespace bpmodule{
-namespace modulebase{        
+namespace system{        
 
 SystemMap MakeNMers(const SystemMap& Frags, size_t N, double Dist){
     SystemMap NMers;

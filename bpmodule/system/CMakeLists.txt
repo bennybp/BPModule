@@ -5,7 +5,7 @@ set(BPMODULE_SYSTEM_FILES
     Atom.cpp
     System.hpp
     System.cpp
-
+    MakeNMers.cpp
     BasisSet.cpp
     BasisShellBase.cpp
     BasisShellInfo.cpp
