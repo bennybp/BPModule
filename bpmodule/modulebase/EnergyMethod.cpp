@@ -66,7 +66,7 @@ Return_t EnergyMethod::Deriv_(size_t Order){
     for(const Atom& AnAtom: Mol)
           Atoms.push_back(AnAtom);
     const Communicator& Comm=parallel::GetEnv().Comm();
-    Communicator NewComm=Comm.Split(1,1);
+    Communicator NewComm=Comm.Split(Comm.NThreads(),1);
     
     math::CentralDiff<double,Return_t> FD(NewComm);
 

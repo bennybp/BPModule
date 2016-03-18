@@ -1,6 +1,14 @@
 docs
 build
+CMakeFiles
+StandardModules
 install
 nbproject
 *.swp
 __pycache__
+.cproject
+.project
+.pydevproject
+install.sh
+CMakeCache.txt
+

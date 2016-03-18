@@ -42,7 +42,7 @@ for i in os.listdir(bpmodule_base):
            f.close()
 
 for key,val in AllClasses.items():
-   f=open(os.path.join(bpmodule_root,"docs/source/"+str(key)+".rst"),"w")
+   f=open(os.path.join(bpmodule_root,"dox/source/"+str(key)+".rst"),"w")
    f.write("###############################################################\n")
    f.write(str(key)+" Core Components\n")
    f.write("###############################################################\n")

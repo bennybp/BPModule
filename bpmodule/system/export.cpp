@@ -194,6 +194,7 @@ PYBIND11_PLUGIN(system)
     .def("GetShells", &Atom::GetShells)
     .def("SetShells", &Atom::SetShells)
     .def("AddShell", &Atom::AddShell)
+    .def("__getitem__", &Atom::GetCoord)
     .def(pybind11::self == pybind11::self)
     ;
    
@@ -208,6 +209,22 @@ PYBIND11_PLUGIN(system)
     // No need to export AtomSet (at the moment)
     math::RegisterUniverse<AtomSetUniverse>(m, "AtomSetUniverse");
 
+    
+    struct PySystemItr{
+        const System& Sys_;
+        System::const_iterator Itr_;
+        pybind11::object ref_;
+        PySystemItr(const System& Sys, pybind11::object ref):
+            Sys_(Sys),Itr_(Sys.begin()),ref_(ref){}
+        Atom next(){
+            if(Itr_==Sys_.end())
+                throw pybind11::stop_iteration();
+            return *(Itr_++);
+        }
+    
+    };
+    
+    
     // Main system class 
     pybind11::class_<System>(m,"System")
     .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
@@ -232,9 +249,16 @@ PYBIND11_PLUGIN(system)
     .def("Print", &System::Print)
     .def("ToString", &System::ToString)
     .def("__str__", &System::ToString)
+    .def("__len__",&System::NAtoms)
+    .def("__iter__",
+         [](pybind11::object s){return PySystemItr(s.cast<const System&>(),s);})
     ;
 
-        
+    pybind11::class_<PySystemItr>(m,"Iterator")
+       .def("__iter__",[](PySystemItr &it)->PySystemItr&{return it;})
+       .def("__next__",&PySystemItr::next)
+    ;
+       
     return m.ptr();
 }
 

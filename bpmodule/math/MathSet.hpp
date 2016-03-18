@@ -130,6 +130,10 @@ public:
         return Universe_->Idx(Elem);
     }
 
+    ///Returns true if this set has the element
+    bool Contains(const T& Elem)const{
+        return Base_t::Contains(Elem);
+    }
 
     ///Same as copy constructor, but for assignment
     My_t& operator=(const My_t &) = default;
@@ -286,7 +290,7 @@ public:
      *  This is a proper superset of other, iff other is a proper subset
      *  of this.
      * 
-     *  \param[in] Set to compare to
+     *  \param[in] RHS Set to compare to
      *  \return True if this is a proper superset of other
      *
      */
@@ -299,7 +303,7 @@ public:
      * 
      *  This is a superset of other iff other is a subset of this
      * 
-     *  \param[in] Set to compare to
+     *  \param[in] RHS Set to compare to
      *  \return true if this is a superset of other
      *  
      */

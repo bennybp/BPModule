@@ -19,8 +19,9 @@ import os
 ###############################################################################
 #Stuff added by RMR
 ##############################################################################
-
-doxygen_xml="/theoryfs2/ds/richard/SrcFiles/BPModule/docs/xml"
+#Assume xml was installed to project_root/docs/xml
+MyDir=os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+doxygen_xml=os.path.join(MyDir,"docs/xml")
 
 rst_epilog = """
 .. |ProjectName| replace:: Pulsar

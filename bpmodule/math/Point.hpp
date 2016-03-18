@@ -3,6 +3,7 @@
 
 #include "bpmodule/pragma.h"
 #include <array>
+#include <cmath>
 
 namespace bpmodule{
 namespace math{
@@ -55,6 +56,88 @@ class PointT
         void SetCoords(T x, T y, T z) { coords_ = CoordType{x,y,z}; }
 
         
+        /** \brief Makes this the element-wise difference between this and 
+         *         another point
+         *
+         *   \param[in] RHS The other point
+         *   \return this with its new elements
+         */
+        PointT<T>& operator-=(const PointT<T>& RHS){
+            for(size_t i=0;i<coords_.size();++i)
+                this->coords_[i]-=RHS.coords_[i];
+            return *this;
+        }
+        
+        /** \brief Returns the element-wise difference between this and 
+         *         another point
+         *
+         *   \param[in] RHS The other point
+         *   \return A copy located at a point that is the element-wise 
+         *           difference of this and RHS
+         */
+        PointT<T> operator-(const PointT<T>& RHS)const{
+            return PointT<T>(*this)-=RHS;
+        }
+        
+        /** \brief Makes this the element-wise sum between this and 
+         *         another point
+         *
+         *   \param[in] RHS The other point
+         *   \return this with its new elements
+         */
+        PointT<T>& operator+=(const PointT<T>& RHS){
+            for(size_t i=0;i<coords_.size();++i)
+                this->coords_[i]+=RHS.coords_[i];
+            return *this;
+        }
+        
+        /** \brief Returns the element-wise difference between this and 
+         *         another point
+         *
+         *   \param[in] RHS The other point
+         *   \return A copy located at a point that is the element-wise 
+         *           difference of this and RHS
+         */
+        PointT<T> operator+(const PointT<T>& RHS)const{
+            return PointT<T>(*this)+=RHS;
+        }
+        
+        /** \brief Makes this the element-wise product between this and 
+         *         another point
+         *
+         *   \param[in] RHS The other point
+         *   \return this with its new elements
+         */
+        PointT<T>& operator*=(const PointT<T>& RHS){
+            for(size_t i=0;i<coords_.size();++i)
+                this->coords_[i]*=RHS.coords_[i];
+            return *this;
+        }
+        
+        
+        /** \brief Returns the element-wise product between this and 
+         *         another point
+         *
+         *   \param[in] RHS The other point
+         *   \return The element-wise product of this and RHS
+         */
+        PointT<T> operator*(const PointT<T>& RHS)const{
+            return PointT<T>(*this)*=RHS;
+        }
+        
+        ///Returns the magnitude of this point (sqrt of dot product)
+        double Magnitude()const{
+            PointT<T> Sq=(*this)*(*this);
+            double sum=0.0;
+            for(size_t i=0;i<coords_.size();++i)sum+=Sq[i];
+            return sqrt(sum);
+        }
+
+        ///Returns the distance between this point and RHS
+        double Distance(const PointT<T>& RHS)const{
+            PointT<T> Diff=*this-RHS;
+            return Diff.Magnitude();
+        }
 
     private:
         CoordType coords_;

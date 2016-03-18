@@ -12,6 +12,9 @@ math Core Components
 .. autodoxyclass:: bpmodule::math::Universe
    :members:
 
+.. autodoxyclass:: bpmodule::math::CombItr
+   :members:
+
 .. autodoxyclass:: bpmodule::math::FiniteDiff
    :members:
 

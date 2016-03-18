@@ -17,7 +17,7 @@
 namespace bpmodule {
 namespace system {
 
-///Macro to define getter/setters and reduce code duplication
+//Macro to define getter/setters and reduce code duplication
 #define GetSetX(PFxnName,PName,PType)\
 PType Get##PFxnName(void) const noexcept{return PName ##_;}\
 void Set##PFxnName(PType value)noexcept{PName##_ =value;}   
@@ -134,31 +134,31 @@ class Atom : public math::Point
         std::string GetSymbol(void) const;
 
         /*! \brief Get/Set the atomic Z number (number of protons) */
-        GetSetX(Z,Z,int)
+        GetSetX(Z,Z,int);
         
         /*! \brief Get/Set the isotope number (number of protons + neutrons) */
-        GetSetX(Isonum,isonum,int)
+        GetSetX(Isonum,isonum,int);
 
         /*! \brief Get/Set the atomic mass (isotope masses weighted by abundance) */
-        GetSetX(Mass,mass,double)
+        GetSetX(Mass,mass,double);
 
         /*! \brief Get/Set the mass of the isotope */
-        GetSetX(IsotopeMass,isotopemass,double)
+        GetSetX(IsotopeMass,isotopemass,double);
 
         /*! \brief Get/Set the charge on this atom/center */
-        GetSetX(Charge,charge,double)
+        GetSetX(Charge,charge,double);
 
         /*! \brief Get/Set the electronic multiplicity of this atom/center  */
-        GetSetX(Multiplicity,multiplicity,double)
+        GetSetX(Multiplicity,multiplicity,double);
 
         /*! \brief Get/Set the number of electrons assigned to this atom/center */
-        GetSetX(NElectrons,nelectrons,double)
+        GetSetX(NElectrons,nelectrons,double);
 
         /*! \brief Get/Set the covalent radius of the atom*/
-        GetSetX(CovRadius,covradius,double)
+        GetSetX(CovRadius,covradius,double);
         
         /*! \brief Get/Set the van der Waals radius of the atom*/
-        GetSetX(VDWRadius,vdwradius,double)
+        GetSetX(VDWRadius,vdwradius,double);
         ///@}
 
 

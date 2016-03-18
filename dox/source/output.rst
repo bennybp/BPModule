@@ -6,6 +6,9 @@ output Core Components
    :maxdepth:1
 
 
-.. autodoxyclass:: bpmodule::output::detail::TeeBufToString
+.. autodoxyclass:: bpmodule::output::TeeBufToString
+   :members:
+
+.. autodoxyclass:: bpmodule::output::OutputStream
    :members:
 

@@ -18,7 +18,8 @@ def ApplyBasis(syst,bsname,bslabel="primary",bstype=bp.system.ShellType.Gaussian
 
 def Run(mm):
     try:
-        mm.LoadModule("MBE","MBE","MBE")
+        mm.LoadModule("Methods","MBE","MBE")
+        mm.LoadModule("Methods","SCF","SCF")
         mm.LoadModule("SystemFragmenters","Bondizer","FRAG")
 
         MyMod=mm.GetModule("MBE",0)
@@ -38,7 +39,7 @@ def Run(mm):
         wfn=bp.datastore.Wavefunction()
         wfn.system.Set(mol)
         MyMod.SetWfn(wfn)
-        
+        MyMod.Options().Change("METHOD","SCF")
         print(MyMod.Deriv(0))
       
     except Exception as e:

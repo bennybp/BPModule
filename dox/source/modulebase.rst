@@ -15,6 +15,9 @@ modulebase Core Components
 .. autodoxyclass:: bpmodule::modulebase::OneElectronIntegral
    :members:
 
+.. autodoxyclass:: bpmodule::modulebase::OneElectronIntegral_Py
+   :members:
+
 .. autodoxyclass:: bpmodule::modulebase::Test_Base
    :members:
 
@@ -34,6 +37,9 @@ modulebase Core Components
    :members:
 
 .. autodoxyclass:: bpmodule::modulebase::TwoElectronIntegral
+   :members:
+
+.. autodoxyclass:: bpmodule::modulebase::TwoElectronIntegral_Py
    :members:
 
 .. autodoxyclass:: bpmodule::modulebase::SystemFragmenter

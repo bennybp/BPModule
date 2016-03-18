@@ -80,7 +80,7 @@ public:
     }
     ///Postfix increment operator
 
-    const My_t& operator++(int)
+    const My_t operator++(int)
     {
         My_t ret(*this);
         ++CurrIdx_;
@@ -250,7 +250,7 @@ public:
     ///Returns true if this set contains Elem, comparison occurs via
     ///Elem's operator==
 
-    bool Contains(const T& Elem)const
+    virtual bool Contains(const T& Elem)const
     {
         return Contains(Idx(Elem));
     }
@@ -404,7 +404,7 @@ public:
      *  This is a proper superset of other, iff other is a proper subset
      *  of this.
      * 
-     *  \param[in] Set to compare to
+     *  \param[in] RHS Set to compare to
      *  \return True if this is a proper superset of other
      *
      */
@@ -417,7 +417,7 @@ public:
      * 
      *  This is a superset of other iff other is a subset of this
      * 
-     *  \param[in] Set to compare to
+     *  \param[in] RHS Set to compare to
      *  \return true if this is a superset of other
      *  
      */

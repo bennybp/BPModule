@@ -12,6 +12,9 @@ system Core Components
 .. autodoxyclass:: bpmodule::system::BasisSetShell
    :members:
 
+.. autodoxyclass:: bpmodule::system::System
+   :members:
+
 .. autodoxyclass:: bpmodule::system::Atom
    :members:
 
