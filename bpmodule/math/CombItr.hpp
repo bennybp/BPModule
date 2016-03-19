@@ -11,8 +11,8 @@
  * Created on March 17, 2016, 10:52 AM
  */
 
-#ifndef COMBITR_HPP
-#define COMBITR_HPP
+#ifndef BPMODULE_GUARD_MATH__COMBITR_HPP_
+#define BPMODULE_GUARD_MATH__COMBITR_HPP_
 
 #include <vector>
 #include "bpmodule/exception/Exceptions.hpp"

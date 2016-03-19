@@ -110,7 +110,10 @@ public:
     ///@{ 
 
     /*! \brief Return the number of Atoms in the System (NOT the Universe) */
-    int NAtoms(void) const;
+    size_t NAtoms(void) const;
+
+    /*! \brief Return the number of Atoms in the System (NOT the Universe) */
+    size_t size(void) const;
 
     /*! \brief Get the charge of the system */
     double GetCharge(void) const;
@@ -139,26 +142,9 @@ public:
     void SetMultiplicity(double m);
 
 
-    /*! \brief Does this system have an atom with the given index
-     * 
-     * \note The index refers to the unique index of the atom (typically
-     *       input ordering), NOT its order within this system.
-     */
-    //bool HasAtom(size_t atomidx) const;
-    
     ///Returns true if the system contains the atom
     bool HasAtom(const Atom& AnAtom)const;
 
-
-    /*! \brief Obtain an atom with the given index
-     * 
-     * \note The index refers to the unique index of the atom (typically
-     *       input ordering), NOT its order within this system.
-     *
-     * \throw bpmodule::exception::SystemException If an atom with the given index
-     *        is not part of this System
-     */
-    Atom GetAtom(size_t atomidx) const;
 
     ///@}
 
@@ -216,42 +202,86 @@ public:
      *
      * \todo Exceptions from MathSet
      */
-    void Insert(const Atom & atom);
+    System & Insert(const Atom & atom);
+
+    System & UnionAssign(const System& RHS);
+    System Union(const System& RHS) const;
+    System & IntersectionAssign(const System& RHS);
+    System Intersection(const System& RHS) const;
+    System & DifferenceAssign(const System& RHS);
+    System Difference(const System& RHS) const;
+    
+    /*! \brief Return all atoms that are in the universe but not in this system */
+    System Complement(void) const;
+
+    /** \brief Returns true if this is a proper subset of other
+     * 
+     *   This is a proper subset of RHS if the atoms are a proper subset
+     *   of other.  Charge, multiplicity, and number of electrons are
+     *   ignored.
+     * 
+     *   \param[in] RHS The system to compare to
+     *   \return True if this is a proper subset of other
+     *
+     */
+    bool IsProperSubsetOf(const System& RHS) const;
+
+
+    /** \brief Returns true if this is a subset of other
+     * 
+     *   This is a subset of RHS if the atoms are a subset
+     *   of other.  Charge, multiplicity, and number of electrons are
+     *   ignored.
+     * 
+     *   \param[in] RHS The set to comapre to
+     *   \return True if this is a subset of other
+     *
+     */
+    bool IsSubsetOf(const System& RHS) const;
+
+
+    /** \brief Returns true if this is a proper superset of other
+     * 
+     *  This is a proper superset of other, iff other is a proper subset
+     *  of this.
+     * 
+     *  \param[in] RHS Set to compare to
+     *  \return True if this is a proper superset of other
+     *
+     */
+    bool IsProperSupersetOf(const System& RHS) const;
+
+
+    /** \brief Returns true if this is a superset of other
+     * 
+     *  This is a superset of other iff other is a subset of this
+     * 
+     *  \param[in] RHS Set to compare to
+     *  \return true if this is a superset of other
+     *  
+     */
+    bool IsSupersetOf(const System& RHS) const;
 
     /*! \brief Return a subset of atoms in the system */
     System Partition(SelectorFunc selector) const;
 
-    /*! \brief Return all atoms that are in the universe but not in this system */
-    System Complement(void) const;
-
-    /*! \brief Return atoms that are in both this system and \p rhs */
-    System Intersection(const System & rhs) const;
     
-    /** \brief Makes this the intersection of this and \p rhs*/
-    System& operator/=(const System& rhs);
-    /** \brief Returns the intersection of this and \p rhs*/
-    System operator/(const System& rhs)const{
-        return Intersection(rhs);
-    }
-
-    /*! \brief Return atoms that are in either this system and \p rhs */
-    System Union(const System & rhs) const;
-    /** \brief Makes this the union of this and \p rhs*/
-    System& operator+=(const System& rhs);
-    /** \brief Returns the union of this and \p rhs*/
-    System operator+(const System& rhs)const{
-        return Union(rhs);
-    }
-
-    /*! \brief Return atoms that are in this system but not in \p rhs */
-    System Difference(const System & rhs) const;
-    /** \brief Makes this the set difference of this and \p rhs*/
-    System& operator-=(const System& rhs);
-    /** \brief Returns the set difference of this and \p rhs*/
-    System operator-(const System& rhs)const{
-        return Difference(rhs);
-    }
     ///@}
+
+    /** \name Operator overloads
+     */
+    System& operator+=(const System& rhs);
+    System operator+(const System& rhs)const;
+    System& operator/=(const System& rhs);
+    System operator/(const System& rhs)const;
+    System& operator-=(const System& rhs);
+    System operator-(const System& rhs)const;
+    bool operator<=(const System& rhs)const;
+    bool operator<(const System& rhs)const;
+    bool operator>=(const System& rhs)const;
+    bool operator>(const System& rhs)const;
+
+
 
     /** \name System comparers
      * 
@@ -286,56 +316,6 @@ public:
         return !(*this == RHS);
     }
 
-    /** \brief Returns true if this is a proper subset of other
-     * 
-     *   This is a proper subset of RHS if the atoms are a proper subset
-     *   of other.  Charge, multiplicity, and number of electrons are
-     *   ignored.
-     * 
-     *   \param[in] RHS The system to compare to
-     *   \return True if this is a proper subset of other
-     *
-     */
-    bool operator<(const System& RHS)const;
-
-    /** \brief Returns true if this is a subset of other
-     * 
-     *   This is a subset of RHS if the atoms are a subset
-     *   of other.  Charge, multiplicity, and number of electrons are
-     *   ignored.
-     * 
-     *   \param[in] RHS The set to comapre to
-     *   \return True if this is a subset of other
-     *
-     */
-    bool operator<=(const System& RHS)const;
-
-    /** \brief Returns true if this is a proper superset of other
-     * 
-     *  This is a proper superset of other, iff other is a proper subset
-     *  of this.
-     * 
-     *  \param[in] RHS Set to compare to
-     *  \return True if this is a proper superset of other
-     *
-     */
-    bool operator>(const System& RHS)const
-    {
-        return RHS<*this;
-    }
-
-    /** \brief Returns true if this is a superset of other
-     * 
-     *  This is a superset of other iff other is a subset of this
-     * 
-     *  \param[in] RHS Set to compare to
-     *  \return true if this is a superset of other
-     *  
-     */
-    bool operator>=(const System& RHS)const
-    {
-        return RHS <= *this;
-    }
     ///@}
 
 

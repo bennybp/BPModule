@@ -55,9 +55,9 @@ def Run():
                          (bp.testing.TestPyCppPy_ulong,              bp.testing.TestPyCppPy_Fail_ulong,                "ulong",               ["int"]),
                          (bp.testing.TestPyCppPy_slonglong,          bp.testing.TestPyCppPy_Fail_slonglong,            "slonglong",           ["int"]),
                          (bp.testing.TestPyCppPy_ulonglong,          bp.testing.TestPyCppPy_Fail_ulonglong,            "ulonglong",           ["int"]),
-                         (bp.testing.TestPyCppPy_float,              bp.testing.TestPyCppPy_Fail_float,                "float",               ["float"]),
-                         (bp.testing.TestPyCppPy_double,             bp.testing.TestPyCppPy_Fail_double,               "double",              ["float"]),
-                         (bp.testing.TestPyCppPy_longdouble,         bp.testing.TestPyCppPy_Fail_longdouble,           "longdouble",          ["float"]),
+                         (bp.testing.TestPyCppPy_float,              bp.testing.TestPyCppPy_Fail_float,                "float",               ["float", "int"]),
+                         (bp.testing.TestPyCppPy_double,             bp.testing.TestPyCppPy_Fail_double,               "double",              ["float", "int"]),
+                         (bp.testing.TestPyCppPy_longdouble,         bp.testing.TestPyCppPy_Fail_longdouble,           "longdouble",          ["float", "int"]),
                          (bp.testing.TestPyCppPy_string,             bp.testing.TestPyCppPy_Fail_string,               "string",              ["string"]),
                          (bp.testing.TestPyCppPy_vector_sshort,      bp.testing.TestPyCppPy_Fail_vector_sshort,        "vector<sshort>",      ["list<int>", "list<empty>"]),
                          (bp.testing.TestPyCppPy_vector_ushort,      bp.testing.TestPyCppPy_Fail_vector_ushort,        "vector<ushort>",      ["list<int>", "list<empty>"]),
@@ -67,9 +67,9 @@ def Run():
                          (bp.testing.TestPyCppPy_vector_ulong,       bp.testing.TestPyCppPy_Fail_vector_ulong,         "vector<ulong>",       ["list<int>", "list<empty>"]),
                          (bp.testing.TestPyCppPy_vector_slonglong,   bp.testing.TestPyCppPy_Fail_vector_slonglong,     "vector<slonglong>",   ["list<int>", "list<empty>"]),
                          (bp.testing.TestPyCppPy_vector_ulonglong,   bp.testing.TestPyCppPy_Fail_vector_ulonglong,     "vector<ulonglong>",   ["list<int>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_float,       bp.testing.TestPyCppPy_Fail_vector_float,         "vector<float>",       ["list<float>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_double,      bp.testing.TestPyCppPy_Fail_vector_double,        "vector<double>",      ["list<float>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_longdouble,  bp.testing.TestPyCppPy_Fail_vector_longdouble,    "vector<long double>", ["list<float>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_float,       bp.testing.TestPyCppPy_Fail_vector_float,         "vector<float>",       ["list<float>",  "list<int>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_double,      bp.testing.TestPyCppPy_Fail_vector_double,        "vector<double>",      ["list<float>",  "list<int>", "list<empty>"]),
+                         (bp.testing.TestPyCppPy_vector_longdouble,  bp.testing.TestPyCppPy_Fail_vector_longdouble,    "vector<long double>", ["list<float>",  "list<int>", "list<empty>"]),
                          (bp.testing.TestPyCppPy_vector_string,      bp.testing.TestPyCppPy_Fail_vector_string,        "vector<string>",      ["list<string>", "list<empty>"])
                        ]  
 
@@ -105,7 +105,6 @@ def Run():
                           ( "float",               float(0.0)                          ),
                           ( "float",               float(5)                            ),
                           ( "string",              "HelloString1"                      ),
-                          ( "string",              "HelloString2"                      ),
                           ( "list<int>",           [ int(5) ]                          ),
                           ( "list<int>",           [ int(5), int(0) ]                  ),
                           ( "list<float>",         [ float(5.0), float(0.0) ]          ),
@@ -123,21 +122,22 @@ def Run():
         for f in testfuncs:
             for d in testdat:
                 s = "Test python {} <-> C++ {}".format(d[0], f[2])
-                expected = ( d[0] in f[3] )
+                success = ( d[0] in f[3] )
+                bp.output.GlobalWarning(str(success) + "\n")   
 
                 # get the range for integer type
-                if expected and f[2] in inttypes:
+                if success and f[2] in inttypes:
                     if d[0] == "int":
-                        expected = d[1] >= intlimitdict[f[2]][0] and d[1] <= intlimitdict[f[2]][1]
+                        success = d[1] >= intlimitdict[f[2]][0] and d[1] <= intlimitdict[f[2]][1]
                     elif d[0] == "list<int>":
-                        expected = min(d[1]) >= intlimitdict[f[2]][0] and max(d[1]) <= intlimitdict[f[2]][1]
+                        success = min(d[1]) >= intlimitdict[f[2]][0] and max(d[1]) <= intlimitdict[f[2]][1]
 
-                tester.Test( s, expected, f[0], d[1]  )
+                tester.Test( s, not success, f[0], d[1]  )
 
                 # Test failing cpp-to-python as well
-                if expected:
+                if success:
                     s = "Test python {} <-> C++ Failure {}".format(d[0], f[2])
-                    tester.Test( s, False, f[1], d[1]  )
+                    tester.Test( s, True, f[1], d[1]  )
        
 
         tester.PrintResults() 

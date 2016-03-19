@@ -8,6 +8,7 @@
 #include "bpmodule/python/Pybind11_stl.hpp"
 #include "bpmodule/python/Pybind11_functional.hpp"
 #include "bpmodule/python/Pybind11_operators.hpp"
+#include "bpmodule/python/Pybind11_iterators.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/system/AMConvert.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
@@ -210,28 +211,14 @@ PYBIND11_PLUGIN(system)
     math::RegisterUniverse<AtomSetUniverse>(m, "AtomSetUniverse");
 
     
-    struct PySystemItr{
-        const System& Sys_;
-        System::const_iterator Itr_;
-        pybind11::object ref_;
-        PySystemItr(const System& Sys, pybind11::object ref):
-            Sys_(Sys),Itr_(Sys.begin()),ref_(ref){}
-        Atom next(){
-            if(Itr_==Sys_.end())
-                throw pybind11::stop_iteration();
-            return *(Itr_++);
-        }
-    
-    };
-    
-    
     // Main system class 
+    python::RegisterPyCopyIterator<System>(m, "System");
+
     pybind11::class_<System>(m,"System")
     .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
     .def(pybind11::init<const System &>())
     .def("NAtoms",&System::NAtoms)
     .def("HasAtom", &System::HasAtom)
-    .def("GetAtom", &System::GetAtom)
     .def("GetCharge",&System::GetCharge)
     .def("GetNElectrons",&System::GetNElectrons)
     .def("GetBasisSet", &System::GetBasisSet)
@@ -239,26 +226,42 @@ PYBIND11_PLUGIN(system)
     .def("Rotate", &System::Rotate<std::array<double, 9>>)
     .def("CenterOfMass", &System::CenterOfMass)
     .def("CenterOfNuclearCharge", &System::CenterOfNuclearCharge)
-    .def("Transform", &System::Transform)
-    .def("Insert", &System::Insert)
-    .def("Partition", &System::Partition)
-    .def("Complement", &System::Complement)
-    .def("Intersection", &System::Intersection)
-    .def("Union", &System::Union)
-    .def("Difference", &System::Difference)
     .def("Print", &System::Print)
     .def("ToString", &System::ToString)
-    .def("__str__", &System::ToString)
-    .def("__len__",&System::NAtoms)
-    .def("__iter__",
-         [](pybind11::object s){return PySystemItr(s.cast<const System&>(),s);})
+    .def("UnionAssign", &System::UnionAssign)
+    .def("Union", &System::Union)
+    .def("IntersectionAssign", &System::IntersectionAssign)
+    .def("Intersection", &System::Intersection)
+    .def("DifferenceAssign", &System::DifferenceAssign)
+    .def("Difference", &System::Difference)
+    .def("Complement", &System::Complement)
+    .def("IsProperSubsetOf", &System::IsProperSubsetOf)
+    .def("IsSubsetOf", &System::IsSubsetOf)
+    .def("IsProperSupersetOf", &System::IsProperSupersetOf)
+    .def("IsSupersetOf", &System::IsSupersetOf)
+    .def("Transform", &System::Transform)
+    .def("Partition", &System::Partition)
+    .def(pybind11::self += pybind11::self)
+    .def(pybind11::self + pybind11::self)
+    .def(pybind11::self -= pybind11::self)
+    .def(pybind11::self - pybind11::self)
+    .def(pybind11::self /= pybind11::self)
+    .def(pybind11::self / pybind11::self)
+    .def(pybind11::self >= pybind11::self)
+    .def(pybind11::self > pybind11::self)
+    .def(pybind11::self <= pybind11::self)
+    .def(pybind11::self < pybind11::self)
+    .def(pybind11::self == pybind11::self)
+    .def("__len__",         &System::size)
+    .def("__contains__",    &System::HasAtom)
+    .def("__str__",&System::ToString)
+    .def("__iter__", [](pybind11::object obj)
+            {
+                const System & cont = obj.cast<const System &>();
+                return python::PyCopyIterator<System>(cont, cont.begin(), obj);
+            })
     ;
 
-    pybind11::class_<PySystemItr>(m,"Iterator")
-       .def("__iter__",[](PySystemItr &it)->PySystemItr&{return it;})
-       .def("__next__",&PySystemItr::next)
-    ;
-       
     return m.ptr();
 }
 

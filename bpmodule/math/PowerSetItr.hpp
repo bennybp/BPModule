@@ -11,8 +11,8 @@
  * Created on March 17, 2016, 6:07 PM
  */
 
-#ifndef POWERSETITR_HPP
-#define POWERSETITR_HPP
+#ifndef BPMODULE_GUARD_MATH__POWERSETITR_HPP_
+#define BPMODULE_GUARD_MATH__POWERSETITR_HPP_
 #include <memory>
 #include "bpmodule/math/CombItr.hpp"
 namespace bpmodule{
