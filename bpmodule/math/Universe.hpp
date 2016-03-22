@@ -135,9 +135,9 @@ protected:
     std::set<size_t> Elems_;
 
     ///For iterating over MathSet and other derived classes
-    ConstSetItr<T, U> MakeIterator(std::set<size_t>::const_iterator elemit) const
+    ConstSetItr<T, U> MakeIterator(std::set<size_t>::const_iterator ElemIt) const
     {
-        return ConstSetItr<T, U>(elemit, *Storage_);
+        return ConstSetItr<T, U>(ElemIt, *Storage_);
     }
 
 public:
@@ -201,7 +201,7 @@ public:
 
     ///Returns true if this set contains Elem, comparison occurs via
     ///Elem's operator==
-    bool ContainsElement(const T& Elem)const
+    bool Contains(const T& Elem)const
     {
         auto it = std::find(Storage_->begin(), Storage_->end(), Elem);
         if(it != Storage_->end())
@@ -210,6 +210,7 @@ public:
             return false;
     }
 
+    ///Returns true if this set contains an element with the given index
     bool ContainsIdx(size_t EI)const
     {
         return Elems_.count(EI) > 0;
@@ -227,17 +228,8 @@ public:
     }
 
 
-    T& operator[](size_t EI) { return (*Storage_)[EI]; }
-
-
     const T& operator[](size_t EI)const { return (*Storage_)[EI]; }
 
-    T& at(size_t EI)
-    {
-        if(EI >= Storage_->size())
-            throw exception::ValueOutOfRange("Out of bounds access in universe", "index", EI);
-        return (*this)[EI];
-    }
 
     const T& at(size_t EI) const
     {
@@ -267,8 +259,7 @@ public:
      */
     My_t& Insert(const T& Elem)
     {
-        std::cout << "HERE\n";
-        if(!ContainsElement(Elem))
+        if(!Contains(Elem))
         {
             Elems_.insert(Storage_->size()); // add the index
             Storage_->insert(Storage_->end(), Elem); // actually copy the data
@@ -291,7 +282,7 @@ public:
      */
     My_t& Insert(T&& Elem)
     {
-        if(!ContainsElement(Elem))
+        if(!Contains(Elem))
         {
             Elems_.insert(Storage_->size()); // add the index
             Storage_->insert(Storage_->end(), std::move(Elem)); // actually move the data
@@ -312,7 +303,7 @@ public:
     My_t& UnionAssign(const My_t& RHS)
     {
         for (const T & EI : RHS)
-            if (!this->ContainsElement(EI))(*this) << EI;
+            if (!this->Contains(EI))(*this) << EI;
         return *this;
     }
 
@@ -320,7 +311,7 @@ public:
     My_t& UnionAssign(My_t&& RHS)
     {
         for(T & EI : *RHS.Storage_)
-            if (!this->ContainsElement(EI))(*this) << std::move(EI);
+            if (!this->Contains(EI))(*this) << std::move(EI);
         return *this;
     }
 
@@ -351,7 +342,7 @@ public:
         std::set<size_t> TempElems;
         for (size_t EI : Elems_) {
             T & Element = Storage_->at(EI);
-            if (RHS.ContainsElement(Element)) {
+            if (RHS.Contains(Element)) {
                 TempElems.insert(Temp->size());
                 Temp->insert(Temp->end(), std::move(Element));
             }
@@ -361,6 +352,8 @@ public:
         return *this;
     }
 
+
+    /*! \brief Returns the intersection of this and RHS */
     My_t Intersection(const My_t& RHS) const
     {
         return My_t(*this).IntersectionAssign(RHS);
@@ -377,7 +370,7 @@ public:
         std::set<size_t> TempElems;
         for (size_t EI : Elems_) {
             T & Element = Storage_->at(EI);
-            if (!RHS.ContainsElement(Element)) {
+            if (!RHS.Contains(Element)) {
                 TempElems.insert(Temp->size());
                 Temp->insert(Temp->end(), std::move(Element));
             }
@@ -424,7 +417,7 @@ public:
     bool IsSubsetOf(const My_t& RHS)const
     {
         for(const auto & it : *this)
-            if(!RHS.ContainsElement(it))
+            if(!RHS.Contains(it))
                 return false; // we have an element not in RHS
         return true; // All our elements are in RHS
     }
@@ -499,10 +492,10 @@ public:
     bool operator<=(const My_t& RHS)const { return IsSubsetOf(RHS); }
 
     /// \copydoc IsProperSupersetOf
-    bool operator>(const My_t& RHS)const { return IsProperSubsetOf(RHS); }
+    bool operator>(const My_t& RHS)const { return IsProperSupersetOf(RHS); }
 
     /// \copydoc IsSupersetOf
-    bool operator>=(const My_t& RHS)const { return IsSubsetOf(RHS); }
+    bool operator>=(const My_t& RHS)const { return IsSupersetOf(RHS); }
 
     ///@}
 
@@ -520,8 +513,22 @@ public:
     bool operator==(const My_t& RHS)const
     {
         // Check pointers first so we can skip elementwise comparison if we can
-        return ( (Storage_ == RHS.Storage_ || *Storage_ == *RHS.Storage_) &&
-                 Elems_ == RHS.Elems_);
+        if(Storage_ == RHS.Storage_)
+            return true;
+        // Check if we have the same number of elements
+        if(size() != RHS.size())
+            return false;
+        // Go element by element
+        for(const auto & it : *this)
+            if(!RHS.Contains(it))
+                return false;
+        // reverse (may not be needed if elements are guaranteed to be unique,
+        // but to be safe
+        for(const auto & it : RHS)
+            if(!Contains(it))
+                return false;
+
+        return true;
     }
 
     /** \brief Returns true if this does not equal other

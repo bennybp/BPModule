@@ -67,9 +67,9 @@ private:
 
     std::shared_ptr<const Base_t> Universe_;
 
-    void UniverseContainsElement(const T& Elem)const
+    void UniverseContains(const T& Elem)const
     {
-        if (!Universe_->ContainsElement(Elem))
+        if (!Universe_->Contains(Elem))
             throw exception::ValueOutOfRange("Requested element is not in the universe for this set");
     }
 
@@ -156,8 +156,8 @@ public:
 
 
     ///Returns true if this set has the element
-    bool ContainsElement(const T& Elem)const{
-        return (Universe_->ContainsElement(Elem) &&
+    bool Contains(const T& Elem)const{
+        return (Universe_->Contains(Elem) &&
                 ContainsIdx(Idx(Elem)) > 0);
     }
 
@@ -177,7 +177,7 @@ public:
 
     My_t& Insert(const T & Elem)
     {
-        UniverseContainsElement(Elem);
+        UniverseContains(Elem);
         this->Elems_.insert(Idx(Elem));
         return *this;
     }
@@ -241,7 +241,7 @@ public:
     {
         My_t Temp(Universe_,{});
         for (const T& EI : *Universe_) {
-            if(!this->ContainsElement(EI))Temp.Insert(EI);
+            if(!this->Contains(EI))Temp.Insert(EI);
         }
         return Temp;
     }
@@ -279,7 +279,7 @@ public:
     {
         if(Universe_ != RHS.Universe_) return false;
         for(const auto & it : *this)
-            if(!RHS.ContainsElement(it))
+            if(!RHS.Contains(it))
                 return false;
         return true;
     }
@@ -297,7 +297,7 @@ public:
      */
     bool IsProperSupersetOf(const My_t& RHS)const
     {
-        return RHS.IsProperSupersetOf(*this);
+        return RHS.IsProperSubsetOf(*this);
     }
 
 
@@ -357,10 +357,10 @@ public:
     bool operator<=(const My_t& RHS)const { return IsSubsetOf(RHS); }
 
     /// \copydoc IsProperSupersetOf
-    bool operator>(const My_t& RHS)const { return IsProperSubsetOf(RHS); }
+    bool operator>(const My_t& RHS)const { return IsProperSupersetOf(RHS); }
 
     /// \copydoc IsSupersetOf
-    bool operator>=(const My_t& RHS)const { return IsSubsetOf(RHS); }
+    bool operator>=(const My_t& RHS)const { return IsSupersetOf(RHS); }
 
 
     ///@}

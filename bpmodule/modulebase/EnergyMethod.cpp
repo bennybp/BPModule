@@ -43,8 +43,13 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
         Return_t operator()(size_t i,const double& newcoord)const{
             AtomSetUniverse NewU;
             for(size_t j=0;j<Atoms_.size();++j){
-                NewU<<Atoms_[j];
-                if(j==(i-i%3)/3)NewU[j][i%3]=newcoord;
+                if(j==(i-i%3)/3) { //does this coord index belong to this atom?
+                    Atom atmp(Atoms_[j]);
+                    atmp[i%3]=newcoord;
+                    NewU<<atmp;
+                }
+                else
+                    NewU<<Atoms_[j];
             }
             Module_t NewModule=MM_.GetModule<EnergyMethod>(Key_,ID_);
             NewModule->Wfn().system.Set(System(NewU,true));

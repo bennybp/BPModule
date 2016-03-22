@@ -107,7 +107,7 @@ void System::SetMultiplicity(double m)
 
 bool System::HasAtom(const Atom& AnAtom)const
 {
-    return atoms_.ContainsElement(AnAtom);
+    return atoms_.Contains(AnAtom);
 }
 
 System& System::Insert(const Atom & atom)
