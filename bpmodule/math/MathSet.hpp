@@ -205,12 +205,13 @@ public:
     My_t& IntersectionAssign(const My_t& RHS)
     {
         SameUniverse(RHS);
-        std::set<size_t> Temp(std::move(this->Elems_));
-        this->Elems_ = std::set<size_t>();
-        std::set_intersection(Temp.begin(), Temp.end(),
+        // careful, RHS may be the same object as this
+        std::set<size_t> NewTemp;
+        std::set_intersection(this->Elems_.begin(), this->Elems_.end(),
                 RHS.Elems_.begin(), RHS.Elems_.end(),
                 std::inserter<std::set<size_t>>(
-                this->Elems_, this->Elems_.begin()));
+                NewTemp, NewTemp.begin()));
+        this->Elems_ = std::move(NewTemp);
         return *this;
     }
 
@@ -222,12 +223,13 @@ public:
     My_t& DifferenceAssign(const My_t& RHS)
     {
         SameUniverse(RHS);
-        std::set<size_t> Temp(std::move(this->Elems_));
-        this->Elems_ = std::set<size_t>();
-        std::set_difference(Temp.begin(), Temp.end(),
+        // careful, RHS may be the same object as this
+        std::set<size_t> NewTemp;
+        std::set_difference(this->Elems_.begin(), this->Elems_.end(),
                 RHS.Elems_.begin(), RHS.Elems_.end(),
                 std::inserter<std::set < size_t >> (
-                this->Elems_, this->Elems_.begin()));
+                NewTemp, NewTemp.begin()));
+        this->Elems_ = std::move(NewTemp);
         return *this;
     }
 

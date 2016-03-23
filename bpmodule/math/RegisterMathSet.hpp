@@ -35,6 +35,8 @@ template<typename T>
 void RegisterMathSet(pybind11::module & m,
                      const char * mathsetname)
 {
+    typedef typename T::value_type value_type;
+
     // Register the iterator
     python::RegisterPyCopyIterator<T>(m, mathsetname);
 
@@ -46,13 +48,16 @@ void RegisterMathSet(pybind11::module & m,
     .def("Idx",  &T::Idx)
     .def("Contains", &T::Contains)
     .def("ContainsIdx", &T::ContainsIdx)
-    .def("Insert", &T::Insert)
     .def("InsertIdx", &T::InsertIdx)
-    .def("UnionAssign", &T::UnionAssign)
-    .def("Union", &T::Union)
-    .def("IntersectionAssign", &T::IntersectionAssign)
+    .def("Insert", static_cast<T &(T::*)(const value_type &)>(&T::Insert))
+    .def("UnionAssign", static_cast<T &(T::*)(const T &)>(&T::UnionAssign),
+                        pybind11::return_value_policy::reference)
+    .def("Union", static_cast<T (T::*)(const T &) const>(&T::Union))
+    .def("IntersectionAssign", &T::IntersectionAssign,
+                               pybind11::return_value_policy::reference)
     .def("Intersection", &T::Intersection)
-    .def("DifferenceAssign", &T::DifferenceAssign)
+    .def("DifferenceAssign", &T::DifferenceAssign,
+                             pybind11::return_value_policy::reference)
     .def("Difference", &T::Difference)
     .def("Complement",&T::Complement,"Returns the complement of this")
     .def("IsProperSubsetOf", &T::IsProperSubsetOf)
@@ -61,11 +66,11 @@ void RegisterMathSet(pybind11::module & m,
     .def("IsSupersetOf", &T::IsSupersetOf)
     .def("Transform", &T::Transform)
     .def("Partition", &T::Partition)
-    .def(pybind11::self += pybind11::self)
+    .def(pybind11::self += pybind11::self, pybind11::return_value_policy::reference)
     .def(pybind11::self + pybind11::self)
-    .def(pybind11::self -= pybind11::self)
+    .def(pybind11::self -= pybind11::self, pybind11::return_value_policy::reference)
     .def(pybind11::self - pybind11::self)
-    .def(pybind11::self /= pybind11::self)
+    .def(pybind11::self /= pybind11::self, pybind11::return_value_policy::reference)
     .def(pybind11::self / pybind11::self)
     .def(pybind11::self >= pybind11::self)
     .def(pybind11::self > pybind11::self)
@@ -111,7 +116,7 @@ void RegisterUniverse(pybind11::module & m,
                                pybind11::return_value_policy::reference)
     .def("Intersection", &T::Intersection)
     .def("DifferenceAssign", &T::DifferenceAssign,
-                               pybind11::return_value_policy::reference)
+                             pybind11::return_value_policy::reference)
     .def("Difference", &T::Difference)
     .def("IsProperSubsetOf", &T::IsProperSubsetOf)
     .def("IsSubsetOf", &T::IsSubsetOf)
