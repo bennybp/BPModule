@@ -7,6 +7,8 @@
 #include "bpmodule/system/System.hpp"
 #include "bpmodule/system/BasisSet.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
+#include "bpmodule/output/GlobalOutput.hpp"
+using bpmodule::output::GlobalDebug;
 
 
 using bpmodule::exception::SystemException;
@@ -47,14 +49,9 @@ System::System(const AtomSetUniverse& universe,bool fill):
 }
 
 
-size_t System::NAtoms(void) const
+size_t System::Size(void) const
 {
-    return size();
-}
-
-size_t System::size(void) const
-{
-    return atoms_.size();
+    return atoms_.Size();
 }
 
 double System::GetSumCharge(void) const
@@ -105,7 +102,7 @@ void System::SetMultiplicity(double m)
     multiplicity_=m;
 }
 
-bool System::HasAtom(const Atom& AnAtom)const
+bool System::Contains(const Atom& AnAtom)const
 {
     return atoms_.Contains(AnAtom);
 }
@@ -113,12 +110,21 @@ bool System::HasAtom(const Atom& AnAtom)const
 System& System::Insert(const Atom & atom)
 {
     atoms_.Insert(atom);
+    SetDefaults_();
+    return *this;
+}
+
+System& System::Insert(Atom && atom)
+{
+    atoms_.Insert(std::move(atom));
+    SetDefaults_();
     return *this;
 }
 
 System & System::UnionAssign(const System& RHS)
 {
     atoms_.UnionAssign(RHS.atoms_);
+    SetDefaults_();
     return *this;
 }
 
@@ -130,6 +136,7 @@ System System::Union(const System& RHS) const
 System& System::IntersectionAssign(const System& RHS)
 {
     atoms_.IntersectionAssign(RHS.atoms_);
+    SetDefaults_();
     return *this;
 }
 
@@ -141,6 +148,7 @@ System System::Intersection(const System& RHS) const
 System& System::DifferenceAssign(const System& RHS)
 {
     atoms_.DifferenceAssign(RHS.atoms_);
+    SetDefaults_();
     return *this;
 }
 
@@ -166,34 +174,38 @@ System System::Transform(System::TransformerFunc transformer) const
 //! \todo will only be true if the universes are the same
 bool System::operator==(const System& RHS)const
 {
+    return(CompareInfo(RHS) && atoms_ == RHS.atoms_);
+}
+
+
+bool System::CompareInfo(const System & RHS)const
+{
     PRAGMA_WARNING_PUSH
     PRAGMA_WARNING_IGNORE_FP_EQUALITY
     return(charge_ == RHS.charge_ &&
            multiplicity_ == RHS.multiplicity_ &&
-           nelectrons_ == RHS.nelectrons_ &&
-           atoms_ == RHS.atoms_
-          );
+           nelectrons_ == RHS.nelectrons_);
     PRAGMA_WARNING_POP
 }
 
 bool System::IsProperSubsetOf(const System& RHS)const
 {
-    return atoms_.IsProperSubsetOf(atoms_);
+    return atoms_.IsProperSubsetOf(RHS.atoms_);
 }
 
 bool System::IsSubsetOf(const System& RHS)const
 {
-    return atoms_.IsSubsetOf(atoms_);
+    return atoms_.IsSubsetOf(RHS.atoms_);
 }
 
 bool System::IsProperSupersetOf(const System& RHS)const
 {
-    return atoms_.IsProperSupersetOf(atoms_);
+    return atoms_.IsProperSupersetOf(RHS.atoms_);
 }
 
 bool System::IsSupersetOf(const System& RHS)const
 {
-    return atoms_.IsSupersetOf(atoms_);
+    return atoms_.IsSupersetOf(RHS.atoms_);
 }
 
 
@@ -203,10 +215,10 @@ System& System::operator/=(const System& rhs) { return IntersectionAssign(rhs); 
 System System::operator/(const System& rhs)const { return Intersection(rhs); }
 System& System::operator-=(const System& rhs) { return DifferenceAssign(rhs); }
 System System::operator-(const System& rhs)const { return Difference(rhs); }
-bool System::operator<=(const System& rhs)const { return IsProperSubsetOf(rhs); }
-bool System::operator<(const System& rhs)const { return IsSubsetOf(rhs); }
-bool System::operator>=(const System& rhs)const { return IsProperSupersetOf(rhs); }
-bool System::operator>(const System& rhs)const { return IsSupersetOf(rhs); }
+bool System::operator<=(const System& rhs)const { return IsSubsetOf(rhs); }
+bool System::operator<(const System& rhs)const { return IsProperSubsetOf(rhs); }
+bool System::operator>=(const System& rhs)const { return IsSupersetOf(rhs); }
+bool System::operator>(const System& rhs)const { return IsProperSupersetOf(rhs); }
 
 
 
@@ -276,8 +288,8 @@ std::string System::ToString()const
 ///Returns the distance between each pair of atoms in sys
 std::vector<double> GetDistance(const System& sys)
 {
-    size_t NAtoms=sys.NAtoms();
-    std::vector<double> DM(NAtoms*NAtoms,0.0);
+    size_t size=sys.Size();
+    std::vector<double> DM(size*size,0.0);
     //Loop over the lower triangle of the matrix, setting upper as well
     size_t I=0;
 
@@ -289,8 +301,8 @@ std::vector<double> GetDistance(const System& sys)
         {
             if(atomJ==atomI)break;
 
-            DM[I*NAtoms+J]=atomI.Distance(atomJ);
-            DM[J*NAtoms+I]=DM[I*NAtoms+J];
+            DM[I*size+J]=atomI.Distance(atomJ);
+            DM[J*size+I]=DM[I*size+J];
             ++J;
         }
 
@@ -308,7 +320,7 @@ Conn_t GetConns(const System& sys,double Tolerance)
     for(const Atom& AtomI:sys)Conns[AtomI]=std::unordered_set<Atom>();
 
     std::vector<double> Dist=GetDistance(sys);
-    size_t I=0,NAtoms=sys.NAtoms();
+    size_t I=0,size=sys.Size();
 
     for(const Atom& AtomI:sys)
     {
@@ -321,7 +333,7 @@ Conn_t GetConns(const System& sys,double Tolerance)
 
             double Jrad=AtomJ.GetCovRadius();
 
-            if(Dist[I*NAtoms+J]<Tolerance*(Irad+Jrad))
+            if(Dist[I*size+J]<Tolerance*(Irad+Jrad))
             {
                 Conns[AtomI].insert(AtomJ);
                 Conns[AtomJ].insert(AtomI);

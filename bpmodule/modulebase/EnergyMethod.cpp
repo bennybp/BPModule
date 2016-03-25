@@ -76,7 +76,7 @@ Return_t EnergyMethod::Deriv_(size_t Order){
     math::CentralDiff<double,Return_t> FD(NewComm);
 
     FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),Key(),ID());
-    TempDeriv=FD.Run(Thing2Run,3*Mol.NAtoms(),0.02,3);
+    TempDeriv=FD.Run(Thing2Run,3*Mol.Size(),0.02,3);
     //Flatten the array & abuse fact that TempDeriv[0] is the first comp    
     for(size_t i=1;i<TempDeriv.size();++i)
        for(double j :  TempDeriv[i])

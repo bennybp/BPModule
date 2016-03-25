@@ -110,10 +110,7 @@ public:
     ///@{ 
 
     /*! \brief Return the number of Atoms in the System (NOT the Universe) */
-    size_t NAtoms(void) const;
-
-    /*! \brief Return the number of Atoms in the System (NOT the Universe) */
-    size_t size(void) const;
+    size_t Size(void) const;
 
     /*! \brief Get the charge of the system */
     double GetCharge(void) const;
@@ -141,10 +138,11 @@ public:
     /*! \brief Set the multiplicity of the System */
     void SetMultiplicity(double m);
 
-
     ///Returns true if the system contains the atom
-    bool HasAtom(const Atom& AnAtom)const;
+    bool Contains(const Atom& AnAtom)const;
 
+    ///Compares the general information for the system (charge, etc)
+    bool CompareInfo(const System & RHS)const;
 
     ///@}
 
@@ -203,6 +201,14 @@ public:
      * \todo Exceptions from MathSet
      */
     System & Insert(const Atom & atom);
+
+    /*! \brief Insert an atom into this system
+     * 
+     * The Atom must already be a part of this System's universe
+     *
+     * \todo Exceptions from MathSet
+     */
+    System & Insert(Atom && atom);
 
     System & UnionAssign(const System& RHS);
     System Union(const System& RHS) const;

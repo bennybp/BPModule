@@ -182,7 +182,7 @@ public:
     ///Basic accessors
 
     ///Returns the cardinality of the universe (i.e. the number of elements)
-    size_t size()const noexcept
+    size_t Size()const noexcept
     {
         return Elems_.size();
     }
@@ -231,7 +231,7 @@ public:
     const T& operator[](size_t EI)const { return (*Storage_)[EI]; }
 
 
-    const T& at(size_t EI) const
+    const T& At(size_t EI) const
     {
         if(EI >= Storage_->size())
             throw exception::ValueOutOfRange("Out of bounds access in universe", "index", EI);
@@ -401,7 +401,7 @@ public:
     {
         // Are we a subset, and does RHS have more elements than we do?
         //! \todo is this logic correct?
-        return IsSubsetOf(RHS) && RHS.size() > this->size();
+        return IsSubsetOf(RHS) && RHS.Size() > this->Size();
     }
 
     /** \brief Returns true if this is a subset of other
@@ -516,7 +516,7 @@ public:
         if(Storage_ == RHS.Storage_)
             return true;
         // Check if we have the same number of elements
-        if(size() != RHS.size())
+        if(Size() != RHS.Size())
             return false;
         // Go element by element
         for(const auto & it : *this)

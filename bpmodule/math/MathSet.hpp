@@ -139,7 +139,7 @@ public:
     ///Basic accessors
 
     ///Returns the number of elements in this set
-    size_t size(void)const noexcept
+    size_t Size(void)const noexcept
     {
         return this->Elems_.size();
     }
@@ -262,7 +262,7 @@ public:
      */
     bool IsProperSubsetOf(const My_t& RHS)const
     {
-        return IsSubsetOf(RHS) && RHS.size() > this->size();
+        return IsSubsetOf(RHS) && RHS.Size() > this->Size();
     }
     
 
@@ -410,8 +410,8 @@ public:
         //  This makes some assumptions about the ordering of elements
         std::shared_ptr<Base_t> newuniverse(new Base_t);
 
-        for(size_t i = 0; i < Universe_->size(); ++i) {
-            const auto & it = (*Universe_).at(i);
+        for(size_t i = 0; i < Universe_->Size(); ++i) {
+            const auto & it = (*Universe_).At(i);
 
             if (this->Elems_.count(i) > 0)
                 newuniverse->Insert(transformer(it));
