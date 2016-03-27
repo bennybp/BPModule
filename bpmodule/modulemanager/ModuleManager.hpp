@@ -10,10 +10,10 @@
 
 #include <atomic>
 
-#include "bpmodule/datastore/ModuleGraph.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
+#include "bpmodule/modulemanager/ModuleTree.hpp"
 #include "bpmodule/modulemanager/ModulePtr.hpp"
 
 
@@ -207,12 +207,6 @@ class ModuleManager
 
 
 
-        /*! \brief Return the graph in DOT format
-         */ 
-        std::string DotGraph(void) const;
-
-
-
         /*! \brief Adds/inserts a module creator to the database
          * 
          * The supermodule is loaded via a handler, and then info
@@ -241,6 +235,16 @@ class ModuleManager
          */
         void EnableDebugAll(bool debug) noexcept; 
 
+
+        /*! \brief Begin iterating over the module tree
+         */
+        ModuleTree::const_iterator TreeBegin(unsigned long startid) const;
+
+        ModuleTree::const_iterator TreeEnd(void) const;
+
+        ModuleTree::const_flat_iterator FlatTreeBegin(void) const;
+
+        ModuleTree::const_flat_iterator FlatTreeEnd(void) const;
 
 
     private:
@@ -277,18 +281,9 @@ class ModuleManager
         bool debugall_;
 
 
-        /*! \brief Map for storing created module information
-         *
-         * \todo will be replaced by a pointer to the graph
+        /*! \brief Tree for storing created module information
          */
-        datastore::ModuleGraph mgraph_;
-
-
-        /*! \brief Map of module ID to graph nodes
-         *
-         * \todo replace with something?
-         */
-        std::map<unsigned long, datastore::ModuleGraphNode> mgraphmap_;
+        ModuleTree mtree_;
 
 
         //! The id to assign to the next created module

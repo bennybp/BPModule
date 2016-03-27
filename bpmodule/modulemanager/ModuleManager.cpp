@@ -17,8 +17,6 @@
 #include "bpmodule/modulemanager/PySupermoduleLoader.hpp"
 
 
-using bpmodule::datastore::ModuleGraphNodeData;
-using bpmodule::datastore::ModuleGraphNode;
 using bpmodule::datastore::Wavefunction;
 using bpmodule::modulebase::ModuleBase;
 using bpmodule::exception::ModuleLoadException;
@@ -213,6 +211,26 @@ void ModuleManager::EnableDebugAll(bool debug) noexcept
 }
 
 
+ModuleTree::const_iterator ModuleManager::TreeBegin(unsigned long startid) const
+{
+    return mtree_.Begin(startid);
+}
+
+ModuleTree::const_iterator ModuleManager::TreeEnd(void) const
+{
+    return mtree_.End();
+}
+
+ModuleTree::const_flat_iterator ModuleManager::FlatTreeBegin(void) const
+{
+    return mtree_.FlatBegin();
+}
+
+ModuleTree::const_flat_iterator ModuleManager::FlatTreeEnd(void) const
+{
+    return mtree_.FlatEnd();
+}
+
 
 /////////////////////////////////////////
 // Module Loading
@@ -281,36 +299,46 @@ ModuleManager::CreateModule_(const std::string & modulekey, unsigned long parent
                                                "modulename", se.mi.name);
 
  
-    // add the moduleinfo to the graph
-    //! \todo Assumes shared pointer, requires map, etc
+    // add the moduleinfo to the tree
+    ModuleTreeNode me{modulekey,      // key
+                      se.mi,          // module info
+                      std::string(),  // output
+                      curid_,         // module id
+                      Wavefunction(), // initial wfn
+                      Wavefunction()  // final wfn
+                     };
+
+
+    // If there is a parent, get its wavefunction and use that
     if(parentid != 0)
     {
-        ModuleGraphNode parent = mgraphmap_.at(parentid);
-        ModuleGraphNode mine{new ModuleGraphNodeData{modulekey, parent->wfn, se.mi}};
-        mgraph_.AddNode(mine);
-        mgraph_.AddEdge(std::make_tuple(mine, parent));
-        mgraphmap_.emplace(curid_, mine);
+        if(!mtree_.HasID(parentid))
+            throw exception::ModuleCreateException("Parent does not exit on map", "parentid", parentid);
+
+        const ModuleTreeNode & parent = mtree_.GetByID(parentid);
+        me.initial_wfn = parent.final_wfn;
+        me.final_wfn = parent.final_wfn;
     }
-    else
-    {
-        ModuleGraphNode mine{new ModuleGraphNodeData{modulekey, Wavefunction(), se.mi}};
-        mgraph_.AddNode(mine);
-        mgraphmap_.emplace(curid_, mine);
-    }
+
+    // move the data to the tree
+    // "me" should not be accessed after this
+    mtree_.Insert(std::move(me), parentid);
 
 
     // set the info for the module
     // (set via C++ functions)
     ModuleBase * p = umbptr->CppPtr();
     p->SetMManager_(this);
-    p->SetGraphNode_(&(mgraphmap_.at(curid_))); // also sets up output tee
+    p->SetTreeNode_(&(mtree_.GetByID(curid_))); // also sets up output tee
 
-    // Debugging?
+
+    // Debugging enabled for this module?
     if(debugall_ || keydebug_.count(modulekey))
         p->EnableDebug(true);
 
+
     // get this module's cache
-    // no need to use .at() -- we need it created if it doesn't exist already
+    // don't use .at() -- we need it created if it doesn't exist already
     std::string mbstr = p->Name() + "_v" + p->Version();
     p->SetCache_(&(cachemap_[mbstr]));
 
@@ -320,13 +348,6 @@ ModuleManager::CreateModule_(const std::string & modulekey, unsigned long parent
     return std::move(umbptr);
 }
 
-
-std::string ModuleManager::DotGraph(void) const
-{
-    std::stringstream ss;
-    ss << mgraph_;
-    return ss.str();
-}
 
 
 ////////////////////

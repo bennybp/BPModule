@@ -13,6 +13,41 @@ namespace bpmodule {
 namespace modulemanager {
 namespace export_python {
 
+std::string DumpTree(const ModuleManager & mm, unsigned long startid)
+{
+    std::stringstream ss;
+
+    for(auto it  = mm.TreeBegin(startid);
+        it != mm.TreeEnd();
+        ++it)
+    {
+        ss << "|" << it->moduleid << "| "
+           << it->minfo.name << " : (" << it->parentid << ") [ ";
+        for(const auto & c : it->children)
+            ss << c << " ";
+        ss << "]\n";
+    }
+    return ss.str();
+}
+
+
+std::string DumpFlatTree(const ModuleManager & mm)
+{
+    std::stringstream ss;
+
+    for(auto it  = mm.FlatTreeBegin();
+        it != mm.FlatTreeEnd();
+        ++it)
+    {
+        ss << "|" << it->moduleid << "| "
+           << it->minfo.name << " : (" << it->parentid << ") [ ";
+        for(const auto & c : it->children)
+            ss << c << " ";
+        ss << "]\n";
+    }
+    return ss.str();
+}
+
 
 PYBIND11_PLUGIN(modulemanager)
 {
@@ -52,12 +87,13 @@ PYBIND11_PLUGIN(modulemanager)
     .def("TestAll", &ModuleManager::TestAll)
     .def("GetModule", &ModuleManager::GetModulePy)
     .def("ChangeOption", &ModuleManager::ChangeOptionPy)
-    .def("DotGraph", &ModuleManager::DotGraph)
     .def("LoadModuleFromModuleInfo", &ModuleManager::LoadModuleFromModuleInfo)
     .def("EnableDebug", &ModuleManager::EnableDebug)
     .def("EnableDebugAll", &ModuleManager::EnableDebugAll)
     ;
 
+    m.def("DumpTree", DumpTree);
+    m.def("DumpFlatTree", DumpFlatTree);
 
     ////////////////////////////////
     // Pointers, etc

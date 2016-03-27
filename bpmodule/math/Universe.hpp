@@ -72,6 +72,11 @@ public:
         return (*Set_)[*CurrIdx_];
     }
 
+    const T * operator->()const
+    {
+        return &(*this);
+    }
+
     ///Prefix increment operator
     My_t& operator++()
     {
