@@ -39,6 +39,11 @@ class ConstModuleTreeIter
         ConstModuleTreeIter(const ModuleTree * mtree, unsigned long id);
 
     public:
+        ConstModuleTreeIter(const ConstModuleTreeIter &) = default;
+        ConstModuleTreeIter(ConstModuleTreeIter &&) = default;
+        ConstModuleTreeIter & operator=(const ConstModuleTreeIter &) = default;
+        ConstModuleTreeIter & operator=(ConstModuleTreeIter &&) = default;
+
         const ModuleTreeNode & operator*()const;
 
         const ModuleTreeNode * operator->()const;
@@ -48,6 +53,11 @@ class ConstModuleTreeIter
 
         // Postfix
         ConstModuleTreeIter operator++(int);
+
+        // Mostly for use from python
+        void Advance(void); 
+
+        const ModuleTreeNode & GetRef(void) const;
 
         // comparison
         bool operator==(const ConstModuleTreeIter & rhs) const;
@@ -70,6 +80,11 @@ class ConstModuleFlatTreeIter
         ConstModuleFlatTreeIter(const MapType * m, MapType::const_iterator it);
 
     public:
+        ConstModuleFlatTreeIter(const ConstModuleFlatTreeIter &) = default;
+        ConstModuleFlatTreeIter(ConstModuleFlatTreeIter &&) = default;
+        ConstModuleFlatTreeIter & operator=(const ConstModuleFlatTreeIter &) = default;
+        ConstModuleFlatTreeIter & operator=(ConstModuleFlatTreeIter &&) = default;
+
         const ModuleTreeNode & operator*()const;
 
         const ModuleTreeNode * operator->()const;
@@ -79,6 +94,11 @@ class ConstModuleFlatTreeIter
 
         // Postfix
         ConstModuleFlatTreeIter operator++(int);
+
+        // Mostly for use from python
+        void Advance(void); 
+
+        const ModuleTreeNode & GetRef(void) const;
 
         // comparison
         bool operator==(const ConstModuleFlatTreeIter & rhs) const;

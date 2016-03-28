@@ -87,12 +87,20 @@ ConstModuleTreeIter ConstModuleTreeIter::operator++(int)
 
 const ModuleTreeNode & ConstModuleTreeIter::operator*()const
 {
-    return *curnode_;
+    return GetRef();
 }
 
 const ModuleTreeNode * ConstModuleTreeIter::operator->()const
 {
-    return curnode_;
+    return &(GetRef());
+}
+
+const ModuleTreeNode & ConstModuleTreeIter::GetRef()const
+{
+    if(curnode_ == nullptr)
+        throw ModuleManagerException("Nullptr dereference in ConstModuleTreeIter");
+
+    return *curnode_;
 }
 
 
@@ -108,6 +116,10 @@ bool ConstModuleTreeIter::operator!=(const ConstModuleTreeIter & rhs) const
     return !( (*this) == rhs);
 }
 
+void ConstModuleTreeIter::Advance(void)
+{
+    ++(*this);
+}
 
 
 ///////////////////////////////////////
@@ -121,12 +133,12 @@ ConstModuleFlatTreeIter::ConstModuleFlatTreeIter(const MapType *  m,
 
 const ModuleTreeNode & ConstModuleFlatTreeIter::operator*()const
 {
-    return curit_->second;
+    return GetRef();
 }
 
 const ModuleTreeNode * ConstModuleFlatTreeIter::operator->()const
 {
-    return &(curit_->second);
+    return &(GetRef());
 }
 
 ConstModuleFlatTreeIter & ConstModuleFlatTreeIter::operator++()
@@ -142,6 +154,11 @@ ConstModuleFlatTreeIter ConstModuleFlatTreeIter::operator++(int)
     return ret;
 }
 
+const ModuleTreeNode & ConstModuleFlatTreeIter::GetRef()const
+{
+    return curit_->second;
+}
+
 bool ConstModuleFlatTreeIter::operator==(const ConstModuleFlatTreeIter & rhs) const
 {
     return (map_ == rhs.map_ &&
@@ -151,6 +168,11 @@ bool ConstModuleFlatTreeIter::operator==(const ConstModuleFlatTreeIter & rhs) co
 bool ConstModuleFlatTreeIter::operator!=(const ConstModuleFlatTreeIter & rhs) const
 {
     return !( (*this) == rhs);
+}
+
+void ConstModuleFlatTreeIter::Advance(void)
+{
+    ++(*this);
 }
 
 

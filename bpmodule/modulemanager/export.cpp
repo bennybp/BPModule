@@ -6,47 +6,15 @@
 
 #include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/python/Pybind11_functional.hpp"
+#include "bpmodule/python/Pybind11_operators.hpp"
 #include "bpmodule/modulemanager/ModuleManager.hpp"
 
+using bpmodule::modulemanager::detail::ConstModuleTreeIter;
+using bpmodule::modulemanager::detail::ConstModuleFlatTreeIter;
 
 namespace bpmodule {
 namespace modulemanager {
 namespace export_python {
-
-std::string DumpTree(const ModuleManager & mm, unsigned long startid)
-{
-    std::stringstream ss;
-
-    for(auto it  = mm.TreeBegin(startid);
-        it != mm.TreeEnd();
-        ++it)
-    {
-        ss << "|" << it->moduleid << "| "
-           << it->minfo.name << " : (" << it->parentid << ") [ ";
-        for(const auto & c : it->children)
-            ss << c << " ";
-        ss << "]\n";
-    }
-    return ss.str();
-}
-
-
-std::string DumpFlatTree(const ModuleManager & mm)
-{
-    std::stringstream ss;
-
-    for(auto it  = mm.FlatTreeBegin();
-        it != mm.FlatTreeEnd();
-        ++it)
-    {
-        ss << "|" << it->moduleid << "| "
-           << it->minfo.name << " : (" << it->parentid << ") [ ";
-        for(const auto & c : it->children)
-            ss << c << " ";
-        ss << "]\n";
-    }
-    return ss.str();
-}
 
 
 PYBIND11_PLUGIN(modulemanager)
@@ -68,7 +36,38 @@ PYBIND11_PLUGIN(modulemanager)
     .def_readwrite("refs", &ModuleInfo::refs)
     .def_readwrite("options", &ModuleInfo::options)
     ;
-     
+
+    //////////////////////////
+    // Tree Node
+    //////////////////////////     
+    pybind11::class_<ModuleTreeNode>(m, "ModuleTreeNode")
+    .def_readonly("modulekey", &ModuleTreeNode::modulekey)
+    .def_readonly("minfo", &ModuleTreeNode::minfo)
+    .def_readonly("output", &ModuleTreeNode::output)
+    .def_readonly("moduleid", &ModuleTreeNode::moduleid)
+    .def_readonly("initial_wfn", &ModuleTreeNode::initial_wfn)
+    .def_readonly("final_wfn", &ModuleTreeNode::final_wfn)
+    .def_readonly("parentid", &ModuleTreeNode::parentid)
+    .def_readonly("children", &ModuleTreeNode::children)
+    ;
+
+
+    //////////////////////////
+    // Tree iterators
+    //////////////////////////     
+    pybind11::class_<ConstModuleTreeIter>(m, "ConstModuleTreeIter")
+    .def("Advance", &ConstModuleTreeIter::Advance)
+    .def("GetRef", &ConstModuleTreeIter::GetRef, pybind11::return_value_policy::reference_internal)
+    .def(pybind11::self == pybind11::self)
+    .def(pybind11::self != pybind11::self)
+    ;
+
+    pybind11::class_<ConstModuleFlatTreeIter>(m, "ConstModuleFlatTreeIter")
+    .def("Advance", &ConstModuleFlatTreeIter::Advance)
+    .def("GetRef", &ConstModuleFlatTreeIter::GetRef, pybind11::return_value_policy::reference_internal)
+    .def(pybind11::self == pybind11::self)
+    .def(pybind11::self != pybind11::self)
+    ;
 
 
     //////////////////////////
@@ -90,10 +89,12 @@ PYBIND11_PLUGIN(modulemanager)
     .def("LoadModuleFromModuleInfo", &ModuleManager::LoadModuleFromModuleInfo)
     .def("EnableDebug", &ModuleManager::EnableDebug)
     .def("EnableDebugAll", &ModuleManager::EnableDebugAll)
+    .def("TreeBegin", &ModuleManager::TreeBegin)
+    .def("TreeEnd", &ModuleManager::TreeEnd)
+    .def("FlatTreeBegin", &ModuleManager::FlatTreeBegin)
+    .def("FlatTreeEnd", &ModuleManager::FlatTreeEnd)
     ;
 
-    m.def("DumpTree", DumpTree);
-    m.def("DumpFlatTree", DumpFlatTree);
 
     ////////////////////////////////
     // Pointers, etc
