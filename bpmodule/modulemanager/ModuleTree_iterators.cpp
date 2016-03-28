@@ -16,9 +16,15 @@ namespace detail {
 ///////////////////////////////////////
 // ConstModuleTreeIter Iterator
 ///////////////////////////////////////
-ConstModuleTreeIter::ConstModuleTreeIter(const ModuleTree * mtree, unsigned long id)
-    : mtree_(mtree), startid_(id), curid_(id), curnode_(nullptr)
+ConstModuleTreeIter::ConstModuleTreeIter(const ModuleTree * mtree,
+                                         unsigned long startid)
+    : mtree_(mtree), startid_(startid), curid_(startid), curnode_(nullptr)
 {
+    if(mtree == nullptr)
+        throw ModuleManagerException("Nullptr given to ConstModuleTreeIter");
+    if(!mtree->HasID(startid))
+        throw ModuleManagerException("Starting ID given to ConstModuleTreeIter does not exist in the tree");
+
     // don't do the lookup if this is being constructed for "end"
     if(curid_ != MAXVAL)
         curnode_ = &mtree_->GetByID(curid_);
@@ -27,6 +33,12 @@ ConstModuleTreeIter::ConstModuleTreeIter(const ModuleTree * mtree, unsigned long
 
 ConstModuleTreeIter & ConstModuleTreeIter::operator++()
 {
+    // Are we already at the end?
+    if(curnode_ == nullptr && 
+       curid_ == MAXVAL &&
+       startid_ == MAXVAL)
+        return *this;
+
     // does the current node have children?
     if(curnode_->children.size() > 0)
     {
@@ -156,6 +168,9 @@ ConstModuleFlatTreeIter ConstModuleFlatTreeIter::operator++(int)
 
 const ModuleTreeNode & ConstModuleFlatTreeIter::GetRef()const
 {
+    if(curit_ == map_->end())
+        throw ModuleManagerException("Attempting to dereference invalid iterator in ConstModuleFlatTreeIter");
+        
     return curit_->second;
 }
 

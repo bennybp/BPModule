@@ -19,11 +19,11 @@ namespace modulemanager {
 ///////////////////////////////////////
 void ModuleTree::Insert(ModuleTreeNode && node, unsigned long parentid)
 {
-    unsigned long mid = node.moduleid;
+    unsigned long mid = node.id;
     bool hasparent = (parentid > 0);
 
     if(HasID(mid))
-        throw ModuleManagerException("Duplicate module ID in the tree", "moduleid", mid);
+        throw ModuleManagerException("Duplicate ID in the tree", "id", mid);
     if(hasparent > 0 && !HasID(parentid))
         throw ModuleManagerException("Inserting a node with a non-existing parent", "parentid", parentid);
 
