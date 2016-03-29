@@ -7,12 +7,12 @@
 #include "bpmodule/python/Pybind11_functional.hpp"
 #include "bpmodule/python/Pybind11_stl.hpp"
 
-#include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/datastore/OptionMap.hpp"
 
 
+PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
 
 using bpmodule::system::System;
 using bpmodule::datastore::Wavefunction;
@@ -39,13 +39,6 @@ static void RegisterOptionHolder(pybind11::module & m, pybind11::class_<OptionBa
 PYBIND11_PLUGIN(datastore)
 {
     pybind11::module m("datastore", "Data storage classes");
-
-
-    //////////////////
-    // UIDPointer
-    //////////////////
-    m.def("MakeUIDPointer", MakeUIDPointerPy);
-
 
 
     //////////////////
@@ -133,9 +126,9 @@ PYBIND11_PLUGIN(datastore)
     pybind11::class_<Wavefunction>(m, "Wavefunction") //! \todo python init for wfn?
     .def(pybind11::init<>())
     .def("UniqueString", &Wavefunction::UniqueString)
-    .def_readwrite("system", &Wavefunction::system)
-    .def_readwrite("cmat", &Wavefunction::cmat)
-    .def_readwrite("epsilon", &Wavefunction::epsilon)
+    .def("GetSystem", &Wavefunction::GetSystem)
+    .def("SetSystem", &Wavefunction::SetSystem)
+    .def("CopySystem", &Wavefunction::CopySystem)
     ;
   
 

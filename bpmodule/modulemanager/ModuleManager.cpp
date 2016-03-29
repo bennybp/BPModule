@@ -9,6 +9,7 @@
 #include "bpmodule/modulebase/ModuleBase.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
+#include "bpmodule/output/GlobalOutput.hpp"
 
 ////////////////////////
 // Supermodule Handlers

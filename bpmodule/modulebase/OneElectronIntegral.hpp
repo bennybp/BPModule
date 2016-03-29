@@ -32,8 +32,8 @@ class OneElectronIntegral : public ModuleBase
          * \param [in] bs1 Basis set on the first center
          * \param [in] bs2 Basis set on the second center
          */
-        void SetBases(const datastore::UIDPointer<system::BasisSet> & bs1,
-                      const datastore::UIDPointer<system::BasisSet> & bs2)
+        void SetBases(std::shared_ptr<const system::BasisSet> & bs1,
+                      std::shared_ptr<const system::BasisSet> & bs2)
         {
             return ModuleBase::CallFunction(&OneElectronIntegral::SetBases_, bs1, bs2);
         }
@@ -79,8 +79,8 @@ class OneElectronIntegral : public ModuleBase
         // To be implemented by derived classes
         /////////////////////////////////////////
         //! \copydoc SetBases
-        virtual void SetBases_(const datastore::UIDPointer<system::BasisSet> & bs1,
-                               const datastore::UIDPointer<system::BasisSet> & bs2) = 0;
+        virtual void SetBases_(std::shared_ptr<const system::BasisSet> & bs1,
+                               std::shared_ptr<const system::BasisSet> & bs2) = 0;
 
 
         //! \copydoc Calculate
@@ -104,8 +104,8 @@ class OneElectronIntegral_Py : public OneElectronIntegral
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
     
-        virtual void SetBases_(const datastore::UIDPointer<system::BasisSet> & bs1,
-                               const datastore::UIDPointer<system::BasisSet> & bs2)
+        virtual void SetBases_(std::shared_ptr<const system::BasisSet> & bs1,
+                               std::shared_ptr<const system::BasisSet> & bs2)
 
         {
             return CallPyOverride<void>("SetBases_", bs1, bs2);

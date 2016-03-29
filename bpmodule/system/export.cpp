@@ -14,9 +14,9 @@
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/system/System.hpp"
 #include "bpmodule/system/BasisSet.hpp"
-#include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/math/RegisterMathSet.hpp"
+
 
 
 namespace bpmodule {
@@ -39,7 +39,6 @@ PYBIND11_PLUGIN(system)
     // Basis set
     ///////////////
 
-    datastore::RegisterUIDPointer<BasisSet>(m, "BasisSet");
 
     // Enumeration for basis set shell types
     pybind11::enum_<ShellType>(m, "ShellType")
@@ -122,8 +121,6 @@ PYBIND11_PLUGIN(system)
     ////////////////////
     // System, etc
     ////////////////////
-    datastore::RegisterUIDPointer<System>(m, "System");
-
 
     pybind11::class_<IsotopeData>(m, "IsotopeData")
     .def_readonly("isonum", &IsotopeData::isonum)
@@ -213,7 +210,7 @@ PYBIND11_PLUGIN(system)
     // Main system class 
     python::RegisterPyCopyIterator<System>(m, "System");
 
-    pybind11::class_<System>(m,"System")
+    pybind11::class_<System, std::shared_ptr<System>>(m,"System")
     .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
     .def(pybind11::init<const System &>())
     .def("Size",&System::Size)

@@ -36,10 +36,10 @@ class TwoElectronIntegral : public ModuleBase
          * \param [in] bs4 Basis set on the fourth center
          */
         void SetBases(int ncenter,
-                      const datastore::UIDPointer<system::BasisSet> & bs1,
-                      const datastore::UIDPointer<system::BasisSet> & bs2,
-                      const datastore::UIDPointer<system::BasisSet> & bs3,
-                      const datastore::UIDPointer<system::BasisSet> & bs4)
+                      std::shared_ptr<const system::BasisSet> & bs1,
+                      std::shared_ptr<const system::BasisSet> & bs2,
+                      std::shared_ptr<const system::BasisSet> & bs3,
+                      std::shared_ptr<const system::BasisSet> & bs4)
         {
             return ModuleBase::CallFunction(&TwoElectronIntegral::SetBases_, ncenter, bs1, bs2, bs3, bs4);
         }
@@ -91,10 +91,10 @@ class TwoElectronIntegral : public ModuleBase
         /////////////////////////////////////////
         //! \copydoc SetBases
         virtual void SetBases_(int ncenter,
-                               const datastore::UIDPointer<system::BasisSet> & bs1,
-                               const datastore::UIDPointer<system::BasisSet> & bs2,
-                               const datastore::UIDPointer<system::BasisSet> & bs3,
-                               const datastore::UIDPointer<system::BasisSet> & bs4) = 0;
+                               std::shared_ptr<const system::BasisSet> & bs1,
+                               std::shared_ptr<const system::BasisSet> & bs2,
+                               std::shared_ptr<const system::BasisSet> & bs3,
+                               std::shared_ptr<const system::BasisSet> & bs4) = 0;
 
 
         //! \copydoc Calculate
@@ -117,10 +117,10 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
         MODULEBASE_FORWARD_PROTECTED_TO_PY
     
         virtual void SetBases_(int ncenter,
-                               const datastore::UIDPointer<system::BasisSet> & bs1,
-                               const datastore::UIDPointer<system::BasisSet> & bs2,
-                               const datastore::UIDPointer<system::BasisSet> & bs3,
-                               const datastore::UIDPointer<system::BasisSet> & bs4)
+                               std::shared_ptr<const system::BasisSet> & bs1,
+                               std::shared_ptr<const system::BasisSet> & bs2,
+                               std::shared_ptr<const system::BasisSet> & bs3,
+                               std::shared_ptr<const system::BasisSet> & bs4)
 
         {
             return CallPyOverride<void>("SetBases_", ncenter, bs1, bs2, bs3, bs4);
