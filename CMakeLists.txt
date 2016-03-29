@@ -85,7 +85,6 @@ ExternalProject_Add(bpmodule_core
 add_dependencies(bpmodule_core memwatch_external
                                pybind11_external
                                cereal_external
-                               libelemental_external
                                libtaskforce_external
                                libtensor_external 
                )
