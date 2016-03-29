@@ -54,8 +54,6 @@ class Hash
          */
         std::string String(void) const;
 
-        /*! \brief Construct given the lower and upper 64-bit parts */
-        Hash(uint64_t h1, uint64_t h2);
 
     private:
         friend class Hasher;
@@ -65,6 +63,9 @@ class Hash
 
         /// Construct as a hash of zeros
         Hash();
+
+        /*! \brief Construct given the lower and upper 64-bit parts */
+        Hash(uint64_t h1, uint64_t h2);
 };
 
 
