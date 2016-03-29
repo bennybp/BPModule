@@ -34,8 +34,8 @@ public:
     Wavefunction & operator=(Wavefunction &&) = default;
 
     UIDPointer<system::System> system;
-    UIDPointer<tensor::DistMatrixD> cmat; //! \todo REPLACE ME WITH TENSOR<2> or <3>
-    UIDPointer<tensor::DistMatrixD> epsilon; //! \todo REPLACE ME WITH TENSOR<1> or <2>
+    UIDPointer<std::vector<double>> cmat; //! \todo REPLACE ME
+    UIDPointer<std::vector<double>> epsilon; //! \todo REPLACE ME
 
     std::string UniqueString(void) const
     {

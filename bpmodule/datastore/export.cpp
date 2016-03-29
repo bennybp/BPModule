@@ -16,7 +16,6 @@
 
 using bpmodule::system::System;
 using bpmodule::datastore::Wavefunction;
-using bpmodule::tensor::DistMatrixD;
 
 
 namespace bpmodule {
