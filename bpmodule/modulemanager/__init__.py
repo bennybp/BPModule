@@ -1,5 +1,5 @@
 from .modinfo import *
-from . import ModuleTreePrinters
+from .ModuleTreePrinters import *
 
 # SO file
 from .modulemanager import *

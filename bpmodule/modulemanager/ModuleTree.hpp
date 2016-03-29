@@ -88,7 +88,7 @@ class ModuleTree
         /*! \brief Obtain a node by its ID
          * 
          * The ID represents the unique ID of the module
-         * and also the unique ID of the graph node
+         * and also the unique ID of the tree node
          *
          * \throw bpmodule::exception::ModuleManagerException if
          *        a node with that ID doesn't exist
@@ -99,7 +99,7 @@ class ModuleTree
         /*! \brief Obtain a node by its ID
          * 
          * The ID represents the unique ID of the module
-         * and also the unique ID of the graph node
+         * and also the unique ID of the tree node
          *
          * \throw bpmodule::exception::ModuleManagerException if
          *        a node with that ID doesn't exist
