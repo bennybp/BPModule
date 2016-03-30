@@ -251,6 +251,14 @@ class Atom : public math::Point
 
         ///@}
 
+        /*! \name Serialization */
+        ///@{
+        template<class Archive>
+        void serialize(Archive & archive)
+        {
+             
+        }
+        ///@}
 
 };
 

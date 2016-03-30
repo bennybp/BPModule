@@ -157,7 +157,7 @@ class ModuleManager
          * \return A wrapped C++ object of the requested type
          */
         template<typename T>
-        ModulePtr<T> GetModule(const std::string & modulekey, unsigned long parentid)
+        ModulePtr<T> GetModule(const std::string & modulekey, ID_t parentid)
         {
             // may throw
             std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(modulekey, parentid);
@@ -187,7 +187,7 @@ class ModuleManager
          *
          * \return The module wrapped in a python object
          */
-        pybind11::object GetModulePy(const std::string & modulekey, unsigned long parentid);
+        pybind11::object GetModulePy(const std::string & modulekey, ID_t parentid);
 
 
 
@@ -238,7 +238,7 @@ class ModuleManager
 
         /*! \brief Begin iterating over the module tree
          */
-        ModuleTree::const_iterator TreeBegin(unsigned long startid) const;
+        ModuleTree::const_iterator TreeBegin(ID_t startid) const;
 
         ModuleTree::const_iterator TreeEnd(void) const;
 
@@ -287,7 +287,7 @@ class ModuleManager
 
 
         //! The id to assign to the next created module
-        std::atomic<unsigned long> curid_;
+        std::atomic<ID_t> curid_;
 
 
         /*! \brief Map of cache data
@@ -353,7 +353,7 @@ class ModuleManager
          *
          */
         std::unique_ptr<detail::ModuleIMPLHolder>
-        CreateModule_(const std::string & modulekey, unsigned long parentid);
+        CreateModule_(const std::string & modulekey, ID_t parentid);
 
 };
 

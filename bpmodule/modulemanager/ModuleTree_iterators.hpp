@@ -31,17 +31,17 @@ namespace detail {
 class ConstModuleTreeIter
 {
     /* When this iterator represents the "end" of iteration,
-     * startid_ = curid_ = MAXVAL (ie, the largest value for an unsigned long)
+     * startid_ = curid_ = MAXVAL (ie, the largest value for an ID_t)
      * and curnode_ = nullptr.
      */
 
     private:
         friend class bpmodule::modulemanager::ModuleTree;
-        static constexpr unsigned long MAXVAL = std::numeric_limits<unsigned long>::max();
+        static constexpr ID_t MAXVAL = std::numeric_limits<ID_t>::max();
 
         const ModuleTree * mtree_;       //!< The tree we are iterating over
-        unsigned long startid_;          //!< The ID of the node where we started iterating
-        unsigned long curid_;            //!< ID of the current node represented by the iterator
+        ID_t startid_;          //!< The ID of the node where we started iterating
+        ID_t curid_;            //!< ID of the current node represented by the iterator
         const ModuleTreeNode * curnode_; //!< Pointer to the node data for the given curid_
 
         /*! \brief Constructor
@@ -54,7 +54,7 @@ class ConstModuleTreeIter
          * \param [in] mtree The tree to interate over
          * \param [in] startid The id to start with 
          */ 
-        ConstModuleTreeIter(const ModuleTree * mtree, unsigned long startid);
+        ConstModuleTreeIter(const ModuleTree * mtree, ID_t startid);
 
 
     public:
@@ -118,7 +118,7 @@ class ConstModuleFlatTreeIter
     private:
         friend class bpmodule::modulemanager::ModuleTree;
 
-        typedef std::map<unsigned long, ModuleTreeNode> MapType;
+        typedef std::map<ID_t, ModuleTreeNode> MapType;
 
         const MapType * map_;            //!< The map we are iterating over
         MapType::const_iterator curit_;  //!< Iterator for the current node

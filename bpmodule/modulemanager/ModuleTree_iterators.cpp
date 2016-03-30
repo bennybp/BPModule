@@ -17,7 +17,7 @@ namespace detail {
 // ConstModuleTreeIter Iterator
 ///////////////////////////////////////
 ConstModuleTreeIter::ConstModuleTreeIter(const ModuleTree * mtree,
-                                         unsigned long startid)
+                                         ID_t startid)
     : mtree_(mtree), startid_(startid), curid_(startid), curnode_(nullptr)
 {
     if(mtree == nullptr)
@@ -50,18 +50,18 @@ ConstModuleTreeIter & ConstModuleTreeIter::operator++()
     {
         // we reached the bottom. Go back up and
         // see if we have a sibling
-        unsigned long parentid = curnode_->parentid;
+        ID_t parentid = curnode_->parentid;
 
         while(parentid != 0 && curid_ != startid_)
         {
             const ModuleTreeNode * parent = &mtree_->GetByID(parentid);
 
-            unsigned long id = curid_; // for lambda
+            ID_t id = curid_; // for lambda
 
             // find a child with an ID greater than me
             const auto nextit = std::find_if(parent->children.begin(),
                                              parent->children.end(),
-                                             [ id ] (unsigned long i) { return i > id; });
+                                             [ id ] (ID_t i) { return i > id; });
 
             if(nextit == parent->children.end())
             {

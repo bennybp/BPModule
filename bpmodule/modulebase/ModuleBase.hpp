@@ -10,6 +10,7 @@
 
 #include <string>
 
+#include "bpmodule/types.h"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/modulemanager/ModuleManager.hpp"
 #include "bpmodule/output/OutputStream.hpp"
@@ -51,7 +52,7 @@ class ModuleBase
 
         /*! \brief Constructor
          */
-        ModuleBase(unsigned long id, const char * modtype);
+        ModuleBase(ID_t id, const char * modtype);
 
 
         virtual ~ModuleBase();
@@ -66,7 +67,7 @@ class ModuleBase
          *
          * \exnothrow
          */
-        unsigned long ID(void) const noexcept;
+        ID_t ID(void) const noexcept;
 
 
         /*! \brief Get the key of this module
@@ -310,7 +311,7 @@ class ModuleBase
 
 
         //! The unique ID of this module
-        const unsigned long id_;
+        const ID_t id_;
 
 
         //! The type of module this is

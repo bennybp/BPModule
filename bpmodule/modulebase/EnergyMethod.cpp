@@ -32,7 +32,7 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
         const AtomV_t& Atoms_;
         MM_t& MM_;
         std::string Key_;
-        unsigned long ID_;
+        ID_t ID_;
     public:
         //Base class operators are fine in all but two cases
         using Base_t::operator();
@@ -57,7 +57,7 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
         }
         
         FDFunctor(size_t Order,const AtomV_t& Atoms,
-                  MM_t& MM,std::string Key,unsigned long ID):
+                  MM_t& MM,std::string Key,ID_t ID):
             Order_(Order),Atoms_(Atoms),MM_(MM),Key_(Key),ID_(ID){}
 };    
     

@@ -22,7 +22,7 @@ class SystemFragmenter : public ModuleBase
         typedef SystemFragmenter BaseType;
 
 
-        SystemFragmenter(unsigned long id)
+        SystemFragmenter(ID_t id)
             : ModuleBase(id, "SystemFragmenter")
         { }
 

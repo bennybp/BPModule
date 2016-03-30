@@ -212,7 +212,7 @@ void ModuleManager::EnableDebugAll(bool debug) noexcept
 }
 
 
-ModuleTree::const_iterator ModuleManager::TreeBegin(unsigned long startid) const
+ModuleTree::const_iterator ModuleManager::TreeBegin(ID_t startid) const
 {
     return mtree_.Begin(startid);
 }
@@ -273,7 +273,7 @@ void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo)
 // Module Creation
 /////////////////////////////////////////
 std::unique_ptr<detail::ModuleIMPLHolder>
-ModuleManager::CreateModule_(const std::string & modulekey, unsigned long parentid)
+ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
 {
     // obtain the information for this key
     const StoreEntry & se = GetOrThrow_(modulekey);
@@ -355,7 +355,7 @@ ModuleManager::CreateModule_(const std::string & modulekey, unsigned long parent
 // Python
 ////////////////////
 pybind11::object ModuleManager::GetModulePy(const std::string & modulekey,
-                                            unsigned long parentid)
+                                            ID_t parentid)
 {
     std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(modulekey, parentid);
 

@@ -22,7 +22,7 @@ class TwoElectronIntegral : public ModuleBase
     public:
         typedef TwoElectronIntegral BaseType;
 
-        TwoElectronIntegral(unsigned long id)
+        TwoElectronIntegral(ID_t id)
             : ModuleBase(id, "TwoElectronIntegral")
         { }
 

@@ -14,8 +14,8 @@ BasisSetShell::BasisSetShell(const BasisSetShell & bshell,
 
 BasisSetShell::BasisSetShell(const BasisShellBase & bshell,
                              double * alphaptr, double * coefptr, double * xyzptr,
-                             unsigned long id, 
-                             unsigned long center)
+                             ID_t id, 
+                             ID_t center)
     : BasisShellBase(bshell), id_(id), center_(center)
 {
     BasisShellBase::SetPtrs_(alphaptr, coefptr); 
@@ -23,12 +23,12 @@ BasisSetShell::BasisSetShell(const BasisShellBase & bshell,
 }
 
 
-unsigned long BasisSetShell::GetID(void) const noexcept
+ID_t BasisSetShell::GetID(void) const noexcept
 {
     return id_;
 }
 
-unsigned long BasisSetShell::GetCenter(void) const noexcept
+ID_t BasisSetShell::GetCenter(void) const noexcept
 {
     return center_;
 }

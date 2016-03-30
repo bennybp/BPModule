@@ -9,6 +9,7 @@
 #define BPMODULE_GUARD_MODULEMANAGER__MODULETREE_HPP_
 
 #include <map>
+#include "bpmodule/types.h"
 #include "bpmodule/modulemanager/ModuleTree_iterators.hpp"
 #include "bpmodule/modulemanager/ModuleInfo.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
@@ -32,13 +33,13 @@ struct ModuleTreeNode
     modulemanager::ModuleInfo minfo;      //!< The information for the module
     std::string output;                   //!< Output captured from the module
 
-    unsigned long id;                     //!< ID of the created module (also identifies this node)
+    ID_t id;                     //!< ID of the created module (also identifies this node)
     datastore::Wavefunction initial_wfn;  //!< Wavefunction this module started with
     datastore::Wavefunction final_wfn;    //!< Wavefunction this module ended with
 
     // tree stuff
-    unsigned long parentid;               //!< ID of the parent tree node
-    std::set<unsigned long> children;     //!< ID of the children of this node
+    ID_t parentid;               //!< ID of the parent tree node
+    std::set<ID_t> children;     //!< ID of the children of this node
 };
 
 
@@ -52,7 +53,7 @@ struct ModuleTreeNode
 class ModuleTree
 {
     private:
-        std::map<unsigned long, ModuleTreeNode> data_;
+        std::map<ID_t, ModuleTreeNode> data_;
 
 
     public:
@@ -77,12 +78,12 @@ class ModuleTree
          *        parent node doesn't exist or if the id is
          *        not unique
          */
-        void Insert(ModuleTreeNode && node, unsigned long parent);
+        void Insert(ModuleTreeNode && node, ID_t parent);
 
 
         /*! \brief Query to see if the tree has a node with an ID
          */ 
-        bool HasID(unsigned long id) const;
+        bool HasID(ID_t id) const;
 
 
         /*! \brief Obtain a node by its ID
@@ -93,7 +94,7 @@ class ModuleTree
          * \throw bpmodule::exception::ModuleManagerException if
          *        a node with that ID doesn't exist
          */
-        const ModuleTreeNode & GetByID(unsigned long id) const;
+        const ModuleTreeNode & GetByID(ID_t id) const;
 
 
         /*! \brief Obtain a node by its ID
@@ -104,7 +105,7 @@ class ModuleTree
          * \throw bpmodule::exception::ModuleManagerException if
          *        a node with that ID doesn't exist
          */
-        ModuleTreeNode & GetByID(unsigned long id);
+        ModuleTreeNode & GetByID(ID_t id);
 
 
         /*! \brief Get the number of nodes in the tree */
@@ -118,7 +119,7 @@ class ModuleTree
          *
          * \param [in] startid ID to use as the base of the tree
          */
-        const_iterator Begin(unsigned long startid) const; 
+        const_iterator Begin(ID_t startid) const; 
 
 
         /*! \brief Ending point of depth-first iteration */

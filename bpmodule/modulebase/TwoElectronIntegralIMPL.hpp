@@ -22,7 +22,7 @@ class TwoElectronIntegralIMPL : public ModuleBase
     public:
         typedef TwoElectronIntegralIMPL BaseType;
 
-        TwoElectronIntegralIMPL(unsigned long id)
+        TwoElectronIntegralIMPL(ID_t id)
             : ModuleBase(id, "TwoElectronIntegralIMPL")
         { }
 

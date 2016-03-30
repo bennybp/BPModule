@@ -17,9 +17,9 @@ namespace modulemanager {
 ///////////////////////////////////////
 // Module Tree
 ///////////////////////////////////////
-void ModuleTree::Insert(ModuleTreeNode && node, unsigned long parentid)
+void ModuleTree::Insert(ModuleTreeNode && node, ID_t parentid)
 {
-    unsigned long mid = node.id;
+    ID_t mid = node.id;
     bool hasparent = (parentid > 0);
 
     if(HasID(mid))
@@ -36,20 +36,20 @@ void ModuleTree::Insert(ModuleTreeNode && node, unsigned long parentid)
 }
 
 
-bool ModuleTree::HasID(unsigned long id) const
+bool ModuleTree::HasID(ID_t id) const
 {
     return data_.count(id);
 }
 
 
-const ModuleTreeNode & ModuleTree::GetByID(unsigned long id) const
+const ModuleTreeNode & ModuleTree::GetByID(ID_t id) const
 {
     if(!HasID(id))
         throw ModuleManagerException("Module with this ID doesn't exist", "id", id);
     return data_.at(id);
 }
 
-ModuleTreeNode & ModuleTree::GetByID(unsigned long id)
+ModuleTreeNode & ModuleTree::GetByID(ID_t id)
 {
     if(!HasID(id))
         throw ModuleManagerException("Module with this ID doesn't exist", "id", id);
@@ -62,7 +62,7 @@ size_t ModuleTree::Size(void) const
     return data_.size();
 }
 
-ModuleTree::const_iterator ModuleTree::Begin(unsigned long startid) const
+ModuleTree::const_iterator ModuleTree::Begin(ID_t startid) const
 {   
     if(!HasID(startid))
         throw ModuleManagerException("Module with this ID doesn't exist", "startid", startid);

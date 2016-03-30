@@ -20,11 +20,11 @@ namespace modulebase {
 class CLASSNAME : public ModuleBase
 {
     public:
-        CLASSNAME(unsigned long id)
+        CLASSNAME(ID_t id)
             : ModuleBase(id)
         { }
 
-        CLASSNAME(PyObject * self, unsigned long id)
+        CLASSNAME(PyObject * self, ID_t id)
             : ModuleBase(self, id)
         { }
 

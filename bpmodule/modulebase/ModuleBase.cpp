@@ -21,7 +21,7 @@ namespace bpmodule {
 namespace modulebase {
 
 
-ModuleBase::ModuleBase(unsigned long id, const char * modtype)
+ModuleBase::ModuleBase(ID_t id, const char * modtype)
     : tbts_(std::cout.rdbuf(), nullptr),  // by default, go to cout only
       out(&tbts_),
       id_(id), modtype_(modtype), mlocator_(nullptr), treenode_(nullptr)
@@ -44,7 +44,7 @@ ModuleBase::~ModuleBase()
 /////////////////////////////
 // Basic Info
 /////////////////////////////
-unsigned long ModuleBase::ID(void) const noexcept
+ID_t ModuleBase::ID(void) const noexcept
 {
     return id_;
 }

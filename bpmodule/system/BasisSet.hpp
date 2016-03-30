@@ -41,7 +41,7 @@ class BasisSet
         int MaxNFunctions(void) const;
 
         void AddShell(const BasisShellInfo & bshell,
-                      unsigned long center,
+                      ID_t center,
                       const CoordType & xyz);
 
 
@@ -58,7 +58,7 @@ class BasisSet
         const_iterator end(void) const;
 
     private:
-        unsigned long curid_;
+        ID_t curid_;
         std::vector<BasisSetShell> shells_;
         std::vector<size_t> unique_shells_;
         std::vector<double> storage_; // storage for alpha and coef
@@ -75,8 +75,8 @@ class BasisSet
         size_t alpha_pos_;
         size_t coef_pos_;
 
-        void AddShell_(const BasisShellBase & bshell, unsigned long id,
-                       unsigned long center, const CoordType & xyz);
+        void AddShell_(const BasisShellBase & bshell, ID_t id,
+                       ID_t center, const CoordType & xyz);
         void AddShell_(const BasisSetShell & bshell);
 
         bool IsUniqueShell_(size_t i) const;

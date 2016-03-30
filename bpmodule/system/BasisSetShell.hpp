@@ -1,6 +1,7 @@
 #ifndef BPMODULE_GUARD_SYSTEM__BASISSETSHELL_HPP_
 #define BPMODULE_GUARD_SYSTEM__BASISSETSHELL_HPP_
 
+#include "bpmodule/types.h"
 #include "bpmodule/system/BasisShellBase.hpp"
 #include "bpmodule/system/CoordType.hpp"
 
@@ -17,7 +18,7 @@ class BasisSetShell : public BasisShellBase
 
         BasisSetShell(const BasisShellBase & bshell,
                       double * alphaptr, double * coefptr, double * xyzptr,
-                      unsigned long id, unsigned long center);
+                      ID_t id, ID_t center);
 
 
         // compiler generated ok
@@ -26,8 +27,8 @@ class BasisSetShell : public BasisShellBase
         BasisSetShell & operator=(const BasisSetShell & rhs) = default;
         BasisSetShell & operator=(BasisSetShell && rhs)      = default;
         
-        unsigned long GetID(void) const noexcept;
-        unsigned long GetCenter(void) const noexcept;
+        ID_t GetID(void) const noexcept;
+        ID_t GetCenter(void) const noexcept;
         CoordType GetCoords(void) const;
 
 
@@ -41,8 +42,8 @@ class BasisSetShell : public BasisShellBase
 
 
     private:
-        unsigned long id_;          //!< Unique id for this shell
-        unsigned long center_;      //!< ID of the center
+        ID_t id_;          //!< Unique id for this shell
+        ID_t center_;      //!< ID of the center
         double * xyz_;              //!< XYZ coordindates of this center
     
 };
