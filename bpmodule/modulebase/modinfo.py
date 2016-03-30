@@ -9,7 +9,7 @@ minfo = {
        "authors"     : [],
        "refs"        : [],
        "options"     : {},
-    }
+    },
     "SystemFragmenter" :
     {
        "type"        : "core",
