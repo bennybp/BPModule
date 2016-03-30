@@ -12,6 +12,8 @@
 #include "bpmodule/datastore/OptionMap.hpp"
 
 
+// This is needed for the member data of
+// the wavefunction struct
 PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
 
 using bpmodule::system::System;
