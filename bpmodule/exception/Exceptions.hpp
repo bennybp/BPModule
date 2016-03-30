@@ -262,6 +262,16 @@ class SystemException : public GeneralException
 
 
 /*! \brief An exception thrown when there is a problem with
+ *         serialization/unserialization
+ */
+class SerializationException : public GeneralException
+{
+    public:
+        using GeneralException::GeneralException;
+};
+
+
+/*! \brief An exception thrown when there is a problem with
  *         options
  */
 class OptionException : public GeneralException
