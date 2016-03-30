@@ -10,6 +10,7 @@
 
 #include <string>
 
+#include "bpmodule/types.h"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/modulemanager/ModuleManager.hpp"
 #include "bpmodule/output/OutputStream.hpp"
@@ -51,7 +52,7 @@ class ModuleBase
 
         /*! \brief Constructor
          */
-        ModuleBase(unsigned long id, const char * modtype);
+        ModuleBase(ID_t id, const char * modtype);
 
 
         virtual ~ModuleBase();
@@ -66,7 +67,7 @@ class ModuleBase
          *
          * \exnothrow
          */
-        unsigned long ID(void) const noexcept;
+        ID_t ID(void) const noexcept;
 
 
         /*! \brief Get the key of this module
@@ -129,14 +130,14 @@ class ModuleBase
 
 
 
-        /*! \brief Return a pointer to my node on the graph
+        /*! \brief Return a pointer to my node on the module tree
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        const datastore::ModuleGraphNode * MyNode(void) const;
+        const modulemanager::ModuleTreeNode & MyNode(void) const;
 
 
-        /*! \brief Get the wavefunction from this module's graph node
+        /*! \brief Get the wavefunction from this module's tree node
          *
          * \throw std::logic_error if there is a severe developer error
          */
@@ -146,7 +147,7 @@ class ModuleBase
         void SetWfn(const datastore::Wavefunction& Wfn);
 
 
-        /*! \brief Get the output from this module's graph node
+        /*! \brief Get the output from this module's tree node
          */
         std::string GetOutput(void) const; 
 
@@ -292,7 +293,7 @@ class ModuleBase
 
 
 
-        /*! \brief Get the wavefunction for this graph node
+        /*! \brief Get the wavefunction for this tree node
          *
          * \throw std::logic_error if there is a severe developer error
          */
@@ -310,7 +311,7 @@ class ModuleBase
 
 
         //! The unique ID of this module
-        const unsigned long id_;
+        const ID_t id_;
 
 
         //! The type of module this is
@@ -320,8 +321,8 @@ class ModuleBase
         //! The ModuleManager in charge of this module
         modulemanager::ModuleManager * mlocator_;
 
-        //! My graph node
-        datastore::ModuleGraphNode * graphnode_;
+        //! My tree node
+        modulemanager::ModuleTreeNode * treenode_;
 
         //! My cache
         datastore::CacheData * cache_;
@@ -330,54 +331,27 @@ class ModuleBase
         ////////////////////
         // Functions
         ////////////////////
-        //
-        /*! \brief Get all module information from the graph node
-         *
-         * \throw std::logic_error if there is a severe developer error
-         */
-        modulemanager::ModuleInfo & MInfo_(void);
-
-
-        /*! \brief Get all module information from the graph node
-         *
-         * \throw std::logic_error if there is a severe developer error
-         */
-        const modulemanager::ModuleInfo & MInfo_(void) const;
-
 
         /*! \brief Set the mlocator_ pointer
          */
         void SetMManager_(modulemanager::ModuleManager * mloc) noexcept;
 
 
-        /*! \brief Set the graph node pointer
+        /*! \brief Set the tree node pointer
          */
-        void SetGraphNode_(datastore::ModuleGraphNode * node) noexcept;
+        void SetTreeNode_(modulemanager::ModuleTreeNode * node) noexcept;
 
 
-        /*! \brief Get the graph node pointer
+        /*! \brief Get the tree node pointer
+         * 
+         * non-const version is private
          */
-        datastore::ModuleGraphNode * GetGraphNode_(void) const noexcept;
+        modulemanager::ModuleTreeNode & MyNode(void);
 
 
         /*! \brief Set the cache object to use
          */
         void SetCache_(datastore::CacheData * cache) noexcept;
-
-
-        /*! \brief Get all module information stored on the graph
-         *
-         * \throw std::logic_error if it hasn't been set
-         */
-        datastore::ModuleGraphNodeData & GraphData(void);
-
-
-        /*! \brief Get all module information stored on the graph
-         *
-         * \throw std::logic_error if it hasn't been set
-         */
-        const datastore::ModuleGraphNodeData & GraphData(void) const;
-
 };
 
 /*! \brief Forward some protected functions so that python

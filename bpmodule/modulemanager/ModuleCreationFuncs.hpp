@@ -10,6 +10,7 @@
 
 #include <functional>
 
+#include "bpmodule/types.h"
 #include "bpmodule/modulemanager/ModuleIMPLHolder.hpp"
 #include "bpmodule/python/Call.hpp"
 
@@ -30,7 +31,7 @@ class ModuleCreationFuncs
 {
     public:
         //! Creation function for a single module
-        typedef std::function<detail::ModuleIMPLHolder * (unsigned long)> Func;
+        typedef std::function<detail::ModuleIMPLHolder * (ID_t)> Func;
 
 
         /////////////////////////////////////////////////////////////
@@ -117,7 +118,7 @@ class ModuleCreationFuncs
         template<typename T>
         static
         detail::ModuleIMPLHolder *
-        CppConstructorWrapper_(unsigned long id)
+        CppConstructorWrapper_(ID_t id)
         {
             // T::BaseType is the module base type (ie, TwoElectronIntegral, etc)
             // defined in the base type class.
@@ -133,7 +134,7 @@ class ModuleCreationFuncs
          */ 
         static
         detail::ModuleIMPLHolder *
-        PyConstructorWrapper_(const pybind11::object & cls, unsigned long id)
+        PyConstructorWrapper_(const pybind11::object & cls, ID_t id)
         {
             pybind11::object o = python::CallPyFunc<pybind11::object>(cls, id);
             return new detail::PyModuleIMPLHolder(std::move(o));

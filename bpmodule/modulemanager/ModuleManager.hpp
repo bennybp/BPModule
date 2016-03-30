@@ -10,10 +10,10 @@
 
 #include <atomic>
 
-#include "bpmodule/datastore/ModuleGraph.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
+#include "bpmodule/modulemanager/ModuleTree.hpp"
 #include "bpmodule/modulemanager/ModulePtr.hpp"
 
 
@@ -157,7 +157,7 @@ class ModuleManager
          * \return A wrapped C++ object of the requested type
          */
         template<typename T>
-        ModulePtr<T> GetModule(const std::string & modulekey, unsigned long parentid)
+        ModulePtr<T> GetModule(const std::string & modulekey, ID_t parentid)
         {
             // may throw
             std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(modulekey, parentid);
@@ -187,7 +187,7 @@ class ModuleManager
          *
          * \return The module wrapped in a python object
          */
-        pybind11::object GetModulePy(const std::string & modulekey, unsigned long parentid);
+        pybind11::object GetModulePy(const std::string & modulekey, ID_t parentid);
 
 
 
@@ -204,12 +204,6 @@ class ModuleManager
         /*! \brief Change an option via python
          */
         void ChangeOptionPy(const std::string & modulekey, const std::string & optkey, const pybind11::object & value);
-
-
-
-        /*! \brief Return the graph in DOT format
-         */ 
-        std::string DotGraph(void) const;
 
 
 
@@ -241,6 +235,16 @@ class ModuleManager
          */
         void EnableDebugAll(bool debug) noexcept; 
 
+
+        /*! \brief Begin iterating over the module tree
+         */
+        ModuleTree::const_iterator TreeBegin(ID_t startid) const;
+
+        ModuleTree::const_iterator TreeEnd(void) const;
+
+        ModuleTree::const_flat_iterator FlatTreeBegin(void) const;
+
+        ModuleTree::const_flat_iterator FlatTreeEnd(void) const;
 
 
     private:
@@ -277,22 +281,13 @@ class ModuleManager
         bool debugall_;
 
 
-        /*! \brief Map for storing created module information
-         *
-         * \todo will be replaced by a pointer to the graph
+        /*! \brief Tree for storing created module information
          */
-        datastore::ModuleGraph mgraph_;
-
-
-        /*! \brief Map of module ID to graph nodes
-         *
-         * \todo replace with something?
-         */
-        std::map<unsigned long, datastore::ModuleGraphNode> mgraphmap_;
+        ModuleTree mtree_;
 
 
         //! The id to assign to the next created module
-        std::atomic<unsigned long> curid_;
+        std::atomic<ID_t> curid_;
 
 
         /*! \brief Map of cache data
@@ -358,7 +353,7 @@ class ModuleManager
          *
          */
         std::unique_ptr<detail::ModuleIMPLHolder>
-        CreateModule_(const std::string & modulekey, unsigned long parentid);
+        CreateModule_(const std::string & modulekey, ID_t parentid);
 
 };
 

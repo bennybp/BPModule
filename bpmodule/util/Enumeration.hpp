@@ -1,5 +1,5 @@
-#ifndef BPMODULE_UTIL_ENUMERATION_HPP_
-#define BPMODULE_UTIL_ENUMERATION_HPP_
+#ifndef BPMODULE_GUARD_UTIL__ENUMERATION_HPP_
+#define BPMODULE_GUARD_UTIL__ENUMERATION_HPP_
 #include <string>
 #include <set>
 namespace bpmodule{

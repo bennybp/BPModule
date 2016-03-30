@@ -31,10 +31,10 @@ def Run():
 
         time0 = perf_counter()
         for i in range(0, ntest):
-            molu.append(bp.system.CreateAtom(i, [ random.uniform(-1000, 1000), random.uniform(-1000, 1000), random.uniform(-1000, 1000) ], 6))
+            molu.Insert(bp.system.CreateAtom(i, [ random.uniform(-1000, 1000), random.uniform(-1000, 1000), random.uniform(-1000, 1000) ], 6))
         mol = bp.system.System(molu, True)
         time1 = perf_counter()
-        bp.output.GlobalOutput("NAtoms: {}\n".format(mol.NAtoms()))
+        bp.output.GlobalOutput("Size: {}\n".format(mol.Size()))
         bp.output.GlobalOutput("     Time to fill: {}\n".format(time1-time0))
 
 

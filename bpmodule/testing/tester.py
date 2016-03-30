@@ -32,24 +32,29 @@ class Tester:
     def Test(self, desc, expected, func, *args):
         """
         Syntax: Test(desc, expected, func, ...)
-        desc: The descrition of the test
-        expected: either True or False depending on 
-                  whether the function should pass
+        desc: The description of the test
+        expected: True if the function should pass, False if it should fail
         func(...): The function to call, all values following the function
                    name will be forwarded to the function
         """
-        failed = func(*args)
+
+        try:
+            success = func(*args)
+        except Exception as e:
+            GlobalDebug("Exception: {}\n".format(str(e)))
+            success = False
         
         fmt = "{:5} : {:<5}  {:<5}  {:<9}   : {}\n"
         
-        passed=(failed==expected)
+        passed=(success==expected)
         
         
-        GlobalOutput(fmt.format(self.ntest , expected , passed , "Success" if passed else "FAILED", desc))
+        GlobalOutput(fmt.format(self.ntest , expected , success , "Success" if passed else "FAILED", desc))
         if not passed:
             self.nfailed+=1
         
         self.ntest += 1
 
-       
+    def TestValue(self, desc, v1, v2):
+        self.Test(desc, True, lambda w1, w2: w1 == w2, v1, v2)
          

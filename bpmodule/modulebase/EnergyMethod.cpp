@@ -32,7 +32,7 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
         const AtomV_t& Atoms_;
         MM_t& MM_;
         std::string Key_;
-        unsigned long ID_;
+        ID_t ID_;
     public:
         //Base class operators are fine in all but two cases
         using Base_t::operator();
@@ -43,23 +43,28 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
         Return_t operator()(size_t i,const double& newcoord)const{
             AtomSetUniverse NewU;
             for(size_t j=0;j<Atoms_.size();++j){
-                NewU<<Atoms_[j];
-                if(j==(i-i%3)/3)NewU[j][i%3]=newcoord;
+                if(j==(i-i%3)/3) { //does this coord index belong to this atom?
+                    Atom atmp(Atoms_[j]);
+                    atmp[i%3]=newcoord;
+                    NewU<<atmp;
+                }
+                else
+                    NewU<<Atoms_[j];
             }
             Module_t NewModule=MM_.GetModule<EnergyMethod>(Key_,ID_);
-            NewModule->Wfn().system.Set(System(NewU,true));
+            NewModule->Wfn().system = std::make_shared<const System>(System(NewU,true));
             return NewModule->Deriv(Order_-1);
         }
         
         FDFunctor(size_t Order,const AtomV_t& Atoms,
-                  MM_t& MM,std::string Key,unsigned long ID):
+                  MM_t& MM,std::string Key,ID_t ID):
             Order_(Order),Atoms_(Atoms),MM_(MM),Key_(Key),ID_(ID){}
 };    
     
  
 Return_t EnergyMethod::Deriv_(size_t Order){
     //if(Order==0)//Throw error
-    const System& Mol=*Wfn().system;
+    const System& Mol=*(Wfn().system);
     std::vector<Atom> Atoms;
     std::vector<Return_t> TempDeriv;
     //I don't know why the fill constructor is not working...
@@ -71,7 +76,7 @@ Return_t EnergyMethod::Deriv_(size_t Order){
     math::CentralDiff<double,Return_t> FD(NewComm);
 
     FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),Key(),ID());
-    TempDeriv=FD.Run(Thing2Run,3*Mol.NAtoms(),0.02,3);
+    TempDeriv=FD.Run(Thing2Run,3*Mol.Size(),0.02,3);
     //Flatten the array & abuse fact that TempDeriv[0] is the first comp    
     for(size_t i=1;i<TempDeriv.size();++i)
        for(double j :  TempDeriv[i])

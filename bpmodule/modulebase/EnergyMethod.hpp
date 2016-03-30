@@ -34,7 +34,7 @@ class EnergyMethod : public ModuleBase
     public:
         typedef EnergyMethod BaseType;
         
-        EnergyMethod(unsigned long id): ModuleBase(id,"EnergyMethod"){ }
+        EnergyMethod(ID_t id): ModuleBase(id,"EnergyMethod"){ }
         
         ///The call users use
         std::vector<double> Deriv(size_t Order){

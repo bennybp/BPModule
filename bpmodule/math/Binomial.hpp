@@ -11,8 +11,8 @@
  * Created on March 17, 2016, 6:42 PM
  */
 
-#ifndef BINOMIAL_HPP
-#define BINOMIAL_HPP
+#ifndef BPMODULE_GUARD_MATH__BINOMIAL_HPP_
+#define BPMODULE_GUARD_MATH__BINOMIAL_HPP_
 
 #include <cstdlib>
 

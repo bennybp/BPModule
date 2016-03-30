@@ -7,6 +7,9 @@ set(BPMODULE_UTIL_FILES
             Filesystem.cpp
             export.cpp
 
+            Hash.cpp
+            Hasher.cpp
+
             vprintfcpp/Format.cpp
             vprintfcpp/Printf_wrap.cpp
    )

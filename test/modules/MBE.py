@@ -7,8 +7,7 @@ import traceback
 
 # Add the bpmodule path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "modules")
-bspath = os.path.join(os.path.dirname(thispath), "basis")
+bppath = os.path.join(os.path.dirname(thispath), "../", "modules")
 sys.path.insert(0, bppath)
 
 import bpmodule as bp
@@ -38,7 +37,7 @@ def Run(mm):
         """)
         mol = ApplyBasis(mol,"sto-3g")
         wfn=bp.datastore.Wavefunction()
-        wfn.system.Set(mol)
+        wfn.system=mol
         MyMod.SetWfn(wfn)
         MyMod.Options().Change("METHOD","SCF")
         print(MyMod.Deriv(0))

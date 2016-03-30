@@ -11,9 +11,9 @@
 using bpmodule::modulemanager::ModuleManager;
 using bpmodule::modulemanager::ModuleInfo;
 using bpmodule::datastore::Wavefunction;
-using bpmodule::datastore::ModuleGraphNodeData;
-using bpmodule::datastore::ModuleGraphNode;
+using bpmodule::modulemanager::ModuleTreeNode;
 using bpmodule::datastore::CacheData;
+using bpmodule::datastore::OptionMap;
 using bpmodule::exception::GeneralException;
 
 
@@ -21,10 +21,10 @@ namespace bpmodule {
 namespace modulebase {
 
 
-ModuleBase::ModuleBase(unsigned long id, const char * modtype)
+ModuleBase::ModuleBase(ID_t id, const char * modtype)
     : tbts_(std::cout.rdbuf(), nullptr),  // by default, go to cout only
       out(&tbts_),
-      id_(id), modtype_(modtype), mlocator_(nullptr), graphnode_(nullptr)
+      id_(id), modtype_(modtype), mlocator_(nullptr), treenode_(nullptr)
 {
     out.Debug("Constructed %? module [%?]\n", modtype, id);
 }
@@ -44,7 +44,7 @@ ModuleBase::~ModuleBase()
 /////////////////////////////
 // Basic Info
 /////////////////////////////
-unsigned long ModuleBase::ID(void) const noexcept
+ID_t ModuleBase::ID(void) const noexcept
 {
     return id_;
 }
@@ -52,19 +52,19 @@ unsigned long ModuleBase::ID(void) const noexcept
 
 std::string ModuleBase::Key(void) const 
 {
-    return GraphData().modulekey;
+    return MyNode().modulekey;
 }
 
 
 std::string ModuleBase::Name(void) const 
 {
-    return MInfo_().name;
+    return MyNode().minfo.name;
 }
 
 
 std::string ModuleBase::Version(void) const 
 {
-    return MInfo_().version;
+    return MyNode().minfo.version;
 }
 
 
@@ -73,20 +73,20 @@ std::string ModuleBase::ModuleType(void) const
     return modtype_;
 }
 
-const datastore::OptionMap & ModuleBase::Options(void) const
+const OptionMap & ModuleBase::Options(void) const
 {
-    return MInfo_().options;
+    return MyNode().minfo.options;
 }
 
-datastore::OptionMap & ModuleBase::Options(void)
+OptionMap & ModuleBase::Options(void)
 {
-    return MInfo_().options;
+    return MyNode().minfo.options;
 }
 
 
 void ModuleBase::Print(std::ostream & os) const
 {
-    MInfo_().Print(os);
+    MyNode().minfo.Print(os);
 }
 
 
@@ -100,18 +100,17 @@ bool ModuleBase::DebugEnabled(void) const noexcept
     return out.DebugEnabled();
 }
 
-const ModuleGraphNode * ModuleBase::MyNode(void) const
+const ModuleTreeNode & ModuleBase::MyNode(void) const
 {
-    if(mlocator_ == nullptr)
-        throw std::logic_error("Developer error - graphnode is null for a module!");
-
-    return graphnode_;
+    if(treenode_ == nullptr)
+        throw std::logic_error("Developer error - tree node is null for a module!");
+    return *treenode_;
 }
 
 
 std::string ModuleBase::GetOutput(void) const
 {
-    return GraphData().output;
+    return MyNode().output;
 }
 
 
@@ -126,34 +125,18 @@ ModuleManager & ModuleBase::MManager(void) const
     return *mlocator_;
 }
 
-const ModuleGraphNodeData & ModuleBase::GraphData(void) const
-{
-    if(graphnode_ == nullptr)
-        throw std::logic_error("Developer error - graphnode_ is null for a module!");
-
-    return *(*graphnode_);
-}
-
-ModuleGraphNodeData & ModuleBase::GraphData(void)
-{
-    if(graphnode_ == nullptr)
-        throw std::logic_error("Developer error - graphnode_ is null for a module!");
-
-    return *(*graphnode_);
-}
-
 const Wavefunction & ModuleBase::Wfn(void) const
 {
-    return GraphData().wfn;
+    return MyNode().initial_wfn;
 }
 
 Wavefunction & ModuleBase::Wfn(void)
 {
-    return GraphData().wfn;
+    return MyNode().initial_wfn;
 }
 
 void ModuleBase::SetWfn(const Wavefunction& wfn){
-    GraphData().wfn=wfn;
+    MyNode().initial_wfn=wfn;
 }
 
 pybind11::object ModuleBase::CreateChildModulePy(const std::string & key) const
@@ -174,39 +157,33 @@ CacheData & ModuleBase::Cache(void) const noexcept
 // Private functions
 ////////////////////////////////
 
-void ModuleBase::SetMManager_(modulemanager::ModuleManager * mloc) noexcept
+void ModuleBase::SetMManager_(ModuleManager * mloc) noexcept
 {
     mlocator_ = mloc;
 }
 
-void ModuleBase::SetGraphNode_(datastore::ModuleGraphNode * node) noexcept
+void ModuleBase::SetTreeNode_(ModuleTreeNode * node) noexcept
 {
-    graphnode_ = node;
+    if(node == nullptr)
+        throw std::logic_error("Developer error - module given a nullptr for tree node!");
 
-    // tee the output to the graph
-    tbts_.SetString(&(GraphData().output));
+    treenode_ = node;
+
+    // tee the output to the tree
+    tbts_.SetString(&(MyNode().output));
 }
 
-datastore::ModuleGraphNode * ModuleBase::GetGraphNode_(void) const noexcept
+ModuleTreeNode & ModuleBase::MyNode(void)
 {
-    return graphnode_;
+    if(treenode_ == nullptr)
+        throw std::logic_error("Developer error - tree node is null for a module!");
+    return *treenode_;
 }
 
-void ModuleBase::SetCache_(datastore::CacheData * cache) noexcept
+void ModuleBase::SetCache_(CacheData * cache) noexcept
 {
     cache_ = cache;
 }
-
-ModuleInfo & ModuleBase::MInfo_(void)
-{
-    return GraphData().minfo;
-}
-
-const ModuleInfo & ModuleBase::MInfo_(void) const
-{
-    return GraphData().minfo;
-}
-
 
 } // close namespace modulebase
 } // close namespace bpmodule

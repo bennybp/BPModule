@@ -36,12 +36,12 @@ def Run():
         MyUniverse=bp.math.StringSetUniverse()
         Alphabet="abcdefghijklmnopqrstuvwxyz"
         for i in list(Alphabet):
-           MyUniverse.append(i)
+           MyUniverse.Insert(i)
         MySets=[]
         MySets.append(bp.math.StringSet(MyUniverse, False))
         
         #Set 0 is just "a"
-        MySets[0].append("a")      
+        MySets[0].Insert("a")      
 
 
         #Set 1 is the rest of the alphabet (test complement)
@@ -49,11 +49,11 @@ def Run():
 
         #Set 2 is "abr" (tests copy)
         MySets.append(bp.math.StringSet(MySets[0]))
-        MySets[2].append("b")
-        MySets[2].append("r")
+        MySets[2].Insert("b")
+        MySets[2].Insert("r")
         
         #Set 3 is "br" (test intersection)
-        MySets.append(MySets[2].__div__(MySets[1]))
+        MySets.append(MySets[2] / MySets[1])
             
         #Set 4 is "a" (test set-difference)
         MySets.append(MySets[2]-MySets[1])

@@ -12,7 +12,6 @@ void Init(void)
     ///////////////////////////
     // Initialize matrix
     ///////////////////////////
-    El::Initialize(*(util::GetArgc()), *(util::GetArgv())); 
 }
 
 void Finalize(void)
@@ -20,7 +19,6 @@ void Finalize(void)
     ///////////////////////////
     // Finalize matrix
     ///////////////////////////
-    El::Finalize();
 }
 
 

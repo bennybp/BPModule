@@ -84,7 +84,7 @@ BasisSet & BasisSet::operator=(const BasisSet & rhs)
 
 
 void BasisSet::AddShell_(const BasisShellBase & bshell,
-                         unsigned long id, unsigned long center,
+                         ID_t id, ID_t center,
                          const CoordType & xyz)
 {
     // always have to add xyz, so we always have to check this
@@ -152,7 +152,7 @@ void BasisSet::AddShell_(const BasisSetShell & bshell)
 
 
 void BasisSet::AddShell(const BasisShellInfo & bshell,
-                        unsigned long center,
+                        ID_t center,
                         const CoordType & xyz)
 {
     AddShell_(bshell, curid_++, center, xyz);

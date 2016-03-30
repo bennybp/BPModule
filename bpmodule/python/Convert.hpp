@@ -19,24 +19,6 @@ namespace bpmodule {
 namespace python {
 
 
-/*! \brief Prevent some conversions
- */
-template<typename T>
-bool ValidConvert(const pybind11::object & obj)
-{
-    //! \todo Won't catch elements in lists, etc. Would have to override in pybind11?
-    std::string cls = GetPyClass(obj);
-    if(std::is_integral<T>::value && !std::is_same<bool,T>::value && cls != "int")
-        return false;
-    if(std::is_floating_point<T>::value && cls != "float")
-        return false;
-    if(std::is_same<T, bool>::value && cls != "bool")
-        return false;
-
-    return true;
-}
-
-
 
 /*! \brief Convert a python object to a C++ object
  *
@@ -53,11 +35,6 @@ T ConvertToCpp(const pybind11::object & obj)
     using bpmodule::exception::Assert;
 
     Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
-
-    if(!ValidConvert<T>(obj))
-        throw PythonConvertException("Cannot convert from python to C++: Incompatible types",
-                                     "fromtype", GetPyClass(obj), "totype", util::DemangleCppType<T>());
-
 
     try {
         return obj.cast<T>();

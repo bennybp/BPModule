@@ -4,6 +4,8 @@ set(BPMODULE_MODULEMANAGER_FILES
             ModuleIMPLHolder.cpp
             ModuleInfo.cpp
             ModuleManager.cpp
+            ModuleTree.cpp
+            ModuleTree_iterators.cpp
             export.cpp
    )
 

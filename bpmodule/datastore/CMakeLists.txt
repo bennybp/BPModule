@@ -1,12 +1,9 @@
 set(BPMODULE_DATASTORE_FILES
             CacheData.cpp
-            UIDPointer.cpp
-            RegisterUIDPointer.cpp
             OptionHolder.cpp
             OptionTypes.cpp
             OptionBase.cpp
             OptionMap.cpp
-            ModuleGraph.cpp
             export.cpp
    )
 

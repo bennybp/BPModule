@@ -115,7 +115,7 @@ def MakeSystem(SomeString):
 
     molu=bp.system.AtomSetUniverse()
     for i in DaAtoms["SYSTEM"]:
-        molu.append(i)
+        molu.Insert(i)
     DaSys=bp.system.System(molu,True)
     #DaSys.SetCharge(Charge[0])
     #DaSys.SetMultiplicity(Mult[0])

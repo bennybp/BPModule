@@ -50,7 +50,7 @@ PYBIND11_PLUGIN(modulebase)
     /////////////////////////
     pybind11::class_<Test_Base_Py> testbase(m, "Test_Base", mbase);
     testbase.alias<Test_Base>()
-            .def(pybind11::init<unsigned long>())
+            .def(pybind11::init<ID_t>())
             .def_readonly("out", &Test_Base_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &Test_Base_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("RunTest", &Test_Base::RunTest)
@@ -65,7 +65,7 @@ PYBIND11_PLUGIN(modulebase)
     /////////////////////////
     pybind11::class_<SystemFragmenter_Py> sysfrag(m, "SystemFragmenter", mbase);
     sysfrag.alias<SystemFragmenter>()
-            .def(pybind11::init<unsigned long>())
+            .def(pybind11::init<ID_t>())
             .def_readonly("out", &SystemFragmenter_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &SystemFragmenter_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("Fragmentize", &SystemFragmenter::Fragmentize)
@@ -78,7 +78,7 @@ PYBIND11_PLUGIN(modulebase)
     //! \todo Don't know about from Calculate to python
     pybind11::class_<OneElectronIntegralIMPL_Py> oneelimpl(m, "OneElectronIntegralIMPL", mbase);
     oneelimpl.alias<OneElectronIntegralIMPL>()
-            .def(pybind11::init<unsigned long>())
+            .def(pybind11::init<ID_t>())
             .def_readonly("out", &OneElectronIntegralIMPL_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &OneElectronIntegralIMPL_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("SetBases", &OneElectronIntegralIMPL::SetBases)
@@ -94,7 +94,7 @@ PYBIND11_PLUGIN(modulebase)
     register_ptr_to_python<boost::shared_ptr<OneElectronIntegral>>();
 
     //! \todo Don't know about from Calculate to python
-    class_<OneElectronIntegral, bases<ModuleBase>, boost::noncopyable>("OneElectronIntegral", init<PyObject *, unsigned long>())
+    class_<OneElectronIntegral, bases<ModuleBase>, boost::noncopyable>("OneElectronIntegral", init<PyObject *, ID_t>())
     .def("SetBases", &OneElectronIntegral::SetBases)
     .def("Calculate", &OneElectronIntegral::Calculate)
     .def("GetIntegralCount", &OneElectronIntegral::GetIntegralCount)
@@ -107,7 +107,7 @@ PYBIND11_PLUGIN(modulebase)
     /////////////////////////
     pybind11::class_<TwoElectronIntegralIMPL_Py> twoelimpl(m, "TwoElectronIntegralIMPL", mbase);
     twoelimpl.alias<TwoElectronIntegralIMPL>()
-            .def(pybind11::init<unsigned long>())
+            .def(pybind11::init<ID_t>())
             .def_readonly("out", &TwoElectronIntegralIMPL_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &TwoElectronIntegralIMPL_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
@@ -122,7 +122,7 @@ PYBIND11_PLUGIN(modulebase)
     /////////////////////////
     register_ptr_to_python<boost::shared_ptr<TwoElectronIntegral>>();
 
-    class_<TwoElectronIntegral, bases<ModuleBase>, boost::noncopyable>("TwoElectronIntegral", init<PyObject *, unsigned long>())
+    class_<TwoElectronIntegral, bases<ModuleBase>, boost::noncopyable>("TwoElectronIntegral", init<PyObject *, ID_t>())
     .def("SetBases", &TwoElectronIntegral::SetBases)
     .def("Calculate", &TwoElectronIntegral::Calculate)
     .def("GetIntegralCount", &TwoElectronIntegral::GetIntegralCount)
@@ -135,7 +135,7 @@ PYBIND11_PLUGIN(modulebase)
 
     pybind11::class_<EnergyMethod_Py> energymethod(m, "EnergyMethod", mbase);
     energymethod.alias<EnergyMethod>()
-            .def(pybind11::init<unsigned long>())
+            .def(pybind11::init<ID_t>())
             .def_readonly("out", &EnergyMethod_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &EnergyMethod_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("Deriv", &EnergyMethod::Deriv)

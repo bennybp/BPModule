@@ -48,6 +48,16 @@ PYBIND11_PLUGIN(math)
     .def("GetCoords", &Point::GetCoords)
     .def("SetCoords", static_cast<void (Point::*)(double, double, double)>(&Point::SetCoords))
     .def("SetCoords", static_cast<void (Point::*)(const Point::CoordType &)>(&Point::SetCoords))
+    .def("__getitem__", [](const Point & p, size_t i) {
+                             if (i >= 3)
+                                 throw pybind11::index_error();
+                             return p[i];
+                        })
+    .def("__setitem__", [](Point &p, size_t i, double v) {
+                             if (i >= 3)
+                                 throw pybind11::index_error();
+                             p[i] = v;
+                        })
     ;
     
 

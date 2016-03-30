@@ -8,14 +8,15 @@
 #include "bpmodule/python/Pybind11_stl.hpp"
 #include "bpmodule/python/Pybind11_functional.hpp"
 #include "bpmodule/python/Pybind11_operators.hpp"
+#include "bpmodule/python/Pybind11_iterators.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/system/AMConvert.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/system/System.hpp"
 #include "bpmodule/system/BasisSet.hpp"
-#include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/math/RegisterMathSet.hpp"
+
 
 
 namespace bpmodule {
@@ -38,7 +39,6 @@ PYBIND11_PLUGIN(system)
     // Basis set
     ///////////////
 
-    datastore::RegisterUIDPointer<BasisSet>(m, "BasisSet");
 
     // Enumeration for basis set shell types
     pybind11::enum_<ShellType>(m, "ShellType")
@@ -121,8 +121,6 @@ PYBIND11_PLUGIN(system)
     ////////////////////
     // System, etc
     ////////////////////
-    datastore::RegisterUIDPointer<System>(m, "System");
-
 
     pybind11::class_<IsotopeData>(m, "IsotopeData")
     .def_readonly("isonum", &IsotopeData::isonum)
@@ -194,7 +192,6 @@ PYBIND11_PLUGIN(system)
     .def("GetShells", &Atom::GetShells)
     .def("SetShells", &Atom::SetShells)
     .def("AddShell", &Atom::AddShell)
-    .def("__getitem__", &Atom::GetCoord)
     .def(pybind11::self == pybind11::self)
     ;
    
@@ -210,28 +207,16 @@ PYBIND11_PLUGIN(system)
     math::RegisterUniverse<AtomSetUniverse>(m, "AtomSetUniverse");
 
     
-    struct PySystemItr{
-        const System& Sys_;
-        System::const_iterator Itr_;
-        pybind11::object ref_;
-        PySystemItr(const System& Sys, pybind11::object ref):
-            Sys_(Sys),Itr_(Sys.begin()),ref_(ref){}
-        Atom next(){
-            if(Itr_==Sys_.end())
-                throw pybind11::stop_iteration();
-            return *(Itr_++);
-        }
-    
-    };
-    
-    
     // Main system class 
-    pybind11::class_<System>(m,"System")
+    python::RegisterPyCopyIterator<System>(m, "System");
+
+    pybind11::class_<System, std::shared_ptr<System>>(m,"System")
     .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
     .def(pybind11::init<const System &>())
-    .def("NAtoms",&System::NAtoms)
-    .def("HasAtom", &System::HasAtom)
-    .def("GetAtom", &System::GetAtom)
+    .def("Size",&System::Size)
+    .def("Contains", &System::Contains)
+    .def("Insert", static_cast<System &(System::*)(const Atom &)>(&System::Insert),
+                   pybind11::return_value_policy::reference)
     .def("GetCharge",&System::GetCharge)
     .def("GetNElectrons",&System::GetNElectrons)
     .def("GetBasisSet", &System::GetBasisSet)
@@ -239,26 +224,42 @@ PYBIND11_PLUGIN(system)
     .def("Rotate", &System::Rotate<std::array<double, 9>>)
     .def("CenterOfMass", &System::CenterOfMass)
     .def("CenterOfNuclearCharge", &System::CenterOfNuclearCharge)
-    .def("Transform", &System::Transform)
-    .def("Insert", &System::Insert)
-    .def("Partition", &System::Partition)
-    .def("Complement", &System::Complement)
-    .def("Intersection", &System::Intersection)
-    .def("Union", &System::Union)
-    .def("Difference", &System::Difference)
     .def("Print", &System::Print)
     .def("ToString", &System::ToString)
-    .def("__str__", &System::ToString)
-    .def("__len__",&System::NAtoms)
-    .def("__iter__",
-         [](pybind11::object s){return PySystemItr(s.cast<const System&>(),s);})
+    .def("UnionAssign", &System::UnionAssign, pybind11::return_value_policy::reference)
+    .def("Union", &System::Union)
+    .def("IntersectionAssign", &System::IntersectionAssign, pybind11::return_value_policy::reference)
+    .def("Intersection", &System::Intersection)
+    .def("DifferenceAssign", &System::DifferenceAssign, pybind11::return_value_policy::reference)
+    .def("Difference", &System::Difference)
+    .def("Complement", &System::Complement)
+    .def("IsProperSubsetOf", &System::IsProperSubsetOf)
+    .def("IsSubsetOf", &System::IsSubsetOf)
+    .def("IsProperSupersetOf", &System::IsProperSupersetOf)
+    .def("IsSupersetOf", &System::IsSupersetOf)
+    .def("Transform", &System::Transform)
+    .def("Partition", &System::Partition)
+    .def(pybind11::self += pybind11::self, pybind11::return_value_policy::reference)
+    .def(pybind11::self + pybind11::self)
+    .def(pybind11::self -= pybind11::self, pybind11::return_value_policy::reference)
+    .def(pybind11::self - pybind11::self)
+    .def(pybind11::self /= pybind11::self, pybind11::return_value_policy::reference)
+    .def(pybind11::self / pybind11::self)
+    .def(pybind11::self >= pybind11::self)
+    .def(pybind11::self > pybind11::self)
+    .def(pybind11::self <= pybind11::self)
+    .def(pybind11::self < pybind11::self)
+    .def(pybind11::self == pybind11::self)
+    .def("__len__",         &System::Size)
+    .def("__contains__",    &System::Contains)
+    .def("__str__",&System::ToString)
+    .def("__iter__", [](pybind11::object obj)
+            {
+                const System & cont = obj.cast<const System &>();
+                return python::PyCopyIterator<System>(cont, cont.begin(), obj);
+            })
     ;
 
-    pybind11::class_<PySystemItr>(m,"Iterator")
-       .def("__iter__",[](PySystemItr &it)->PySystemItr&{return it;})
-       .def("__next__",&PySystemItr::next)
-    ;
-       
     return m.ptr();
 }
 

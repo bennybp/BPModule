@@ -24,7 +24,7 @@ class Test_Base : public ModuleBase
         typedef Test_Base BaseType;
 
 
-        Test_Base(unsigned long id)
+        Test_Base(ID_t id)
             : ModuleBase(id, "Test_Base")
         { }
 

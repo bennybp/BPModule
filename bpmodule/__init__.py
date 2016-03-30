@@ -28,8 +28,8 @@ from . import python
 from . import math
 
 from . import tensor
-from . import datastore
 from . import system
+from . import datastore
 from . import modulebase
 from . import modulemanager
 

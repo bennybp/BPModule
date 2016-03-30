@@ -7,17 +7,17 @@
 #include "bpmodule/python/Pybind11_functional.hpp"
 #include "bpmodule/python/Pybind11_stl.hpp"
 
-#include "bpmodule/datastore/RegisterUIDPointer.hpp"
 #include "bpmodule/datastore/CacheData.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/datastore/OptionMap.hpp"
-#include "bpmodule/datastore/ModuleGraph.hpp"
 
 
+// This is needed for the member data of
+// the wavefunction struct
+PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
 
 using bpmodule::system::System;
 using bpmodule::datastore::Wavefunction;
-using bpmodule::tensor::DistMatrixD;
 
 
 namespace bpmodule {
@@ -37,26 +37,10 @@ static void RegisterOptionHolder(pybind11::module & m, pybind11::class_<OptionBa
     ;
 }
 
-std::string Graph_PrintDot_Wrap(const ModuleGraph & g)
-{
-    std::stringstream ss;
-    ss << g;
-    return ss.str();
-}
-
-
-
 
 PYBIND11_PLUGIN(datastore)
 {
     pybind11::module m("datastore", "Data storage classes");
-
-
-    //////////////////
-    // UIDPointer
-    //////////////////
-    m.def("MakeUIDPointer", MakeUIDPointerPy);
-
 
 
     //////////////////
@@ -145,18 +129,8 @@ PYBIND11_PLUGIN(datastore)
     .def(pybind11::init<>())
     .def("UniqueString", &Wavefunction::UniqueString)
     .def_readwrite("system", &Wavefunction::system)
-    .def_readwrite("cmat", &Wavefunction::cmat)
-    .def_readwrite("epsilon", &Wavefunction::epsilon)
     ;
   
-
-    ////////////////////////////////////////
-    // Graph
-    ////////////////////////////////////////
-    pybind11::class_<ModuleGraph>(m, "ModuleGraph")
-    .def("NNodes", &ModuleGraph::NNodes)
-    .def("NEdges", static_cast<size_t (ModuleGraph::*)(void) const>(&ModuleGraph::NEdges))
-    ;
 
     ////////////////////////////////////////
     // CacheData
