@@ -18,6 +18,21 @@ namespace modulebase {
  */
 class SystemFragmenter : public ModuleBase
 {
+    private:
+    /** \brief Function for taking all unions of a set of fragments
+     * 
+     *   For a lot of methods that depend on fragments you need to consider
+     *   pairs of fragments, triples of fragments, etc.  This function takes
+     *   a SystemMap of fragments and takes all N-way unions of them.  Optionally,
+     *   distance cut-offs may be applied to screen fragments.  This is applied as
+     *   follows, for each fragment in the N-mer the
+     * 
+     *   \param[in] Frags The monomers we want the unions of
+     *   \param[in] N How many ways the union is
+     *   \param[in] Dist The maximum distance 
+     */
+        system::SystemMap MakeNMers(const system::SystemMap& Frags, 
+                                     size_t N,double Dist);
     public:
         typedef SystemFragmenter BaseType;
 
@@ -28,11 +43,13 @@ class SystemFragmenter : public ModuleBase
 
 
         /*! \brief Fragment the system
+         * 
+         *   This function automatically takes care of creating unions
+         *   of fragments, if the user requested them.  This is
+         *   handy for automation such as that seen in MBE using
+         *   MIM.
          */
-        system::SystemMap Fragmentize(const system::System & mol)
-        {
-            return ModuleBase::CallFunction(&SystemFragmenter::Fragmentize_, mol);
-        }
+        system::SystemMap Fragmentize(const system::System & mol);
 
 
         /////////////////////////////////////////
@@ -40,6 +57,10 @@ class SystemFragmenter : public ModuleBase
         /////////////////////////////////////////
         /*! \copydoc Fragmentize
          * 
+         *   This function should produce the fundamental fragments.
+         *   Creation of the n-mers (unions of fragments taken n at a time)
+         *   will be handled automatically by the Fragmentize function
+         *    if requested)
          * \note To be implemented by derived classes
          */ 
         virtual system::SystemMap Fragmentize_(const system::System & mol) = 0;
@@ -59,20 +80,6 @@ class SystemFragmenter_Py : public SystemFragmenter
         }
 
 };
-
-/** \brief Function for taking all unions of a set of fragments
- * 
- *   For a lot of methods that depend on fragments you need to consider
- *   pairs of fragments, triples of fragments, etc.  This function takes
- *   a SystemMap of fragments and takes all N-way unions of them.  Optionally,
- *   distance cut-offs may be applied to screen fragments.  This is applied as
- *   follows, for each fragment in the N-mer the
- * 
- *   \param[in] Frags The monomers we want the unions of
- *   \param[in] N How many ways the union is
- *   \param[in] Dist The maximum distance 
- */
-system::SystemMap MakeNMers(const system::SystemMap& Frags, size_t N,double Dist);
 
 } // close namespace modulebase
 } // close namespace bpmodule

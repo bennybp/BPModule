@@ -19,6 +19,7 @@ def ApplyBasis(syst,bsname,bslabel="primary",bstype=bp.system.ShellType.Gaussian
 def Run(mm):
     try:
         mm.LoadModule("Methods","MBE","MBE")
+        mm.LoadModule("Methods","MIM","MIM")
         mm.LoadModule("Methods","SCF","SCF")
         mm.LoadModule("SystemFragmenters","Bondizer","FRAG")
 

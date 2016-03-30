@@ -4,25 +4,46 @@
  * and open the template in the editor.
  */
 
-#include "bpmodule/system/System.hpp"
-#include "bpmodule/math/Point.hpp"
+#include<limits>//for max of double
+#include "bpmodule/modulebase/SystemFragmenter.hpp"
+#include "bpmodule/datastore/OptionMap.hpp"
 #include "bpmodule/math/CombItr.hpp"
+#include "bpmodule/math/Point.hpp"
 
-
-
-using bpmodule::system::SystemMap;
+using bpmodule::datastore::OptionMap;
 using bpmodule::system::System;
+using bpmodule::system::SystemMap;
 using bpmodule::math::Point;
 typedef typename SystemMap::value_type Frag_t;
 
 namespace bpmodule{
-namespace system{        
+namespace modulebase{
 
-SystemMap MakeNMers(const SystemMap& Frags, size_t N, double Dist){
+SystemMap SystemFragmenter::Fragmentize(const System & mol){
+    const OptionMap& DaOptions=Options();
+    size_t N=2;//DaOptions.Get<size_t>("TRUNCATION_ORDER");
+    std::map<size_t,double> Truncs;//=
+        //DaOptions.Get<std::map<size_t,double>>("DISTANCE_THRESHOLDS");
+    SystemMap Frags=
+            ModuleBase::CallFunction(&SystemFragmenter::Fragmentize_, mol);
+    SystemMap NMers=Frags;
+    for(size_t n=2;n<=N;++n){
+        //Defaults to about 1e308 a.u., or about 1e271 times the size of
+        //the observable universe...I think that is equivalent to no cut-off
+        double dist=(Truncs.count(n)==1?
+                     Truncs.at(n):std::numeric_limits<double>::max());
+        SystemMap Temp=MakeNMers(Frags,n,dist);
+        NMers.insert(Temp.begin(),Temp.end());
+    }
+    return NMers;
+}
+    
+SystemMap SystemFragmenter::MakeNMers(const SystemMap& Frags, 
+                                      size_t N, double Dist){
     SystemMap NMers;
     //Make sure we work in two stupid scenarios i.e. N==0 or 1
-    if(N==0)return NMers;
-    if(N==1)return Frags;
+    if(N==0)return NMers;//Empty set
+    if(N==1)return Frags;//The fragments we were given
     math::CombItr<SystemMap> Comb(Frags,N);
     while(!Comb.Done()){
         std::stringstream Name;
@@ -56,5 +77,4 @@ SystemMap MakeNMers(const SystemMap& Frags, size_t N, double Dist){
 
     return NMers;
 }
-
-}}//End namespaces
+}}//end namespaces

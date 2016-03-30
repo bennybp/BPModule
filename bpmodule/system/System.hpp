@@ -173,6 +173,10 @@ public:
 
 
     /*! \name Iteration over atoms
+     *  
+     *  As long as a system has not been modified (i.e. an atom added or
+     *  deleted) the iteration order is defined.  The atom that you get first
+     *  will always be first, the atom you get second, will be second, etc.
      */
     ///@{
 
@@ -401,24 +405,8 @@ inline std::ostream& operator<<(std::ostream& os, const System& Mol)
     return os << Mol.ToString();
 }
 
-//! A map of systems (fragments, etc)
+//! A map of systems (fragments, etc), MIM uses fact that this is ordered
 typedef std::map<std::string, System> SystemMap;
-
-
-/** \brief Function for taking all unions of a set of fragments
- * 
- *   For a lot of methods that depend on fragments you need to consider
- *   pairs of fragments, triples of fragments, etc.  This function takes
- *   a SystemMap of fragments and takes all N-way unions of them.  Optionally,
- *   distance cut-offs may be applied to screen fragments.  This is applied as
- *   follows, for each fragment in the N-mer the
- * 
- *   \param[in] Frags The monomers we want the unions of
- *   \param[in] N How many ways the union is
- *   \param[in] Dist The maximum distance 
- */
-SystemMap MakeNMers(const system::SystemMap& Frags, size_t N,double Dist);
-
 
 } // close namespace system
 } // close namespace bpmodule
