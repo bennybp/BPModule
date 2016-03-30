@@ -52,15 +52,16 @@ class StdStreamArchive
         }
 
 
+
         /*! \brief Add data to the archive
          * 
-         * The object must be serializable
+         * The objects must be serializable
          * 
          * \throw bpmodule::exception::SerializationException if we are not serializing or we
          *        are unserializing.
          */
-        template<typename T>
-        void Serialize(const T & obj)
+        template<typename... Targs>
+        void Serialize(const Targs &... args)
         {
             if(!serializing_)
                 throw exception::SerializationException("Serialize called when we aren't serializing");
@@ -69,7 +70,7 @@ class StdStreamArchive
             if(!oarchive_)
                 throw std::logic_error("OArchive is not valid, but we are serializing");
 
-            (*oarchive_)(obj);
+            Serialize_(args...);
         }
 
 
@@ -119,13 +120,16 @@ class StdStreamArchive
         }
 
 
+
+
+
         /*! \brief Extract data from the archive
          * 
          * \throw bpmodule::exception::SerializationException if we are serializing or we
          *        are not unserializing.
          */
-        template<typename T>
-        void Unserialize(T & obj)
+        template<typename... Targs>
+        void Unserialize(Targs &... args)
         {
             if(!unserializing_)
                 throw exception::SerializationException("Unserialize called when we aren't unserializing");
@@ -134,8 +138,10 @@ class StdStreamArchive
             if(!iarchive_)
                 throw std::logic_error("IArchive is not valid, but we are unserializing");
 
-            (*iarchive_)(obj);
+            Unserialize_(args...);
         }
+
+
 
         /*! \brief Stop unserialization
          * 
@@ -188,6 +194,39 @@ class StdStreamArchive
         {
             stream_.seekg(0, stream_.beg);
             stream_.seekp(0, stream_.beg);
+        }
+
+        void Serialize_(void) { }
+
+        template<typename T>
+        void Serialize_(const T & obj)
+        {
+            (*oarchive_)(obj);
+        }
+
+
+        template<typename T, typename... Targs>
+        void Serialize_(T & obj, Targs &... args)
+        {
+            Serialize_(obj);
+            Serialize_(args...);
+        }
+
+
+        void Unserialize_(void) { }
+
+        template<typename T>
+        void Unserialize_(T & obj)
+        {
+            (*iarchive_)(obj);
+        }
+
+
+        template<typename T, typename... Targs>
+        void Unserialize_(T & obj, Targs &... args)
+        {
+            Unserialize_(obj);
+            Unserialize_(args...);
         }
 
 };

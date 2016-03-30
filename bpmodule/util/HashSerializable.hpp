@@ -20,11 +20,11 @@ namespace util {
  * This function is used to obtain the hash for any
  * object that can be serialized
  */ 
-template<typename T>
-Hash HashSerializable(const T & obj)
+template<typename... Targs>
+Hash HashSerializable(const Targs &... args)
 {
     detail::HashingArchive harchive;
-    harchive(obj);
+    harchive(args...);
     return harchive.Finalize();
 }
 
