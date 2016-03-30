@@ -27,34 +27,40 @@ namespace modulebase {
  *  derivative orders higher than you have coded, this class will take care of
  *  all necessary finite difference computations.  Obviously, we can not
  *  finite difference the energy for you....
+ * 
+ *  \TODO The FDiff displacement should be an option and not just hard-coded
  *
  */
 class EnergyMethod : public ModuleBase
-{
+{   
     public:
         typedef EnergyMethod BaseType;
         
         EnergyMethod(ID_t id): ModuleBase(id,"EnergyMethod"){ }
         
-        ///The call users use
+        ///The call users use, tries to use available analytic derivatives
         std::vector<double> Deriv(size_t Order){
+            if(Order>MaxDeriv()) return FiniteDifference(Order);
             return ModuleBase::CallFunction(&EnergyMethod::Deriv_,Order);
         }
         
-        /** This is the function you override.  For all orders that you haven't
-         *  implemented you should defer to the base class's Deriv() function,
-         *  e.g. for example if you only have gradients:
-         * 
-         * \code
-         *  std::vector<double> MyClass::Deriv(size_t Order){
-         *      if(Order>1)return Method::Deriv(Order);
-         *      //Take care of orders with Order=0 and 1
-         *      return result
-         *   }
-         * \endcode
-         */ 
-        virtual std::vector<double> Deriv_(size_t Order);
+        /// This is the function you override.  
+        virtual std::vector<double> Deriv_(size_t Order)=0;
+        
+        ///Returns the maximum order for which analytic derivative are coded
+        ///reads it from option MAX_DERIV
+        size_t MaxDeriv()const;
 
+        /** \brief Computes your Order-th derivative via Finite difference
+         * 
+         *   I originally made this protected, but then realized people
+         *   may want to obtain non-analytic derivatives for an order
+         *   for which they exist.  This function will continue recursively
+         *   calling Deriv until analytic derivatives are available.  Hence,
+         *   setting MAX_DERIV controls the level of nesting
+         */ 
+        std::vector<double> FiniteDifference(size_t Order);
+        
         ///@{
         ///Convenience functions
         ///Returns the energy of this method
@@ -74,8 +80,7 @@ class EnergyMethod_Py : public EnergyMethod{
                 
         virtual std::vector<double> Deriv_(size_t Order){
             return CallPyOverride<std::vector<double>>("Deriv_",Order);
-        }
-    
+        }    
 };
 
 } // close namespace modulebase

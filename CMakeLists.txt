@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.2)
 project(BPModule CXX)
 enable_language(C)
 
@@ -80,6 +80,7 @@ ExternalProject_Add(bpmodule_core
                                      -DBPMODULE_CORE_PYTHON_INCLUDE_DIRS:STRING=${PYTHON_INCLUDE_DIRS}
                                      -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
                     BUILD_COMMAND $(MAKE) --silent
+                    BUILD_ALWAYS 1
                     INSTALL_COMMAND $(MAKE) install DESTDIR=${CMAKE_BINARY_DIR}/stage
 )
 add_dependencies(bpmodule_core memwatch_external

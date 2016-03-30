@@ -21,10 +21,10 @@ namespace modulebase{
 
 SystemMap SystemFragmenter::Fragmentize(const System & mol){
     const OptionMap& DaOptions=Options();
-    size_t N=2;//DaOptions.Get<size_t>("TRUNCATION_ORDER");
-    std::map<size_t,double> Truncs;//=
-        //DaOptions.Get<std::map<size_t,double>>("DISTANCE_THRESHOLDS");
-    SystemMap Frags=
+    size_t N=DaOptions.Get<size_t>("TRUNCATION_ORDER");
+    std::map<size_t,double> Truncs=
+        DaOptions.Get<std::map<size_t,double>>("DISTANCE_THRESHOLDS");
+    SystemMap Frags= 
             ModuleBase::CallFunction(&SystemFragmenter::Fragmentize_, mol);
     SystemMap NMers=Frags;
     for(size_t n=2;n<=N;++n){

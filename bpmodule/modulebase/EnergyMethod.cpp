@@ -8,21 +8,27 @@
 #include "bpmodule/math/FiniteDiff.hpp"
 #include "bpmodule/datastore/Wavefunction.hpp"
 #include "bpmodule/system/System.hpp"
+#include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/modulemanager/ModulePtr.hpp"
 #include "bpmodule/modulemanager/ModuleManager.hpp"
 #include "bpmodule/parallel/InitFinalize.hpp"
 #include "LibTaskForce.hpp"
 
+using std::vector;
+
+using bpmodule::system::Atom;
+using bpmodule::system::System;
+using bpmodule::system::AtomSetUniverse;
+using LibTaskForce::Communicator;
+using bpmodule::exception::GeneralException;
+
+typedef vector<Atom> AtomV_t;
+typedef bpmodule::modulemanager::ModuleManager MM_t;
+typedef vector<double> Return_t;
+
+
 namespace bpmodule {
 namespace modulebase {
-
-    using system::Atom;
-    typedef std::vector<Atom> AtomV_t;
-    typedef modulemanager::ModuleManager MM_t;
-    typedef std::vector<double> Return_t;
-    using system::System;
-    using system::AtomSetUniverse;
-    using LibTaskForce::Communicator;
     
 class FDFunctor:public math::FDiffVisitor<double,Return_t>{
     private:
@@ -52,7 +58,8 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
                     NewU<<Atoms_[j];
             }
             Module_t NewModule=MM_.GetModule<EnergyMethod>(Key_,ID_);
-            NewModule->Wfn().system = std::make_shared<const System>(System(NewU,true));
+            NewModule->Wfn().system = 
+                    std::make_shared<const System>(System(NewU,true));
             return NewModule->Deriv(Order_-1);
         }
         
@@ -60,13 +67,19 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
                   MM_t& MM,std::string Key,ID_t ID):
             Order_(Order),Atoms_(Atoms),MM_(MM),Key_(Key),ID_(ID){}
 };    
-    
+
+
+size_t EnergyMethod::MaxDeriv()const{
+    return Options().Get<size_t>("MAX_DERIV");
+} 
  
-Return_t EnergyMethod::Deriv_(size_t Order){
-    //if(Order==0)//Throw error
+Return_t EnergyMethod::FiniteDifference(size_t Order){
+    if(Order==0)
+        throw GeneralException("I do not know how to obtain an energy via "
+                               "finite difference.");
     const System& Mol=*(Wfn().system);
-    std::vector<Atom> Atoms;
-    std::vector<Return_t> TempDeriv;
+    vector<Atom> Atoms;
+    vector<Return_t> TempDeriv;
     //I don't know why the fill constructor is not working...
     for(const Atom& AnAtom: Mol)
           Atoms.push_back(AnAtom);

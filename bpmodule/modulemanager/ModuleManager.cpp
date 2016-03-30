@@ -317,8 +317,8 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
             throw exception::ModuleCreateException("Parent does not exit on map", "parentid", parentid);
 
         const ModuleTreeNode & parent = mtree_.GetByID(parentid);
-        me.initial_wfn = parent.final_wfn;
-        me.final_wfn = parent.final_wfn;
+        me.initial_wfn = parent.initial_wfn;
+        me.final_wfn = parent.initial_wfn;
     }
 
     // move the data to the tree
