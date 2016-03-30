@@ -126,9 +126,7 @@ PYBIND11_PLUGIN(datastore)
     pybind11::class_<Wavefunction>(m, "Wavefunction") //! \todo python init for wfn?
     .def(pybind11::init<>())
     .def("UniqueString", &Wavefunction::UniqueString)
-    .def("GetSystem", &Wavefunction::GetSystem)
-    .def("SetSystem", &Wavefunction::SetSystem)
-    .def("CopySystem", &Wavefunction::CopySystem)
+    .def_readwrite("system", &Wavefunction::system)
     ;
   
 

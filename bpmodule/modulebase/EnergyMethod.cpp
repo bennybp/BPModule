@@ -52,7 +52,7 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
                     NewU<<Atoms_[j];
             }
             Module_t NewModule=MM_.GetModule<EnergyMethod>(Key_,ID_);
-            NewModule->Wfn().TakeSystem(System(NewU,true));
+            NewModule->Wfn().system = std::make_shared<const System>(System(NewU,true));
             return NewModule->Deriv(Order_-1);
         }
         
@@ -64,7 +64,7 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
  
 Return_t EnergyMethod::Deriv_(size_t Order){
     //if(Order==0)//Throw error
-    const System& Mol=*(Wfn().GetSystem());
+    const System& Mol=*(Wfn().system);
     std::vector<Atom> Atoms;
     std::vector<Return_t> TempDeriv;
     //I don't know why the fill constructor is not working...

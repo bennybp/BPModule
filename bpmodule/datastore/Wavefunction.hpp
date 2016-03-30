@@ -17,37 +17,11 @@
 namespace bpmodule {
 namespace datastore {
 
-class Wavefunction
+struct Wavefunction
 {
-public:
-    Wavefunction(void)=default;
-    Wavefunction(const Wavefunction &) = default;
-    Wavefunction & operator=(const Wavefunction &) = default;
-    Wavefunction(Wavefunction &&) = default;
-    Wavefunction & operator=(Wavefunction &&) = default;
-
-    std::shared_ptr<system::System> GetSystem(void) const
-    {
-        if(!system)
-            throw bpmodule::exception::DataStoreException("Attempting to get null pointer for system inside wavefunction");
-        return system;
-    }
- 
-    void SetSystem(std::shared_ptr<system::System> & sysptr)
-    {
-        system = sysptr;
-    }
-
-    void CopySystem(const system::System & sys)
-    {
-        system = std::make_shared<system::System>(sys);
-    }
-
-    void TakeSystem(system::System && sys)
-    { 
-        system = std::make_shared<system::System>(std::move(sys));
-    }
-
+    std::shared_ptr<const system::System> system;
+    std::shared_ptr<const std::vector<double>> cmat; //! \todo REPLACE ME
+    std::shared_ptr<const std::vector<double>> epsilon; //! \todo REPLACE ME
 
     std::string UniqueString(void) const
     {
@@ -57,12 +31,6 @@ public:
         //s += "E:" + std::to_string(epsilon.Valid()) + "_" + std::to_string(epsilon.UID()) + ";";
         return s;
     }
-
-    private:
-        std::shared_ptr<system::System> system;
-        std::shared_ptr<const std::vector<double>> cmat; //! \todo REPLACE ME
-        std::shared_ptr<const std::vector<double>> epsilon; //! \todo REPLACE ME
-
 };
 
 
