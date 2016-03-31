@@ -9,6 +9,9 @@
 #include "bpmodule/testing/TestOptions.hpp"
 #include "bpmodule/testing/TestingBase.hpp"
 
+#include "bpmodule/system/BasisShellInfo.hpp"
+#include "bpmodule/testing/TestSerialization.hpp"
+
 
 /*! \brief Returns the limits of a type as a python tuple
  */ 
@@ -167,6 +170,13 @@ PYBIND11_PLUGIN(testing)
     m.def("TestOptionMapChange_vector_longdouble", &TestOptionMap_Change<std::vector<long double>>);
     m.def("TestOptionMapChange_vector_string",     &TestOptionMap_Change<std::vector<std::string>>);
 
+
+
+
+    /////////////////////////////////
+    // Serialization
+    /////////////////////////////////
+    //m.def("TestSerialization_BasisShellInfo",     &TestSerialization<system::BasisShellInfo>);
 
     return m.ptr();
 }

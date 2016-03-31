@@ -4,7 +4,7 @@ from .modinfo import *
 from .testing import *
 
 # Tester class
-from .tester import *
+from .Tester import *
 
 from bpmodule.output import GlobalOutput, GlobalError, GlobalSuccess, GlobalDebug
 

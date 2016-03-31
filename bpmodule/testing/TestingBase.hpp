@@ -29,10 +29,10 @@ namespace testing {
  * \param [in] func A callable object
  * \param [in] Fargs Arguments for that callable object
  *
- * \return 1 If the function fails (throws), 0 if it succeeds
+ * \return False If the function fails (throws), True if it succeeds
  */
 template<typename T, typename... Targs>
-int TestFunc(T func, Targs... Fargs)
+bool TestFunc(T func, Targs... Fargs)
 {
     try {
        func(Fargs...); 
@@ -41,18 +41,16 @@ int TestFunc(T func, Targs... Fargs)
     {
         GlobalDebug(ex.what());
         GlobalDebug("\n");
-        return 1;
+        return false;
     }   
     catch(...)
     {
         GlobalDebug("Caught unknown exception\n");
-        return 1;
+        return false;
     }   
 
-
-
     // here if no exceptions are thrown
-    return 0;
+    return true;
 }
 
 
@@ -65,30 +63,25 @@ int TestFunc(T func, Targs... Fargs)
  * \param [in] func A callable object
  * \param [in] Fargs Arguments for that callable object
  *
- * \return 1 If the function fails (returns false or throws), 0 if it succeeds
+ * \return False If the function fails (returns false or throws), True if it succeeds
  */
 template<typename T, typename... Targs>
-int TestBoolFunc(T func, Targs... Fargs)
+bool TestBoolFunc(T func, Targs... Fargs)
 {
     try {
-        if(func(Fargs...))
-            return 0;
-        else
-            return 1;
+        return func(Fargs...);
     }
     catch(std::exception & ex)
     {
         GlobalDebug(ex.what());
         GlobalDebug("\n");
-        return 1;
+        return false;
     }   
     catch(...)
     {
         GlobalDebug("Caught unknown exception\n");
-        return 1;
+        return false;
     }   
-
-    return 0;
 }
 
 
@@ -101,10 +94,10 @@ int TestBoolFunc(T func, Targs... Fargs)
  *
  * \param [in] Fargs Arguments for the object's constructor
  *
- * \return 1 If the construction fails, 0 if it succeeds
+ * \return True If the construction fails, False if it succeeds
  */
 template<typename T, typename... Targs>
-int TestConstruct(Targs... Fargs)
+bool TestConstruct(Targs... Fargs)
 {
     try {
        T obj(Fargs...); 
@@ -113,18 +106,16 @@ int TestConstruct(Targs... Fargs)
     {
         GlobalDebug(ex.what());
         GlobalDebug("\n");
-        return 1;
+        return false;
     }   
     catch(...)
     {
         GlobalDebug("Caught unknown exception\n");
-        return 1;
+        return false;
     }   
 
-
-
     // here if no exceptions are thrown
-    return 0;
+    return true;
 }
 
 

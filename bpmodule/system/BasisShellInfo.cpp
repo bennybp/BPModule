@@ -1,3 +1,9 @@
+/*! \file
+ *
+ * \brief Standalone class for basis shell information (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
 #include "bpmodule/exception/Assert.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/system/BasisShellInfo.hpp"
@@ -41,9 +47,8 @@ BasisShellInfo & BasisShellInfo::operator=(const BasisShellInfo & rhs)
 
 bool BasisShellInfo::operator==(const BasisShellInfo & rhs) const
 {
-    // this is done manually (rather than "using")
     // prevent implicit comparison between one type and another
-    return BasisShellBase::operator==(rhs);
+    return BasisShellBase::BaseCompare(rhs);
 }
 
 

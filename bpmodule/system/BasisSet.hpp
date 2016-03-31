@@ -1,3 +1,9 @@
+/*! \file
+ *
+ * \brief Main BasisSet object (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
 #ifndef BPMODULE_GUARD_SYSTEM__BASISSET_HPP_
 #define BPMODULE_GUARD_SYSTEM__BASISSET_HPP_
 
