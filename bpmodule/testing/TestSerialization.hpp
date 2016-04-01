@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Various test for datastore (header)
+ * \brief Functions for testing serialization (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -11,8 +11,8 @@
 #include <string>
 #include "bpmodule/python/Convert.hpp"
 #include "bpmodule/testing/TestingBase.hpp"
+#include "bpmodule/util/SerializationArchives.hpp"
 #include "bpmodule/util/HashSerializable.hpp"
-#include "bpmodule/util/Serialize.hpp"
 
 namespace bpmodule {
 namespace testing {

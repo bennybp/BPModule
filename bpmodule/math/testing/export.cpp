@@ -1,15 +1,16 @@
 /*! \file
  *
- * \brief Exports for testing system
+ * \brief Exports for testing math
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/system/System.hpp"
+
 #include "bpmodule/testing/TestSerialization.hpp"
+#include "bpmodule/math/Point.hpp"
 
 
 namespace bpmodule {
-namespace system {
+namespace math {
 namespace export_python {
 
 void export_testing(pybind11::module & m)
@@ -19,8 +20,7 @@ void export_testing(pybind11::module & m)
     /////////////////////////////////
     // Serialization
     /////////////////////////////////
-    m.def("TestSerialization_BasisShellInfo",     &TestSerialization<BasisShellInfo>);
-    m.def("TestSerialization_Atom",               &TestSerialization<Atom>);
+    m.def("TestSerialization_Point",     &TestSerialization<Point>);
 }
 
 

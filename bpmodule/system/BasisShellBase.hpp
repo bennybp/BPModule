@@ -8,7 +8,7 @@
 #define BPMODULE_GUARD_SYSTEM__BASISSHELLBASE_HPP_
 
 #include <vector>
-#include "bpmodule/util/Serialize.hpp"
+#include "bpmodule/util/Serialization.hpp"
 #include "bpmodule/exception/Assert.hpp"
 
 

@@ -1,11 +1,11 @@
 /*! \file
  *
- * \brief Serialization helpers
+ * \brief Storage of serialized data
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_UTIL__SERIALIZE_HPP_
-#define BPMODULE_GUARD_UTIL__SERIALIZE_HPP_
+#ifndef BPMODULE_GUARD_UTIL__SERIALIZATIONARCHIVES_HPP_
+#define BPMODULE_GUARD_UTIL__SERIALIZATIONARCHIVES_HPP_
 
 #include <sstream>
 #include <fstream>
@@ -283,11 +283,6 @@ class FileArchive : public detail::StdStreamArchive<std::fstream>
 
 } // close namespace util
 } // close namespace bpmodule
-
-
-#define DECLARE_SERIALIZATION_FRIENDS \
-    friend class cereal::access; \
-    template<typename T> friend class bpmodule::util::detail::StdStreamArchive;
 
 
 

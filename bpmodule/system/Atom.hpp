@@ -58,27 +58,60 @@ class Atom : public math::Point
         //! Information stored about the basis set on the atom
         struct BasisInfo_
         {
-            // Stores string that are unique when whitespace is trimmed and
-            // string are compared case insensitive
-            typedef std::set<std::string, util::CaseInsensitiveTrimLess> SetType_;
+            // Stores string which is stored lowercase and trimmed
+            typedef std::set<std::string> SetType_;
 
-            SetType_ description;             //!< Description of basis
-            BasisShellInfoVector  shells;     //!< Actual basis
+            SetType_ description;            //!< Description of basis
+            BasisShellInfoVector shells;     //!< Actual basis
 
             bool operator==(const BasisInfo_ & rhs) const
             {
-                // compare case-insensitive and trimmed strings
                 // note we have to check sizes first for std::equal 
                 return (
                         shells == rhs.shells &&
                         description.size() == rhs.description.size() &&
-                        std::equal(description.begin(), description.end(),
-                                   rhs.description.begin(), util::CaseInsensitiveTrimEquality())
+                        std::equal(description.begin(), description.end(), rhs.description.begin())
                        );
             }
+
+
+            //! \name Serialization
+            ///@{
+
+            template<class Archive>
+            void serialize(Archive & ar)
+            {
+                // we aren't serializing the base class, so we do this manually
+                ar(description, shells);
+            }
+
+            ///@}
         };
 
         std::map<std::string, BasisInfo_> bshells_; //!< Basis functions associated with this atom/center
+
+
+
+
+        //! \name Serialization
+        ///@{
+
+        DECLARE_SERIALIZATION_FRIENDS
+
+
+        template<class Archive>
+        void serialize(Archive & ar)
+        {
+            // we aren't serializing the base class, so we do this manually
+            ar(cereal::base_class<math::Point>(this), idx_, Z_, isonum_,
+                                                mass_, isotopemass_,
+                                                charge_, multiplicity_,
+                                                nelectrons_, covradius_,
+                                                vdwradius_, bshells_);
+        }
+
+        ///@}
+
 
     public:
         /*! \brief Constructor
@@ -87,6 +120,12 @@ class Atom : public math::Point
              double isotopemass, double charge, double multiplicity,
              double nelectrons,double covradius,double vdwradius);
 
+        /*! \brief For serialization only
+         * 
+         * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
+         * \todo Replace if cereal fixes this
+         */
+        Atom() = default;
 
         Atom(const Atom &)             = default;
         Atom & operator=(const Atom &) = default;
@@ -236,7 +275,7 @@ class Atom : public math::Point
         void AddShell(const std::string & label, const std::string & shelldesc, const BasisShellInfo & shell)
         {
             bshells_[label].shells.push_back(shell);
-            bshells_[label].description.insert(shelldesc);
+            bshells_[label].description.insert(util::Trim_Copy(util::ToLower_Copy(shelldesc)));
         }
 
 
@@ -249,15 +288,6 @@ class Atom : public math::Point
 
         void Print(std::ostream & os) const;
 
-        ///@}
-
-        /*! \name Serialization */
-        ///@{
-        template<class Archive>
-        void serialize(Archive & archive)
-        {
-             
-        }
         ///@}
 
 };

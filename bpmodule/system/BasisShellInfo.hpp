@@ -8,9 +8,6 @@
 #define BPMODULE_GUARD_SYSTEM__BASISSHELLINFO_HPP_
 
 #include "bpmodule/system/BasisShellBase.hpp"
-#include "bpmodule/util/Serialize.hpp"
-#include <cereal/types/vector.hpp>
-
 
 
 namespace bpmodule {
@@ -32,6 +29,15 @@ class BasisShellInfo : public BasisShellBase
 {
     public:
         BasisShellInfo(ShellType type, int am, bool cart, int nprim, int ngen);
+
+
+        /*! \brief For serialization only
+         * 
+         * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
+         * \todo Replace if cereal fixes this
+         */
+        BasisShellInfo() = default;
+
 
         // compiler generated NOT ok
         // Will leave dangling pointers in the base class
@@ -56,8 +62,6 @@ class BasisShellInfo : public BasisShellBase
 
         DECLARE_SERIALIZATION_FRIENDS
 
-        // For serialization only
-        BasisShellInfo() = default;
 
         template<class Archive>
         void serialize(Archive & ar)

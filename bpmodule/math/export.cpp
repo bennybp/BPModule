@@ -18,9 +18,11 @@
 
 namespace bpmodule {
 namespace math {
-
 namespace export_python {
 
+
+// in testing/export.cpp
+void export_testing(pybind11::module & m);
 
     
     
@@ -44,7 +46,11 @@ PYBIND11_PLUGIN(math)
     RegisterMathSet<MathSet<std::string>>(m, "StringSet"); 
 
 
+    //! \todo If we need other types, we need a RegisterPoint function
+    //        (probably ok just having it in this file)
     pybind11::class_<Point>(m, "Point")
+    .def(pybind11::init<double, double, double>()) 
+    .def(pybind11::init<const Point::CoordType &>()) 
     .def("GetCoords", &Point::GetCoords)
     .def("SetCoords", static_cast<void (Point::*)(double, double, double)>(&Point::SetCoords))
     .def("SetCoords", static_cast<void (Point::*)(const Point::CoordType &)>(&Point::SetCoords))
@@ -61,6 +67,8 @@ PYBIND11_PLUGIN(math)
     ;
     
 
+    // Export the testing stuff
+    export_testing(m);
 
     return m.ptr();
 }
