@@ -33,6 +33,8 @@ def Run():
         s = System(u, True)
         s = bp.system.ApplySingleBasis(bp.system.ShellType.Gaussian, "primary", "sto-3g", s)
 
+        tester.Test("System serialization", True, bp.system.TestSerialization_System, s)
+
         i = 0
         for a in s:
             tester.Test("Atom serialization - {}".format(i), True,

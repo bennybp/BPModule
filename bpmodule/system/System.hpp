@@ -60,15 +60,32 @@ private:
     //! Actual storage of all the atoms
     AtomSet atoms_;
 
-    // For use from transformations, etc
-    System(const AtomSet & atoms);
-
     double charge_; //!< Total charge on this system
     double multiplicity_; //!< Total multiplicity of the system
     double nelectrons_; //!< Total number of electrons in the system 
 
+
+    // For use from transformations, etc
+    System(const AtomSet & atoms);
+
+
     /* \brief Sets charge, multiplicity, and nelectrons as determined from the Atoms in this set */
     void SetDefaults_(void);
+
+
+    //! \name Serialization
+    ///@{
+
+    DECLARE_SERIALIZATION_FRIENDS
+
+    template<class Archive>
+    void serialize(Archive & ar)
+    {
+        // we aren't serializing the base class, so we do this manually
+        ar(atoms_, charge_, multiplicity_, nelectrons_);
+    }
+
+    ///@}
 
 public:
     typedef AtomSet::value_type value_type;
@@ -95,6 +112,13 @@ public:
      */
     System(std::shared_ptr<const AtomSetUniverse> universe, bool fill);
     System(const AtomSetUniverse& universe, bool fill);
+
+    /*! \brief For serialization only
+     * 
+     * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
+     * \todo Replace if cereal fixes this
+     */
+    System() = default;
 
     // compiler generated ok
     // Copies will share storage in the AtomSet, but have their
