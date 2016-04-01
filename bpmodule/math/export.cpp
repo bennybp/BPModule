@@ -11,7 +11,6 @@
 #include "bpmodule/math/Factorial.hpp"
 #include "bpmodule/math/Universe.hpp"
 #include "bpmodule/math/Point.hpp"
-#include "bpmodule/math/RegisterMathSet.hpp"
 
 
 //! \todo Export exact casts? Or have the equivalent with python?
@@ -42,8 +41,6 @@ PYBIND11_PLUGIN(math)
     m.def("Double2nm1FactorialF", Double2nm1FactorialF); 
     m.def("Double2nm1FactorialD", Double2nm1FactorialD);
 
-    RegisterUniverse<Universe<std::string>>(m, "StringSetUniverse"); 
-    RegisterMathSet<MathSet<std::string>>(m, "StringSet"); 
 
 
     //! \todo If we need other types, we need a RegisterPoint function

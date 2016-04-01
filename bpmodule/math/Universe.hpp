@@ -14,6 +14,7 @@
 #include <algorithm> //For std::find
 #include <sstream> //For printing
 
+#include "bpmodule/util/Serialization.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 
 
@@ -144,6 +145,32 @@ protected:
     {
         return ConstSetItr<T, U>(ElemIt, *Storage_);
     }
+
+
+private:
+    //! \name Serialization
+    ///@{
+    
+    DECLARE_SERIALIZATION_FRIENDS
+
+    /* We have to split load/save since MathSet uses
+     * load/save, and these are inherited. If not,
+     * cereal will find serialize() here and load/save
+     * for MathSet, and trigger an assertion
+     */
+    template<class Archive>
+    void save(Archive & ar) const
+    {
+        ar(Storage_, Elems_);
+    }
+    
+    template<class Archive>
+    void load(Archive & ar)
+    {
+        ar(Storage_, Elems_);
+    }
+
+    ///@}
 
 public:
     typedef T value_type;
