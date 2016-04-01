@@ -9,6 +9,7 @@
 
 #include "bpmodule/system/BasisShellBase.hpp"
 #include "bpmodule/util/Serialize.hpp"
+#include <cereal/types/vector.hpp>
 
 
 
@@ -43,38 +44,32 @@ class BasisShellInfo : public BasisShellBase
 
         bool operator==(const BasisShellInfo & rhs) const;
 
-/*
+
+    private:
+        std::vector<double> alphas_; //!< Exponents (storage)
+        std::vector<double> coefs_;  //!< Coefficients (storage)
+
+
+
         //! \name Serialization
         ///@{
+
+        DECLARE_SERIALIZATION_FRIENDS
+
+        // For serialization only
+        BasisShellInfo() = default;
+
         template<class Archive>
         void serialize(Archive & ar)
         {
             // we aren't serializing the base class, so we do this manually
-            ar(GetType(), AM(), IsCartesian(), NPrim(), NGeneral(), alphas_, coefs_);
-        }
+            ar(cereal::base_class<BasisShellBase>(this), alphas_, coefs_);
 
-
-        template<class Archive>
-        static void load_and_construct(Archive & ar, cereal::construct<BasisShellInfo> & construct)
-        {
-            ShellType type;
-            int am, nprim, ngen;
-            bool cart;
-            ar(type, am, cart, nprim, ngen);
-
-            // construct with the temporaries
-            construct(type, am, cart, nprim, ngen);
-
-            // now that it's constructed, we can fill in the
-            // exponents and coefficients
-            ar(construct->alphas_, construct->coefs_);
+            // if we are unserializing
+            BasisShellBase::SetPtrs_(alphas_.data(), coefs_.data());
         }
 
         ///@}
-*/
-    private:
-        std::vector<double> alphas_; //!< Exponents (storage)
-        std::vector<double> coefs_;  //!< Coefficients (storage)
 };
 
 

@@ -8,6 +8,7 @@
 #define BPMODULE_GUARD_SYSTEM__BASISSHELLBASE_HPP_
 
 #include <vector>
+#include "bpmodule/util/Serialize.hpp"
 #include "bpmodule/exception/Assert.hpp"
 
 
@@ -325,6 +326,9 @@ class BasisShellBase
         /// Set the pointers for the exponents and coefficients
         void SetPtrs_(double * alphaptr, double * coefptr) ASSERTIONS_ONLY;
 
+        // For serialization only (needed by derived classes)
+        BasisShellBase() = default;
+
 
     private:
         ShellType type_;             //!< Gaussian, Slater, etc
@@ -342,6 +346,25 @@ class BasisShellBase
         void AssertGenIdx_(int n) const;
         void ValidatePrimIdx_(int i) const;
         void ValidateGenIdx_(int n) const;
+
+
+        //! \name Serialization
+        ///@{
+
+        DECLARE_SERIALIZATION_FRIENDS
+
+        template<class Archive>
+        void serialize(Archive & ar)
+        {
+            // of course, we don't do the pointers. They are owned
+            // by somebody else. It's their responsibilty
+            ar(type_, am_, cart_, nprim_, ngen_);
+        }
+
+        ///@}
+
+
+
 };
 
 

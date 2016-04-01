@@ -23,6 +23,9 @@ namespace bpmodule {
 namespace system {
 namespace export_python {
 
+// in testing/export.cpp
+void export_testing(pybind11::module & m);
+
 
 
 PYBIND11_PLUGIN(system)
@@ -98,12 +101,16 @@ PYBIND11_PLUGIN(system)
 
 
     // Main BasisSet class
+    python::RegisterPyCopyIterator<BasisSet>(m, "BasisSet");
+
     pybind11::class_<BasisSet>(m, "BasisSet")
     .def(pybind11::init<size_t, size_t, size_t>())
     .def("Print", &BasisSet::Print)
     .def("AddShell", &BasisSet::AddShell)
     .def("NShell", &BasisSet::NShell)
     .def("Shell", &BasisSet::Shell, pybind11::return_value_policy::reference_internal)
+    .def("UniqueShell", &BasisSet::UniqueShell, pybind11::return_value_policy::reference_internal)
+    .def("ShellInfo", &BasisSet::ShellInfo)
     .def("NPrim", &BasisSet::NPrim)
     .def("NCoef", &BasisSet::NCoef)
     .def("NCoef", &BasisSet::NCoef)
@@ -115,6 +122,12 @@ PYBIND11_PLUGIN(system)
     .def("MaxNFunctions", &BasisSet::MaxNFunctions)
     .def("Transform", &BasisSet::Transform)
     .def("ShrinkFit", &BasisSet::ShrinkFit)
+    .def("__iter__", [](pybind11::object obj)
+            {
+                const BasisSet & cont = obj.cast<const BasisSet &>();
+                return python::PyCopyIterator<BasisSet>(cont, cont.begin(), obj);
+            })
+    ;
     ;
 
 
@@ -259,6 +272,10 @@ PYBIND11_PLUGIN(system)
                 return python::PyCopyIterator<System>(cont, cont.begin(), obj);
             })
     ;
+
+
+    // Export the testing stuff
+    export_testing(m);
 
     return m.ptr();
 }

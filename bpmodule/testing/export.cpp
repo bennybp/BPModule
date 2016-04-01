@@ -9,8 +9,6 @@
 #include "bpmodule/testing/TestOptions.hpp"
 #include "bpmodule/testing/TestingBase.hpp"
 
-#include "bpmodule/system/BasisShellInfo.hpp"
-#include "bpmodule/testing/TestSerialization.hpp"
 
 
 /*! \brief Returns the limits of a type as a python tuple
@@ -173,10 +171,6 @@ PYBIND11_PLUGIN(testing)
 
 
 
-    /////////////////////////////////
-    // Serialization
-    /////////////////////////////////
-    //m.def("TestSerialization_BasisShellInfo",     &TestSerialization<system::BasisShellInfo>);
 
     return m.ptr();
 }

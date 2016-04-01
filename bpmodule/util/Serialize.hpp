@@ -10,6 +10,7 @@
 #include <sstream>
 #include <fstream>
 #include <cereal/cereal.hpp>
+#include <cereal/access.hpp>
 #include <cereal/archives/binary.hpp>
 
 #include "bpmodule/util/HashingArchive.hpp"
@@ -143,6 +144,23 @@ class StdStreamArchive
 
 
 
+        /*! \brief Extract data from the archive
+         * 
+         * Returns a single object. Useful for types without a public default constructor
+         * 
+         * \throw bpmodule::exception::SerializationException if we are serializing or we
+         *        are not unserializing.
+         */
+        template<typename T>
+        T UnserializeSingle(void)
+        {
+            T ret;
+            Unserialize(ret);
+            return ret;
+        }
+
+
+
         /*! \brief Stop unserialization
          * 
          * \throw bpmodule::exception::SerializationException if the object is
@@ -265,6 +283,12 @@ class FileArchive : public detail::StdStreamArchive<std::fstream>
 
 } // close namespace util
 } // close namespace bpmodule
+
+
+#define DECLARE_SERIALIZATION_FRIENDS \
+    friend class cereal::access; \
+    template<typename T> friend class bpmodule::util::detail::StdStreamArchive;
+
 
 
 #endif

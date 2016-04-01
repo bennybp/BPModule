@@ -21,6 +21,7 @@ class BasisSet
     public:
         typedef std::vector<BasisSetShell>::iterator iterator;
         typedef std::vector<BasisSetShell>::const_iterator const_iterator;
+        typedef BasisSetShell value_type; // for iteration
         typedef std::function<BasisSetShell (const BasisSetShell &)> TransformerFunc;
 
         BasisSet(size_t nshells, size_t nprim, size_t ncoef);
@@ -35,6 +36,7 @@ class BasisSet
 
         const BasisSetShell & Shell(int i) const;
         const BasisSetShell & UniqueShell(int i) const;
+        BasisShellInfo ShellInfo(int i) const;
 
         int NPrim(void) const;
         int NCoef(void) const;
