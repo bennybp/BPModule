@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 
-
 import os
 import sys
-import random
 import traceback 
-
-from helper.SetOperations import TestSetOperations
-from helper.TestAtoms import nonane
+import random
 
 # Add the bpmodule path
 thispath = os.path.dirname(os.path.realpath(__file__))
@@ -15,14 +11,16 @@ bppath = os.path.join(os.path.dirname(thispath), "modules")
 sys.path.insert(0, bppath)
 
 import bpmodule as bp
-from bpmodule.math import StringSetUniverse, StringSet
+from bpmodule.output import *
+from bpmodule.testing import *
+from bpmodule.math import *
+
+from helper.SetOperations import TestSetOperations
 
 
 def Run():
     try:
-        out = bp.output.GetGlobalOut()
-
-        tester = bp.testing.Tester("Testing Math class - serialization")
+        tester = Tester("Testing Math class - serialization")
         tester.PrintHeader()
 
         ####################################
@@ -30,12 +28,12 @@ def Run():
         ####################################
         pts = []
         for i in range(0, 15):
-            pts.append(bp.math.Point(random.uniform(-1.0e4, 1e4), random.uniform(-1.0e4, 1e4), random.uniform(-1.0e4, 1e4)))
+            pts.append(Point(random.uniform(-1.0e4, 1e4), random.uniform(-1.0e4, 1e4), random.uniform(-1.0e4, 1e4)))
 
         for i in range(0, len(pts)):
             p = pts[i]
             tester.Test("Point serialization - {}".format(i), True,
-                        bp.math.TestSerialization_Point, p)
+                        TestSerialization_Point, p)
 
 
         ###########################################
@@ -57,22 +55,22 @@ def Run():
         s1.Insert("b")
         s1.Insert("c")
 
-        tester.Test("Universe serialization - u0", True, bp.math.TestSerialization_StringSetUniverse, u0)
-        tester.Test("Universe serialization - u1", True, bp.math.TestSerialization_StringSetUniverse, u1)
-        tester.Test("MathSet serialization - s0", True, bp.math.TestSerialization_StringSet, s0)
-        tester.Test("MathSet serialization - s1", True, bp.math.TestSerialization_StringSet, s1)
-        tester.Test("MathSet serialization - s2", True, bp.math.TestSerialization_StringSet, s2)
+        tester.Test("Universe serialization - u0", True, TestSerialization_StringSetUniverse, u0)
+        tester.Test("Universe serialization - u1", True, TestSerialization_StringSetUniverse, u1)
+        tester.Test("MathSet serialization - s0", True, TestSerialization_StringSet, s0)
+        tester.Test("MathSet serialization - s1", True, TestSerialization_StringSet, s1)
+        tester.Test("MathSet serialization - s2", True, TestSerialization_StringSet, s2)
 
 
         tester.PrintResults() 
 
 
     except Exception as e:
-      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.GlobalError("\n")
-      bp.output.GlobalError(str(e))
-      bp.output.GlobalError("\n")
+      GlobalError("\n")
+      GlobalError(str(e))
+      GlobalError("\n")
 
 
 

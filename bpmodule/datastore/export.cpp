@@ -25,17 +25,6 @@ namespace datastore {
 namespace export_python {
 
 
-template<OptionType OPTTYPE>
-static void RegisterOptionHolder(pybind11::module & m, pybind11::class_<OptionBase> ohbase)
-{
-    const char * otname = OptionTypeToString(OPTTYPE);
-
-    const std::string pyname = std::string("OptionHolder_") + otname;
-    pybind11::class_<OptionHolder<OPTTYPE>>(m, pyname.c_str(), ohbase)
-    .def(pybind11::init<const std::string &, bool, pybind11::object, const std::string &>()) 
-    .def(pybind11::init<const std::string &, bool, pybind11::object, const std::string &, const pybind11::object &>()) 
-    ;
-}
 
 
 PYBIND11_PLUGIN(datastore)
@@ -72,39 +61,12 @@ PYBIND11_PLUGIN(datastore)
 
 
     /////////////////////////
-    // OptionHolders
-    /////////////////////////
-    pybind11::class_<OptionBase> ohbase(m, "OptionBase");
-    
-    RegisterOptionHolder<OptionType::Int>(m, ohbase);
-    RegisterOptionHolder<OptionType::Float>(m, ohbase);
-    RegisterOptionHolder<OptionType::Bool>(m, ohbase);
-    RegisterOptionHolder<OptionType::String>(m, ohbase);
-    RegisterOptionHolder<OptionType::ListInt>(m, ohbase);
-    RegisterOptionHolder<OptionType::ListFloat>(m, ohbase);
-    RegisterOptionHolder<OptionType::ListBool>(m, ohbase);
-    RegisterOptionHolder<OptionType::ListString>(m, ohbase);
-    RegisterOptionHolder<OptionType::SetInt>(m, ohbase);
-    RegisterOptionHolder<OptionType::SetFloat>(m, ohbase);
-    RegisterOptionHolder<OptionType::SetBool>(m, ohbase);
-    RegisterOptionHolder<OptionType::SetString>(m, ohbase);
-
-    RegisterOptionHolder<OptionType::DictIntInt>(m, ohbase);
-    RegisterOptionHolder<OptionType::DictIntFloat>(m, ohbase);
-    RegisterOptionHolder<OptionType::DictIntBool>(m, ohbase);
-    RegisterOptionHolder<OptionType::DictIntString>(m, ohbase);
-    RegisterOptionHolder<OptionType::DictStringInt>(m, ohbase);
-    RegisterOptionHolder<OptionType::DictStringFloat>(m, ohbase);
-    RegisterOptionHolder<OptionType::DictStringBool>(m, ohbase);
-    RegisterOptionHolder<OptionType::DictStringString>(m, ohbase);
-
-
-    /////////////////////////
     // OptionMap
     /////////////////////////
     // OptionMap always returns copies
     pybind11::class_<OptionMap>(m, "OptionMap")
     .def(pybind11::init<>())
+    .def(pybind11::init<const std::string &>())
     .def("Has", &OptionMap::Has)
     .def("HasKey", &OptionMap::HasKey)
     .def("Size", &OptionMap::Size)
@@ -120,6 +82,7 @@ PYBIND11_PLUGIN(datastore)
     .def("Compare", &OptionMap::Compare)
     .def("CompareSelect", &OptionMap::CompareSelect)
     .def("HasIssues", &OptionMap::HasIssues);
+
 
 
     ///////////////////////

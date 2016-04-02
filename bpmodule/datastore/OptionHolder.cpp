@@ -19,40 +19,6 @@ namespace bpmodule {
 namespace datastore {
 
 
-
-///////////////////////////////////////////////////
-// These are the allowed types of OptionHolder
-///////////////////////////////////////////////////
-template class OptionHolder<OptionType::Int>;
-template class OptionHolder<OptionType::Float>;
-template class OptionHolder<OptionType::Bool>;
-template class OptionHolder<OptionType::String>;
-
-template class OptionHolder<OptionType::ListInt>;
-template class OptionHolder<OptionType::ListFloat>;
-template class OptionHolder<OptionType::ListBool>;
-template class OptionHolder<OptionType::ListString>;
-
-template class OptionHolder<OptionType::SetInt>;
-template class OptionHolder<OptionType::SetFloat>;
-template class OptionHolder<OptionType::SetBool>;
-template class OptionHolder<OptionType::SetString>;
-
-template class OptionHolder<OptionType::DictIntInt>;
-template class OptionHolder<OptionType::DictIntFloat>;
-template class OptionHolder<OptionType::DictIntBool>;
-template class OptionHolder<OptionType::DictIntString>;
-
-template class OptionHolder<OptionType::DictStringInt>;
-template class OptionHolder<OptionType::DictStringFloat>;
-template class OptionHolder<OptionType::DictStringBool>;
-template class OptionHolder<OptionType::DictStringString>;
-
-
-
-
-
-
 ////////////////////////////////////
 // Wrapper around validator
 ////////////////////////////////////
@@ -439,6 +405,78 @@ void OptionHolder<OPTTYPE>::Print(std::ostream & os) const
     }
 }
 
+
+///////////////////////////////////////////////////
+// These are the allowed types of OptionHolder
+///////////////////////////////////////////////////
+template class OptionHolder<OptionType::Int>;
+template class OptionHolder<OptionType::Float>;
+template class OptionHolder<OptionType::Bool>;
+template class OptionHolder<OptionType::String>;
+
+template class OptionHolder<OptionType::ListInt>;
+template class OptionHolder<OptionType::ListFloat>;
+template class OptionHolder<OptionType::ListBool>;
+template class OptionHolder<OptionType::ListString>;
+
+template class OptionHolder<OptionType::SetInt>;
+template class OptionHolder<OptionType::SetFloat>;
+template class OptionHolder<OptionType::SetBool>;
+template class OptionHolder<OptionType::SetString>;
+
+template class OptionHolder<OptionType::DictIntInt>;
+template class OptionHolder<OptionType::DictIntFloat>;
+template class OptionHolder<OptionType::DictIntBool>;
+template class OptionHolder<OptionType::DictIntString>;
+
+template class OptionHolder<OptionType::DictStringInt>;
+template class OptionHolder<OptionType::DictStringFloat>;
+template class OptionHolder<OptionType::DictStringBool>;
+template class OptionHolder<OptionType::DictStringString>;
+
+
+
+//! \todo make_unique in c++14
+#define CASE_RETURN_OPTIONHOLDER(TYPE) \
+    case OptionType::TYPE: \
+         if(python::IsNone(def)) \
+             return std::unique_ptr<OptionBase>(new OptionHolder<OptionType::TYPE>(key, required, validator, help));\
+         else\
+             return std::unique_ptr<OptionBase>(new OptionHolder<OptionType::TYPE>(key, required, validator, help, def));
+
+std::unique_ptr<OptionBase>
+CreateOptionHolder(std::string key, OptionType opttype, bool required,
+                   const pybind11::object & validator, std::string help,
+                   const pybind11::object & def)
+{
+    switch(opttype)
+    {
+        CASE_RETURN_OPTIONHOLDER(Int)
+        CASE_RETURN_OPTIONHOLDER(Float)
+        CASE_RETURN_OPTIONHOLDER(Bool)
+        CASE_RETURN_OPTIONHOLDER(String)
+        CASE_RETURN_OPTIONHOLDER(SetInt)
+        CASE_RETURN_OPTIONHOLDER(SetFloat)
+        CASE_RETURN_OPTIONHOLDER(SetBool)
+        CASE_RETURN_OPTIONHOLDER(SetString)
+        CASE_RETURN_OPTIONHOLDER(ListInt)
+        CASE_RETURN_OPTIONHOLDER(ListFloat)
+        CASE_RETURN_OPTIONHOLDER(ListBool)
+        CASE_RETURN_OPTIONHOLDER(ListString)
+        CASE_RETURN_OPTIONHOLDER(DictIntInt)
+        CASE_RETURN_OPTIONHOLDER(DictIntFloat)
+        CASE_RETURN_OPTIONHOLDER(DictIntBool)
+        CASE_RETURN_OPTIONHOLDER(DictIntString)
+        CASE_RETURN_OPTIONHOLDER(DictStringInt)
+        CASE_RETURN_OPTIONHOLDER(DictStringFloat)
+        CASE_RETURN_OPTIONHOLDER(DictStringBool)
+        CASE_RETURN_OPTIONHOLDER(DictStringString)
+        default:
+            throw std::logic_error("Unhandled option type");
+    }
+}
+
+#undef CASE_RETURN_OPTIONHOLDER
 
 
 } // close namespace datastore

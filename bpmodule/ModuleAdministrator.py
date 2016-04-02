@@ -93,8 +93,7 @@ class ModuleAdministrator(modulemanager.ModuleManager):
 
         # Create the options object
         for optkey,opt in minfo["options"].items():
-            oph = datastore.MakeOptionHolder(optkey, opt[0], opt[2], opt[3], opt[4], opt[1])
-            cppminfo.options.AddOption(oph)
+            cppminfo.options.AddOption(optkey, opt[0], opt[2], opt[3], opt[4], opt[1])
         
 
         # Now we can actually load it

@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 
-
 import os
 import sys
-import argparse
+import traceback 
 import operator
-import traceback
-
-from helper.SetOperations import TestSetOperations
 
 # Add the bpmodule path
 thispath = os.path.dirname(os.path.realpath(__file__))
@@ -15,8 +11,11 @@ bppath = os.path.join(os.path.dirname(thispath), "modules")
 sys.path.insert(0, bppath)
 
 import bpmodule as bp
-from bpmodule.math import StringSetUniverse, StringSet
+from bpmodule.output import *
+from bpmodule.testing import *
+from bpmodule.math import *
 
+from helper.SetOperations import TestSetOperations
 
 
 def SetElement(s, i, e):
@@ -28,7 +27,7 @@ def Run():
         Alphabet="abcdefghijklmnopqrstuvwxyz"
         BadAlphabet = "ABCDE"
 
-        tester = bp.testing.Tester("Testing Universe and MathSet")
+        tester = Tester("Testing Universe and MathSet")
         tester.PrintHeader()
 
         u1 = StringSetUniverse()
@@ -95,11 +94,11 @@ def Run():
 
 
     except Exception as e:
-      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.GlobalError("\n")
-      bp.output.GlobalError(str(e))
-      bp.output.GlobalError("\n")
+      GlobalError("\n")
+      GlobalError(str(e))
+      GlobalError("\n")
 
 
 

@@ -246,14 +246,18 @@ bool OptionMap::CompareSelect(const OptionMap & rhs, const KeySet & selection) c
 }
 
 
-void OptionMap::AddOption(const OptionBase & opt)
+void OptionMap::AddOption(std::string key, OptionType opttype, bool required,
+                          const pybind11::object & validator, std::string help,
+                          const pybind11::object & def)
 {
-    //! \todo insert sanity check for pytype / actual type mapping
-    if(HasKey(opt.Key()))
+    if(HasKey(key))
         throw OptionException("Attempting to add duplicate option key",
-                              "optionkey", opt.Key(), "modulekey", modulekey_);
+                              "optionkey", key, "modulekey", modulekey_);
 
-    opmap_.emplace(opt.Key(), opt.Clone());
+    std::unique_ptr<OptionBase> oph = CreateOptionHolder(key, opttype, required,
+                                                       validator, help, def);
+
+    opmap_.emplace(std::move(key), std::move(oph));
 }
 
 

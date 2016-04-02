@@ -151,40 +151,32 @@ MAKE_CONTAINER_TYPE_DICT(OptionType::String, OptionType::String, OptionType::Dic
 // Mapping of POD to their corresponding
 // option types
 ////////////////////////////////////////
-template<typename T,
-         bool = std::is_integral<T>::value,
-         bool = std::is_floating_point<T>::value>
-struct OptionTypeMap {  };
+
+template<typename T> struct OptionTypeMap { static constexpr bool valid = false; };
+
+#define MAPTOOPTIONTYPE(TYPE, OPTTYPE) \
+        template<> struct OptionTypeMap<TYPE> { \
+        static constexpr OptionType opt_type = OptionType::OPTTYPE; };
+
+MAPTOOPTIONTYPE(bool,                Bool)
+MAPTOOPTIONTYPE(unsigned char,       Int)
+MAPTOOPTIONTYPE(signed   char,       Int)
+MAPTOOPTIONTYPE(unsigned short,      Int)
+MAPTOOPTIONTYPE(signed   short,      Int)
+MAPTOOPTIONTYPE(unsigned int,        Int)
+MAPTOOPTIONTYPE(signed   int,        Int)
+MAPTOOPTIONTYPE(unsigned long,       Int)
+MAPTOOPTIONTYPE(signed   long,       Int)
+MAPTOOPTIONTYPE(unsigned long long,  Int)
+MAPTOOPTIONTYPE(signed   long long,  Int)
+MAPTOOPTIONTYPE(float,               Float)
+MAPTOOPTIONTYPE(double,              Float)
+MAPTOOPTIONTYPE(long double,         Float)
+MAPTOOPTIONTYPE(std::string,         String)
 
 
-// Integral types
-template<typename T>
-struct OptionTypeMap<T, true, false> 
-{
-    static constexpr OptionType opt_type = OptionType::Int;
-};
+#undef MAPTOOPTIONTYPE
 
-// Floating point types
-template<typename T>
-struct OptionTypeMap<T, false, true> 
-{
-    static constexpr OptionType opt_type = OptionType::Float;
-};
-
-// Bool is special
-template<>
-struct OptionTypeMap<bool>
-{
-    static constexpr OptionType opt_type = OptionType::Bool;
-};
-
-// So is string
-template<>
-struct OptionTypeMap<std::string>
-{
-    static constexpr OptionType opt_type = OptionType::String;
-};
-                                  
 
 //////////////////////////
 // Containers
@@ -192,7 +184,7 @@ struct OptionTypeMap<std::string>
 // Sets
 
 template<typename T>
-struct OptionTypeMap<std::set<T>, false, false>
+struct OptionTypeMap<std::set<T>>
 {
     static constexpr OptionType inner_type = OptionTypeMap<T>::opt_type;
     static constexpr OptionType opt_type = ContainerMap<inner_type>::set_type;
@@ -200,7 +192,7 @@ struct OptionTypeMap<std::set<T>, false, false>
 
 // Lists/vectors
 template<typename T>
-struct OptionTypeMap<std::vector<T>, false, false>
+struct OptionTypeMap<std::vector<T>>
 {
     static constexpr OptionType inner_type = OptionTypeMap<T>::opt_type;
     static constexpr OptionType opt_type = ContainerMap<inner_type>::list_type;
@@ -208,7 +200,7 @@ struct OptionTypeMap<std::vector<T>, false, false>
 
 // Maps
 template<typename T, typename U>
-struct OptionTypeMap<std::map<T, U>, false, false>
+struct OptionTypeMap<std::map<T, U>>
 {
     static constexpr OptionType inner_key_type = OptionTypeMap<T>::opt_type;
     static constexpr OptionType inner_val_type = OptionTypeMap<U>::opt_type;

@@ -162,8 +162,20 @@ class OptionHolder : public OptionBase
 
         //! Validation function object
         ValidatorFunc validator_;
+
+
 };
 
+        
+
+/*! \brief Creates an OptionHolder based on an OptionType
+ *
+ * Passes the rest of the arguments to the OptionHolder constructor
+ */
+std::unique_ptr<OptionBase>
+CreateOptionHolder(std::string key, OptionType opttype, bool required,
+                   const pybind11::object & validator, std::string help,
+                   const pybind11::object & def);
 
 
 } //closing namespace datastore

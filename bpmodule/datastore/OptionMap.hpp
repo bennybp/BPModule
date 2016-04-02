@@ -68,8 +68,8 @@ class OptionMap
 
 
 
-        OptionMap(OptionMap && /*rhs*/)                  = default;
-        OptionMap & operator=(OptionMap && /*rhs*/)      = default;
+        OptionMap(OptionMap &&)                  = default;
+        OptionMap & operator=(OptionMap &&)      = default;
 
 
 
@@ -292,7 +292,13 @@ class OptionMap
 
 
 
-        void AddOption(const OptionBase & opt);
+        /*! \brief Add an option to this map
+         *
+         * \todo exceptions 
+         */
+        void AddOption(std::string key, OptionType opttype, bool required,
+                       const pybind11::object & validator, std::string help,
+                       const pybind11::object & def);
 
 
 

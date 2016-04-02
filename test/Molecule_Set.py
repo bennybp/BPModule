@@ -3,11 +3,8 @@
 
 import os
 import sys
-import argparse
 import traceback 
 
-from helper.SetOperations import TestSetOperations
-from helper.TestAtoms import nonane
 
 # Add the bpmodule path
 thispath = os.path.dirname(os.path.realpath(__file__))
@@ -15,14 +12,17 @@ bppath = os.path.join(os.path.dirname(thispath), "modules")
 sys.path.insert(0, bppath)
 
 import bpmodule as bp
-from bpmodule.system import System, AtomSetUniverse, Atom
+from bpmodule.output import *
+from bpmodule.testing import *
+from bpmodule.system import *
+
+from helper.SetOperations import TestSetOperations
+from helper.TestAtoms import nonane
 
 
 def Run():
     try:
-        out = bp.output.GetGlobalOut()
-
-        tester = bp.testing.Tester("Testing System class - set operations")
+        tester = Tester("Testing System class - set operations")
         tester.PrintHeader()
 
         atoms = list(nonane)
@@ -68,11 +68,11 @@ def Run():
 
 
     except Exception as e:
-      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.GlobalError("\n")
-      bp.output.GlobalError(str(e))
-      bp.output.GlobalError("\n")
+      GlobalError("\n")
+      GlobalError(str(e))
+      GlobalError("\n")
 
 
 
