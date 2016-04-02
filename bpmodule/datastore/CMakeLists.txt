@@ -5,6 +5,7 @@ set(BPMODULE_DATASTORE_FILES
             OptionBase.cpp
             OptionMap.cpp
             export.cpp
+            testing/export.cpp
    )
 
   

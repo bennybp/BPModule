@@ -25,6 +25,8 @@ namespace datastore {
 namespace export_python {
 
 
+// in testing/export.cpp
+void export_testing(pybind11::module & m);
 
 
 PYBIND11_PLUGIN(datastore)
@@ -122,6 +124,10 @@ PYBIND11_PLUGIN(datastore)
                 pybind11::arg("obj"),
                 pybind11::arg("opt") = OptionMap())
     ;
+
+
+    // Export the testing stuff
+    export_testing(m);
 
     return m.ptr();
 }

@@ -15,8 +15,6 @@ from bpmodule.output import *
 from bpmodule.testing import *
 from bpmodule.math import *
 
-from helper.SetOperations import TestSetOperations
-
 
 def Run():
     try:

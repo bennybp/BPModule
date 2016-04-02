@@ -16,12 +16,11 @@ from bpmodule.output import *
 from bpmodule.testing import *
 from bpmodule.system import *
 
-from helper.SetOperations import TestSetOperations
 from helper.TestAtoms import nonane
 
 def Run():
     try:
-        tester = Tester("Testing System class - serialization")
+        tester = Tester("Testing System - serialization")
         tester.PrintHeader()
 
         atoms = list(nonane)

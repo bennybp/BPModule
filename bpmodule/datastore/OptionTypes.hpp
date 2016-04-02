@@ -30,8 +30,17 @@ namespace datastore {
 //! Integer options are stored as this type
 typedef intmax_t OptionInt;
 
+
+////////////////////////////////////////////////////////
+// WARNING
+// This was originally long double. However, that
+// messes up hashing. long double is 80-bit precision,
+// but stored as 128-bit, with unused garbage after
+// the first 10 bytes. This might be fixable, but
+// double is ok for now
+///////////////////////////////////////////////////////
 //! Floating point options are stored as this type
-typedef long double OptionFloat;
+typedef double OptionFloat;
 
 
 

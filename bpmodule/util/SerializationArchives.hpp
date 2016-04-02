@@ -196,6 +196,27 @@ class StdStreamArchive
         }
 
 
+        /*! \brief Get the contents of this archive as a byte array */
+        std::vector<char> ToByteArray(void)
+        {
+            BeginUnserialization(); // perform checks and reset positions
+            std::vector<char> ret;
+            size_t size = Size();
+            ret.resize(size);
+            stream_.read(ret.data(), size);
+            EndUnserialization();
+            return ret;
+        }
+
+        /*! \brief Create this archive from a byte array */
+        void FromByteArray(const std::vector<char> & arr)
+        {
+            BeginSerialization(); // perform checks and reset positions
+            stream_.write(arr.data(), arr.size());
+            EndSerialization();
+        }
+
+
     protected:
         StdStreamArchive() = default;
 
@@ -260,6 +281,7 @@ class MemoryArchive : public detail::StdStreamArchive<std::stringstream>
     public:
         // forward the protected constructor
         using Base::Base;
+
 }; 
 
 

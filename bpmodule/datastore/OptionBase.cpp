@@ -17,6 +17,12 @@ OptionBase::OptionBase(const std::string & key,
     : key_(key), required_(required), help_(help)
 { }
 
+OptionBase::OptionBase(std::string && key,
+                       bool required,
+                       std::string && help)
+    : key_(std::move(key)), required_(required), help_(std::move(help))
+{ }
+
 const std::string & OptionBase::Key(void) const noexcept
 {
     return key_;
@@ -45,7 +51,6 @@ bool OptionBase::HasIssues(void) const
 {
     return (GetIssues().size());
 }
-
 
 
 } //closing namespace datastore

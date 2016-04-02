@@ -14,6 +14,7 @@
 #include <ostream>
 
 #include "bpmodule/python/Pybind11_fwd.hpp"
+#include "bpmodule/util/Serialization.hpp"
 
 namespace bpmodule {
 namespace datastore {
@@ -21,6 +22,7 @@ namespace datastore {
 
 // forward declare class
 class OptionBase;
+enum class OptionType;
 
 
 
@@ -48,9 +50,11 @@ class OptionBase
          * \param [in] required True if this is a required option
          * \param [in] help A help string for this option
          */
-        OptionBase(const std::string & key,
-                   bool required,
-                   const std::string & help);
+        OptionBase(const std::string & key, bool required, const std::string & help);
+
+        /// \copydocs OptionBase(const std::string &, bool, const std::string &)
+        OptionBase(std::string && key, bool required, std::string && help);
+
 
         virtual ~OptionBase() noexcept              = default;
 
@@ -133,8 +137,14 @@ class OptionBase
          *
          * \exnothrow
          */
-        virtual const char * Type(void) const noexcept = 0;
+        virtual const char * TypeString(void) const noexcept = 0;
 
+
+        /*! \brief Get the type of this
+         *
+         * \exnothrow
+         */
+        virtual OptionType Type(void) const noexcept = 0;
 
 
         /*! \brief Print out information about this option
@@ -142,6 +152,8 @@ class OptionBase
         virtual void Print(std::ostream & os) const = 0;
 
 
+        /*! \brief Serialize the option to a byte array */
+        virtual ByteArray ToByteArray(void) const = 0;
 
 
         /////////////////////////////////////////
@@ -218,23 +230,35 @@ class OptionBase
 
 
     protected:
+        /*! \brief For serialization only
+         * 
+         * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
+         */
+        OptionBase() = default;
+
         /*! \brief Copy constructor
          *
          * Should only be called from Clone(), hence it is kept protected
          */
-        OptionBase(const OptionBase & /*rhs*/) = default;
+        OptionBase(const OptionBase &) = default;
 
+
+        /*! \brief For serialization only
+         * 
+         * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
+         */
+        //void SetBase_(std::string && key, bool required, std::string && help);
 
 
     private:
         //! The key of this option
-        const std::string key_;
+        std::string key_;
 
         //! Is this option required
-        const bool required_;
+        bool required_;
 
         //! The help string for this option
-        const std::string help_;
+        std::string help_;
 
 
 

@@ -16,8 +16,8 @@ from bpmodule.output import *
 from bpmodule.testing import *
 from bpmodule.datastore import *
 
-from helper.SetOperations import TestSetOperations
-from helper.TestAtoms import nonane
+from helper.TestOptions import opttypemap, allvals
+
 
 # can d be converted to t
 def IsValid(t, d):
@@ -46,58 +46,10 @@ def Run():
         tester = Tester("Testing construction of OptionMap objects")
         tester.PrintHeader()
 
-        # map to optionstypes,
-        opttypemap = { "int"   : OptionType.Int,
-                       "float" : OptionType.Float,
-                       "bool"  : OptionType.Bool,
-                       "str"   : OptionType.String,
-                       "setint"   : OptionType.SetInt,
-                       "setfloat" : OptionType.SetFloat,
-                       "setbool"  : OptionType.SetBool,
-                       "setstr"   : OptionType.SetString,
-                       "listint"   : OptionType.ListInt,
-                       "listfloat" : OptionType.ListFloat,
-                       "listbool"  : OptionType.ListBool,
-                       "liststr"   : OptionType.ListString,
-                      }
-                    # TODO
-                    #                        OptionType.DictIntInt
-                    #                        OptionType.DictIntFloat
-                    #                        OptionType.DictIntBool
-                    #                        OptionType.DictIntString,
-                    #                        OptionType.DictStringInt
-                    #                        OptionType.DictStringFloat
-                    #                        OptionType.DictStringBool
-                    #                        OptionType.DictStringString
-
-
-        # valid data for some types
-        validvals = [ ("int" ,   5),
-                      ("float" , 5.0),
-                      ("bool" , True),
-                      ("str", "Hello"),
-                      ("listint" , [-1, 0, 1]),
-                      ("listfloat" , [-1.0, 0.0, 1.0]),
-                      ("listbool" , [False, False, True]),
-                      ("liststr" , ["My", "Test", "Strings"]),
-                      ("listint" , []),
-                      ("listfloat" , []),
-                      ("listbool" , []),
-                      ("liststr" , []),
-                      ("setint" , { -1, 0, 1, 10 }),
-                      ("setfloat" , { -1.1, 0.1, 1.1, 10.1 }),
-                      ("setbool" , set({True, False})),
-                      ("setstr" , { "My", "Set", "of", "Strings" }),
-                      ("setint" , set()),
-                      ("setfloat" , set()),
-                      ("setbool" , set()),
-                      ("setstr" , set())
-                    ]
-
 
 
         # Test single element, no validator
-        for k,v in validvals:
+        for k,v in allvals:
 
             # with default, not required
             optmap = OptionMap()
@@ -129,7 +81,7 @@ def Run():
 
         # Adding multiple elements
         optmap = OptionMap("nomodule")
-        for k, v in validvals: 
+        for k, v in allvals: 
             s = "Test adding {}".format(k)
             opttype = opttypemap[k]
             dup = optmap.HasKey(k) # Can't add duplicate keys
@@ -143,7 +95,7 @@ def Run():
 #            # create a list of dicts to test
 #            allopt = [ { "test_opt" : ( t1,   None,          True, None, "(no help)" ) },
 #                       { "test_opt" : ( t1,   None,          False, None, "(no help)" ) },
-#                       { "test_opt" : ( t1,   validvals[t1], False, None, "(no help)" ) },
+#                       { "test_opt" : ( t1,   allvals[t1], False, None, "(no help)" ) },
 #                     ]
 #
 #

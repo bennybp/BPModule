@@ -355,8 +355,6 @@ class OptionMap
 
 
 
-
-
         /*! \brief Get an OptionBase or throw if the key doesn't exist
          *
          * \note Key should already have been transformed to lowercase
@@ -388,7 +386,7 @@ class OptionMap
             if(oh == nullptr)
                 throw exception::OptionException("Bad option cast", "optionkey", key,
                                                  "modulekey", modulekey_,
-                                                 "fromtype", ptr->Type(),
+                                                 "fromtype", ptr->TypeString(),
                                                  "totype", OptionTypeToString(OPTTYPE)); 
 
             return oh;
@@ -405,7 +403,7 @@ class OptionMap
             if(oh == nullptr)
                 throw exception::OptionException("Bad option cast", "optionkey", key,
                                                  "modulekey", modulekey_,
-                                                 "fromtype", ptr->Type(),
+                                                 "fromtype", ptr->TypeString(),
                                                  "totype", OptionTypeToString(OPTTYPE)); 
 
             return oh;
@@ -424,6 +422,50 @@ class OptionMap
             //static_assert( OptionTypeMap<T>::valid,
             //               "Invalid type for an option given to OptionMap");
         }
+
+
+
+        //! \name Serialization
+        ///@{
+
+        DECLARE_SERIALIZATION_FRIENDS
+
+
+        template<class Archive>
+        void save(Archive & ar) const
+        {
+            // We don't do lockvalid - if we are unserializing, we are
+            // going to lock it. We also don't do validators
+            ar(modulekey_, expert_);
+
+            // We have to do the options a special way
+            // static cast for size - just to be absolutely sure
+            ar(static_cast<size_t>(opmap_.size()));
+            for(const auto & it : opmap_)
+                ar(it.first, it.second->Type(), it.second->ToByteArray());
+        }
+
+        template<class Archive>
+        void load(Archive & ar)
+        {
+            size_t size;
+            ar(modulekey_, expert_, size);
+
+            // We have to do the options a special way
+            for(size_t i = 0; i < size; i++)
+            {
+                std::string key;
+                OptionType opttype;
+                ByteArray ba;
+                ar(key, opttype, ba);
+                std::unique_ptr<OptionBase> opt = OptionHolderFromByteArray(opttype, ba);
+                opmap_.emplace(key, std::move(opt));
+            }
+
+            lockvalid_ = true;
+        }
+
+        ///@}
 };
 
 

@@ -65,8 +65,8 @@ OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
 
 template<OptionType OPTTYPE>
 OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
-                              bool required, const pybind11::object & validator,
-                              const std::string & help)
+                                    bool required, const pybind11::object & validator,
+                                    const std::string & help)
     : OptionHolder(key, required, validator, help, nullptr)
 {
 }
@@ -93,9 +93,9 @@ OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
 
 template<OptionType OPTTYPE>
 OptionHolder<OPTTYPE>::OptionHolder(const std::string & key,
-                              bool required, const pybind11::object & validator,
-                              const std::string & help,
-                              const pybind11::object & def)
+                                    bool required, const pybind11::object & validator,
+                                    const std::string & help,
+                                    const pybind11::object & def)
     : OptionHolder(key, required, validator, help, python::ConvertToCpp<stored_type>(def))
 {
 }
@@ -111,6 +111,17 @@ OptionHolder<OPTTYPE>::OptionHolder(const OptionHolder & oph)
         value_ = std::unique_ptr<stored_type>(new stored_type(*oph.value_));
     if(oph.default_)
         default_ = std::unique_ptr<stored_type>(new stored_type(*oph.default_));
+}
+
+
+template<OptionType OPTTYPE>
+OptionHolder<OPTTYPE>::OptionHolder(std::string && key, bool required,
+                                    std::string && help,
+                                    std::unique_ptr<stored_type> && value,
+                                    std::unique_ptr<stored_type> && def)
+    : OptionBase(std::move(key), required, std::move(help)),
+      value_(std::move(value)), default_(std::move(def))
+{
 }
 
 
@@ -156,9 +167,15 @@ OptionBasePtr OptionHolder<OPTTYPE>::Clone(void) const
 
 
 template<OptionType OPTTYPE>
-const char * OptionHolder<OPTTYPE>::Type(void) const noexcept
+const char * OptionHolder<OPTTYPE>::TypeString(void) const noexcept
 {
     return OptionTypeToString(OPTTYPE);
+}
+
+template<OptionType OPTTYPE>
+OptionType OptionHolder<OPTTYPE>::Type(void) const noexcept
+{
+    return OPTTYPE;
 }
 
 
@@ -208,7 +225,7 @@ bool OptionHolder<OPTTYPE>::Compare(const OptionBase & rhs) const
 {
     const OptionHolder<OPTTYPE> * op = dynamic_cast<const OptionHolder<OPTTYPE> *>(&rhs);
 
-    if(op == nullptr)
+    if(op == nullptr) // option of a different type
         return false;
 
     PRAGMA_WARNING_PUSH
@@ -236,6 +253,16 @@ OptionIssues OptionHolder<OPTTYPE>::GetIssues(void) const
         return OptionIssues();
 }
 
+
+template<OptionType OPTTYPE>
+ByteArray OptionHolder<OPTTYPE>::ToByteArray(void) const
+{
+    util::MemoryArchive mar;
+    mar.BeginSerialization();
+    mar.Serialize(Key(), IsRequired(), Help(), value_, default_);
+    mar.EndSerialization();
+    return mar.ToByteArray();
+}
 
 
 /////////////////////////////////////////
@@ -381,7 +408,7 @@ void OptionHolder<OPTTYPE>::Print(std::ostream & os) const
     // print the first line
     std::vector<std::string> optlines;
     optlines.push_back(FormatString("          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n",
-                                    Key(), Type(), val[0], def[0], req,  Help()));
+                                    Key(), TypeString(), val[0], def[0], req,  Help()));
 
 
     // now other lines
@@ -477,6 +504,56 @@ CreateOptionHolder(std::string key, OptionType opttype, bool required,
 }
 
 #undef CASE_RETURN_OPTIONHOLDER
+
+
+//! \todo make_unique in c++14
+#define CASE_UNSERIALIZE_OPTIONHOLDER(TYPE) \
+    case OptionType::TYPE: {\
+        std::unique_ptr<OptionHolder<OptionType::TYPE>::stored_type> value, def; \
+        mar.Unserialize(key, required, help, value, def); \
+        return std::unique_ptr<OptionBase>(new OptionHolder<OptionType::TYPE>\
+                    (std::move(key), required, std::move(help), std::move(value), std::move(def)));\
+    }
+
+std::unique_ptr<OptionBase>
+OptionHolderFromByteArray(OptionType opttype, const ByteArray & ba)
+{
+    MemoryArchive mar;
+    mar.FromByteArray(ba);
+    std::string key, help;
+    bool required;
+
+    mar.BeginUnserialization();
+
+    switch(opttype)
+    {
+        CASE_UNSERIALIZE_OPTIONHOLDER(Int)
+        CASE_UNSERIALIZE_OPTIONHOLDER(Float)
+        CASE_UNSERIALIZE_OPTIONHOLDER(Bool)
+        CASE_UNSERIALIZE_OPTIONHOLDER(String)
+        CASE_UNSERIALIZE_OPTIONHOLDER(SetInt)
+        CASE_UNSERIALIZE_OPTIONHOLDER(SetFloat)
+        CASE_UNSERIALIZE_OPTIONHOLDER(SetBool)
+        CASE_UNSERIALIZE_OPTIONHOLDER(SetString)
+        CASE_UNSERIALIZE_OPTIONHOLDER(ListInt)
+        CASE_UNSERIALIZE_OPTIONHOLDER(ListFloat)
+        CASE_UNSERIALIZE_OPTIONHOLDER(ListBool)
+        CASE_UNSERIALIZE_OPTIONHOLDER(ListString)
+        CASE_UNSERIALIZE_OPTIONHOLDER(DictIntInt)
+        CASE_UNSERIALIZE_OPTIONHOLDER(DictIntFloat)
+        CASE_UNSERIALIZE_OPTIONHOLDER(DictIntBool)
+        CASE_UNSERIALIZE_OPTIONHOLDER(DictIntString)
+        CASE_UNSERIALIZE_OPTIONHOLDER(DictStringInt)
+        CASE_UNSERIALIZE_OPTIONHOLDER(DictStringFloat)
+        CASE_UNSERIALIZE_OPTIONHOLDER(DictStringBool)
+        CASE_UNSERIALIZE_OPTIONHOLDER(DictStringString)
+        default:
+            throw std::logic_error("Unhandled option type");
+    }
+}
+
+#undef CASE_UNSERIALIZE_OPTIONHOLDER
+
 
 
 } // close namespace datastore
