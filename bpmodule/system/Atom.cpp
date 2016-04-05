@@ -131,6 +131,41 @@ Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum)
     return CreateAtom(idx, {x,y,z}, Z, isonum);
 }
 
+Atom MakeGhost(size_t idx,const Atom& AtomI){
+  Atom AtomJ(AtomI);//copy basis
+  AtomJ.SetZ(0);
+  AtomJ.SetIsonum(0);
+  AtomJ.SetMass(0.0);
+  AtomJ.SetIsotopeMass(0.0);
+  AtomJ.SetCharge(0.0);
+  AtomJ.SetMultiplicity(0.0);
+  AtomJ.SetNElectrons(0.0);
+  AtomJ.SetCovRadius(0.0);
+  return AtomJ;
+}
+
+Atom MakeDummy(size_t idx,CoordType xyz){
+      return CreateAtom(idx,xyz,-1);
+}
+
+Atom MakeCharge(size_t idx,double charge,CoordType xyz){
+    return CreateAtom(idx,xyz,-2);
+}
+
+bool IsGhost(const Atom& AtomI){
+    Atom AtomJ=MakeGhost(0,AtomI);
+    return AtomJ==AtomI;
+}
+
+bool IsDummy(const Atom& AtomI){
+    Atom AtomJ=MakeDummy(0,AtomI);
+    return AtomJ==AtomI;
+}
+
+bool IsCharge(const Atom& AtomI){
+    Atom AtomJ=MakeCharge(0,AtomI);
+    return AtomJ==AtomI;
+}
 
 } // close namespace system
 } // close namespace bpmodule

@@ -12,3 +12,9 @@ output Core Components
 .. autodoxyclass:: bpmodule::output::OutputStream
    :members:
 
+.. autodoxyclass:: bpmodule::output::Cell
+   :members:
+
+.. autodoxyclass:: bpmodule::output::Table
+   :members:
+

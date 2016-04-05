@@ -6,24 +6,26 @@ math Core Components
    :maxdepth:1
 
 
-.. autodoxyclass:: bpmodule::math::ConstSetItr
-   :members:
+.. comment autodoxyclass:: bpmodule::math::ConstSetItr
+.. comment :members:
 
-.. autodoxyclass:: bpmodule::math::Universe
-   :members:
+.. comment autodoxyclass:: bpmodule::math::Universe
+.. comment   :members:
 
-.. autodoxyclass:: bpmodule::math::CombItr
-   :members:
+.. comment.. autodoxyclass:: bpmodule::math::CombItr
+.. comment   :members:
 
-.. autodoxyclass:: bpmodule::math::FiniteDiff
-   :members:
+.. comment autodoxyclass:: bpmodule::math::FiniteDiff
+.. comment   :members:
 
-.. autodoxyclass:: bpmodule::math::ForwardDiff
-   :members:
+.. comment autodoxyclass:: bpmodule::math::ForwardDiff
+.. comment   :members:
 
-.. autodoxyclass:: bpmodule::math::BackwardDiff
-   :members:
+.. comment autodoxyclass:: bpmodule::math::BackwardDiff
+.. comment   :members:
 
-.. autodoxyclass:: bpmodule::math::MathSet
-   :members:
+.. comment .. autodoxyclass:: bpmodule::math::PowerSetItr
+.. comment    :members:
+.. comment .. autodoxyclass:: bpmodule::math::MathSet
+.. comment    :members:
 

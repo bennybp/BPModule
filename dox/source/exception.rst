@@ -36,6 +36,9 @@ exception Core Components
 .. autodoxyclass:: bpmodule::exception::SystemException
    :members:
 
+.. autodoxyclass:: bpmodule::exception::SerializationException
+   :members:
+
 .. autodoxyclass:: bpmodule::exception::OptionException
    :members:
 

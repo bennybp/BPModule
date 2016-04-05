@@ -184,7 +184,20 @@ struct OptionTypeMap<std::string>
 {
     static constexpr OptionType opt_type = OptionType::String;
 };
-                                  
+
+//string literals
+template<size_t N>
+struct OptionTypeMap<const char[N],false,false>
+{
+    static constexpr OptionType opt_type = OptionType::String;
+};
+
+template<size_t N>
+struct OptionTypeMap<char[N],false,false>
+{
+    static constexpr OptionType opt_type = OptionType::String;
+};
+
 
 //////////////////////////
 // Containers
@@ -241,6 +254,16 @@ template<>
 struct OptionCast<std::string, std::string>
 {
     static std::string Cast(const std::string & s)   {  return s; }
+};
+
+/*! \brief Converts an option value to/from its stored type
+ *
+ * Specialization for string literal types
+ */
+template<size_t N>
+struct OptionCast<std::string, char [N]>
+{
+    static std::string Cast(const char* s)   {  return s; }
 };
 
 

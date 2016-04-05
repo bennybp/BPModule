@@ -290,6 +290,62 @@ Atom CreateAtom(size_t idx, CoordType xyz, int Z, int isonum);
 /*! \copydoc CreateAtom(size_t idx, CoordType xyz, int Z, int isonum) */ 
 Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum);
 
+
+///@{\name Ghost Atom Functions
+/** When making/checking for ghost atoms please use these functions to ensure
+ *  consistent definitions of ghost atoms.  A ghost atom has the same basis
+ *  functions as the atom it is replacing, but no other properties, i.e.
+ *  a charge of 0, a mass of 0, a multiplicity of 0, etc.  Ghost atoms
+ *  must be made from atoms that have basis functions already because the
+ *  Z information will be lost.  In practice this poses no problems for
+ *  any existing BSSE method.
+ */
+///Makes a copy of AtomI that is a ghost atom with new index idx
+Atom MakeGhost(size_t idx, const Atom& AtomI);
+///Returns true if AtomI is a ghost atom
+bool IsGhost(const Atom& AtomI);
+///@}
+
+///@{\name Point Charge Functions
+/** When making/checking for point charges please use these functions to ensure
+ *  consistent definitions of point charge.  A point charge has a charge, but
+ *  no other properties.
+ */
+///Makes a charge from a charge and coordinates
+Atom MakeCharge(size_t idx,double Charge,CoordType xyz);
+///Copies AtomI into a point charge
+inline Atom MakeCharge(size_t idx, const Atom& AtomI){
+    return MakeCharge(idx,AtomI.GetCharge(),AtomI.GetCoords());
+}
+///Makes a point charge from a charge and coordinates
+inline Atom MakeCharge(size_t idx, double Charge, double x, double y, double z){
+    return MakeCharge(idx,Charge, {x,y,z});
+}
+///Returns true if AtomI is a point charge
+bool IsCharge(const Atom& AtomI);
+///@}
+
+///@{\name Dummy Atom Functions
+/** When making/checking for point charges please use these functions to ensure
+ *  consistent definitions of point charge.  A point charge has a charge, but
+ *  no other properties.
+ */
+///Makes a dummy atom from coordinates
+Atom MakeDummy(size_t idx,CoordType xyz);
+
+///Copies AtomI into a dummy atom
+inline Atom MakeDummy(size_t idx, const Atom& AtomI){
+    return MakeDummy(idx,AtomI.GetCoords());
+}
+///Makes a dummy atom from component coordinates
+inline Atom MakeDummy(size_t idx, double x, double y, double z){
+    return MakeDummy(idx,{x,y,z});
+}
+///Returns true if AtomI is a dummy atom
+bool IsDummy(const Atom& AtomI);
+///@}
+
+
 #undef GetSetX
 
 
