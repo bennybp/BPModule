@@ -1,15 +1,27 @@
+/*! \file
+ *
+ * \brief A simple class representing a Point
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
 #ifndef BPMODULE_GUARD_MATH__POINT_HPP_
 #define BPMODULE_GUARD_MATH__POINT_HPP_
 
-#include "bpmodule/pragma.h"
 #include <array>
 #include <cmath>
+
+#include "bpmodule/pragma.h"
+#include "bpmodule/util/Serialization.hpp"
+
 
 namespace bpmodule{
 namespace math{
 
 
-
+/*! \brief A simple class representing a Point
+ *
+ * Cartesian point of data type \p T
+ */
 template<typename T>
 class PointT
 {
@@ -139,9 +151,23 @@ class PointT
             return Diff.Magnitude();
         }
 
+
     private:
         CoordType coords_;
 
+
+        //! \name Serialization
+        ///@{
+        
+        DECLARE_SERIALIZATION_FRIENDS
+        
+        template<class Archive>
+        void serialize(Archive & ar)
+        {
+            ar(coords_);
+        }
+
+        ///@}
 };
 
 

@@ -1,15 +1,16 @@
 /*! \file
  *
- * \brief Serialization helpers
+ * \brief Storage of serialized data
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_UTIL__SERIALIZE_HPP_
-#define BPMODULE_GUARD_UTIL__SERIALIZE_HPP_
+#ifndef BPMODULE_GUARD_UTIL__SERIALIZATIONARCHIVES_HPP_
+#define BPMODULE_GUARD_UTIL__SERIALIZATIONARCHIVES_HPP_
 
 #include <sstream>
 #include <fstream>
 #include <cereal/cereal.hpp>
+#include <cereal/access.hpp>
 #include <cereal/archives/binary.hpp>
 
 #include "bpmodule/util/HashingArchive.hpp"
@@ -143,6 +144,23 @@ class StdStreamArchive
 
 
 
+        /*! \brief Extract data from the archive
+         * 
+         * Returns a single object. Useful for types without a public default constructor
+         * 
+         * \throw bpmodule::exception::SerializationException if we are serializing or we
+         *        are not unserializing.
+         */
+        template<typename T>
+        T UnserializeSingle(void)
+        {
+            T ret;
+            Unserialize(ret);
+            return ret;
+        }
+
+
+
         /*! \brief Stop unserialization
          * 
          * \throw bpmodule::exception::SerializationException if the object is
@@ -175,6 +193,27 @@ class StdStreamArchive
             // set the output position back to where it was
             stream_.seekp(orig);
             return size;
+        }
+
+
+        /*! \brief Get the contents of this archive as a byte array */
+        std::vector<char> ToByteArray(void)
+        {
+            BeginUnserialization(); // perform checks and reset positions
+            std::vector<char> ret;
+            size_t size = Size();
+            ret.resize(size);
+            stream_.read(ret.data(), size);
+            EndUnserialization();
+            return ret;
+        }
+
+        /*! \brief Create this archive from a byte array */
+        void FromByteArray(const std::vector<char> & arr)
+        {
+            BeginSerialization(); // perform checks and reset positions
+            stream_.write(arr.data(), arr.size());
+            EndSerialization();
         }
 
 
@@ -242,6 +281,7 @@ class MemoryArchive : public detail::StdStreamArchive<std::stringstream>
     public:
         // forward the protected constructor
         using Base::Base;
+
 }; 
 
 
@@ -265,6 +305,7 @@ class FileArchive : public detail::StdStreamArchive<std::fstream>
 
 } // close namespace util
 } // close namespace bpmodule
+
 
 
 #endif

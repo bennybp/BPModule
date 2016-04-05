@@ -54,7 +54,7 @@ void ToLower(std::string & str);
  * \param [in] str String to convert to lowercase
  * \return The string converted to lowercase
  */
-std::string ToLowerCopy(std::string str);
+std::string ToLower_Copy(std::string str);
 
 
 /*! \brief Trim a string (beginning)

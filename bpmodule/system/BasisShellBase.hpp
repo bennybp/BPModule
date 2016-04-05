@@ -1,14 +1,22 @@
+/*! \file
+ *
+ * \brief Base class for basis set shells (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
 #ifndef BPMODULE_GUARD_SYSTEM__BASISSHELLBASE_HPP_
 #define BPMODULE_GUARD_SYSTEM__BASISSHELLBASE_HPP_
 
 #include <vector>
+#include "bpmodule/util/Serialization.hpp"
+#include "bpmodule/exception/Assert.hpp"
 
 
 namespace bpmodule {
 namespace system {
 
 
-
+/*! \brief Type of basis shells */
 enum class ShellType
 {
     Gaussian,
@@ -18,81 +26,295 @@ enum class ShellType
 
 
 
-
+/*! \brief Base class for basis set shells
+ *
+ * This is used to implement the base interface for shells, particularly
+ * all of the functionality for getting / setting information  about the shell.
+ *
+ * This class provides two different accesses. The first is a safe, although
+ * slower, access via GetAlpha(), etc. These functions check bounds access
+ * and return copies of the underlying data.
+ *
+ * For fast, unsafe access, raw pointers and references to the underlying
+ * data can also be obtained.
+ *
+ * \todo We need developers notes about "special" combined shells
+ */
 class BasisShellBase
 {
+    /*
+     * Since this class is never expected to be
+     * instantiated by itself, serialization is done
+     * completely through the derived classes. This
+     * is due to the derived classes owning the 
+     * that we point to.
+     */
     public:
         virtual ~BasisShellBase() = default;
 
-        /*! \name General properties */
-        ///@{ 
-        ShellType GetType(void) const noexcept;
 
-        int AM(void) const noexcept;
-
-        int NPrim(void) const noexcept;
-        int NCoef(void) const noexcept;
-        int NGeneral(void) const noexcept;
-        int NCartesian(void) const noexcept;
-        int NSpherical(void) const noexcept;
-        int NFunctions(void) const noexcept;
-
-        bool IsCombinedAM(void) const noexcept;
-        bool IsCartesian(void) const noexcept;
-        bool IsSpherical(void) const noexcept;
-
-        bool operator==(const BasisShellBase & rhs) const;
-
+        /*! \brief Compare with another BasisShellBase
+         * 
+         * Used instead of to prevent comparisons with derived classes when
+         * called from the derived class operator==
+         *
+         * This compares all properties and values, looking for an exact match.
+         */
         bool BaseCompare(const BasisShellBase & rhs) const;
 
+
+        /*! \name General properties */
+        ///@{ 
+
+        /// Get the type of shell
+        ShellType GetType(void) const noexcept;
+
+        /// Get this shells angular momentum
+        int AM(void) const noexcept;
+
+        /// Get the number of primitives in this shell
+        int NPrim(void) const noexcept;
+
+        /*! \brief Get the number of coefficients in this shell
+         * 
+         * This takes into account general contractions and combined shells,
+         * so it is not necessarily equal to the number of primitives
+         */
+        int NCoef(void) const noexcept;
+
+        /// Get the level of general contraction of this shell
+        int NGeneral(void) const noexcept;
+
+
+        /*! \brief Get the number of cartesian functions represented by this shell
+         * 
+         * This takes into account general contractions and combined shells, so it
+         * is not simply based on the AM alone
+         */
+        int NCartesian(void) const noexcept;
+
+
+        /*! \brief Get the number of spherical functions represented by this shell
+         * 
+         * This takes into account general contractions and combined shells, so it
+         * is not simply based on the AM alone
+         */
+        int NSpherical(void) const noexcept;
+
+
+        /*! \brief Get the number of functions represented by this shell
+         *
+         * Returns NCartesian() if this shell represents cartesian basis functions,
+         * or NSpherical() if this shell represents spherical basis functions. 
+         *
+         * This takes into account general contractions and combined shells, so it
+         * is not simply based on the AM alone
+         */
+        int NFunctions(void) const noexcept;
+
+
+        /*! \brief Is this shell a combined AM shell
+         * 
+         * A combined AM shell is a generally-contracted shell where
+         * the general contractions represent different angular momentum.
+         * For example, sp and spd shells.
+         */
+        bool IsCombinedAM(void) const noexcept;
+
+
+        /// Does this shell represent cartesian basis functions
+        bool IsCartesian(void) const noexcept;
+
+        /// Does this shell represent spherical basis functions
+        bool IsSpherical(void) const noexcept;
+
         ///@}
+
+
 
         /*! \name Raw, fast, unsafe access */
         ///@{ 
 
-        const double & Alpha(int i) const;
-        double & Alpha(int i);
+        /*! \brief Get a single value for alpha (exponent)
+         *
+         * \param [in] i Index of the primitive to get
+         */
+        const double & Alpha(int i) const ASSERTIONS_ONLY;
 
-        const double & Coef(int n, int i) const;
-        double & Coef(int n, int i) ;
+        /// \copydocs Alpha(int i) const
+        double & Alpha(int i) ASSERTIONS_ONLY;
 
-        double const * AlphaPtr(void) const;
-        double * AlphaPtr(void);
 
-        double const * CoefPtr(int n) const;
-        double * CoefPtr(int n);
 
-        double const * AllCoefsPtr(void) const;
-        double * AllCoefsPtr(void);
+        /*! \brief Get a single value of a coefficient
+         *
+         * \param [in] n Index of the general contraction
+         * \param [in] i Index in the segmented contraction
+         */
+        const double & Coef(int n, int i) const ASSERTIONS_ONLY;
+
+        /// \copydocs Coef(int n, int i) const
+        double & Coef(int n, int i) ASSERTIONS_ONLY;
+
+
+        /*! \brief Get the pointer to the exponents
+         */
+        double const * AlphaPtr(void) const ASSERTIONS_ONLY;
+
+        /// \copydocs AlphaPtr(void) const
+        double * AlphaPtr(void) ASSERTIONS_ONLY;
+
+
+        /*! \brief Get the pointer to the coefficients of a particular general contraction
+         * 
+         * The coefficients for a particular general contraction are
+         * assumed to be contiguous
+         *
+         * \param [in] n Index of the general contraction
+         */
+        double const * CoefPtr(int n) const ASSERTIONS_ONLY;
+
+        /// \copydocs CoefPtr(int n) const
+        double * CoefPtr(int n) ASSERTIONS_ONLY;
+
+
+
+        /*! \brief Get the pointer to all coefficients
+         * 
+         * The coefficients are assumed to be contiguous, with the
+         * general contraction index being the slowest index.
+         */
+        double const * AllCoefsPtr(void) const ASSERTIONS_ONLY;
+
+        /// \copydocs AllCoefsPtr(void) const
+        double * AllCoefsPtr(void) ASSERTIONS_ONLY;
 
         ///@}
+
+
 
 
         /*! \name Slow, safe element access */
         ///@{
 
+
+        /*! \brief Get a single value for alpha (exponent)
+         *
+         * \throw bpmodule::exception::BasisSetException on out-of-bounds access
+         *
+         * \param [in] i Index of the primitive to get
+         */
         double GetAlpha(int i) const;
+
+
+        
+        /*! \brief Set a single value for alpha (exponent)
+         *
+         * \throw bpmodule::exception::BasisSetException on out-of-bounds access
+         *
+         * \param [in] i Index of the primitive to set
+         * \param [in] alpha The value to set the exponent to
+         */
         void SetAlpha(int i, double alpha);
+
+
+
+        /*! \brief Get a single value of a coefficient
+         *
+         * \throw bpmodule::exception::BasisSetException on out-of-bounds access
+         *
+         * \param [in] n Index of the general contraction
+         * \param [in] i Index in the segmented contraction
+         */
         double GetCoef(int n, int i) const;
+
+
+
+        /*! \brief Set a single value of a coefficient
+         *
+         * \throw bpmodule::exception::BasisSetException on out-of-bounds access
+         *
+         * \param [in] n Index of the general contraction
+         * \param [in] i Index in the segmented contraction
+         * \param [in] coef The value to set the coefficient to
+         */
         void SetCoef(int n, int i, double coef);
 
 
+        /// Get all exponents as a vector
         std::vector<double> GetAlphas(void) const;
+
+
+        /*! \brief Set all exponents via a vector
+         *
+         * \throw bpmodule::exception::BasisSetException if the vector is not of the right length
+         */ 
         void SetAlphas(const std::vector<double> & alphas);
 
+
+        /*! \brief Get all coefficients of a general contraction as a vector
+         * 
+         * \param [in] n Index of the general contraction
+         */
         std::vector<double> GetCoefs(int n) const;
+
+
+        /*! \brief Set all coefficients for a general contraction via a vector
+         * 
+         * \throw bpmodule::exception::BasisSetException if the vector is not of the right length
+         */
         void SetCoefs(int n, const std::vector<double> & coefs);
 
+        /// Get all coefficints for all general contractions as a vector
         std::vector<double> GetAllCoefs(void) const;
+
+
+        /*! \brief Set all coefficients for all general contractions via a vector
+         * 
+         * \throw bpmodule::exception::BasisSetException if the vector is not of the right length
+         */
         void SetAllCoefs(const std::vector<double> & coefs);
 
+
+        /*! \brief Set a primitive for a shell with no general contractions
+         * 
+         * \throw bpmodule::exception::BasisSetException if the shell has more than
+         *        one general contraction or if there is out-of-bounds access
+         * 
+         * \param [in] i Index of the primitive
+         * \param [in] alpha The exponent of the primitive
+         * \param [in] coef The coefficient of the single general contraction
+         */ 
         void SetPrimitive(int i, double alpha, double coef);
+
+
+        /*! \brief Set all information for a primitive
+         * 
+         * \throw bpmodule::exception::BasisSetException if \p coefs is not the right length
+         *        or if there is out-of-bounds access
+         *
+         * \param [in] i Index of the primitive
+         * \param [in] alpha The exponent of the primitive
+         * \param [in] coefs Coefficients for the general contractions of this primitive
+         */
         void SetPrimitive(int i, double alpha, const std::vector<double> & coefs);
 
         ///@}
 
+
+
     protected:
+
+        /*! \brief Constructor
+         * 
+         * \param [in] type Type of the shell
+         * \param [in] am Angular momentum of the shell
+         * \param [in] cart True if this shell is cartesian, false if spherical
+         * \param [in] nprim Number of primitives
+         * \param [in] ngen Number of general contractions
+         */
         BasisShellBase(ShellType type, int am, bool cart, int nprim, int ngen);
+
 
         // compiler generated ok
         BasisShellBase(const BasisShellBase &)             = default;
@@ -101,7 +323,11 @@ class BasisShellBase
         BasisShellBase & operator=(BasisShellBase &&)      = default;
 
 
-        void SetPtrs_(double * alphaptr, double * coefptr);
+        /// Set the pointers for the exponents and coefficients
+        void SetPtrs_(double * alphaptr, double * coefptr) ASSERTIONS_ONLY;
+
+        // For serialization only (needed by derived classes)
+        BasisShellBase() = default;
 
 
     private:
@@ -114,11 +340,31 @@ class BasisShellBase
         double * coefs_;             //!< Coefficients
 
 
+        // Assertions and sanity checks
         void AssertPtrs_(void) const;
         void AssertPrimIdx_(int i) const;
         void AssertGenIdx_(int n) const;
         void ValidatePrimIdx_(int i) const;
         void ValidateGenIdx_(int n) const;
+
+
+        //! \name Serialization
+        ///@{
+
+        DECLARE_SERIALIZATION_FRIENDS
+
+        template<class Archive>
+        void serialize(Archive & ar)
+        {
+            // of course, we don't do the pointers. They are owned
+            // by somebody else. It's their responsibilty
+            ar(type_, am_, cart_, nprim_, ngen_);
+        }
+
+        ///@}
+
+
+
 };
 
 

@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   MathSet.hpp
  * Original Author: Ryan Richard <ryanmrichard1@gmail.com>
  *
@@ -17,7 +17,7 @@ namespace math {
 
 /** \brief A class for performing set manipulations efficiently relative to
  *   some universe.
- * 
+ *
  *   With the universe class all of the operations are deep copies or involve
  *   copying the actual elements over.  Now that we know what our universe is,
  *   we can do these operations much more efficiently by mapping each element
@@ -26,13 +26,13 @@ namespace math {
  *   by default operations with this class are shallow copies.  It is entirely
  *   possible to simply use the Universe class for set manipulations (barring
  *   complement), it will just not be as efficient.
- *   
+ *
  *   Because a MathSet derives from Universe it is perfectly capable of being
  *   itself used as a universe.  Note that the privateness of the Universe
  *   base class means you can't pass this class by it's base class to anything
  *   other than this class.  All classes that intend to use MathSet should
  *   derive from it.
- * 
+ *
  *   Developer note:  I originally thought we could get away without the
  *   shared_ptr to the Universe_.  When we link to a Universe, we just set
  *   the Storage_ in the base class to that of the one in Universe we are
@@ -52,10 +52,10 @@ namespace math {
  *   copy and the point of this class is to avoid that (the Universe class
  *   would have taken that route)).  However, by storing a pointer to A, we
  *   need only compare against A's Elems_.
- * 
+ *
  *   \param T The type of the object in the set
      \param U The type of the container holding the objects
- *   
+ *
  */
 template<typename T, typename U = std::vector<T>>
 class MathSet : private Universe<T, U> {
@@ -94,6 +94,31 @@ private:
         this->Elems_ = Elems;
     }
 
+    //! \name Serialization
+    ///@{
+
+    DECLARE_SERIALIZATION_FRIENDS
+
+    /* We have to split load/save since the
+     * the shared_ptr points to const data, and
+     * cereal can't serialize to const data
+     */
+    template<class Archive>
+    void save(Archive & ar) const
+    {
+        ar(cereal::base_class<Base_t>(this), Universe_);
+    }
+
+    template<class Archive>
+    void load(Archive & ar)
+    {
+        std::shared_ptr<Base_t> Newuniverse;
+        ar(cereal::base_class<Base_t>(this), Newuniverse);
+        Universe_=std::move(Newuniverse);
+    }
+
+    ///@}
+
 
 
 public:
@@ -104,6 +129,7 @@ public:
     typedef std::function<T(const T &)> TransformerFunc;
 
     typedef Universe<T, U> Universe_t;
+
 
     /// \name Constructors, destructors, assignment
     ///@{
@@ -117,6 +143,15 @@ public:
             this->Elems_ = AUniverse->Elems_;
         }
     }
+
+
+    /*! \brief For serialization only
+     *
+     * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
+     * \todo Replace if cereal fixes this
+     */
+    MathSet() = default;
+
 
 
     ///Deep copies elements, shallow copies Universe_ and (and Storage_)
@@ -251,11 +286,11 @@ public:
 
 
     /** \brief Returns true if this is a proper subset of other
-     * 
+     *
      *   This is a proper subset of RHS if they have the same universe,
      *   all elements in this are in RHS, and there is at least one
      *   element in RHS that is not in this
-     *  
+     *
      *   \param[in] RHS The set to comapre to
      *   \return True if this is a proper subset of other
      *
@@ -264,15 +299,15 @@ public:
     {
         return IsSubsetOf(RHS) && RHS.Size() > this->Size();
     }
-    
+
 
     /** \brief Returns true if this is a subset of other
-     * 
+     *
      *   This is a subset of RHS if they have the same universe,
      *   and all elements in this are in RHS
-     *  
+     *
      *   \todo Avoid two equality checks (there's one in operator<)
-     * 
+     *
      *   \param[in] RHS The set to comapre to
      *   \return True if this is a subset of other
      *
@@ -289,10 +324,10 @@ public:
 
 
     /** \brief Returns true if this is a proper superset of other
-     * 
+     *
      *  This is a proper superset of other, iff other is a proper subset
      *  of this.
-     * 
+     *
      *  \param[in] RHS Set to compare to
      *  \return True if this is a proper superset of other
      *
@@ -304,12 +339,12 @@ public:
 
 
     /** \brief Returns true if this is a superset of other
-     * 
+     *
      *  This is a superset of other iff other is a subset of this
-     * 
+     *
      *  \param[in] RHS Set to compare to
      *  \return true if this is a superset of other
-     *  
+     *
      */
     bool IsSupersetOf(const My_t& RHS)const
     {
@@ -373,11 +408,11 @@ public:
 
 
     /** \brief Returns true if this set equals other
-     * 
+     *
      *   We define equality as having literally the same universe,
      *   i.e. the pointers to the Universes have to be the same, and
      *   having the same elements.
-     * 
+     *
      *   \param[in] RHS The other MathSet to compare to
      *   \return True if this set equals other
      */
@@ -387,12 +422,12 @@ public:
     }
 
     /** \brief Returns true if this does not equal other
-     * 
+     *
      *   Literally just negates the result of operator==()
-     * 
+     *
      *   \param[in] RHS The other MathSet
      *   \return True if the sets are different
-     * 
+     *
      */
     bool operator!=(const My_t& RHS)const
     {

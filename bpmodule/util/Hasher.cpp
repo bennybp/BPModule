@@ -167,6 +167,7 @@ void Hasher::Update(void const * buffer, size_t size)
 
 void Hasher::Update(std::istream & is)
 {
+    //! \todo Error checking
     //if(!is.good())
     //    throw exception
 

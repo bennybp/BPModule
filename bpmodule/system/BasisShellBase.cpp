@@ -1,3 +1,9 @@
+/*! \file
+ *
+ * \brief Base class for basis set shells (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
 #include "bpmodule/exception/Assert.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/system/BasisShellBase.hpp"
@@ -53,7 +59,7 @@ void BasisShellBase::AssertPtrs_(void) const
     Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
 }
 
-void BasisShellBase::SetPtrs_(double * alphaptr, double * coefptr)
+void BasisShellBase::SetPtrs_(double * alphaptr, double * coefptr) ASSERTIONS_ONLY
 {
     alphas_ = alphaptr;
     coefs_ = coefptr;
@@ -127,21 +133,21 @@ bool BasisShellBase::IsSpherical(void) const noexcept
 // Raw, fast, unsafe
 // Here lies segfaults if you don't use it right
 ///////////////////////////////////
-const double & BasisShellBase::Alpha(int i) const
+const double & BasisShellBase::Alpha(int i) const ASSERTIONS_ONLY
 {
     AssertPtrs_();
     AssertPrimIdx_(i);
     return alphas_[i]; 
 }
 
-double & BasisShellBase::Alpha(int i)
+double & BasisShellBase::Alpha(int i) ASSERTIONS_ONLY
 {
     AssertPtrs_();
     AssertPrimIdx_(i);
     return alphas_[i]; 
 }
 
-const double & BasisShellBase::Coef(int n, int i) const
+const double & BasisShellBase::Coef(int n, int i) const ASSERTIONS_ONLY
 {
     AssertPtrs_();
     AssertPrimIdx_(i);
@@ -149,7 +155,7 @@ const double & BasisShellBase::Coef(int n, int i) const
     return coefs_[n*nprim_+i]; 
 }
 
-double & BasisShellBase::Coef(int n, int i)
+double & BasisShellBase::Coef(int n, int i) ASSERTIONS_ONLY
 {
     AssertPtrs_();
     AssertPrimIdx_(i);
@@ -157,39 +163,39 @@ double & BasisShellBase::Coef(int n, int i)
     return coefs_[n*nprim_+i]; 
 }
 
-double const * BasisShellBase::AlphaPtr(void) const
+double const * BasisShellBase::AlphaPtr(void) const ASSERTIONS_ONLY
 {
     AssertPtrs_();
     return alphas_;
 }
 
-double * BasisShellBase::AlphaPtr(void)
+double * BasisShellBase::AlphaPtr(void) ASSERTIONS_ONLY
 {
     AssertPtrs_();
     return alphas_;
 }
 
-double const * BasisShellBase::CoefPtr(int n) const
+double const * BasisShellBase::CoefPtr(int n) const ASSERTIONS_ONLY
 {
     AssertPtrs_();
     AssertGenIdx_(n);
     return coefs_ + n*nprim_;
 }
 
-double * BasisShellBase::CoefPtr(int n)
+double * BasisShellBase::CoefPtr(int n) ASSERTIONS_ONLY
 {
     AssertPtrs_();
     AssertGenIdx_(n);
     return coefs_ + n*nprim_;
 }
 
-double const * BasisShellBase::AllCoefsPtr(void) const
+double const * BasisShellBase::AllCoefsPtr(void) const ASSERTIONS_ONLY
 {
     AssertPtrs_();
     return coefs_;
 }
 
-double * BasisShellBase::AllCoefsPtr(void)
+double * BasisShellBase::AllCoefsPtr(void) ASSERTIONS_ONLY
 {
     AssertPtrs_();
     return coefs_;
@@ -304,7 +310,8 @@ void BasisShellBase::SetPrimitive(int i, double alpha, const std::vector<double>
 }
 
 
-bool BasisShellBase::operator==(const BasisShellBase & rhs) const
+
+bool BasisShellBase::BaseCompare(const BasisShellBase & rhs) const
 {
     if(this == &rhs)
         return true;
@@ -327,12 +334,6 @@ bool BasisShellBase::operator==(const BasisShellBase & rhs) const
            );
 
     PRAGMA_WARNING_POP
-}
-
-
-bool BasisShellBase::BaseCompare(const BasisShellBase & rhs) const
-{
-    return (*this) == rhs;
 }
 
 

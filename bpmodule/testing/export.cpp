@@ -10,6 +10,7 @@
 #include "bpmodule/testing/TestingBase.hpp"
 
 
+
 /*! \brief Returns the limits of a type as a python tuple
  */ 
 template<typename T>
@@ -166,6 +167,9 @@ PYBIND11_PLUGIN(testing)
     m.def("TestOptionMapChange_vector_double",     &TestOptionMap_Change<std::vector<double>>);
     m.def("TestOptionMapChange_vector_longdouble", &TestOptionMap_Change<std::vector<long double>>);
     m.def("TestOptionMapChange_vector_string",     &TestOptionMap_Change<std::vector<std::string>>);
+
+
+
 
 
     return m.ptr();

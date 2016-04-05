@@ -11,16 +11,17 @@
 #include "bpmodule/math/Factorial.hpp"
 #include "bpmodule/math/Universe.hpp"
 #include "bpmodule/math/Point.hpp"
-#include "bpmodule/math/RegisterMathSet.hpp"
 
 
 //! \todo Export exact casts? Or have the equivalent with python?
 
 namespace bpmodule {
 namespace math {
-
 namespace export_python {
 
+
+// in testing/export.cpp
+void export_testing(pybind11::module & m);
 
     
     
@@ -40,11 +41,13 @@ PYBIND11_PLUGIN(math)
     m.def("Double2nm1FactorialF", Double2nm1FactorialF); 
     m.def("Double2nm1FactorialD", Double2nm1FactorialD);
 
-    RegisterUniverse<Universe<std::string>>(m, "StringSetUniverse"); 
-    RegisterMathSet<MathSet<std::string>>(m, "StringSet"); 
 
 
+    //! \todo If we need other types, we need a RegisterPoint function
+    //        (probably ok just having it in this file)
     pybind11::class_<Point>(m, "Point")
+    .def(pybind11::init<double, double, double>()) 
+    .def(pybind11::init<const Point::CoordType &>()) 
     .def("GetCoords", &Point::GetCoords)
     .def("SetCoords", static_cast<void (Point::*)(double, double, double)>(&Point::SetCoords))
     .def("SetCoords", static_cast<void (Point::*)(const Point::CoordType &)>(&Point::SetCoords))
@@ -61,6 +64,8 @@ PYBIND11_PLUGIN(math)
     ;
     
 
+    // Export the testing stuff
+    export_testing(m);
 
     return m.ptr();
 }

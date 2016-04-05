@@ -194,6 +194,17 @@ const BasisSetShell & BasisSet::UniqueShell(int i) const
                                 "index", i, "nshells", unique_shells_.size());
 }
 
+BasisShellInfo BasisSet::ShellInfo(int i) const
+{
+    const BasisSetShell & bss = Shell(i);
+    BasisShellInfo bsi(bss.GetType(), bss.AM(), bss.IsCartesian(),
+                       bss.NPrim(), bss.NGeneral());
+
+    bsi.SetAlphas(bss.GetAlphas());
+    bsi.SetAllCoefs(bss.GetAllCoefs());
+    return bsi;
+}
+
 int BasisSet::NPrim(void) const
 {
     return std::accumulate(this->begin(), this->end(), 0,

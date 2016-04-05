@@ -1,3 +1,9 @@
+/*! \file
+ *
+ * \brief Basis shell from a basis set object (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
 #include "bpmodule/system/BasisSetShell.hpp"
 
 namespace bpmodule {
@@ -5,7 +11,7 @@ namespace system {
 
 
 BasisSetShell::BasisSetShell(const BasisSetShell & bshell,
-                             double * alphaptr, double * coefptr, double * xyzptr)
+                             double * alphaptr, double * coefptr, double * xyzptr) ASSERTIONS_ONLY
     : BasisSetShell(bshell, alphaptr, coefptr, xyzptr,
                     bshell.GetID(), bshell.GetCenter())
 {
@@ -15,7 +21,7 @@ BasisSetShell::BasisSetShell(const BasisSetShell & bshell,
 BasisSetShell::BasisSetShell(const BasisShellBase & bshell,
                              double * alphaptr, double * coefptr, double * xyzptr,
                              ID_t id, 
-                             ID_t center)
+                             ID_t center) ASSERTIONS_ONLY
     : BasisShellBase(bshell), id_(id), center_(center)
 {
     BasisShellBase::SetPtrs_(alphaptr, coefptr); 
@@ -54,7 +60,7 @@ bool BasisSetShell::operator==(const BasisSetShell & rhs) const
               id_ == rhs.id_ &&
               center_ == rhs.center_ &&
               std::equal(xyz_, xyz_+3, rhs.xyz_) &&
-              BasisShellBase::operator==(rhs)
+              BasisShellBase::BaseCompare(rhs)
            );
 }
 

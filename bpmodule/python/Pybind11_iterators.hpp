@@ -6,6 +6,10 @@
 namespace bpmodule {
 namespace python {
 
+
+//! \todo replace value_type with second template parameter
+
+
 template<typename Container>
 class PyCopyIterator
 {

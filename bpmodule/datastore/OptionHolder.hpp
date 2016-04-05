@@ -12,9 +12,29 @@
 
 #include "bpmodule/datastore/OptionBase.hpp"
 #include "bpmodule/datastore/OptionTypes.hpp"
+#include "bpmodule/util/Serialization.hpp"
 
 namespace bpmodule {
 namespace datastore {
+
+
+/*! \brief Creates an OptionHolder based on an OptionType
+ *
+ * Passes the rest of the arguments to the OptionHolder constructor
+ */
+std::unique_ptr<OptionBase>
+CreateOptionHolder(std::string key, OptionType opttype, bool required,
+                   const pybind11::object & validator, std::string help,
+                   const pybind11::object & def);
+
+/*! \brief Creates an OptionHolder based on an OptionType
+ *
+ * Passes the rest of the arguments to the OptionHolder constructor
+ */
+std::unique_ptr<OptionBase>
+OptionHolderFromByteArray(OptionType opttype, const ByteArray & ba);
+
+
 
 
 
@@ -124,7 +144,9 @@ class OptionHolder : public OptionBase
 
         virtual OptionBasePtr Clone(void) const;
 
-        virtual const char * Type(void) const noexcept;
+        virtual const char * TypeString(void) const noexcept;
+
+        virtual OptionType Type(void) const noexcept;
 
         virtual bool HasValue(void) const noexcept;
 
@@ -140,6 +162,8 @@ class OptionHolder : public OptionBase
 
         virtual bool Compare(const OptionBase & rhs) const;
 
+        virtual ByteArray ToByteArray(void) const;
+
         /////////////////////////////////////////
         // Python-related functions
         /////////////////////////////////////////
@@ -149,10 +173,18 @@ class OptionHolder : public OptionBase
 
 
     private:
+        friend std::unique_ptr<OptionBase> OptionHolderFromByteArray(OptionType, const ByteArray &);
+
         // used in constructor delegation
         OptionHolder(const std::string & key,
                      bool required, const pybind11::object & validator,
                      const std::string & help, stored_type * def);
+
+        // used in deserialization
+        OptionHolder(std::string && key,bool required, 
+                     std::string && help,
+                     std::unique_ptr<stored_type> && val,
+                     std::unique_ptr<stored_type> && def);
 
         //! A set value for the option
         std::unique_ptr<stored_type> value_;
@@ -162,7 +194,11 @@ class OptionHolder : public OptionBase
 
         //! Validation function object
         ValidatorFunc validator_;
+
+
 };
+
+        
 
 
 

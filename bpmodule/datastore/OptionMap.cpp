@@ -32,15 +32,20 @@ OptionMap::OptionMap(const std::string & modulekey)
 
 
 OptionMap::OptionMap(const OptionMap & rhs)
-    : modulekey_(rhs.modulekey_)
+    : modulekey_(rhs.modulekey_),
+      expert_(rhs.expert_),
+      lockvalid_(rhs.lockvalid_),
+      wholevalid_(rhs.wholevalid_)
 {
     for(const auto & it : rhs.opmap_)
-        opmap_.emplace(it.first, it.second->Clone());
+        opmap_.emplace(it.first, std::move(it.second->Clone()));
 }
 
 OptionMap & OptionMap::operator=(const OptionMap & rhs)
 {
     using std::swap;
+    if(this == &rhs)
+        return *this;
 
     // copy and swap it
     OptionMap copy(rhs);
@@ -246,14 +251,18 @@ bool OptionMap::CompareSelect(const OptionMap & rhs, const KeySet & selection) c
 }
 
 
-void OptionMap::AddOption(const OptionBase & opt)
+void OptionMap::AddOption(std::string key, OptionType opttype, bool required,
+                          const pybind11::object & validator, std::string help,
+                          const pybind11::object & def)
 {
-    //! \todo insert sanity check for pytype / actual type mapping
-    if(HasKey(opt.Key()))
+    if(HasKey(key))
         throw OptionException("Attempting to add duplicate option key",
-                              "optionkey", opt.Key(), "modulekey", modulekey_);
+                              "optionkey", key, "modulekey", modulekey_);
 
-    opmap_.emplace(opt.Key(), opt.Clone());
+    std::unique_ptr<OptionBase> oph = CreateOptionHolder(key, opttype, required,
+                                                       validator, help, def);
+
+    opmap_.emplace(std::move(key), std::move(oph));
 }
 
 

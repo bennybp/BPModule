@@ -4,7 +4,7 @@ from .modinfo import *
 from .testing import *
 
 # Tester class
-from .tester import *
+from .Tester import *
 
 from bpmodule.output import GlobalOutput, GlobalError, GlobalSuccess, GlobalDebug
 
@@ -16,20 +16,17 @@ def PyTestFunc(func, *args):
        func(*args)
     except Exception as e:
         GlobalDebug(str(e) + "\n")
-        return 1
+        return 0
     except:
-        return 1
+        return 0
 
-    return 0
+    return 1
 
 
 
 def PyTestBoolFunc(func, *args):
     try:
-        if func(*args):
-            return 0
-        else:
-            return 1
+        return func(*args)
 
     except Exception as e:
         GlobalDebug(str(e) + "\n")

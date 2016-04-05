@@ -18,7 +18,7 @@ void ToLower(std::string & str)
 }
 
 
-std::string ToLowerCopy(std::string str)
+std::string ToLower_Copy(std::string str)
 {
     ToLower(str);
     return str;
