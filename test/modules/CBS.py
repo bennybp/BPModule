@@ -37,19 +37,21 @@ def CompareGrad(GradIn):
 
 def Run(mm):
     try:
-        tester = bp.testing.Tester("Testing Boys and Bernardi CP")
+        tester = bp.testing.Tester("Testing CBS Extrapolations")
         tester.PrintHeader()
 
         mm.LoadModule("Methods","CP","CP")
         mm.LoadModule("Methods","MIM","MIM")
         mm.LoadModule("Methods","SCF","SCF")
+        mm.LoadModule("Methods","HelgakerCBS","CBS")
         mm.LoadModule("SystemFragmenters","UserDefined","UD_FRAG")
-        mm.LoadModule("SystemFragmenters","Bondizer","FRAG")
+        mm.LoadModule("SystemFragmenters","NullFragmenter","FRAG")
         
-        mm.ChangeOption("CP","METHOD","SCF")
-        mm.ChangeOption("CP","MAX_DERIV",1)
+        
+        mm.ChangeOption("MIM","BASIS_SETS",["aug-cc-pvdz","aug-cc-pvtz"])
+        mm.ChangeOption("CBS","METHOD","SCF")
  
-        MyMod=mm.GetModule("CP",0)
+        MyMod=mm.GetModule("CBS",0)
         mol=bp.system.MakeSystem("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
@@ -69,6 +71,7 @@ def Run(mm):
         
 
         Egy=MyMod.Deriv(0)
+        print(Egy)
         #tester.Test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
         #Egy=MyMod.Energy()
         #tester.Test("Testing Energy via Energy()", True, CompareEgy, Egy)

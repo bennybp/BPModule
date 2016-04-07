@@ -65,7 +65,7 @@ def Run(mm):
         mol = ApplyBasis(mol,"sto-3g")
         wfn=bp.datastore.Wavefunction()
         wfn.system=mol
-        MyMod.SetWfn(wfn)
+        MyMod.SetInitialWfn(wfn)
         
 
         Egy=MyMod.Deriv(0)
