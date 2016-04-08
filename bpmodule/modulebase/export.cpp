@@ -57,6 +57,7 @@ PYBIND11_PLUGIN(modulebase)
             .def("Cache", &Test_Base_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("RunTest", &Test_Base::RunTest)
             .def("CallRunTest", &Test_Base::CallRunTest)
+            .def("CallRunTest2", &Test_Base::CallRunTest2)
             .def("TestThrow", &Test_Base::TestThrow)
             .def("CallThrow", &Test_Base::CallThrow)
             ;

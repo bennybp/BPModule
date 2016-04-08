@@ -2,7 +2,7 @@
  *
  * \brief Base class for a test module (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef BPMODULE_GUARD_MODULEBASE__TEST_BASE_HPP_
@@ -40,12 +40,25 @@ class Test_Base : public ModuleBase
         /*! \brief Call RunTest() of another module
          *
          * \param [in] other Key of the other module in the database
-         */ 
+         */
         void CallRunTest(const std::string & other)
         {
             return ModuleBase::CallFunction(&Test_Base::CallRunTest_, other);
         }
 
+
+        /*! \brief Nested CallRunTest()
+         *
+         * Loads the module under other1 and then runs CallRunTest(other2)
+         * from that module.
+         *
+         * \param [in] other1 Key of the other module in the database
+         * \param [in] other2 Key of the other module in the database
+         */
+        void CallRunTest2(const std::string & other1, const std::string & other2)
+        {
+            return ModuleBase::CallFunction(&Test_Base::CallRunTest2_, other1, other2);
+        }
 
 
         /*! \brief Throw an exception
@@ -60,7 +73,7 @@ class Test_Base : public ModuleBase
         /*! \brief Call Throw() of another module
          *
          * \param [in] other Key of the other module in the database
-         */ 
+         */
         void CallThrow(const std::string & other)
         {
             return ModuleBase::CallFunction(&Test_Base::CallThrow_, other);
@@ -73,30 +86,37 @@ class Test_Base : public ModuleBase
         // To be implemented by derived classes
         /////////////////////////////////////////
         /*! \copydoc RunTest
-         * 
+         *
          * \note To be implemented by derived classes
-         */ 
+         */
         virtual void RunTest_(void) = 0;
 
 
         /*! \copydoc CallRunTest
-         * 
+         *
          * \note To be implemented by derived classes
-         */ 
+         */
         virtual void CallRunTest_(const std::string & other) = 0;
 
 
-        /*! \copydoc TestThrow
-         * 
+        /*! \copydoc CallRunTest2
+         *
          * \note To be implemented by derived classes
-         */ 
+         */
+        virtual void CallRunTest2_(const std::string & other1, const std::string & other2) = 0;
+
+
+        /*! \copydoc TestThrow
+         *
+         * \note To be implemented by derived classes
+         */
         virtual void TestThrow_(void) = 0;
 
 
         /*! \copydoc CallThrow
-         * 
+         *
          * \note To be implemented by derived classes
-         */ 
+         */
         virtual void CallThrow_(const std::string & other) = 0;
 
 
@@ -112,7 +132,7 @@ class Test_Base_Py : public Test_Base
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
-    
+
         virtual void RunTest_(void)
         {
             return CallPyOverride<void>("RunTest_");
@@ -123,6 +143,11 @@ class Test_Base_Py : public Test_Base
         virtual void CallRunTest_(const std::string & other)
         {
             return CallPyOverride<void>("CallRunTest_", other);
+        }
+
+        virtual void CallRunTest2_(const std::string & other1, const std::string & other2)
+        {
+            return CallPyOverride<void>("CallRunTest2_", other1, other2);
         }
 
 
