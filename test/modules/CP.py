@@ -2,15 +2,13 @@
 
 import os
 import sys
-import argparse
-import traceback 
 
 # Add the bpmodule path
 thispath = os.path.dirname(os.path.realpath(__file__))
 bppath = os.path.join(os.path.dirname(thispath), "../", "modules")
 sys.path.insert(0, bppath)
 
-import bpmodule as bp
+from StandardModules import *
 
 def ApplyBasis(syst,bsname,bslabel="primary",bstype=bp.system.ShellType.Gaussian):
     return bp.system.ApplySingleBasis(bstype,bslabel,bsname,syst)
@@ -39,17 +37,12 @@ def Run(mm):
     try:
         tester = bp.testing.Tester("Testing Boys and Bernardi CP")
         tester.PrintHeader()
-
-        mm.LoadModule("Methods","CP","CP")
-        mm.LoadModule("Methods","MIM","MIM")
-        mm.LoadModule("Methods","SCF","SCF")
-        mm.LoadModule("SystemFragmenters","UserDefined","UD_FRAG")
-        mm.LoadModule("SystemFragmenters","Bondizer","FRAG")
+       
         
-        mm.ChangeOption("CP","METHOD","SCF")
-        mm.ChangeOption("CP","MAX_DERIV",1)
+        mm.ChangeOption("BP_CP","METHOD","BP_SCF")
+        mm.ChangeOption("BP_CP","MAX_DERIV",1)
  
-        MyMod=mm.GetModule("CP",0)
+        MyMod=mm.GetModule("BP_CP",0)
         mol=bp.system.MakeSystem("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
@@ -81,10 +74,6 @@ def Run(mm):
     except Exception as e:
       bp.output.Output("Caught exception in main handler\n")
       traceback.print_exc()
-
-
-
-bp.Init(sys.argv, out = "stdout", color = True, debug = True)
 
 with bp.ModuleAdministrator() as mm:
     Run(mm)

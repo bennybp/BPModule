@@ -12,7 +12,15 @@
   - \ref compiling_page
   - \ref testing_page
   - \ref usage_page
-  - [Developers](@ref md_wiki_Developer_Developers)
+  - Developer notes
+    - [Basic Filesystem Layout](@ref basic)
+    - [Exceptions and Error Handeling](@ref except)
+    - [Making Modules and Supermodules](@ref makemod)
+    - [Module Basics](@ref modulebasics)
+    - [Program Philosophy](@ref philosophy)
+    - [Understanding the Graph and the Cache](@ref graphcache)
+    - [Understanding Shared Libraries](@ref shared)
+    - [Using and Setting Options](@ref Options)
 
 
 \section Authors

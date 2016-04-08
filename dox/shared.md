@@ -1,10 +1,6 @@
-##################################################
-Shared Object Files, Plugins, and the Symbol Table
-##################################################
+# Shared Object Files, Plugins, and the Symbol Table ##       {#shared}
 
-****************
-The Symbol Table
-****************
+## The Symbol Table ###
 
 Each process has a table of associated symbols with it. These symbols
 correspond to functions, global variables, etc, available to code
@@ -23,16 +19,12 @@ The symbol table is loaded from a few different places:
 The only real difference between shared libraries and modules is that the existence of
 the module is unknown at compile time.
 
-*********************************
-What is a Shared-Object (SO) File
-*********************************
+## What is a Shared-Object (SO) File ##
 
 An SO file is just a collection of functions and other data that is accessible from other programs at runtime.
 That's about it.
 
-****************
-Shared Libraries
-****************
+## Shared Libraries ##
 
 A shared library is a type of SO file.
 Using a shared library is easy - you just link to it. At runtime, the
@@ -51,9 +43,7 @@ binary, searches for `main`, and runs it (among lots of other stuff). For
 this reason, you can sometimes use executables as SO files (although
 some different compilation flags may be required to really do this).
 
-****************
-What is a Module
-****************
+## What is a Module ##
 
 A module is very similar to an SO file. However, it is not linked to the binary, and therefore the operating system
 does not know anything about the link between them.
@@ -81,12 +71,9 @@ What about symbols not defined in the module file, but in other module files?
 Modules can be linked to shared libraries as well, and these are resolved when using `dlopen()`. Symbols
 from these chained shared-object libraries are available as if they were part of the module.
 
-.. NOTE::
-   I think
+\note   I think
 
-*********
-The RPath
-*********
+## The RPath ##
 
 The rpath is a hard-coded path that an executable, shared-library or
 module can use to find shared libraries (but not modules).  This allows
@@ -97,9 +84,7 @@ is that the result may not be portable (since the path is hard coded).
 The rpath of an SO file or an executable can be changed at any time
 (usually via the `patchelf` command).
 
-******************
-What about Python?
-******************
+## What about Python? ##
 
 C++ projects that are to be used by python are modules. When python
 `import`s an SO file, it calls `dlopen()` and then searches for a function
@@ -112,9 +97,7 @@ symbol table applies to python as well. That is, loading a module with
 functionality from the first module.
 
 
-***************************
-Using this to our advantage
-***************************
+## Using this to our advantage ##
 
 So how does this work in practice in BPModule? Well, it starts with `import`ing bpmodule.
 This is a traditional python library, with an `__init__.py` file. In that file the core modules
@@ -143,4 +126,4 @@ and sandbox the module and prevent contamination of the main symbol table.
 
 
 For more info on how BPModule modules are opened and used, 
-see [Modules and Supermodules](wiki/modulebasics.md)
+see [Modules and Supermodules](@ref modulebasics)

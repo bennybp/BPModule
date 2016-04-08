@@ -2,15 +2,13 @@
 
 import os
 import sys
-import argparse
-import traceback 
 
 # Add the bpmodule path
 thispath = os.path.dirname(os.path.realpath(__file__))
 bppath = os.path.join(os.path.dirname(thispath), "../", "modules")
 sys.path.insert(0, bppath)
 
-import bpmodule as bp
+from StandardModules import *
 
 def ApplyBasis(syst,bsname,bslabel="primary",bstype=bp.system.ShellType.Gaussian):
     return bp.system.ApplySingleBasis(bstype,bslabel,bsname,syst)
@@ -39,17 +37,11 @@ def Run(mm):
     try:
         tester = bp.testing.Tester("Testing VMFC via MIM")
         tester.PrintHeader()
-
-        mm.LoadModule("Methods","VMFC","VMFC")
-        mm.LoadModule("Methods","MIM","MIM")
-        mm.LoadModule("Methods","SCF","SCF")
-        mm.LoadModule("SystemFragmenters","UserDefined","UD_FRAG")
-        mm.LoadModule("SystemFragmenters","Bondizer","FRAG")
         
-        mm.ChangeOption("VMFC","METHOD","SCF")
-        mm.ChangeOption("FRAG","TRUNCATION_ORDER",2)       
+        mm.ChangeOption("BP_VMFC","METHOD","BP_SCF")
+        mm.ChangeOption("BP_BOND_FRAG","TRUNCATION_ORDER",2)       
  
-        MyMod=mm.GetModule("VMFC",0)
+        MyMod=mm.GetModule("BP_VMFC",0)
         mol=bp.system.MakeSystem("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
@@ -82,9 +74,6 @@ def Run(mm):
       bp.output.Output("Caught exception in main handler\n")
       traceback.print_exc()
 
-
-
-bp.Init(sys.argv, out = "stdout", color = True, debug = True)
 
 with bp.ModuleAdministrator() as mm:
     Run(mm)
