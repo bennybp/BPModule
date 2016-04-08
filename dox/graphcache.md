@@ -1,13 +1,10 @@
-===================
-The Graph and Cache
+The Graph and Cache                               {#graphcache}
 ===================
 
 The Graph
 ---------
 
-.. todo:: 
-
-   Fill in graph information
+\todo Fill in graph information
 
 
 Data Caching
@@ -78,5 +75,4 @@ Storing the Cache
 Checkpointing of the cache is tricky, although should not be impossible.
 For now, the discussion of checkpointing has been put on the backburner.
 
-.. todo::
-   Checkpointing 
+\todo Checkpointing 

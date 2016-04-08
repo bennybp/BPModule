@@ -1,6 +1,4 @@
-######################################################
-Creating Modules, SuperModules, and Module Base Types
-######################################################
+# Creating Modules, SuperModules, and Module Base Types ###         {#makemod}
 
 The point of this page is to get you started in creating your first module and 
 to document the steps required to make SuperModules and Module Base Types.  We 
@@ -18,17 +16,14 @@ The steps to making a module can roughly be described as:
 5. Build and install your module
 6. Run your module
 
-==================
-Making Your Module
-==================
+## Making Your Module ###
 
-----------------
-C++ Instructions
-----------------
+### C++ Instructions ###
 
 In C++, simply derive from the module base type you are implementing.  Each module base type defines the minimal API that your module must implement in order to work and the conventions that must occur at the interface.  For example,
-say you are implementing a new method that computes an energy.  The appropriate class to inherit from is `EnergyMethod` and the code looks like::
+say you are implementing a new method that computes an energy.  The appropriate class to inherit from is `EnergyMethod` and the code looks like:
 
+~~~{.cpp}
     class MyNewMethod: public bpmodule::modulebase::EnergyMethod{
        public:
        //Only use the constructors defined in the base class, or else your module can not be loaded
@@ -37,34 +32,30 @@ say you are implementing a new method that computes an energy.  The appropriate 
        //We need to implement the Deriv_ function (exact requirements can be found in the module base type PROP)
        std::vector<double> Deriv_(size_t i);
        };
+~~~
 
 In your .cpp file you would then write out the Deriv_ function's guts.
 
--------------------
-Python Instructions
--------------------
-Like C++, in Python you need to derive from the base type you are implementing.  Again if we were implmenting a new method for computing energies::
+### Python Instructions ###
+Like C++, in Python you need to derive from the base type you are implementing.  Again if we were implmenting a new method for computing energies:
 
+~~~{.py}
    class MyNewMethod(bp.modulebase.EnergyMethod):
      def __init__(self,myid):
         super(MyNewMethod,self).__init__(myid)
 
      def Deriv_(self,order):
         #Compute energy here
+~~~
 
-This would be     
-
-====================
-Building Your Module
-====================
+## Building Your Module ###
 For the most part you are free to configure your build however you like (although we strongly recommend you use CMake otherwise dependency forwarding will quickly become a nightmare).  Building really only applies to C++ modules.  Python modules simply need installed.
 
-----------------------
-CMake and Installation
-----------------------
+### CMake and Installation ###
 
 A typical `CMakeLists.txt` for a module looks like::
 
+~~~{.sh}
     #These two commands would occur in your top-level CMakeLists.txt 
     #before including any folders
     #they find the bpmodule core and tell your modules to use its header files
@@ -80,6 +71,7 @@ A typical `CMakeLists.txt` for a module looks like::
     install(TARGETS YourModulesName LIBRARY DESTINATION YourModulesName RUNTIME DESTINATION YourModulesName)
     install(FILES "__init_.py" DESTINATION YourModulesName)
     install(FILES "modinfo.py" DESTINATION YourModulesName)
+~~~
 
 Notes:
 - Be sure to specify your compilers!
@@ -93,13 +85,9 @@ Notes:
   - No idea if building against `<builddir>/stage/<path>` will work.
 - Modules are meant to be run only after installation as well. Yes, I know this is a pain, but it is how BPModule is supposed to work. I suppose you could run it from the source directory if you put the right path to C++ SO files. Python might work as is.
 
-######################
-Creating a Supermodule
-######################
+## Creating a Supermodule ##
 
-======================
-Parts of a Supermodule
-======================
+### Parts of a Supermodule ##
 
 Every supermodule requires one of the two following files
 
@@ -124,24 +112,27 @@ Every supermodule requires one of the two following files
      - Used to initialize your supermodule
      - Must minimally contain `from .modinfo import *`
   - A file that instructs the framework how to use your supermodule
-     - In C++ you need to compile::
-          
+     - In C++ you need to compile:
+
+~~~{.cpp}          
            extern "C" {
               ModuleCreationFuncs InsertSupermodule(void){
                  ModuleCreationFuncs cf;
                  cf.AddCppCreator<type of your module>("module name");
                  return cf;
               }
-
+~~~
        - Currently this file is being called `creator.cpp`
      - In Python the file looks something like::
-       
+
+~~~{.py}       
            from bpmodule.modulemanager import ModuleCreationFuncs
 
            def InsertSupermodule():
                cf = ModuleCreationFuncs()
                cf.AddPyCreator("module name",an instance of module)
                return cf
+~~~
        
        - Currently this file is being called `creator.py`
        - InsertSupermodule/InitializeSupermodule/FinalizeSupermodule must be part of __init__.py or imported from there
@@ -149,24 +140,21 @@ Every supermodule requires one of the two following files
 C++ and Python Supermodules can be part of the same directory, with some care.
 
 
-###########################
-Creating a Base Module Type
-###########################
+## Creating a Base Module Type ##
 
 RMR-Are these always in C++ and exported to Python?  If not should document the reverse process as well
 
 Base module types have a few catches that normal modules don't.  Specifically they have to also implement the machinery necessary for the module manager to create them.  Briefly these considerations are:
 
-(RMR-first two considerations could be taken away by CRTP)
-- Constructor needs to have the signature and definition::
+- Constructor needs to have the signature and definition:
 
+~~~{.cpp}
         MyBaseModule(unsigned long id):ModuleBase(id,"MyMethod"){}
-
+~~~
 - A typedef of its type to "BaseType", i.e. `typedef MyBaseModule BaseType;`
 - All methods that are virtual need wrapped in two ways (one for C++, the other for Python)
-  - Wrapping allows the `ModuleManager` instance to downcast (shouldn't we just be relying on the virtual-ness
-    (at least for C++)?)::
-
+  - Wrapping allows the `ModuleManager` instance to downcast 
+~~~{.cpp}
         //The function derived classes override
         virtual return_value MyVirtualMethodImpl(Arg1,Arg2,...)=0;
 
@@ -191,4 +179,4 @@ Base module types have a few catches that normal modules don't.  Specifically th
                                                     Arg1,Arg2,...);
             }
         };
-
+~~~

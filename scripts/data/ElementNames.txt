@@ -1,3 +1,5 @@
+-2     Chg    Charge
+-1     Dum    Dummy
 0      Gho    Ghost
 1      H      Hydrogen
 2      He     Helium

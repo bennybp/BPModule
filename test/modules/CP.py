@@ -14,33 +14,35 @@ def ApplyBasis(syst,bsname,bslabel="primary",bstype=bp.system.ShellType.Gaussian
     return bp.system.ApplySingleBasis(bstype,bslabel,bsname,syst)
 
 def CompareEgy(EgyIn):
-   return EgyIn+224.90851104986243<0.00001
+   return EgyIn+224.89287653924677<0.00001
 
 def CompareGrad(GradIn):
-   CorrectGrad=[0.0056338166169999995, 0.0036814809890000004, 0.052711233995, 
-                0.019826950933, -0.0014316311719999998, -0.031158701642999997,
-                -0.024939313557, -0.0048274306840000005, -0.024943585464,
-                -0.018262424115999997, -0.047669106939, -0.006046442297,
-                 0.015971721606, 0.024963209265, -0.019093643937999998, 
-                 0.00619578613, 0.025219535787000005, 0.027208442172, 
-                 0.017581587257, 0.036519045374999996, -0.035085608934999984,
-                -0.028617330772000002, -0.023986983217, 0.003537758562,
-               0.006609205900000001, -0.012468119404999999, 0.03287054754200001]
+   CorrectGrad=[
+    -0.000988976949000001, 0.0004443157829999993, 0.05238342271999999, 
+     0.018237358511, -0.002547005771, -0.030731839919000005, 
+    -0.02344281975, -0.0062568701740000005, -0.025360880303, 
+    -0.015409293889000001, -0.047382578540999996, -0.012807191666999996, 
+     0.016869055227000003, 0.024963490952999996, -0.017442968207000004, 
+     0.007207092293000001, 0.025306999363999997, 0.023850402741000004, 
+     0.019786523729999998, 0.04038960502300001, -0.028509120090000006, 
+    -0.026869925129, -0.022975320699000004, 0.005627050168, 
+     0.004610985953999999, -0.011942635934, 0.032991124551000006]
+
    AllGood=True
-   for i in range(0,27):
+   for i in range(0,len(CorrectGrad)):
         AllGood=AllGood and CorrectGrad[i]-GradIn[i]<0.00001
    return AllGood
 
 def Run(mm):
     try:
-        tester = bp.testing.Tester("Testing MBE via MIM")
+        tester = bp.testing.Tester("Testing Boys and Bernardi CP")
         tester.PrintHeader()
+       
         
-        mm.ChangeOption("BP_MBE","METHOD","BP_SCF")
-        mm.ChangeOption("BP_MIM","FRAGMENTIZER","BP_BOND_FRAG")
-        mm.ChangeOption("BP_BOND_FRAG","TRUNCATION_ORDER",2)       
+        mm.ChangeOption("BP_CP","METHOD","BP_SCF")
+        mm.ChangeOption("BP_CP","MAX_DERIV",1)
  
-        MyMod=mm.GetModule("BP_MBE",0)
+        MyMod=mm.GetModule("BP_CP",0)
         mol=bp.system.MakeSystem("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
@@ -60,15 +62,13 @@ def Run(mm):
         
 
         Egy=MyMod.Deriv(0)
-        tester.Test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
-        Egy=MyMod.Energy()
-        tester.Test("Testing Energy via Energy()", True, CompareEgy, Egy)
-        Grad=MyMod.Deriv(1)
-        tester.Test("Testing Gradient via Deriv(1)", True, CompareGrad, Grad)
-        Grad=MyMod.Gradient()
-        tester.Test("Testing Gradient via Gradient()", True, CompareGrad, Grad)
-
-        tester.PrintResults()
+        #tester.Test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
+        #Egy=MyMod.Energy()
+        #tester.Test("Testing Energy via Energy()", True, CompareEgy, Egy)
+        #Egy=MyMod.Deriv(1)
+        #tester.Test("Testing Gradient via Deriv(1)", True, CompareGrad, Egy)
+        #Egy=MyMod.Gradient()
+        #tester.Test("Testing Energy via Gradient()", True, CompareGrad, Egy)
         
      
     except Exception as e:

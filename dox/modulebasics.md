@@ -1,5 +1,4 @@
-========================
-Modules and Supermodules
+Modules and Supermodules                                  {#modulebasics}
 ========================
 
 
@@ -46,9 +45,7 @@ Loading a module requires loading the supermodule and obtaining information for
 all the modules contained in the supermodule. The information for the desired module
 is then located and stored in the internal map of the ModuleManager.
 
-.. image:: images/SupermoduleLoading.png
-   :alt: Supermodule Loading
-   :align: center
+![alt text](images/SupermoduleLoading.png)
 
 The ModuleManager uses separate handlers for different types of modules
 (currently, C++ and Python modules). These are responsible for the details
@@ -62,6 +59,4 @@ Within the C++ SO file or the python module package, the module class's construc
 is called. This is handled within the ModuleCreationFuncs object that is returned
 by InsertSupermodule.
 
-.. image:: images/SupermoduleCreation.png
-   :alt: Creating a module using the ModuleManager
-   :align: center
+![alt text](images/SupermoduleCreation.png)

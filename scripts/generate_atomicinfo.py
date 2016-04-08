@@ -116,7 +116,7 @@ with bp_common.HeaderSourceFiles(outbase, "LUTs for Atomic Information",
     src.fh.write("// Various data maps. Stored in LUT source file\n")
     src.fh.write("//////////////////////////////////////////////////\n")
     src.fh.write("extern const std::map<int, std::string> atomic_Z_sym_;\n\n")
-    src.fh.write("extern const std::map<std::string, int, util::CaseInsensitiveCompare> atomic_sym_Z_;\n\n")
+    src.fh.write("extern const std::map<std::string, int, util::CaseInsensitiveLess> atomic_sym_Z_;\n\n")
     src.fh.write("extern const std::map<int, AtomicData> atomic_Z_data_;\n\n")
 
     # Now the source file
@@ -127,7 +127,7 @@ with bp_common.HeaderSourceFiles(outbase, "LUTs for Atomic Information",
     src.f.write("}; // close atomic_Z_sym_\n\n\n")
 
     # Next, atomic symbol to Z
-    src.f.write("extern const std::map<std::string, int, util::CaseInsensitiveCompare> atomic_sym_Z_{\n")
+    src.f.write("extern const std::map<std::string, int, util::CaseInsensitiveLess> atomic_sym_Z_{\n")
     for k,v in sorted(atomicinfo.items()):
         src.f.write("  {{ \"{}\" , {} }},\n".format(v["sym"], k))
     src.f.write("}; // close atomic_sym_Z_\n\n\n")

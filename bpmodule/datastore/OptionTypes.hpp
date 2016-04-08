@@ -182,8 +182,9 @@ MAPTOOPTIONTYPE(float,               Float)
 MAPTOOPTIONTYPE(double,              Float)
 MAPTOOPTIONTYPE(long double,         Float)
 MAPTOOPTIONTYPE(std::string,         String)
-
-
+//RMR- Seems silly to change macro to include N, for this scenario
+template<size_t N> struct OptionTypeMap<char[N]> { 
+static constexpr OptionType opt_type = OptionType::String; };
 #undef MAPTOOPTIONTYPE
 
 
@@ -242,6 +243,16 @@ template<>
 struct OptionCast<std::string, std::string>
 {
     static std::string Cast(const std::string & s)   {  return s; }
+};
+
+/*! \brief Converts an option value to/from its stored type
+ *
+ * Specialization for string literal types
+ */
+template<size_t N>
+struct OptionCast<std::string, char [N]>
+{
+    static std::string Cast(const char* s)   {  return s; }
 };
 
 

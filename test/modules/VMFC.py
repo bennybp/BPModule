@@ -14,18 +14,20 @@ def ApplyBasis(syst,bsname,bslabel="primary",bstype=bp.system.ShellType.Gaussian
     return bp.system.ApplySingleBasis(bstype,bslabel,bsname,syst)
 
 def CompareEgy(EgyIn):
-   return EgyIn+224.90851104986243<0.00001
+   return EgyIn+224.88878115622086<0.00001
 
 def CompareGrad(GradIn):
-   CorrectGrad=[0.0056338166169999995, 0.0036814809890000004, 0.052711233995, 
-                0.019826950933, -0.0014316311719999998, -0.031158701642999997,
-                -0.024939313557, -0.0048274306840000005, -0.024943585464,
-                -0.018262424115999997, -0.047669106939, -0.006046442297,
-                 0.015971721606, 0.024963209265, -0.019093643937999998, 
-                 0.00619578613, 0.025219535787000005, 0.027208442172, 
-                 0.017581587257, 0.036519045374999996, -0.035085608934999984,
-                -0.028617330772000002, -0.023986983217, 0.003537758562,
-               0.006609205900000001, -0.012468119404999999, 0.03287054754200001]
+   CorrectGrad=[
+      -0.0017069898160000001, -0.001626469551000001, 0.050303614141000014, 
+       0.015141013799999999, -0.0037465124789999994, -0.02830022157100001,
+      -0.02381044127600001, -0.006742533005, -0.025865760775000003,
+      -0.013301246809, -0.04562762713499999, -0.012875201989,
+       0.017484176375, 0.025399369801, -0.017641048981999998,
+       0.00785578526, 0.023461865716000004, 0.01942375991700001,
+       0.017700039130999996, 0.040563140105, -0.02590982685799999,
+      -0.023815472778, -0.019776749375, 0.007282793088999999,
+       0.00445313611, -0.011904484072999997, 0.03358189302100002]
+
    AllGood=True
    for i in range(0,27):
         AllGood=AllGood and CorrectGrad[i]-GradIn[i]<0.00001
@@ -33,14 +35,13 @@ def CompareGrad(GradIn):
 
 def Run(mm):
     try:
-        tester = bp.testing.Tester("Testing MBE via MIM")
+        tester = bp.testing.Tester("Testing VMFC via MIM")
         tester.PrintHeader()
         
-        mm.ChangeOption("BP_MBE","METHOD","BP_SCF")
-        mm.ChangeOption("BP_MIM","FRAGMENTIZER","BP_BOND_FRAG")
+        mm.ChangeOption("BP_VMFC","METHOD","BP_SCF")
         mm.ChangeOption("BP_BOND_FRAG","TRUNCATION_ORDER",2)       
  
-        MyMod=mm.GetModule("BP_MBE",0)
+        MyMod=mm.GetModule("BP_VMFC",0)
         mol=bp.system.MakeSystem("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
@@ -63,17 +64,16 @@ def Run(mm):
         tester.Test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
         Egy=MyMod.Energy()
         tester.Test("Testing Energy via Energy()", True, CompareEgy, Egy)
-        Grad=MyMod.Deriv(1)
-        tester.Test("Testing Gradient via Deriv(1)", True, CompareGrad, Grad)
-        Grad=MyMod.Gradient()
-        tester.Test("Testing Gradient via Gradient()", True, CompareGrad, Grad)
-
-        tester.PrintResults()
+        Egy=MyMod.Deriv(1)
+        tester.Test("Testing Gradient via Deriv(1)", True, CompareGrad, Egy)
+        Egy=MyMod.Gradient()
+        tester.Test("Testing Energy via Gradient()", True, CompareGrad, Egy)
         
      
     except Exception as e:
       bp.output.Output("Caught exception in main handler\n")
       traceback.print_exc()
+
 
 with bp.ModuleAdministrator() as mm:
     Run(mm)
