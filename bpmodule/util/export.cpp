@@ -4,11 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "bpmodule/util/Format.hpp"
-#include "bpmodule/util/Cmdline.hpp"
-#include "bpmodule/util/Memwatch.hpp"
 #include "bpmodule/python/Pybind11.hpp"
 #include "bpmodule/python/Pybind11_stl.hpp"
+#include "bpmodule/python/Pybind11_operators.hpp"
+#include "bpmodule/util/Cmdline.hpp"
+#include "bpmodule/util/Memwatch.hpp"
+#include "bpmodule/util/Hash.hpp"
 
 
 namespace bpmodule {
@@ -24,7 +25,19 @@ PYBIND11_PLUGIN(util)
     m.def("SetCmdline", SetCmdline);
     m.def("ClearCmdline", ClearCmdline);
 
-
+    //////////////////////////
+    // Hashing
+    //////////////////////////
+    pybind11::class_<Hash>(m, "Hash")
+    .def("String", &Hash::String)
+    .def("__str__", &Hash::String)
+    .def(pybind11::self == pybind11::self)
+    .def(pybind11::self != pybind11::self)
+    .def(pybind11::self < pybind11::self)
+    .def(pybind11::self <= pybind11::self)
+    .def(pybind11::self > pybind11::self)
+    .def(pybind11::self >= pybind11::self)
+    ;
 
     //////////////////////////
     // Memwatch

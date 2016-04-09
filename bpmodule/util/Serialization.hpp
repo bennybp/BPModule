@@ -15,6 +15,7 @@
 #include <cereal/types/memory.hpp>
 #include <cereal/types/map.hpp>
 #include <cereal/types/set.hpp>
+#include <cereal/types/tuple.hpp>
 #include <cereal/types/string.hpp>
 
 #include "bpmodule/util/SerializationArchives.hpp"

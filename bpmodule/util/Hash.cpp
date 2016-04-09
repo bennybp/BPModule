@@ -19,27 +19,32 @@ Hash::Hash(void)
 { }
 
 
-bool Hash::operator==(const Hash & rhs)
+bool Hash::operator==(const Hash & rhs) const
 {
     return hash_ == rhs.hash_;
 }
-bool Hash::operator!=(const Hash & rhs)
+
+bool Hash::operator!=(const Hash & rhs) const
 {
     return hash_ != rhs.hash_;
 }
-bool Hash::operator<(const Hash & rhs)
+
+bool Hash::operator<(const Hash & rhs) const
 {
     return hash_ < rhs.hash_;
 }
-bool Hash::operator>(const Hash & rhs)
+
+bool Hash::operator>(const Hash & rhs) const
 {
     return hash_ > rhs.hash_;
 }
-bool Hash::operator>=(const Hash & rhs)
+
+bool Hash::operator>=(const Hash & rhs) const
 {
     return hash_ >= rhs.hash_;
 }
-bool Hash::operator<=(const Hash & rhs)
+
+bool Hash::operator<=(const Hash & rhs) const
 {
     return hash_ <= rhs.hash_;
 }

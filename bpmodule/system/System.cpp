@@ -8,9 +8,9 @@
 #include "bpmodule/system/BasisSet.hpp"
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/output/GlobalOutput.hpp"
+#include "bpmodule/util/HashSerializable.hpp"
+
 using bpmodule::output::GlobalDebug;
-
-
 using bpmodule::exception::SystemException;
 
 
@@ -177,6 +177,10 @@ bool System::operator==(const System& RHS)const
     return(CompareInfo(RHS) && atoms_ == RHS.atoms_);
 }
 
+util::Hash System::MyHash(void) const
+{
+    return util::HashSerializable(*this);
+}
 
 bool System::CompareInfo(const System & RHS)const
 {

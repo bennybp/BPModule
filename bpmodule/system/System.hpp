@@ -23,6 +23,9 @@ namespace bpmodule {
 namespace system {
 class BasisSet;
 }
+namespace util {
+class Hash;
+}
 }
 
 
@@ -167,6 +170,10 @@ public:
 
     ///Compares the general information for the system (charge, etc)
     bool CompareInfo(const System & RHS)const;
+
+
+    /*! \brief Obtain a hash of this BasisSet */
+    util::Hash MyHash(void) const;
 
     ///@}
 

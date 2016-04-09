@@ -41,6 +41,10 @@ def Run():
             
 
         bs = s.GetBasisSet("primary")
+        tester.Test("BasisSet serialization", True,
+                    TestSerialization_BasisSet, bs)
+
+
         for i in range(0, bs.NShell()):
             s = bs.ShellInfo(i)
             tester.Test("ShellInfo serialization - {}".format(i), True,

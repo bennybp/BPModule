@@ -30,6 +30,12 @@ class BasisShellInfo : public BasisShellBase
     public:
         BasisShellInfo(ShellType type, int am, bool cart, size_t nprim, size_t ngen);
 
+        BasisShellInfo(ShellType type, int am, bool cart, size_t nprim, size_t ngen,
+                       const std::vector<double> & alphas, const std::vector<double> & allcoefs);
+
+        BasisShellInfo(ShellType type, int am, bool cart, size_t nprim, size_t ngen,
+                       std::vector<double> && alphas, std::vector<double> && allcoefs);
+
 
         /*! \brief For serialization only
          * 
@@ -41,6 +47,7 @@ class BasisShellInfo : public BasisShellBase
 
         // compiler generated NOT ok
         // Will leave dangling pointers in the base class
+        BasisShellInfo(const BasisShellBase &);
         BasisShellInfo(const BasisShellInfo &);
         BasisShellInfo & operator=(const BasisShellInfo &);
 

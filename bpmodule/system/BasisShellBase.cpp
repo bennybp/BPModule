@@ -245,7 +245,7 @@ void BasisShellBase::SetAlphas(const std::vector<double> & alphas)
 {
     AssertPtrs_();
 
-    if(static_cast<int>(alphas.size()) != nprim_)
+    if(alphas.size() != nprim_)
         throw BasisSetException("Incompatible dimensions for alphas", "nprim", nprim_, "given", alphas.size());
 
     std::copy(alphas.begin(), alphas.end(), alphas_);
@@ -266,7 +266,7 @@ void BasisShellBase::SetCoefs(size_t n, const std::vector<double> & coefs)
     AssertPtrs_();
     ValidateGenIdx_(n);
 
-    if(static_cast<int>(coefs.size()) != nprim_)
+    if(coefs.size() != nprim_)
         throw BasisSetException("Incompatible dimensions for coefficients", "nprim", nprim_, "given", coefs.size());
 
     std::copy(coefs.begin(), coefs.end(), coefs_ + n*nprim_);
@@ -281,7 +281,7 @@ std::vector<double> BasisShellBase::GetAllCoefs(void) const
 void BasisShellBase::SetAllCoefs(const std::vector<double> & coefs)
 {
     AssertPtrs_();
-    if(static_cast<int>(coefs.size()) != NCoef())
+    if(coefs.size() != NCoef())
         throw BasisSetException("Incompatible dimensions for coefficients", "nprim", nprim_, "ngen", ngen_, "given", coefs.size());
     std::copy(coefs.begin(), coefs.end(), coefs_);
 }

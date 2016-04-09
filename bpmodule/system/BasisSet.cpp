@@ -3,6 +3,7 @@
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/exception/Assert.hpp"
+#include "bpmodule/util/HashSerializable.hpp"
 
 using bpmodule::exception::Assert;
 using bpmodule::exception::BasisSetException;
@@ -10,11 +11,8 @@ using bpmodule::exception::BasisSetException;
 namespace bpmodule {
 namespace system {
 
-BasisSet::BasisSet(size_t nshells, size_t nprim, size_t ncoef)
-    : curid_(0),
-      xyz_base_ptr_(nullptr),
-      alpha_base_ptr_(nullptr),
-      coef_base_ptr_(nullptr)
+
+void BasisSet::Allocate_(size_t nshells, size_t nprim, size_t ncoef)
 {
     // totalstorage = number of doubles to store
     // nshells*3 = storage for xyz
@@ -31,31 +29,31 @@ BasisSet::BasisSet(size_t nshells, size_t nprim, size_t ncoef)
     max_ncoef_ = ncoef;
     max_nxyz_ = nshells*3;
 
-    xyz_base_ptr_ = storage_.data();
-    alpha_base_ptr_ = xyz_base_ptr_ + max_nxyz_;
-    coef_base_ptr_ = alpha_base_ptr_ + max_nalpha_;
-
-    xyz_pos_ = alpha_pos_ = coef_pos_ = 0;
+    ResetPointers_();
 }
 
-BasisSet::BasisSet(const BasisSet & rhs)
-    : curid_(rhs.curid_),
-      storage_(rhs.storage_),
-      max_nxyz_(rhs.max_nxyz_),
-      max_nalpha_(rhs.max_nalpha_),
-      max_ncoef_(rhs.max_ncoef_),
+
+BasisSet::BasisSet(size_t nshells, size_t nprim, size_t ncoef)
+    : curid_(0),
       xyz_base_ptr_(nullptr),
       alpha_base_ptr_(nullptr),
       coef_base_ptr_(nullptr)
 {
-    xyz_pos_ = alpha_pos_ = coef_pos_ = 0;
+    Allocate_(nshells, nprim, ncoef);
+}
 
+
+BasisSet::BasisSet(const BasisSet & rhs)
+    : curid_(rhs.curid_),
+      storage_(rhs.storage_.size()),
+      max_nxyz_(rhs.max_nxyz_),
+      max_nalpha_(rhs.max_nalpha_),
+      max_ncoef_(rhs.max_ncoef_)
+{
     // storage has been copied   
     // but all the pointers in shells_ would be incorrect
     // so we have to rebuild them
-    xyz_base_ptr_ = storage_.data();
-    alpha_base_ptr_ = xyz_base_ptr_ + max_nxyz_;
-    coef_base_ptr_ = alpha_base_ptr_ + max_nalpha_;
+    ResetPointers_();
 
     // This should leave all the IDs as they are,
     // so we copy curid_ above
@@ -63,12 +61,24 @@ BasisSet::BasisSet(const BasisSet & rhs)
         AddShell_(it);
 
     // double check
-    if(alpha_pos_ != rhs.alpha_pos_ || coef_pos_ != rhs.coef_pos_ || xyz_pos_ != rhs.xyz_pos_)
+    if(alpha_pos_ != rhs.alpha_pos_ ||
+       coef_pos_ != rhs.coef_pos_ ||
+       xyz_pos_ != rhs.xyz_pos_)
         throw BasisSetException("Developer error. Inconsistent basis set copying");
 
     // triple check
     Assert<BasisSetException>(shells_ == rhs.shells_, "Developer error. Inconsistent basis set copying");
 }
+
+
+void BasisSet::ResetPointers_(void)
+{
+    xyz_base_ptr_ = storage_.data();
+    alpha_base_ptr_ = xyz_base_ptr_ + max_nxyz_;
+    coef_base_ptr_ = alpha_base_ptr_ + max_nalpha_;
+    xyz_pos_ = alpha_pos_ = coef_pos_ = 0;
+}
+
 
 BasisSet & BasisSet::operator=(const BasisSet & rhs)
 {
@@ -80,6 +90,21 @@ BasisSet & BasisSet::operator=(const BasisSet & rhs)
     BasisSet tmp(rhs);
     swap(*this, tmp);
     return *this;
+}
+
+bool BasisSet::operator==(const BasisSet & rhs) const
+{
+    // this will take into account if one is shrinkfit and the
+    // other isn't. Will also be true even if storage is different
+    // size, etc.
+    //! \todo Will not take ordering into account. Is that desired?
+    return shells_ == rhs.shells_;
+}
+
+
+util::Hash BasisSet::MyHash(void) const
+{
+    return util::HashSerializable(*this);
 }
 
 
@@ -167,18 +192,18 @@ bool BasisSet::IsUniqueShell_(size_t i) const
 
 size_t BasisSet::NShell(void) const noexcept
 {
-    return static_cast<int>(shells_.size());
+    return shells_.size();
 }
 
 size_t BasisSet::NUniqueShell(void) const noexcept
 {
-    return static_cast<int>(unique_shells_.size());
+    return unique_shells_.size();
 }
 
 
 const BasisSetShell & BasisSet::Shell(size_t i) const
 {
-    if(static_cast<size_t>(i) < shells_.size() )
+    if(i < shells_.size())
         return shells_[i];
     else
         throw BasisSetException("Shell index out of range",
@@ -187,7 +212,7 @@ const BasisSetShell & BasisSet::Shell(size_t i) const
 
 const BasisSetShell & BasisSet::UniqueShell(size_t i) const
 {
-    if(static_cast<size_t>(i) < unique_shells_.size() )
+    if(i < unique_shells_.size())
         return Shell(unique_shells_.at(i));
     else
         throw BasisSetException("Unique shell index out of range",

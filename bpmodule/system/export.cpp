@@ -50,7 +50,7 @@ PYBIND11_PLUGIN(system)
     ;
 
 
-    // BasisShellInfo class
+    // BasisShellBase class
     pybind11::class_<BasisShellBase> bshellbase(m, "BasisShellBase");
     bshellbase.def("GetType", &BasisShellBase::GetType)
               .def("AM", &BasisShellBase::AM)
@@ -87,7 +87,8 @@ PYBIND11_PLUGIN(system)
     // BasisShellInfo class
     pybind11::class_<BasisShellInfo> bshell(m, "BasisShellInfo", bshellbase);
     bshell.def(pybind11::init<ShellType, int, bool, int, int>())
-    .def(pybind11::self == pybind11::self)
+          .def(pybind11::init<ShellType, int, bool, int, int, const std::vector<double> &, const std::vector<double> &>())
+          .def(pybind11::self == pybind11::self)
     ;
     
 
@@ -122,6 +123,8 @@ PYBIND11_PLUGIN(system)
     .def("MaxNFunctions", &BasisSet::MaxNFunctions)
     .def("Transform", &BasisSet::Transform)
     .def("ShrinkFit", &BasisSet::ShrinkFit)
+    .def("MyHash", &BasisSet::MyHash)
+    .def(pybind11::self == pybind11::self)
     .def("__iter__", [](pybind11::object obj)
             {
                 const BasisSet & cont = obj.cast<const BasisSet &>();
@@ -233,6 +236,7 @@ PYBIND11_PLUGIN(system)
     .def("GetCharge",&System::GetCharge)
     .def("GetNElectrons",&System::GetNElectrons)
     .def("GetBasisSet", &System::GetBasisSet)
+    .def("MyHash", &BasisSet::MyHash)
     .def("Translate", &System::Translate<std::array<double, 3>>)
     .def("Rotate", &System::Rotate<std::array<double, 9>>)
     .def("CenterOfMass", &System::CenterOfMass)

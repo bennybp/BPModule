@@ -5,6 +5,7 @@
  */
 
 #include "bpmodule/system/System.hpp"
+#include "bpmodule/system/BasisSet.hpp"
 #include "bpmodule/testing/TestSerialization.hpp"
 
 
@@ -46,6 +47,7 @@ void export_testing(pybind11::module & m)
     m.def("TestSerialization_BasisShellInfo",   &TestSerialization<BasisShellInfo>);
     m.def("TestSerialization_Atom",             &TestSerialization<Atom>);
     m.def("TestSerialization_System",           &TestSerialization<System, SystemCompare>);
+    m.def("TestSerialization_BasisSet",         &TestSerialization<BasisSet>);
 }
 
 

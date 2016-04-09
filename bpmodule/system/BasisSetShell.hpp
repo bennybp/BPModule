@@ -74,10 +74,32 @@ class BasisSetShell : public BasisShellBase
         bool operator==(const BasisSetShell & rhs) const;
 
 
+        /*! \brief For serialization only
+         * 
+         * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
+         * \todo Replace if cereal fixes this
+         */
+        BasisSetShell() = default;
+
+
     private:
         ID_t id_;          //!< Unique id for this shell
         ID_t center_;      //!< ID of the center
         double * xyz_;     //!< XYZ coordindates of this center
+
+
+        //! \name Serialization
+        ///@{
+
+        DECLARE_SERIALIZATION_FRIENDS
+
+        template<class Archive>
+        void serialize(Archive & ar)
+        {
+            ar(cereal::base_class<BasisShellBase>(this), id_, center_);
+        }
+
+        ///@}
     
 };
 

@@ -32,8 +32,7 @@ class OneElectronIntegralIMPL : public ModuleBase
          * \param [in] bs1 Basis set on the first center
          * \param [in] bs2 Basis set on the second center
          */
-        void SetBases(std::shared_ptr<const system::BasisSet> & bs1,
-                      std::shared_ptr<const system::BasisSet> & bs2)
+        void SetBases(const std::string & bs1, const std::string & bs2)
         {
             return ModuleBase::CallFunction(&OneElectronIntegralIMPL::SetBases_, bs1, bs2);
         }
@@ -46,7 +45,7 @@ class OneElectronIntegralIMPL : public ModuleBase
          * \param [in] shell2 Shell index on the second center
          * \return Number of integrals calculated
          */
-        long Calculate(int deriv, int shell1, int shell2)
+        long Calculate(size_t deriv, size_t shell1, size_t shell2)
         {
             return ModuleBase::CallFunction(&OneElectronIntegralIMPL::Calculate_, deriv, 
                                                                                   shell1,
@@ -79,12 +78,11 @@ class OneElectronIntegralIMPL : public ModuleBase
         // To be implemented by derived classes
         /////////////////////////////////////////
         //! \copydoc SetBases
-        virtual void SetBases_(std::shared_ptr<const system::BasisSet> & bs1,
-                               std::shared_ptr<const system::BasisSet> & bs2) = 0;
+        virtual void SetBases_(const std::string & bs1, const std::string & bs2) = 0;
 
 
         //! \copydoc Calculate
-        virtual long Calculate_(int deriv, int shell1, int shell2) = 0;
+        virtual long Calculate_(size_t deriv, size_t shell1, size_t shell2) = 0;
 
 
         //! \copydoc GetBuf
@@ -104,15 +102,14 @@ class OneElectronIntegralIMPL_Py : public OneElectronIntegralIMPL
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
     
-        virtual void SetBases_(std::shared_ptr<const system::BasisSet> & bs1,
-                               std::shared_ptr<const system::BasisSet> & bs2)
+        virtual void SetBases_(const std::string & bs1, const std::string & bs2)
 
         {
             return CallPyOverride<void>("SetBases_", bs1, bs2);
         }
 
 
-        virtual long Calculate_(int deriv, int shell1, int shell2)
+        virtual long Calculate_(size_t deriv, size_t shell1, size_t shell2)
         {
             return CallPyOverride<long>("Calculate_", deriv, shell1, shell2);
         }

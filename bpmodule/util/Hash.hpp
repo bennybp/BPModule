@@ -33,17 +33,17 @@ class Hash
         Hash(Hash &&) = default;
         Hash & operator=(Hash &&) = default;
 
-        bool operator==(const Hash & rhs);
+        bool operator==(const Hash & rhs) const;
 
-        bool operator!=(const Hash & rhs);
+        bool operator!=(const Hash & rhs) const;
 
-        bool operator<(const Hash & rhs);
+        bool operator<(const Hash & rhs) const;
 
-        bool operator>(const Hash & rhs);
+        bool operator>(const Hash & rhs) const;
 
-        bool operator>=(const Hash & rhs);
+        bool operator>=(const Hash & rhs) const;
 
-        bool operator<=(const Hash & rhs);
+        bool operator<=(const Hash & rhs) const;
 
 
         /*! \brief Return a string representation of the hash

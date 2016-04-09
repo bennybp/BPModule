@@ -12,6 +12,13 @@
 #include "bpmodule/system/BasisSetShell.hpp"
 #include "bpmodule/system/BasisShellInfo.hpp"
 
+// forward declare
+namespace bpmodule {
+namespace util {
+class Hash;
+} }
+
+
 namespace bpmodule {
 namespace system {
 
@@ -30,6 +37,8 @@ class BasisSet
         BasisSet & operator=(const BasisSet & rhs);
         BasisSet(BasisSet && rhs)                  = default;
         BasisSet & operator=(BasisSet && rhs)      = default;
+
+        bool operator==(const BasisSet & rhs) const;
 
         size_t NShell(void) const noexcept;
         size_t NUniqueShell(void) const noexcept;
@@ -65,6 +74,18 @@ class BasisSet
         const_iterator begin(void) const;
         const_iterator end(void) const;
 
+        /*! \brief Obtain a hash of this BasisSet */
+        util::Hash MyHash(void) const;
+
+
+        /*! \brief For serialization only
+         * 
+         * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
+         * \todo Replace if cereal fixes this
+         */
+        BasisSet() = default;
+
+
     private:
         ID_t curid_;
         std::vector<BasisSetShell> shells_;
@@ -88,7 +109,75 @@ class BasisSet
         void AddShell_(const BasisSetShell & bshell);
 
         bool IsUniqueShell_(size_t i) const;
+
+        void ResetPointers_(void);
+
+        void Allocate_(size_t nshells, size_t nprim, size_t ncoef);
+
+
+        //! \name Serialization
+        ///@{
+
+        DECLARE_SERIALIZATION_FRIENDS
+
+        template<class Archive>
+        void save(Archive & ar) const
+        {
+            // stores shell info, ID, center ID, and XYZ
+            typedef std::tuple<BasisShellInfo, ID_t, ID_t, CoordType> ShellTuple;
+
+            std::vector<ShellTuple> sinfo;
+            sinfo.reserve(shells_.size());
+
+            for(const auto & it : *this)
+            {
+                // can convert BasisShellBase to BasisShellInfo, but
+                // will slice id, center, and xyz
+                BasisShellInfo bsinfo(it);
+                sinfo.push_back(std::make_tuple(std::move(bsinfo), it.GetID(), it.GetCenter(), it.GetCoords()));
+            }
+            
+            ar(sinfo);
+        }
+
+        template<class Archive>
+        void load(Archive & ar)
+        {
+            storage_.clear();
+            // stores shell info, ID, center ID, and XYZ
+            typedef std::tuple<BasisShellInfo, ID_t, ID_t, CoordType> ShellTuple;
+
+            std::vector<ShellTuple> sinfo;
+            ar(sinfo);
+
+            // find how much storage we need
+            size_t nshells = sinfo.size();
+            size_t nprim = 0;
+            size_t ncoef = 0;
+
+            for(const auto & it : sinfo)
+            {
+                const BasisShellInfo & bsi = std::get<0>(it);
+                nprim += bsi.NPrim();
+                ncoef += bsi.NCoef();
+            }
+
+            Allocate_(nshells, nprim, ncoef);
+
+
+            // now add all elements of the vector, unpacking the tuple
+            for(const auto & it : sinfo)
+                AddShell_(std::get<0>(it), std::get<1>(it),
+                          std::get<2>(it), std::get<3>(it));
+        }
+
+        ///@}
 };
+
+
+//! The common tag for a null basis set (ie, for 3- and 2-center ERI)
+#define NULL_BASIS "NULL_BASIS"
+
 
 
 } // close namespace system
