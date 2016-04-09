@@ -136,6 +136,9 @@ class ModuleTree
         
         /*! \brief Ending point of iteration over all modules in the tree */
         const_flat_iterator FlatEnd(void) const; 
+
+        /*! \brief Clear the contents of the entire tree */
+        void Clear(void);
 };
 
 

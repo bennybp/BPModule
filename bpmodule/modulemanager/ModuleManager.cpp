@@ -53,6 +53,12 @@ ModuleManager::~ModuleManager()
     keymap_.clear();
     store_.clear();
 
+    /*
+     * The tree contains System, so that must be cleared before unloading
+     *  as well
+     */
+    mtree_.Clear();
+
     // NOW we can close all the handlers
     loadhandlers_.clear();
 }

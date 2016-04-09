@@ -150,7 +150,7 @@ public:
      * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
      * \todo Replace if cereal fixes this
      */
-    MathSet() = default;
+    MathSet() {} // cannot be "=default" due to compiler bugs
 
 
 

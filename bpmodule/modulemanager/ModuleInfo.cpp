@@ -21,6 +21,7 @@ void ModuleInfo::Print(std::ostream & os) const
     Output(os, "  ++ Module: %?\n", name);
     Output(os, "         Version: %?\n", version);
     Output(os, "            Type: %?\n", type);
+    Output(os, "            Base: %?\n", base);
     Output(os, "            Path: %?\n", path);
 
     Output(os, "     Description: %?\n", description);

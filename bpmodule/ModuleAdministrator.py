@@ -2,7 +2,7 @@ import sys
 import os
 import importlib
 
-from . import modulemanager, output, exception, datastore, CheckSupermodule
+from . import *
 
 
 # TODO - document me
@@ -84,6 +84,22 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         cppminfo.description = minfo["description"]
         cppminfo.authors = minfo["authors"]
         cppminfo.refs = minfo["refs"]
+
+        # Options inheritence
+        if "base" in minfo:
+            b = minfo["base"]
+            cppminfo.base = b
+
+            if b in modulebase.base_options:
+                dtmp = modulebase.base_options[b].copy()
+
+                # Update with the options in modinfo, which
+                # will overwrite the defaults if necessary
+                dtmp.update(minfo["options"])
+
+                minfo["options"] = dtmp
+                
+            
 
         # Modpath is used for C++ SO modules
         # if it exists, append it

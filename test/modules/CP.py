@@ -38,6 +38,7 @@ def Run(mm):
         tester = bp.testing.Tester("Testing Boys and Bernardi CP")
         tester.PrintHeader()
        
+        LoadDefaultModules(mm)
         
         mm.ChangeOption("BP_CP","METHOD","BP_SCF")
         mm.ChangeOption("BP_CP","MAX_DERIV",1)

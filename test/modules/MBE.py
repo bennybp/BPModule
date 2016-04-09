@@ -35,6 +35,8 @@ def Run(mm):
     try:
         tester = bp.testing.Tester("Testing MBE via MIM")
         tester.PrintHeader()
+
+        LoadDefaultModules(mm)
         
         mm.ChangeOption("BP_MBE","METHOD","BP_SCF")
         mm.ChangeOption("BP_MIM","FRAGMENTIZER","BP_BOND_FRAG")

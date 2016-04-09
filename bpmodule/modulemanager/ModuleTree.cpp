@@ -84,6 +84,11 @@ ModuleTree::const_flat_iterator ModuleTree::FlatEnd(void) const
     return const_flat_iterator(&data_, data_.end());
 }
 
+void ModuleTree::Clear(void)
+{
+    data_.clear();
+}
+
 } // close namespace modulemanager
 } // close namespace bpmodule
 

@@ -21,6 +21,7 @@ struct ModuleInfo
 {
     std::string name;                  //!< Some descriptive name for the module
     std::string type;                  //!< Type of the supermodule (c_module, python_module, etc)
+    std::string base;                  //!< Base class of this module (EnergyMethod, etc)
     std::string path;                  //!< Full path for the supermodule (including the filename for an SO file)
     std::string version;               //!< Arbitrary version string of the supermodule
     std::string description;           //!< A description of the module
