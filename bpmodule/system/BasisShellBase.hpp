@@ -47,7 +47,7 @@ class BasisShellBase
      * instantiated by itself, serialization is done
      * completely through the derived classes. This
      * is due to the derived classes owning the 
-     * that we point to.
+     * that we posize_t to.
      */
     public:
         virtual ~BasisShellBase() = default;
@@ -73,17 +73,17 @@ class BasisShellBase
         int AM(void) const noexcept;
 
         /// Get the number of primitives in this shell
-        int NPrim(void) const noexcept;
+        size_t NPrim(void) const noexcept;
 
         /*! \brief Get the number of coefficients in this shell
          * 
          * This takes into account general contractions and combined shells,
          * so it is not necessarily equal to the number of primitives
          */
-        int NCoef(void) const noexcept;
+        size_t NCoef(void) const noexcept;
 
         /// Get the level of general contraction of this shell
-        int NGeneral(void) const noexcept;
+        size_t NGeneral(void) const noexcept;
 
 
         /*! \brief Get the number of cartesian functions represented by this shell
@@ -91,7 +91,7 @@ class BasisShellBase
          * This takes into account general contractions and combined shells, so it
          * is not simply based on the AM alone
          */
-        int NCartesian(void) const noexcept;
+        size_t NCartesian(void) const noexcept;
 
 
         /*! \brief Get the number of spherical functions represented by this shell
@@ -99,7 +99,7 @@ class BasisShellBase
          * This takes into account general contractions and combined shells, so it
          * is not simply based on the AM alone
          */
-        int NSpherical(void) const noexcept;
+        size_t NSpherical(void) const noexcept;
 
 
         /*! \brief Get the number of functions represented by this shell
@@ -110,7 +110,7 @@ class BasisShellBase
          * This takes into account general contractions and combined shells, so it
          * is not simply based on the AM alone
          */
-        int NFunctions(void) const noexcept;
+        size_t NFunctions(void) const noexcept;
 
 
         /*! \brief Is this shell a combined AM shell
@@ -139,10 +139,10 @@ class BasisShellBase
          *
          * \param [in] i Index of the primitive to get
          */
-        const double & Alpha(int i) const ASSERTIONS_ONLY;
+        const double & Alpha(size_t i) const ASSERTIONS_ONLY;
 
-        /// \copydocs Alpha(int i) const
-        double & Alpha(int i) ASSERTIONS_ONLY;
+        /// \copydocs Alpha(size_t i) const
+        double & Alpha(size_t i) ASSERTIONS_ONLY;
 
 
 
@@ -151,10 +151,10 @@ class BasisShellBase
          * \param [in] n Index of the general contraction
          * \param [in] i Index in the segmented contraction
          */
-        const double & Coef(int n, int i) const ASSERTIONS_ONLY;
+        const double & Coef(size_t n, size_t i) const ASSERTIONS_ONLY;
 
-        /// \copydocs Coef(int n, int i) const
-        double & Coef(int n, int i) ASSERTIONS_ONLY;
+        /// \copydocs Coef(size_t n, size_t i) const
+        double & Coef(size_t n, size_t i) ASSERTIONS_ONLY;
 
 
         /*! \brief Get the pointer to the exponents
@@ -172,10 +172,10 @@ class BasisShellBase
          *
          * \param [in] n Index of the general contraction
          */
-        double const * CoefPtr(int n) const ASSERTIONS_ONLY;
+        double const * CoefPtr(size_t n) const ASSERTIONS_ONLY;
 
-        /// \copydocs CoefPtr(int n) const
-        double * CoefPtr(int n) ASSERTIONS_ONLY;
+        /// \copydocs CoefPtr(size_t n) const
+        double * CoefPtr(size_t n) ASSERTIONS_ONLY;
 
 
 
@@ -204,7 +204,7 @@ class BasisShellBase
          *
          * \param [in] i Index of the primitive to get
          */
-        double GetAlpha(int i) const;
+        double GetAlpha(size_t i) const;
 
 
         
@@ -215,7 +215,7 @@ class BasisShellBase
          * \param [in] i Index of the primitive to set
          * \param [in] alpha The value to set the exponent to
          */
-        void SetAlpha(int i, double alpha);
+        void SetAlpha(size_t i, double alpha);
 
 
 
@@ -226,7 +226,7 @@ class BasisShellBase
          * \param [in] n Index of the general contraction
          * \param [in] i Index in the segmented contraction
          */
-        double GetCoef(int n, int i) const;
+        double GetCoef(size_t n, size_t i) const;
 
 
 
@@ -238,7 +238,7 @@ class BasisShellBase
          * \param [in] i Index in the segmented contraction
          * \param [in] coef The value to set the coefficient to
          */
-        void SetCoef(int n, int i, double coef);
+        void SetCoef(size_t n, size_t i, double coef);
 
 
         /// Get all exponents as a vector
@@ -256,14 +256,14 @@ class BasisShellBase
          * 
          * \param [in] n Index of the general contraction
          */
-        std::vector<double> GetCoefs(int n) const;
+        std::vector<double> GetCoefs(size_t n) const;
 
 
         /*! \brief Set all coefficients for a general contraction via a vector
          * 
          * \throw bpmodule::exception::BasisSetException if the vector is not of the right length
          */
-        void SetCoefs(int n, const std::vector<double> & coefs);
+        void SetCoefs(size_t n, const std::vector<double> & coefs);
 
         /// Get all coefficints for all general contractions as a vector
         std::vector<double> GetAllCoefs(void) const;
@@ -285,7 +285,7 @@ class BasisShellBase
          * \param [in] alpha The exponent of the primitive
          * \param [in] coef The coefficient of the single general contraction
          */ 
-        void SetPrimitive(int i, double alpha, double coef);
+        void SetPrimitive(size_t i, double alpha, double coef);
 
 
         /*! \brief Set all information for a primitive
@@ -297,7 +297,7 @@ class BasisShellBase
          * \param [in] alpha The exponent of the primitive
          * \param [in] coefs Coefficients for the general contractions of this primitive
          */
-        void SetPrimitive(int i, double alpha, const std::vector<double> & coefs);
+        void SetPrimitive(size_t i, double alpha, const std::vector<double> & coefs);
 
         ///@}
 
@@ -313,7 +313,7 @@ class BasisShellBase
          * \param [in] nprim Number of primitives
          * \param [in] ngen Number of general contractions
          */
-        BasisShellBase(ShellType type, int am, bool cart, int nprim, int ngen);
+        BasisShellBase(ShellType type, int am, bool cart, size_t nprim, size_t ngen);
 
 
         // compiler generated ok
@@ -334,18 +334,18 @@ class BasisShellBase
         ShellType type_;             //!< Gaussian, Slater, etc
         int am_;                     //!< Angular momentum
         bool cart_;                  //!< Is cartesian?
-        int nprim_;                  //!< Number of primitives
-        int ngen_;                   //!< Number of general contractions
+        size_t nprim_;                  //!< Number of primitives
+        size_t ngen_;                   //!< Number of general contractions
         double * alphas_;            //!< Exponents
         double * coefs_;             //!< Coefficients
 
 
         // Assertions and sanity checks
         void AssertPtrs_(void) const;
-        void AssertPrimIdx_(int i) const;
-        void AssertGenIdx_(int n) const;
-        void ValidatePrimIdx_(int i) const;
-        void ValidateGenIdx_(int n) const;
+        void AssertPrimIdx_(size_t i) const;
+        void AssertGenIdx_(size_t n) const;
+        void ValidatePrimIdx_(size_t i) const;
+        void ValidateGenIdx_(size_t n) const;
 
 
         //! \name Serialization

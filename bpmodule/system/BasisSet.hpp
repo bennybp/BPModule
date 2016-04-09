@@ -31,22 +31,22 @@ class BasisSet
         BasisSet(BasisSet && rhs)                  = default;
         BasisSet & operator=(BasisSet && rhs)      = default;
 
-        int NShell(void) const noexcept;
-        int NUniqueShell(void) const noexcept;
+        size_t NShell(void) const noexcept;
+        size_t NUniqueShell(void) const noexcept;
 
-        const BasisSetShell & Shell(int i) const;
-        const BasisSetShell & UniqueShell(int i) const;
-        BasisShellInfo ShellInfo(int i) const;
+        const BasisSetShell & Shell(size_t i) const;
+        const BasisSetShell & UniqueShell(size_t i) const;
+        BasisShellInfo ShellInfo(size_t i) const;
 
-        int NPrim(void) const;
-        int NCoef(void) const;
-        int NCartesian(void) const;
-        int NFunctions(void) const;
+        size_t NPrim(void) const;
+        size_t NCoef(void) const;
+        size_t NCartesian(void) const;
+        size_t NFunctions(void) const;
 
-        int MaxNPrim(void) const;
+        size_t MaxNPrim(void) const;
         int MaxAM(void) const;
-        int MaxNCartesian(void) const;
-        int MaxNFunctions(void) const;
+        size_t MaxNCartesian(void) const;
+        size_t MaxNFunctions(void) const;
 
         void AddShell(const BasisShellInfo & bshell,
                       ID_t center,

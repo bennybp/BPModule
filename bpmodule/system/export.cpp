@@ -64,8 +64,8 @@ PYBIND11_PLUGIN(system)
               .def("IsCartesian", &BasisShellBase::IsCartesian)
               .def("IsSpherical", &BasisShellBase::IsSpherical)
 
-              .def("Alpha", static_cast<double &(BasisShellBase::*)(int)>(&BasisShellBase::Alpha))
-              .def("Coef", static_cast<double &(BasisShellBase::*)(int)>(&BasisShellBase::Alpha))
+              .def("Alpha", static_cast<double &(BasisShellBase::*)(size_t)>(&BasisShellBase::Alpha))
+              .def("Coef", static_cast<double &(BasisShellBase::*)(size_t)>(&BasisShellBase::Alpha))
 
               .def("GetAlpha", &BasisShellBase::GetAlpha)
               .def("SetAlpha", &BasisShellBase::SetAlpha)
@@ -79,8 +79,8 @@ PYBIND11_PLUGIN(system)
               .def("GetAllCoefs", &BasisShellBase::GetAllCoefs)
               .def("SetAllCoefs", &BasisShellBase::SetAllCoefs)
 
-              .def("SetPrimitive", static_cast<void (BasisShellBase::*)(int, double, double)>(&BasisShellBase::SetPrimitive))
-              .def("SetPrimitive", static_cast<void (BasisShellBase::*)(int, double, const std::vector<double> &)>(&BasisShellBase::SetPrimitive))
+              .def("SetPrimitive", static_cast<void (BasisShellBase::*)(size_t, double, double)>(&BasisShellBase::SetPrimitive))
+              .def("SetPrimitive", static_cast<void (BasisShellBase::*)(size_t, double, const std::vector<double> &)>(&BasisShellBase::SetPrimitive))
     ;
 
 

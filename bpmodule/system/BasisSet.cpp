@@ -165,18 +165,18 @@ bool BasisSet::IsUniqueShell_(size_t i) const
 
 
 
-int BasisSet::NShell(void) const noexcept
+size_t BasisSet::NShell(void) const noexcept
 {
     return static_cast<int>(shells_.size());
 }
 
-int BasisSet::NUniqueShell(void) const noexcept
+size_t BasisSet::NUniqueShell(void) const noexcept
 {
     return static_cast<int>(unique_shells_.size());
 }
 
 
-const BasisSetShell & BasisSet::Shell(int i) const
+const BasisSetShell & BasisSet::Shell(size_t i) const
 {
     if(static_cast<size_t>(i) < shells_.size() )
         return shells_[i];
@@ -185,7 +185,7 @@ const BasisSetShell & BasisSet::Shell(int i) const
                                 "index", i, "nshells", shells_.size());
 }
 
-const BasisSetShell & BasisSet::UniqueShell(int i) const
+const BasisSetShell & BasisSet::UniqueShell(size_t i) const
 {
     if(static_cast<size_t>(i) < unique_shells_.size() )
         return Shell(unique_shells_.at(i));
@@ -194,7 +194,7 @@ const BasisSetShell & BasisSet::UniqueShell(int i) const
                                 "index", i, "nshells", unique_shells_.size());
 }
 
-BasisShellInfo BasisSet::ShellInfo(int i) const
+BasisShellInfo BasisSet::ShellInfo(size_t i) const
 {
     const BasisSetShell & bss = Shell(i);
     BasisShellInfo bsi(bss.GetType(), bss.AM(), bss.IsCartesian(),
@@ -205,19 +205,19 @@ BasisShellInfo BasisSet::ShellInfo(int i) const
     return bsi;
 }
 
-int BasisSet::NPrim(void) const
+size_t BasisSet::NPrim(void) const
 {
     return std::accumulate(this->begin(), this->end(), 0,
-                           [](int sum, const BasisSetShell & sh) { return sum + sh.NPrim(); } );
+                           [](size_t sum, const BasisSetShell & sh) { return sum + sh.NPrim(); } );
 }
 
-int BasisSet::NCoef(void) const
+size_t BasisSet::NCoef(void) const
 {
     return std::accumulate(this->begin(), this->end(), 0,
-                           [](int sum, const BasisSetShell & sh) { return sum + sh.NCoef(); } );
+                           [](size_t sum, const BasisSetShell & sh) { return sum + sh.NCoef(); } );
 }
 
-int BasisSet::MaxNPrim(void) const
+size_t BasisSet::MaxNPrim(void) const
 {
     return std::max_element(this->begin(), this->end(), 
                     [](const BasisSetShell & lhs, const BasisSetShell & rhs) { return lhs.NPrim() < rhs.NPrim(); })->NPrim();
@@ -226,28 +226,29 @@ int BasisSet::MaxNPrim(void) const
 int BasisSet::MaxAM(void) const
 {
     int max = std::max_element(this->begin(), this->end(), 
-                    [](const BasisSetShell & lhs, const BasisSetShell & rhs) { return std::abs(lhs.AM()) < std::abs(rhs.AM()); })->AM();
+                    [](const BasisSetShell & lhs, const BasisSetShell & rhs)
+                      { return std::abs(lhs.AM()) < std::abs(rhs.AM()); })->AM();
     return std::abs(max);
 }
 
-int BasisSet::NCartesian(void) const
+size_t BasisSet::NCartesian(void) const
 {
     return std::accumulate(this->begin(), this->end(), 0,
-                           [](int sum, const BasisSetShell & sh) { return sum + sh.NCartesian(); } );
+                           [](size_t sum, const BasisSetShell & sh) { return sum + sh.NCartesian(); } );
 }
 
-int BasisSet::NFunctions(void) const
+size_t BasisSet::NFunctions(void) const
 {
     return std::accumulate(this->begin(), this->end(), 0,
-                           [](int sum, const BasisSetShell & sh) { return sum + sh.NFunctions(); } );
+                           [](size_t sum, const BasisSetShell & sh) { return sum + sh.NFunctions(); } );
 }
 
-int BasisSet::MaxNCartesian(void) const
+size_t BasisSet::MaxNCartesian(void) const
 {
     return NCARTESIAN(MaxAM());
 }
 
-int BasisSet::MaxNFunctions(void) const
+size_t BasisSet::MaxNFunctions(void) const
 {
     return std::max_element(this->begin(), this->end(), 
                     [](const BasisSetShell & lhs, const BasisSetShell & rhs) { return lhs.NFunctions() < rhs.NFunctions(); })->NFunctions();
@@ -332,7 +333,7 @@ void BasisSet::Print(std::ostream & os) const
 {
     using namespace bpmodule::output;
 
-    int nshell = NShell();
+    size_t nshell = NShell();
 
     Output(os, "Basis set with %? shells\n", nshell);
     Output(os, "NCart = %? , MaxAM = %?\n", NCartesian(), MaxAM());
@@ -342,15 +343,15 @@ void BasisSet::Print(std::ostream & os) const
                                                                  coef_pos_, max_ncoef_);
 
 
-    for(int i = 0; i < nshell; i++)
+    for(size_t i = 0; i < nshell; i++)
     {
         const auto & shell = Shell(i);
         Output(os, "Shell %?  AM=%?  Cart=%?  NPrim=%? NGen=%?\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim(), shell.NGeneral());
         Output(os, "Coordinates: % 16.8? % 16.8? % 16.8?\n", shell.GetCoords()[0], shell.GetCoords()[1], shell.GetCoords()[2]);
-        for(int j = 0; j < shell.NPrim(); ++j)
+        for(size_t j = 0; j < shell.NPrim(); ++j)
         {
             Output(os, "    % 16.8?", shell.GetAlpha(j));
-            for(int n = 0; n < shell.NGeneral(); n++)
+            for(size_t n = 0; n < shell.NGeneral(); n++)
                 Output(os, "    % 16.8?", shell.GetCoef(n, j));
             Output(os, "\n");
         }

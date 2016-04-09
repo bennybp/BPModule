@@ -16,7 +16,7 @@ using bpmodule::exception::BasisSetException;
 namespace bpmodule {
 namespace system {
 
-BasisShellInfo::BasisShellInfo(ShellType type, int am, bool cart, int nprim, int ngen)
+BasisShellInfo::BasisShellInfo(ShellType type, int am, bool cart, size_t nprim, size_t ngen)
     : BasisShellBase(type, am, cart, nprim, ngen)
 {
     alphas_.resize(NPrim());

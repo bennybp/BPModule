@@ -28,7 +28,7 @@ namespace system {
 class BasisShellInfo : public BasisShellBase
 {
     public:
-        BasisShellInfo(ShellType type, int am, bool cart, int nprim, int ngen);
+        BasisShellInfo(ShellType type, int am, bool cart, size_t nprim, size_t ngen);
 
 
         /*! \brief For serialization only
