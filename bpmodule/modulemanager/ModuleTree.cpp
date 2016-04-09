@@ -28,7 +28,7 @@ void ModuleTree::Insert(ModuleTreeNode && node, ID_t parentid)
         throw ModuleManagerException("Inserting a node with a non-existing parent", "parentid", parentid);
 
     node.parentid = parentid;
-    data_.emplace(mid, std::move(node)); 
+    data_.emplace(mid, std::move(node));
 
     // add as a child to the parent
     if(hasparent)
@@ -63,24 +63,24 @@ size_t ModuleTree::Size(void) const
 }
 
 ModuleTree::const_iterator ModuleTree::Begin(ID_t startid) const
-{   
+{
     if(!HasID(startid))
         throw ModuleManagerException("Module with this ID doesn't exist", "startid", startid);
     return const_iterator(this, startid);
 }
 
 ModuleTree::const_iterator ModuleTree::End(void) const
-{   
+{
     return const_iterator(this, const_iterator::MAXVAL);
 }
 
 ModuleTree::const_flat_iterator ModuleTree::FlatBegin(void) const
-{   
+{
     return const_flat_iterator(&data_, data_.begin());
 }
 
 ModuleTree::const_flat_iterator ModuleTree::FlatEnd(void) const
-{   
+{
     return const_flat_iterator(&data_, data_.end());
 }
 

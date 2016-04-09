@@ -82,6 +82,10 @@ size_t OptionMap::Size(void) const noexcept
     return opmap_.size();
 }
 
+bool OptionMap::IsSet(const std::string & key) const
+{
+    return GetOrThrow_(key)->IsSet();
+}
 
 bool OptionMap::IsDefault(const std::string & key) const
 {

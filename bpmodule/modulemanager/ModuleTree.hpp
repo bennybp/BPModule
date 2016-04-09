@@ -19,7 +19,7 @@ namespace modulemanager {
 
 
 /*! \brief Information stored on the tree for a module
- * 
+ *
  * This should be considered read-only, except for the
  * module that uses this node, and the ModuleManager
  */
@@ -46,7 +46,7 @@ struct ModuleTreeNode
 /*! \brief A tree holding the information for the modules
  *
  * Whenever a new module is created, a node is added to the tree,
- * optionally with a specific parent. Therefore, 
+ * optionally with a specific parent. Therefore,
  * the tree stores the program flow and the data for each major
  * step of a calculation.
  */
@@ -82,12 +82,12 @@ class ModuleTree
 
 
         /*! \brief Query to see if the tree has a node with an ID
-         */ 
+         */
         bool HasID(ID_t id) const;
 
 
         /*! \brief Obtain a node by its ID
-         * 
+         *
          * The ID represents the unique ID of the module
          * and also the unique ID of the tree node
          *
@@ -98,7 +98,7 @@ class ModuleTree
 
 
         /*! \brief Obtain a node by its ID
-         * 
+         *
          * The ID represents the unique ID of the module
          * and also the unique ID of the tree node
          *
@@ -113,29 +113,29 @@ class ModuleTree
 
 
         /*! \brief Iterate (depth first) starting with a given ID
-         * 
+         *
          * \throw bpmodule::exception::ModuleManagerException if the
          *        a node with the starting id doesn't exist
          *
          * \param [in] startid ID to use as the base of the tree
          */
-        const_iterator Begin(ID_t startid) const; 
+        const_iterator Begin(ID_t startid) const;
 
 
         /*! \brief Ending point of depth-first iteration */
-        const_iterator End(void) const; 
+        const_iterator End(void) const;
 
 
         /*! \brief Iterate over all modules in the tree
          *
          * The order is not specified, and should not be
-         * assumed to be, for example, always increasing. 
+         * assumed to be, for example, always increasing.
          */
-        const_flat_iterator FlatBegin(void) const; 
+        const_flat_iterator FlatBegin(void) const;
 
-        
+
         /*! \brief Ending point of iteration over all modules in the tree */
-        const_flat_iterator FlatEnd(void) const; 
+        const_flat_iterator FlatEnd(void) const;
 
         /*! \brief Clear the contents of the entire tree */
         void Clear(void);

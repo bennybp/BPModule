@@ -58,25 +58,43 @@ class ModulePtr
 
 
         /*! \brief Dereference the object
-         * 
+         *
          * Used to call functions of the contained module object
          *
-         * \exnothrow
-         */ 
-        T * operator->() const { return ptr_; }
+         * \throw bpmodule::exception::GeneralException if there is a null pointer
+         *        in this object (ie, has been deleted)
+         */
+        T * operator->() const
+        {
+            using namespace bpmodule::exception;
+
+            if(!holder_)
+                throw GeneralException("ModulePtr has an empty unique pointer");
+            if(ptr_ == nullptr)
+                throw GeneralException("ModulePtr has a null pointer");
+            return ptr_;
+        }
 
 
         /*! \brief Dereference the object
          *
          * Used to call functions of the contained module object
          *
-         * \exnothrow
-         */ 
-        T & operator*() const { return *ptr_; }
+         * \throw bpmodule::exception::GeneralException if there is a null pointer
+         *        in this object (ie, has been deleted)
+         */
+        T & operator*() const
+        {
+            if(!holder_)
+                throw GeneralException("ModulePtr has an empty unique pointer");
+            if(ptr_ == nullptr)
+                throw GeneralException("ModulePtr has a null pointer");
+            return *ptr_;
+        }
 
 
     private:
-        //! The acutal held module (pointer to the ModuleIMPLHolder base class)
+        //! The actual held module (pointer to the ModuleIMPLHolder base class)
         std::unique_ptr<detail::ModuleIMPLHolder> holder_;
 
         //! C++ pointer to the held module
@@ -98,9 +116,9 @@ class PyModulePtr
     public:
         /*! \brief Constructor
          *
-         * Moves the held module from the unique pointer 
+         * Moves the held module from the unique pointer
          *
-         * \param [in] holder The holder of the module to be contained in 
+         * \param [in] holder The holder of the module to be contained in
          *                    this object
          */
         PyModulePtr(std::unique_ptr<detail::ModuleIMPLHolder> && holder)
@@ -126,22 +144,29 @@ class PyModulePtr
 
 
         /*! \brief Dereference the module. Used by python for smart pointer semantics
-         * 
+         *
          * See \ref python_smart_pointer
          *
-         * \note May raise a python exception if the specified method doesn't exist
+         * \throw bpmodule::exception::GeneralException if there is a null pointer
+         *        or empty object in this object (ie, has been deleted)
          *
          * \param [in] name The attribute to get from the module
          */
         pybind11::object Py__getattr__(const std::string & name)
         {
+            using namespace bpmodule::exception;
+
+            // check before getting the python object
+            if(!holder_)
+                throw GeneralException("PyModulePtr has a null pointer");
+            if(!obj_)
+                throw GeneralException("PyModulePtr python object is empty");
             return obj_.attr(name.c_str());
         }
 
 
-
     private:
-        //! The acutal held module
+        //! The actual held module
         std::unique_ptr<detail::ModuleIMPLHolder> holder_;
 
         //! Held module converted to a pybind11::object

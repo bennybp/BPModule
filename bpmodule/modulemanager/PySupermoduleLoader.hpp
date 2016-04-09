@@ -21,7 +21,7 @@ namespace modulemanager {
 
 /*! \brief Loads python supermodules
  *
- * This loader loads supermodules for python supermodule (a python module 
+ * This loader loads supermodules for python supermodule (a python module
  * directory containing  * a __init__.py file).
  * Module objects and creation functions are cached
  * and deleted/closed at destruction.

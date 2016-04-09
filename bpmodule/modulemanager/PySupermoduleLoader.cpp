@@ -33,11 +33,11 @@ PySupermoduleLoader::~PySupermoduleLoader()
 
         if(python::HasCallableAttr(it.second.mod, "FinalizeSupermodule"))
         {
-            GlobalDebug("Running finalization function in %?\n", it.first); 
+            GlobalDebug("Running finalization function in %?\n", it.first);
             python::CallPyFuncAttr<void>(it.second.mod, "FinalizeSupermodule");
         }
         else
-            GlobalDebug("Supermodule %? doesn't have finalization function. Skipping\n", it.first); 
+            GlobalDebug("Supermodule %? doesn't have finalization function. Skipping\n", it.first);
 
         GlobalOutput("Closed supermodule %?\n", it.first);
     }
@@ -53,7 +53,7 @@ const ModuleCreationFuncs & PySupermoduleLoader::LoadSupermodule(const std::stri
 
     GlobalDebug("Loading python supermodule %?\n", spath);
 
- 
+
     if(!objmap_.count(spath))
     {
         GlobalDebug("Supermodule not yet loaded. Looking to import python supermodule: %?\n", spath);
@@ -98,7 +98,7 @@ const ModuleCreationFuncs & PySupermoduleLoader::LoadSupermodule(const std::stri
 
 
         // get the module creation functions
-        // and put them right in the map 
+        // and put them right in the map
         ModuleCreationFuncs creators = python::CallPyFuncAttr<ModuleCreationFuncs>(mod, "InsertSupermodule");
 
         objmap_.emplace(spath, PyModInfo{std::move(mod), std::move(creators)});

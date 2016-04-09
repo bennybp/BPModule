@@ -40,7 +40,7 @@ PYBIND11_PLUGIN(modulemanager)
 
     //////////////////////////
     // Tree Node
-    //////////////////////////     
+    //////////////////////////
     pybind11::class_<ModuleTreeNode>(m, "ModuleTreeNode")
     .def_readonly("modulekey", &ModuleTreeNode::modulekey)
     .def_readonly("minfo", &ModuleTreeNode::minfo)
@@ -55,7 +55,7 @@ PYBIND11_PLUGIN(modulemanager)
 
     //////////////////////////
     // Tree iterators
-    //////////////////////////     
+    //////////////////////////
     pybind11::class_<ConstModuleTreeIter>(m, "ConstModuleTreeIter")
     .def("Advance", &ConstModuleTreeIter::Advance)
     .def("GetRef", &ConstModuleTreeIter::GetRef, pybind11::return_value_policy::reference_internal)
@@ -86,6 +86,7 @@ PYBIND11_PLUGIN(modulemanager)
     .def("ReplaceKey", &ModuleManager::ReplaceKey)
     .def("TestAll", &ModuleManager::TestAll)
     .def("GetModule", &ModuleManager::GetModulePy)
+    .def("ModuleInUse", &ModuleManager::ModuleInUse)
     .def("ChangeOption", &ModuleManager::ChangeOptionPy)
     .def("LoadModuleFromModuleInfo", &ModuleManager::LoadModuleFromModuleInfo)
     .def("EnableDebug", &ModuleManager::EnableDebug)

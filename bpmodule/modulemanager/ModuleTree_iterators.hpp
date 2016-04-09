@@ -52,8 +52,8 @@ class ConstModuleTreeIter
          *        is a nullptr or the starting id doesn't exist
          *
          * \param [in] mtree The tree to interate over
-         * \param [in] startid The id to start with 
-         */ 
+         * \param [in] startid The id to start with
+         */
         ConstModuleTreeIter(const ModuleTree * mtree, ID_t startid);
 
 
@@ -66,14 +66,14 @@ class ConstModuleTreeIter
         /*! \brief Dereference the iterator
          *
          * \throw bpmodule::exception::ModuleManagerException if the current
-         *        node does not exist (ie, we are past the end) 
+         *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode & operator*()const;
 
         /*! \brief Dereference the iterator
          *
          * \throw bpmodule::exception::ModuleManagerException if the current
-         *        node does not exist (ie, we are past the end) 
+         *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode * operator->()const;
 
@@ -87,7 +87,7 @@ class ConstModuleTreeIter
          *
          * Similar to prefix increment. Mostly for use from python.
          */
-        void Advance(void); 
+        void Advance(void);
 
 
         /*! \brief Get a reference to the node data
@@ -95,8 +95,8 @@ class ConstModuleTreeIter
          * Similar to dereferencing. Mostly for use from python
          *
          * \throw bpmodule::exception::ModuleManagerException if the current
-         *        node does not exist (ie, we are past the end) 
-         */ 
+         *        node does not exist (ie, we are past the end)
+         */
         const ModuleTreeNode & GetRef(void) const;
 
 
@@ -129,7 +129,7 @@ class ConstModuleFlatTreeIter
          *
          * \param [in] m The map to iterator over
          * \param [in] it Where to start the iteration
-         */ 
+         */
         ConstModuleFlatTreeIter(const MapType * m, MapType::const_iterator it);
 
     public:
@@ -141,14 +141,14 @@ class ConstModuleFlatTreeIter
         /*! \brief Dereference the iterator
          *
          * \throw bpmodule::exception::ModuleManagerException if the current
-         *        node does not exist (ie, we are past the end) 
+         *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode & operator*()const;
 
         /*! \brief Dereference the iterator
          *
          * \throw bpmodule::exception::ModuleManagerException if the current
-         *        node does not exist (ie, we are past the end) 
+         *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode * operator->()const;
 
@@ -162,15 +162,15 @@ class ConstModuleFlatTreeIter
          *
          * Similar to prefix increment. Mostly for use from python.
          */
-        void Advance(void); 
+        void Advance(void);
 
         /*! \brief Get a reference to the node data
          *
          * Similar to dereferencing. Mostly for use from python
          *
          * \throw bpmodule::exception::ModuleManagerException if the current
-         *        node does not exist (ie, we are past the end) 
-         */ 
+         *        node does not exist (ie, we are past the end)
+         */
         const ModuleTreeNode & GetRef(void) const;
 
         // comparison

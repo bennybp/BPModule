@@ -34,7 +34,7 @@ ConstModuleTreeIter::ConstModuleTreeIter(const ModuleTree * mtree,
 ConstModuleTreeIter & ConstModuleTreeIter::operator++()
 {
     // Are we already at the end?
-    if(curnode_ == nullptr && 
+    if(curnode_ == nullptr &&
        curid_ == MAXVAL &&
        startid_ == MAXVAL)
         return *this;
@@ -95,7 +95,7 @@ ConstModuleTreeIter ConstModuleTreeIter::operator++(int)
     ++(*this);
     return ret;
 }
-        
+
 
 const ModuleTreeNode & ConstModuleTreeIter::operator*()const
 {
@@ -170,7 +170,7 @@ const ModuleTreeNode & ConstModuleFlatTreeIter::GetRef()const
 {
     if(curit_ == map_->end())
         throw ModuleManagerException("Attempting to dereference invalid iterator in ConstModuleFlatTreeIter");
-        
+
     return curit_->second;
 }
 

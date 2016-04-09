@@ -79,7 +79,6 @@ class OptionMap
 
 
 
-
         /*! \brief Determine if this object contains a value for a key
          *
          * Checks to see if the map has the key and then if
@@ -117,6 +116,16 @@ class OptionMap
          *        the key doesn't exist
          */
         bool IsDefault(const std::string & key) const;
+
+
+
+
+        /*! \brief Check to see if an option is set
+         * 
+         * Ie, is the option set by the user. This is true even
+         * if it is explicitly set to the default value.
+         */
+        bool IsSet(const std::string & key) const;
 
 
 

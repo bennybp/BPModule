@@ -194,6 +194,12 @@ bool OptionHolder<OPTTYPE>::HasDefault(void) const noexcept
 }
 
 
+template<OptionType OPTTYPE>
+bool OptionHolder<OPTTYPE>::IsSet(void) const noexcept
+{
+    return bool(value_);
+}
+
 
 template<OptionType OPTTYPE>
 bool OptionHolder<OPTTYPE>::IsDefault(void) const

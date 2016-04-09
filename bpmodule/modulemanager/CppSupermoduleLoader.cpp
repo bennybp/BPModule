@@ -64,7 +64,7 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
 {
     // Initializing/Finalizing the so file
     typedef void (*InitializeFunc)(void);
-    
+
     // Function for creating modules
     typedef ModuleCreationFuncs (*GeneratorFunc)(void);
 
@@ -112,7 +112,7 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
             GlobalDebug("Running initialization function for supermodule %?\n", spath);
             ifn();
         }
-        
+
 
         // get the module creation functions
         // and put them in the map, under the key for this supermodule

@@ -18,7 +18,7 @@
 namespace bpmodule {
 namespace modulemanager {
 
-        
+
 /*! \brief Stores creation functions for modules within a supermodule
  *
  * This object contains a map of module names to functions that create
@@ -40,12 +40,12 @@ class ModuleCreationFuncs
 
 
         /*! \brief Add a creator for a C++ module
-         * 
+         *
          * \tparam T The module to add. This is the full type, not the type
          *           of the base class.
          *
          * \param [in] modulename The name of the module
-         */ 
+         */
         template<typename T>
         void AddCppCreator(const std::string & modulename)
         {
@@ -55,10 +55,10 @@ class ModuleCreationFuncs
 
 
         /*! \brief Add a creator for a python module
-         * 
+         *
          * \param [in] modulename The name of the module
          * \param [in] cls The module to add. This should be a python class.
-         */ 
+         */
         void AddPyCreator(const std::string & modulename, const pybind11::object & cls)
         {
             //! \todo check if it is a class?
@@ -79,7 +79,7 @@ class ModuleCreationFuncs
 
 
         /*! \brief Get the creator function for a module
-         * 
+         *
          * \throw bpmodule::exception::GeneralException if there isn't a
          *        creator for that module name.
          *
@@ -97,7 +97,7 @@ class ModuleCreationFuncs
 
 
         /*! \brief Delete all the stored creators
-         */ 
+         */
         void Clear(void)
         {
             creators_.clear();
@@ -112,9 +112,9 @@ class ModuleCreationFuncs
 
         /*! \brief Wrap construction of a C++ object
          *
-         * \tparam T Full type of the module (not the base type) 
+         * \tparam T Full type of the module (not the base type)
          * \param [in] id The ID of the newly-created module
-         */ 
+         */
         template<typename T>
         static
         detail::ModuleIMPLHolder *
@@ -128,10 +128,10 @@ class ModuleCreationFuncs
 
 
         /*! \brief Wrap construction of a python object (class)
-         * 
+         *
          * \param [in] cls Python class
          * \param [in] id The ID of the newly-created module
-         */ 
+         */
         static
         detail::ModuleIMPLHolder *
         PyConstructorWrapper_(const pybind11::object & cls, ID_t id)

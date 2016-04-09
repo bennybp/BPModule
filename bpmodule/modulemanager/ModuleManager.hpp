@@ -74,7 +74,7 @@ class ModuleManager
         ModuleInfo ModuleNameInfo(const std::string & modulename) const;
 
 
-        
+
         /*! \brief Prints all the information about the loaded modules
          */
         void Print(std::ostream & os) const;
@@ -98,7 +98,7 @@ class ModuleManager
 
 
         /*! \brief Associates a key with a given module name
-         * 
+         *
          * \throw bpmodule::exception::ModuleManagerException
          *        if the module key already exists or if a module with the given
          *        name doesn't exist
@@ -110,7 +110,7 @@ class ModuleManager
 
 
         /*! \brief Associates or re-associates a key with a given module name
-         * 
+         *
          * Will overwrite if the key already exists. If it doesn't exist, it will
          * be added.
          *
@@ -175,7 +175,7 @@ class ModuleManager
 
 
         /*! \brief Retrieve a module as a python object
-         * 
+         *
          * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
@@ -191,9 +191,24 @@ class ModuleManager
 
 
 
+        /*! \brief Check to see if a module is currently in use
+         */
+        bool ModuleInUse(ID_t id) const;
+
+
+        /*! \brief Notify the manager that a module is being destructed
+         *
+         * \warning Only to be called from the ModuleBase destructor
+         */
+        void DestructionNotify(ID_t id) noexcept;
+
+
+
+
+
         /*! \brief Change an option for a module
          */
-        template<typename T>        
+        template<typename T>
         void ChangeOption(const std::string & modulekey, const std::string & optkey, const T & value)
         {
             GetOrThrow_(modulekey).mi.options.Change(optkey, value);
@@ -208,7 +223,7 @@ class ModuleManager
 
 
         /*! \brief Adds/inserts a module creator to the database
-         * 
+         *
          * The supermodule is loaded via a handler, and then info
          * for the module is extracted from the supermodule information.
          *
@@ -217,7 +232,7 @@ class ModuleManager
          *        contain a creator for the given module name (in \p mi)
          *
          *  \note We pass all module creation funcs. This is so we
-         *        don't need to export IMPL holders to pybind11 
+         *        don't need to export IMPL holders to pybind11
          *
          * \param [in] minfo Information about the module
          */
@@ -225,15 +240,15 @@ class ModuleManager
 
 
         /*! \brief Enable debugging for a specific key
-         * 
+         *
          * The key doesn't have to exist -- it will be used if it is ever loaded
-         */ 
-        void EnableDebug(const std::string & modulekey, bool debug); 
+         */
+        void EnableDebug(const std::string & modulekey, bool debug);
 
 
         /*! \brief Enable debug printing on all modules
          */
-        void EnableDebugAll(bool debug) noexcept; 
+        void EnableDebugAll(bool debug) noexcept;
 
 
         /*! \brief Begin iterating over the module tree
@@ -259,7 +274,7 @@ class ModuleManager
 
 
         /*! \brief Handlers for different module types
-         */   
+         */
         std::map<std::string, std::unique_ptr<SupermoduleLoaderBase>> loadhandlers_;
 
 
@@ -290,6 +305,10 @@ class ModuleManager
         std::atomic<ID_t> curid_;
 
 
+        //! Modules currently in use
+        std::set<ID_t> modules_inuse_;
+
+
         /*! \brief Map of cache data
          *
          * The key is a combination of the module name and version
@@ -298,7 +317,7 @@ class ModuleManager
 
 
         /*! \brief Obtain the module name for a key or throw an exception
-         * 
+         *
          * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist
          */
@@ -316,7 +335,7 @@ class ModuleManager
 
 
         /*! \copydoc GetOrThrowName_
-         */ 
+         */
         StoreEntry & GetOrThrowName_(const std::string & modulename);
 
 
@@ -337,7 +356,7 @@ class ModuleManager
 
 
         /*! \brief Create a module via its creator function
-         * 
+         *
          * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
@@ -346,7 +365,7 @@ class ModuleManager
          *
          * \return A pair with the first member being a raw pointer and
          *         the second member being its deleter func
-         * 
+         *
          * \exbasic
          *
          * \note The calling function is responsible for managing the pointer

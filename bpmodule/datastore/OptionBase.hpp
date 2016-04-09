@@ -94,6 +94,13 @@ class OptionBase
         virtual bool HasDefault(void) const noexcept = 0;
 
 
+        /*! \brief Check if this option is set
+         *
+         * This is true, even if the option is set explicitly to
+         * the default.
+         */
+        virtual bool IsSet(void) const noexcept = 0;
+
 
         /*! \brief Check if this option is set to the default
          *
@@ -102,7 +109,6 @@ class OptionBase
          * \note May be tricky with floating point types.
          */
         virtual bool IsDefault(void) const = 0;
-
 
 
         /*! \brief Set the option to its default

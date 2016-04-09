@@ -16,7 +16,7 @@ namespace detail {
 
 PyModuleIMPLHolder::PyModuleIMPLHolder(const pybind11::object & mod)
     : mod_(mod)
-{ 
+{
     using namespace bpmodule::exception;
 
     if(!mod)
@@ -30,7 +30,7 @@ modulebase::ModuleBase * PyModuleIMPLHolder::CppPtr(void) const
 
 pybind11::object PyModuleIMPLHolder::PythonObject(void) const
 {
-    return mod_; 
+    return mod_;
 }
 
 

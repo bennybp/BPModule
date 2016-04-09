@@ -152,6 +152,8 @@ class OptionHolder : public OptionBase
 
         virtual bool HasDefault(void) const noexcept;
 
+        virtual bool IsSet(void) const noexcept;
+
         virtual bool IsDefault(void) const;
 
         virtual void ResetToDefault(void) noexcept;

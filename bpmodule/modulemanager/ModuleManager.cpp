@@ -43,6 +43,16 @@ ModuleManager::ModuleManager()
 ModuleManager::~ModuleManager()
 {
     /*
+     * Delete any in-use modules
+     */
+    auto ninuse = modules_inuse_.size();
+    if(ninuse)
+        output::GlobalWarning("ModuleManager is destructing with %? modules in use\n", ninuse);
+    else
+        output::GlobalSuccess("ModuleManager has no modules in use\n");
+
+
+    /*
        WARNING WARNING WARNING WARNING WARNING
        Clearing the cache and store MUST be done BEFORE unloading
        the modules or else deleting elements will cause a segfault.
@@ -58,6 +68,8 @@ ModuleManager::~ModuleManager()
      *  as well
      */
     mtree_.Clear();
+
+
 
     // NOW we can close all the handlers
     loadhandlers_.clear();
@@ -272,7 +284,16 @@ void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo)
 }
 
 
+bool ModuleManager::ModuleInUse(ID_t id) const
+{
+    return modules_inuse_.count(id);
+}
 
+void ModuleManager::DestructionNotify(ID_t id) noexcept
+{
+   // comparison object doesn't throw, therefore this shouldn't throw
+   modules_inuse_.erase(id);
+}
 
 
 /////////////////////////////////////////
@@ -305,7 +326,7 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
                                                "modulekey", modulekey,
                                                "modulename", se.mi.name);
 
- 
+
     // add the moduleinfo to the tree
     ModuleTreeNode me{modulekey,      // key
                       se.mi,          // module info
@@ -349,6 +370,9 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
     std::string mbstr = p->Name() + "_v" + p->Version();
     p->SetCache_(&(cachemap_[mbstr]));
 
+    // mark the module as inuse
+    modules_inuse_.insert(curid_);
+
     // next id
     curid_++;
 
@@ -368,9 +392,10 @@ pybind11::object ModuleManager::GetModulePy(const std::string & modulekey,
     // we use a pointer so that the python object
     // can take ownership and we can avoid having
     // a copy constructor for PyModulePtr
+
     return python::ConvertToPy(new PyModulePtr(std::move(umbptr)), pybind11::return_value_policy::take_ownership);
 }
-        
+
 void ModuleManager::ChangeOptionPy(const std::string & modulekey, const std::string & optkey, const pybind11::object & value)
 {
     GetOrThrow_(modulekey).mi.options.ChangePy(optkey, value);

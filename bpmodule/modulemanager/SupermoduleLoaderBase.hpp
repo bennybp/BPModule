@@ -25,9 +25,9 @@ class ModuleCreationFuncs;
  * Classes that derive from this implement loading (and unloading)
  * of supermodules for a given module type.
  *
- * Unloading should be orderly and happen at destruction. 
+ * Unloading should be orderly and happen at destruction.
  * At destruction, it can be assumed that no modules from within
- * any loaded supermodule are active and therefore handles, etc, 
+ * any loaded supermodule are active and therefore handles, etc,
  * can be safely closed.
  */
 class SupermoduleLoaderBase
