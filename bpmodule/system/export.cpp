@@ -105,7 +105,7 @@ PYBIND11_PLUGIN(system)
     python::RegisterPyCopyIterator<BasisSet>(m, "BasisSet");
 
     pybind11::class_<BasisSet>(m, "BasisSet")
-    .def(pybind11::init<size_t, size_t, size_t>())
+    .def(pybind11::init<size_t, size_t, size_t, size_t>())
     .def("Print", &BasisSet::Print)
     .def("AddShell", &BasisSet::AddShell)
     .def("NShell", &BasisSet::NShell)

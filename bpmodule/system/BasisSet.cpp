@@ -12,62 +12,65 @@ namespace bpmodule {
 namespace system {
 
 
-void BasisSet::Allocate_(size_t nshells, size_t nprim, size_t ncoef)
+BasisSet::BasisSet(size_t nshells, size_t nprim, size_t ncoef, size_t nxyz)
+    : curid_(0)
 {
-    // totalstorage = number of doubles to store
-    // nshells*3 = storage for xyz
-    // nprim = storage for alpha
-    // ncoef = storage for coefficients
-    size_t totalstorage = nshells*3 + nprim + ncoef;
-
-    storage_.resize(totalstorage);
-
-    // for debugging, you can fill with a random value
-    //std::fill(storage_.begin(), storage_.end(), 0.0);
-
-    max_nalpha_ = nprim;
-    max_ncoef_ = ncoef;
-    max_nxyz_ = nshells*3;
-
-    ResetPointers_();
-}
-
-
-BasisSet::BasisSet(size_t nshells, size_t nprim, size_t ncoef)
-    : curid_(0),
-      xyz_base_ptr_(nullptr),
-      alpha_base_ptr_(nullptr),
-      coef_base_ptr_(nullptr)
-{
-    Allocate_(nshells, nprim, ncoef);
+    Allocate_(nshells, nprim, ncoef, nxyz);
 }
 
 
 BasisSet::BasisSet(const BasisSet & rhs)
     : curid_(rhs.curid_),
-      storage_(rhs.storage_.size()),
+      unique_shells_(rhs.unique_shells_),
+      storage_(rhs.storage_),
       max_nxyz_(rhs.max_nxyz_),
       max_nalpha_(rhs.max_nalpha_),
-      max_ncoef_(rhs.max_ncoef_)
+      max_ncoef_(rhs.max_ncoef_),
+      xyz_pos_(rhs.xyz_pos_),
+      alpha_pos_(rhs.alpha_pos_),
+      coef_pos_(rhs.coef_pos_)
 {
     // storage has been copied   
     // but all the pointers in shells_ would be incorrect
     // so we have to rebuild them
     ResetPointers_();
 
-    // This should leave all the IDs as they are,
-    // so we copy curid_ above
-    for(const auto & it : rhs)
-        AddShell_(it);
+    shells_.reserve(rhs.shells_.size());
+    for(const auto & it : rhs.shells_)
+    {
+        // determine offsets for this shells xyz, alpha, and coefs
+        // They are currently relative to the beginning of rhs.storage_
+        ptrdiff_t alpha_offset = it.AlphaPtr()    - rhs.storage_.data();
+        ptrdiff_t coef_offset =  it.AllCoefsPtr() - rhs.storage_.data();
+        ptrdiff_t xyz_offset =   it.CoordsPtr()   - rhs.storage_.data();
+        double * sbegin = storage_.data();
+        shells_.push_back(BasisSetShell(it, sbegin + alpha_offset,
+                                            sbegin + coef_offset,
+                                            sbegin + xyz_offset));
+    }
 
     // double check
-    if(alpha_pos_ != rhs.alpha_pos_ ||
-       coef_pos_ != rhs.coef_pos_ ||
-       xyz_pos_ != rhs.xyz_pos_)
-        throw BasisSetException("Developer error. Inconsistent basis set copying");
-
-    // triple check
     Assert<BasisSetException>(shells_ == rhs.shells_, "Developer error. Inconsistent basis set copying");
+}
+
+
+
+void BasisSet::Allocate_(size_t nshells, size_t nprim, size_t ncoef, size_t nxyz)
+{
+    // totalstorage = number of doubles to store
+    // nshells*3 = storage for xyz
+    // nprim = storage for alpha
+    // ncoef = storage for coefficients
+    size_t totalstorage = nxyz + nprim + ncoef;
+
+    storage_.resize(totalstorage);
+
+    max_nalpha_ = nprim;
+    max_ncoef_ = ncoef;
+    max_nxyz_ = nxyz;
+
+    ResetPointers_();
+    xyz_pos_ = alpha_pos_ = coef_pos_ = 0;
 }
 
 
@@ -76,7 +79,6 @@ void BasisSet::ResetPointers_(void)
     xyz_base_ptr_ = storage_.data();
     alpha_base_ptr_ = xyz_base_ptr_ + max_nxyz_;
     coef_base_ptr_ = alpha_base_ptr_ + max_nalpha_;
-    xyz_pos_ = alpha_pos_ = coef_pos_ = 0;
 }
 
 
@@ -97,7 +99,6 @@ bool BasisSet::operator==(const BasisSet & rhs) const
     // this will take into account if one is shrinkfit and the
     // other isn't. Will also be true even if storage is different
     // size, etc.
-    //! \todo Will not take ordering into account. Is that desired?
     return shells_ == rhs.shells_;
 }
 
@@ -112,20 +113,34 @@ void BasisSet::AddShell_(const BasisShellBase & bshell,
                          ID_t id, ID_t center,
                          const CoordType & xyz)
 {
-    // always have to add xyz, so we always have to check this
-    if(xyz_pos_ + 3 > max_nxyz_)
-        throw BasisSetException("Not enough storage for this shell: too many coordinates to store",
-                                           "max", max_nxyz_,
-                                           "current", xyz_pos_, "toadd", 1);  
-
-    // we always have to add the xyz coordinates
-    double * const my_xyz = xyz_base_ptr_ + xyz_pos_;
-    std::copy(xyz.begin(), xyz.end(), my_xyz);
-    xyz_pos_ += 3; // advance where we are putting xyz coords
-
-    // Check to see if the other prim data has been added already
+    // have the coordinates been added already?
     auto it = std::find_if(shells_.begin(), shells_.end(),
-                           [& bshell](const BasisSetShell & b) { return b.BaseCompare(bshell); });
+                           [& xyz](const BasisSetShell & b)
+                           { return b.GetCoords() == xyz; });
+
+    double * my_xyz = nullptr;
+
+    if(it != shells_.end())
+        my_xyz = it->CoordsPtr();
+    else
+    {
+        // do we have enough room for xyz
+        if(xyz_pos_ + 3 > max_nxyz_)
+            throw BasisSetException("Not enough storage for this shell: too many coordinates to store",
+                                    "max", max_nxyz_,
+                                    "current", xyz_pos_, "toadd", 1);
+
+        // need a non-const temporary
+        my_xyz = xyz_base_ptr_ + xyz_pos_;
+        std::copy(xyz.begin(), xyz.end(), my_xyz);
+        xyz_pos_ += 3; // advance where we are putting xyz coords
+    }
+     
+
+
+    // Check to see if alpha & coefs has been added already
+    it = std::find_if(shells_.begin(), shells_.end(),
+                      [& bshell](const BasisSetShell & b) { return b.BaseCompare(bshell); });
 
 
     if(it != shells_.end())
@@ -133,10 +148,8 @@ void BasisSet::AddShell_(const BasisShellBase & bshell,
         // equivalent shell already exists! Use the primitives,
         // but copy center, etc, from bshell
         shells_.push_back(BasisSetShell(bshell,
-                                        it->AlphaPtr(),
-                                        it->AllCoefsPtr(),
-                                        my_xyz,
-                                        id, center));
+                                        it->AlphaPtr(), it->AllCoefsPtr(),
+                                        my_xyz, id, center));
     }
     else
     {
@@ -158,20 +171,24 @@ void BasisSet::AddShell_(const BasisShellBase & bshell,
         std::copy(old_alphaptr, old_alphaptr+bshell.NPrim(), my_alpha);
         std::copy(old_coefptr, old_coefptr+bshell.NCoef(), my_coef);
 
+        // unique_shells_ stores the index in the shells_ vector
         // the index of this new shell will be shells_.size()
         unique_shells_.push_back(shells_.size());
+
+        // actually add the shell
         shells_.push_back(BasisSetShell(bshell, my_alpha, my_coef, my_xyz, id, center));
 
         // advance these
         alpha_pos_ += bshell.NPrim();
         coef_pos_ += bshell.NCoef();
     }
-
 }
 
 
 void BasisSet::AddShell_(const BasisSetShell & bshell)
 {
+    // Adds an existing basis set shell
+    // Will copy all data
     AddShell_(bshell, bshell.GetID(), bshell.GetCenter(), bshell.GetCoords());
 }
 
@@ -180,6 +197,8 @@ void BasisSet::AddShell(const BasisShellInfo & bshell,
                         ID_t center,
                         const CoordType & xyz)
 {
+    // Add from a BasisShellInfo
+    // Will copy all data
     AddShell_(bshell, curid_++, center, xyz);
 }
 
@@ -189,11 +208,11 @@ bool BasisSet::IsUniqueShell_(size_t i) const
 }
 
 
-
 size_t BasisSet::NShell(void) const noexcept
 {
     return shells_.size();
 }
+
 
 size_t BasisSet::NUniqueShell(void) const noexcept
 {
@@ -232,8 +251,10 @@ BasisShellInfo BasisSet::ShellInfo(size_t i) const
 
 size_t BasisSet::NPrim(void) const
 {
+    //! \todo generic lambda in C++14
     return std::accumulate(this->begin(), this->end(), 0,
-                           [](size_t sum, const BasisSetShell & sh) { return sum + sh.NPrim(); } );
+                           [](size_t sum, const BasisSetShell & sh)
+                           { return sum + sh.NPrim(); } );
 }
 
 size_t BasisSet::NCoef(void) const
@@ -244,28 +265,35 @@ size_t BasisSet::NCoef(void) const
 
 size_t BasisSet::MaxNPrim(void) const
 {
+    //! \todo generic lambda in C++14
     return std::max_element(this->begin(), this->end(), 
-                    [](const BasisSetShell & lhs, const BasisSetShell & rhs) { return lhs.NPrim() < rhs.NPrim(); })->NPrim();
+                            [](const BasisSetShell & lhs, const BasisSetShell & rhs)
+                            { return lhs.NPrim() < rhs.NPrim(); })->NPrim();
 }
 
 int BasisSet::MaxAM(void) const
 {
+    //! \todo generic lambda in C++14
     int max = std::max_element(this->begin(), this->end(), 
-                    [](const BasisSetShell & lhs, const BasisSetShell & rhs)
-                      { return std::abs(lhs.AM()) < std::abs(rhs.AM()); })->AM();
+                               [](const BasisSetShell & lhs, const BasisSetShell & rhs)
+                               { return std::abs(lhs.AM()) < std::abs(rhs.AM()); })->AM();
     return std::abs(max);
 }
 
 size_t BasisSet::NCartesian(void) const
 {
+    //! \todo generic lambda in C++14
     return std::accumulate(this->begin(), this->end(), 0,
-                           [](size_t sum, const BasisSetShell & sh) { return sum + sh.NCartesian(); } );
+                           [](size_t sum, const BasisSetShell & sh)
+                           { return sum + sh.NCartesian(); } );
 }
 
 size_t BasisSet::NFunctions(void) const
 {
+    //! \todo generic lambda in C++14
     return std::accumulate(this->begin(), this->end(), 0,
-                           [](size_t sum, const BasisSetShell & sh) { return sum + sh.NFunctions(); } );
+                           [](size_t sum, const BasisSetShell & sh)
+                           { return sum + sh.NFunctions(); } );
 }
 
 size_t BasisSet::MaxNCartesian(void) const
@@ -275,8 +303,10 @@ size_t BasisSet::MaxNCartesian(void) const
 
 size_t BasisSet::MaxNFunctions(void) const
 {
+    //! \todo generic lambda in C++14
     return std::max_element(this->begin(), this->end(), 
-                    [](const BasisSetShell & lhs, const BasisSetShell & rhs) { return lhs.NFunctions() < rhs.NFunctions(); })->NFunctions();
+                            [](const BasisSetShell & lhs, const BasisSetShell & rhs)
+                            { return lhs.NFunctions() < rhs.NFunctions(); })->NFunctions();
 }
 
 BasisSet::const_iterator BasisSet::begin(void) const
@@ -291,15 +321,16 @@ BasisSet::const_iterator BasisSet::end(void) const
 
 BasisSet BasisSet::Transform(BasisSet::TransformerFunc transformer) const
 {
-    BasisSet bs(NShell(), NPrim(), NCoef());
+    BasisSet bs(NShell(), NPrim(), NCoef(), 3*NPrim());
     for(const auto & shell : shells_)
         bs.AddShell_(transformer(shell));
-    return bs;
+
+    return bs.ShrinkFit();
 }
 
 BasisSet BasisSet::TransformUnique(BasisSet::TransformerFunc transformer) const
 {
-    BasisSet bs(NShell(), NPrim(), NCoef());
+    BasisSet bs(NShell(), NPrim(), NCoef(), 3*NPrim());
     for(size_t i = 0; i < shells_.size(); i++)
     {
         const auto & shell = shells_[i];
@@ -308,7 +339,8 @@ BasisSet BasisSet::TransformUnique(BasisSet::TransformerFunc transformer) const
         else
             bs.AddShell_(shell);
     }
-    return bs;
+
+    return bs.ShrinkFit();
 }
 
 
@@ -320,9 +352,6 @@ BasisSet BasisSet::ShrinkFit(void) const
     // We check <= , since the *_pos variables represent where we would put
     // the next one. If pos_ == max_n, then it is full. If it is greater, then
     // one was already placed where it wasn't supposed to go...
-    Assert<BasisSetException>(xyz_pos_ == (shells_.size()*3),
-                              "Developer error. Inconsistent number of coordinates in basis set",
-                              "nxyz", xyz_pos_, "nshells", shells_.size());
     Assert<BasisSetException>(xyz_pos_ <= max_nxyz_,
                               "Developer error. Too many xyz in basis set",
                               "pos", xyz_pos_, "max", max_nxyz_);
@@ -334,16 +363,13 @@ BasisSet BasisSet::ShrinkFit(void) const
                               "pos", coef_pos_, "max", max_ncoef_);
 
 
-    // alpha_pos_ = current position of alpha. This corresponds to
-    //              the number of primitives (each primitive has only one alpha)
-    // coef_pos_ = current position of coefficients. This would represent the number
-    //             of coefficients
+    // We need to know the actual number of stored primitives and coefficients. These
+    // are stored in *_pos_ variables.
     // shells_.size() is self explanatory
-    BasisSet newbs(shells_.size(), alpha_pos_, coef_pos_);
-
+    BasisSet newbs(shells_.size(), alpha_pos_, coef_pos_, xyz_pos_);
 
     // Just push through what we have
-    // using the private functions
+    // using the private functions. This will check for overflow, etc
     for(const auto & it : shells_)
         newbs.AddShell_(it);
 
@@ -364,8 +390,8 @@ void BasisSet::Print(std::ostream & os) const
     Output(os, "NCart = %? , MaxAM = %?\n", NCartesian(), MaxAM());
     Output(os, "MaxNCart = %? , MaxNPrim = %?\n", MaxNCartesian(), MaxNPrim());
     Debug(os, "Space usage: XYZ: %?/%?  Alpha: %?/%?  Coef %?/%?\n", xyz_pos_, max_nxyz_,
-                                                                 alpha_pos_, max_nalpha_,
-                                                                 coef_pos_, max_ncoef_);
+                                                                     alpha_pos_, max_nalpha_,
+                                                                     coef_pos_, max_ncoef_);
 
 
     for(size_t i = 0; i < nshell; i++)

@@ -14,6 +14,9 @@
 namespace bpmodule {
 namespace system {
 
+// for friend
+class BasisSet;
+
 
 /*! \brief Shell information stored in a BasisSet object
  *
@@ -41,7 +44,7 @@ class BasisSetShell : public BasisShellBase
          * \param [in] xyzptr Pointer to where this shell's coordinates are
          */
         BasisSetShell(const BasisSetShell & bshell,
-                     double * alphaptr, double * coefptr, double * xyzptr) ASSERTIONS_ONLY;
+                      double * alphaptr, double * coefptr, double * xyzptr) ASSERTIONS_ONLY;
 
         BasisSetShell(const BasisShellBase & bshell,
                       double * alphaptr, double * coefptr, double * xyzptr,
@@ -69,6 +72,9 @@ class BasisSetShell : public BasisShellBase
         /// Get a pointer to the coordinates of the shell
         const double * CoordsPtr(void) const noexcept;
 
+        /// Get a pointer to the coordinates of the shell
+        double * CoordsPtr(void) noexcept;
+
         ///@}
 
         bool operator==(const BasisSetShell & rhs) const;
@@ -83,9 +89,13 @@ class BasisSetShell : public BasisShellBase
 
 
     private:
+        friend class BasisSet;
+
         ID_t id_;          //!< Unique id for this shell
         ID_t center_;      //!< ID of the center
         double * xyz_;     //!< XYZ coordindates of this center
+
+        void SetPtrs_(double * alphaptr, double * coefptr, double * xyzptr);
 
 
         //! \name Serialization

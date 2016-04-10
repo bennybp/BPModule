@@ -151,6 +151,7 @@ public:
      * \todo Replace if cereal fixes this
      */
     MathSet() {} // cannot be "=default" due to compiler bugs
+                 // (symbol may be missing when compiled in Debug mode)
 
 
 

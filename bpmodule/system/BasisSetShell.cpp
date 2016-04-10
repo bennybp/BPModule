@@ -24,6 +24,11 @@ BasisSetShell::BasisSetShell(const BasisShellBase & bshell,
                              ID_t center) ASSERTIONS_ONLY
     : BasisShellBase(bshell), id_(id), center_(center)
 {
+    SetPtrs_(alphaptr, coefptr, xyzptr);
+}
+
+void BasisSetShell::SetPtrs_(double * alphaptr, double * coefptr, double * xyzptr)
+{
     BasisShellBase::SetPtrs_(alphaptr, coefptr); 
     xyz_ = xyzptr;
 }
@@ -45,6 +50,11 @@ CoordType BasisSetShell::GetCoords(void) const
 }
 
 const double * BasisSetShell::CoordsPtr(void) const noexcept
+{
+    return xyz_;
+}
+
+double * BasisSetShell::CoordsPtr(void) noexcept
 {
     return xyz_;
 }

@@ -26,12 +26,11 @@ namespace system {
 class BasisSet
 {
     public:
-        typedef std::vector<BasisSetShell>::iterator iterator;
         typedef std::vector<BasisSetShell>::const_iterator const_iterator;
-        typedef BasisSetShell value_type; // for iteration
+        typedef BasisSetShell value_type;
         typedef std::function<BasisSetShell (const BasisSetShell &)> TransformerFunc;
 
-        BasisSet(size_t nshells, size_t nprim, size_t ncoef);
+        BasisSet(size_t nshells, size_t nprim, size_t ncoef, size_t nxyz);
 
         BasisSet(const BasisSet & rhs);
         BasisSet & operator=(const BasisSet & rhs);
@@ -104,15 +103,24 @@ class BasisSet
         size_t alpha_pos_;
         size_t coef_pos_;
 
+
         void AddShell_(const BasisShellBase & bshell, ID_t id,
                        ID_t center, const CoordType & xyz);
+
         void AddShell_(const BasisSetShell & bshell);
 
         bool IsUniqueShell_(size_t i) const;
 
+
+        /*! \brief Set the internal pointers to the proper locations */
         void ResetPointers_(void);
 
-        void Allocate_(size_t nshells, size_t nprim, size_t ncoef);
+
+        /*! \brief Allocate enough memory for the given information
+         *
+         * Also set up some pointers
+         */
+        void Allocate_(size_t nshells, size_t nprim, size_t ncoef, size_t nxyz);
 
 
         //! \name Serialization
@@ -123,52 +131,53 @@ class BasisSet
         template<class Archive>
         void save(Archive & ar) const
         {
-            // stores shell info, ID, center ID, and XYZ
-            typedef std::tuple<BasisShellInfo, ID_t, ID_t, CoordType> ShellTuple;
+            // serialize the size info
+            ar(max_nxyz_, max_nalpha_, max_ncoef_);
+            ar(xyz_pos_, alpha_pos_, coef_pos_);
 
-            std::vector<ShellTuple> sinfo;
-            sinfo.reserve(shells_.size());
+            // serialize the storage and shell info
+            ar(storage_, shells_, unique_shells_);
 
-            for(const auto & it : *this)
+            // offsets for xyz, alpha, and coef for each shell
+            std::vector<ptrdiff_t> offsets;
+            offsets.reserve(3*shells_.size());
+
+            const uintptr_t base = reinterpret_cast<uintptr_t>(storage_.data());
+            for(const auto & it : shells_)
             {
-                // can convert BasisShellBase to BasisShellInfo, but
-                // will slice id, center, and xyz
-                BasisShellInfo bsinfo(it);
-                sinfo.push_back(std::make_tuple(std::move(bsinfo), it.GetID(), it.GetCenter(), it.GetCoords()));
+                offsets.push_back(reinterpret_cast<uintptr_t>(it.AlphaPtr())-base);
+                offsets.push_back(reinterpret_cast<uintptr_t>(it.AllCoefsPtr())-base);
+                offsets.push_back(reinterpret_cast<uintptr_t>(it.CoordsPtr())-base);
             }
-            
-            ar(sinfo);
+
+            ar(offsets);
         }
 
         template<class Archive>
         void load(Archive & ar)
         {
-            storage_.clear();
-            // stores shell info, ID, center ID, and XYZ
-            typedef std::tuple<BasisShellInfo, ID_t, ID_t, CoordType> ShellTuple;
+            // load the size info
+            ar(max_nxyz_, max_nalpha_, max_ncoef_);
+            ar(xyz_pos_, alpha_pos_, coef_pos_);
 
-            std::vector<ShellTuple> sinfo;
-            ar(sinfo);
+            // storage and shell info
+            ar(storage_, shells_, unique_shells_);
 
-            // find how much storage we need
-            size_t nshells = sinfo.size();
-            size_t nprim = 0;
-            size_t ncoef = 0;
+            // offsets for xyz, alpha, and coef for each shell
+            std::vector<ptrdiff_t> offsets;
+            ar(offsets);
 
-            for(const auto & it : sinfo)
+            // now loop over the shells and set the pointers
+            const uintptr_t base = reinterpret_cast<uintptr_t>(storage_.data());
+
+            size_t offsetidx = 0;
+            for(auto & it : shells_)
             {
-                const BasisShellInfo & bsi = std::get<0>(it);
-                nprim += bsi.NPrim();
-                ncoef += bsi.NCoef();
+                it.SetPtrs_(reinterpret_cast<double *>(base + offsets.at(offsetidx)),
+                            reinterpret_cast<double *>(base + offsets.at(offsetidx+1)),
+                            reinterpret_cast<double *>(base + offsets.at(offsetidx+2)));
+                offsetidx += 3;
             }
-
-            Allocate_(nshells, nprim, ncoef);
-
-
-            // now add all elements of the vector, unpacking the tuple
-            for(const auto & it : sinfo)
-                AddShell_(std::get<0>(it), std::get<1>(it),
-                          std::get<2>(it), std::get<3>(it));
         }
 
         ///@}

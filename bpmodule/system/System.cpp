@@ -265,7 +265,7 @@ BasisSet System::GetBasisSet(const std::string & basislabel) const
         }
     }
 
-    BasisSet bs(nshell,nprim,ncoef);
+    BasisSet bs(nshell,nprim,ncoef,3*nprim);
 
     // now add them
     for(const auto & atom:*this)
