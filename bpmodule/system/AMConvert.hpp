@@ -1,3 +1,9 @@
+/*! \file
+ *
+ * \brief Conversion of angular momentum info to human-readable forms (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
 #ifndef BPMODULE_GUARD_SYSTEM__AMCONVERT_HPP_
 #define BPMODULE_GUARD_SYSTEM__AMCONVERT_HPP_
 

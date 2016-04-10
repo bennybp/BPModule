@@ -22,7 +22,20 @@ class Hash;
 namespace bpmodule {
 namespace system {
 
-
+/*! \brief A basis set for a QM calculation
+ *
+ * Basis shell information is stored compacted. That is,
+ * common exponents/coefficients are stored once, with
+ * shells containing pointers to the data. Therefore, extreme
+ * care should be taken when modifying shell data. Note that
+ * this is also done with coordinates - each xyz coordinate is
+ * stored only once, with shells containing a pointer to the
+ * appropriate entry.
+ *
+ * Shell information that is actually stored is referred to as
+ * the unique shells. That is, information from each unique
+ * shell can be shared among several shells.
+ */
 class BasisSet
 {
     public:
@@ -30,6 +43,19 @@ class BasisSet
         typedef BasisSetShell value_type;
         typedef std::function<BasisSetShell (const BasisSetShell &)> TransformerFunc;
 
+        /*! \brief Construct a basis set object
+         *
+         * This information is required before construction. The parameters
+         * refer to the maximum expected to be stored. The actual stored
+         * may be less, since information is stored compacted.
+         *
+         * \param [in] nshells Maximum number of shells expected to be stored
+         * \param [in] nprim Maximum number of primitives expected to be stored. This
+         *                   is also the number of exponents (alpha) to be stored.
+         * \param [in] ncoef Maximum number of coefficients to be stored.
+         * \param [in] nxyz Maximum number of coordinates to be stored. If not sure,
+         *                  use 3 * \p nprim.
+         */
         BasisSet(size_t nshells, size_t nprim, size_t ncoef, size_t nxyz);
 
         BasisSet(const BasisSet & rhs);
@@ -39,35 +65,151 @@ class BasisSet
 
         bool operator==(const BasisSet & rhs) const;
 
+
+        /// \name General information
+        ///@{
+        //
+        /// Return the number of shells currently stored
         size_t NShell(void) const noexcept;
+
+        /// Return the number of unique shells stored
         size_t NUniqueShell(void) const noexcept;
 
-        const BasisSetShell & Shell(size_t i) const;
-        const BasisSetShell & UniqueShell(size_t i) const;
-        BasisShellInfo ShellInfo(size_t i) const;
-
+        /// Return the number of primitives stored
         size_t NPrim(void) const;
+
+        /// Return the number of coefficients stored
         size_t NCoef(void) const;
+
+        /*! \brief Return the number of cartesian basis functions
+         *         represented by the basis set
+         *
+         * That is, the sum of the number of cartesian functions for all
+         * shells. This takes into account general contractions, etc.
+         * For example, a d-shell with 2 general contractions will count
+         * as 12 cartesian basis functions. This also takes into account
+         * combined shells, such as sp, spd, etc.
+         */
         size_t NCartesian(void) const;
+
+        /*! \brief Return the number of basis functions
+         *         represented by the basis set
+         *
+         * That is, the sum of the number of functions for all
+         * shells. This takes into account whether a shell is
+         * marked as spherical or cartesian. Similar to
+         * NCartesian, this takes into account general contractions.
+         */
         size_t NFunctions(void) const;
 
+        /*! \brief Return the maximum number of primitives contained in a shell
+         */
         size_t MaxNPrim(void) const;
+
+        /*! \brief Return the maximum angular momentum stored in this basis set
+         * 
+         * This takes combined shells into account (ie, spd will count only as d).
+         */
         int MaxAM(void) const;
+
+        /*! \brief Return the maximum number of cartesians functions stored in a shell
+         * 
+         * This takes into account combined shells (ie, spd = 10)
+         */
         size_t MaxNCartesian(void) const;
+
+        /*! \brief Return the maximum number of basis functions stored in a shell
+         * 
+         * This takes into account combined shells (ie, spd = 10 cartesian or 9 spherical)
+         */
         size_t MaxNFunctions(void) const;
 
-        void AddShell(const BasisShellInfo & bshell,
-                      ID_t center,
+        ///@}
+
+        /// \name Shell information and manipulation
+        ///@{
+
+        /* \brief Obtain information about a shell
+         * 
+         * \throw bpmodule::exception::BasisSetException if the
+         *        shell index is out of range
+         *
+         * \param [in] i Index of the shell to obtain
+         */
+        const BasisSetShell & Shell(size_t i) const;
+
+        /* \brief Obtain information about a unique shell
+         * 
+         * Information within a unique shell can be shared among
+         * multiple shells.
+         *
+         * The coordinates, center, and ID are not well-defined
+         * and belong to an arbitrary shell.
+         *
+         * \throw bpmodule::exception::BasisSetException if the
+         *        shell index is out of range
+         *
+         * \param [in] i Index of the shell to obtain
+         */
+        const BasisSetShell & UniqueShell(size_t i) const;
+
+
+        /* \brief Obtain information about a shell as a ShellInfo object
+         * 
+         * The ShellInfo will not contain information about the center or
+         * the unique ID of the shell.
+         *
+         * \throw bpmodule::exception::BasisSetException if the
+         *        shell index is out of range
+         *
+         * \param [in] i Index of the shell to obtain
+         */
+        BasisShellInfo ShellInfo(size_t i) const;
+
+
+        /*! \brief Add a shell to this basis set
+         * 
+         * Will determine if this shell has data in common with another
+         * stored shell
+         *
+         * \throw bpmodule::exception::BasisSetException if the
+         *        shell information will not fit in what has been
+         *        allocated already.
+         * 
+         * \param [in] bshell Basis shell information to add
+         * \param [in] center ID for what atom/center this shell belongs to. Should
+         *                    correspond to an entry in a System.
+         * \param [in] xyz Coordinates for this shell
+         */
+        void AddShell(const BasisShellInfo & bshell, ID_t center,
                       const CoordType & xyz);
+
+        ///@}
 
 
         //! \todo make a printer class?
         void Print(std::ostream & os) const;
 
+        /*! \brief Reduce memory useage by removing empty space due to
+         *         common information
+         *
+         * AddShell will link information for common shell information,
+         * however if more space was allocated in the contructor than is
+         * necessary, this results in empty space. This function removes that
+         * space.
+         *
+         * Is called internally, but you can call it whenever you want also.
+         *
+         * \return A BasisSet matching this, but with more efficient storage.
+         */
         BasisSet ShrinkFit(void) const;
 
+        /*! \brief General transformation function
+         * 
+         * This will loop over all shells.
+         */
         BasisSet Transform(TransformerFunc transformer) const;
-        BasisSet TransformUnique(TransformerFunc transformer) const;
+
 
         // iterate over shells
         const_iterator begin(void) const;
@@ -104,12 +246,12 @@ class BasisSet
         size_t coef_pos_;
 
 
+        /// Adds a shell, copying the information from bshell and setting id, etc
         void AddShell_(const BasisShellBase & bshell, ID_t id,
                        ID_t center, const CoordType & xyz);
 
+        /// Adds a shell, copying the information from bshell
         void AddShell_(const BasisSetShell & bshell);
-
-        bool IsUniqueShell_(size_t i) const;
 
 
         /*! \brief Set the internal pointers to the proper locations */

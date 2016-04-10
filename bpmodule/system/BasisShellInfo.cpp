@@ -7,7 +7,7 @@
 #include "bpmodule/exception/Assert.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/system/BasisShellInfo.hpp"
-#include "bpmodule/system/NCartesian.hpp"
+#include "bpmodule/system/NFunction.hpp"
 
 using bpmodule::exception::Assert;
 using bpmodule::exception::BasisSetException;

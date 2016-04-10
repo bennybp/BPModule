@@ -1,5 +1,11 @@
-#ifndef BPMODULE_GUARD_SYSTEM__NCARTESIAN_HPP_
-#define BPMODULE_GUARD_SYSTEM__NCARTESIAN_HPP_
+/*! \file
+ *
+ * \brief Calculation of sperical and cartesian basis functions
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
+#ifndef BPMODULE_GUARD_SYSTEM__NFUNCTION_HPP_
+#define BPMODULE_GUARD_SYSTEM__NFUNCTION_HPP_
 
 #include <array>
 #include <algorithm>

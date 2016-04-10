@@ -1,5 +1,11 @@
+/*! \file
+ *
+ * \brief Main BasisSet object (source)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
 #include "bpmodule/system/BasisSet.hpp"
-#include "bpmodule/system/NCartesian.hpp"
+#include "bpmodule/system/NFunction.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/exception/Assert.hpp"
@@ -202,12 +208,6 @@ void BasisSet::AddShell(const BasisShellInfo & bshell,
     AddShell_(bshell, curid_++, center, xyz);
 }
 
-bool BasisSet::IsUniqueShell_(size_t i) const
-{
-    return (std::find(unique_shells_.begin(), unique_shells_.end(), i) != unique_shells_.end());
-}
-
-
 size_t BasisSet::NShell(void) const noexcept
 {
     return shells_.size();
@@ -260,7 +260,8 @@ size_t BasisSet::NPrim(void) const
 size_t BasisSet::NCoef(void) const
 {
     return std::accumulate(this->begin(), this->end(), 0,
-                           [](size_t sum, const BasisSetShell & sh) { return sum + sh.NCoef(); } );
+                           [](size_t sum, const BasisSetShell & sh)
+                           { return sum + sh.NCoef(); } );
 }
 
 size_t BasisSet::MaxNPrim(void) const
@@ -298,7 +299,10 @@ size_t BasisSet::NFunctions(void) const
 
 size_t BasisSet::MaxNCartesian(void) const
 {
-    return NCARTESIAN(MaxAM());
+    //! \todo generic lambda in C++14
+    return std::max_element(this->begin(), this->end(), 
+                            [](const BasisSetShell & lhs, const BasisSetShell & rhs)
+                            { return lhs.NCartesian() < rhs.NCartesian(); })->NCartesian();
 }
 
 size_t BasisSet::MaxNFunctions(void) const
@@ -327,22 +331,6 @@ BasisSet BasisSet::Transform(BasisSet::TransformerFunc transformer) const
 
     return bs.ShrinkFit();
 }
-
-BasisSet BasisSet::TransformUnique(BasisSet::TransformerFunc transformer) const
-{
-    BasisSet bs(NShell(), NPrim(), NCoef(), 3*NPrim());
-    for(size_t i = 0; i < shells_.size(); i++)
-    {
-        const auto & shell = shells_[i];
-        if(IsUniqueShell_(i))
-            bs.AddShell_(transformer(shell));
-        else
-            bs.AddShell_(shell);
-    }
-
-    return bs.ShrinkFit();
-}
-
 
 BasisSet BasisSet::ShrinkFit(void) const
 {

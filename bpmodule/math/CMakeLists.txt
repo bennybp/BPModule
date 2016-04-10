@@ -3,7 +3,7 @@ set(BPMODULE_MATH_FILES
             Factorial_LUT.cpp
             FiniteDiff.cpp
             export.cpp
-            testing/export.cpp
+            testing_export.cpp
    )
   
 

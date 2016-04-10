@@ -12,8 +12,7 @@ set(BPMODULE_SYSTEM_FILES
     AMConvert.cpp
 
     export.cpp
-
-    testing/export.cpp
+    testing_export.cpp
    )
   
 

@@ -1,3 +1,9 @@
+/*! \file
+ *
+ * \brief Conversion of angular momentum info to human-readable forms (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
 #include <map>
 
 #include "bpmodule/system/AMConvert.hpp"
@@ -6,24 +12,37 @@
 
 using bpmodule::util::CaseInsensitiveLess;
 
-static const std::map<std::string, int, CaseInsensitiveLess> toi_{ { "spdf", -3},
-                                                                      { "spd",  -2},
-                                                                      { "sp",   -1},
-                                                                      { "s",     0 },
-                                                                      { "p",     1 },
-                                                                      { "d",     2 },
-                                                                      { "f",     3 },
-                                                                      { "g",     4 },
-                                                                      { "h",     5 },
-                                                                      { "i",     6 },
-                                                                      { "j",     7 },
-                                                                      { "k",     8 },
-                                                                      { "l",     9 },
-                                                                      { "m",    10 },
-                                                                      { "n",    11 },
-                                                                      { "o",    12 } };
+static const std::map<std::string, int, CaseInsensitiveLess> toi_{ { "spdfgh", -5 },
+                                                                   { "spdfg",  -4 },
+                                                                   { "spdf",   -3 },
+                                                                   { "spd",    -2 },
+                                                                   { "sp",     -1 },
+                                                                   { "s",       0 },
+                                                                   { "p",       1 },
+                                                                   { "d",       2 },
+                                                                   { "f",       3 },
+                                                                   { "g",       4 },
+                                                                   { "h",       5 },
+                                                                   { "i",       6 },
+                                                                   { "j",       7 },
+                                                                   { "k",       8 },
+                                                                   { "l",       9 },
+                                                                   { "m",      10 },
+                                                                   { "n",      11 },
+                                                                   { "o",      12 },
+                                                                   { "q",      13 },
+                                                                   { "r",      14 },
+                                                                   { "t",      15 },
+                                                                   { "u",      16 },
+                                                                   { "v",      17 },
+                                                                   { "w",      18 },
+                                                                   { "x",      19 },
+                                                                   { "y",      20 },
+                                                                   { "z",      21 } };
 
-static const std::map<int, std::string> tostr_{ { -3, "spdf"},
+static const std::map<int, std::string> tostr_{ { -5, "spdfgh"},
+                                                { -4, "spdfg"},
+                                                { -3, "spdf"},
                                                 { -2, "spd"},
                                                 { -1, "sp"},
                                                 {  0, "s"},
@@ -38,7 +57,16 @@ static const std::map<int, std::string> tostr_{ { -3, "spdf"},
                                                 {  9, "l"},
                                                 { 10, "m"},
                                                 { 11, "n"},
-                                                { 12, "o"} };
+                                                { 12, "o"},
+                                                { 13, "q"},
+                                                { 14, "r"},
+                                                { 15, "t"},
+                                                { 16, "u"},
+                                                { 17, "v"},
+                                                { 18, "w"},
+                                                { 19, "x"},
+                                                { 20, "y"},
+                                                { 21, "z"} };
 
 
 namespace bpmodule {
