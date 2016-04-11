@@ -95,6 +95,10 @@ ModuleInfo ModuleManager::ModuleKeyInfo(const std::string & modulekey) const
 
 void ModuleManager::DuplicateKey(const std::string & modulekey, const std::string newkey)
 {
+    if(HasKey(newkey))
+        throw ModuleLoadException("Cannot duplicate key: new key already exists",
+                                  "modulekey", modulekey, "newkey", newkey);
+
     store_.emplace(newkey, GetOrThrow_(modulekey));
 }
 
