@@ -113,13 +113,9 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         
 
         # Now we can actually load it
-        super(ModuleAdministrator, self).LoadModuleFromModuleInfo(cppminfo)
+        super(ModuleAdministrator, self).LoadModuleFromModuleInfo(cppminfo, modulekey)
 
-        output.GlobalDebug("Imported module name {} from {}\n".format(modulename, supermodule))
-
-        super(ModuleAdministrator, self).AddKey(modulekey, modulename)
-
-        output.GlobalDebug("Associated key {} with module {}\n".format(modulekey, supermodule))
+        output.GlobalDebug("Imported module name {} from {} and associated key {}\n".format(modulename, supermodule, modulekey))
         output.GlobalOutput("\n")
 
 

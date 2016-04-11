@@ -60,7 +60,6 @@ ModuleManager::~ModuleManager()
                the destructors exists in the modules
     */
     cachemap_.clear();
-    keymap_.clear();
     store_.clear();
 
     /*
@@ -76,30 +75,6 @@ ModuleManager::~ModuleManager()
 }
 
 
-void ModuleManager::AddKey(const std::string & modulekey, const std::string & modulename)
-{
-    if(!HasName(modulename))
-        throw ModuleManagerException("Cannot add key: The given module name doesn't exist",
-                                     "modulekey", modulekey, "modulename", modulename);
-    if(HasKey(modulekey))
-        throw ModuleManagerException("Cannot add key: Key already exists",
-                                     "modulekey", modulekey, "modulename", modulename);
-
-    keymap_.emplace(modulekey, modulename);
-}
-
-
-void ModuleManager::ReplaceKey(const std::string & modulekey, const std::string & modulename)
-{
-    if(!HasName(modulename))
-        throw ModuleManagerException("Cannot add key: The given module name doesn't exist",
-                                     "modulekey", modulekey, "modulename", modulename);
-
-    keymap_.erase(modulekey); // ok if the key doesn't exist
-    AddKey(modulekey, modulename);
-}
-
-
 size_t ModuleManager::Size(void) const noexcept
 {
     return store_.size();
@@ -108,13 +83,7 @@ size_t ModuleManager::Size(void) const noexcept
 
 bool ModuleManager::HasKey(const std::string & modulekey) const
 {
-    return keymap_.count(modulekey);
-}
-
-
-bool ModuleManager::HasName(const std::string & modulename) const
-{
-    return store_.count(modulename);
+    return store_.count(modulekey);
 }
 
 
@@ -124,11 +93,10 @@ ModuleInfo ModuleManager::ModuleKeyInfo(const std::string & modulekey) const
 }
 
 
-ModuleInfo ModuleManager::ModuleNameInfo(const std::string & modulename) const
+void ModuleManager::DuplicateKey(const std::string & modulekey, const std::string newkey)
 {
-    return GetOrThrowName_(modulename).mi;
+    store_.emplace(newkey, GetOrThrow_(modulekey));
 }
-
 
 void ModuleManager::Print(std::ostream & os) const
 {
@@ -159,59 +127,37 @@ void ModuleManager::TestAll(void)
     }
 
     output::GlobalDebug("Testing getting of modules\n");
-    for(const auto & it : keymap_)
+    for(const auto & it : store_)
     {
         try {
             GetModule<ModuleBase>(it.first, 0);
         }
         catch(std::exception & ex)
         {
-            output::GlobalError("Error - module %? [key %?]\" failed test loading!\n", it.second, it.first);
+            output::GlobalError("Error - module %? [key %?]\" failed test loading!\n", it.second.mi.name, it.first);
             throw GeneralException(ex, "location", "TestAll");
         }
     }
-
 
     output::GlobalDebug("Testing done!\n");
 }
 
 
-std::string ModuleManager::GetOrThrowKey_(const std::string & modulekey) const
+ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string & modulekey)
 {
     if(HasKey(modulekey))
-        return keymap_.at(modulekey);
+        return store_.at(modulekey);
     else
         throw ModuleManagerException("Missing module key in ModuleManager", "modulekey", modulekey);
 }
 
 
-ModuleManager::StoreEntry & ModuleManager::GetOrThrowName_(const std::string & modulename)
-{
-    if(HasName(modulename))
-        return store_.at(modulename);
-    else
-        throw ModuleManagerException("Missing module name in ModuleManager", "modulename", modulename);
-}
-
-
-const ModuleManager::StoreEntry & ModuleManager::GetOrThrowName_(const std::string & modulename) const
-{
-    if(HasName(modulename))
-        return store_.at(modulename);
-    else
-        throw ModuleManagerException("Missing module name in ModuleManager", "modulename", modulename);
-}
-
-
-ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string & modulekey)
-{
-    return GetOrThrowName_(GetOrThrowKey_(modulekey));
-}
-
-
 const ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string & modulekey) const
 {
-    return GetOrThrowName_(GetOrThrowKey_(modulekey));
+    if(HasKey(modulekey))
+        return store_.at(modulekey);
+    else
+        throw ModuleManagerException("Missing module key in ModuleManager", "modulekey", modulekey);
 }
 
 
@@ -254,7 +200,7 @@ ModuleTree::const_flat_iterator ModuleManager::FlatTreeEnd(void) const
 /////////////////////////////////////////
 // Module Loading
 /////////////////////////////////////////
-void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo)
+void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo, const std::string & modulekey)
 {
     // path set in the module info?
     if(minfo.path.size() == 0)
@@ -280,7 +226,7 @@ void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo)
                                   "path", minfo.path, "modulename", minfo.name);
 
     // add to store with the given module name
-    store_.emplace(minfo.name, StoreEntry{minfo, mcf.GetCreator(minfo.name)});
+    store_.emplace(modulekey, StoreEntry{minfo, mcf.GetCreator(minfo.name)});
 }
 
 

@@ -64,17 +64,6 @@ class ModuleManager
         ModuleInfo ModuleKeyInfo(const std::string & modulekey) const;
 
 
-        /*! \brief Returns the information about a module with a given module name
-         *
-         * \throw bpmodule::exception::ModuleManagerException
-         *        if the module name doesn't exist in the database
-         *
-         * \param [in] modulename A module name
-         */
-        ModuleInfo ModuleNameInfo(const std::string & modulename) const;
-
-
-
         /*! \brief Prints all the information about the loaded modules
          */
         void Print(std::ostream & os) const;
@@ -86,43 +75,6 @@ class ModuleManager
          * \return True if the key exists in the map, false if it doesn't
          */
         bool HasKey(const std::string & modulekey) const;
-
-
-        /*! \brief Returns true if a module with the given module name exists in the database
-         *
-         * \param [in] modulename Name of the module
-         * \return True if the name exists in the map, false if it doesn't
-         */
-        bool HasName(const std::string & modulename) const;
-
-
-
-        /*! \brief Associates a key with a given module name
-         *
-         * \throw bpmodule::exception::ModuleManagerException
-         *        if the module key already exists or if a module with the given
-         *        name doesn't exist
-         *
-         * \param [in] modulekey The key to be used
-         * \param [in] modulename The name of the module to be associated with \p modulekey
-         */
-        void AddKey(const std::string & modulekey, const std::string & modulename);
-
-
-        /*! \brief Associates or re-associates a key with a given module name
-         *
-         * Will overwrite if the key already exists. If it doesn't exist, it will
-         * be added.
-         *
-         * \throw bpmodule::exception::ModuleManagerException
-         *        if a module with the given name doesn't exist
-         *
-         * \param [in] modulekey The key to be used
-         * \param [in] modulename The name of the module to be associated with \p modulekey
-         */
-        void ReplaceKey(const std::string & modulekey, const std::string & modulename);
-
-
 
 
         /*! \brief Test the creation of all modules
@@ -207,6 +159,13 @@ class ModuleManager
 
 
         /*! \brief Change an option for a module
+         * 
+         * \throw bpmodule::exception::ModuleManagerException
+         *        if the key doesn't exist in the database
+         *
+         * \param [in] modulekey The key of the module whose options to change
+         * \param [in] optkey The key of the option to change
+         * \param [in] value The value to set the option to
          */
         template<typename T>
         void ChangeOption(const std::string & modulekey, const std::string & optkey, const T & value)
@@ -215,8 +174,28 @@ class ModuleManager
         }
 
 
+        /*! \brief Duplicate information about a key to a new key
+         *
+         * Options, etc, are copied from the original key.
+         *
+         * \throw bpmodule::exception::ModuleManagerException
+         *        if the key doesn't exist in the database
+         *
+         * \param [in] modulekey Existing module key to duplicate
+         * \param [in] newkey New key to be associated with the module
+         */
+        void DuplicateKey(const std::string & modulekey, const std::string newkey);
 
-        /*! \brief Change an option via python
+
+
+        /*! \brief Change an option for a module (python version)
+         * 
+         * \throw bpmodule::exception::ModuleManagerException
+         *        if the key doesn't exist in the database
+         *
+         * \param [in] modulekey The key of the module whose options to change
+         * \param [in] optkey The key of the option to change
+         * \param [in] value The value to set the option to
          */
         void ChangeOptionPy(const std::string & modulekey, const std::string & optkey, const pybind11::object & value);
 
@@ -235,8 +214,9 @@ class ModuleManager
          *        don't need to export IMPL holders to pybind11
          *
          * \param [in] minfo Information about the module
+         * \param [in] modulekey The key to associate with the module
          */
-        void LoadModuleFromModuleInfo(const ModuleInfo & minfo);
+        void LoadModuleFromModuleInfo(const ModuleInfo & minfo, const std::string & modulekey);
 
 
         /*! \brief Enable debugging for a specific key
@@ -278,14 +258,9 @@ class ModuleManager
         std::map<std::string, std::unique_ptr<SupermoduleLoaderBase>> loadhandlers_;
 
 
-        /*! \brief Actual storage object - maps module names to creation functions
+        /*! \brief Actual storage object - maps module keys to creation functions
          */
         std::map<std::string, StoreEntry> store_;
-
-
-        /*! \brief Stores map of keys to module names
-         */
-        std::map<std::string, std::string> keymap_;
 
 
         /*! \brief List of keys with debugging info enabled */
@@ -314,29 +289,6 @@ class ModuleManager
          * The key is a combination of the module name and version
          */
         std::map<std::string, datastore::CacheData> cachemap_;
-
-
-        /*! \brief Obtain the module name for a key or throw an exception
-         *
-         * \throw bpmodule::exception::ModuleManagerException
-         *        if the key doesn't exist
-         */
-        std::string GetOrThrowKey_(const std::string & modulekey) const;
-
-
-        /*! \brief Obtain stored internal info for a module (via module name) or throw an exception
-         *
-         * \throw bpmodule::exception::ModuleManagerException
-         *        if the name doesn't exist
-         *
-         * \param [in] modulename Name of the module
-         */
-        const StoreEntry & GetOrThrowName_(const std::string & modulename) const;
-
-
-        /*! \copydoc GetOrThrowName_
-         */
-        StoreEntry & GetOrThrowName_(const std::string & modulename);
 
 
         /*! \brief Obtain stored internal info for a module (via module key) or throw an exception
