@@ -34,32 +34,6 @@ def Run():
                         TestSerialization_Point, p)
 
 
-        ###########################################
-        # Serialization of Universe and MathSet
-        ###########################################
-        Alphabet="abcdefghijklmnopqrstuvwxyz"
-
-        u0 = StringSetUniverse()
-        u1 = StringSetUniverse()
-
-        # Make a universe of the alphabet
-        for i in list(Alphabet):
-           u1.Insert(i)
-
-        s0 = StringSet(u1, False)
-        s1 = StringSet(u1, False)
-        s2 = StringSet(u1, True)
-        s1.Insert("a")
-        s1.Insert("b")
-        s1.Insert("c")
-
-        tester.Test("Universe serialization - u0", True, TestSerialization_StringSetUniverse, u0)
-        tester.Test("Universe serialization - u1", True, TestSerialization_StringSetUniverse, u1)
-        tester.Test("MathSet serialization - s0", True, TestSerialization_StringSet, s0)
-        tester.Test("MathSet serialization - s1", True, TestSerialization_StringSet, s1)
-        tester.Test("MathSet serialization - s2", True, TestSerialization_StringSet, s2)
-
-
         tester.PrintResults() 
 
 

@@ -53,9 +53,6 @@ bool Atom::operator==(const Atom & rhs) const
     PRAGMA_WARNING_PUSH
     PRAGMA_WARNING_IGNORE_FP_EQUALITY
 
-    //\todo The basis comparision is not working!!!!
-
-            
     // order by the parts that are most likely to be different, since
     //   this should short-circuit on the first false comparison
     return GetZ() == rhs.GetZ() &&

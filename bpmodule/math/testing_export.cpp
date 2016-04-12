@@ -8,6 +8,7 @@
 #include "bpmodule/testing/TestSerialization.hpp"
 #include "bpmodule/math/Point.hpp"
 #include "bpmodule/math/RegisterMathSet.hpp"
+#include "bpmodule/math/IrrepSpinMatrix.hpp"
 
 
 namespace bpmodule {
@@ -53,6 +54,10 @@ void export_testing(pybind11::module & m)
     m.def("TestSerialization_Point",             &TestSerialization<Point>);
     m.def("TestSerialization_StringSetUniverse", &TestSerialization<Universe<std::string>>);
     m.def("TestSerialization_StringSet",         &TestSerialization<MathSet<std::string>, MathSetCompare<std::string>>);
+    m.def("TestSerialization_SimpleMatrixF",     &TestSerialization<SimpleMatrixF>);
+    m.def("TestSerialization_SimpleMatrixD",     &TestSerialization<SimpleMatrixD>);
+    m.def("TestSerialization_IrrepSpinMatrixF",  &TestSerialization<IrrepSpinMatrixF>);
+    m.def("TestSerialization_IrrepSpinMatrixD",  &TestSerialization<IrrepSpinMatrixD>);
 }
 
 

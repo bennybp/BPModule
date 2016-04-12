@@ -9,6 +9,8 @@
 
 #include <memory>
 #include <complex>
+#include <vector>
+#include <algorithm>
 
 #include "bpmodule/exception/Assert.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
@@ -30,6 +32,9 @@ template<typename T>
 class SimpleMatrix
 {
     public:
+        /*! \brief Constructs an empty matrix */
+        SimpleMatrix() : SimpleMatrix(0, 0) { }
+
         /*! \brief Construct a matrix of a given size */
         SimpleMatrix(size_t nrows, size_t ncols)
             : nrows_(nrows), ncols_(ncols), size_(nrows*ncols),
@@ -41,6 +46,17 @@ class SimpleMatrix
             : SimpleMatrix(nrows, ncols)
         {
             std::copy(data, data + size_, data_.get());
+        }
+
+        /*! \brief Construct a matrix by copying data from an std::vector */
+        SimpleMatrix(size_t nrows, size_t ncols, const std::vector<T> & v)
+            : SimpleMatrix(nrows, ncols)
+        {
+            if(v.size() != size_)
+                throw exception::MathException("Vector has incompatible length", "vecsize", v.size(),
+                                               "nrows", nrows, "ncols", ncols);
+ 
+            std::copy(v.begin(), v.end(), data_.get()); 
         }
 
         /*! \brief Construct a matrix by moving a unique_ptr */
@@ -57,6 +73,17 @@ class SimpleMatrix
             std::copy(rhs.data_.get(), rhs.data_.get() + size_, data_.get());
         }
 
+
+
+        // compiler-generated not ok due to compiler bugs
+        SimpleMatrix(SimpleMatrix && rhs) 
+          : nrows_(std::move(rhs.nrows_)),
+            ncols_(std::move(rhs.ncols_)),
+            size_(std::move(rhs.size_)),
+            data_(std::move(rhs.data_))
+        { }
+
+        SimpleMatrix & operator=(SimpleMatrix &&) = default;
         SimpleMatrix & operator=(const SimpleMatrix & rhs)
         {
             using std::swap;
@@ -69,15 +96,37 @@ class SimpleMatrix
             return *this;
         }
 
-        // compiler-generated ok
-        SimpleMatrix(SimpleMatrix &&) = default;
-        SimpleMatrix & operator=(SimpleMatrix &&) = default;
+
+        /*! \brief Comparison
+         * 
+         * Compares sizes and then elementwise. Values must exactly match
+         * (ie, to all bits for floating point)
+         */
+        bool operator==(const SimpleMatrix & rhs) const
+        {
+            PRAGMA_WARNING_PUSH
+            PRAGMA_WARNING_IGNORE_FP_EQUALITY
+
+            if(!data_ && !rhs.data_)
+                return true;
+            else if(!data_ || !rhs.data_)
+                return false;
+            else
+                return (nrows_ == rhs.nrows_ &&
+                        ncols_ == rhs.ncols_ &&
+                        std::equal(data_.get(), data_.get() + size_, rhs.data_.get()));
+
+            PRAGMA_WARNING_POP
+        }
 
         /// Get the number of rows of this matrix
         size_t NRows(void) const noexcept { return nrows_; }
 
         /// Get the number of columns of this matrix
         size_t NCols(void) const noexcept { return ncols_; }
+
+        /// Get the total size this matrix
+        size_t Size(void) const noexcept { return size_; }
 
         /// Fill this matrix with zeroes
         void Zero(void)
@@ -151,6 +200,8 @@ class SimpleMatrix
             return data_.get();
         }
 
+
+
         /*! \brief Release the raw data
          *
          * \note After this call, rows, cols, etc are all set
@@ -173,12 +224,6 @@ class SimpleMatrix
         }
  
     
-        /*! \brief For serialization only
-         *
-         * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
-         * \todo Replace if cereal fixes this
-         */
-        SimpleMatrix() = default;
 
 
     private:
@@ -231,6 +276,11 @@ extern template class SimpleMatrix<double>;
 extern template class SimpleMatrix<std::complex<float>>;
 extern template class SimpleMatrix<std::complex<double>>;
 
+
+typedef SimpleMatrix<float> SimpleMatrixF;
+typedef SimpleMatrix<double> SimpleMatrixD;
+typedef SimpleMatrix<std::complex<float>> SimpleMatrixCF;
+typedef SimpleMatrix<std::complex<double>> SimpleMatrixCD;
 
 
 } // close namespace math

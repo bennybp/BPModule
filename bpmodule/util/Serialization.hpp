@@ -14,6 +14,7 @@
 #include <cereal/types/vector.hpp>
 #include <cereal/types/memory.hpp>
 #include <cereal/types/map.hpp>
+#include <cereal/types/utility.hpp>
 #include <cereal/types/set.hpp>
 #include <cereal/types/tuple.hpp>
 #include <cereal/types/string.hpp>

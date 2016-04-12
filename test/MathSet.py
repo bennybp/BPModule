@@ -60,6 +60,14 @@ def Run():
         TestSetOperations(tester, StringSet, Alphabet, BadAlphabet,
                           True, s0, s1, s2, s3, s9)
  
+        ################################
+        # Serialization
+        ################################
+        tester.Test("MathSet serialization - s0", True, TestSerialization_StringSet, s0)
+        tester.Test("MathSet serialization - s1", True, TestSerialization_StringSet, s1)
+        tester.Test("MathSet serialization - s2", True, TestSerialization_StringSet, s2)
+        tester.Test("MathSet serialization - s3", True, TestSerialization_StringSet, s3)
+        tester.Test("MathSet serialization - s9", True, TestSerialization_StringSet, s9)
 
 
         ############################################################

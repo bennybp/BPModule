@@ -67,6 +67,14 @@ def Run():
         TestSetOperations(tester, StringSetUniverse, Alphabet, BadAlphabet,
                           False, u0, u1, u2, u3, u9)
 
+        ###############################
+        # Serialization
+        ###############################
+        tester.Test("Universe serialization - u0", True, TestSerialization_StringSetUniverse, u0)
+        tester.Test("Universe serialization - u1", True, TestSerialization_StringSetUniverse, u1)
+        tester.Test("Universe serialization - u2", True, TestSerialization_StringSetUniverse, u2)
+        tester.Test("Universe serialization - u3", True, TestSerialization_StringSetUniverse, u3)
+        tester.Test("Universe serialization - u9", True, TestSerialization_StringSetUniverse, u9)
 
         ###############################
         # Universe-specific stuff
