@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief A map of spin and spatial symmetry to matrices
+ * \brief A map of spin and spatial symmetry to data types
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
@@ -9,6 +9,7 @@
 
 #include <map>
 #include "bpmodule/util/Serialization.hpp"
+#include "bpmodule/util/HashSerializable.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/math/Irrep.hpp"
 
@@ -88,6 +89,10 @@ class BlockByIrrepSpin
             data_.clear();
         }
 
+        util::Hash MyHash(void) const
+        {
+            return util::HashSerializable(*this);
+        }
 
     private:
         std::map<IrrepSpin, T> data_;

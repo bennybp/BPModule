@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief A general-purpose dense matrix storage class
+ * \brief General-purpose dense matrix & vector classes
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
@@ -15,6 +15,7 @@
 #include "bpmodule/exception/Assert.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 #include "bpmodule/util/Serialization.hpp"
+#include "bpmodule/util/HashSerializable.hpp"
 
 
 namespace bpmodule{
@@ -165,7 +166,7 @@ class SimpleMatrix
          * \throw bpmodule::exception::MathException if the row
          *        or column is out of range
          */
-        T & At(size_t row, size_t col) ASSERTIONS_ONLY
+        T & At(size_t row, size_t col)
         {
             CheckIndices_(row, col);
             return data_[row*ncols_+col]; 
@@ -176,7 +177,7 @@ class SimpleMatrix
          * \throw bpmodule::exception::MathException if the row
          *        or column is out of range
          */
-        const T & At(size_t row, size_t col) const ASSERTIONS_ONLY
+        const T & At(size_t row, size_t col) const
         {
             CheckIndices_(row, col);
             return data_[row*ncols_+col]; 
@@ -222,7 +223,11 @@ class SimpleMatrix
             size_ = nrows*ncols;
             data_ = std::move(data);
         }
- 
+
+        util::Hash MyHash(void) const
+        {
+            return util::HashSerializable(*this);
+        } 
     
 
 
@@ -270,17 +275,121 @@ class SimpleMatrix
 };
 
 
+template<typename T>
+class SimpleVector : public SimpleMatrix<T>
+{
+    public:
+        /*! \brief Constructs an empty vector */
+        SimpleVector() : SimpleMatrix<T>(0, 0) { }
+
+        /*! \brief Construct a vector of a given size */
+        SimpleVector(size_t nelements)
+            : SimpleMatrix<T>(1, nelements)
+        { }
+
+        /*! \brief Construct a vector by copying data from a raw pointer */
+        SimpleVector(size_t nelements, T * data)
+            : SimpleMatrix<T>(1, nelements, data)
+        { }
+
+        /*! \brief Construct a vector by copying data from an std::vector */
+        SimpleVector(size_t nelements, const std::vector<T> & v)
+            : SimpleMatrix<T>(1, nelements, v)
+        { }
+
+        /*! \brief Construct a vector by moving a unique_ptr */
+        SimpleVector(size_t nelements, std::unique_ptr<T []> && data)
+            : SimpleMatrix<T>(1, nelements, std::move(data))
+        { }
+
+        /*! \brief Deep copy constructor */
+        SimpleVector(const SimpleVector & rhs)
+            : SimpleMatrix<T>(static_cast<SimpleMatrix<T>>(rhs))
+        { }
+
+        SimpleVector(SimpleVector && rhs)
+            : SimpleMatrix<T>(static_cast<SimpleMatrix<T> &&>(rhs))
+        { }
+
+        SimpleVector & operator=(SimpleVector &&) = default;
+        SimpleVector & operator=(const SimpleVector & rhs) = default; // use base class
+
+
+        /*! \brief Obtain a reference to an element
+         * 
+         * \throw bpmodule::exception::MathException if the row
+         *        or column is out of range (only if assertions are enabled)
+         */
+        T & operator()(size_t i) ASSERTIONS_ONLY
+        {
+            return static_cast<SimpleMatrix<T>>(*this)(1, i);
+        }
+
+        /*! \brief Obtain a const reference to an element
+         * 
+         * \throw bpmodule::exception::MathException if the row
+         *        or column is out of range (only if assertions are enabled)
+         */
+        const T & operator()(size_t i) const ASSERTIONS_ONLY
+        {
+            return static_cast<SimpleMatrix<T>>(*this)(1, i);
+        }
+
+        /*! \brief Obtain a reference to an element
+         * 
+         * \throw bpmodule::exception::MathException if the row
+         *        or column is out of range
+         */
+        T & At(size_t i)
+        {
+            return SimpleMatrix<T>::At(1, i);
+        }
+
+        /*! \brief Obtain a const reference to an element
+         * 
+         * \throw bpmodule::exception::MathException if the row
+         *        or column is out of range
+         */
+        const T & At(size_t i) const
+        {
+            return SimpleMatrix<T>::At(1, i);
+        }
+
+
+        /// Take ownership of raw data
+        void Take(size_t nelements, std::unique_ptr<T[]> && data)
+        {
+            SimpleMatrix<T>::Take(1, nelements, std::move(data));
+        }
+ 
+
+        ///////////////////////////////////////////////
+        // serialization is handled in the base class
+        ///////////////////////////////////////////////
+};
+
+
+
+
 // Explicit instantiations
 extern template class SimpleMatrix<float>;
 extern template class SimpleMatrix<double>;
 extern template class SimpleMatrix<std::complex<float>>;
 extern template class SimpleMatrix<std::complex<double>>;
+extern template class SimpleVector<float>;
+extern template class SimpleVector<double>;
+extern template class SimpleVector<std::complex<float>>;
+extern template class SimpleVector<std::complex<double>>;
 
 
 typedef SimpleMatrix<float> SimpleMatrixF;
 typedef SimpleMatrix<double> SimpleMatrixD;
 typedef SimpleMatrix<std::complex<float>> SimpleMatrixCF;
 typedef SimpleMatrix<std::complex<double>> SimpleMatrixCD;
+typedef SimpleVector<float> SimpleVectorF;
+typedef SimpleVector<double> SimpleVectorD;
+typedef SimpleVector<std::complex<float>> SimpleVectorCF;
+typedef SimpleVector<std::complex<double>> SimpleVectorCD;
 
 
 } // close namespace math

@@ -10,27 +10,80 @@
 #include <memory>
 
 #include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/tensor/Matrix.hpp"
+#include "bpmodule/math/IrrepSpinMatrix.hpp"
 #include "bpmodule/system/System.hpp"
+#include "bpmodule/util/HashSerializable.hpp"
+#include "bpmodule/util/Serialization.hpp"
 
 
 namespace bpmodule {
 namespace datastore {
 
-struct Wavefunction
+class Wavefunction
 {
-    std::shared_ptr<const system::System> system;
-    std::shared_ptr<const std::vector<double>> cmat; //! \todo REPLACE ME
-    std::shared_ptr<const std::vector<double>> epsilon; //! \todo REPLACE ME
+    public:
+        std::shared_ptr<const system::System> system;
+        std::shared_ptr<const math::IrrepSpinMatrixD> cmat;
+        std::shared_ptr<const math::IrrepSpinVectorD> epsilon;
 
-    std::string UniqueString(void) const
-    {
-        std::string s = "WFN_TODO";
-        //s += "M:" + std::to_string(system.Valid()) + "_" + std::to_string(system.UID()) + "_";
-        //s += "C:" + std::to_string(cmat.Valid()) + "_" + std::to_string(cmat.UID()) + "_";
-        //s += "E:" + std::to_string(epsilon.Valid()) + "_" + std::to_string(epsilon.UID()) + ";";
-        return s;
-    }
+        util::Hash MyHash(void) const
+        {
+            return util::HashSerializable(*this);
+        }
+
+        bool operator==(const Wavefunction & rhs) const
+        {
+            // check for pointer equivalence first
+            bool samesystem = (system == rhs.system);
+            bool samecmat = (cmat == rhs.cmat);
+            bool sameepsilon = (epsilon == rhs.epsilon);
+
+            // if the pointers aren't the same, check the 
+            // actual data
+            if(!samesystem && bool(system) && bool(rhs.system))
+                samesystem = ( (*system) == (*rhs.system) );
+
+            if(!samecmat && bool(cmat) && bool(rhs.cmat))
+                samecmat = ( (*cmat) == (*rhs.cmat) );
+
+            if(!sameepsilon && bool(epsilon) && bool(rhs.epsilon))
+                sameepsilon = ( (*epsilon) == (*rhs.epsilon) );
+                    
+            return (samesystem && samecmat && sameepsilon);
+        }
+
+
+    private:
+        //! \name Serialization
+        ///@{
+
+        DECLARE_SERIALIZATION_FRIENDS
+
+        /* We have to split load/save since the
+         * the shared_ptr points to const data, and
+         * cereal can't serialize to const data
+         */
+        template<class Archive>
+        void save(Archive & ar) const
+        {
+            ar(system, cmat, epsilon);
+        }
+
+        template<class Archive>
+        void load(Archive & ar)
+        {
+            std::shared_ptr<system::System> newsystem;
+            std::shared_ptr<math::IrrepSpinMatrixD> newcmat;
+            std::shared_ptr<math::IrrepSpinVectorD> newepsilon;
+
+            ar(newsystem, newcmat, newepsilon);
+
+            system = std::move(newsystem);
+            cmat = std::move(newcmat);
+            epsilon = std::move(newepsilon);
+        }
+
+        ///@}
 };
 
 

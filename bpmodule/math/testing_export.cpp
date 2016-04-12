@@ -58,9 +58,13 @@ void export_testing(pybind11::module & m)
     m.def("TestSerialization_SimpleMatrixD",     &TestSerialization<SimpleMatrixD>);
     m.def("TestSerialization_IrrepSpinMatrixF",  &TestSerialization<IrrepSpinMatrixF>);
     m.def("TestSerialization_IrrepSpinMatrixD",  &TestSerialization<IrrepSpinMatrixD>);
+    m.def("TestSerialization_SimpleVectorF",     &TestSerialization<SimpleVectorF>);
+    m.def("TestSerialization_SimpleVectorD",     &TestSerialization<SimpleVectorD>);
+    m.def("TestSerialization_IrrepSpinVectorF",  &TestSerialization<IrrepSpinVectorF>);
+    m.def("TestSerialization_IrrepSpinVectorD",  &TestSerialization<IrrepSpinVectorD>);
 }
 
 
 } // close namespace export_python
-} // close namespace system 
+} // close namespace math 
 } // close namespace bpmodule

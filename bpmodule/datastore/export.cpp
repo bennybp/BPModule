@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "bpmodule/python/Pybind11_functional.hpp"
+#include "bpmodule/python/Pybind11_operators.hpp"
 #include "bpmodule/python/Pybind11_stl.hpp"
 
 #include "bpmodule/datastore/CacheData.hpp"
@@ -94,8 +94,11 @@ PYBIND11_PLUGIN(datastore)
     ///////////////////////
     pybind11::class_<Wavefunction>(m, "Wavefunction") //! \todo python init for wfn?
     .def(pybind11::init<>())
-    .def("UniqueString", &Wavefunction::UniqueString)
+    .def("MyHash", &Wavefunction::MyHash)
+    .def(pybind11::self == pybind11::self)
     .def_readwrite("system", &Wavefunction::system)
+    .def_readwrite("cmat", &Wavefunction::cmat)
+    .def_readwrite("epsilon", &Wavefunction::epsilon)
     ;
   
 
