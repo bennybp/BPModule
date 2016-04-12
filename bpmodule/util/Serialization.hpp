@@ -17,6 +17,7 @@
 #include <cereal/types/set.hpp>
 #include <cereal/types/tuple.hpp>
 #include <cereal/types/string.hpp>
+#include <cereal/types/complex.hpp>
 
 #include "bpmodule/util/SerializationArchives.hpp"
 

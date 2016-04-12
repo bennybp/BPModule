@@ -2,6 +2,7 @@ set(BPMODULE_MATH_FILES
             Binomial.cpp
             Factorial_LUT.cpp
             FiniteDiff.cpp
+            SimpleMatrix.cpp
             export.cpp
             testing_export.cpp
    )
