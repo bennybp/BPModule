@@ -98,14 +98,6 @@ class ModuleBase
         std::string ModuleType(void) const;
 
 
-
-        /*! \brief Get the OptionMap object for this module
-         *
-         * \throw std::logic_error if there is a severe developer error
-         */
-        datastore::OptionMap & Options(void);
-
-
         /*! \brief Get the OptionMap object for this module
          *
          * \throw std::logic_error if there is a severe developer error

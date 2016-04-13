@@ -84,12 +84,6 @@ const OptionMap & ModuleBase::Options(void) const
     return MyNode().minfo.options;
 }
 
-OptionMap & ModuleBase::Options(void)
-{
-    return MyNode().minfo.options;
-}
-
-
 void ModuleBase::Print(std::ostream & os) const
 {
     MyNode().minfo.Print(os);
