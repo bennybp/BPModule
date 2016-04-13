@@ -390,6 +390,7 @@ class ModuleBase
  */
 #define MODULEBASE_FORWARD_PROTECTED_TO_PY \
     using ModuleBase::Cache; \
+    using ModuleBase::MManager; \
     using ModuleBase::out;
 
 

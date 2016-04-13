@@ -55,6 +55,7 @@ PYBIND11_PLUGIN(modulebase)
             .def(pybind11::init<ID_t>())
             .def_readonly("out", &Test_Base_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &Test_Base_Py::Cache, pybind11::return_value_policy::reference_internal)
+            .def("MManager", &Test_Base_Py::MManager, pybind11::return_value_policy::reference_internal)
             .def("RunTest", &Test_Base::RunTest)
             .def("CallRunTest", &Test_Base::CallRunTest)
             .def("CallRunTest2", &Test_Base::CallRunTest2)
@@ -71,6 +72,7 @@ PYBIND11_PLUGIN(modulebase)
             .def(pybind11::init<ID_t>())
             .def_readonly("out", &SystemFragmenter_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &SystemFragmenter_Py::Cache, pybind11::return_value_policy::reference_internal)
+            .def("MManager", &SystemFragmenter_Py::MManager, pybind11::return_value_policy::reference_internal)
             .def("Fragmentize", &SystemFragmenter::Fragmentize)
     ;
 
@@ -84,26 +86,12 @@ PYBIND11_PLUGIN(modulebase)
             .def(pybind11::init<ID_t>())
             .def_readonly("out", &OneElectronIntegralIMPL_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &OneElectronIntegralIMPL_Py::Cache, pybind11::return_value_policy::reference_internal)
+            .def("MManager", &OneElectronIntegralIMPL_Py::MManager, pybind11::return_value_policy::reference_internal)
             .def("SetBases", &OneElectronIntegralIMPL::SetBases)
             .def("Calculate", &OneElectronIntegralIMPL::Calculate)
             .def("GetIntegralCount", &OneElectronIntegralIMPL::GetIntegralCount)
             .def("GetBuf", &OneElectronIntegralIMPL::GetBufPy)
             ;
-
-/*
-    /////////////////////////
-    // One electron integral builder
-    /////////////////////////
-    register_ptr_to_python<boost::shared_ptr<OneElectronIntegral>>();
-
-    //! \todo Don't know about from Calculate to python
-    class_<OneElectronIntegral, bases<ModuleBase>, boost::noncopyable>("OneElectronIntegral", init<PyObject *, ID_t>())
-    .def("SetBases", &OneElectronIntegral::SetBases)
-    .def("Calculate", &OneElectronIntegral::Calculate)
-    .def("GetIntegralCount", &OneElectronIntegral::GetIntegralCount)
-    .def("GetBuf", &OneElectronIntegral::GetBufPy)
-    ;
-*/
 
     /////////////////////////
     // Two electron integral implementation
@@ -113,34 +101,22 @@ PYBIND11_PLUGIN(modulebase)
             .def(pybind11::init<ID_t>())
             .def_readonly("out", &TwoElectronIntegralIMPL_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &TwoElectronIntegralIMPL_Py::Cache, pybind11::return_value_policy::reference_internal)
+            .def("MManager", &TwoElectronIntegralIMPL_Py::MManager, pybind11::return_value_policy::reference_internal)
             .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
             .def("Calculate", &TwoElectronIntegralIMPL::Calculate)
             .def("GetIntegralCount", &TwoElectronIntegralIMPL::GetIntegralCount)
             .def("GetBuf", &TwoElectronIntegralIMPL::GetBufPy)
             ;
 
-/*
-    /////////////////////////
-    // Two electron integral builder
-    /////////////////////////
-    register_ptr_to_python<boost::shared_ptr<TwoElectronIntegral>>();
-
-    class_<TwoElectronIntegral, bases<ModuleBase>, boost::noncopyable>("TwoElectronIntegral", init<PyObject *, ID_t>())
-    .def("SetBases", &TwoElectronIntegral::SetBases)
-    .def("Calculate", &TwoElectronIntegral::Calculate)
-    .def("GetIntegralCount", &TwoElectronIntegral::GetIntegralCount)
-    .def("GetBuf", &TwoElectronIntegral::GetBufPy)
-    ;
-*/
     ///////////////////////
     // Method base class
     ///////////////////////
-
     pybind11::class_<EnergyMethod_Py> energymethod(m, "EnergyMethod", mbase);
     energymethod.alias<EnergyMethod>()
             .def(pybind11::init<ID_t>())
             .def_readonly("out", &EnergyMethod_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &EnergyMethod_Py::Cache, pybind11::return_value_policy::reference_internal)
+            .def("MManager", &EnergyMethod_Py::MManager, pybind11::return_value_policy::reference_internal)
             .def("Deriv", &EnergyMethod::Deriv)
             .def("Energy",&EnergyMethod::Energy)
             .def("Gradient",&EnergyMethod::Gradient)
