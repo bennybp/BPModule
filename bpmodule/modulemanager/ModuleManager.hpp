@@ -161,7 +161,9 @@ class ModuleManager
         /*! \brief Change an option for a module
          * 
          * \throw bpmodule::exception::ModuleManagerException
-         *        if the key doesn't exist in the database
+         *        if the key doesn't exist in the database or
+         *        if options can't be changed since the module
+         *        has been used.
          *
          * \param [in] modulekey The key of the module whose options to change
          * \param [in] optkey The key of the option to change
@@ -170,7 +172,11 @@ class ModuleManager
         template<typename T>
         void ChangeOption(const std::string & modulekey, const std::string & optkey, const T & value)
         {
-            GetOrThrow_(modulekey).mi.options.Change(optkey, value);
+            StoreEntry & se = GetOrThrow_(modulekey);
+            if(se.ncalled != 0)
+                throw exception::ModuleManagerException("Attempting to change options for a previously-used module key",
+                                             "modulekey", modulekey, "optkey", optkey);
+            se.mi.options.Change(optkey, value);
         }
 
 
@@ -191,7 +197,9 @@ class ModuleManager
         /*! \brief Change an option for a module (python version)
          * 
          * \throw bpmodule::exception::ModuleManagerException
-         *        if the key doesn't exist in the database
+         *        if the key doesn't exist in the database or
+         *        if options can't be changed since the module
+         *        has been used.
          *
          * \param [in] modulekey The key of the module whose options to change
          * \param [in] optkey The key of the option to change
@@ -250,6 +258,7 @@ class ModuleManager
         {
             ModuleInfo mi;             //!< Information for this module
             ModuleCreationFuncs::Func mc; //!< Function to create this module
+            unsigned int ncalled; //!< Number of times this key has been used for creation
         };
 
 

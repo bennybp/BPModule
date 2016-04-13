@@ -99,7 +99,13 @@ void ModuleManager::DuplicateKey(const std::string & modulekey, const std::strin
         throw ModuleLoadException("Cannot duplicate key: new key already exists",
                                   "modulekey", modulekey, "newkey", newkey);
 
-    store_.emplace(newkey, GetOrThrow_(modulekey));
+    // copy
+    StoreEntry se = GetOrThrow_(modulekey);
+
+    // set the number of times this key has been called
+    se.ncalled = 0;
+
+    store_.emplace(newkey, std::move(se));
 }
 
 void ModuleManager::Print(std::ostream & os) const
@@ -230,7 +236,8 @@ void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo, const std
                                   "path", minfo.path, "modulename", minfo.name);
 
     // add to store with the given module name
-    store_.emplace(modulekey, StoreEntry{minfo, mcf.GetCreator(minfo.name)});
+    // Arguments: module info, creator, ncalled
+    store_.emplace(modulekey, StoreEntry{minfo, mcf.GetCreator(minfo.name), 0});
 }
 
 
@@ -253,7 +260,7 @@ std::unique_ptr<detail::ModuleIMPLHolder>
 ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
 {
     // obtain the information for this key
-    const StoreEntry & se = GetOrThrow_(modulekey);
+    StoreEntry & se = GetOrThrow_(modulekey);
 
     // actually create the module
     std::unique_ptr<detail::ModuleIMPLHolder> umbptr;
@@ -326,6 +333,10 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
     // next id
     curid_++;
 
+    // increment the number of times this key has been
+    // used in creation
+    se.ncalled++;
+
     return std::move(umbptr);
 }
 
@@ -348,7 +359,11 @@ pybind11::object ModuleManager::GetModulePy(const std::string & modulekey,
 
 void ModuleManager::ChangeOptionPy(const std::string & modulekey, const std::string & optkey, const pybind11::object & value)
 {
-    GetOrThrow_(modulekey).mi.options.ChangePy(optkey, value);
+    StoreEntry & se = GetOrThrow_(modulekey);
+    if(se.ncalled != 0)
+        throw ModuleManagerException("Attempting to change options for a previously-used module key", "modulekey", modulekey, "optkey", optkey);
+
+    se.mi.options.ChangePy(optkey, value);
 }
 
 
