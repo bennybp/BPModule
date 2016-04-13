@@ -108,6 +108,11 @@ bool BasisSet::operator==(const BasisSet & rhs) const
     return shells_ == rhs.shells_;
 }
 
+bool BasisSet::operator!=(const BasisSet & rhs) const
+{
+    return !((*this) == rhs);
+}
+
 
 util::Hash BasisSet::MyHash(void) const
 {

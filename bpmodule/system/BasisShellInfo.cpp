@@ -75,6 +75,11 @@ bool BasisShellInfo::operator==(const BasisShellInfo & rhs) const
     return BasisShellBase::BaseCompare(rhs);
 }
 
+bool BasisShellInfo::operator!=(const BasisShellInfo & rhs) const
+{
+    return !((*this) == rhs);
+}
+
 
 } // close namespace system
 } // close namespace bpmodule

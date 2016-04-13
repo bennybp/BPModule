@@ -78,6 +78,7 @@ class BasisSetShell : public BasisShellBase
         ///@}
 
         bool operator==(const BasisSetShell & rhs) const;
+        bool operator!=(const BasisSetShell & rhs) const;
 
 
         /*! \brief For serialization only

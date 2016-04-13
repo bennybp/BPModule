@@ -60,7 +60,7 @@ bool RoundTripSerialization(pybind11::object obj)
 
     Equality eq;
 
-
+/*
     output::GlobalDebug("Hash1: %s \n", hash1.String());
     output::GlobalDebug("Hash2: %s \n", hash2.String());
     output::GlobalDebug("Hash3: %s \n", hash3.String());
@@ -73,7 +73,7 @@ bool RoundTripSerialization(pybind11::object obj)
     output::GlobalDebug("Equality 1: %s \n",  eq(cppobj, newobj) ? "True" : "False");
     output::GlobalDebug("Equality 2: %s \n",  eq(cppobj, newobj2) ? "True" : "False");
     output::GlobalDebug("Equality 3: %s \n",  eq(cppobj, *newobj3) ? "True" : "False");
-
+*/
 
     // All hashes should match, and the two objects should
     // be equal

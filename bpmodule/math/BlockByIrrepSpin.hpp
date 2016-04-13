@@ -36,6 +36,11 @@ class BlockByIrrepSpin
             return data_ == rhs.data_;
         }
 
+        bool operator!=(const BlockByIrrepSpin & rhs) const
+        {
+            return !((*this) == rhs);
+        }
+
 
         bool Has(Irrep irrep, int spin) const
         {

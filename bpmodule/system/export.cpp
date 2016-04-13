@@ -89,6 +89,7 @@ PYBIND11_PLUGIN(system)
     bshell.def(pybind11::init<ShellType, int, bool, int, int>())
           .def(pybind11::init<ShellType, int, bool, int, int, const std::vector<double> &, const std::vector<double> &>())
           .def(pybind11::self == pybind11::self)
+          .def(pybind11::self != pybind11::self)
     ;
     
 
@@ -98,6 +99,7 @@ PYBIND11_PLUGIN(system)
     .def("GetCenter", &BasisSetShell::GetCenter)
     .def("GetCoords", &BasisSetShell::GetCoords)
     .def(pybind11::self == pybind11::self)
+    .def(pybind11::self != pybind11::self)
     ;
 
 
@@ -125,6 +127,7 @@ PYBIND11_PLUGIN(system)
     .def("ShrinkFit", &BasisSet::ShrinkFit)
     .def("MyHash", &BasisSet::MyHash)
     .def(pybind11::self == pybind11::self)
+    .def(pybind11::self != pybind11::self)
     .def("__iter__", [](pybind11::object obj)
             {
                 const BasisSet & cont = obj.cast<const BasisSet &>();
@@ -209,6 +212,7 @@ PYBIND11_PLUGIN(system)
     .def("SetShells", &Atom::SetShells)
     .def("AddShell", &Atom::AddShell)
     .def(pybind11::self == pybind11::self)
+    .def(pybind11::self != pybind11::self)
     ;
    
 
@@ -267,6 +271,7 @@ PYBIND11_PLUGIN(system)
     .def(pybind11::self <= pybind11::self)
     .def(pybind11::self < pybind11::self)
     .def(pybind11::self == pybind11::self)
+    .def(pybind11::self != pybind11::self)
     .def("__len__",         &System::Size)
     .def("__contains__",    &System::Contains)
     .def("__str__",&System::ToString)

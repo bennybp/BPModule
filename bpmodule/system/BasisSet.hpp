@@ -64,6 +64,7 @@ class BasisSet
         BasisSet & operator=(BasisSet && rhs)      = default;
 
         bool operator==(const BasisSet & rhs) const;
+        bool operator!=(const BasisSet & rhs) const;
 
 
         /// \name General information

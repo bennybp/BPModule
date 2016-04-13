@@ -39,33 +39,19 @@ struct WavefunctionCompare
         // if the pointers aren't the same, check the 
         // actual data
         if(!samesystem && bool(lhs.system) && bool(rhs.system))
-        {
-            if(lhs.system->Size() != rhs.system->Size())
-                samesystem = false;
-
-            auto it = lhs.system->begin();
-            auto it2 = rhs.system->begin();
-            for(; it != lhs.system->end(); ++it, ++it2)
-            {
-                if(*it != *it2)
-                    samesystem = false;
-            }
-
-            samesystem = true;
-        }
-
-        if(!samesystem)
-            return false;
+            if (lhs.system->Size() != rhs.system->Size() &&
+                !std::equal(lhs.system->begin(), lhs.system->end(), rhs.system->begin()))
+                return false;
 
         if(!samecmat && bool(lhs.cmat) && bool(rhs.cmat))
-            samecmat = ( (*lhs.cmat) == (*rhs.cmat) );
-        if(!samecmat)
-            return false;
+            if( (*lhs.cmat) != (*rhs.cmat) )
+                return false;
 
         if(!sameepsilon && bool(lhs.epsilon) && bool(rhs.epsilon))
-            sameepsilon = ( (*lhs.epsilon) == (*rhs.epsilon) );
+            if( (*lhs.epsilon) != (*rhs.epsilon) )
+                return false;
                 
-        return sameepsilon;
+        return true;
     }
 };
 

@@ -16,7 +16,6 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
 
     # some useless remarks
     #  1418  : external function definition with no prior declaration
-    #   411  : class "<unnamed>" defines no constructor to initialize the following (happens in boost::python)
     #  1419  : external declaration in primary source file (happens in boost files)
     #   383  : value copied to temporary, reference to temporary used (generally ok in c++)
     #   981  : operands are evaluated in unspecified order (generally ok in c++)
@@ -25,14 +24,15 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
     #          remark to be printed for variadic templates
     # 11074  : Inlining inhibited by limit max-size (etc)
     # 11076  : To get full report use -qopt-report=4 -qopt-report-phase ipo
+    #   444  : destructor for base class .. not virtual (even warns for classes without virtual functions)
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd1418")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd1419")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd411")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd383")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd981")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd869")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd11074")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd11076")
+    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd444")
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-std=c++11")
     list(APPEND BPMODULE_CXX_STRICT_FLAGS "-Wall;-Wextra;-pedantic")

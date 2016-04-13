@@ -120,6 +120,13 @@ class SimpleMatrix
             PRAGMA_WARNING_POP
         }
 
+
+        /// Inequality comparison
+        bool operator!=(const SimpleMatrix & rhs) const
+        {
+            return !((*this) == rhs);
+        }
+
         /// Get the number of rows of this matrix
         size_t NRows(void) const noexcept { return nrows_; }
 

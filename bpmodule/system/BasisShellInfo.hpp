@@ -56,6 +56,7 @@ class BasisShellInfo : public BasisShellBase
         BasisShellInfo & operator=(BasisShellInfo &&)      = default;
 
         bool operator==(const BasisShellInfo & rhs) const;
+        bool operator!=(const BasisShellInfo & rhs) const;
 
 
     private:

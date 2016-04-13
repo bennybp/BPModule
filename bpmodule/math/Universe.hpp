@@ -13,6 +13,7 @@
 #include <memory> //Shared ptrs
 #include <algorithm> //For std::find
 #include <sstream> //For printing
+#include <iterator> //std::iterator
 
 #include "bpmodule/util/Serialization.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
@@ -33,7 +34,7 @@ class MathSet;
  * this only behaves like a const_iterator
  */
 template<typename T, typename U>
-class ConstSetItr {
+class ConstSetItr : public std::iterator<std::input_iterator_tag, T> {
 private:
     ///My type
     typedef ConstSetItr<T, U> My_t;
@@ -50,6 +51,9 @@ private:
     CurrIdx_(CurrIdx), Set_(&Set) { }
 
 public:
+    ///Type being iterated over
+    typedef T value_type;
+
     ConstSetItr(const ConstSetItr&) = default;
     ConstSetItr& operator=(const ConstSetItr&) = default;
     ~ConstSetItr() = default;

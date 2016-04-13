@@ -23,18 +23,8 @@ struct MathSetCompare
 {
     bool operator()(const MathSet<T> & lhs, const MathSet<T> & rhs) const
     {
-        if(lhs.Size() != rhs.Size())
-            return false;
-
-        auto it = lhs.begin();
-        auto it2 = rhs.begin();
-        for(; it != lhs.end(); ++it, ++it2)
-        {
-            if(*it != *it2)
-                return false;
-        }
-
-        return true;
+        return (lhs.Size() == rhs.Size() &&
+                std::equal(lhs.begin(), lhs.end(), rhs.begin()));
     }
 };
 

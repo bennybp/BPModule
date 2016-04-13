@@ -74,6 +74,10 @@ bool BasisSetShell::operator==(const BasisSetShell & rhs) const
            );
 }
 
+bool BasisSetShell::operator!=(const BasisSetShell & rhs) const
+{
+    return !((*this) == rhs);
+}
 
 } // close namespace system
 } // close namespace bpmodule
