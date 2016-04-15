@@ -1,6 +1,7 @@
 #include <sstream>
 #include<iostream>
 #include<iomanip>
+#include<limits>
 #include "bpmodule/output/Table.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 
@@ -117,7 +118,9 @@ namespace bpmodule{
         }
         void Cell::AddData(const double& Data){
           std::stringstream ss;
-          ss<<std::setprecision(14)<<Data;
+          ss<<std::setprecision(std::numeric_limits<double>::max_digits10)
+             <<std::fixed
+             <<std::setw(std::numeric_limits<double>::max_digits10)<<Data;
           Data_=ss.str();
         }
         

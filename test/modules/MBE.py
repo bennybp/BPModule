@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
-
 import os
 import sys
 
-# Add the bpmodule path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "../", "modules")
-sys.path.insert(0, bppath)
+sys.path.insert(0, os.path.join(os.path.dirname(thispath),"helper"))
 
+from MiscFxns import *
 from StandardModules import *
 
 def ApplyBasis(syst,bsname,bslabel="primary"):
@@ -41,7 +39,7 @@ def Run(mm):
         mm.ChangeOption("BP_MBE","METHOD","BP_SCF")
         mm.ChangeOption("BP_MIM","FRAGMENTIZER","BP_BOND_FRAG")
         mm.ChangeOption("BP_BOND_FRAG","TRUNCATION_ORDER",2)       
- 
+        mm.ChangeOption("BP_SCF","BASIS_SET","sto-3g")
         MyMod=mm.GetModule("BP_MBE",0)
         mol=bp.system.MakeSystem("""
         0 1
@@ -55,7 +53,7 @@ def Run(mm):
         H    0.4367536  -0.3759433  -0.9973297
         H   -0.5031835  -0.8251492  -2.0957959
         """)
-        mol = ApplyBasis(mol,"sto-3g")
+        mol = ApplyBasis(mol,"sto-3g","sto-3g")
         wfn=bp.datastore.Wavefunction()
         wfn.system=mol
         MyMod.SetInitialWfn(wfn)

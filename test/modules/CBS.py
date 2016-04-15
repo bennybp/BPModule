@@ -1,31 +1,31 @@
 #!/usr/bin/env python3
-
 import os
 import sys
 
-# Add the bpmodule path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "../", "modules")
-sys.path.insert(0, bppath)
+sys.path.insert(0, os.path.join(os.path.dirname(thispath),"helper"))
+
+from MiscFxns import *
 from StandardModules import *
 
 def ApplyBasis(syst,bsname,bslabel="primary"):
     return bp.system.ApplySingleBasis(bslabel,bsname,syst)
 
 def CompareEgy(EgyIn):
-   return EgyIn+224.89287653924677<0.00001
+   return EgyIn+228.11521111389305<0.00001
 
 def CompareGrad(GradIn):
    CorrectGrad=[
-    -0.000988976949000001, 0.0004443157829999993, 0.05238342271999999, 
-     0.018237358511, -0.002547005771, -0.030731839919000005, 
-    -0.02344281975, -0.0062568701740000005, -0.025360880303, 
-    -0.015409293889000001, -0.047382578540999996, -0.012807191666999996, 
-     0.016869055227000003, 0.024963490952999996, -0.017442968207000004, 
-     0.007207092293000001, 0.025306999363999997, 0.023850402741000004, 
-     0.019786523729999998, 0.04038960502300001, -0.028509120090000006, 
-    -0.026869925129, -0.022975320699000004, 0.005627050168, 
-     0.004610985953999999, -0.011942635934, 0.032991124551000006]
+    -0.006279464066421052, -0.002688502472263158, 0.017376164549999996,
+     0.012173863455368422, -0.00017413037057894734, -0.016439835997789472,
+     -0.008070814829947367, -0.0008539125617368421, -0.004133039731,
+     -0.0007373577561578947, -0.014813456446526319, -0.011724073861368419,
+     0.0033722650953157893, 0.003745745449578947, -0.0076003668459473685,
+     0.002851177203263159, 0.01279772943342105, 0.01858454261631579,
+     0.011151683116631578, 0.01558758901536842, -0.0036400231553157894,
+     -0.01853777866094737, -0.012176382615052633, -0.001044487247842105,
+     0.004076426441473684, -0.0014246794266842104, 0.008621119674789474]
+
 
    AllGood=True
    for i in range(0,len(CorrectGrad)):
@@ -38,10 +38,11 @@ def Run(mm):
         tester.PrintHeader()
        
         LoadDefaultModules(mm)
-       
-        mm.ChangeOption("BP_MIM","BASIS_SETS",["aug-cc-pvdz","aug-cc-pvtz"])
+        mm.DuplicateKey("BP_MP2","MP2_aTZ")
+        mm.ChangeOption("BP_MP2","BASIS_SET","aug-cc-pVDZ")
+        mm.ChangeOption("MP2_aTZ","BASIS_SET","aug-cc-pVTZ")
         mm.ChangeOption("BP_HELGAKER_CBS","BASIS_CARDINAL_NUMS",[2,3])
-        mm.ChangeOption("BP_MIM","METHODS",["BP_SCF"])
+        mm.ChangeOption("BP_MIM","METHODS",["BP_MP2","MP2_aTZ"])
 
  
         MyMod=mm.GetModule("BP_HELGAKER_CBS",0)
@@ -57,21 +58,21 @@ def Run(mm):
         H    0.4367536  -0.3759433  -0.9973297
         H   -0.5031835  -0.8251492  -2.0957959
         """)
-        mol = ApplyBasis(mol,"sto-3g")
+        mol = ApplyBasis(mol,"aug-cc-pvdz","aug-cc-pVDZ")
+        mol = ApplyBasis(mol,"aug-cc-pvtz","aug-cc-pVTZ")
         wfn=bp.datastore.Wavefunction()
         wfn.system=mol
         MyMod.SetInitialWfn(wfn)
         
 
         Egy=MyMod.Deriv(0)
-        print(Egy)
-        #tester.Test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
-        #Egy=MyMod.Energy()
-        #tester.Test("Testing Energy via Energy()", True, CompareEgy, Egy)
-        #Egy=MyMod.Deriv(1)
-        #tester.Test("Testing Gradient via Deriv(1)", True, CompareGrad, Egy)
-        #Egy=MyMod.Gradient()
-        #tester.Test("Testing Energy via Gradient()", True, CompareGrad, Egy)
+        tester.Test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
+        Egy=MyMod.Energy()
+        tester.Test("Testing Energy via Energy()", True, CompareEgy, Egy)
+        Egy=MyMod.Deriv(1)
+        tester.Test("Testing Gradient via Deriv(1)", True, CompareGrad, Egy)
+        Egy=MyMod.Gradient()
+        tester.Test("Testing Energy via Gradient()", True, CompareGrad, Egy)
         
      
     except Exception as e:
