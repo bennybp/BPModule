@@ -93,6 +93,15 @@ class ModuleManager
 
         /*! \brief Create a new module as a wrapped C++ object
          *
+         * The wavefunction that is set for the initial and final
+         * wavefunctions of the new module depend on whether or
+         * not the parent module is in use. If it is in use, the wavefunctions
+         * are set to the initial wavefunction of the parent, since it is assumed
+         * that it has not completed yet.
+         *
+         * If the parent is not in use, the wavefunction is set to the final
+         * wavefunction of the parent.
+         *
          * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
@@ -127,6 +136,15 @@ class ModuleManager
 
 
         /*! \brief Retrieve a module as a python object
+         *
+         * The wavefunction that is set for the initial and final
+         * wavefunctions of the new module depend on whether or
+         * not the parent module is in use. If it is in use, the wavefunctions
+         * are set to the initial wavefunction of the parent, since it is assumed
+         * that it has not completed yet.
+         *
+         * If the parent is not in use, the wavefunction is set to the final
+         * wavefunction of the parent.
          *
          * \throw bpmodule::exception::ModuleManagerException
          *        if the key doesn't exist in the database

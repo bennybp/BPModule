@@ -17,12 +17,10 @@
 #include "bpmodule/modulemanager/CppSupermoduleLoader.hpp"
 #include "bpmodule/modulemanager/PySupermoduleLoader.hpp"
 
-
-using bpmodule::datastore::Wavefunction;
-using bpmodule::modulebase::ModuleBase;
-using bpmodule::exception::ModuleLoadException;
-using bpmodule::exception::ModuleManagerException;
-using bpmodule::exception::GeneralException;
+using namespace bpmodule::exception;
+using namespace bpmodule::datastore;
+using namespace bpmodule::modulebase;
+using namespace bpmodule::output;
 
 
 namespace bpmodule {
@@ -52,9 +50,9 @@ ModuleManager::~ModuleManager()
      */
     auto ninuse = modules_inuse_.size();
     if(ninuse)
-        output::GlobalWarning("ModuleManager is destructing with %? modules in use\n", ninuse);
+        GlobalWarning("ModuleManager is destructing with %? modules in use\n", ninuse);
     else
-        output::GlobalSuccess("ModuleManager has no modules in use\n");
+        GlobalSuccess("ModuleManager has no modules in use\n");
 
 
     /*
@@ -123,25 +121,25 @@ void ModuleManager::Print(std::ostream & os) const
 void ModuleManager::TestAll(void)
 {
     //! \todo needs rewriting and cleanup
-    output::GlobalDebug("Testing all modules\n");
+    GlobalDebug("Testing all modules\n");
     for(const auto & it : store_)
     {
-        output::GlobalDebug("Testing %? (%?)...\n", it.first, it.second.mi.name);
+        GlobalDebug("Testing %? (%?)...\n", it.first, it.second.mi.name);
 
         if(!it.second.mi.options.AllReqSet())
         {
-            output::GlobalError("Error - module %? [key %?]\" failed options test - required options are missing", it.second.mi.name, it.first);
+            GlobalError("Error - module %? [key %?]\" failed options test - required options are missing", it.second.mi.name, it.first);
 
             auto missingreq = it.second.mi.options.AllMissingReq();
             for(const auto & optit : missingreq)
-                output::GlobalError("    Missing \"%?\"\n", optit);
+                GlobalError("    Missing \"%?\"\n", optit);
         }
 
 
-        output::GlobalDebug("Test of %? OK\n", it.first);
+        GlobalDebug("Test of %? OK\n", it.first);
     }
 
-    output::GlobalDebug("Testing getting of modules\n");
+    GlobalDebug("Testing getting of modules\n");
     for(const auto & it : store_)
     {
         try {
@@ -149,12 +147,12 @@ void ModuleManager::TestAll(void)
         }
         catch(std::exception & ex)
         {
-            output::GlobalError("Error - module %? [key %?]\" failed test loading!\n", it.second.mi.name, it.first);
+            GlobalError("Error - module %? [key %?]\" failed test loading!\n", it.second.mi.name, it.first);
             throw GeneralException(ex, "location", "TestAll");
         }
     }
 
-    output::GlobalDebug("Testing done!\n");
+    GlobalDebug("Testing done!\n");
 }
 
 
@@ -313,8 +311,20 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
             throw exception::ModuleCreateException("Parent does not exit on map", "parentid", parentid);
 
         const ModuleTreeNode & parent = mtree_.GetByID(parentid);
-        me.initial_wfn = parent.initial_wfn;
-        me.final_wfn = parent.initial_wfn;
+
+        // if the parent is inuse, use its initial wfn. Else, use its final
+        if(ModuleInUse(parentid))
+        {
+            GlobalDebug("Module %? - using initial wavefunction of inuse parent %?\n", static_cast<ID_t>(curid_), parentid);
+            me.initial_wfn = parent.initial_wfn;
+            me.final_wfn = parent.initial_wfn;
+        }
+        else
+        {
+            GlobalDebug("Module %? - using final wavefunction of destroyed parent %?\n", static_cast<ID_t>(curid_), parentid);
+            me.initial_wfn = parent.final_wfn;
+            me.final_wfn = parent.final_wfn;
+        }
     }
 
     // move the data to the tree
