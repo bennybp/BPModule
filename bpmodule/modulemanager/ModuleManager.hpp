@@ -42,9 +42,9 @@ class ModuleManager
 
         // no copy construction or assignment
         ModuleManager(const ModuleManager & rhs)             = delete;
-        ModuleManager(ModuleManager && rhs)                  = delete;
+        ModuleManager(ModuleManager && rhs)                  = default;
         ModuleManager & operator=(const ModuleManager & rhs) = delete;
-        ModuleManager & operator=(ModuleManager && rhs)      = delete;
+        ModuleManager & operator=(ModuleManager && rhs)      = default;
 
 
         /*! \brief Returns the number of modules in the database

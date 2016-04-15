@@ -28,7 +28,7 @@ bool RoundTripSerialization(pybind11::object obj)
 {
     using namespace bpmodule::util;
 
-    T cppobj = bpmodule::python::ConvertToCpp<T>(obj);
+    T & cppobj = bpmodule::python::ConvertToCpp<T &>(obj);
 
     // Initial hash
     Hash hash1 = HashSerializable(cppobj);

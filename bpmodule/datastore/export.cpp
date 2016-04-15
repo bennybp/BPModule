@@ -25,7 +25,7 @@ namespace datastore {
 namespace export_python {
 
 
-// in testing/export.cpp
+// in testing_export.cpp
 void export_testing(pybind11::module & m);
 
 
@@ -84,7 +84,9 @@ PYBIND11_PLUGIN(datastore)
     .def("ModuleKey", &OptionMap::ModuleKey, pybind11::return_value_policy::copy)
     .def("Compare", &OptionMap::Compare)
     .def("CompareSelect", &OptionMap::CompareSelect)
-    .def("HasIssues", &OptionMap::HasIssues);
+    .def("HasIssues", &OptionMap::HasIssues)
+    .def(pybind11::self == pybind11::self)
+    ;
 
 
 

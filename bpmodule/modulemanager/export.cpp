@@ -17,6 +17,9 @@ namespace modulemanager {
 namespace export_python {
 
 
+// in testing_export.cpp
+void export_testing(pybind11::module & m);
+
 PYBIND11_PLUGIN(modulemanager)
 {
     pybind11::module m("modulemanager", "Module loading and location");
@@ -111,6 +114,9 @@ PYBIND11_PLUGIN(modulemanager)
     .def("AddPyCreator", &ModuleCreationFuncs::AddPyCreator)
     .def("HasCreator", &ModuleCreationFuncs::HasCreator)
     ;
+
+    // Export the testing stuff
+    export_testing(m);
 
     return m.ptr();
 }

@@ -295,6 +295,13 @@ class OptionMap
         bool Compare(const OptionMap & rhs) const; 
 
 
+        /*! \copydocs Compare(const OptionMap & rhs) const
+         * 
+         * \todo does this make sense?
+         */
+        bool operator==(const OptionMap & rhs) const;
+
+
         /*! \brief Compare two OptionMap, but only with some keys
          */
         bool CompareSelect(const OptionMap & rhs, const KeySet & selection) const;

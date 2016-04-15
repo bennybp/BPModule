@@ -7,6 +7,7 @@ set(BPMODULE_MODULEMANAGER_FILES
             ModuleTree.cpp
             ModuleTree_iterators.cpp
             export.cpp
+            testing_export.cpp
    )
 
 

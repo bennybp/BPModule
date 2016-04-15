@@ -210,6 +210,9 @@ bool OptionMap::HasIssues(void) const
 
 bool OptionMap::Compare(const OptionMap & rhs) const
 {
+    if(Size() != rhs.Size())
+        return false;
+
     KeySet keys1, keys2;
     for(const auto & it : opmap_)
         keys1.insert(it.first);
@@ -223,6 +226,11 @@ bool OptionMap::Compare(const OptionMap & rhs) const
             return false;
 
     return true;
+}
+
+bool OptionMap::operator==(const OptionMap & rhs) const
+{
+    return Compare(rhs);
 }
 
 

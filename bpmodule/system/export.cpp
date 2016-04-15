@@ -23,7 +23,7 @@ namespace bpmodule {
 namespace system {
 namespace export_python {
 
-// in testing/export.cpp
+// in testing_export.cpp
 void export_testing(pybind11::module & m);
 
 

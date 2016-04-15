@@ -40,6 +40,27 @@ struct ModuleTreeNode
     // tree stuff
     ID_t parentid;               //!< ID of the parent tree node
     std::set<ID_t> children;     //!< ID of the children of this node
+
+
+    private:
+        //! \name Serialization
+        ///@{
+
+        DECLARE_SERIALIZATION_FRIENDS
+
+        /* We have to split load/save since the
+         * the shared_ptr points to const data, and
+         * cereal can't serialize to const data
+         */
+        template<class Archive>
+        void serialize(Archive & ar)
+        {
+            ar(modulekey, minfo, output, id);
+            ar(initial_wfn, final_wfn);
+            ar(parentid, children);
+        }
+
+        ///@}
 };
 
 
@@ -55,6 +76,22 @@ class ModuleTree
     private:
         std::map<ID_t, ModuleTreeNode> data_;
 
+        //! \name Serialization
+        ///@{
+
+        DECLARE_SERIALIZATION_FRIENDS
+
+        /* We have to split load/save since the
+         * the shared_ptr points to const data, and
+         * cereal can't serialize to const data
+         */
+        template<class Archive>
+        void serialize(Archive & ar)
+        {
+            ar(data_);
+        }
+
+        ///@}
 
     public:
         /// Depth-first iterator

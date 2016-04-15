@@ -39,6 +39,19 @@ void ModuleInfo::Print(std::ostream & os) const
 }
 
 
+bool ModuleInfo::operator==(const ModuleInfo & rhs) const
+{
+    return (name == rhs.name &&
+            type == rhs.type &&
+            base == rhs.base &&
+            path == rhs.path &&
+            version == rhs.version &&
+            description == rhs.description &&
+            authors == rhs.authors &&
+            refs == rhs.refs &&
+            options == rhs.options);
+}
+
 
 
 } // close namespace modulemanager

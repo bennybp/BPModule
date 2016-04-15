@@ -33,6 +33,33 @@ struct ModuleInfo
     /*! \brief Print out this info
     */
     void Print(std::ostream & os) const;
+
+
+    /*! \brief Comapre two ModuleInfo
+     *  
+     *  See also the OptionMap comparison operator for details about that
+     */
+    bool operator==(const ModuleInfo & rhs) const;
+    
+
+    private:
+        //! \name Serialization
+        ///@{
+
+        DECLARE_SERIALIZATION_FRIENDS
+
+        /* We have to split load/save since the
+         * the shared_ptr points to const data, and
+         * cereal can't serialize to const data
+         */
+        template<class Archive>
+        void serialize(Archive & ar)
+        {
+            ar(name, type, base, path);
+            ar(version, description, authors, refs, options);
+        }
+
+        ///@}
 };
 
 
