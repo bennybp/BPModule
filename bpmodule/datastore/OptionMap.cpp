@@ -21,13 +21,43 @@ namespace bpmodule {
 namespace datastore {
 
 
+////////////////////////////////////////////////
+// OptionMapIssues Member functions
+////////////////////////////////////////////////
+bool OptionMapIssues::OK(void) const
+{
+    return (toplevel.size() == 0 && optissues.size() == 0);
+}
+
+void OptionMapIssues::Print(std::ostream & os) const
+{
+    if(toplevel.size() || optissues.size())
+        Warning(os, "OptionMap has some issues\n");
+
+    if(toplevel.size())
+    {
+        Warning(os, "    OptionMap top level issues:\n");
+        for(const auto & it : toplevel)
+            Warning(os, "        %?", it);
+    }
+    if(optissues.size())
+    {
+        Warning(os, "    Individual option issues:\n");
+        for(const auto & it : optissues)
+        {
+            Warning(os, "        %?\n", it.first);
+            for(const auto & it2 : it.second)
+                Warning(os, "            %?\n", it2);
+        }
+    }
+}
+
 
 ////////////////////////////////////////////////
 // Member functions
 ////////////////////////////////////////////////
-
 OptionMap::OptionMap(const std::string & modulekey)
-    : modulekey_(modulekey)
+    : modulekey_(modulekey), expert_(false), lockvalid_(false)
 { }
 
 
@@ -120,47 +150,10 @@ void OptionMap::SetExpert(bool expert) noexcept
 
 void OptionMap::LockValid(bool lockvalid)
 {
+    Validate_();
     lockvalid_ = lockvalid;
 }
 
-
-
-void OptionMap::Validate(void) const
-{
-    OptionMapIssues omi = GetIssues();
-    bool throwme = false;
-
-    if(omi.toplevel.size() || omi.optissues.size())
-        output::GlobalWarning("OptionMap has some issues\n");
-
-    if(omi.toplevel.size())
-    {
-        throwme = true;
-        output::GlobalWarning("    OptionMap top level issues:\n");
-        for(const auto & it : omi.toplevel)
-            output::GlobalWarning("        %?", it);
-    }
-    if(omi.optissues.size())
-    {
-        output::GlobalWarning("    Individual option issues:\n");
-        for(const auto & it : omi.optissues)
-        {
-            output::GlobalWarning("        %?\n", it.first);
-            for(const auto & it2 : it.second)
-                output::GlobalWarning("            %?\n", it2);
-        }
-        throwme = true;
-    }
-
-    if(throwme)
-    {
-        if(expert_)
-            output::GlobalWarning("Expert mode is set for the OptionMap. You're on you're own\n");
-        else
-            throw exception::OptionException("OptionMap is in an invalid state. See above for errors",
-                                              "modulekey", modulekey_);
-    }
-}
 
 
 KeySet OptionMap::AllMissingReq(void) const
@@ -211,8 +204,7 @@ OptionMapIssues OptionMap::GetIssues(void) const
 
 bool OptionMap::HasIssues(void) const
 {
-    OptionMapIssues omi = GetIssues();
-    return (omi.toplevel.size() && omi.optissues.size());
+    return !(GetIssues().OK());
 }
 
 
@@ -270,6 +262,21 @@ void OptionMap::AddOption(std::string key, OptionType opttype, bool required,
 }
 
 
+void OptionMap::Validate_(void) const
+{
+    if(!expert_)
+    {
+        OptionMapIssues omi = GetIssues();
+
+        if(!omi.OK())
+        {
+            std::stringstream ss;
+            omi.Print(ss);
+            throw OptionException("Error - OptionMap in invalid state", "issues", ss.str());
+        }
+    }
+}
+
 
 //////////////////////
 // Python
@@ -286,7 +293,7 @@ void OptionMap::ChangePy(const std::string & key, const pybind11::object & obj)
     ptr->ChangePy(obj);
 
     if(lockvalid_)
-        Validate();
+        Validate_();
 }
 
 

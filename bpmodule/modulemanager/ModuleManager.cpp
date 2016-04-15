@@ -29,6 +29,11 @@ namespace bpmodule {
 namespace modulemanager {
 
 
+static std::string MakeCacheKey(const ModuleInfo & mi)
+{
+    return mi.name + "_v" + mi.version;
+}
+
 
 ModuleManager::ModuleManager()
     : debugall_(false),
@@ -262,6 +267,23 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
     // obtain the information for this key
     StoreEntry & se = GetOrThrow_(modulekey);
 
+    // obtain the options and lock their validity
+    // this will also validate them and throw an
+    // exception if they are invalid (and not in expert mode)
+    // NOTE - we do this first so that we don't create a module
+    // if the options are bad (and an exception is thrown)
+    ModuleInfo mi(se.mi);
+    mi.options.LockValid(true);
+
+    // add the moduleinfo to the tree
+    ModuleTreeNode me{modulekey,      // key
+                      se.mi,          // module info
+                      std::string(),  // output
+                      curid_,         // module id
+                      Wavefunction(), // initial wfn
+                      Wavefunction()  // final wfn
+                     };
+
     // actually create the module
     std::unique_ptr<detail::ModuleIMPLHolder> umbptr;
 
@@ -284,16 +306,6 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
                                                "modulename", se.mi.name);
 
 
-    // add the moduleinfo to the tree
-    ModuleTreeNode me{modulekey,      // key
-                      se.mi,          // module info
-                      std::string(),  // output
-                      curid_,         // module id
-                      Wavefunction(), // initial wfn
-                      Wavefunction()  // final wfn
-                     };
-
-
     // If there is a parent, get its wavefunction and use that
     if(parentid != 0)
     {
@@ -306,15 +318,17 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
     }
 
     // move the data to the tree
-    // "me" should not be accessed after this
+    // "me" should not be accessed after this, so
+    // we load a reference to it
     mtree_.Insert(std::move(me), parentid);
+    ModuleTreeNode & mtn = mtree_.GetByID(curid_);
 
 
     // set the info for the module
     // (set via C++ functions)
     ModuleBase * p = umbptr->CppPtr();
     p->SetMManager_(this);
-    p->SetTreeNode_(&(mtree_.GetByID(curid_))); // also sets up output tee
+    p->SetTreeNode_(&mtn); // also sets up output tee
 
 
     // Debugging enabled for this module?
@@ -324,7 +338,7 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
 
     // get this module's cache
     // don't use .at() -- we need it created if it doesn't exist already
-    std::string mbstr = p->Name() + "_v" + p->Version();
+    std::string mbstr = MakeCacheKey(mtn.minfo);
     p->SetCache_(&(cachemap_[mbstr]));
 
     // mark the module as inuse

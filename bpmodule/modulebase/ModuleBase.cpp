@@ -32,8 +32,13 @@ ModuleBase::ModuleBase(ID_t id, const char * modtype)
 
 ModuleBase::~ModuleBase()
 {
-    out.Debug("Module [%?] : Output size: %?\n", ID(), GetOutput().size());
-    out.Debug("Destructed module [%?] : %? v%?\n", ID(), Name(), Version());
+    if(treenode_ == nullptr)
+        out.Debug("Destroying a module that doesn't have a tree node...");
+    else
+    {
+        out.Debug("Module [%?] : Output size: %?\n", ID(), GetOutput().size());
+        out.Debug("Destructed module [%?] : %? v%?\n", ID(), Name(), Version());
+    }
 
     if(mlocator_ == nullptr)
         out.Error("Module module locator is null");

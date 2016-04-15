@@ -33,6 +33,17 @@ struct OptionMapIssues
 {
     WholeOptionMapIssues toplevel;                  //!< Issues with the map itself
     std::map<std::string, OptionIssues> optissues;  //!< Issues with any individual options
+
+    /*! \brief Check to see if there are issues
+     *
+     * Returns true if there are no issues stored in this structure
+     */
+    bool OK(void) const;
+
+
+    /*! \brief Print issues (if there are any) */
+    void Print(std::ostream & os) const;
+
 };
 
 
@@ -199,20 +210,6 @@ class OptionMap
         void LockValid(bool lockvalid);
 
 
-
-        /*! \brief Validate this map
-         *
-         * Causes all the problems with this map to be
-         * printed out. If there is a problem (and this OptionMap
-         * is not in expert mode), an exception is thrown.
-         *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
-         *        with validation.
-         */
-        void Validate(void) const;
-
-
-
         /*! \brief Dumps the options to the output
         */
         void Print(std::ostream & os) const;
@@ -281,6 +278,9 @@ class OptionMap
             }
 
             GetOrThrow_Cast_<opt_type>(key)->Change(convval);
+
+            if(lockvalid_)
+                Validate_();
         }
 
 
@@ -356,7 +356,6 @@ class OptionMap
         //! Holds the options
         std::map<std::string, std::unique_ptr<OptionBase>, util::CaseInsensitiveLess> opmap_;
 
-
         //!< Validates the whole options container
         WholeOptionValidator wholevalid_;
 
@@ -431,6 +430,13 @@ class OptionMap
             //static_assert( OptionTypeMap<T>::valid,
             //               "Invalid type for an option given to OptionMap");
         }
+
+
+        /*! \brief Validate and throw an exception if necessary
+         * 
+         * Validation errors will throw an exception if not in expert mode
+         */
+        void Validate_(void) const;
 
 
 
