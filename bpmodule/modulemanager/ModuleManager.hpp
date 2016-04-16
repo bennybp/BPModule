@@ -159,21 +159,9 @@ class ModuleManager
          */
         pybind11::object GetModulePy(const std::string & modulekey, ID_t parentid);
 
-
-
         /*! \brief Check to see if a module is currently in use
          */
         bool ModuleInUse(ID_t id) const;
-
-
-        /*! \brief Notify the manager that a module is being destructed
-         *
-         * \warning Only to be called from the ModuleBase destructor
-         */
-        void DestructionNotify(ID_t id) noexcept;
-
-
-
 
 
         /*! \brief Change an option for a module

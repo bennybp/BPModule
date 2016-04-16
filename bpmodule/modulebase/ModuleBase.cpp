@@ -38,12 +38,8 @@ ModuleBase::~ModuleBase()
     {
         out.Debug("Module [%?] : Output size: %?\n", ID(), GetOutput().size());
         out.Debug("Destructed module [%?] : %? v%?\n", ID(), Name(), Version());
+        treenode_->inuse = false;
     }
-
-    if(mlocator_ == nullptr)
-        out.Error("Module module locator is null");
-    else
-        mlocator_->DestructionNotify(ID());
 
     //out.Debug("*****\n");
     //out.Warning(GetOutput());

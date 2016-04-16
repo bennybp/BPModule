@@ -37,10 +37,12 @@ struct ModuleTreeNode
     datastore::Wavefunction initial_wfn;  //!< Wavefunction this module started with
     datastore::Wavefunction final_wfn;    //!< Wavefunction this module ended with
 
+    // is the tree node in use
+    bool inuse;
+
     // tree stuff
     ID_t parentid;               //!< ID of the parent tree node
     std::set<ID_t> children;     //!< ID of the children of this node
-
 
     private:
         //! \name Serialization

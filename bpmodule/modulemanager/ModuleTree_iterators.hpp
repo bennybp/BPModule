@@ -28,7 +28,8 @@ namespace detail {
  * Data stored on the nodes is not allowed to be changed
  * via this iterator (ie, it is a const_iterator)
  */
-class ConstModuleTreeIter
+class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag, 
+                                                 const ModuleTreeNode>
 {
     /* When this iterator represents the "end" of iteration,
      * startid_ = curid_ = MAXVAL (ie, the largest value for an ID_t)

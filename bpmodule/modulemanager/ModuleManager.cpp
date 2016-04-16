@@ -46,9 +46,12 @@ ModuleManager::ModuleManager()
 ModuleManager::~ModuleManager()
 {
     /*
-     * Delete any in-use modules
+     * Warn of any in-use modules
      */
-    auto ninuse = modules_inuse_.size();
+    size_t ninuse = 0;
+    for(auto it = mtree_.FlatBegin(); it != mtree_.FlatEnd(); ++it)
+        ninuse += (it->inuse ? 1 : 0);
+                        
     if(ninuse)
         GlobalWarning("ModuleManager is destructing with %? modules in use\n", ninuse);
     else
@@ -246,13 +249,10 @@ void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo, const std
 
 bool ModuleManager::ModuleInUse(ID_t id) const
 {
-    return modules_inuse_.count(id);
-}
-
-void ModuleManager::DestructionNotify(ID_t id) noexcept
-{
-   // comparison object doesn't throw, therefore this shouldn't throw
-   modules_inuse_.erase(id);
+    if(!mtree_.HasID(id))
+        return false;
+    else
+        return mtree_.GetByID(id).inuse;
 }
 
 
@@ -274,12 +274,14 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
     mi.options.LockValid(true);
 
     // add the moduleinfo to the tree
+    // (parentid, etc, will be set by the tree)
     ModuleTreeNode me{modulekey,      // key
                       se.mi,          // module info
                       std::string(),  // output
                       curid_,         // module id
                       Wavefunction(), // initial wfn
-                      Wavefunction()  // final wfn
+                      Wavefunction(), // final wfn
+                      true            // module is in use
                      };
 
     // actually create the module
@@ -350,9 +352,6 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
     // don't use .at() -- we need it created if it doesn't exist already
     std::string mbstr = MakeCacheKey(mtn.minfo);
     p->SetCache_(&(cachemap_[mbstr]));
-
-    // mark the module as inuse
-    modules_inuse_.insert(curid_);
 
     // next id
     curid_++;

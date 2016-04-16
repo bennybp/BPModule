@@ -34,7 +34,7 @@ class MathSet;
  * this only behaves like a const_iterator
  */
 template<typename T, typename U>
-class ConstSetItr : public std::iterator<std::input_iterator_tag, T> {
+class ConstSetItr : public std::iterator<std::input_iterator_tag, const T> {
 private:
     ///My type
     typedef ConstSetItr<T, U> My_t;

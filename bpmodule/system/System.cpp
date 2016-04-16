@@ -58,18 +58,14 @@ double System::GetSumCharge(void) const
 {
     return std::accumulate(this->begin(),this->end(),static_cast<double>(0.0),
                            [](double sum,const Atom&a)
-    {
-        return sum+a.GetCharge();
-    });
+                           { return sum+a.GetCharge(); });
 }
 
 double System::GetSumNElectrons(void) const
 {
     return std::accumulate(this->begin(),this->end(),static_cast<double>(0.0),
                            [](double sum,const Atom&a)
-    {
-        return sum+a.GetNElectrons();
-    });
+                           { return sum+a.GetNElectrons(); });
 }
 
 double System::GetCharge(void) const

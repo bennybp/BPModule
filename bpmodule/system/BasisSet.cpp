@@ -257,14 +257,14 @@ BasisShellInfo BasisSet::ShellInfo(size_t i) const
 size_t BasisSet::NPrim(void) const
 {
     //! \todo generic lambda in C++14
-    return std::accumulate(this->begin(), this->end(), 0,
+    return std::accumulate(this->begin(), this->end(), static_cast<size_t>(0),
                            [](size_t sum, const BasisSetShell & sh)
                            { return sum + sh.NPrim(); } );
 }
 
 size_t BasisSet::NCoef(void) const
 {
-    return std::accumulate(this->begin(), this->end(), 0,
+    return std::accumulate(this->begin(), this->end(), static_cast<size_t>(0),
                            [](size_t sum, const BasisSetShell & sh)
                            { return sum + sh.NCoef(); } );
 }
@@ -289,7 +289,7 @@ int BasisSet::MaxAM(void) const
 size_t BasisSet::NCartesian(void) const
 {
     //! \todo generic lambda in C++14
-    return std::accumulate(this->begin(), this->end(), 0,
+    return std::accumulate(this->begin(), this->end(), static_cast<size_t>(0),
                            [](size_t sum, const BasisSetShell & sh)
                            { return sum + sh.NCartesian(); } );
 }
@@ -297,7 +297,7 @@ size_t BasisSet::NCartesian(void) const
 size_t BasisSet::NFunctions(void) const
 {
     //! \todo generic lambda in C++14
-    return std::accumulate(this->begin(), this->end(), 0,
+    return std::accumulate(this->begin(), this->end(), static_cast<size_t>(0),
                            [](size_t sum, const BasisSetShell & sh)
                            { return sum + sh.NFunctions(); } );
 }

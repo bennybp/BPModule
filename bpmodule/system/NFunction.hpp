@@ -34,8 +34,9 @@ inline int NCARTESIAN(int am)
 template<size_t N>
 int NCARTESIAN(const std::array<int, N> & v)
 {
-    return std::accumulate(v.begin(), v.end(), 0,
-                          [](int i, int j){ return i *= NCARTESIAN_(j); });
+    return std::accumulate(v.begin(), v.end(), static_cast<int>(0),
+                          [](int i, int j)
+                          { return i *= NCARTESIAN_(j); });
 }
 
 
@@ -61,8 +62,9 @@ inline int NSPHERICAL(int am)
 template<size_t N>
 int NSPHERICAL(const std::array<int, N> & v)
 {
-    return std::accumulate(v.begin(), v.end(), 0,
-                          [](int i, int j){ return i *= NSPHERICAL_(j); });
+    return std::accumulate(v.begin(), v.end(), static_cast<int>(0),
+                          [](int i, int j)
+                          { return i *= NSPHERICAL_(j); });
 }
 
 
