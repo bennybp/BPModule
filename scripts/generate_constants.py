@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 
+import sys
 import mpmath as mp
+import bp_common
 
 mp.dps=250
 mp.mp.dps = 250
+
+if len(sys.argv) != 2:
+   print("Usage: generate_constants.py outbase")
+   quit(1)
+
+outbase = sys.argv[1]
+
 
 
 constants = {}
@@ -45,25 +54,23 @@ constants["ATOMIC_UNIT_VELOCITY"]     =  constants['AU_VELOCITY_SI']
 
 
 
-# generate h file
-# blah blah
-
 # keys in alphabetical order
 keys = sorted(constants.keys())
 
 
-for c in keys:
-    v = constants[c]
+with bp_common.HeaderSourceFiles(outbase, "Various constants and conversion factors", 
+                                 [], # no namespaces
+                                 createsource = False) as src:
+    for c in keys:
+        v = constants[c]
 
-    print("/*! \\brief {}".format(v[1]))                          # description
-    print(" *")
-    if v[2]:
-        print(" * {}".format(v[2]))
-    print(" */")
-    # setting min_fixed > max_fixed results in always using floating-point format
-    print("#define {}_F   {}f".format(c, mp.nstr(v[0], 10, strip_zeros=True, min_fixed=1, max_fixed=0)))   # float (single precision)
-    print("#define {}_D   {}".format(c, mp.nstr(v[0], 18, strip_zeros=True, min_fixed=1, max_fixed=0)))   # double precision
-    print("\n")
-
-
+        src.fh.write("/*! \\brief {}\n".format(v[1]))
+        src.fh.write(" *\n")
+        if v[2]:
+            src.fh.write(" * {}\n".format(v[2]))
+        src.fh.write(" */\n")
+        # setting min_fixed > max_fixed results in always using floating-point format
+        #src.fh.write("#define {}_F   {}f\n".format(c, mp.nstr(v[0], 10, strip_zeros=True, min_fixed=1, max_fixed=0)))   # float (single precision)
+        src.fh.write("#define {}     {}\n".format(c, mp.nstr(v[0], 18, strip_zeros=True, min_fixed=1, max_fixed=0)))   # double precision
+        src.fh.write("\n\n")
 

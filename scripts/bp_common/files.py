@@ -58,7 +58,6 @@ class HeaderSourceFiles:
         autogenstr += "CREATED: " + self.created + "\n"
         autogenstr += "**************************************************************/\n"
 
-        self.namespaces.insert(0, "bpmodule")
         guard = GenIncludeGuard(self.hppfile)
 
 
@@ -101,14 +100,15 @@ class HeaderSourceFiles:
             self.fh.write("#define {}\n".format(guard))
             self.fh.write("\n\n")
 
-            for inc in self.hppincludes:
-                self.fh.write("#include {}\n".format(inc)) 
-            self.fh.write("\n\n\n")
+            if len(self.hppincludes) > 0:
+                for inc in self.hppincludes:
+                    self.fh.write("#include {}\n".format(inc)) 
+                self.fh.write("\n\n\n")
 
-            for nm in self.namespaces:
-                self.fh.write("namespace {} {{\n".format(nm))
-
-            self.fh.write("\n\n\n")
+            if len(self.namespaces) > 0:
+                for nm in self.namespaces:
+                    self.fh.write("namespace {} {{\n".format(nm))
+                self.fh.write("\n\n\n")
 
 
     def CloseHeaderSourcePair(self):
@@ -122,10 +122,12 @@ class HeaderSourceFiles:
 
         if self.createheader:
             self.fh.write("\n\n\n")
-            for nm in reversed(self.namespaces):
-                self.fh.write("}} // closing namespace {}\n".format(nm))
-        
-            self.fh.write("\n\n\n")
+
+            if len(self.namespaces) > 0:
+                for nm in reversed(self.namespaces):
+                    self.fh.write("}} // closing namespace {}\n".format(nm))
+                self.fh.write("\n\n\n")
+
             self.fh.write("#endif\n")
 
             self.fh.close()

@@ -102,13 +102,8 @@ dfac_2nm1_double = [ float(v) for v in dfac_2nm1 ]
 
 
 
-# Create cpp and hpp files
-cppfile = "test.cpp"
-hppfile = "test.hpp"
-
-
 with bp_common.HeaderSourceFiles(outbase, "LUT for factorial and related functions", 
-                                 ["math", "lut"],
+                                 ["bpmodule", "math", "lut"],
                                  hppincludes = ["<cstdint>"],
                                  cppincludes = ["<cstdint>"]) as src:
 
