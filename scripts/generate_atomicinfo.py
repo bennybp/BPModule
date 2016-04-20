@@ -103,10 +103,10 @@ for l in open(os.path.join(datadir, "NIST-ATOMICION.formatted.txt")).readlines()
 
 with bp_common.HeaderSourceFiles(outbase, "LUTs for Atomic Information", 
                                  ["bpmodule", "system", "lut"],
-                                 hppincludes = ["<map>",
-                                                "\"bpmodule/system/AtomicInfo.hpp\"",
-                                                "\"bpmodule/util/StringUtil.hpp\""],
-                                 cppincludes = ["<map>",
+                                 hincludes = ["<map>",
+                                              "\"bpmodule/system/AtomicInfo.hpp\"",
+                                              "\"bpmodule/util/StringUtil.hpp\""],
+                                 srcincludes = ["<map>",
                                                 "\"bpmodule/system/AtomicInfo.hpp\"",
                                                 "\"bpmodule/util/StringUtil.hpp\""]) as src:
 

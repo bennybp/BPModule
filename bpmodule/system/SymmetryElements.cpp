@@ -6,7 +6,7 @@
 #include <iostream>
 #include "bpmodule/system/SymmetryElements.hpp"
 #include "bpmodule/math/Geometry.hpp"
-#include "SymmetryElements.hpp"
+#include "bpmodule/system/SymmetryElements.hpp"
 
     using std::string;
     using std::to_string;

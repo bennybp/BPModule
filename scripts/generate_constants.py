@@ -61,7 +61,8 @@ keys = sorted(constants.keys())
 
 with bp_common.HeaderSourceFiles(outbase, "Various constants and conversion factors", 
                                  [], # no namespaces
-                                 createsource = False) as src:
+                                 createsource = False,
+                                 plainc = True) as src:
     for c in keys:
         v = constants[c]
 

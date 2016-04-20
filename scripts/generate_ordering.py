@@ -59,7 +59,7 @@ for l in range(-1, -5, -1):
 with bp_common.HeaderSourceFiles(outbase, "Ordering of basis functions",
                                  ["bpmodule","system","lut"],
                                  createheader = False,
-                                 cppincludes = ["\"bpmodule/system/Ordering.hpp\""]) as src:
+                                 srcincludes = ["\"bpmodule/system/Ordering.hpp\""]) as src:
 
     src.f.write("//Map of AM to exponents on x, y, z\n")
     src.f.write("extern const CartesianOrderingMap ao_cartesian_order_{\n");

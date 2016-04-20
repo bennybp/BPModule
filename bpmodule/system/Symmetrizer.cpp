@@ -13,7 +13,7 @@
 #include "bpmodule/math/NumberTheory.hpp"
 #include "bpmodule/math/BLAS.hpp"
 #include "bpmodule/math/Checking.hpp"
-#include "bpmodule/Constants.hpp"
+#include "bpmodule/constants.h"
 #include "bpmodule/exception/Exceptions.hpp"
 
 

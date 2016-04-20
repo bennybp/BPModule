@@ -22,15 +22,20 @@ def GenIncludeGuard(path):
 
 
 class HeaderSourceFiles:
-    def __init__(self, base, desc, namespaces, hppincludes = [], cppincludes = [],
-                 createheader = True, createsource = True):
+    def __init__(self, base, desc, namespaces, hincludes = [], srcincludes = [],
+                 createheader = True, createsource = True, plainc = False):
         self.base = base
         self.desc = desc
         self.namespaces = namespaces
-        self.hppincludes = hppincludes
-        self.cppincludes = cppincludes
-        self.cppfile = base + ".cpp" 
-        self.hppfile = base + ".hpp"
+        self.hincludes = hincludes
+        self.srcincludes = srcincludes
+
+        if plainc:
+            self.srcfile = base + ".c" 
+            self.hfile = base + ".h"
+        else:
+            self.srcfile = base + ".cpp" 
+            self.hfile = base + ".hpp"
 
         self.createheader = createheader
         self.createsource = createsource
@@ -58,14 +63,14 @@ class HeaderSourceFiles:
         autogenstr += "CREATED: " + self.created + "\n"
         autogenstr += "**************************************************************/\n"
 
-        guard = GenIncludeGuard(self.hppfile)
+        guard = GenIncludeGuard(self.hfile)
 
 
         ##########################
         # SOURCE FILE ############
         ##########################
         if self.createsource:
-            self.f = open(self.cppfile, 'w')
+            self.f = open(self.srcfile, 'w')
             self.f.write("/*\\file\n")
             self.f.write(" *\n")
             self.f.write(" * \\brief {} (source)\n".format(self.desc))
@@ -73,7 +78,7 @@ class HeaderSourceFiles:
             self.f.write("\n\n")
             self.f.write(autogenstr)
             self.f.write("\n\n")
-            for inc in self.cppincludes:
+            for inc in self.srcincludes:
                 self.f.write("#include {}\n".format(inc)) 
             self.f.write("\n\n\n")
 
@@ -88,7 +93,7 @@ class HeaderSourceFiles:
         # HEADER FILE ############
         ##########################
         if self.createheader:
-            self.fh = open(self.hppfile, 'w')
+            self.fh = open(self.hfile, 'w')
             self.fh.write("/*\\file\n")
             self.fh.write(" *\n")
             self.fh.write(" * \\brief {} (header)\n".format(self.desc))
@@ -100,8 +105,8 @@ class HeaderSourceFiles:
             self.fh.write("#define {}\n".format(guard))
             self.fh.write("\n\n")
 
-            if len(self.hppincludes) > 0:
-                for inc in self.hppincludes:
+            if len(self.hincludes) > 0:
+                for inc in self.hincludes:
                     self.fh.write("#include {}\n".format(inc)) 
                 self.fh.write("\n\n\n")
 

@@ -104,8 +104,8 @@ dfac_2nm1_double = [ float(v) for v in dfac_2nm1 ]
 
 with bp_common.HeaderSourceFiles(outbase, "LUT for factorial and related functions", 
                                  ["bpmodule", "math", "lut"],
-                                 hppincludes = ["<cstdint>"],
-                                 cppincludes = ["<cstdint>"]) as src:
+                                 hincludes = ["<cstdint>"],
+                                 srcincludes = ["<cstdint>"]) as src:
 
     ########################################################
     # Create LUT
