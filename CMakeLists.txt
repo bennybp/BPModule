@@ -76,6 +76,7 @@ ExternalProject_Add(bpmodule_core
                                -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
 			                   -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
                                -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+                               -DBPMODULE_MATH_LIBS=${BPMODULE_MATH_LIBS}
                     CMAKE_CACHE_ARGS -DBPMODULE_CORE_PYTHON_LIBRARIES:STRING=${PYTHON_LIBRARIES}
                                      -DBPMODULE_CORE_PYTHON_INCLUDE_DIRS:STRING=${PYTHON_INCLUDE_DIRS}
                                      -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}

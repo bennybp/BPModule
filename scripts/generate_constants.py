@@ -28,6 +28,7 @@ constants["ONE_OVER_PI"]              =  (mp.mpf('1.0')/mp.pi,              "1/p
 constants["ONE_OVER_SQRT_PI"]         =  (mp.mpf('1.0')/mp.sqrt(mp.pi),     "1/sqrt(pi)",                            None                            )
 constants["SPEED_OF_LIGHT_SI"]        =  (mp.mpf('299792458'),              "Speed of light in m/s",                 "NIST CODATA 2014"              )
 constants["BOHR_RADIUS_SI"]           =  (mp.mpf('0.52917721067e-10'),      "Bohr radius (AU of length) in m",       "NIST CODATA 2014"              )
+constants["BOHR_RADIUS_ANGSTROMS"]    =  (mp.mpf('0.52917721067'),         "Bohr radius (AU of length) in A",       "NIST CODATA 2014"              )
 constants["ELECTRON_MASS_SI"]         =  (mp.mpf('9.10938356e-31'),         "Mass of electron in kg",                "NIST CODATA 2014"              )
 constants["AVOGADROS_CONSTANT"]       =  (mp.mpf('6.022140857e23'),         "Avogadro's constant (mol^-1)",          "NIST CODATA 2014"              )
 constants["BOLTZMANN_CONSTANT_SI"]    =  (mp.mpf('1.38064852e-23'),         "Boltzmann's constant in J/K",           "NIST CODATA 2014"              )

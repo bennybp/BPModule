@@ -3,7 +3,7 @@
  * \brief Main module database class (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
-
+#include <random>
 #include "bpmodule/modulemanager/ModuleManager.hpp"
 #include "bpmodule/output/Output.hpp"
 #include "bpmodule/modulebase/ModuleBase.hpp"
@@ -112,6 +112,17 @@ void ModuleManager::DuplicateKey(const std::string & modulekey, const std::strin
     se.ncalled = 0;
 
     store_.emplace(newkey, std::move(se));
+}
+
+std::string ModuleManager::GenerateUniqueKey() const{
+    std::random_device r;
+    std::default_random_engine e(r());
+    std::uniform_int_distribution<int> dist;
+    std::stringstream ss;
+    do{
+        ss<<dist(e);
+    }while(HasKey(ss.str()));
+    return ss.str();
 }
 
 void ModuleManager::Print(std::ostream & os) const

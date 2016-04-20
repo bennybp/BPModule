@@ -58,6 +58,13 @@ bool IsInteger(T val)
     return detail::IntegerCheck<T>::IsInteger(val);
 }
 
+///Checks if \p lhs is equal to \p rhs to within \p Tol
+template<typename T>
+bool AreEqual(const T& lhs,const T& rhs,const T& Tol){
+    return(fabs(lhs-rhs)<Tol);
+}
+
+
 } // close namespace math
 } // close namespace bpmodule
 

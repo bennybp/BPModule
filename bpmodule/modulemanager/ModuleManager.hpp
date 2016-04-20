@@ -90,7 +90,6 @@ class ModuleManager
         void TestAll(void);
 
 
-
         /*! \brief Create a new module as a wrapped C++ object
          *
          * The wavefunction that is set for the initial and final
@@ -198,7 +197,18 @@ class ModuleManager
          */
         void DuplicateKey(const std::string & modulekey, const std::string newkey);
 
-
+        /*! \brief Generates a unique module key
+         *
+         *   Internally within a module there arises situations in which the
+         *   module needs to duplicate a module so that it can tweak some
+         *   options.  The resulting module must have a unique key.  This
+         *   function generates a random unique key that your module can
+         *   use in these circumstances.
+         * 
+         *   \return A random unique key that is not tied to any module yet
+         */
+        std::string GenerateUniqueKey(void)const;
+        
 
         /*! \brief Change an option for a module (python version)
          * 

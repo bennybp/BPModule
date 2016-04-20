@@ -417,6 +417,92 @@ std::vector<double> GetDistance(const System& sys);
 ///bonded if Tolerance*sum of covRaddii is greater than distance
 std::unordered_map<Atom, std::unordered_set<Atom>> GetConns(const System& sys, double Tolerance = 1.20);
 
+/** \brief Given a molecule that has been translated to the center of mass
+ *         this function computes the inertia tensor for that system
+ * 
+ *  The moment of inertia of a rigid rotating body comprised of \f$N\f$
+ *  particles rotating about some axis is given by:
+ *  \f[
+ *     I=\sum_i^N m_iR_i^2,
+ *  \f]
+ *  where \f$m_i\f$ is the mass of the \f$i\f$-th particle and \f$R_i\f$ is
+ *  the distance to the axis of rotation.  In most cases we instead know the
+ *  distance to the origin, \f$r_i\f$.  If we assume that the axis of rotation passes
+ *  through the origin we have a right triangle formed from \f$R_i\f$, 
+ *  \f$r_i\f$, and a unit vector in \f$n\f$ parallel with the rotation axis.
+ *  Therefore we know:
+ *  \f{align}{
+ *    I=&\sum_i^N m_i\left[\left|r_i\right|\sin\left(\theta\right)\right]^2
+ *     =&\sum_i^N m_i\left(r_i \times n\right)^2
+ *  \f}
+ *  where \f$\theta\f$ is the angle between \f$r_i\f$ and \f$n\f$.  In general,
+ *  \f$n\f$ will not be parallel to any of the axes for which \f$r_i\f$ is
+ *  defined.  We can get its projection onto those axes via the dot-product
+ *  and consequentially, 
+ *  \f$n=\left[\cos\left(\alpha\right),\cos\left(\beta\right),\cos\left(\gamma\right)\right]\f$,
+ *  where \f$\alpha,\beta\f$, and \f$\gamma\f$ are the angles between \f$n\f$ and
+ *  the x,y, and z axes in the \f$r_i\f$ frame respectively.  After a little
+ *  math we have:
+ *  \f[
+ *    r_i\times n=\left[r_{iy}\cos\left(\gamma\right)-
+ *                      r_{iz}\cos\left(\beta\right),
+ *                      r_{iz}\cos\left(\alpha\right)-
+ *                      r_{ix}\cos\left(\gamma\right),
+ *                      r_{ix}\cos\left(\beta\right)-
+ *                      r_{iy}\cos\left(\alpha\right)\right]
+ *  \f]
+ *  Squaring this we get:
+ *  \f[
+ *    \left(r_i\times n\right)^2=r^2_{iy}\cos^2\left(\gamma\right)-
+ *      2r_{iy}r_{iz}\cos\left(\beta\right)\cos\left(\gamma\right)+
+ *      r^2_{iz}\cos^2\left(\beta\right)+
+ *      r^2_{iz}\cos^2\left(\alpha\right)-
+ *      r_{ix}r_{iz}\cos\left(\alpha\right)\cos\left(\gamma\right)+
+ *      r^2_{ix}\cos^2\left(\gamma\right)+
+ *      r^2_{ix}\cos^2\left(\beta\right)-
+ *      r_{ix}r_{iy}\cos\left(\alpha\right)\cos\left(\beta\right)+
+ *      r^2_{iy}\cos^2\left(\alpha\right)
+ *  \f]
+ *  Upon collecting \f$\cos\f$ terms:
+ *  \f[
+ *    \left(r_i\times n\right)^2=
+ *      \left(r^2_{ix}+r^2_{iy}\right)\cos^2\left(\gamma\right)-
+ *      2r_{iy}r_{iz}\cos\left(\beta\right)\cos\left(\gamma\right)+
+ *      \left(r^2_{ix}+r^2_{iz}\right)\cos^2\left(\beta\right)-
+ *      2r_{ix}r_{iz}\cos\left(\alpha\right)\cos\left(\gamma\right)-
+ *      2r_{ix}r_{iy}\cos\left(\alpha\right)\cos\left(\beta\right)+
+ *      \left(r^2_{iy}+r^2_{iz}\right)\cos^2\left(\alpha\right)
+ *  \f]
+ *  Defining:
+ *  \f{eqnarray}{
+ *     I_{xx}=&\sum_i^N m_i\left(r^2_{iy}+r^2_{iz}\right)\\
+ *     I_{xy}=&-\sum_i^N m_ir_{ix}r_{iy}\\
+ *     I_{xz}=&-\sum_i^N m_ir_{ix}r_[iz}\\
+ *     I_{yy}=&\sum_i^N m_i\left(r^2_{ix}+r^2_{iz}\right)\\
+ *     I_{yz}=&-\sum_i^N m_ir_{iy}r_{iz}\\
+ *     I_{zz}=&\sum_i^Nm_i\left(r^2_{ix}+r^2_{iy}\right)
+ *  \f}
+ *  We can write:
+ *  \f[
+ *    I=\sum_i^Nm_i\left(r_i\times n\right)^2=
+ *      I_{xx}\cos^2\left(\alpha\right)+
+ *      I_{yy}\cos^2\left(\beta\right)+
+ *      I_{zz}\cos^2\left(\gamma\right)+
+ *      2I_{xy}\cos\left(\alpha\right)\cos\left(\beta\right)+ 
+ *      2I_{xz}\cos\left(\alpha\right)\cos\left(\gamma\right)
+ *      2I_{yz}\cos\left(\beta\right)\cos\left(\gamma\right)=
+ *      n^T \mathbf{I} n,
+ *  \f]
+ *   where \f$\mathbf{I}\f$ is the inertia tensor.  Consequentially the
+ *   inertial tensor is not simply the second moments of the mass distribution
+ *   when their coordinates are expressed in terms of their initial coordinate
+ *   system, but:
+ *   \f[
+ *      I_{pq}=\sum_i^Nm_ir^2_{i}\delta_{pq}-m_ir_{ip}r_{iq}
+ *   \f]
+ */
+std::array<double,9> InertiaTensor(const System& Mol);
+
 inline std::ostream& operator<<(std::ostream& os, const System& Mol)
 {
     return os << Mol.ToString();

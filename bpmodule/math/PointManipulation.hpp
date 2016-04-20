@@ -127,8 +127,75 @@ PointContainer RotatePointContainer_Copy(const PointContainer & cont, const Flat
 // Center-finding
 ////////////////////////////////////////////
 
-/*! \brief Find the center of a container of points
+///Recursive function for computing the moments (Don't directly call)
+template<size_t M,typename Pt>
+void MomentGuts(std::vector<size_t> Index,const Pt& P,const size_t& Dim,
+                double value,std::vector<double>& Moments){
+    if(Index.size()==M-1){
+        size_t Offset=0,stride=Dim;
+        for(size_t i=Index.size();i>0;--i){
+            Offset+=Index[i-1]*stride;
+            stride*=Dim;
+        }
+        for(size_t i=0;i<Dim;++i)
+            Moments[Offset+i]+=value*P[i];
+    }
+    else{
+        Index.push_back(0);
+        for(size_t i=0;i<Dim;++i){
+            Index.back()=i;
+            MomentGuts<M>(Index,P,Dim,value*P[i],Moments);
+        }
+    }
+    
+}
+
+/*! \brief Finds the normalized M-th moment of a distribution of points
+ *
+ * 
+ *  For a series of \f$n\f$ points, centered about the origin, such that the
+ *  \f$i\f$-th point, \f$X_i\f$, is weighted by \f$w_i\f$, the \f$M\f$-th 
+ *  moment, \f$R^{(M)}\f$ is given by:
+ *  \f[
+ *    R^{(M)}=\frac{\sum_{i=1}^M w_i\bigotimes_{j=1}^MX_i}{\sum_{i=1}^M w_i}
+ *  \f]
+ * 
+ * Function assumes for the time-being that all points have 3 components, but
+ * that can be changed by setting the Dim parameter appropriately.
+ * 
+ * \param[in] The container of points, must:
+ *    - Define the type value_type as the type that it holds
+ *      - value_type must by index accessible (define operator[])
+ *    - Have iterators
+ * \param[in] fxn A function that given an object of value_type type returns
+ *                its weight as a double.  A default "weighter" is provided 
+ *                that weights each point equally.
+ * \return The flattened moments.  Each component runs from [0,Dim)
+ * 
+ * \todo if dim is always going to be known at compile time switch from vector
+ *       to array
+ * 
  */
+template<size_t M,typename PointContainer>
+std::vector<double> Moment(const PointContainer& cont,
+  std::function<double (const typename PointContainer::value_type &)> fxn
+  =[](const typename PointContainer::value_type &){return 1.0;}){
+    if(M==0)return {1.0};//Handle 0-th normalized moment
+    const size_t Dim=3;
+    size_t DoF=1;
+    for(size_t i=0;i<M;++i)DoF*=Dim;
+    std::vector<double> Moments(DoF);
+    double Total=0.0;
+    for(const auto& Xi: cont){
+        double value=fxn(Xi);
+        Total+=value;
+        MomentGuts<M>(std::vector<size_t>(),Xi,Dim,value,Moments);
+    }
+    for(size_t i=0;i<DoF;++i)Moments[i]/=Total;
+    return Moments;
+}
+/*! \brief Find the center of a container of points
+ * RMR-same as weighted except with weights of 1.0
 template<typename Coord, typename PointContainer>
 Coord PointsCenter(const PointContainer & cont)
 {
@@ -152,7 +219,7 @@ Coord PointsCenter(const PointContainer & cont)
     coord[2] /= n2;
 
     return Coord{coord[0], coord[1], coord[2]};
-}
+}*/
 
 
 /*! \brief Find the weighted center of a container of points
@@ -160,7 +227,7 @@ Coord PointsCenter(const PointContainer & cont)
 template<typename Coord, typename PointContainer>
 Coord WeightedPointsCenter(const PointContainer & cont, std::function<double (const typename PointContainer::value_type &)> weighter)
 {
-    typedef typename Coord::value_type type_t;
+    /*typedef typename Coord::value_type type_t;
 
     std::array<type_t, 3> coord{0,0,0};
 
@@ -179,9 +246,17 @@ Coord WeightedPointsCenter(const PointContainer & cont, std::function<double (co
     coord[0] /= sumweight;
     coord[1] /= sumweight;
     coord[2] /= sumweight;
-    return Coord{coord[0], coord[1], coord[2]};
+    */
+     std::vector<double> coord=Moment<1>(cont,weighter);
+     return Coord{coord[0],coord[1],coord[2]};
 }
 
+template<typename Coord, typename PointContainer>
+Coord PointsCenter(const PointContainer & cont)
+{
+    return WeightedPointsCenter<Coord>(cont,
+           [](const typename PointContainer::value_type&){return 1.0;});
+}
 
 } // close namespace math
 } // close namespace bpmodule

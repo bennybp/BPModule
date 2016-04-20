@@ -3,7 +3,8 @@ set(BPMODULE_SYSTEM_FILES
     AtomicInfo_LUT.cpp
     Atom.hpp
     Atom.cpp
-    System.hpp
+    Symmetrizer.cpp
+    SymmetryElements.cpp
     System.cpp
     BasisSet.cpp
     BasisShellBase.cpp

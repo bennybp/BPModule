@@ -44,7 +44,9 @@ class PointT
         PointT & operator=(const PointT &) = default;
         PointT & operator=(PointT &&)      = default;
         virtual ~PointT()                  = default;
-
+        size_t size()const{return coords_.size();}
+        
+        
         bool operator==(const PointT & rhs) const
         {
             PRAGMA_WARNING_PUSH
@@ -137,6 +139,17 @@ class PointT
             return PointT<T>(*this)*=RHS;
         }
         
+        /** \brief Scales the point by a scalar*/
+        PointT<T>& operator*=(double c){
+            for(T& i: coords_)i*=c;
+            return *this;
+        }
+        
+        /** \brief Scales a copy of the point by a scalar*/
+        PointT<T> operator*(double c)const{
+            return PointT<T>(*this)*=c;
+        }
+        
         ///Returns the magnitude of this point (sqrt of dot product)
         double Magnitude()const{
             PointT<T> Sq=(*this)*(*this);
@@ -149,6 +162,13 @@ class PointT
         double Distance(const PointT<T>& RHS)const{
             PointT<T> Diff=*this-RHS;
             return Diff.Magnitude();
+        }
+        
+        void Print(std::ostream& os)const{
+            for(size_t i=0;i<coords_.size();++i){
+                os<<coords_[i];
+                if(i!=coords_.size()-1)os<<" ";
+            }
         }
 
 
@@ -170,12 +190,23 @@ class PointT
         ///@}
 };
 
+///Allows for left-multiplication by a double
+template<typename T>
+PointT<T> operator*(double c,const PointT<T>& P){
+    return PointT<T>(P)*=c;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os,const PointT<T>& P){
+    P.Print(os);
+}
 
 typedef PointT<double> Point;
 
 
-}
-}//End namespaces
+
+
+}}//End namespaces
 
 #endif /* BPMODULE_GUARD_POINT_HPP_ */
 

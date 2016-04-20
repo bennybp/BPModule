@@ -9,6 +9,7 @@
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/output/GlobalOutput.hpp"
 #include "bpmodule/util/HashSerializable.hpp"
+#include "bpmodule/math/PointManipulation.hpp"
 
 using bpmodule::output::GlobalDebug;
 using bpmodule::exception::SystemException;
@@ -348,6 +349,21 @@ Conn_t GetConns(const System& sys,double Tolerance)
     return Conns;
 }
 
+std::array<double,9> InertiaTensor(const System& Mol){
+    std::array<double,9> I;
+    double mass=0.0;
+    for(const Atom& AtomI: Mol){
+        double massI=AtomI.GetMass();
+        mass+=massI;
+        for(size_t j=0;j<3;++j)
+            for(size_t i=0;i<3;++i)
+                I[j*3+j]+=massI*AtomI[i]*AtomI[i];
+    }
+    std::vector<double> TempI=math::Moment<2>(Mol,&Atom::GetMass);
+    for(size_t i=0;i<9;++i)I[i]-=mass*TempI[i];
+    return I;
+    
+}
 
 } // close namespace system
 } // close namespace bpmodule

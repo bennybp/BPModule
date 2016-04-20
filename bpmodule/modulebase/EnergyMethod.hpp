@@ -23,12 +23,9 @@ namespace modulebase {
  *  We insist on a common name for the call to the energy, Deriv, so that we can
  *  write generic routines for combining the results without if/then logic.
  * 
- *  As long as your derived class calls the base class's Deriv function for
- *  derivative orders higher than you have coded, this class will take care of
- *  all necessary finite difference computations.  Obviously, we can not
+ *  This base class will take care of all necessary finite difference 
+ *  computations as determined by the MAX_DERIV keyword.  Obviously, we can not
  *  finite difference the energy for you....
- * 
- *  \TODO The FDiff displacement should be an option and not just hard-coded
  *
  */
 class EnergyMethod : public ModuleBase

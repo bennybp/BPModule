@@ -14,6 +14,8 @@
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/system/System.hpp"
 #include "bpmodule/system/BasisSet.hpp"
+#include "bpmodule/system/Symmetrizer.hpp"
+#include "bpmodule/system/SymmetryElements.hpp"
 #include "bpmodule/system/Ordering.hpp"
 #include "bpmodule/math/RegisterMathSet.hpp"
 
@@ -186,6 +188,7 @@ PYBIND11_PLUGIN(system)
     m.def("AtomicNameFromSym", AtomicNameFromSym);
     m.def("AtomicMultiplicityFromZ", AtomicMultiplicityFromZ);
     m.def("AtomicMultiplicityFromSym", AtomicMultiplicityFromSym);
+    m.def("InertiaTensor",InertiaTensor);
 
 
     // Atom structure
@@ -287,7 +290,37 @@ PYBIND11_PLUGIN(system)
             })
     ;
 
-
+    pybind11::class_<Symmetrizer>(m, "Symmetrizer")
+    .def(pybind11::init<>())
+    .def("GetSymmetry",&Symmetrizer::GetSymmetry);
+    
+    pybind11::class_<SymmetryElement>(m,"SymmetryElement")
+    .def(pybind11::init<const std::array<double,9>&,
+                        const std::string&,const std::string&>())
+    .def(pybind11::init<const SymmetryElement&>())
+    .def_readonly("Elem",&SymmetryElement::Elem)
+    .def_readonly("SSymbol",&SymmetryElement::SSymbol)
+    .def_readonly("HMSymbol",&SymmetryElement::HMSymbol)
+    ;
+    
+    pybind11::class_<MirrorPlane>
+    (m,"MirrorPlane",pybind11::base<SymmetryElement>())
+    .def(pybind11::init<const std::array<double,3>&>())
+    ;
+    
+    pybind11::class_<Rotation>
+    (m,"Rotation",pybind11::base<SymmetryElement>())
+    .def(pybind11::init<const std::array<double,3>&,size_t,size_t>())
+    ;
+    
+    pybind11::class_<ImproperRotation>
+    (m,"ImproperRotation",pybind11::base<SymmetryElement>())
+    .def(pybind11::init<const std::array<double,3>&,size_t,size_t>())
+    ;
+    
+    m.attr("Identity")=pybind11::cast(SymmetryElement(Identity));
+    m.attr("CoI")=pybind11::cast(SymmetryElement(CoI));
+    
     // Export the testing stuff
     export_testing(m);
 

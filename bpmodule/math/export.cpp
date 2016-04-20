@@ -177,6 +177,10 @@ PYBIND11_PLUGIN(math)
                                  throw pybind11::index_error();
                              p[i] = v;
                         })
+    .def("__str__",[](const Point& p){
+                        std::stringstream ss;
+                        p.Print(ss);
+                        return ss.str();})
     ;
    
     /////////////////////////// 

@@ -12,7 +12,6 @@ set(BPMODULE_MATH_FILES
 ADD_COREMODULE(math
            "${BPMODULE_MATH_FILES}"
            ""
-           ""
+           "${BPMODULE_MATH_LIBS}"
            "")
-
 INSTALL_COREMODULE(math)
