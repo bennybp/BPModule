@@ -59,28 +59,29 @@ for l in range(-1, -5, -1):
 with psr_common.HeaderSourceFiles(outbase, "Ordering of basis functions",
                                  ["pulsar","system","lut"],
                                  createheader = False,
-                                 srcincludes = ["\"pulsar/system/Ordering.hpp\""]) as src:
+                                 srcincludes = ["\"pulsar/system/AOOrdering.hpp\""]) as src:
 
     src.f.write("//Map of AM to exponents on x, y, z\n")
-    src.f.write("extern const CartesianOrderingMap ao_cartesian_order_{\n");
+    src.f.write("extern const AOOrderingMaps ao_ordering_{\n");
 
+    src.f.write("{ // open spherical gaussian\n")
+    for l in range(-4, maxl+1):
+        src.f.write("  {{ {:3}, {{".format(l))
+        for v in sphmap[l]:
+            src.f.write("  {:3},".format(v))
+        src.f.write("  }  },\n")
+    src.f.write("}, // close spherical gaussian\n")
+
+    src.f.write("\n")
+
+    src.f.write("{ // open cartesian gaussian\n")
     for l in range(-4, maxl+1):
         src.f.write("  {{ {:3}, {{\n".format(l))
         for v in cartmap[l]:
             src.f.write("          {{ {:3},{:3},{:3} }},\n".format(v[0], v[1], v[2]));
         src.f.write("         },\n")
         src.f.write("  },\n")
+    src.f.write("}, // close cartesian gaussian\n")
 
-    src.f.write("};\n")
+    src.f.write("}; // close ao_ordering_\n")
 
-    src.f.write("\n\n")
-    src.f.write("//Map of AM to m_l value\n")
-    src.f.write("extern const SphericalOrderingMap ao_spherical_order_{\n");
-
-    for l in range(-4, maxl+1):
-        src.f.write("{{ {:3}, {{".format(l))
-        for v in sphmap[l]:
-            src.f.write("{:3},".format(v))
-        src.f.write("}  },\n")
-
-    src.f.write("};\n")

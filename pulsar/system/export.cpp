@@ -16,7 +16,8 @@
 #include "pulsar/system/BasisSet.hpp"
 #include "pulsar/system/Symmetrizer.hpp"
 #include "pulsar/system/SymmetryElements.hpp"
-#include "pulsar/system/Ordering.hpp"
+#include "pulsar/system/AOOrdering.hpp"
+#include "pulsar/system/SphericalTransform.hpp"
 #include "pulsar/math/RegisterMathSet.hpp"
 
 
@@ -44,15 +45,33 @@ PYBIND11_PLUGIN(system)
     ///////////////
     // Ordering
     ///////////////
-    m.def("AllSphericalOrdering", AllSphericalOrderings);
-    m.def("AllCartesianOrdering", AllCartesianOrderings);
+    pybind11::class_<AOOrderingMaps>(m, "AOOrderingMaps")
+    .def(pybind11::init<>())
+    .def(pybind11::init<const AOOrderingMaps &>())
+    .def_readwrite("spherical_order", &AOOrderingMaps::spherical_order)
+    .def_readwrite("cartesian_order", &AOOrderingMaps::cartesian_order)
+    ;
+
+    m.def("AllAOOrderings", AllAOOrderings, pybind11::return_value_policy::copy);
     m.def("SphericalOrdering", SphericalOrdering);
     m.def("CartesianOrdering", CartesianOrdering);
     m.def("SphericalIndex", SphericalIndex);
     m.def("CartesianIndex", CartesianIndex);
+    m.def("MakeBSReorderMap", MakeBSReorderMap);
+    m.def("MakeAOBasisOrdering", MakeAOBasisOrdering);
 
-    //! \todo Reorder with python lists? Or opaque vectors
+    ////////////////////////////
+    // Spherical Transformation
+    ////////////////////////////
+    pybind11::class_<SphericalTransformCoefficient>(m, "SphericalTransformCoefficient")
+    .def(pybind11::init<>())
+    .def(pybind11::init<const SphericalTransformCoefficient &>())
+    .def_readwrite("sphidx", &SphericalTransformCoefficient::sphidx)
+    .def_readwrite("cartidx", &SphericalTransformCoefficient::cartidx)
+    .def_readwrite("coef", &SphericalTransformCoefficient::coef)
+    ;
 
+    m.def("AllSphericalTransforms", AllSphericalTransforms, pybind11::return_value_policy::copy);
 
     ///////////////
     // Basis set

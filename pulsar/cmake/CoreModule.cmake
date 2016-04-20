@@ -10,6 +10,7 @@
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
     list(APPEND PULSAR_CXX_STRICT_FLAGS "-std=c++11")
     list(APPEND PULSAR_CXX_STRICT_FLAGS "-w3")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-restrict;-DRESTRICT=restrict")
 
     #  2338  : switch statement does not have a default clause
     #list(APPEND PULSAR_CXX_STRICT_FLAGS "-ww2338")
@@ -35,6 +36,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
     list(APPEND PULSAR_CXX_STRICT_FLAGS "-wd444")
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
     list(APPEND PULSAR_CXX_STRICT_FLAGS "-std=c++11")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-DRESTRICT=__restrict__")
     list(APPEND PULSAR_CXX_STRICT_FLAGS "-Wall;-Wextra;-pedantic")
     list(APPEND PULSAR_CXX_STRICT_FLAGS "-Wfloat-equal;-Wshadow")
     list(APPEND PULSAR_CXX_STRICT_FLAGS "-Wswitch-default")

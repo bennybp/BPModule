@@ -7,6 +7,7 @@
 
 #include "pulsar/testing/TestSerialization.hpp"
 #include "pulsar/math/Point.hpp"
+#include "pulsar/math/Reorder.hpp"
 #include "pulsar/math/RegisterMathSet.hpp"
 #include "pulsar/math/IrrepSpinMatrix.hpp"
 
@@ -17,7 +18,6 @@ namespace export_python {
 
 
 // Compare two MathSets elementwise
-//! \todo Maybe replace if able to get universes from mathset. This is ugly
 template<typename T>
 struct MathSetCompare
 {
@@ -29,14 +29,33 @@ struct MathSetCompare
 };
 
 
+std::vector<double> Test_Reorder(const std::vector<size_t> & neworder,
+                                 const std::vector<double> & src,
+                                 size_t width, size_t niter)
+{
+    std::vector<double> ret(src.size());
+    ReorderBlock(neworder, src.data(), ret.data(), width, niter);
+    return ret;
+}
+                              
+
 
 void export_testing(pybind11::module & m)
 {
     using pulsar::testing::TestSerialization;
 
-    // For testing
+    /////////////////////////
+    // MathSet and Universe
+    /////////////////////////
     RegisterUniverse<Universe<std::string>>(m, "StringSetUniverse"); 
     RegisterMathSet<MathSet<std::string>>(m, "StringSet"); 
+
+    /////////////////////////
+    // Reordering
+    /////////////////////////
+    m.def("Test_Reorder", &Test_Reorder);
+    m.def("Test_MakeOrdering", &MakeOrdering<int>);
+    
 
     /////////////////////////////////
     // Serialization

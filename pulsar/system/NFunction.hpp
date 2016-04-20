@@ -13,8 +13,8 @@
 #include "pulsar/system/ShellType.hpp"
 
 
-#define NCARTESIAN_GAUSSIAN_(am) ((am>=0)?((((am)+2)*((am)+1))>>1):0)
-#define NSPHERICAL_GAUSSIAN_(am) ((2*(am)+1))
+#define NCartesianGaussian_(am) ((am>=0)?((((am)+2)*((am)+1))>>1):0)
+#define NSphericalGaussian_(am) ((2*(am)+1))
 
 
 namespace pulsar{
@@ -24,15 +24,15 @@ namespace system {
 //////////////////////////////
 // Cartesian
 //////////////////////////////
-inline int NCARTESIAN_GAUSSIAN(int am)
+inline int NCartesianGaussian(int am)
 {
     if(am >= 0) // "Normal" angular momentum
-        return NCARTESIAN_GAUSSIAN_(am);
+        return NCartesianGaussian_(am);
     else // "Special" combination (sp, spd, etc)
     {
         int ncart = 0;
         for(int i = 0; i >= am; --i)
-            ncart += NCARTESIAN_GAUSSIAN_(-i);
+            ncart += NCartesianGaussian_(-i);
         return ncart;
     }
 }
@@ -42,15 +42,15 @@ inline int NCARTESIAN_GAUSSIAN(int am)
 //////////////////////////////
 // Spherical Harmonics
 //////////////////////////////
-inline int NSPHERICAL_GAUSSIAN(int am)
+inline int NSphericalGaussian(int am)
 {
     if(am >= 0) // "Normal" angular momentum
-        return NSPHERICAL_GAUSSIAN_(am);
+        return NSphericalGaussian_(am);
     else // "Special" combination (sp, spd, etc)
     {
         int ncart = 0;
         for(int i = 0; i >= am; --i)
-            ncart += NSPHERICAL_GAUSSIAN_(-i);
+            ncart += NSphericalGaussian_(-i);
         return ncart;
     }
 }
@@ -60,7 +60,7 @@ inline int NSPHERICAL_GAUSSIAN(int am)
 
 
 /////////////////
-// Main function
+// Main functions
 /////////////////
 
 /*! \brief Determine the number of functions for a given angular momentum
@@ -74,9 +74,9 @@ inline int NFunction(ShellType type, int am)
     switch(type)
     {
         case ShellType::CartesianGaussian:
-            return NCARTESIAN_GAUSSIAN(am);
+            return NCartesianGaussian(am);
         case ShellType::SphericalGaussian:
-            return NSPHERICAL_GAUSSIAN(am);
+            return NSphericalGaussian(am);
         default:
             throw exception::BasisSetException("Unknown shell type", "type", static_cast<int>(type));
     }

@@ -11,8 +11,10 @@ set(PULSAR_SYSTEM_FILES
     BasisShellInfo.cpp
     BasisSetShell.cpp
     AMConvert.cpp
-    Ordering_LUT.cpp
-    Ordering.cpp
+    AOOrdering_LUT.cpp
+    AOOrdering.cpp
+    SphericalTransform.cpp
+    SphericalTransform_LUT.cpp
 
     export.cpp
     testing_export.cpp

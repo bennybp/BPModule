@@ -8,8 +8,8 @@
 #define PULSAR_GUARD_SYSTEM__SHELLTYPE_HPP_
 
 #include <vector>
+#include <stdexcept>
 #include "pulsar/util/Serialization.hpp"
-#include "pulsar/exception/Assert.hpp"
 
 
 namespace pulsar{
@@ -23,6 +23,23 @@ enum class ShellType
     CartesianGaussian,
     Slater
 };
+
+
+inline const char * ShellTypeString(ShellType type)
+{
+    switch(type)
+    {
+        case ShellType::SphericalGaussian:
+            return "SphericalGaussian";
+        case ShellType::CartesianGaussian:
+            return "CartesianGaussian";
+        case ShellType::Slater:
+            return "Slater";
+        default:
+            throw std::logic_error("Shell type to string is missing");
+    }
+};
+
 
 
 } // close namespace system
