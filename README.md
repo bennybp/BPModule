@@ -120,7 +120,20 @@ The Pulsar project is comprised of two components: the core framework and the
  modules.
 The core is the framework that keeps all the modules playing nicely with one
 another and we will compile that first.  You should only have to compile the
-framework once unless you are developing for it.  Compilation of the core 
+framework once unless you are developing for it. Note that Pulsar uses git
+submodules, which are a bit touchy sometimes.  Make sure you clone the
+source code with:
+```git
+git clone --recursive git@github.com:pulsar-chem/Pulsar-Core.git
+```
+If you forget to do that in the Pulsar home directory run:
+```git
+git submodule --init --recursive
+```
+which will then checkout all of the submodules for you.
+
+
+Once you have the source code (and the submodules), compilation of the core 
 should be as simple as (on an ideally setup Linux box):
 
 ```Bash
