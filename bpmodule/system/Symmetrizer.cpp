@@ -13,7 +13,7 @@
 #include "bpmodule/math/NumberTheory.hpp"
 #include "bpmodule/math/BLAS.hpp"
 #include "bpmodule/math/Checking.hpp"
-#include "bpmodule/util/Constants.hpp"
+#include "bpmodule/Constants.hpp"
 #include "bpmodule/exception/Exceptions.hpp"
 
 
@@ -64,7 +64,7 @@ bool IsGood(const System& Mol,const SymmEl_t& E,const Vector_t& Ax,double Tol){
         MaxDist=MinDist;
         AJ=AI;
     }
-    double a0=1.0/BOHR_RADIUS_ANGSTROMS_D,Denom=0.0;
+    double a0=1.0/BOHR_RADIUS_ANGSTROMS,Denom=0.0;
     if(E.SSymbol=="i")Denom=AJ.Magnitude();
     else if(E.SSymbol=="m")Denom=fabs(Dot(AJ,Ax));
     else Denom=PerpDist(Ax,AJ);

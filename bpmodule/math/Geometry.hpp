@@ -16,7 +16,7 @@
 
 #include<array>
 #include<cmath>
-#include"bpmodule/util/Constants.hpp"//For Pi
+#include"bpmodule/Constants.hpp"//For Pi
 namespace bpmodule{
 namespace math{
 
@@ -24,7 +24,7 @@ namespace math{
 //Returns rotation matrix about the unit vector by \p n degrees
 template<typename T>
 std::array<double,9> Rotation(const T& Axis, double ndegrees){
-    const double angle=ndegrees*PI_D/180.0,x=Axis[0],y=Axis[1],z=Axis[2];
+    const double angle=ndegrees*PI/180.0,x=Axis[0],y=Axis[1],z=Axis[2];
     const double c=cos(angle),s=sin(angle);
     double c1=1-c;
     return {c+x*x*c1, x*y*c1-z*s,x*z*c1+y*s,

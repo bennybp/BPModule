@@ -5,7 +5,6 @@
  */
 #include <iostream>
 #include "bpmodule/system/SymmetryElements.hpp"
-#include "bpmodule/util/Constants.hpp"
 #include "bpmodule/math/Geometry.hpp"
 #include "SymmetryElements.hpp"
 
