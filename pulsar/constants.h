@@ -15,8 +15,8 @@ CREATED: 2016-04-20 11:59:40.699578
 **************************************************************/
 
 
-#ifndef BPMODULE_GUARD_BPMODULE__CONSTANTS_H_
-#define BPMODULE_GUARD_BPMODULE__CONSTANTS_H_
+#ifndef PULSAR_GUARD_PULSAR__CONSTANTS_H_
+#define PULSAR_GUARD_PULSAR__CONSTANTS_H_
 
 
 /*! \brief Angstrom (in m)

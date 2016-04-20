@@ -1,9 +1,9 @@
-#ifndef BPMODULE_GUARD_GRAPH__BFS_HPP_
-#define BPMODULE_GUARD_GRAPH__BFS_HPP_
+#ifndef PULSAR_GUARD_GRAPH__BFS_HPP_
+#define PULSAR_GUARD_GRAPH__BFS_HPP_
 
 #include <boost/graph/breadth_first_search.hpp>
 
-namespace bpmodule{
+namespace pulsar{
 namespace datastore {
 namespace LibGraph{
 
@@ -225,6 +225,6 @@ class BFSBase:public boost::default_bfs_visitor{
 
 } // close namespace LibGraph
 } // close namespace datastore
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif /* GRAPH_BFS_HPP_ */

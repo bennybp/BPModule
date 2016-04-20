@@ -6,7 +6,7 @@
 import sys
 import os
 
-import bp_common
+import psr_common
 
 
 for f in sys.argv[1:]:
@@ -14,7 +14,7 @@ for f in sys.argv[1:]:
     print("File doesn't exist or is not a file: {}".format(f)) 
     continue
 
-  guard = bp_common.GenIncludeGuard(f)
+  guard = psr_common.GenIncludeGuard(f)
 
   print("Processing file {}".format(f)) 
   print("  Header guard: {}".format(guard)) 

@@ -1,10 +1,10 @@
-set(BPMODULE_PARALLEL_FILES
+set(PULSAR_PARALLEL_FILES
             InitFinalize.cpp
             export.cpp
    )
  
 ADD_COREMODULE(parallel
-           "${BPMODULE_PARALLEL_FILES}"
+           "${PULSAR_PARALLEL_FILES}"
            ""
            "libtaskforce"
            "")

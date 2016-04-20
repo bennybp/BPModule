@@ -1,11 +1,11 @@
-#ifndef BPMODULE_GUARD_MATH__FACTORIAL_HPP_
-#define BPMODULE_GUARD_MATH__FACTORIAL_HPP_
+#ifndef PULSAR_GUARD_MATH__FACTORIAL_HPP_
+#define PULSAR_GUARD_MATH__FACTORIAL_HPP_
 
-#include "bpmodule/math/Factorial_LUT.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/math/Factorial_LUT.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 
 
@@ -193,7 +193,7 @@ inline double Double2nm1FactorialD(int n)
 
 
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

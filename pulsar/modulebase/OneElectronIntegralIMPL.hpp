@@ -5,13 +5,13 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_MODULEBASE__ONEELECTRONINTEGRALIMPL_HPP_
-#define BPMODULE_GUARD_MODULEBASE__ONEELECTRONINTEGRALIMPL_HPP_
+#ifndef PULSAR_GUARD_MODULEBASE__ONEELECTRONINTEGRALIMPL_HPP_
+#define PULSAR_GUARD_MODULEBASE__ONEELECTRONINTEGRALIMPL_HPP_
 
-#include "bpmodule/modulebase/ModuleBase.hpp"
+#include "pulsar/modulebase/ModuleBase.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulebase {
 
 /*! \brief One-electron integral implementation
@@ -129,6 +129,6 @@ class OneElectronIntegralIMPL_Py : public OneElectronIntegralIMPL
 };
 
 } // close namespace modulebase
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

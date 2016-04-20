@@ -5,16 +5,16 @@ import os
 import sys
 import traceback 
 
-# Add the bpmodule path
+# Add the pulsar path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "../", "modules")
+psrpath = os.path.join(os.path.dirname(thispath), "../", "modules")
 parent = os.path.join(os.path.dirname(thispath))
-sys.path.insert(0, bppath)
+sys.path.insert(0, psrpath)
 sys.path.insert(0, parent)
 
-from bpmodule.system import *
-from bpmodule.datastore import *
-from bpmodule.output import *
+from pulsar.system import *
+from pulsar.datastore import *
+from pulsar.output import *
 
 from helper.TestAtoms import water
 
@@ -57,9 +57,9 @@ def Run(mm):
 
 
 
-bp.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.Init(sys.argv, out = "stdout", color = True, debug = True)
 
-with bp.ModuleAdministrator() as mm:
+with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-bp.Finalize()
+psr.Finalize()

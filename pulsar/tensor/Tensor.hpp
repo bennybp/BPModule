@@ -1,13 +1,13 @@
-#ifndef BPMODULE_GUARD_TENSOR__TENSOR_HPP_
-#define BPMODULE_GUARD_TENSOR__TENSOR_HPP_
+#ifndef PULSAR_GUARD_TENSOR__TENSOR_HPP_
+#define PULSAR_GUARD_TENSOR__TENSOR_HPP_
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace tensor {
 
 
 } // close namespace tensor
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

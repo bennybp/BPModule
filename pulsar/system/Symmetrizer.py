@@ -1,4 +1,4 @@
-import bpmodule as bp
+import pulsar as psr
 import numpy as np
 
 def CoI():
@@ -36,7 +36,7 @@ class Symmetrizer:
         """
         CoM=Mol.CenterOfMass()
         CenteredMol=Mol.Translate([-1*i for i in CoM])
-        I=np.array(bp.system.InertiaTensor(CenteredMol)).reshape(3,3)
+        I=np.array(psr.system.InertiaTensor(CenteredMol)).reshape(3,3)
         evals,evecs=np.linalg.eig(I)
         #Sort eigenvalues in descending order
         idx=evals.argsort()[::-1]

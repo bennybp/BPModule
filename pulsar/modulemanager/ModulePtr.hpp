@@ -5,12 +5,12 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULEPTR_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__MODULEPTR_HPP_
+#ifndef PULSAR_GUARD_MODULEMANAGER__MODULEPTR_HPP_
+#define PULSAR_GUARD_MODULEMANAGER__MODULEPTR_HPP_
 
-#include "bpmodule/modulemanager/ModuleIMPLHolder.hpp"
+#include "pulsar/modulemanager/ModuleIMPLHolder.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 /*! \brief A C++ smart pointer containing a module
@@ -33,7 +33,7 @@ class ModulePtr
         ModulePtr(std::unique_ptr<detail::ModuleIMPLHolder> && holder)
                 : holder_(std::move(holder))
         {
-            using namespace bpmodule::exception;
+            using namespace pulsar::exception;
 
             // check before getting Cpp pointer
             if(!holder_)
@@ -61,12 +61,12 @@ class ModulePtr
          *
          * Used to call functions of the contained module object
          *
-         * \throw bpmodule::exception::GeneralException if there is a null pointer
+         * \throw pulsar::exception::GeneralException if there is a null pointer
          *        in this object (ie, has been deleted)
          */
         T * operator->() const
         {
-            using namespace bpmodule::exception;
+            using namespace pulsar::exception;
 
             if(!holder_)
                 throw GeneralException("ModulePtr has an empty unique pointer");
@@ -80,7 +80,7 @@ class ModulePtr
          *
          * Used to call functions of the contained module object
          *
-         * \throw bpmodule::exception::GeneralException if there is a null pointer
+         * \throw pulsar::exception::GeneralException if there is a null pointer
          *        in this object (ie, has been deleted)
          */
         T & operator*() const
@@ -124,7 +124,7 @@ class PyModulePtr
         PyModulePtr(std::unique_ptr<detail::ModuleIMPLHolder> && holder)
                   : holder_(std::move(holder))
         {
-            using namespace bpmodule::exception;
+            using namespace pulsar::exception;
 
             // check before getting the python object
             if(!holder_)
@@ -147,14 +147,14 @@ class PyModulePtr
          *
          * See \ref python_smart_pointer
          *
-         * \throw bpmodule::exception::GeneralException if there is a null pointer
+         * \throw pulsar::exception::GeneralException if there is a null pointer
          *        or empty object in this object (ie, has been deleted)
          *
          * \param [in] name The attribute to get from the module
          */
         pybind11::object Py__getattr__(const std::string & name)
         {
-            using namespace bpmodule::exception;
+            using namespace pulsar::exception;
 
             // check before getting the python object
             if(!holder_)
@@ -176,7 +176,7 @@ class PyModulePtr
 
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

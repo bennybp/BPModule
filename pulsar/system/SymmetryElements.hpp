@@ -11,14 +11,14 @@
  * Created on April 13, 2016, 3:38 PM
  */
 
-#ifndef SYMMETRYELEMENTS_HPP
-#define SYMMETRYELEMENTS_HPP
+#ifndef PULSAR_GUARD_SYSTEM__SYMMETRYELEMENTS_HPP_
+#define PULSAR_GUARD_SYSTEM__SYMMETRYELEMENTS_HPP_
 
 #include <array>
 #include <string>
 #include <sstream>
 
-namespace bpmodule{
+namespace pulsar{
 namespace system{
 
 
@@ -94,8 +94,8 @@ inline std::ostream& operator<<(std::ostream& os, const SymmetryElement& E){
 
 ///Allows Symmetry elements to be hashed, although not terribly uniquely
 namespace std{
-template<> struct hash<bpmodule::system::SymmetryElement>{
-    size_t operator()(const bpmodule::system::SymmetryElement& E)const{
+template<> struct hash<pulsar::system::SymmetryElement>{
+    size_t operator()(const pulsar::system::SymmetryElement& E)const{
         std::hash<std::string> h;
         return h(E.SSymbol);
     }

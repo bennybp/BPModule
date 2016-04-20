@@ -2,12 +2,12 @@
 #include<iostream>
 #include<iomanip>
 #include<limits>
-#include "bpmodule/output/Table.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/output/Table.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
-using bpmodule::exception::GeneralException;
+using pulsar::exception::GeneralException;
 typedef std::vector<char> Border_t;
-namespace bpmodule{
+namespace pulsar{
     namespace output{
         typedef std::vector<Cell> Col_t;
         typedef std::vector<Col_t> Row_t;

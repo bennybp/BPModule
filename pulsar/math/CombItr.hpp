@@ -11,12 +11,12 @@
  * Created on March 17, 2016, 10:52 AM
  */
 
-#ifndef BPMODULE_GUARD_MATH__COMBITR_HPP_
-#define BPMODULE_GUARD_MATH__COMBITR_HPP_
+#ifndef PULSAR_GUARD_MATH__COMBITR_HPP_
+#define PULSAR_GUARD_MATH__COMBITR_HPP_
 
 #include <vector>
-#include "bpmodule/exception/Exceptions.hpp"
-namespace bpmodule {
+#include "pulsar/exception/Exceptions.hpp"
+namespace pulsar{
 namespace math{
 
 /** \brief An iterator to generate all combinations from n objects,
@@ -155,7 +155,7 @@ template <typename T>
 CombItr<T>::CombItr(const T& Set, size_t K) :
       K_(K), End_(K),Set_(Set), Done_(false) {
    if (Set.size()<K)
-    throw bpmodule::exception::GeneralException(
+    throw pulsar::exception::GeneralException(
            "I don't know how to generate combinations with"
            " more items than you gave me....");
 

@@ -7,17 +7,17 @@ import argparse
 import copy
 import traceback 
 
-# Add the bpmodule path
+# Add the pulsar path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "modules")
-sys.path.insert(0, bppath)
+psrpath = os.path.join(os.path.dirname(thispath), "modules")
+sys.path.insert(0, psrpath)
 
-import bpmodule as bp
+import pulsar as psr
 
 def Run():
     try:
 
-        tester = bp.testing.Tester("Testing conversions from Python to C++")
+        tester = psr.testing.Tester("Testing conversions from Python to C++")
         tester.PrintHeader()
 
         # integer types
@@ -27,50 +27,50 @@ def Run():
                    ]
 
         # The limits on various integer types
-        intlimitdict = { "sshort"             : bp.testing.Limits_sshort(),
-                         "ushort"             : bp.testing.Limits_ushort(),
-                         "sint"               : bp.testing.Limits_sint(),
-                         "uint"               : bp.testing.Limits_uint(),
-                         "slong"              : bp.testing.Limits_slong(),
-                         "ulong"              : bp.testing.Limits_ulong(),
-                         "slonglong"          : bp.testing.Limits_slonglong(),
-                         "ulonglong"          : bp.testing.Limits_ulonglong(),
-                         "vector<sshort>"     : bp.testing.Limits_sshort(),
-                         "vector<ushort>"     : bp.testing.Limits_ushort(),
-                         "vector<sint>"       : bp.testing.Limits_sint(),
-                         "vector<uint>"       : bp.testing.Limits_uint(),
-                         "vector<slong>"      : bp.testing.Limits_slong(),
-                         "vector<ulong>"      : bp.testing.Limits_ulong(),
-                         "vector<slonglong>"  : bp.testing.Limits_slonglong(),
-                         "vector<ulonglong>"  : bp.testing.Limits_ulonglong(),
+        intlimitdict = { "sshort"             : psr.testing.Limits_sshort(),
+                         "ushort"             : psr.testing.Limits_ushort(),
+                         "sint"               : psr.testing.Limits_sint(),
+                         "uint"               : psr.testing.Limits_uint(),
+                         "slong"              : psr.testing.Limits_slong(),
+                         "ulong"              : psr.testing.Limits_ulong(),
+                         "slonglong"          : psr.testing.Limits_slonglong(),
+                         "ulonglong"          : psr.testing.Limits_ulonglong(),
+                         "vector<sshort>"     : psr.testing.Limits_sshort(),
+                         "vector<ushort>"     : psr.testing.Limits_ushort(),
+                         "vector<sint>"       : psr.testing.Limits_sint(),
+                         "vector<uint>"       : psr.testing.Limits_uint(),
+                         "vector<slong>"      : psr.testing.Limits_slong(),
+                         "vector<ulong>"      : psr.testing.Limits_ulong(),
+                         "vector<slonglong>"  : psr.testing.Limits_slonglong(),
+                         "vector<ulonglong>"  : psr.testing.Limits_ulonglong(),
                        }
 
 
                       # function                                     failing function                                 name                   acceptable python types
-        testfuncs =    [ (bp.testing.TestPyCppPy_sshort,             bp.testing.TestPyCppPy_Fail_sshort,               "sshort",              ["int"]),
-                         (bp.testing.TestPyCppPy_ushort,             bp.testing.TestPyCppPy_Fail_ushort,               "ushort",              ["int"]),
-                         (bp.testing.TestPyCppPy_sint,               bp.testing.TestPyCppPy_Fail_sint,                 "sint",                ["int"]),
-                         (bp.testing.TestPyCppPy_uint,               bp.testing.TestPyCppPy_Fail_uint,                 "uint",                ["int"]),
-                         (bp.testing.TestPyCppPy_slong,              bp.testing.TestPyCppPy_Fail_slong,                "slong",               ["int"]),
-                         (bp.testing.TestPyCppPy_ulong,              bp.testing.TestPyCppPy_Fail_ulong,                "ulong",               ["int"]),
-                         (bp.testing.TestPyCppPy_slonglong,          bp.testing.TestPyCppPy_Fail_slonglong,            "slonglong",           ["int"]),
-                         (bp.testing.TestPyCppPy_ulonglong,          bp.testing.TestPyCppPy_Fail_ulonglong,            "ulonglong",           ["int"]),
-                         (bp.testing.TestPyCppPy_float,              bp.testing.TestPyCppPy_Fail_float,                "float",               ["float", "int"]),
-                         (bp.testing.TestPyCppPy_double,             bp.testing.TestPyCppPy_Fail_double,               "double",              ["float", "int"]),
-                         (bp.testing.TestPyCppPy_longdouble,         bp.testing.TestPyCppPy_Fail_longdouble,           "longdouble",          ["float", "int"]),
-                         (bp.testing.TestPyCppPy_string,             bp.testing.TestPyCppPy_Fail_string,               "string",              ["string"]),
-                         (bp.testing.TestPyCppPy_vector_sshort,      bp.testing.TestPyCppPy_Fail_vector_sshort,        "vector<sshort>",      ["list<int>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_ushort,      bp.testing.TestPyCppPy_Fail_vector_ushort,        "vector<ushort>",      ["list<int>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_sint,        bp.testing.TestPyCppPy_Fail_vector_sint,          "vector<sint>",        ["list<int>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_uint,        bp.testing.TestPyCppPy_Fail_vector_uint,          "vector<uint>",        ["list<int>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_slong,       bp.testing.TestPyCppPy_Fail_vector_slong,         "vector<slong>",       ["list<int>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_ulong,       bp.testing.TestPyCppPy_Fail_vector_ulong,         "vector<ulong>",       ["list<int>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_slonglong,   bp.testing.TestPyCppPy_Fail_vector_slonglong,     "vector<slonglong>",   ["list<int>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_ulonglong,   bp.testing.TestPyCppPy_Fail_vector_ulonglong,     "vector<ulonglong>",   ["list<int>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_float,       bp.testing.TestPyCppPy_Fail_vector_float,         "vector<float>",       ["list<float>",  "list<int>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_double,      bp.testing.TestPyCppPy_Fail_vector_double,        "vector<double>",      ["list<float>",  "list<int>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_longdouble,  bp.testing.TestPyCppPy_Fail_vector_longdouble,    "vector<long double>", ["list<float>",  "list<int>", "list<empty>"]),
-                         (bp.testing.TestPyCppPy_vector_string,      bp.testing.TestPyCppPy_Fail_vector_string,        "vector<string>",      ["list<string>", "list<empty>"])
+        testfuncs =    [ (psr.testing.TestPyCppPy_sshort,             psr.testing.TestPyCppPy_Fail_sshort,               "sshort",              ["int"]),
+                         (psr.testing.TestPyCppPy_ushort,             psr.testing.TestPyCppPy_Fail_ushort,               "ushort",              ["int"]),
+                         (psr.testing.TestPyCppPy_sint,               psr.testing.TestPyCppPy_Fail_sint,                 "sint",                ["int"]),
+                         (psr.testing.TestPyCppPy_uint,               psr.testing.TestPyCppPy_Fail_uint,                 "uint",                ["int"]),
+                         (psr.testing.TestPyCppPy_slong,              psr.testing.TestPyCppPy_Fail_slong,                "slong",               ["int"]),
+                         (psr.testing.TestPyCppPy_ulong,              psr.testing.TestPyCppPy_Fail_ulong,                "ulong",               ["int"]),
+                         (psr.testing.TestPyCppPy_slonglong,          psr.testing.TestPyCppPy_Fail_slonglong,            "slonglong",           ["int"]),
+                         (psr.testing.TestPyCppPy_ulonglong,          psr.testing.TestPyCppPy_Fail_ulonglong,            "ulonglong",           ["int"]),
+                         (psr.testing.TestPyCppPy_float,              psr.testing.TestPyCppPy_Fail_float,                "float",               ["float", "int"]),
+                         (psr.testing.TestPyCppPy_double,             psr.testing.TestPyCppPy_Fail_double,               "double",              ["float", "int"]),
+                         (psr.testing.TestPyCppPy_longdouble,         psr.testing.TestPyCppPy_Fail_longdouble,           "longdouble",          ["float", "int"]),
+                         (psr.testing.TestPyCppPy_string,             psr.testing.TestPyCppPy_Fail_string,               "string",              ["string"]),
+                         (psr.testing.TestPyCppPy_vector_sshort,      psr.testing.TestPyCppPy_Fail_vector_sshort,        "vector<sshort>",      ["list<int>", "list<empty>"]),
+                         (psr.testing.TestPyCppPy_vector_ushort,      psr.testing.TestPyCppPy_Fail_vector_ushort,        "vector<ushort>",      ["list<int>", "list<empty>"]),
+                         (psr.testing.TestPyCppPy_vector_sint,        psr.testing.TestPyCppPy_Fail_vector_sint,          "vector<sint>",        ["list<int>", "list<empty>"]),
+                         (psr.testing.TestPyCppPy_vector_uint,        psr.testing.TestPyCppPy_Fail_vector_uint,          "vector<uint>",        ["list<int>", "list<empty>"]),
+                         (psr.testing.TestPyCppPy_vector_slong,       psr.testing.TestPyCppPy_Fail_vector_slong,         "vector<slong>",       ["list<int>", "list<empty>"]),
+                         (psr.testing.TestPyCppPy_vector_ulong,       psr.testing.TestPyCppPy_Fail_vector_ulong,         "vector<ulong>",       ["list<int>", "list<empty>"]),
+                         (psr.testing.TestPyCppPy_vector_slonglong,   psr.testing.TestPyCppPy_Fail_vector_slonglong,     "vector<slonglong>",   ["list<int>", "list<empty>"]),
+                         (psr.testing.TestPyCppPy_vector_ulonglong,   psr.testing.TestPyCppPy_Fail_vector_ulonglong,     "vector<ulonglong>",   ["list<int>", "list<empty>"]),
+                         (psr.testing.TestPyCppPy_vector_float,       psr.testing.TestPyCppPy_Fail_vector_float,         "vector<float>",       ["list<float>",  "list<int>", "list<empty>"]),
+                         (psr.testing.TestPyCppPy_vector_double,      psr.testing.TestPyCppPy_Fail_vector_double,        "vector<double>",      ["list<float>",  "list<int>", "list<empty>"]),
+                         (psr.testing.TestPyCppPy_vector_longdouble,  psr.testing.TestPyCppPy_Fail_vector_longdouble,    "vector<long double>", ["list<float>",  "list<int>", "list<empty>"]),
+                         (psr.testing.TestPyCppPy_vector_string,      psr.testing.TestPyCppPy_Fail_vector_string,        "vector<string>",      ["list<string>", "list<empty>"])
                        ]  
 
 
@@ -123,7 +123,7 @@ def Run():
             for d in testdat:
                 s = "Test python {} <-> C++ {}".format(d[0], f[2])
                 success = ( d[0] in f[3] )
-                bp.output.GlobalWarning(str(success) + "\n")   
+                psr.output.GlobalWarning(str(success) + "\n")   
 
                 # get the range for integer type
                 if success and f[2] in inttypes:
@@ -144,15 +144,15 @@ def Run():
 
 
     except Exception as e:
-      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      psr.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.GlobalError("\n")
-      bp.output.GlobalError(str(e))
-      bp.output.GlobalError("\n")
+      psr.output.GlobalError("\n")
+      psr.output.GlobalError(str(e))
+      psr.output.GlobalError("\n")
 
 
 
 
-bp.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.Init(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-bp.Finalize()
+psr.Finalize()

@@ -5,10 +5,10 @@
  */
 
 
-#include "bpmodule/math/IrrepSpinMatrix.hpp"
+#include "pulsar/math/IrrepSpinMatrix.hpp"
 
 
-namespace bpmodule{
+namespace pulsar{
 namespace math{
 
 
@@ -23,5 +23,5 @@ template class BlockByIrrepSpin<SimpleVectorCF>;
 template class BlockByIrrepSpin<SimpleVectorCD>;
 
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar
 

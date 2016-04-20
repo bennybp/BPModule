@@ -5,10 +5,10 @@
  */ 
 
 #include <algorithm>
-#include "bpmodule/util/StringUtil.hpp"
+#include "pulsar/util/StringUtil.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 
@@ -104,5 +104,5 @@ std::string Line(char c, int n)
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 

@@ -6,12 +6,12 @@ import sys
 import argparse
 import traceback
 
-# Add the bpmodule path
+# Add the pulsar path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "modules")
-sys.path.insert(0, bppath)
+psrpath = os.path.join(os.path.dirname(thispath), "modules")
+sys.path.insert(0, psrpath)
 
-import bpmodule as bp
+import pulsar as psr
 
 
 def IsValid(t, d):
@@ -35,7 +35,7 @@ def IsValid(t, d):
 def Run(mm):
     try:
 
-        tester = bp.testing.Tester("Testing construction of Modules and Options")
+        tester = psr.testing.Tester("Testing construction of Modules and Options")
         tester.PrintHeader()
 
 
@@ -96,7 +96,7 @@ def Run(mm):
 
 
         for m in allmod:
-            bp.output.GlobalOutput("Got module key {:<20} {:<20} v{}\n".format(m[0].Key(), m[0].Name(), m[0].Version()))
+            psr.output.GlobalOutput("Got module key {:<20} {:<20} v{}\n".format(m[0].Key(), m[0].Name(), m[0].Version()))
 
 
         nfailed = 0
@@ -105,19 +105,19 @@ def Run(mm):
         for m in allmod:
             # None should be valid - I haven't specified required options
             desc = "Testing validity of {}".format(m[0].Key())
-            tester.Test(desc, False, bp.testing.PyTestBoolFunc, m[0].Options().AllReqSet)
+            tester.Test(desc, False, psr.testing.PyTestBoolFunc, m[0].Options().AllReqSet)
 
         for m in allmod:
             for d in testelements:
                 if d[0] == m[1]:
                     desc = "Setting required option for {}".format(m[0].Key())
                     opt = d[0] + "_req"
-                    tester.Test(desc, True, bp.testing.PyTestFunc, m[0].Options().Change, opt, d[1]) 
+                    tester.Test(desc, True, psr.testing.PyTestFunc, m[0].Options().Change, opt, d[1]) 
 
         for m in allmod:
             # Should be valid now
             desc = "Retesting validity of {}".format(m[0].Key())
-            tester.Test(desc, True, bp.testing.PyTestBoolFunc, m[0].Options().AllReqSet)
+            tester.Test(desc, True, psr.testing.PyTestBoolFunc, m[0].Options().AllReqSet)
 
 
         for m in allmod:
@@ -126,25 +126,25 @@ def Run(mm):
                     opt = m[1] + o
                     expected = IsValid(m[1], d[0])
                     desc = "Setting {} option for {} -> {}".format(opt, m[0].Key(), d[0])
-                    tester.Test(desc, expected, bp.testing.PyTestFunc, m[0].Options().Change, opt, d[1])
+                    tester.Test(desc, expected, psr.testing.PyTestFunc, m[0].Options().Change, opt, d[1])
 
         tester.PrintResults()
 
 
 
     except Exception as e:
-          bp.output.GlobalOutput("Caught exception in main handler\n")
+          psr.output.GlobalOutput("Caught exception in main handler\n")
           traceback.print_exc()
-          bp.output.GlobalError("\n")
-          bp.output.GlobalError(str(e))
-          bp.output.GlobalError("\n")
+          psr.output.GlobalError("\n")
+          psr.output.GlobalError(str(e))
+          psr.output.GlobalError("\n")
 
 
 
 
-bp.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.Init(sys.argv, out = "stdout", color = True, debug = True)
 
-with bp.ModuleAdministrator() as mm:
+with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-bp.Finalize()
+psr.Finalize()

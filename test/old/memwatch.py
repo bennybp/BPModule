@@ -6,38 +6,38 @@ import sys
 import argparse
 import traceback 
 
-# Add the bpmodule path
+# Add the pulsar path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "modules")
-sys.path.insert(0, bppath)
+psrpath = os.path.join(os.path.dirname(thispath), "modules")
+sys.path.insert(0, psrpath)
 
-import bpmodule as bp
+import pulsar as psr
 
 
 def Run(mm):
 
-    bp.output.GlobalOutput("\n\n----------------------------------------\n")
-    isrun = bp.util.Memwatch_running()
-    bp.output.GlobalOutput("Memwatch is running? {}\n".format(isrun))
+    psr.output.GlobalOutput("\n\n----------------------------------------\n")
+    isrun = psr.util.Memwatch_running()
+    psr.output.GlobalOutput("Memwatch is running? {}\n".format(isrun))
 
-    mem = bp.util.Memwatch_allocated()
-    bp.output.GlobalOutput("Allocated memory so far: {}\n".format(mem))
+    mem = psr.util.Memwatch_allocated()
+    psr.output.GlobalOutput("Allocated memory so far: {}\n".format(mem))
 
-    maxmem = bp.util.Memwatch_getlimit()
-    bp.output.GlobalOutput("Maximum memory to be used: {}\n".format(maxmem))
-
-
-    bp.util.Memwatch_setlimit(10485760)
-    maxmem = bp.util.Memwatch_getlimit()
-    bp.output.GlobalOutput("Maximum memory to be used: {}\n".format(maxmem))
-
-    bp.output.GlobalOutput("----------------------------------------\n\n")
+    maxmem = psr.util.Memwatch_getlimit()
+    psr.output.GlobalOutput("Maximum memory to be used: {}\n".format(maxmem))
 
 
+    psr.util.Memwatch_setlimit(10485760)
+    maxmem = psr.util.Memwatch_getlimit()
+    psr.output.GlobalOutput("Maximum memory to be used: {}\n".format(maxmem))
 
-bp.Init(sys.argv, out = "stdout", color = True, debug = True)
+    psr.output.GlobalOutput("----------------------------------------\n\n")
 
-with bp.ModuleAdministrator() as mm:
+
+
+psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+
+with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-bp.Finalize()
+psr.Finalize()

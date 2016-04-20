@@ -5,11 +5,11 @@
  */ 
 
 
-#include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/tensor/InitFinalize.hpp"
+#include "pulsar/python/Pybind11.hpp"
+#include "pulsar/tensor/InitFinalize.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace tensor {
 namespace export_python {
 
@@ -26,5 +26,5 @@ PYBIND11_PLUGIN(tensor)
 
 } // close namespace export_python
 } // close namespace tensor
-} // close namespace bpmodule
+} // close namespace pulsar
 

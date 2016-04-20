@@ -5,17 +5,17 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__PYSUPERMODULELOADER_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__PYSUPERMODULELOADER_HPP_
+#ifndef PULSAR_GUARD_MODULEMANAGER__PYSUPERMODULELOADER_HPP_
+#define PULSAR_GUARD_MODULEMANAGER__PYSUPERMODULELOADER_HPP_
 
 #include <unordered_map>
 
-#include "bpmodule/modulemanager/SupermoduleLoaderBase.hpp"
-#include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
-#include "bpmodule/python/Pybind11.hpp"
+#include "pulsar/modulemanager/SupermoduleLoaderBase.hpp"
+#include "pulsar/modulemanager/ModuleCreationFuncs.hpp"
+#include "pulsar/python/Pybind11.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 
@@ -62,7 +62,7 @@ class PySupermoduleLoader : public SupermoduleLoaderBase
 };
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

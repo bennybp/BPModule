@@ -1,9 +1,9 @@
-#ifndef BPMODULE_GUARD_PYTHON__PYBIND11_ITERATORS_HPP_
-#define BPMODULE_GUARD_PYTHON__PYBIND11_ITERATORS_HPP_
+#ifndef PULSAR_GUARD_PYTHON__PYBIND11_ITERATORS_HPP_
+#define PULSAR_GUARD_PYTHON__PYBIND11_ITERATORS_HPP_
 
-#include "bpmodule/python/Pybind11.hpp"
+#include "pulsar/python/Pybind11.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace python {
 
 
@@ -46,6 +46,6 @@ void RegisterPyCopyIterator(pybind11::module & m, const char * contname)
 }
 
 } // close namespace python
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

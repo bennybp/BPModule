@@ -19,7 +19,7 @@ CREATED: 2016-04-20 12:00:20.664935
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 namespace lut {
 
@@ -913,4 +913,4 @@ extern const double dfac_2nm1_double_lut_[151] = {
 
 } // closing namespace lut
 } // closing namespace math
-} // closing namespace bpmodule
+} // closing namespace pulsar

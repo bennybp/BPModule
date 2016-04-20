@@ -1,5 +1,5 @@
 #include "FiniteDiff.hpp"
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 
 std::vector<double> Coefs(const std::vector<double>& Stencil, size_t Deriv) {

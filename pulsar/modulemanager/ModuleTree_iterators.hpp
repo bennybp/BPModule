@@ -5,13 +5,13 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULETREE_ITERATORS_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__MODULETREE_ITERATORS_HPP_
+#ifndef PULSAR_GUARD_MODULEMANAGER__MODULETREE_ITERATORS_HPP_
+#define PULSAR_GUARD_MODULEMANAGER__MODULETREE_ITERATORS_HPP_
 
 #include <map>
 #include <limits>
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 
@@ -37,7 +37,7 @@ class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag,
      */
 
     private:
-        friend class bpmodule::modulemanager::ModuleTree;
+        friend class pulsar::modulemanager::ModuleTree;
         static constexpr ID_t MAXVAL = std::numeric_limits<ID_t>::max();
 
         const ModuleTree * mtree_;       //!< The tree we are iterating over
@@ -49,7 +49,7 @@ class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag,
          *
          * Only accessible by other objects of this class and by a ModuleTree
          *
-         * \throw bpmodule::exception::ModuleManagerException if mtree
+         * \throw pulsar::exception::ModuleManagerException if mtree
          *        is a nullptr or the starting id doesn't exist
          *
          * \param [in] mtree The tree to interate over
@@ -66,14 +66,14 @@ class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag,
 
         /*! \brief Dereference the iterator
          *
-         * \throw bpmodule::exception::ModuleManagerException if the current
+         * \throw pulsar::exception::ModuleManagerException if the current
          *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode & operator*()const;
 
         /*! \brief Dereference the iterator
          *
-         * \throw bpmodule::exception::ModuleManagerException if the current
+         * \throw pulsar::exception::ModuleManagerException if the current
          *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode * operator->()const;
@@ -95,7 +95,7 @@ class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag,
          *
          * Similar to dereferencing. Mostly for use from python
          *
-         * \throw bpmodule::exception::ModuleManagerException if the current
+         * \throw pulsar::exception::ModuleManagerException if the current
          *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode & GetRef(void) const;
@@ -117,7 +117,7 @@ class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag,
 class ConstModuleFlatTreeIter
 {
     private:
-        friend class bpmodule::modulemanager::ModuleTree;
+        friend class pulsar::modulemanager::ModuleTree;
 
         typedef std::map<ID_t, ModuleTreeNode> MapType;
 
@@ -141,14 +141,14 @@ class ConstModuleFlatTreeIter
 
         /*! \brief Dereference the iterator
          *
-         * \throw bpmodule::exception::ModuleManagerException if the current
+         * \throw pulsar::exception::ModuleManagerException if the current
          *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode & operator*()const;
 
         /*! \brief Dereference the iterator
          *
-         * \throw bpmodule::exception::ModuleManagerException if the current
+         * \throw pulsar::exception::ModuleManagerException if the current
          *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode * operator->()const;
@@ -169,7 +169,7 @@ class ConstModuleFlatTreeIter
          *
          * Similar to dereferencing. Mostly for use from python
          *
-         * \throw bpmodule::exception::ModuleManagerException if the current
+         * \throw pulsar::exception::ModuleManagerException if the current
          *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode & GetRef(void) const;
@@ -182,7 +182,7 @@ class ConstModuleFlatTreeIter
 
 } // close namespace detail
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

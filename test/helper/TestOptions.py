@@ -1,12 +1,12 @@
 import os
 import sys
 
-# Add the bpmodule path
+# Add the pulsar path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "../", "modules")
-sys.path.insert(0, bppath)
+psrpath = os.path.join(os.path.dirname(thispath), "../", "modules")
+sys.path.insert(0, psrpath)
 
-from bpmodule.datastore import OptionType
+from pulsar.datastore import OptionType
 
 # map to optionstypes,
 opttypemap = { "int"   : OptionType.Int,

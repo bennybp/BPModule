@@ -5,16 +5,16 @@
  */
 
 
-#ifndef BPMODULE_GUARD_UTIL__HASHINGARCHIVE_HPP_
-#define BPMODULE_GUARD_UTIL__HASHINGARCHIVE_HPP_
+#ifndef PULSAR_GUARD_UTIL__HASHINGARCHIVE_HPP_
+#define PULSAR_GUARD_UTIL__HASHINGARCHIVE_HPP_
 
 #include <cereal/cereal.hpp>
 
-#include "bpmodule/util/Hasher.hpp"
-#include "bpmodule/util/Hash.hpp"
+#include "pulsar/util/Hasher.hpp"
+#include "pulsar/util/Hash.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 namespace detail {
@@ -163,15 +163,15 @@ void CEREAL_SAVE_FUNCTION_NAME(HashingOutputArchive & ar, cereal::BinaryData<T> 
 } // close namespace detail
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 //////////////////////////////////////////////
 // Register. We only have an output archive
 // (must be done outside of namespaces)
 //////////////////////////////////////////////
-CEREAL_REGISTER_ARCHIVE(bpmodule::util::detail::HashingArchive)
-CEREAL_REGISTER_ARCHIVE(bpmodule::util::detail::HashingOutputArchive)
+CEREAL_REGISTER_ARCHIVE(pulsar::util::detail::HashingArchive)
+CEREAL_REGISTER_ARCHIVE(pulsar::util::detail::HashingOutputArchive)
 
 
 #endif

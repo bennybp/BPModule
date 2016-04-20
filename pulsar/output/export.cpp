@@ -5,12 +5,12 @@
  */ 
 
 #include <vector>
-#include "bpmodule/output/OutputStream.hpp"
-#include "bpmodule/output/GlobalOutput.hpp"
-#include "bpmodule/python/Pybind11.hpp"
+#include "pulsar/output/OutputStream.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
+#include "pulsar/python/Pybind11.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace output {
 namespace export_python {
 
@@ -71,5 +71,5 @@ PYBIND11_PLUGIN(output)
 
 } // close namespace export_python
 } // close namespace output
-} // close namespace bpmodule
+} // close namespace pulsar
 

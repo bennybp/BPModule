@@ -1,11 +1,11 @@
-from bpmodule.datastore import OptionType
+from pulsar.datastore import OptionType
 
 minfo = { 
-    "BPModule_ModuleBase" :
+    "Pulsar_ModuleBase" :
     {
        "type"        : "core",
        "version"     : "0.1a",
-       "description" : "Module Base Classes for BPModule",
+       "description" : "Module Base Classes for Pulsar",
        "authors"     : [],
        "refs"        : [],
        "options"     : {},
@@ -14,7 +14,7 @@ minfo = {
     {
        "type"        : "core",
        "version"     : "0.1a",
-       "description" : "Module Base Classes for BPModule",
+       "description" : "Module Base Classes for Pulsar",
        "authors"     : [],
        "refs"        : [],
        "options"     : {},

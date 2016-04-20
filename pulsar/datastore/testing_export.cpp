@@ -4,19 +4,19 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/datastore/OptionMap.hpp"
-#include "bpmodule/datastore/Wavefunction.hpp"
-#include "bpmodule/testing/TestSerialization.hpp"
+#include "pulsar/datastore/OptionMap.hpp"
+#include "pulsar/datastore/Wavefunction.hpp"
+#include "pulsar/testing/TestSerialization.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 namespace export_python {
 
 
 void export_testing(pybind11::module & m)
 {
-    using bpmodule::testing::TestSerialization;
+    using pulsar::testing::TestSerialization;
 
     /////////////////////////////////
     // Serialization
@@ -28,4 +28,4 @@ void export_testing(pybind11::module & m)
 
 } // close namespace export_python
 } // close namespace system 
-} // close namespace bpmodule
+} // close namespace pulsar

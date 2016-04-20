@@ -5,17 +5,17 @@
  */
 
 
-#include "bpmodule/datastore/OptionHolder.hpp"
-#include "bpmodule/python/Call.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/output/Output.hpp"
+#include "pulsar/datastore/OptionHolder.hpp"
+#include "pulsar/python/Call.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/output/Output.hpp"
 
-using namespace bpmodule::python;
-using namespace bpmodule::exception;
-using namespace bpmodule::util;
+using namespace pulsar::python;
+using namespace pulsar::exception;
+using namespace pulsar::util;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 
 
@@ -26,7 +26,7 @@ namespace datastore {
  *
  * Will call the python function \p func and give it \p val as its only argument
  *
- * \throw bpmodule::exception::PythonCallException if there is a problem calling
+ * \throw pulsar::exception::PythonCallException if there is a problem calling
  *        the python function or if the return type can't be converted
  *
  */
@@ -391,7 +391,7 @@ static std::vector<std::string> OptToString_(const std::map<T, U> & opt)
 template<OptionType OPTTYPE>
 void OptionHolder<OPTTYPE>::Print(std::ostream & os) const
 {
-    using namespace bpmodule::output;
+    using namespace pulsar::output;
 
     std::vector<std::string> val = {"(none)"};
     std::vector<std::string> def = {"(none)"};
@@ -563,5 +563,5 @@ OptionHolderFromByteArray(OptionType opttype, const ByteArray & ba)
 
 
 } // close namespace datastore
-} // close namespace bpmodule
+} // close namespace pulsar
 

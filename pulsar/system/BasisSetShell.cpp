@@ -4,9 +4,9 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/system/BasisSetShell.hpp"
+#include "pulsar/system/BasisSetShell.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -80,5 +80,5 @@ bool BasisSetShell::operator!=(const BasisSetShell & rhs) const
 }
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 

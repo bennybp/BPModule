@@ -6,11 +6,11 @@
 
 #include <algorithm>
 
-#include "bpmodule/system/AtomicInfo.hpp"
-#include "bpmodule/system/AtomicInfo_LUT.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/system/AtomicInfo.hpp"
+#include "pulsar/system/AtomicInfo_LUT.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 // global LUT:
@@ -181,5 +181,5 @@ double VDWRadiusFroSym(const std::string & sym)
 }
 
 } // closing namespace system
-} // closing namespace bpmodule
+} // closing namespace pulsar
 

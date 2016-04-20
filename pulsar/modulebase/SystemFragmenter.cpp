@@ -5,18 +5,18 @@
  */
 
 #include<limits>//for max of double
-#include "bpmodule/modulebase/SystemFragmenter.hpp"
-#include "bpmodule/datastore/OptionMap.hpp"
-#include "bpmodule/math/CombItr.hpp"
-#include "bpmodule/math/Point.hpp"
+#include "pulsar/modulebase/SystemFragmenter.hpp"
+#include "pulsar/datastore/OptionMap.hpp"
+#include "pulsar/math/CombItr.hpp"
+#include "pulsar/math/Point.hpp"
 
-using bpmodule::datastore::OptionMap;
-using bpmodule::system::System;
-using bpmodule::system::SystemMap;
-using bpmodule::math::Point;
+using pulsar::datastore::OptionMap;
+using pulsar::system::System;
+using pulsar::system::SystemMap;
+using pulsar::math::Point;
 typedef typename SystemMap::value_type Frag_t;
 
-namespace bpmodule{
+namespace pulsar{
 namespace modulebase{
 
 SystemMap SystemFragmenter::Fragmentize(const System & mol){

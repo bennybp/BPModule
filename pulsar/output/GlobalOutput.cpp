@@ -8,13 +8,13 @@
 #include <iostream>
 #include <memory>
 
-#include "bpmodule/output/GlobalOutput.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
 
 
 namespace {
 
 
-using namespace bpmodule::output;
+using namespace pulsar::output;
 
 
 bool usecolor_ = false;
@@ -33,7 +33,7 @@ void CreateGlobalOut_(void)
 }
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace output {
 
 
@@ -68,4 +68,4 @@ void EnableColor(bool enabled) noexcept
 
 
 } // close namespace output
-} // close namespace bpmodule
+} // close namespace pulsar

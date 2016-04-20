@@ -5,13 +5,13 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_OUTPUT__OUTPUTSTREAM_HPP_
-#define BPMODULE_GUARD_OUTPUT__OUTPUTSTREAM_HPP_
+#ifndef PULSAR_GUARD_OUTPUT__OUTPUTSTREAM_HPP_
+#define PULSAR_GUARD_OUTPUT__OUTPUTSTREAM_HPP_
 
-#include "bpmodule/output/Output.hpp"
+#include "pulsar/output/Output.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace output {
 
 
@@ -40,7 +40,7 @@ class OutputStream : public std::ostream
 
         /*! \brief Print formatted text this stream
          *
-         * \throw bpmodule::exception::GeneralException with malformed formats,
+         * \throw pulsar::exception::GeneralException with malformed formats,
          *        improper number of arguments, etc.
          *
          * \tparam Targs The types of the arguments to print
@@ -60,7 +60,7 @@ class OutputStream : public std::ostream
 
         /*! \brief Print formatted general output to this stream
          * 
-         * \throw bpmodule::exception::GeneralException with malformed formats,
+         * \throw pulsar::exception::GeneralException with malformed formats,
          *        improper number of arguments, etc.
          *
          * \tparam Targs The types of the arguments to print
@@ -153,7 +153,7 @@ class OutputStream : public std::ostream
 
 
 } // close namespace output
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

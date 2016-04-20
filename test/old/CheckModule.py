@@ -4,13 +4,13 @@ import os
 import sys
 from  importlib.machinery import SourceFileLoader
 
-# Add the bpmodule path
+# Add the pulsar path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "modules")
-sys.path.insert(0, bppath)
+psrpath = os.path.join(os.path.dirname(thispath), "modules")
+sys.path.insert(0, psrpath)
 
-from bpmodule import GlobalOutput CheckSupermodule
-from bpmodule.exception import PyGeneralException
+from pulsar import GlobalOutput CheckSupermodule
+from pulsar.exception import PyGeneralException
 
 
 GlobalOutputSetOut_Stdout()

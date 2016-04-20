@@ -5,22 +5,22 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEBASE__MODULEBASE_HPP_
-#define BPMODULE_GUARD_MODULEBASE__MODULEBASE_HPP_
+#ifndef PULSAR_GUARD_MODULEBASE__MODULEBASE_HPP_
+#define PULSAR_GUARD_MODULEBASE__MODULEBASE_HPP_
 
 #include <string>
 
-#include "bpmodule/types.h"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/modulemanager/ModuleManager.hpp"
-#include "bpmodule/output/OutputStream.hpp"
-#include "bpmodule/output/TeeBufToString.hpp"
-#include "bpmodule/util/Format.hpp"
-#include "bpmodule/python/Call.hpp"
+#include "pulsar/types.h"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/modulemanager/ModuleManager.hpp"
+#include "pulsar/output/OutputStream.hpp"
+#include "pulsar/output/TeeBufToString.hpp"
+#include "pulsar/util/Format.hpp"
+#include "pulsar/python/Call.hpp"
 
 
 // forward declarations
-namespace bpmodule {
+namespace pulsar{
 
 namespace datastore {
 struct Wavefunction;
@@ -30,13 +30,13 @@ namespace options {
 class OptionMap;
 }
 
-} // close namespace bpmodule 
+} // close namespace pulsar
 
 
 // end forward declarations
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulebase {
 
 
@@ -387,6 +387,6 @@ class ModuleBase
 
 
 } // close namespace modulebase
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

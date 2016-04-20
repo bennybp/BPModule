@@ -12,23 +12,23 @@
  *          as finding primes, factoring numbers, etc.
  */
 
-#ifndef NUMBERTHEORY_HPP
-#define NUMBERTHEORY_HPP
+#ifndef PULSAR_GUARD_MATH__NUMBERTHEORY_HPP_
+#define PULSAR_GUARD_MATH__NUMBERTHEORY_HPP_
 #include<set>
 #include<algorithm>
 #include<utility>
-#include "bpmodule/math/Checking.hpp"
-#include "bpmodule/math/Cast.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/math/Checking.hpp"
+#include "pulsar/math/Cast.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
-namespace bpmodule{
+namespace pulsar{
 namespace math{
 
 ///Computes and returns all factors of \p Num
 template<typename T>
 std::set<T> Factors(T Num){
     if(!IsInteger(Num))
-        throw bpmodule::exception::GeneralException("Integer required");
+        throw pulsar::exception::GeneralException("Integer required");
     std::set<T> f;
     for(T i=1;i<=(T)floor(sqrt(numeric_cast<double>(Num)));++i)
         if(Num%i==0){

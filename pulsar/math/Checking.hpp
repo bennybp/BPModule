@@ -1,14 +1,14 @@
 // Getting/checking information about a number
 
-#ifndef BPMODULE_GUARD_MATH__CHECKING_HPP_
-#define BPMODULE_GUARD_MATH__CHECKING_HPP_
+#ifndef PULSAR_GUARD_MATH__CHECKING_HPP_
+#define PULSAR_GUARD_MATH__CHECKING_HPP_
 
 
 
 #include <cmath>
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 
 namespace detail {
@@ -66,6 +66,6 @@ bool AreEqual(const T& lhs,const T& rhs,const T& Tol){
 
 
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

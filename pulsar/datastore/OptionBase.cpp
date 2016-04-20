@@ -5,9 +5,9 @@
  */
 
 
-#include "bpmodule/datastore/OptionBase.hpp"
+#include "pulsar/datastore/OptionBase.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 
 
@@ -54,4 +54,4 @@ bool OptionBase::HasIssues(void) const
 
 
 } //closing namespace datastore
-} //closing namespace bpmodule
+} //closing namespace pulsar

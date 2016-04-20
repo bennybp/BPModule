@@ -1,14 +1,14 @@
-#ifndef BPMODULE_GUARD_MATH__CAST_STL_HPP_
-#define BPMODULE_GUARD_MATH__CAST_STL_HPP_
+#ifndef PULSAR_GUARD_MATH__CAST_STL_HPP_
+#define PULSAR_GUARD_MATH__CAST_STL_HPP_
 
 #include <vector>
 #include <set>
 
-#include "bpmodule/math/ExactCast.hpp"
+#include "pulsar/math/ExactCast.hpp"
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 namespace detail {
 
@@ -65,7 +65,7 @@ struct ExactCast<std::set<Source>, std::set<Source>>
 
 } // close namespace detail
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

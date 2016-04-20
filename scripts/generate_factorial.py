@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import bp_common
+import psr_common
 
 
 
@@ -102,8 +102,8 @@ dfac_2nm1_double = [ float(v) for v in dfac_2nm1 ]
 
 
 
-with bp_common.HeaderSourceFiles(outbase, "LUT for factorial and related functions", 
-                                 ["bpmodule", "math", "lut"],
+with psr_common.HeaderSourceFiles(outbase, "LUT for factorial and related functions", 
+                                 ["pulsar", "math", "lut"],
                                  hincludes = ["<cstdint>"],
                                  srcincludes = ["<cstdint>"]) as src:
 

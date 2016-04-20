@@ -1,4 +1,4 @@
-set(BPMODULE_TESTING_FILES
+set(PULSAR_TESTING_FILES
             TestDatastore.cpp
             TestOptions.cpp
             export.cpp
@@ -6,7 +6,7 @@ set(BPMODULE_TESTING_FILES
 
 
 ADD_COREMODULE(testing
-           "${BPMODULE_TESTING_FILES}"
+           "${PULSAR_TESTING_FILES}"
            ""
            ""
            "")

@@ -4,12 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/system/System.hpp"
-#include "bpmodule/system/BasisSet.hpp"
-#include "bpmodule/testing/TestSerialization.hpp"
+#include "pulsar/system/System.hpp"
+#include "pulsar/system/BasisSet.hpp"
+#include "pulsar/testing/TestSerialization.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 namespace export_python {
 
@@ -28,7 +28,7 @@ struct SystemCompare
 
 void export_testing(pybind11::module & m)
 {
-    using bpmodule::testing::TestSerialization;
+    using pulsar::testing::TestSerialization;
 
     /////////////////////////////////
     // Serialization
@@ -42,4 +42,4 @@ void export_testing(pybind11::module & m)
 
 } // close namespace export_python
 } // close namespace system 
-} // close namespace bpmodule
+} // close namespace pulsar

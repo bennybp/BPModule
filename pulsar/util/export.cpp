@@ -4,15 +4,15 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/python/Pybind11_stl.hpp"
-#include "bpmodule/python/Pybind11_operators.hpp"
-#include "bpmodule/util/Cmdline.hpp"
-#include "bpmodule/util/Memwatch.hpp"
-#include "bpmodule/util/Hash.hpp"
+#include "pulsar/python/Pybind11.hpp"
+#include "pulsar/python/Pybind11_stl.hpp"
+#include "pulsar/python/Pybind11_operators.hpp"
+#include "pulsar/util/Cmdline.hpp"
+#include "pulsar/util/Memwatch.hpp"
+#include "pulsar/util/Hash.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 namespace export_python {
 
@@ -53,5 +53,5 @@ PYBIND11_PLUGIN(util)
 
 } // close namespace export_python
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 

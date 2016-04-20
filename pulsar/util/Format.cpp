@@ -5,9 +5,9 @@
  */ 
 
 
-#include "bpmodule/util/Format.hpp"
+#include "pulsar/util/Format.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 // Instantiate some commonly-used templates
@@ -67,4 +67,4 @@ DECLARE_TEMPLATE_FORMAT_2(double, double)
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar

@@ -1,4 +1,4 @@
-#include "bpmodule/tensor/Tensor.hpp"
+#include "pulsar/tensor/Tensor.hpp"
 
 namespace {
 
@@ -6,9 +6,9 @@ namespace {
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace tensor {
 
 
 } // close namespace tensor
-} // close namespace bpmodule
+} // close namespace pulsar

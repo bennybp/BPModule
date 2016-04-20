@@ -6,20 +6,20 @@ import sys
 import argparse
 import traceback 
 
-# Add the bpmodule path
+# Add the pulsar path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "modules")
-sys.path.insert(0, bppath)
+psrpath = os.path.join(os.path.dirname(thispath), "modules")
+sys.path.insert(0, psrpath)
 
-import bpmodule as bp
-from bpmodule.system import System, CreateAtom
+import pulsar as psr
+from pulsar.system import System, CreateAtom
 
 
 def Run():
     try:
-        out = bp.output.GetGlobalOut()
+        out = psr.output.GetGlobalOut()
 
-        tester = bp.testing.Tester("Testing System class")
+        tester = psr.testing.Tester("Testing System class")
         tester.PrintHeader()
 
         atoms = [ CreateAtom(0, [ 0.000000000000,     0.000000000000,     0.000000000000], 6),
@@ -41,13 +41,13 @@ def Run():
         ]
 
 
-        molu = bp.system.AtomSetUniverse()
+        molu = psr.system.AtomSetUniverse()
         for a in atoms:
             molu.Insert(a)
 
         tester.TestValue("System universe size", molu.size(), 14)
 
-        mol = bp.system.System(molu, True)
+        mol = psr.system.System(molu, True)
         tester.TestValue("System size", mol.size(), 14)
         tester.TestValue("System size", len(mol), 14)
 
@@ -63,7 +63,7 @@ def Run():
         tester.Test("System doesn't have atom - via 'in'", False, lambda m, el: el in m, mol, noatom)
 
         # Starting with empty system
-        mol = bp.system.System(molu, False)
+        mol = psr.system.System(molu, False)
         tester.TestValue("System size", mol.size(), 0)
         tester.TestValue("System size", len(mol), 0)
 
@@ -91,15 +91,15 @@ def Run():
 
 
     except Exception as e:
-      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      psr.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.GlobalError("\n")
-      bp.output.GlobalError(str(e))
-      bp.output.GlobalError("\n")
+      psr.output.GlobalError("\n")
+      psr.output.GlobalError(str(e))
+      psr.output.GlobalError("\n")
 
 
 
 
-bp.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.Init(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-bp.Finalize()
+psr.Finalize()

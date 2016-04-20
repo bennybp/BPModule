@@ -8,10 +8,10 @@
 #ifndef HEADERGUARD
 #define HEADERGUARD
 
-#include "bpmodule/modulebase/ModuleBase.hpp"
+#include "pulsar/modulebase/ModuleBase.hpp"
 
 
-namespace bpmodule {
+namespace pulsar {
 namespace modulebase {
 
 /*! \brief MODULEDESC
@@ -38,6 +38,6 @@ class CLASSNAME : public ModuleBase
 };
 
 } // close namespace modulebase
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

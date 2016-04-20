@@ -5,10 +5,10 @@
  */ 
 
 
-#include "bpmodule/output/Output.hpp"
+#include "pulsar/output/Output.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace output {
 
 
@@ -64,4 +64,4 @@ void Output_(std::ostream & out, OutputType type, const std::string & str)
 
 
 } // close namespace output
-} // close namespace bpmodule
+} // close namespace pulsar

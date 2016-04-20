@@ -5,16 +5,16 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_TESTING__TESTSERIALIZATION_HPP_
-#define BPMODULE_GUARD_TESTING__TESTSERIALIZATION_HPP_
+#ifndef PULSAR_GUARD_TESTING__TESTSERIALIZATION_HPP_
+#define PULSAR_GUARD_TESTING__TESTSERIALIZATION_HPP_
 
 #include <string>
-#include "bpmodule/python/Convert.hpp"
-#include "bpmodule/testing/TestingBase.hpp"
-#include "bpmodule/util/Serialization.hpp"
-#include "bpmodule/util/HashSerializable.hpp"
+#include "pulsar/python/Convert.hpp"
+#include "pulsar/testing/TestingBase.hpp"
+#include "pulsar/util/Serialization.hpp"
+#include "pulsar/util/HashSerializable.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace testing {
 
 /*! \brief Serialize an object, then unserialize
@@ -26,9 +26,9 @@ namespace testing {
 template<typename T, typename Equality = std::equal_to<T>>
 bool RoundTripSerialization(pybind11::object obj)
 {
-    using namespace bpmodule::util;
+    using namespace pulsar::util;
 
-    T & cppobj = bpmodule::python::ConvertToCpp<T &>(obj);
+    T & cppobj = pulsar::python::ConvertToCpp<T &>(obj);
 
     // Initial hash
     Hash hash1 = HashSerializable(cppobj);
@@ -104,7 +104,7 @@ int TestSerialization(pybind11::object obj)
 
 
 } // close namespace testing
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

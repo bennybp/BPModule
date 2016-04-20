@@ -2,7 +2,7 @@ Using and Setting Options                                   {#Options}
 =========================
 
 Electronic structure codes have many options available to them and managing them
-can be a nightmare.  Thankfully, BPModule has a plan, which is detailed in this
+can be a nightmare.  Thankfully, Pulsar has a plan, which is detailed in this
 section.
 
 OptionMap

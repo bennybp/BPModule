@@ -1,16 +1,16 @@
-#ifndef BPMODULE_GUARD_MATH__EXACTCAST_HPP_
-#define BPMODULE_GUARD_MATH__EXACTCAST_HPP_
+#ifndef PULSAR_GUARD_MATH__EXACTCAST_HPP_
+#define PULSAR_GUARD_MATH__EXACTCAST_HPP_
 
 #include <limits>
 
-#include "bpmodule/pragma.h"
-#include "bpmodule/math/Checking.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/util/Mangle.hpp"
+#include "pulsar/pragma.h"
+#include "pulsar/math/Checking.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/util/Mangle.hpp"
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 namespace detail {
 
@@ -223,7 +223,7 @@ struct ExactCast<Source, Source>
 
 } // close namespace detail
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

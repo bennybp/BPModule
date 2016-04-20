@@ -5,14 +5,14 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_OUTPUT__TEEBUFTOSTRING_HPP_
-#define BPMODULE_GUARD_OUTPUT__TEEBUFTOSTRING_HPP_
+#ifndef PULSAR_GUARD_OUTPUT__TEEBUFTOSTRING_HPP_
+#define PULSAR_GUARD_OUTPUT__TEEBUFTOSTRING_HPP_
 
 #include <iostream>
 #include <string>
 #include <stdexcept>
 
-namespace bpmodule {
+namespace pulsar{
 namespace output {
 
 
@@ -85,7 +85,7 @@ class TeeBufToString : public std::streambuf
 
 
 } // close namespace output
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

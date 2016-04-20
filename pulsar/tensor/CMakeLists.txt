@@ -1,4 +1,4 @@
-set(BPMODULE_TENSOR_FILES
+set(PULSAR_TENSOR_FILES
     InitFinalize.cpp
     Tensor.cpp
     export.cpp
@@ -6,7 +6,7 @@ set(BPMODULE_TENSOR_FILES
   
 
 ADD_COREMODULE(tensor
-           "${BPMODULE_TENSOR_FILES}"
+           "${PULSAR_TENSOR_FILES}"
            ""
            ""
            "")

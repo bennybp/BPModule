@@ -1,6 +1,6 @@
 # For output
-from bpmodule.output import GlobalOutput, GlobalError, GlobalSuccess, GlobalDebug
-from bpmodule.util import Line
+from pulsar.output import GlobalOutput, GlobalError, GlobalSuccess, GlobalDebug
+from pulsar.util import Line
 
 class Tester:
     def __init__(self, desc):

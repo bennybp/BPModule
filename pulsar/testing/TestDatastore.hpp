@@ -5,19 +5,19 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_TESTING__TESTDATASTORE_HPP_
-#define BPMODULE_GUARD_TESTING__TESTDATASTORE_HPP_
+#ifndef PULSAR_GUARD_TESTING__TESTDATASTORE_HPP_
+#define PULSAR_GUARD_TESTING__TESTDATASTORE_HPP_
 
 #include <string>
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace testing {
 
 
 
 } // close namespace testing
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

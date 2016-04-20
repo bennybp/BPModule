@@ -1,8 +1,8 @@
-#ifndef BPMODULE_GUARD_UTIL__ENUMERATION_HPP_
-#define BPMODULE_GUARD_UTIL__ENUMERATION_HPP_
+#ifndef PULSAR_GUARD_UTIL__ENUMERATION_HPP_
+#define PULSAR_GUARD_UTIL__ENUMERATION_HPP_
 #include <string>
 #include <set>
-namespace bpmodule{
+namespace pulsar{
 namespace util{
 
 /** \brief A class to implement intelligent enumerations, based on strings
@@ -129,4 +129,4 @@ inline bool operator==(const std::string& lhs,const Enumeration<T>& rhs){
 
 }}//end namespaces
 
-#endif /* BPMODULE_UTIL_ENUMERATION_HPP_ */
+#endif /* PULSAR_UTIL_ENUMERATION_HPP_ */

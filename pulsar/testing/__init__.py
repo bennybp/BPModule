@@ -6,7 +6,7 @@ from .testing import *
 # Tester class
 from .Tester import *
 
-from bpmodule.output import GlobalOutput, GlobalError, GlobalSuccess, GlobalDebug
+from pulsar.output import GlobalOutput, GlobalError, GlobalSuccess, GlobalDebug
 
 ##################
 # For testing on the python side

@@ -4,16 +4,16 @@
  * and open the template in the editor.
  */
 #include <iostream>
-#include "bpmodule/system/SymmetryElements.hpp"
-#include "bpmodule/math/Geometry.hpp"
-#include "bpmodule/system/SymmetryElements.hpp"
+#include "pulsar/system/SymmetryElements.hpp"
+#include "pulsar/math/Geometry.hpp"
+#include "pulsar/system/SymmetryElements.hpp"
 
     using std::string;
     using std::to_string;
     typedef std::array<double,3> Vector_t;
     typedef std::array<double,9> Matrix_t;
 
-namespace bpmodule{
+namespace pulsar{
 namespace system{
     
 

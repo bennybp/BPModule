@@ -5,19 +5,19 @@
  */
 
 
-#ifndef BPMODULE_GUARD_PYTHON__ERRORS_HPP_
-#define BPMODULE_GUARD_PYTHON__ERRORS_HPP_
+#ifndef PULSAR_GUARD_PYTHON__ERRORS_HPP_
+#define PULSAR_GUARD_PYTHON__ERRORS_HPP_
 
 #include <string>
 
-namespace bpmodule {
+namespace pulsar{
 namespace python {
 namespace detail {
 
 
 /*! \brief Get the current python exception and convert to a GeneralException
  *
- * Can handle some bpmodule-derived exception classes
+ * Can handle some pulsar-derived exception classes
  */
 std::string GetPyException(void);
 
@@ -25,6 +25,6 @@ std::string GetPyException(void);
 
 } // close namespace detail
 } // close namespace python
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

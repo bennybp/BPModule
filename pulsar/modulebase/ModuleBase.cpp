@@ -5,19 +5,19 @@
  */ 
 
 
-#include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/datastore/Wavefunction.hpp"
+#include "pulsar/modulebase/ModuleBase.hpp"
+#include "pulsar/datastore/Wavefunction.hpp"
 
-using bpmodule::modulemanager::ModuleManager;
-using bpmodule::modulemanager::ModuleInfo;
-using bpmodule::datastore::Wavefunction;
-using bpmodule::modulemanager::ModuleTreeNode;
-using bpmodule::datastore::CacheData;
-using bpmodule::datastore::OptionMap;
-using bpmodule::exception::GeneralException;
+using pulsar::modulemanager::ModuleManager;
+using pulsar::modulemanager::ModuleInfo;
+using pulsar::datastore::Wavefunction;
+using pulsar::modulemanager::ModuleTreeNode;
+using pulsar::datastore::CacheData;
+using pulsar::datastore::OptionMap;
+using pulsar::exception::GeneralException;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulebase {
 
 
@@ -204,4 +204,4 @@ void ModuleBase::SetCache_(CacheData * cache) noexcept
 }
 
 } // close namespace modulebase
-} // close namespace bpmodule
+} // close namespace pulsar

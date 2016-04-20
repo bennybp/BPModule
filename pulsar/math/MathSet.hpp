@@ -5,14 +5,14 @@
  * Created on January 22, 2016, 11:11 AM
  */
 
-#ifndef BPMODULE_GUARD_MATH__MATHSET_HPP_
-#define BPMODULE_GUARD_MATH__MATHSET_HPP_
+#ifndef PULSAR_GUARD_MATH__MATHSET_HPP_
+#define PULSAR_GUARD_MATH__MATHSET_HPP_
 
 #include <vector> //For default set container
-#include "bpmodule/exception/Assert.hpp"
-#include "bpmodule/math/Universe.hpp"
+#include "pulsar/exception/Assert.hpp"
+#include "pulsar/math/Universe.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 
 /** \brief A class for performing set manipulations efficiently relative to
@@ -482,5 +482,5 @@ public:
 }
 }//End namespaces
 
-#endif /* BPMODULE_GUARD_MATHSET_HPP_ */
+#endif /* PULSAR_GUARD_MATHSET_HPP_ */
 

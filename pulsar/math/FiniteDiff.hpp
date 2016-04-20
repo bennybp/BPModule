@@ -1,10 +1,10 @@
-#ifndef BPMODULE_GUARD_MATH__FINITEDIFF_HPP_
-#define BPMODULE_GUARD_MATH__FINITEDIFF_HPP_
+#ifndef PULSAR_GUARD_MATH__FINITEDIFF_HPP_
+#define PULSAR_GUARD_MATH__FINITEDIFF_HPP_
 
 #include<vector>
 #include "LibTaskForce.hpp" 
 
-namespace bpmodule{
+namespace pulsar{
 namespace math{
 
 /** \brief Abstract base class for an object meeting the requirements of

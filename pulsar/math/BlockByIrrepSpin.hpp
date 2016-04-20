@@ -4,16 +4,16 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_MATH__BLOCKBYIRREPSPIN_HPP_
-#define BPMODULE_GUARD_MATH__BLOCKBYIRREPSPIN_HPP_
+#ifndef PULSAR_GUARD_MATH__BLOCKBYIRREPSPIN_HPP_
+#define PULSAR_GUARD_MATH__BLOCKBYIRREPSPIN_HPP_
 
 #include <map>
-#include "bpmodule/util/Serialization.hpp"
-#include "bpmodule/util/HashSerializable.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/math/Irrep.hpp"
+#include "pulsar/util/Serialization.hpp"
+#include "pulsar/util/HashSerializable.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/math/Irrep.hpp"
 
-namespace bpmodule{
+namespace pulsar{
 namespace math{
 
 
@@ -119,6 +119,6 @@ class BlockByIrrepSpin
 
 
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

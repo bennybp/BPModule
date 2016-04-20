@@ -7,14 +7,14 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_MODULEBASE__ENERGYMETHOD_HPP_
-#define BPMODULE_GUARD_MODULEBASE__ENERGYMETHOD_HPP_
+#ifndef PULSAR_GUARD_MODULEBASE__ENERGYMETHOD_HPP_
+#define PULSAR_GUARD_MODULEBASE__ENERGYMETHOD_HPP_
 
 #include <vector>
-#include "bpmodule/modulebase/ModuleBase.hpp"
+#include "pulsar/modulebase/ModuleBase.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulebase {
 
 /*! \brief This is the base class for modules that can compute derivatives of
@@ -81,6 +81,6 @@ class EnergyMethod_Py : public EnergyMethod{
 };
 
 } // close namespace modulebase
-} // close namespace bpmodule
+} // close namespace pulsar
 
-#endif /* BPMODULE_GUARD_MODULEBASE__ENERGYMETHOD_HPP_ */
+#endif /* PULSAR_GUARD_MODULEBASE__ENERGYMETHOD_HPP_ */

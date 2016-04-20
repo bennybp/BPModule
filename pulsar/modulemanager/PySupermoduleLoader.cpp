@@ -5,18 +5,18 @@
  */
 
 
-#include "bpmodule/modulemanager/PySupermoduleLoader.hpp"
-#include "bpmodule/util/Filesystem.hpp"
-#include "bpmodule/output/GlobalOutput.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/exception/Assert.hpp"
-#include "bpmodule/python/Call.hpp"
+#include "pulsar/modulemanager/PySupermoduleLoader.hpp"
+#include "pulsar/util/Filesystem.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/Assert.hpp"
+#include "pulsar/python/Call.hpp"
 
-using namespace bpmodule::exception;
-using namespace bpmodule::output;
+using namespace pulsar::exception;
+using namespace pulsar::output;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 
@@ -112,4 +112,4 @@ const ModuleCreationFuncs & PySupermoduleLoader::LoadSupermodule(const std::stri
 
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar

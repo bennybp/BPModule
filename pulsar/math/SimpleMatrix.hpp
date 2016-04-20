@@ -4,21 +4,21 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_MATH__SIMPLEMATRIX_HPP_
-#define BPMODULE_GUARD_MATH__SIMPLEMATRIX_HPP_
+#ifndef PULSAR_GUARD_MATH__SIMPLEMATRIX_HPP_
+#define PULSAR_GUARD_MATH__SIMPLEMATRIX_HPP_
 
 #include <memory>
 #include <complex>
 #include <vector>
 #include <algorithm>
 
-#include "bpmodule/exception/Assert.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/util/Serialization.hpp"
-#include "bpmodule/util/HashSerializable.hpp"
+#include "pulsar/exception/Assert.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/util/Serialization.hpp"
+#include "pulsar/util/HashSerializable.hpp"
 
 
-namespace bpmodule{
+namespace pulsar{
 namespace math{
 
 /*! \brief A general-purpose dense matrix storage class
@@ -144,7 +144,7 @@ class SimpleMatrix
 
         /*! \brief Obtain a reference to an element
          * 
-         * \throw bpmodule::exception::MathException if the row
+         * \throw pulsar::exception::MathException if the row
          *        or column is out of range (only if assertions are enabled)
          */
         T & operator()(size_t row, size_t col) ASSERTIONS_ONLY
@@ -157,7 +157,7 @@ class SimpleMatrix
 
         /*! \brief Obtain a const reference to an element
          * 
-         * \throw bpmodule::exception::MathException if the row
+         * \throw pulsar::exception::MathException if the row
          *        or column is out of range (only if assertions are enabled)
          */
         const T & operator()(size_t row, size_t col) const ASSERTIONS_ONLY
@@ -170,7 +170,7 @@ class SimpleMatrix
 
         /*! \brief Obtain a reference to an element
          * 
-         * \throw bpmodule::exception::MathException if the row
+         * \throw pulsar::exception::MathException if the row
          *        or column is out of range
          */
         T & At(size_t row, size_t col)
@@ -181,7 +181,7 @@ class SimpleMatrix
 
         /*! \brief Obtain a const reference to an element
          * 
-         * \throw bpmodule::exception::MathException if the row
+         * \throw pulsar::exception::MathException if the row
          *        or column is out of range
          */
         const T & At(size_t row, size_t col) const
@@ -193,7 +193,7 @@ class SimpleMatrix
         /// Obtain a pointer to the raw data
         T * Data(void) ASSERTIONS_ONLY
         {
-            using namespace bpmodule::exception;
+            using namespace pulsar::exception;
             if(!data_)
                 throw MathException("Null pointer in SimpleMatrix");
             return data_.get();
@@ -202,7 +202,7 @@ class SimpleMatrix
         /// Obtain a pointer to the raw data
         const T * Data(void) const ASSERTIONS_ONLY
         {
-            using namespace bpmodule::exception;
+            using namespace pulsar::exception;
             if(!data_)
                 throw MathException("Null pointer in SimpleMatrix");
             return data_.get();
@@ -246,7 +246,7 @@ class SimpleMatrix
 
         void CheckIndices_(size_t row, size_t col) const
         {
-            using namespace bpmodule::exception;
+            using namespace pulsar::exception;
             if(row >= nrows_)
                 throw MathException("Row out of range", "row", row, "nrows", nrows_);
             if(col >= ncols_)
@@ -324,7 +324,7 @@ class SimpleVector : public SimpleMatrix<T>
 
         /*! \brief Obtain a reference to an element
          * 
-         * \throw bpmodule::exception::MathException if the row
+         * \throw pulsar::exception::MathException if the row
          *        or column is out of range (only if assertions are enabled)
          */
         T & operator()(size_t i) ASSERTIONS_ONLY
@@ -334,7 +334,7 @@ class SimpleVector : public SimpleMatrix<T>
 
         /*! \brief Obtain a const reference to an element
          * 
-         * \throw bpmodule::exception::MathException if the row
+         * \throw pulsar::exception::MathException if the row
          *        or column is out of range (only if assertions are enabled)
          */
         const T & operator()(size_t i) const ASSERTIONS_ONLY
@@ -344,7 +344,7 @@ class SimpleVector : public SimpleMatrix<T>
 
         /*! \brief Obtain a reference to an element
          * 
-         * \throw bpmodule::exception::MathException if the row
+         * \throw pulsar::exception::MathException if the row
          *        or column is out of range
          */
         T & At(size_t i)
@@ -354,7 +354,7 @@ class SimpleVector : public SimpleMatrix<T>
 
         /*! \brief Obtain a const reference to an element
          * 
-         * \throw bpmodule::exception::MathException if the row
+         * \throw pulsar::exception::MathException if the row
          *        or column is out of range
          */
         const T & At(size_t i) const
@@ -400,6 +400,6 @@ typedef SimpleVector<std::complex<double>> SimpleVectorCD;
 
 
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

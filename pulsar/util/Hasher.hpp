@@ -4,14 +4,14 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_UTIL__HASHER_HPP_
-#define BPMODULE_GUARD_UTIL__HASHER_HPP_
+#ifndef PULSAR_GUARD_UTIL__HASHER_HPP_
+#define PULSAR_GUARD_UTIL__HASHER_HPP_
 
 #include <cstdint>
 #include <memory>
 #include <istream>
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 
@@ -93,6 +93,6 @@ class Hasher
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

@@ -5,18 +5,18 @@
  */
 
 
-#ifndef BPMODULE_GUARD_DATASTORE__OPTIONMAP_HPP_
-#define BPMODULE_GUARD_DATASTORE__OPTIONMAP_HPP_
+#ifndef PULSAR_GUARD_DATASTORE__OPTIONMAP_HPP_
+#define PULSAR_GUARD_DATASTORE__OPTIONMAP_HPP_
 
 #include <map>
 
-#include "bpmodule/datastore/OptionTypes.hpp"
-#include "bpmodule/datastore/OptionHolder.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/util/StringUtil.hpp"
+#include "pulsar/datastore/OptionTypes.hpp"
+#include "pulsar/datastore/OptionHolder.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/util/StringUtil.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 
 
@@ -123,7 +123,7 @@ class OptionMap
 
         /*! \brief Check if the option is currently set to the default
          *
-         * \throw bpmodule::exception::OptionException if
+         * \throw pulsar::exception::OptionException if
          *        the key doesn't exist
          */
         bool IsDefault(const std::string & key) const;
@@ -142,7 +142,7 @@ class OptionMap
 
         /*! \brief Sets an option to its default
          *
-         * \throw bpmodule::exception::OptionException if
+         * \throw pulsar::exception::OptionException if
          *        the key doesn't exist
          *
          * \exstrong
@@ -171,7 +171,7 @@ class OptionMap
          *
          * \note This is not meant to be called from python
          *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
+         * \throw pulsar::exception::PythonCallException if there is a problem
          *        with calling a validation function
          */
         OptionMapIssues GetIssues(void) const;
@@ -180,7 +180,7 @@ class OptionMap
 
         /*! \brief See if there are any issues with this OptionMap
          *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
+         * \throw pulsar::exception::PythonCallException if there is a problem
          *        with validation.
          */
         bool HasIssues(void) const;
@@ -204,7 +204,7 @@ class OptionMap
          *
          * The validity of this map is checked first if setting to true.
          *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
+         * \throw pulsar::exception::PythonCallException if there is a problem
          *        with validation.
          */
         void LockValid(bool lockvalid);
@@ -221,7 +221,7 @@ class OptionMap
          * Will attempt some safe conversions between integer types
          * or between floating point types.
          *
-         * \throw bpmodule::exception::OptionException if the
+         * \throw pulsar::exception::OptionException if the
          *        option does not have a value or if the
          *        key does not exist or if the value cannot be
          *        cast to the appropriate type
@@ -251,7 +251,7 @@ class OptionMap
          *
          * The data is copied.
          *
-         * \throw bpmodule::exception::OptionException if
+         * \throw pulsar::exception::OptionException if
          *        the value is invalid (and not expert),
          *        if the key does not exist, or the
          *        data cannot be cast to the appropriate type
@@ -324,10 +324,10 @@ class OptionMap
         /////////////////////////////
         /*! \brief Change an option by passing a boost::python object
          *
-         * \throw bpmodule::exception::OptionException if there is
+         * \throw pulsar::exception::OptionException if there is
          *        a problem with the option (nonexistant key, validation, conversion, etc)
          *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
+         * \throw pulsar::exception::PythonCallException if there is a problem
          *        with the validation itself.
          *
          * \exstrong
@@ -338,7 +338,7 @@ class OptionMap
 
         /*! \brief Return the option's value as a python object
          *
-         * \throw bpmodule::exception::OptionException if there is
+         * \throw pulsar::exception::OptionException if there is
          *        a problem with the option (nonexistant key, validation, conversion, etc)
          */
         pybind11::object GetPy(const std::string & key) const;
@@ -374,7 +374,7 @@ class OptionMap
          *
          * \note Key should already have been transformed to lowercase
          *
-         * \throw bpmodule::exception::OptionException
+         * \throw pulsar::exception::OptionException
          *        if a key doesn't exist
          */
         const OptionBase * GetOrThrow_(const std::string & key) const;
@@ -389,7 +389,7 @@ class OptionMap
          *
          * \note Key should already have been transformed to lowercase
          *
-         * \throw bpmodule::exception::OptionException
+         * \throw pulsar::exception::OptionException
          *        if a key doesn't exist or cannot
          *        be cast to the desired type
          */
@@ -493,7 +493,7 @@ class OptionMap
 
 
 } // close namespace datastore
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

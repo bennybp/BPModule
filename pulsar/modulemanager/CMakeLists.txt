@@ -1,4 +1,4 @@
-set(BPMODULE_MODULEMANAGER_FILES
+set(PULSAR_MODULEMANAGER_FILES
             CppSupermoduleLoader.cpp
             PySupermoduleLoader.cpp
             ModuleIMPLHolder.cpp
@@ -12,7 +12,7 @@ set(BPMODULE_MODULEMANAGER_FILES
 
 
 ADD_COREMODULE(modulemanager
-           "${BPMODULE_MODULEMANAGER_FILES}"
+           "${PULSAR_MODULEMANAGER_FILES}"
            ""
            ""
            "")

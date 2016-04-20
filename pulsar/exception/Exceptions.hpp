@@ -1,12 +1,12 @@
 /*! \file
  *
- * \brief The base, general exception for BPModule (header)
+ * \brief The base, general exception for Pulsar (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
 
-#ifndef BPMODULE_GUARD_EXCEPTION__EXCEPTIONS_HPP_
-#define BPMODULE_GUARD_EXCEPTION__EXCEPTIONS_HPP_
+#ifndef PULSAR_GUARD_EXCEPTION__EXCEPTIONS_HPP_
+#define PULSAR_GUARD_EXCEPTION__EXCEPTIONS_HPP_
 
 #include <stdexcept>
 
@@ -15,10 +15,10 @@
 #include <sstream>
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace exception {
 
-/*! \brief A base exception for BPModule
+/*! \brief A base exception for Pulsar
  *
  * Basically, this is a string with some fancy formatting.
  * There is one line (basically an overall description)
@@ -303,6 +303,6 @@ class PythonConvertException : public GeneralException
 
 
 } // close namespace exception
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

@@ -15,17 +15,17 @@ CREATED: 2016-04-20 12:00:47.566990
 **************************************************************/
 
 
-#ifndef BPMODULE_GUARD_SYSTEM__ATOMICINFO_LUT_HPP_
-#define BPMODULE_GUARD_SYSTEM__ATOMICINFO_LUT_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__ATOMICINFO_LUT_HPP_
+#define PULSAR_GUARD_SYSTEM__ATOMICINFO_LUT_HPP_
 
 
 #include <map>
-#include "bpmodule/system/AtomicInfo.hpp"
-#include "bpmodule/util/StringUtil.hpp"
+#include "pulsar/system/AtomicInfo.hpp"
+#include "pulsar/util/StringUtil.hpp"
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 namespace lut {
 
@@ -45,7 +45,7 @@ extern const std::map<int, AtomicData> atomic_Z_data_;
 
 } // closing namespace lut
 } // closing namespace system
-} // closing namespace bpmodule
+} // closing namespace pulsar
 
 
 

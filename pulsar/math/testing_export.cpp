@@ -5,13 +5,13 @@
  */
 
 
-#include "bpmodule/testing/TestSerialization.hpp"
-#include "bpmodule/math/Point.hpp"
-#include "bpmodule/math/RegisterMathSet.hpp"
-#include "bpmodule/math/IrrepSpinMatrix.hpp"
+#include "pulsar/testing/TestSerialization.hpp"
+#include "pulsar/math/Point.hpp"
+#include "pulsar/math/RegisterMathSet.hpp"
+#include "pulsar/math/IrrepSpinMatrix.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 namespace export_python {
 
@@ -32,7 +32,7 @@ struct MathSetCompare
 
 void export_testing(pybind11::module & m)
 {
-    using bpmodule::testing::TestSerialization;
+    using pulsar::testing::TestSerialization;
 
     // For testing
     RegisterUniverse<Universe<std::string>>(m, "StringSetUniverse"); 
@@ -57,4 +57,4 @@ void export_testing(pybind11::module & m)
 
 } // close namespace export_python
 } // close namespace math 
-} // close namespace bpmodule
+} // close namespace pulsar

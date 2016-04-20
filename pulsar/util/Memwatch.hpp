@@ -4,11 +4,11 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_UTIL__MEMWATCH_HPP_
-#define BPMODULE_GUARD_UTIL__MEMWATCH_HPP_
+#ifndef PULSAR_GUARD_UTIL__MEMWATCH_HPP_
+#define PULSAR_GUARD_UTIL__MEMWATCH_HPP_
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 
@@ -38,6 +38,6 @@ size_t Memwatch_getlimit(void) noexcept;
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

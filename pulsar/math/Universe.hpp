@@ -1,5 +1,5 @@
-#ifndef BPMODULE_GUARD_MATH__UNIVERSE_HPP_
-#define BPMODULE_GUARD_MATH__UNIVERSE_HPP_
+#ifndef PULSAR_GUARD_MATH__UNIVERSE_HPP_
+#define PULSAR_GUARD_MATH__UNIVERSE_HPP_
 /* 
  * \file   Universe.hpp
  * Original Author: richard
@@ -15,11 +15,11 @@
 #include <sstream> //For printing
 #include <iterator> //std::iterator
 
-#include "bpmodule/util/Serialization.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/util/Serialization.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 
 // Forward declarations for friends
@@ -599,5 +599,5 @@ std::ostream& operator<<(std::ostream& os, const Universe<T, U>& AUniv)
 
 }
 }//End namespaces
-#endif /* BPMODULE_GUARD_Universe_HPP_ */
+#endif /* PULSAR_GUARD_Universe_HPP_ */
 

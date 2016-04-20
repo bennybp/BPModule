@@ -1,6 +1,6 @@
 import re
-import bpmodule as bp
-from bpmodule.exception import GeneralException
+import pulsar as psr
+from pulsar.exception import GeneralException
 
 def MakeSystem(SomeString):
     """This function turns a string into a system object, which it then returns
@@ -106,17 +106,17 @@ def MakeSystem(SomeString):
                     Carts.append(ToAU*float(entries[2]))
                     Carts.append(ToAU*float(entries[3]))
                 
-                TempAtom=bp.system.CreateAtom(len(DaAtoms["SYSTEM"]),Carts,bp.system.AtomicZNumberFromSym(atomSym))
+                TempAtom=psr.system.CreateAtom(len(DaAtoms["SYSTEM"]),Carts,psr.system.AtomicZNumberFromSym(atomSym))
                 DaAtoms["SYSTEM"].append(TempAtom)
                 if len(DaAtoms) > 1:
                    DaAtoms[len(DaAtoms)-1].append(TempAtom)
         else:
             raise GeneralException('MakeSystem: Unidentifiable line in geometry specification: %s' % (line))
 
-    molu=bp.system.AtomSetUniverse()
+    molu=psr.system.AtomSetUniverse()
     for i in DaAtoms["SYSTEM"]:
         molu.Insert(i)
-    DaSys=bp.system.System(molu,True)
+    DaSys=psr.system.System(molu,True)
     #DaSys.SetCharge(Charge[0])
     #DaSys.SetMultiplicity(Mult[0])
     return DaSys

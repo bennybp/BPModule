@@ -11,12 +11,12 @@ import argparse
 import copy
 import traceback 
 
-# Add the bpmodule path
+# Add the pulsar path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "modules")
-sys.path.insert(0, bppath)
+psrpath = os.path.join(os.path.dirname(thispath), "modules")
+sys.path.insert(0, psrpath)
 
-import bpmodule as bp
+import pulsar as psr
 
 
 def RemoveKey(m, key):
@@ -35,7 +35,7 @@ def ReplaceKey(m, key, val):
 def Run():
     try:
 
-        tester = bp.testing.Tester("Testing construction of ModuleInfo")
+        tester = psr.testing.Tester("Testing construction of ModuleInfo")
         tester.PrintHeader()
 
         # This one should work
@@ -53,8 +53,8 @@ def Run():
         }
 
 
-        tester.Test("Acceptable ModuleInfo", True, bp.testing.TestModuleInfo_Construct,  minfo)
-        tester.Test("Empty ModuleInfo", False, bp.testing.TestModuleInfo_Construct,  {})
+        tester.Test("Acceptable ModuleInfo", True, psr.testing.TestModuleInfo_Construct,  minfo)
+        tester.Test("Empty ModuleInfo", False, psr.testing.TestModuleInfo_Construct,  {})
 
         allkeys = sorted(minfo.keys())
         strkeys = copy.deepcopy(allkeys)
@@ -64,43 +64,43 @@ def Run():
         # test missing elements
         # test replacing keys with non-strings 
         for k in allkeys:
-            tester.Test("Missing {}".format(k),                    False, bp.testing.TestModuleInfo_Construct, RemoveKey(minfo, k)                      )
-            tester.Test("Replace {} with int".format(k),           False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, int(5) )            )
-            tester.Test("Replace {} with float".format(k),         False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, float(5) )          )
-            tester.Test("Replace {} with dict".format(k),          False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, {"hi": 4} )         )
-            tester.Test("Replace {} with set".format(k),           False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, {"hi", "4"} )       )
-            tester.Test("Replace {} with tuple".format(k),         False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, ("hi", 4) )         )
-            tester.Test("Replace {} with list int".format(k),      False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [int(5)] )          )
-            tester.Test("Replace {} with list float".format(k),    False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [float(5)] )        )
-            tester.Test("Replace {} with list dict".format(k),     False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [{"hi": 4}] )       )
-            tester.Test("Replace {} with list set".format(k),      False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [{"hi", "4"}] )     )
-            tester.Test("Replace {} with list tuple".format(k),    False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [("hi", 4)] )       )
-            tester.Test("Replace {} with list list".format(k),     False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [[5, 4], [1, 0]] )  )
+            tester.Test("Missing {}".format(k),                    False, psr.testing.TestModuleInfo_Construct, RemoveKey(minfo, k)                      )
+            tester.Test("Replace {} with int".format(k),           False, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, int(5) )            )
+            tester.Test("Replace {} with float".format(k),         False, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, float(5) )          )
+            tester.Test("Replace {} with dict".format(k),          False, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, {"hi": 4} )         )
+            tester.Test("Replace {} with set".format(k),           False, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, {"hi", "4"} )       )
+            tester.Test("Replace {} with tuple".format(k),         False, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, ("hi", 4) )         )
+            tester.Test("Replace {} with list int".format(k),      False, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [int(5)] )          )
+            tester.Test("Replace {} with list float".format(k),    False, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [float(5)] )        )
+            tester.Test("Replace {} with list dict".format(k),     False, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [{"hi": 4}] )       )
+            tester.Test("Replace {} with list set".format(k),      False, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [{"hi", "4"}] )     )
+            tester.Test("Replace {} with list tuple".format(k),    False, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [("hi", 4)] )       )
+            tester.Test("Replace {} with list list".format(k),     False, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, [[5, 4], [1, 0]] )  )
 
 
         # test replacing with a list of strings
         # (except those that are lists of strings)
         for k in strkeys:
-            tester.Test("Replace {} with list str".format(k),  False, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, ["Hello", "Hi"] )       )
+            tester.Test("Replace {} with list str".format(k),  False, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, k, ["Hello", "Hi"] )       )
 
 
-        tester.Test("Empty authors".format(k),  True, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, "authors", []))
-        tester.Test("Empty refs".format(k),     True, bp.testing.TestModuleInfo_Construct, ReplaceKey(minfo, "refs", []))
+        tester.Test("Empty authors".format(k),  True, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, "authors", []))
+        tester.Test("Empty refs".format(k),     True, psr.testing.TestModuleInfo_Construct, ReplaceKey(minfo, "refs", []))
 
 
         tester.PrintResults()
 
 
     except Exception as e:
-      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      psr.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
       #traceback.print_exc()
-      bp.output.GlobalError("\n")
-      bp.output.GlobalError(str(e))
-      bp.output.GlobalError("\n")
+      psr.output.GlobalError("\n")
+      psr.output.GlobalError(str(e))
+      psr.output.GlobalError("\n")
 
 
 
 
-bp.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.Init(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-bp.Finalize()
+psr.Finalize()

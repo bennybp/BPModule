@@ -1,7 +1,7 @@
-#ifndef BPMODULE_GUARD_GRAPH__GRAPHITR_HPP_
-#define BPMODULE_GUARD_GRAPH__GRAPHITR_HPP_
+#ifndef PULSAR_GUARD_GRAPH__GRAPHITR_HPP_
+#define PULSAR_GUARD_GRAPH__GRAPHITR_HPP_
 
-namespace bpmodule{
+namespace pulsar{
 namespace datastore {
 namespace LibGraph{
 
@@ -53,6 +53,6 @@ namespace LibGraph{
 
 } // close namespace LibGraph
 } // close namespace datastore
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif /* GRAPH_GRAPHITR_HPP_ */

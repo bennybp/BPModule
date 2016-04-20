@@ -1,10 +1,10 @@
-#ifndef VPRINTFCPP__FORMAT_HPP_
-#define VPRINTFCPP__FORMAT_HPP_
+#ifndef PULSAR_GUARD_VPRINTFCPP__FORMAT_HPP_
+#define PULSAR_GUARD_VPRINTFCPP__FORMAT_HPP_
 
 #include <sstream>
 #include <stdexcept>
 
-#include "bpmodule/util/vprintfcpp/Printf_wrap.hpp"
+#include "pulsar/util/vprintfcpp/Printf_wrap.hpp"
 
 namespace vprintfcpp {
 

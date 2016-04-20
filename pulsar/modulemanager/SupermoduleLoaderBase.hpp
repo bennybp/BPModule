@@ -5,14 +5,14 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__SUPERMODULELOADERBASE_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__SUPERMODULELOADERBASE_HPP_
+#ifndef PULSAR_GUARD_MODULEMANAGER__SUPERMODULELOADERBASE_HPP_
+#define PULSAR_GUARD_MODULEMANAGER__SUPERMODULELOADERBASE_HPP_
 
 
 #include <string>
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 
@@ -45,7 +45,7 @@ class SupermoduleLoaderBase
 
         /*! \brief Load a supermodule
          *
-         * \throw bpmodule::exception::ModuleLoadException if there
+         * \throw pulsar::exception::ModuleLoadException if there
          *        is a problem (missing function, etc)
          *
          * \param [in] spath The path to the supermodule to be loaded
@@ -55,7 +55,7 @@ class SupermoduleLoaderBase
 };
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

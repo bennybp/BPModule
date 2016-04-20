@@ -4,12 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 #include <memory>
-#include "bpmodule/parallel/InitFinalize.hpp"
-#include "bpmodule/output/GlobalOutput.hpp"
-#include "bpmodule/util/Cmdline.hpp"
+#include "pulsar/parallel/InitFinalize.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
+#include "pulsar/util/Cmdline.hpp"
 #include "LibTaskForce.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace parallel {
 
 typedef LibTaskForce::Environment Env_t;
@@ -49,4 +49,4 @@ long GetNProc(void)
 }
 
 } // close namespace parallel
-} // close namespace bpmodule
+} // close namespace pulsar

@@ -3,7 +3,7 @@
 import os
 import sys
 import re
-import bp_common 
+import psr_common 
 
 
 if len(sys.argv) != 2:
@@ -101,14 +101,14 @@ for l in open(os.path.join(datadir, "NIST-ATOMICION.formatted.txt")).readlines()
 
 
 
-with bp_common.HeaderSourceFiles(outbase, "LUTs for Atomic Information", 
-                                 ["bpmodule", "system", "lut"],
+with psr_common.HeaderSourceFiles(outbase, "LUTs for Atomic Information", 
+                                 ["pulsar", "system", "lut"],
                                  hincludes = ["<map>",
-                                              "\"bpmodule/system/AtomicInfo.hpp\"",
-                                              "\"bpmodule/util/StringUtil.hpp\""],
+                                              "\"pulsar/system/AtomicInfo.hpp\"",
+                                              "\"pulsar/util/StringUtil.hpp\""],
                                  srcincludes = ["<map>",
-                                                "\"bpmodule/system/AtomicInfo.hpp\"",
-                                                "\"bpmodule/util/StringUtil.hpp\""]) as src:
+                                                "\"pulsar/system/AtomicInfo.hpp\"",
+                                                "\"pulsar/util/StringUtil.hpp\""]) as src:
 
     # Header file
     src.fh.write("//////////////////////////////////////////////////\n")

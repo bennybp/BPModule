@@ -5,14 +5,14 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_UTIL__FILESYSTEM_HPP_
-#define BPMODULE_GUARD_UTIL__FILESYSTEM_HPP_
+#ifndef PULSAR_GUARD_UTIL__FILESYSTEM_HPP_
+#define PULSAR_GUARD_UTIL__FILESYSTEM_HPP_
 
 #include <utility>
 #include <string>
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 
@@ -37,7 +37,7 @@ std::pair<std::string, std::string> SplitPath(const std::string & path);
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

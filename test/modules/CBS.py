@@ -9,7 +9,7 @@ from MiscFxns import *
 from StandardModules import *
 
 def ApplyBasis(syst,bsname,bslabel="primary"):
-    return bp.system.ApplySingleBasis(bslabel,bsname,syst)
+    return psr.system.ApplySingleBasis(bslabel,bsname,syst)
 
 def CompareEgy(EgyIn):
    return EgyIn+228.11521111389305<0.00001
@@ -34,19 +34,19 @@ def CompareGrad(GradIn):
 
 def Run(mm):
     try:
-        tester = bp.testing.Tester("Testing CBS Extrapolations")
+        tester = psr.testing.Tester("Testing CBS Extrapolations")
         tester.PrintHeader()
        
         LoadDefaultModules(mm)
-        mm.DuplicateKey("BP_MP2","MP2_aTZ")
-        mm.ChangeOption("BP_MP2","BASIS_SET","aug-cc-pVDZ")
+        mm.DuplicateKey("PSR_MP2","MP2_aTZ")
+        mm.ChangeOption("PSR_MP2","BASIS_SET","aug-cc-pVDZ")
         mm.ChangeOption("MP2_aTZ","BASIS_SET","aug-cc-pVTZ")
-        mm.ChangeOption("BP_HELGAKER_CBS","BASIS_CARDINAL_NUMS",[2,3])
-        mm.ChangeOption("BP_MIM","METHODS",["BP_MP2","MP2_aTZ"])
+        mm.ChangeOption("PSR_HELGAKER_CBS","BASIS_CARDINAL_NUMS",[2,3])
+        mm.ChangeOption("PSR_MIM","METHODS",["PSR_MP2","MP2_aTZ"])
 
  
-        MyMod=mm.GetModule("BP_HELGAKER_CBS",0)
-        mol=bp.system.MakeSystem("""
+        MyMod=mm.GetModule("PSR_HELGAKER_CBS",0)
+        mol=psr.system.MakeSystem("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
         H    0.5104418   0.8944555   0.5514190
@@ -60,7 +60,7 @@ def Run(mm):
         """)
         mol = ApplyBasis(mol,"aug-cc-pvdz","aug-cc-pVDZ")
         mol = ApplyBasis(mol,"aug-cc-pvtz","aug-cc-pVTZ")
-        wfn=bp.datastore.Wavefunction()
+        wfn=psr.datastore.Wavefunction()
         wfn.system=mol
         MyMod.SetInitialWfn(wfn)
         
@@ -76,10 +76,10 @@ def Run(mm):
         
      
     except Exception as e:
-      bp.output.Output("Caught exception in main handler\n")
+      psr.output.Output("Caught exception in main handler\n")
       traceback.print_exc()
 
-with bp.ModuleAdministrator() as mm:
+with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-bp.Finalize()
+psr.Finalize()

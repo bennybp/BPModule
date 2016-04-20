@@ -11,12 +11,12 @@
  * Created on March 17, 2016, 6:42 PM
  */
 
-#ifndef BPMODULE_GUARD_MATH__BINOMIAL_HPP_
-#define BPMODULE_GUARD_MATH__BINOMIAL_HPP_
+#ifndef PULSAR_GUARD_MATH__BINOMIAL_HPP_
+#define PULSAR_GUARD_MATH__BINOMIAL_HPP_
 
 #include <cstdlib>
 
-namespace bpmodule{
+namespace pulsar{
 namespace math{
 
 /** \brief Computes the beta function of a and b

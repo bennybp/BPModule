@@ -11,13 +11,13 @@
  * Created on April 13, 2016, 3:51 PM
  */
 
-#ifndef SYMMETRIZER_HPP
-#define SYMMETRIZER_HPP
+#ifndef PULSAR_GUARD_SYSTEM__SYMMETRIZER_HPP_
+#define PULSAR_GUARD_SYSTEM__SYMMETRIZER_HPP_
 
 #include <map>
-//#include "bpmodule/system/SymmetryGroups.hpp"
+//#include "pulsar/system/SymmetryGroups.hpp"
 
-namespace bpmodule{
+namespace pulsar{
 namespace system{
 class System;
 

@@ -5,14 +5,14 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_DATASTORE__GENERICHOLDER_HPP_
-#define BPMODULE_GUARD_DATASTORE__GENERICHOLDER_HPP_
+#ifndef PULSAR_GUARD_DATASTORE__GENERICHOLDER_HPP_
+#define PULSAR_GUARD_DATASTORE__GENERICHOLDER_HPP_
 
-#include "bpmodule/util/Mangle.hpp"
-#include "bpmodule/datastore/GenericBase.hpp"
+#include "pulsar/util/Mangle.hpp"
+#include "pulsar/datastore/GenericBase.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 namespace detail {
 
@@ -117,7 +117,7 @@ class GenericHolder : public GenericBase
 
 } //closing namespace detail
 } //closing namespace datastore
-} //closing namespace bpmodule
+} //closing namespace pulsar
 
 
 #endif

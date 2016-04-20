@@ -5,13 +5,13 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_UTIL__STRINGUTIL_HPP_
-#define BPMODULE_GUARD_UTIL__STRINGUTIL_HPP_
+#ifndef PULSAR_GUARD_UTIL__STRINGUTIL_HPP_
+#define PULSAR_GUARD_UTIL__STRINGUTIL_HPP_
 
 #include <string>
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 /*! \brief Joins each element of a container of strings
@@ -157,7 +157,7 @@ std::string Line(char c, int n = 80);
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif
 

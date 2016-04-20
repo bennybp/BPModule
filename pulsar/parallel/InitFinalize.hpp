@@ -5,8 +5,8 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_PARALLEL__INITFINALIZE_HPP_
-#define BPMODULE_GUARD_PARALLEL__INITFINALIZE_HPP_
+#ifndef PULSAR_GUARD_PARALLEL__INITFINALIZE_HPP_
+#define PULSAR_GUARD_PARALLEL__INITFINALIZE_HPP_
 
 #include <cstddef> //For size_t
 
@@ -16,7 +16,7 @@ namespace LibTaskForce{
     class Environment;
 }
 
-namespace bpmodule {
+namespace pulsar{
 namespace parallel {
 
 //Returns the current environment
@@ -52,6 +52,6 @@ long GetNProc(void);
 
 
 } // close namespace parallel
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

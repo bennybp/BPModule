@@ -5,11 +5,11 @@
  */
 
 
-#include "bpmodule/modulemanager/ModuleInfo.hpp"
-#include "bpmodule/output/Output.hpp"
+#include "pulsar/modulemanager/ModuleInfo.hpp"
+#include "pulsar/output/Output.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 
@@ -55,5 +55,5 @@ bool ModuleInfo::operator==(const ModuleInfo & rhs) const
 
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 

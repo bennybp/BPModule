@@ -4,15 +4,15 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/python/Pybind11_functional.hpp"
-#include "bpmodule/python/Pybind11_operators.hpp"
-#include "bpmodule/modulemanager/ModuleManager.hpp"
+#include "pulsar/python/Pybind11.hpp"
+#include "pulsar/python/Pybind11_functional.hpp"
+#include "pulsar/python/Pybind11_operators.hpp"
+#include "pulsar/modulemanager/ModuleManager.hpp"
 
-using bpmodule::modulemanager::detail::ConstModuleTreeIter;
-using bpmodule::modulemanager::detail::ConstModuleFlatTreeIter;
+using pulsar::modulemanager::detail::ConstModuleTreeIter;
+using pulsar::modulemanager::detail::ConstModuleFlatTreeIter;
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 namespace export_python {
 
@@ -124,5 +124,5 @@ PYBIND11_PLUGIN(modulemanager)
 
 } // close namespace export_python
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 

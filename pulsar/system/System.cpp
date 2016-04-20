@@ -3,24 +3,24 @@
  * \brief The system class (source)
  */
 
-#include "bpmodule/pragma.h"
-#include "bpmodule/system/System.hpp"
-#include "bpmodule/system/BasisSet.hpp"
-#include "bpmodule/system/AtomicInfo.hpp"
-#include "bpmodule/output/GlobalOutput.hpp"
-#include "bpmodule/util/HashSerializable.hpp"
-#include "bpmodule/math/PointManipulation.hpp"
+#include "pulsar/pragma.h"
+#include "pulsar/system/System.hpp"
+#include "pulsar/system/BasisSet.hpp"
+#include "pulsar/system/AtomicInfo.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
+#include "pulsar/util/HashSerializable.hpp"
+#include "pulsar/math/PointManipulation.hpp"
 
-using bpmodule::output::GlobalDebug;
-using bpmodule::exception::SystemException;
+using pulsar::output::GlobalDebug;
+using pulsar::exception::SystemException;
 
 
 // Instantiate the MathSet, etc, templates
-template class bpmodule::math::Universe<bpmodule::system::Atom>;
-template class bpmodule::math::MathSet<bpmodule::system::Atom>;
+template class pulsar::math::Universe<pulsar::system::Atom>;
+template class pulsar::math::MathSet<pulsar::system::Atom>;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 void System::SetDefaults_(void)
@@ -366,5 +366,5 @@ std::array<double,9> InertiaTensor(const System& Mol){
 }
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 

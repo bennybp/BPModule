@@ -4,22 +4,22 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#ifndef BPMODULE_GUARD_MATH__REGISTERMATHSET_HPP_
-#define BPMODULE_GUARD_MATH__REGISTERMATHSET_HPP_
+#ifndef PULSAR_GUARD_MATH__REGISTERMATHSET_HPP_
+#define PULSAR_GUARD_MATH__REGISTERMATHSET_HPP_
 
-#include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/python/Pybind11_stl.hpp"
-#include "bpmodule/python/Pybind11_functional.hpp"
-#include "bpmodule/python/Pybind11_operators.hpp"
-#include "bpmodule/python/Pybind11_iterators.hpp"
-#include "bpmodule/math/Universe.hpp"
-#include "bpmodule/math/MathSet.hpp"
+#include "pulsar/python/Pybind11.hpp"
+#include "pulsar/python/Pybind11_stl.hpp"
+#include "pulsar/python/Pybind11_functional.hpp"
+#include "pulsar/python/Pybind11_operators.hpp"
+#include "pulsar/python/Pybind11_iterators.hpp"
+#include "pulsar/math/Universe.hpp"
+#include "pulsar/math/MathSet.hpp"
 
 PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
 
 //! \todo Export exact casts? Or have the equivalent with python?
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 
 
@@ -148,7 +148,7 @@ void RegisterUniverse(pybind11::module & m,
 
 
 } // close namespace math 
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif
 

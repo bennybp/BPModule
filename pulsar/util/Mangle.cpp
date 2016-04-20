@@ -6,9 +6,9 @@
 
 
 #include <cxxabi.h>
-#include "bpmodule/util/Mangle.hpp"
+#include "pulsar/util/Mangle.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 
@@ -35,4 +35,4 @@ std::string DemangleCpp(const char * typestr)
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar

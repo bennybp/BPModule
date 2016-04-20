@@ -4,15 +4,15 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/python/Errors.hpp"
-#include "bpmodule/python/Types.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/python/Pybind11.hpp"
+#include "pulsar/python/Errors.hpp"
+#include "pulsar/python/Types.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/python/Pybind11.hpp"
 
-using bpmodule::exception::GeneralException;
+using pulsar::exception::GeneralException;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace python {
 namespace detail {
 
@@ -56,4 +56,4 @@ std::string GetPyException(void)
 
 } // close namespace detail
 } // close namespace python
-} // close namespace bpmodule
+} // close namespace pulsar

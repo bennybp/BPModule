@@ -4,17 +4,17 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_MATH__POINT_HPP_
-#define BPMODULE_GUARD_MATH__POINT_HPP_
+#ifndef PULSAR_GUARD_MATH__POINT_HPP_
+#define PULSAR_GUARD_MATH__POINT_HPP_
 
 #include <array>
 #include <cmath>
 
-#include "bpmodule/pragma.h"
-#include "bpmodule/util/Serialization.hpp"
+#include "pulsar/pragma.h"
+#include "pulsar/util/Serialization.hpp"
 
 
-namespace bpmodule{
+namespace pulsar{
 namespace math{
 
 
@@ -208,6 +208,6 @@ typedef PointT<double> Point;
 
 }}//End namespaces
 
-#endif /* BPMODULE_GUARD_POINT_HPP_ */
+#endif /* PULSAR_GUARD_POINT_HPP_ */
 
 

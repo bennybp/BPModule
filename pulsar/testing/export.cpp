@@ -4,10 +4,10 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "bpmodule/testing/TestConvert.hpp"
-#include "bpmodule/testing/TestDatastore.hpp"
-#include "bpmodule/testing/TestOptions.hpp"
-#include "bpmodule/testing/TestingBase.hpp"
+#include "pulsar/testing/TestConvert.hpp"
+#include "pulsar/testing/TestDatastore.hpp"
+#include "pulsar/testing/TestOptions.hpp"
+#include "pulsar/testing/TestingBase.hpp"
 
 
 
@@ -23,7 +23,7 @@ pybind11::tuple Limits(void)
 }
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace testing {
 namespace export_python {
 
@@ -178,5 +178,5 @@ PYBIND11_PLUGIN(testing)
 
 } // close namespace export_python
 } // close namespace testing 
-} // close namespace bpmodule
+} // close namespace pulsar
 

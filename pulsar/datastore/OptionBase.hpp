@@ -5,18 +5,18 @@
  */
 
 
-#ifndef BPMODULE_GUARD_DATASTORE__OPTIONBASE_HPP_
-#define BPMODULE_GUARD_DATASTORE__OPTIONBASE_HPP_
+#ifndef PULSAR_GUARD_DATASTORE__OPTIONBASE_HPP_
+#define PULSAR_GUARD_DATASTORE__OPTIONBASE_HPP_
 
 #include <memory>
 #include <string>
 #include <vector>
 #include <ostream>
 
-#include "bpmodule/python/Pybind11_fwd.hpp"
-#include "bpmodule/util/Serialization.hpp"
+#include "pulsar/python/Pybind11_fwd.hpp"
+#include "pulsar/util/Serialization.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 
 
@@ -125,7 +125,7 @@ class OptionBase
          * Does not throw on validation error, but will throw if the validator
          * cannot be called (python issues, etc).
          *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
+         * \throw pulsar::exception::PythonCallException if there is a problem
          *        with the validation function
          *
          * \return Any problems / issues with this option
@@ -167,7 +167,7 @@ class OptionBase
         /////////////////////////////////////////
         /*! \brief Return a copy of the value as a python object
          *
-         * \throw bpmodule::exception::OptionException
+         * \throw pulsar::exception::OptionException
          *        If the value does not exist or cannot
          *        be converted to a python object
          */
@@ -177,7 +177,7 @@ class OptionBase
 
         /*! \brief Change the value via a python object
          *
-         * \throw bpmodule::exception::OptionException
+         * \throw pulsar::exception::OptionException
          *        if there is a problem with the python conversion
          *
          *  \exstrong
@@ -229,7 +229,7 @@ class OptionBase
 
         /*! \brief Test if this option has issues
          *
-         * \throw bpmodule::exception::PythonCallException if there is a problem
+         * \throw pulsar::exception::PythonCallException if there is a problem
          *        with the validation function
          */
         bool HasIssues(void) const;
@@ -276,6 +276,6 @@ class OptionBase
 
 
 } //closing namespace datastore
-} //closing namespace bpmodule
+} //closing namespace pulsar
 
 #endif

@@ -11,13 +11,13 @@
  * Created on April 15, 2016, 3:43 PM
  */
 
-#ifndef GEOMETRY_HPP
-#define GEOMETRY_HPP
+#ifndef PULSAR_GUARD_MATH__GEOMETRY_HPP_
+#define PULSAR_GUARD_MATH__GEOMETRY_HPP_
 
 #include<array>
 #include<cmath>
-#include"bpmodule/constants.h"//For Pi
-namespace bpmodule{
+#include "pulsar/constants.h"//For Pi
+namespace pulsar{
 namespace math{
 
 

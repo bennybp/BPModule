@@ -1,8 +1,8 @@
 import os
 import functools
 from . import BasisSetParsers
-import bpmodule
-from bpmodule.exception import GeneralException
+import pulsar
+from pulsar.exception import GeneralException
 
 
 def TransformName(bsname):
@@ -10,7 +10,7 @@ def TransformName(bsname):
 
 
 def AddShellsToAtom(label, desc, bsmap, atom):
-    atom2 = bpmodule.system.Atom(atom)
+    atom2 = pulsar.system.Atom(atom)
     atom2.SetShells(label, desc, bsmap[atom.GetZ()])
     return atom2
 
@@ -21,7 +21,7 @@ def ApplySingleBasis(bslabel, bsname, syst):
 
     bspath = None
 
-    for p in bpmodule.bpmodule_paths["basis"]:
+    for p in pulsar.pulsar_paths["basis"]:
         testpath = os.path.join(p, TransformName(bsname)) + ".gbs"
         if os.path.isfile(testpath):
             bspath = testpath
@@ -29,7 +29,7 @@ def ApplySingleBasis(bslabel, bsname, syst):
           
     if bspath == None:
         ge = GeneralException("File for basis set does not exist", "bsname", bsname)
-        for p in bpmodule.bpmodule_paths["basis"]:
+        for p in pulsar.pulsar_paths["basis"]:
             ge.AppendInfo("path", p)
         raise ge
 

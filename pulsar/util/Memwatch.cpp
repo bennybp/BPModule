@@ -6,9 +6,9 @@
 
 
 #include "memwatch/memwatch.h"
-#include "bpmodule/util/Memwatch.hpp"
+#include "pulsar/util/Memwatch.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 
@@ -35,5 +35,5 @@ size_t Memwatch_getlimit(void) noexcept
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 

@@ -1,8 +1,8 @@
-minfo = { "BPModule_ModuleManager" :
+minfo = { "Pulsar_ModuleManager" :
   {
     "type"        : "core",
     "version"     : "0.1a",
-    "description" : "Basic modulemanager for BPModule",
+    "description" : "Basic modulemanager for Pulsar",
     "authors"     : [],
     "refs"        : [],
     "options"     : {}

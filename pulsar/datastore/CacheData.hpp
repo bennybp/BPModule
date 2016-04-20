@@ -5,17 +5,17 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_DATASTORE__CACHEDATA_HPP_
-#define BPMODULE_GUARD_DATASTORE__CACHEDATA_HPP_
+#ifndef PULSAR_GUARD_DATASTORE__CACHEDATA_HPP_
+#define PULSAR_GUARD_DATASTORE__CACHEDATA_HPP_
 
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/datastore/GenericHolder.hpp"
-#include "bpmodule/datastore/OptionMap.hpp"
-#include "bpmodule/python/Pybind11.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/datastore/GenericHolder.hpp"
+#include "pulsar/datastore/OptionMap.hpp"
+#include "pulsar/python/Pybind11.hpp"
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 
 
@@ -106,7 +106,7 @@ class CacheData
 
         /*! \brief Return the underlying data
          *
-         * \throw bpmodule::exception::DataStoreException if key (with the given
+         * \throw pulsar::exception::DataStoreException if key (with the given
          *        significant options) doesn't exist or is of the wrong type
          *
          * \tparam T The type of the data
@@ -132,7 +132,7 @@ class CacheData
          * Since it actually stores python objects, returning by
          * copy or reference is undefined.
          *
-         * \throw bpmodule::exception::DataStoreException if key (with the given
+         * \throw pulsar::exception::DataStoreException if key (with the given
          *        significant options) doesn't exist
          *
          * \tparam T The type of the data
@@ -238,7 +238,7 @@ class CacheData
 
         /*! \brief Obtains a CacheDataEntry or throws if data doesn't exist
          * 
-         * \throw bpmodule::exception::DataStoreException if key (with the given
+         * \throw pulsar::exception::DataStoreException if key (with the given
          *        significant options) doesn't exist
          *
          * \param [in] key Key of the data to get
@@ -254,7 +254,7 @@ class CacheData
 
         /*! \brief Obtains a pointer to a GenericHolder cast to desired type
          * 
-         * \throw bpmodule::exception::DataStoreException if key (with the given 
+         * \throw pulsar::exception::DataStoreException if key (with the given 
          *        significant options) doesn't exist or the cast fails.
          *
          * \param [in] key Key of the data to get
@@ -294,7 +294,7 @@ class CacheData
 
 
 } // close namespace datastore
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

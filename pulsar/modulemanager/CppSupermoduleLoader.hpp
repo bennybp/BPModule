@@ -5,16 +5,16 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__CPPSUPERMODULELOADER_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__CPPSUPERMODULELOADER_HPP_
+#ifndef PULSAR_GUARD_MODULEMANAGER__CPPSUPERMODULELOADER_HPP_
+#define PULSAR_GUARD_MODULEMANAGER__CPPSUPERMODULELOADER_HPP_
 
 #include <map>
 
-#include "bpmodule/modulemanager/SupermoduleLoaderBase.hpp"
-#include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
+#include "pulsar/modulemanager/SupermoduleLoaderBase.hpp"
+#include "pulsar/modulemanager/ModuleCreationFuncs.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 
@@ -60,7 +60,7 @@ class CppSupermoduleLoader : public SupermoduleLoaderBase
 };
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

@@ -1,4 +1,4 @@
-set(BPMODULE_UTIL_FILES
+set(PULSAR_UTIL_FILES
             Format.cpp
             Memwatch.cpp
             Cmdline.cpp
@@ -16,7 +16,7 @@ set(BPMODULE_UTIL_FILES
 
 
 ADD_COREMODULE(util 
-           "${BPMODULE_UTIL_FILES}"
+           "${PULSAR_UTIL_FILES}"
            ""
            "${MEMWATCH_LIBRARIES}"
            "${MEMWATCH_INCLUDE_DIR}")

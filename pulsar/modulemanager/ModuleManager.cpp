@@ -4,26 +4,26 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 #include <random>
-#include "bpmodule/modulemanager/ModuleManager.hpp"
-#include "bpmodule/output/Output.hpp"
-#include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/datastore/Wavefunction.hpp"
-#include "bpmodule/output/GlobalOutput.hpp"
+#include "pulsar/modulemanager/ModuleManager.hpp"
+#include "pulsar/output/Output.hpp"
+#include "pulsar/modulebase/ModuleBase.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/datastore/Wavefunction.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
 
 ////////////////////////
 // Supermodule Handlers
 ////////////////////////
-#include "bpmodule/modulemanager/CppSupermoduleLoader.hpp"
-#include "bpmodule/modulemanager/PySupermoduleLoader.hpp"
+#include "pulsar/modulemanager/CppSupermoduleLoader.hpp"
+#include "pulsar/modulemanager/PySupermoduleLoader.hpp"
 
-using namespace bpmodule::exception;
-using namespace bpmodule::datastore;
-using namespace bpmodule::modulebase;
-using namespace bpmodule::output;
+using namespace pulsar::exception;
+using namespace pulsar::datastore;
+using namespace pulsar::modulebase;
+using namespace pulsar::output;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 
@@ -402,4 +402,4 @@ void ModuleManager::ChangeOptionPy(const std::string & modulekey, const std::str
 
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar

@@ -6,11 +6,11 @@
 
 #include <map>
 
-#include "bpmodule/system/AMConvert.hpp"
-#include "bpmodule/util/StringUtil.hpp" // for case insensitive compare
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/system/AMConvert.hpp"
+#include "pulsar/util/StringUtil.hpp" // for case insensitive compare
+#include "pulsar/exception/Exceptions.hpp"
 
-using bpmodule::util::CaseInsensitiveLess;
+using pulsar::util::CaseInsensitiveLess;
 
 static const std::map<std::string, int, CaseInsensitiveLess> toi_{ { "spdfgh", -5 },
                                                                    { "spdfg",  -4 },
@@ -69,7 +69,7 @@ static const std::map<int, std::string> tostr_{ { -5, "spdfgh"},
                                                 { 21, "z"} };
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -93,5 +93,5 @@ std::string AMToString(int am)
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 

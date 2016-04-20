@@ -1,8 +1,8 @@
-minfo = { "BPModule_System" :
+minfo = { "Pulsar_System" :
   {
     "type"        : "core",
     "version"     : "0.1a",
-    "description" : "System class for BPModule",
+    "description" : "System class for Pulsar",
     "authors"     : [],
     "refs"        : [],
     "options"     : {}

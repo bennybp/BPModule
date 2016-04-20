@@ -4,14 +4,14 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_SYSTEM__BASISSETSHELL_HPP_
-#define BPMODULE_GUARD_SYSTEM__BASISSETSHELL_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__BASISSETSHELL_HPP_
+#define PULSAR_GUARD_SYSTEM__BASISSETSHELL_HPP_
 
-#include "bpmodule/types.h"
-#include "bpmodule/system/BasisShellBase.hpp"
-#include "bpmodule/system/CoordType.hpp"
+#include "pulsar/types.h"
+#include "pulsar/system/BasisShellBase.hpp"
+#include "pulsar/system/CoordType.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 // for friend
@@ -116,7 +116,7 @@ class BasisSetShell : public BasisShellBase
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

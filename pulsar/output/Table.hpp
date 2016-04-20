@@ -1,13 +1,13 @@
-#ifndef _TABLE_H_
-#define _TABLE_H_
+#ifndef PULSAR_GUARD_OUTPUT__TABLE_HPP_
+#define PULSAR_GUARD_OUTPUT__TABLE_HPP_
 
 #include <string>
 #include <vector>
-namespace bpmodule{
+namespace pulsar{
 namespace output{
 
 
-/** \page Printing pretty tables with BPModule
+/** \page Printing pretty tables with Pulsar
  *    
  *   \todo Go back over and C++11-ify this 
  *  

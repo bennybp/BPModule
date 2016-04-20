@@ -4,8 +4,8 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_UTIL__SERIALIZATION_HPP_
-#define BPMODULE_GUARD_UTIL__SERIALIZATION_HPP_
+#ifndef PULSAR_GUARD_UTIL__SERIALIZATION_HPP_
+#define PULSAR_GUARD_UTIL__SERIALIZATION_HPP_
 
 // Included via SerializationArchives.hpp
 //#include <cereal/cereal.hpp>
@@ -20,17 +20,17 @@
 #include <cereal/types/string.hpp>
 #include <cereal/types/complex.hpp>
 
-#include "bpmodule/util/SerializationArchives.hpp"
+#include "pulsar/util/SerializationArchives.hpp"
 
 #define DECLARE_SERIALIZATION_FRIENDS \
     friend class cereal::access; \
-    template<typename T> friend class bpmodule::util::detail::StdStreamArchive;
+    template<typename T> friend class pulsar::util::detail::StdStreamArchive;
 
 
 typedef std::vector<char> ByteArray;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 /*! \brief Convert a c++ object to a byte array
@@ -85,7 +85,7 @@ std::unique_ptr<T> NewFromByteArray(const ByteArray & arr)
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif
 

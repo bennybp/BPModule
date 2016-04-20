@@ -29,38 +29,38 @@ def CompareGrad(GradIn):
 
 def Run(mm):
     try:
-        tester = bp.testing.Tester(
+        tester = psr.testing.Tester(
            "Testing FPA. MP2/a(TQ)Z+[2B-CCSD(T)/aDZ]-[2B-MP2/aDZ]")
         tester.PrintHeader()
        
         LoadDefaultModules(mm)
-        mm.DuplicateKey("BP_MP2","MP2_aTZ")
-        mm.DuplicateKey("BP_MP2","MP2_aQZ")
-        mm.DuplicateKey("BP_MBE","BP_MBE_MP2")
+        mm.DuplicateKey("PSR_MP2","MP2_aTZ")
+        mm.DuplicateKey("PSR_MP2","MP2_aQZ")
+        mm.DuplicateKey("PSR_MBE","PSR_MBE_MP2")
 
         aDZ="aug-cc-pvdz"
         aTZ="aug-cc-pvtz"
         aQZ="aug-cc-pvqz"
-        mm.ChangeOption("BP_MBE","METHOD","BP_CCSD(T)")
-        mm.ChangeOption("BP_MBE_MP2","METHOD","BP_MP2")
-        mm.ChangeOption("BP_BOND_FRAG","TRUNCATION_ORDER",2)
-        mm.ChangeOption("BP_CCSD(T)","BASIS_SET",aDZ)
-        mm.ChangeOption("BP_MP2","BASIS_SET",aDZ)
+        mm.ChangeOption("PSR_MBE","METHOD","PSR_CCSD(T)")
+        mm.ChangeOption("PSR_MBE_MP2","METHOD","PSR_MP2")
+        mm.ChangeOption("PSR_BOND_FRAG","TRUNCATION_ORDER",2)
+        mm.ChangeOption("PSR_CCSD(T)","BASIS_SET",aDZ)
+        mm.ChangeOption("PSR_MP2","BASIS_SET",aDZ)
         mm.ChangeOption("MP2_aTZ","BASIS_SET",aTZ)
         mm.ChangeOption("MP2_aQZ","BASIS_SET",aQZ)
         
 
-        mm.DuplicateKey("BP_MIM","FPA_MP2_MIM")
+        mm.DuplicateKey("PSR_MIM","FPA_MP2_MIM")
         mm.ChangeOption("FPA_MP2_MIM","METHODS",["MP2_aTZ","MP2_aQZ"])
-        mm.ChangeOption("BP_HELGAKER_CBS","BASIS_CARDINAL_NUMS",[3,4])
-        mm.ChangeOption("BP_HELGAKER_CBS","MIM_KEY","FPA_MP2_MIM")
-        mm.ChangeOption("BP_MIM","METHODS",["BP_HELGAKER_CBS",
-                                            "BP_MBE",
-                                            "BP_MBE_MP2"
+        mm.ChangeOption("PSR_HELGAKER_CBS","BASIS_CARDINAL_NUMS",[3,4])
+        mm.ChangeOption("PSR_HELGAKER_CBS","MIM_KEY","FPA_MP2_MIM")
+        mm.ChangeOption("PSR_MIM","METHODS",["PSR_HELGAKER_CBS",
+                                            "PSR_MBE",
+                                            "PSR_MBE_MP2"
                                             ])
-        mm.ChangeOption("BP_MIM","WEIGHTS",[1.0,1.0,-1.0])
-        MyMod=mm.GetModule("BP_MIM",0)
-        mol=bp.system.MakeSystem("""
+        mm.ChangeOption("PSR_MIM","WEIGHTS",[1.0,1.0,-1.0])
+        MyMod=mm.GetModule("PSR_MIM",0)
+        mol=psr.system.MakeSystem("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
         H    0.5104418   0.8944555   0.5514190
@@ -75,7 +75,7 @@ def Run(mm):
         mol = ApplyBasis(mol,aDZ,aDZ)
         mol = ApplyBasis(mol,aTZ,aTZ)
         mol = ApplyBasis(mol,aQZ,aQZ)
-        wfn=bp.datastore.Wavefunction()
+        wfn=psr.datastore.Wavefunction()
         wfn.system=mol
         MyMod.SetInitialWfn(wfn)
         
@@ -91,11 +91,11 @@ def Run(mm):
         
      
     except Exception as e:
-      bp.output.Output("Caught exception in main handler\n")
+      psr.output.Output("Caught exception in main handler\n")
       traceback.print_exc()
 
-with bp.ModuleAdministrator() as mm:
+with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-bp.Finalize()
+psr.Finalize()
 

@@ -1,4 +1,4 @@
-set(BPMODULE_OUTPUT_FILES
+set(PULSAR_OUTPUT_FILES
             GlobalOutput.cpp
             Output.cpp 
             Table.cpp
@@ -7,7 +7,7 @@ set(BPMODULE_OUTPUT_FILES
 
 
 ADD_COREMODULE(output 
-           "${BPMODULE_OUTPUT_FILES}"
+           "${PULSAR_OUTPUT_FILES}"
            ""
            ""
            "")

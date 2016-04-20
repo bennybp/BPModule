@@ -5,9 +5,9 @@
  */ 
 
 
-#include "bpmodule/util/Filesystem.hpp"
+#include "pulsar/util/Filesystem.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 
@@ -62,4 +62,4 @@ std::pair<std::string, std::string> SplitPath(const std::string & path)
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar

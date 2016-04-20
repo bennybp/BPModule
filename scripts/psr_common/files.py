@@ -14,7 +14,7 @@ def GenIncludeGuard(path):
   guard = guard.replace('-', '_')
   guard = guard.replace('/', '__')
   guard = guard.replace('\\', '__')
-  guard = "BPMODULE_GUARD_{}_".format(guard)
+  guard = "PULSAR_GUARD_{}_".format(guard)
 
   return guard
 

@@ -6,17 +6,17 @@ import sys
 import argparse
 import traceback 
 
-# Add the bpmodule path
+# Add the pulsar path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "modules")
-sys.path.insert(0, bppath)
+psrpath = os.path.join(os.path.dirname(thispath), "modules")
+sys.path.insert(0, psrpath)
 
-import bpmodule as bp
+import pulsar as psr
 
 
 def Run(mm):
     try:
-      out = bp.output.GetGlobalOut()
+      out = psr.output.GetGlobalOut()
 
       # Load the python modules
       #             supermodule      module name      key
@@ -30,15 +30,15 @@ def Run(mm):
 
 
       # Create the molecule/basis set
-      mol = bp.system.System()
+      mol = psr.system.System()
       mol.AddAtom(1, [0.0, 0.0, 0.0] )
       mol.AddAtom(1, [1.0, 0.0, 0.0] )
       mol.AddAtom(8, [0.0, 1.0, 0.0] )
 
 
-      bs = bp.system.CreateSimpleBasisSet("/home/ben/programming/BPModule/install/basis/sto-3g.gbs", mol);
+      bs = psr.system.CreateSimpleBasisSet("/home/ben/programming/BPModule/install/basis/sto-3g.gbs", mol);
 
-      bp.output.GlobalOutput("Number of shells: {}\n".format(bs.NShell()))
+      psr.output.GlobalOutput("Number of shells: {}\n".format(bs.NShell()))
       for i in range(0, bs.NShell()):
          gs = bs.Shell(i)
          print("ID={}  Cart={}   NPrim={}   {}".format(gs.ID(), gs.IsCartesian(), gs.NPrim(), gs.Coordinates()))
@@ -53,25 +53,25 @@ def Run(mm):
       b2 = mm.GetModule("TESTPYMOD1", b1.ID())
 
       b1.RunTest()
-      bp.output.GlobalOutput("\n")
+      psr.output.GlobalOutput("\n")
       b2.RunTest()
-      bp.output.GlobalOutput("\n")
+      psr.output.GlobalOutput("\n")
     
-      bp.output.GlobalOutput("\nDone testing\n")
+      psr.output.GlobalOutput("\nDone testing\n")
 
 
     except Exception as e:
-      bp.output.GlobalOutput("Caught exception in main handler\n")
+      psr.output.GlobalOutput("Caught exception in main handler\n")
       traceback.print_exc()
-      bp.output.GlobalError("\n")
-      bp.output.GlobalError(str(e))
-      bp.output.GlobalError("\n")
+      psr.output.GlobalError("\n")
+      psr.output.GlobalError(str(e))
+      psr.output.GlobalError("\n")
 
 
 
-bp.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.Init(sys.argv, out = "stdout", color = True, debug = True)
 
-with bp.ModuleAdministrator() as mm:
+with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-bp.Finalize()
+psr.Finalize()

@@ -4,16 +4,16 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/exception/Assert.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/system/BasisShellInfo.hpp"
-#include "bpmodule/system/NFunction.hpp"
+#include "pulsar/exception/Assert.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/system/BasisShellInfo.hpp"
+#include "pulsar/system/NFunction.hpp"
 
-using bpmodule::exception::Assert;
-using bpmodule::exception::BasisSetException;
+using pulsar::exception::Assert;
+using pulsar::exception::BasisSetException;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -82,5 +82,5 @@ bool BasisShellInfo::operator!=(const BasisShellInfo & rhs) const
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 

@@ -4,22 +4,22 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_SYSTEM__BASISSET_HPP_
-#define BPMODULE_GUARD_SYSTEM__BASISSET_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__BASISSET_HPP_
+#define PULSAR_GUARD_SYSTEM__BASISSET_HPP_
 
 #include <functional>
 
-#include "bpmodule/system/BasisSetShell.hpp"
-#include "bpmodule/system/BasisShellInfo.hpp"
+#include "pulsar/system/BasisSetShell.hpp"
+#include "pulsar/system/BasisShellInfo.hpp"
 
 // forward declare
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 class Hash;
 } }
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 /*! \brief A basis set for a QM calculation
@@ -121,7 +121,7 @@ class BasisSet
 
         /* \brief Obtain information about a shell
          * 
-         * \throw bpmodule::exception::BasisSetException if the
+         * \throw pulsar::exception::BasisSetException if the
          *        shell index is out of range
          *
          * \param [in] i Index of the shell to obtain
@@ -136,7 +136,7 @@ class BasisSet
          * The coordinates, center, and ID are not well-defined
          * and belong to an arbitrary shell.
          *
-         * \throw bpmodule::exception::BasisSetException if the
+         * \throw pulsar::exception::BasisSetException if the
          *        shell index is out of range
          *
          * \param [in] i Index of the shell to obtain
@@ -149,7 +149,7 @@ class BasisSet
          * The ShellInfo will not contain information about the center or
          * the unique ID of the shell.
          *
-         * \throw bpmodule::exception::BasisSetException if the
+         * \throw pulsar::exception::BasisSetException if the
          *        shell index is out of range
          *
          * \param [in] i Index of the shell to obtain
@@ -162,7 +162,7 @@ class BasisSet
          * Will determine if this shell has data in common with another
          * stored shell
          *
-         * \throw bpmodule::exception::BasisSetException if the
+         * \throw pulsar::exception::BasisSetException if the
          *        shell information will not fit in what has been
          *        allocated already.
          * 
@@ -322,7 +322,7 @@ class BasisSet
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

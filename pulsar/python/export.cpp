@@ -5,9 +5,9 @@
  */
 
 
-#include "bpmodule/python/Pybind11.hpp"
+#include "pulsar/python/Pybind11.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace python {
 namespace export_python {
 
@@ -22,5 +22,5 @@ PYBIND11_PLUGIN(python)
 
 } // close namespace export_python
 } // close namespace python
-} // close namespace bpmodule
+} // close namespace pulsar
 

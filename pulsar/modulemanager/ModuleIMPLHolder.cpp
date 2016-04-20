@@ -5,11 +5,11 @@
  */
 
 
-#include "bpmodule/modulemanager/ModuleIMPLHolder.hpp"
-#include "bpmodule/modulebase/ModuleBase.hpp"
+#include "pulsar/modulemanager/ModuleIMPLHolder.hpp"
+#include "pulsar/modulebase/ModuleBase.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 namespace detail {
 
@@ -17,7 +17,7 @@ namespace detail {
 PyModuleIMPLHolder::PyModuleIMPLHolder(const pybind11::object & mod)
     : mod_(mod)
 {
-    using namespace bpmodule::exception;
+    using namespace pulsar::exception;
 
     if(!mod)
         throw GeneralException("PyModuleIMPLHolder given a null object");
@@ -37,4 +37,4 @@ pybind11::object PyModuleIMPLHolder::PythonObject(void) const
 
 } // close namespace detail
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar

@@ -7,13 +7,13 @@
 
 #include <cstdlib>
 #include <algorithm>
-#include "bpmodule/system/Ordering.hpp"
-#include "bpmodule/system/BasisSet.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/system/Ordering.hpp"
+#include "pulsar/system/BasisSet.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
-using namespace bpmodule::exception;
+using namespace pulsar::exception;
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -105,5 +105,5 @@ DECLARE_TEMPLATE_REORDER(double)
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 

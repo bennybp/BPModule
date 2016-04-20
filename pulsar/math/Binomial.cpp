@@ -8,10 +8,10 @@
 #include <math.h>       /* math_errhandling */
 #include <errno.h>      /* errno, EDOM */
 #include <fenv.h>       /* feclearexcept, fetestexcept, FE_ALL_EXCEPT, FE_INVALID */
-#include "bpmodule/math/Binomial.hpp"
-#include "bpmodule/math/Factorial_LUT.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/pragma.h"
+#include "pulsar/math/Binomial.hpp"
+#include "pulsar/math/Factorial_LUT.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/pragma.h"
 
 
 PRAGMA_WARNING_PUSH
@@ -20,9 +20,9 @@ PRAGMA_WARNING_IGNORE_UNRECOGNIZED_PRAGMA
 //Intel at least doesn't seem to like it
 #pragma STDC FENV_ACCESS on
 PRAGMA_WARNING_POP
-using bpmodule::exception::GeneralException;
+using pulsar::exception::GeneralException;
 
-namespace bpmodule{
+namespace pulsar{
     namespace math{
 
 double Beta(double a,double b){

@@ -1,8 +1,8 @@
-minfo = { "BPModule_Tensor" :
+minfo = { "Pulsar_Tensor" :
   {
     "type"        : "core",
     "version"     : "0.1a",
-    "description" : "Tensor library functionality for BPModule",
+    "description" : "Tensor library functionality for Pulsar",
     "authors"     : [],
     "refs"        : [],
     "options"     : {}

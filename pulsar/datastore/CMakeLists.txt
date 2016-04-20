@@ -1,4 +1,4 @@
-set(BPMODULE_DATASTORE_FILES
+set(PULSAR_DATASTORE_FILES
             CacheData.cpp
             OptionHolder.cpp
             OptionTypes.cpp
@@ -10,7 +10,7 @@ set(BPMODULE_DATASTORE_FILES
 
   
 ADD_COREMODULE(datastore
-           "${BPMODULE_DATASTORE_FILES}"
+           "${PULSAR_DATASTORE_FILES}"
            ""
            ""
            "")

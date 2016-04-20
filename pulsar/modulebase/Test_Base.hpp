@@ -5,13 +5,13 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEBASE__TEST_BASE_HPP_
-#define BPMODULE_GUARD_MODULEBASE__TEST_BASE_HPP_
+#ifndef PULSAR_GUARD_MODULEBASE__TEST_BASE_HPP_
+#define PULSAR_GUARD_MODULEBASE__TEST_BASE_HPP_
 
-#include "bpmodule/modulebase/ModuleBase.hpp"
+#include "pulsar/modulebase/ModuleBase.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulebase {
 
 /*! \brief A test module
@@ -168,6 +168,6 @@ class Test_Base_Py : public Test_Base
 
 
 } // close namespace modulebase
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

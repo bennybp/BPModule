@@ -11,7 +11,7 @@
 
 # Purpose and Overview
 
-The "BPModule" project, as it currently is being called, is intended to be a
+The "Pulsar" project, as it currently is being called, is intended to be a
 re-envisioned framework in which to run and develop quantum chemical computations
 and methods via interchangeable modules.  Together, these two points allow one
 to rapidly develop production-quality electronic structure codes, in a fraction
@@ -116,7 +116,7 @@ provided to the main project.
 
 ## Compile the core
 
-The BPModule project is comprised of two components: the core framework and the
+The Pulsar project is comprised of two components: the core framework and the
  modules.
 The core is the framework that keeps all the modules playing nicely with one
 another and we will compile that first.  You should only have to compile the
@@ -124,7 +124,7 @@ framework once unless you are developing for it.  Compilation of the core
 should be as simple as (on an ideally setup Linux box):
 
 ```Bash
-#In the BPModule root directory
+#In the Pulsar root directory
 cmake -H. -Bbuild
 cd build && make
 make install
@@ -147,12 +147,12 @@ MPI_Fortran_COMPILER=<Path to the MPI wrapper around CMAKE_Fortran_COMPILER>
 PYTHON_LIBRARY=<path to the Python libraries>
 PYTHON_INCLUDE_DIR=<path to Python's header files>
 PYTHON_EXECUTABLE=<path to the Python interpreter associated with the above>
-BPMODULE_MATH_LIBS=<-mkl or other linking flags>
+PULSAR_MATH_LIBS=<-mkl or other linking flags>
 
 # These are more fine-granined control
 CMAKE_PREFIX_PATH=<Paths that CMake should search when looking for dependencies>
 CMAKE_BUILD_TYPE=<Debug or Release>
-CMAKE_INSTALL_PREFIX=<Path where the BPModule gets installed>
+CMAKE_INSTALL_PREFIX=<Path where the Pulsar gets installed>
 ```
 
 ## Compiling modules
@@ -160,7 +160,7 @@ CMAKE_INSTALL_PREFIX=<Path where the BPModule gets installed>
 Modules are installed into the same top-level directory as the core.
 (For now).
 
-    cmake -DBPMODULE_PATH=core/install/path \
+    cmake -DPULSAR_PATH=core/install/path \
           -DCMAKE_INSTALL_PREFIX=core/install/path \
           -DCMAKE_BUILD_TYPE=Debug \
           ../

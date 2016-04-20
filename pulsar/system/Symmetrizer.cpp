@@ -6,25 +6,25 @@
 #include <array>
 #include <unordered_set>
 #include <iostream>
-#include "bpmodule/system/Symmetrizer.hpp"
-#include "bpmodule/system/SymmetryElements.hpp"
-#include "bpmodule/system/System.hpp"
-#include "bpmodule/math/Point.hpp"
-#include "bpmodule/math/NumberTheory.hpp"
-#include "bpmodule/math/BLAS.hpp"
-#include "bpmodule/math/Checking.hpp"
-#include "bpmodule/constants.h"
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/system/Symmetrizer.hpp"
+#include "pulsar/system/SymmetryElements.hpp"
+#include "pulsar/system/System.hpp"
+#include "pulsar/math/Point.hpp"
+#include "pulsar/math/NumberTheory.hpp"
+#include "pulsar/math/BLAS.hpp"
+#include "pulsar/math/Checking.hpp"
+#include "pulsar/constants.h"
+#include "pulsar/exception/Exceptions.hpp"
 
 
-namespace bpmodule{
+namespace pulsar{
 namespace system{
 
-using bpmodule::math::Point;
-using bpmodule::math::AreEqual;
-using bpmodule::math::Dot;
-using bpmodule::math::Cross;
-using bpmodule::exception::GeneralException;
+using pulsar::math::Point;
+using pulsar::math::AreEqual;
+using pulsar::math::Dot;
+using pulsar::math::Cross;
+using pulsar::exception::GeneralException;
 typedef std::unordered_set<Atom> AtomSet_t;
 typedef std::array<double,3> Vector_t;
 typedef std::array<double,9> Matrix_t;

@@ -5,12 +5,12 @@
  */
 
 
-#include "bpmodule/datastore/CacheData.hpp"
-#include "bpmodule/output/Output.hpp"
-#include "bpmodule/python/Convert.hpp"
+#include "pulsar/datastore/CacheData.hpp"
+#include "pulsar/output/Output.hpp"
+#include "pulsar/python/Convert.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 
 
@@ -90,7 +90,7 @@ size_t CacheData::Erase(const std::string & key)
 
 void CacheData::Print(std::ostream & os, size_t) const
 {
-    using namespace bpmodule::output;
+    using namespace pulsar::output;
 
     Output(os, "Cache data with %? entries\n", Size());
 
@@ -140,5 +140,5 @@ void CacheData::Set_(const std::string & key, std::unique_ptr<detail::GenericBas
 
 
 } // close namespace datastore
-} // close namespace bpmodule
+} // close namespace pulsar
 

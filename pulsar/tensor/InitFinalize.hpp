@@ -1,8 +1,8 @@
-#ifndef BPMODULE_GUARD_TENSOR__INITFINALIZE_HPP_
-#define BPMODULE_GUARD_TENSOR__INITFINALIZE_HPP_
+#ifndef PULSAR_GUARD_TENSOR__INITFINALIZE_HPP_
+#define PULSAR_GUARD_TENSOR__INITFINALIZE_HPP_
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace tensor {
 
 void Init(void);
@@ -10,7 +10,7 @@ void Finalize(void);
 
 
 } // close namespace tensor
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

@@ -5,8 +5,8 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MEMWATCH__MEMWATCH_H_
-#define BPMODULE_GUARD_MEMWATCH__MEMWATCH_H_
+#ifndef PULSAR_GUARD_MEMWATCH__MEMWATCH_H_
+#define PULSAR_GUARD_MEMWATCH__MEMWATCH_H_
 
 #include <stddef.h> /* for size_t */
 

@@ -4,14 +4,14 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_UTIL__HASH_HPP_
-#define BPMODULE_GUARD_UTIL__HASH_HPP_
+#ifndef PULSAR_GUARD_UTIL__HASH_HPP_
+#define PULSAR_GUARD_UTIL__HASH_HPP_
 
 #include <cstdint>
 #include <memory>
 #include <string>
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 // forward declare for friend
@@ -70,7 +70,7 @@ class Hash
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

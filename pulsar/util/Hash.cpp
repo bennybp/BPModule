@@ -4,9 +4,9 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/util/Hash.hpp"
+#include "pulsar/util/Hash.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 Hash::Hash(uint64_t h1, uint64_t h2)
@@ -65,6 +65,6 @@ std::string Hash::String(void) const
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 

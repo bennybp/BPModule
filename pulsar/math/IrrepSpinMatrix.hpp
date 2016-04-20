@@ -4,14 +4,14 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_MATH__IRREPSPINMATRIX_HPP_
-#define BPMODULE_GUARD_MATH__IRREPSPINMATRIX_HPP_
+#ifndef PULSAR_GUARD_MATH__IRREPSPINMATRIX_HPP_
+#define PULSAR_GUARD_MATH__IRREPSPINMATRIX_HPP_
 
-#include "bpmodule/math/SimpleMatrix.hpp"
-#include "bpmodule/math/BlockByIrrepSpin.hpp"
+#include "pulsar/math/SimpleMatrix.hpp"
+#include "pulsar/math/BlockByIrrepSpin.hpp"
 
 
-namespace bpmodule{
+namespace pulsar{
 namespace math{
 
 template<typename T>
@@ -42,6 +42,6 @@ typedef BlockByIrrepSpin<SimpleVectorCD> IrrepSpinVectorCD;
 
 
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

@@ -1,4 +1,4 @@
-minfo = { "BPModule_Testing" :
+minfo = { "Pulsar_Testing" :
   {
     "type"        : "core",
     "version"     : "0.1a",

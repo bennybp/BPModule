@@ -5,18 +5,18 @@
  */ 
 
 
-#include "bpmodule/modulebase/All.hpp"
-#include "bpmodule/datastore/Wavefunction.hpp"
-#include "bpmodule/modulemanager/ModuleManager.hpp"
+#include "pulsar/modulebase/All.hpp"
+#include "pulsar/datastore/Wavefunction.hpp"
+#include "pulsar/modulemanager/ModuleManager.hpp"
 
 
-using bpmodule::modulemanager::ModuleManager;
-using bpmodule::modulemanager::ModuleInfo;
-using bpmodule::datastore::OptionMap;
+using pulsar::modulemanager::ModuleManager;
+using pulsar::modulemanager::ModuleInfo;
+using pulsar::datastore::OptionMap;
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulebase {
 namespace export_python {
 
@@ -126,5 +126,5 @@ PYBIND11_PLUGIN(modulebase)
 }
 } // close namespace export_python
 } // close namespace modulebase
-} // close namespace bpmodule
+} // close namespace pulsar
 

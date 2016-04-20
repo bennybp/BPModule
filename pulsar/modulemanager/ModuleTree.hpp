@@ -5,16 +5,16 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULETREE_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__MODULETREE_HPP_
+#ifndef PULSAR_GUARD_MODULEMANAGER__MODULETREE_HPP_
+#define PULSAR_GUARD_MODULEMANAGER__MODULETREE_HPP_
 
 #include <map>
-#include "bpmodule/types.h"
-#include "bpmodule/modulemanager/ModuleTree_iterators.hpp"
-#include "bpmodule/modulemanager/ModuleInfo.hpp"
-#include "bpmodule/datastore/Wavefunction.hpp"
+#include "pulsar/types.h"
+#include "pulsar/modulemanager/ModuleTree_iterators.hpp"
+#include "pulsar/modulemanager/ModuleInfo.hpp"
+#include "pulsar/datastore/Wavefunction.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 
@@ -113,7 +113,7 @@ class ModuleTree
 
         /*! \brief Insert a node onto the tree
          *
-         * \throw bpmodule::exception::ModuleManagerException if the
+         * \throw pulsar::exception::ModuleManagerException if the
          *        parent node doesn't exist or if the id is
          *        not unique
          */
@@ -130,7 +130,7 @@ class ModuleTree
          * The ID represents the unique ID of the module
          * and also the unique ID of the tree node
          *
-         * \throw bpmodule::exception::ModuleManagerException if
+         * \throw pulsar::exception::ModuleManagerException if
          *        a node with that ID doesn't exist
          */
         const ModuleTreeNode & GetByID(ID_t id) const;
@@ -141,7 +141,7 @@ class ModuleTree
          * The ID represents the unique ID of the module
          * and also the unique ID of the tree node
          *
-         * \throw bpmodule::exception::ModuleManagerException if
+         * \throw pulsar::exception::ModuleManagerException if
          *        a node with that ID doesn't exist
          */
         ModuleTreeNode & GetByID(ID_t id);
@@ -153,7 +153,7 @@ class ModuleTree
 
         /*! \brief Iterate (depth first) starting with a given ID
          *
-         * \throw bpmodule::exception::ModuleManagerException if the
+         * \throw pulsar::exception::ModuleManagerException if the
          *        a node with the starting id doesn't exist
          *
          * \param [in] startid ID to use as the base of the tree
@@ -183,7 +183,7 @@ class ModuleTree
 
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

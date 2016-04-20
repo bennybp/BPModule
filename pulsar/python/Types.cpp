@@ -4,12 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/python/Call.hpp"
+#include "pulsar/python/Call.hpp"
 
-using bpmodule::exception::Assert;
-using bpmodule::exception::GeneralException;
+using pulsar::exception::Assert;
+using pulsar::exception::GeneralException;
 
-namespace bpmodule {
+namespace pulsar{
 namespace python {
 
 
@@ -47,5 +47,5 @@ bool HasCallableAttr(const pybind11::object & obj, const std::string & attr)
 
 
 } // close namespace python
-} // close namespace bpmodule
+} // close namespace pulsar
 

@@ -4,13 +4,13 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_SYSTEM__BASISSHELLINFO_HPP_
-#define BPMODULE_GUARD_SYSTEM__BASISSHELLINFO_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__BASISSHELLINFO_HPP_
+#define PULSAR_GUARD_SYSTEM__BASISSHELLINFO_HPP_
 
-#include "bpmodule/system/BasisShellBase.hpp"
+#include "pulsar/system/BasisShellBase.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -90,7 +90,7 @@ typedef std::vector<BasisShellInfo> BasisShellInfoVector;
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

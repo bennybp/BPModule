@@ -5,14 +5,14 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULEIMPLHOLDER_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__MODULEIMPLHOLDER_HPP_
+#ifndef PULSAR_GUARD_MODULEMANAGER__MODULEIMPLHOLDER_HPP_
+#define PULSAR_GUARD_MODULEMANAGER__MODULEIMPLHOLDER_HPP_
 
-#include "bpmodule/python/Convert.hpp"
+#include "pulsar/python/Convert.hpp"
 
 // Split into hpp and cpp files so we don't have to
 // include ModuleBase.hpp here
-namespace bpmodule {
+namespace pulsar{
 namespace modulebase {
 class ModuleBase;
 }
@@ -20,7 +20,7 @@ class ModuleBase;
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 namespace detail {
 
@@ -65,7 +65,7 @@ class ModuleIMPLHolder
         template<typename T>
         bool IsType(void) const
         {
-            using namespace bpmodule::exception;
+            using namespace pulsar::exception;
 
             if(CppPtr() == nullptr)
                 throw GeneralException("Null pointer in ModuleIMPLHolder");
@@ -98,7 +98,7 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
 
         virtual modulebase::ModuleBase * CppPtr(void) const
         {
-            using namespace bpmodule::exception;
+            using namespace pulsar::exception;
             if(!mod_)
                 throw GeneralException("Null pointer in CppModuleIMPLHolder");
             return mod_.get();
@@ -107,7 +107,7 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
 
         virtual pybind11::object PythonObject(void) const
         {
-            using namespace bpmodule::exception;
+            using namespace pulsar::exception;
             if(!mod_)
               throw GeneralException("Null pointer in CppModuleIMPLHolder");
             T * ptr = mod_.get();
@@ -148,7 +148,7 @@ class PyModuleIMPLHolder : public ModuleIMPLHolder
 
 } // close namespace detail
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif
 

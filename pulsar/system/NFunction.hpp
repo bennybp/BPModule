@@ -4,20 +4,20 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_SYSTEM__NFUNCTION_HPP_
-#define BPMODULE_GUARD_SYSTEM__NFUNCTION_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__NFUNCTION_HPP_
+#define PULSAR_GUARD_SYSTEM__NFUNCTION_HPP_
 
 #include <array>
 #include <algorithm>
 
-#include "bpmodule/system/ShellType.hpp"
+#include "pulsar/system/ShellType.hpp"
 
 
 #define NCARTESIAN_GAUSSIAN_(am) ((am>=0)?((((am)+2)*((am)+1))>>1):0)
 #define NSPHERICAL_GAUSSIAN_(am) ((2*(am)+1))
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -67,7 +67,7 @@ inline int NSPHERICAL_GAUSSIAN(int am)
  *
  * This takes into account combined shells (sp, spd, etc).
  *
- * \throw bpmodule::exception::BasisSetException if the type is unknown
+ * \throw pulsar::exception::BasisSetException if the type is unknown
  */
 inline int NFunction(ShellType type, int am)
 {
@@ -89,7 +89,7 @@ inline int NFunction(ShellType type, int am)
  * container of angular momenta (std::array or std::vector) for which
  * all the angular momenta are multiplied together.
  *
- * \throw bpmodule::exception::BasisSetException if the type is unknown
+ * \throw pulsar::exception::BasisSetException if the type is unknown
  */
 template<typename Container>
 int NFunction(ShellType type, const Container & amcont)
@@ -101,7 +101,7 @@ int NFunction(ShellType type, const Container & amcont)
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

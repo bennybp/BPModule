@@ -5,16 +5,16 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_TESTING__TESTCONVERT_HPP_
-#define BPMODULE_GUARD_TESTING__TESTCONVERT_HPP_
+#ifndef PULSAR_GUARD_TESTING__TESTCONVERT_HPP_
+#define PULSAR_GUARD_TESTING__TESTCONVERT_HPP_
 
 #include <string>
 
-#include "bpmodule/python/Convert.hpp"
-#include "bpmodule/testing/TestingBase.hpp"
+#include "pulsar/python/Convert.hpp"
+#include "pulsar/testing/TestingBase.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace testing {
 
 
@@ -41,7 +41,7 @@ struct FailObject
 template<typename T>
 int TestConvertToCpp(pybind11::object obj)
 {
-    return TestFunc(bpmodule::python::ConvertToCpp<T>, obj);
+    return TestFunc(pulsar::python::ConvertToCpp<T>, obj);
 }
 
 
@@ -55,7 +55,7 @@ int TestConvertToCpp(pybind11::object obj)
 template<typename T>
 int TestConvertToPy(const T & obj)
 {
-    return TestFunc(bpmodule::python::ConvertToPy<T>, obj);
+    return TestFunc(pulsar::python::ConvertToPy<T>, obj);
 }
 
 
@@ -124,7 +124,7 @@ int TestPyCppPy_Fail(pybind11::object obj)
 
 
 } // close namespace testing
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

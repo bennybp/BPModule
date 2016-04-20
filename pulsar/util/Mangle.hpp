@@ -4,14 +4,14 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_UTIL__MANGLE_HPP_
-#define BPMODULE_GUARD_UTIL__MANGLE_HPP_
+#ifndef PULSAR_GUARD_UTIL__MANGLE_HPP_
+#define PULSAR_GUARD_UTIL__MANGLE_HPP_
 
 #include <typeinfo>
 
-#include "bpmodule/python/Types.hpp"
+#include "pulsar/python/Types.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 
@@ -73,6 +73,6 @@ std::string DemangleCppType(void)
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

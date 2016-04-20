@@ -1,51 +1,51 @@
-/*! \namespace bpmodule
+/*! \namespace pulsar
  *  \brief Main namespace for the module library
  */
 
-/*! \namespace bpmodule::modulemanager
+/*! \namespace pulsar::modulemanager
  *  \brief Classes and functions for module loading, storage, and creation
  */
 
-/*! \namespace bpmodule::system
+/*! \namespace pulsar::system
  *  \brief Classes and functions for the molecules, atoms, and systems
  */
 
-/*! \namespace bpmodule::output
+/*! \namespace pulsar::output
  *  \brief Classes and functions for output and printing
  */
 
-/*! \namespace bpmodule::modulebase
+/*! \namespace pulsar::modulebase
  *  \brief Base classes for modules
  */
 
-/*! \namespace bpmodule::datastore
+/*! \namespace pulsar::datastore
  *  \brief Classes and functions for dealing with generic data storage
  */
 
-/*! \namespace bpmodule::options
+/*! \namespace pulsar::options
  *  \brief Classes and functionality for handling options
  */
 
-/*! \namespace bpmodule::parallel
+/*! \namespace pulsar::parallel
  *  \brief Classes and functions for dealing with parallelization
  */
 
-/*! \namespace bpmodule::python
+/*! \namespace pulsar::python
  *  \brief Helper classes and functions for exporting and importing from python
  */
 
-/*! \namespace bpmodule::exception
+/*! \namespace pulsar::exception
  *  \brief Helper classes and functions for exceptions
  */
 
-/*! \namespace bpmodule::tensor
+/*! \namespace pulsar::tensor
  *  \brief Helper classes and functions for tensors and matrices
  */
 
-/*! \namespace bpmodule::util
+/*! \namespace pulsar::util
  *  \brief Miscellaneous funcionality, such as string formatting, etc
  */
 
-/*! \namespace bpmodule::testing
+/*! \namespace pulsar::testing
  *  \brief Functions for testing the core library
  */

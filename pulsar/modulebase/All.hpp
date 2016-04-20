@@ -5,21 +5,21 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_MODULEBASE__ALL_HPP_
-#define BPMODULE_GUARD_MODULEBASE__ALL_HPP_
+#ifndef PULSAR_GUARD_MODULEBASE__ALL_HPP_
+#define PULSAR_GUARD_MODULEBASE__ALL_HPP_
 
-//#include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/modulebase/Test_Base.hpp"
+//#include "pulsar/modulebase/ModuleBase.hpp"
+#include "pulsar/modulebase/Test_Base.hpp"
 
 // System stuff
-#include "bpmodule/modulebase/SystemFragmenter.hpp"
+#include "pulsar/modulebase/SystemFragmenter.hpp"
 
 // Integrals
-#include "bpmodule/modulebase/OneElectronIntegralIMPL.hpp"
-//#include "bpmodule/modulebase/OneElectronIntegral.hpp"
-#include "bpmodule/modulebase/TwoElectronIntegralIMPL.hpp"
-//#include "bpmodule/modulebase/TwoElectronIntegral.hpp"
+#include "pulsar/modulebase/OneElectronIntegralIMPL.hpp"
+//#include "pulsar/modulebase/OneElectronIntegral.hpp"
+#include "pulsar/modulebase/TwoElectronIntegralIMPL.hpp"
+//#include "pulsar/modulebase/TwoElectronIntegral.hpp"
 
-#include "bpmodule/modulebase/EnergyMethod.hpp"
+#include "pulsar/modulebase/EnergyMethod.hpp"
 
 #endif

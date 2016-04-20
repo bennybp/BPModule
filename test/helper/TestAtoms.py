@@ -1,12 +1,12 @@
 import os
 import sys
 
-# Add the bpmodule path
+# Add the pulsar path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "../", "modules")
-sys.path.insert(0, bppath)
+psrpath = os.path.join(os.path.dirname(thispath), "../", "modules")
+sys.path.insert(0, psrpath)
 
-from bpmodule.system import CreateAtom
+from pulsar.system import CreateAtom
 
 nonane = [ CreateAtom(0, [    0.0000,    0.0000,    0.3723 ], 6),
            CreateAtom(1, [    0.0000,    1.2842,   -0.4867 ], 6),

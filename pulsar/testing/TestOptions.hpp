@@ -5,16 +5,16 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_TESTING__TESTOPTIONS_HPP_
-#define BPMODULE_GUARD_TESTING__TESTOPTIONS_HPP_
+#ifndef PULSAR_GUARD_TESTING__TESTOPTIONS_HPP_
+#define PULSAR_GUARD_TESTING__TESTOPTIONS_HPP_
 
 #include <string>
 
-#include "bpmodule/datastore/OptionMap.hpp"
-#include "bpmodule/python/Convert.hpp"
+#include "pulsar/datastore/OptionMap.hpp"
+#include "pulsar/python/Convert.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace testing {
 
 
@@ -37,7 +37,7 @@ void TestOptionMap_Change(datastore::OptionMap & opt, const std::string & key, p
 
 
 } // close namespace testing
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

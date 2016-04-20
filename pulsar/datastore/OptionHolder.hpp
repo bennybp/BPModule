@@ -5,16 +5,16 @@
  */
 
 
-#ifndef BPMODULE_GUARD_DATASTORE__OPTIONHOLDER_HPP_
-#define BPMODULE_GUARD_DATASTORE__OPTIONHOLDER_HPP_
+#ifndef PULSAR_GUARD_DATASTORE__OPTIONHOLDER_HPP_
+#define PULSAR_GUARD_DATASTORE__OPTIONHOLDER_HPP_
 
 #include <functional>
 
-#include "bpmodule/datastore/OptionBase.hpp"
-#include "bpmodule/datastore/OptionTypes.hpp"
-#include "bpmodule/util/Serialization.hpp"
+#include "pulsar/datastore/OptionBase.hpp"
+#include "pulsar/datastore/OptionTypes.hpp"
+#include "pulsar/util/Serialization.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 
 
@@ -63,11 +63,11 @@ class OptionHolder : public OptionBase
          *
          * The value is not set on construction, only the default
          *
-         * \throw bpmodule::exception::OptionException
+         * \throw pulsar::exception::OptionException
          *        If the default value is invalid, or
          *        there is a default argument supplied for a 'required' option.
          *
-         * \throw bpmodule::exception::PythonCallException
+         * \throw pulsar::exception::PythonCallException
          *       If there is a problem calling the validation function
          *
          * \param [in] key The key of this option
@@ -121,7 +121,7 @@ class OptionHolder : public OptionBase
          *
          * If the value is not set, but a default exists, the default is returned.
          *
-         * \throw bpmodule::exception::OptionException
+         * \throw pulsar::exception::OptionException
          *        If the option does not have a value or a default
          */
         const stored_type & Get(void) const;
@@ -131,7 +131,7 @@ class OptionHolder : public OptionBase
 
         /*! \brief Get the default value
          *
-         * \throw bpmodule::exception::OptionException
+         * \throw pulsar::exception::OptionException
          *        If the option does not have a default
          */
         const stored_type & GetDefault(void) const;
@@ -205,7 +205,7 @@ class OptionHolder : public OptionBase
 
 
 } //closing namespace datastore
-} //closing namespace bpmodule
+} //closing namespace pulsar
 
 
 #endif

@@ -4,17 +4,17 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "bpmodule/testing/TestingBase.hpp"
-#include "bpmodule/testing/TestDatastore.hpp"
-#include "bpmodule/datastore/CacheData.hpp"
+#include "pulsar/testing/TestingBase.hpp"
+#include "pulsar/testing/TestDatastore.hpp"
+#include "pulsar/datastore/CacheData.hpp"
 
-using bpmodule::datastore::CacheData;
+using pulsar::datastore::CacheData;
 
-namespace bpmodule {
+namespace pulsar{
 namespace testing {
 
 
 
 
 } // close namespace testing
-} // close namespace bpmodule
+} // close namespace pulsar

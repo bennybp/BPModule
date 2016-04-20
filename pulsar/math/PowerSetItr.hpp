@@ -11,11 +11,11 @@
  * Created on March 17, 2016, 6:07 PM
  */
 
-#ifndef BPMODULE_GUARD_MATH__POWERSETITR_HPP_
-#define BPMODULE_GUARD_MATH__POWERSETITR_HPP_
+#ifndef PULSAR_GUARD_MATH__POWERSETITR_HPP_
+#define PULSAR_GUARD_MATH__POWERSETITR_HPP_
 #include <memory>
-#include "bpmodule/math/CombItr.hpp"
-namespace bpmodule{
+#include "pulsar/math/CombItr.hpp"
+namespace pulsar{
 namespace math{
 /** \brief Class to facilitate iterating over the power set of a set
  *
@@ -145,7 +145,7 @@ class PowerSetItr{
       size_t MinOrder_;
       ///The current order
       size_t Order_;
-      typedef typename bpmodule::math::CombItr<T> CombItr_t;
+      typedef typename pulsar::math::CombItr<T> CombItr_t;
       typedef typename std::shared_ptr<CombItr_t> SharedItr_t;
       SharedItr_t CurrentIt_;
       ///Have we iterated over the entire range yet?

@@ -1,4 +1,4 @@
-set(BPMODULE_SYSTEM_FILES
+set(PULSAR_SYSTEM_FILES
     AtomicInfo.cpp
     AtomicInfo_LUT.cpp
     Atom.hpp
@@ -20,7 +20,7 @@ set(BPMODULE_SYSTEM_FILES
   
 
 ADD_COREMODULE(system
-           "${BPMODULE_SYSTEM_FILES}"
+           "${PULSAR_SYSTEM_FILES}"
            ""
            ""
            "")

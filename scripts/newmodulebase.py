@@ -3,11 +3,11 @@
 import os
 import argparse
 import shutil
-import bp_common
+import psr_common
 
 
 thispath = os.path.dirname(os.path.realpath(__file__))
-modpath = os.path.join(os.path.dirname(thispath), "bpmodule", "modulebase")
+modpath = os.path.join(os.path.dirname(thispath), "pulsar", "modulebase")
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--author", required=True, help="Author of the file")
@@ -25,7 +25,7 @@ htemplatepath = os.path.join(modpath, "NewModule.hpp.template")
 ctemplatepath = os.path.join(modpath, "NewModule.cpp.template")
 
 
-hguard = bp_common.GenIncludeGuard(hfilename)
+hguard = psr_common.GenIncludeGuard(hfilename)
 
 print("Creating {}".format(hfilepath))
 with open(hfilepath, 'w') as dest:

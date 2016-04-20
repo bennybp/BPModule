@@ -5,21 +5,21 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_UTIL__FORMAT_HPP_
-#define BPMODULE_GUARD_UTIL__FORMAT_HPP_
+#ifndef PULSAR_GUARD_UTIL__FORMAT_HPP_
+#define PULSAR_GUARD_UTIL__FORMAT_HPP_
 
-#include "bpmodule/util/vprintfcpp/Format.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/util/vprintfcpp/Format.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 
 
 /*! \brief Output a formatted string to a stream
  *
- * \throw bpmodule::exception::GeneralException for malformed inputs, etc
+ * \throw pulsar::exception::GeneralException for malformed inputs, etc
  *
  * \tparam Targs The types of the arguments to print
  *
@@ -46,7 +46,7 @@ void FormatStream(std::ostream & os, const std::string & fmt,
 
 /*! \brief Create a formatted string
  *
- * \throw bpmodule::exception::GeneralException for malformed inputs, etc
+ * \throw pulsar::exception::GeneralException for malformed inputs, etc
  *
  * \tparam Targs The types of the arguments to print
  *
@@ -128,7 +128,7 @@ DECLARE_EXTERN_TEMPLATE_FORMAT_2(double, double)
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

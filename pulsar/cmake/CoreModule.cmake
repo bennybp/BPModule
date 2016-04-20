@@ -8,11 +8,11 @@
 ###################################################
 
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-std=c++11")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-w3")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-std=c++11")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-w3")
 
     #  2338  : switch statement does not have a default clause
-    #list(APPEND BPMODULE_CXX_STRICT_FLAGS "-ww2338")
+    #list(APPEND PULSAR_CXX_STRICT_FLAGS "-ww2338")
 
     # some useless remarks
     #  1418  : external function definition with no prior declaration
@@ -25,23 +25,23 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
     # 11074  : Inlining inhibited by limit max-size (etc)
     # 11076  : To get full report use -qopt-report=4 -qopt-report-phase ipo
     #   444  : destructor for base class .. not virtual (even warns for classes without virtual functions)
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd1418")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd1419")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd383")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd981")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd869")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd11074")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd11076")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-wd444")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-wd1418")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-wd1419")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-wd383")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-wd981")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-wd869")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-wd11074")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-wd11076")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-wd444")
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-std=c++11")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-Wall;-Wextra;-pedantic")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-Wfloat-equal;-Wshadow")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-Wswitch-default")
-    list(APPEND BPMODULE_CXX_STRICT_FLAGS "-Wconversion")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-std=c++11")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-Wall;-Wextra;-pedantic")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-Wfloat-equal;-Wshadow")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-Wswitch-default")
+    list(APPEND PULSAR_CXX_STRICT_FLAGS "-Wconversion")
 
     # maybe in the future. Seems to need a very new gcc compiler
-    #list(APPEND BPMODULE_CXX_STRICT_FLAGS "-Wmisleading-indentation")
+    #list(APPEND PULSAR_CXX_STRICT_FLAGS "-Wmisleading-indentation")
 endif()
 
 
@@ -74,7 +74,7 @@ macro(ADD_COREMODULE MODULE_NAME
       list(APPEND ${MODULE_NAME}_CXX_FLAGS ${MPI_CXX_COMPILE_FLAGS})
 
       # Default flags for stuff
-      list(APPEND ${MODULE_NAME}_CXX_FLAGS ${BPMODULE_CXX_STRICT_FLAGS})
+      list(APPEND ${MODULE_NAME}_CXX_FLAGS ${PULSAR_CXX_STRICT_FLAGS})
       target_compile_options(${MODULE_NAME} PRIVATE ${${MODULE_NAME}_CXX_FLAGS})
 
 
@@ -93,7 +93,7 @@ macro(ADD_COREMODULE MODULE_NAME
 
       # External dependencies (mark as system includes)
       list(APPEND ${MODULE_NAME}_CXX_EXTERNAL_INCLUDES ${Boost_INCLUDE_DIRS})
-      list(APPEND ${MODULE_NAME}_CXX_EXTERNAL_INCLUDES ${BPMODULE_CORE_PYTHON_INCLUDE_DIRS})
+      list(APPEND ${MODULE_NAME}_CXX_EXTERNAL_INCLUDES ${PULSAR_CORE_PYTHON_INCLUDE_DIRS})
       list(APPEND ${MODULE_NAME}_CXX_EXTERNAL_INCLUDES ${MPI_CXX_INCLUDE_PATH})
       list(APPEND ${MODULE_NAME}_CXX_EXTERNAL_INCLUDES ${PYBIND11_INCLUDE_DIR})
       list(APPEND ${MODULE_NAME}_CXX_EXTERNAL_INCLUDES ${LIBELEMENTAL_INCLUDE_DIR})
@@ -111,7 +111,7 @@ macro(ADD_COREMODULE MODULE_NAME
       # Main dependencies
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${OpenMP_CXX_FLAGS})
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${Boost_LIBRARIES})
-      list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${BPMODULE_CORE_PYTHON_LIBRARIES})
+      list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${PULSAR_CORE_PYTHON_LIBRARIES})
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${MPI_CXX_LINK_FLAGS})
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${MPI_CXX_LIBRARIES})
 
@@ -128,9 +128,9 @@ endmacro()
 macro(INSTALL_COREMODULE MODULE_NAME)
 
   install(TARGETS ${MODULE_NAME} 
-          LIBRARY DESTINATION modules/bpmodule/${MODULE_NAME}
-          RUNTIME DESTINATION modules/bpmodule/${MODULE_NAME})
+          LIBRARY DESTINATION modules/pulsar/${MODULE_NAME}
+          RUNTIME DESTINATION modules/pulsar/${MODULE_NAME})
 
-  # Python files are installed from bpmodule/CMakeLists.txt
+  # Python files are installed from pulsar/CMakeLists.txt
 
 endmacro()

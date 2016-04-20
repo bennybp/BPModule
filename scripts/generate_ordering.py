@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
-import bp_common
+import psr_common
 
 
 if len(sys.argv) != 3:
@@ -56,10 +56,10 @@ for l in range(-1, -5, -1):
     
 
 
-with bp_common.HeaderSourceFiles(outbase, "Ordering of basis functions",
-                                 ["bpmodule","system","lut"],
+with psr_common.HeaderSourceFiles(outbase, "Ordering of basis functions",
+                                 ["pulsar","system","lut"],
                                  createheader = False,
-                                 srcincludes = ["\"bpmodule/system/Ordering.hpp\""]) as src:
+                                 srcincludes = ["\"pulsar/system/Ordering.hpp\""]) as src:
 
     src.f.write("//Map of AM to exponents on x, y, z\n")
     src.f.write("extern const CartesianOrderingMap ao_cartesian_order_{\n");

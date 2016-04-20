@@ -4,16 +4,16 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "bpmodule/testing/TestingBase.hpp"
-#include "bpmodule/datastore/OptionMap.hpp"
+#include "pulsar/testing/TestingBase.hpp"
+#include "pulsar/datastore/OptionMap.hpp"
 
-using bpmodule::datastore::OptionMap;
+using pulsar::datastore::OptionMap;
 
-namespace bpmodule {
+namespace pulsar{
 namespace testing {
 
 
 
 
 } // close namespace testing
-} // close namespace bpmodule
+} // close namespace pulsar

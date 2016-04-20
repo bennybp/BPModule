@@ -4,8 +4,8 @@ import os
 import sys
 from  importlib.machinery import SourceFileLoader
 
-from bpmodule import output
-from bpmodule.exception import GeneralException
+from pulsar import output
+from pulsar.exception import GeneralException
 
 
 indent = "    "

@@ -16,7 +16,7 @@ Since several modules are often related, and often share some code
 between them, modules are grouped together into a *supermodule*.
 Simply, a supermodule is a collection of related modules. All modules
 must be part of a supermodule, even if it is the only module there.
-Supermodules can be built completely outside of the BPModule source tree,
+Supermodules can be built completely outside of the Pulsar source tree,
 utilizing only the installed headers. They may also be written in Python.
 
 The process of *loading* a module means opening the supermodule file

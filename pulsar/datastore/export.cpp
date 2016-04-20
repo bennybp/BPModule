@@ -4,23 +4,23 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "bpmodule/python/Pybind11_operators.hpp"
-#include "bpmodule/python/Pybind11_stl.hpp"
+#include "pulsar/python/Pybind11_operators.hpp"
+#include "pulsar/python/Pybind11_stl.hpp"
 
-#include "bpmodule/datastore/CacheData.hpp"
-#include "bpmodule/datastore/Wavefunction.hpp"
-#include "bpmodule/datastore/OptionMap.hpp"
+#include "pulsar/datastore/CacheData.hpp"
+#include "pulsar/datastore/Wavefunction.hpp"
+#include "pulsar/datastore/OptionMap.hpp"
 
 
 // This is needed for the member data of
 // the wavefunction struct
 PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
 
-using bpmodule::system::System;
-using bpmodule::datastore::Wavefunction;
+using pulsar::system::System;
+using pulsar::datastore::Wavefunction;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 namespace export_python {
 
@@ -141,5 +141,5 @@ PYBIND11_PLUGIN(datastore)
 
 } // close namespace export_python
 } // close namespace datastore
-} // close namespace bpmodule
+} // close namespace pulsar
 

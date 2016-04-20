@@ -15,11 +15,11 @@ CREATED: 2016-04-20 12:01:04.827987
 **************************************************************/
 
 
-#include "bpmodule/system/Ordering.hpp"
+#include "pulsar/system/Ordering.hpp"
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 namespace lut {
 
@@ -1978,4 +1978,4 @@ extern const SphericalOrderingMap ao_spherical_order_{
 
 } // closing namespace lut
 } // closing namespace system
-} // closing namespace bpmodule
+} // closing namespace pulsar

@@ -4,15 +4,15 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_SYSTEM__SHELLTYPE_HPP_
-#define BPMODULE_GUARD_SYSTEM__SHELLTYPE_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__SHELLTYPE_HPP_
+#define PULSAR_GUARD_SYSTEM__SHELLTYPE_HPP_
 
 #include <vector>
-#include "bpmodule/util/Serialization.hpp"
-#include "bpmodule/exception/Assert.hpp"
+#include "pulsar/util/Serialization.hpp"
+#include "pulsar/exception/Assert.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -26,7 +26,7 @@ enum class ShellType
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

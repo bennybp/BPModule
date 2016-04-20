@@ -5,17 +5,17 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULECREATIONFUNCS_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__MODULECREATIONFUNCS_HPP_
+#ifndef PULSAR_GUARD_MODULEMANAGER__MODULECREATIONFUNCS_HPP_
+#define PULSAR_GUARD_MODULEMANAGER__MODULECREATIONFUNCS_HPP_
 
 #include <functional>
 
-#include "bpmodule/types.h"
-#include "bpmodule/modulemanager/ModuleIMPLHolder.hpp"
-#include "bpmodule/python/Call.hpp"
+#include "pulsar/types.h"
+#include "pulsar/modulemanager/ModuleIMPLHolder.hpp"
+#include "pulsar/python/Call.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 
@@ -80,7 +80,7 @@ class ModuleCreationFuncs
 
         /*! \brief Get the creator function for a module
          *
-         * \throw bpmodule::exception::GeneralException if there isn't a
+         * \throw pulsar::exception::GeneralException if there isn't a
          *        creator for that module name.
          *
          * \param [in] modulename The name of the module
@@ -143,7 +143,7 @@ class ModuleCreationFuncs
 
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

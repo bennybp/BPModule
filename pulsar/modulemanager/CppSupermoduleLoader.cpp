@@ -8,16 +8,16 @@
 // For dlsym, etc.
 #include <dlfcn.h>
 
-#include "bpmodule/modulemanager/CppSupermoduleLoader.hpp"
-#include "bpmodule/output/GlobalOutput.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/exception/Assert.hpp"
+#include "pulsar/modulemanager/CppSupermoduleLoader.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/Assert.hpp"
 
-using namespace bpmodule::exception;
-using namespace bpmodule::output;
+using namespace pulsar::exception;
+using namespace pulsar::output;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 
@@ -131,4 +131,4 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
 
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar

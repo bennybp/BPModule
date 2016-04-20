@@ -5,14 +5,14 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULEINFO_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__MODULEINFO_HPP_
+#ifndef PULSAR_GUARD_MODULEMANAGER__MODULEINFO_HPP_
+#define PULSAR_GUARD_MODULEMANAGER__MODULEINFO_HPP_
 
 
-#include "bpmodule/datastore/OptionMap.hpp"
+#include "pulsar/datastore/OptionMap.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 /*! \brief Structure that stores information about a module
@@ -64,7 +64,7 @@ struct ModuleInfo
 
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

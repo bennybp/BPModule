@@ -4,12 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/modulemanager/ModuleTree.hpp"
+#include "pulsar/modulemanager/ModuleTree.hpp"
 
-using bpmodule::exception::ModuleManagerException;
+using pulsar::exception::ModuleManagerException;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 
@@ -90,6 +90,6 @@ void ModuleTree::Clear(void)
 }
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 
 

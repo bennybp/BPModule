@@ -1,8 +1,8 @@
 
 #include <map>
-#include "bpmodule/datastore/OptionTypes.hpp"
+#include "pulsar/datastore/OptionTypes.hpp"
 
-using namespace bpmodule::datastore;
+using namespace pulsar::datastore;
 
 static std::map<OptionType, const char *> option_namemap_{
           {OptionType::Int,        "Int"},
@@ -33,7 +33,7 @@ static std::map<OptionType, const char *> option_namemap_{
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 
 const char * OptionTypeToString(OptionType ot)
@@ -46,4 +46,4 @@ const char * OptionTypeToString(OptionType ot)
 
 
 } // closing namespace datastore
-} // closing namespace bpmodule
+} // closing namespace pulsar

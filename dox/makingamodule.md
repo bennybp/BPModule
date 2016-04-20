@@ -24,10 +24,10 @@ In C++, simply derive from the module base type you are implementing.  Each modu
 say you are implementing a new method that computes an energy.  The appropriate class to inherit from is `EnergyMethod` and the code looks like:
 
 ~~~{.cpp}
-    class MyNewMethod: public bpmodule::modulebase::EnergyMethod{
+    class MyNewMethod: public pulsar::modulebase::EnergyMethod{
        public:
        //Only use the constructors defined in the base class, or else your module can not be loaded
-       using bpmodule::modulebase::EnergyMethod;
+       using pulsar::modulebase::EnergyMethod;
        
        //We need to implement the Deriv_ function (exact requirements can be found in the module base type PROP)
        std::vector<double> Deriv_(size_t i);
@@ -40,7 +40,7 @@ In your .cpp file you would then write out the Deriv_ function's guts.
 Like C++, in Python you need to derive from the base type you are implementing.  Again if we were implmenting a new method for computing energies:
 
 ~~~{.py}
-   class MyNewMethod(bp.modulebase.EnergyMethod):
+   class MyNewMethod(psr.modulebase.EnergyMethod):
      def __init__(self,myid):
         super(MyNewMethod,self).__init__(myid)
 
@@ -58,16 +58,16 @@ A typical `CMakeLists.txt` for a module looks like::
 ~~~{.sh}
     #These two commands would occur in your top-level CMakeLists.txt 
     #before including any folders
-    #they find the bpmodule core and tell your modules to use its header files
-    find_package(bpmodule REQUIRED)
-    include_directories(${BPMODULE_CXX_INCLUDES})
+    #they find the pulsar core and tell your modules to use its header files
+    find_package(pulsar REQUIRED)
+    include_directories(${PULSAR_CXX_INCLUDES})
 
     #These are the commands for actually building your module
     #Note that "YourModulesName" is being used as the target name and a 
     #folder namespace
     set(YOUR_MODULES_SRC_FILES file1.cpp file2.cpp ...)
     add_library(YourModulesName MODULE ${YOUR_MODULES_SRC_FILES})
-    target_link_libraries(YourModulesName bpmodule)
+    target_link_libraries(YourModulesName pulsar)
     install(TARGETS YourModulesName LIBRARY DESTINATION YourModulesName RUNTIME DESTINATION YourModulesName)
     install(FILES "__init_.py" DESTINATION YourModulesName)
     install(FILES "modinfo.py" DESTINATION YourModulesName)
@@ -75,15 +75,15 @@ A typical `CMakeLists.txt` for a module looks like::
 
 Notes:
 - Be sure to specify your compilers!
-- CMake only needs to include the `bpmoduleConfig.cmake` file (which is looked for by `find_package`). 
+- CMake only needs to include the `pulsarConfig.cmake` file (which is looked for by `find_package`). 
 - The modules are built as MODULE types
-- The modules must be linked to the interface target `bpmodule` plus any libraries specific to the module.
+- The modules must be linked to the interface target `pulsar` plus any libraries specific to the module.
 - Installation in the above goes to `${CMAKE_INSTALL_PREFIX}/YourModulesName`
   - It doesn't matter really where you install it, but the ModuleManager's paths will have to be updated accordingly 
 - Don't forget to install `__init__.py` and `modinfo.py`, plus any other python files!
-- Modules are meant to be built against an installed bpmodule core, not the build directory. 
+- Modules are meant to be built against an installed pulsar core, not the build directory. 
   - No idea if building against `<builddir>/stage/<path>` will work.
-- Modules are meant to be run only after installation as well. Yes, I know this is a pain, but it is how BPModule is supposed to work. I suppose you could run it from the source directory if you put the right path to C++ SO files. Python might work as is.
+- Modules are meant to be run only after installation as well. Yes, I know this is a pain, but it is how Pulsar is supposed to work. I suppose you could run it from the source directory if you put the right path to C++ SO files. Python might work as is.
 
 ## Creating a Supermodule ##
 
@@ -126,7 +126,7 @@ Every supermodule requires one of the two following files
      - In Python the file looks something like::
 
 ~~~{.py}       
-           from bpmodule.modulemanager import ModuleCreationFuncs
+           from pulsar.modulemanager import ModuleCreationFuncs
 
            def InsertSupermodule():
                cf = ModuleCreationFuncs()

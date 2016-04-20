@@ -4,30 +4,30 @@
  * and open the template in the editor.
  */
 
-#include "bpmodule/modulebase/EnergyMethod.hpp"
-#include "bpmodule/math/FiniteDiff.hpp"
-#include "bpmodule/datastore/Wavefunction.hpp"
-#include "bpmodule/system/System.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/modulemanager/ModulePtr.hpp"
-#include "bpmodule/modulemanager/ModuleManager.hpp"
-#include "bpmodule/parallel/InitFinalize.hpp"
+#include "pulsar/modulebase/EnergyMethod.hpp"
+#include "pulsar/math/FiniteDiff.hpp"
+#include "pulsar/datastore/Wavefunction.hpp"
+#include "pulsar/system/System.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/modulemanager/ModulePtr.hpp"
+#include "pulsar/modulemanager/ModuleManager.hpp"
+#include "pulsar/parallel/InitFinalize.hpp"
 #include "LibTaskForce.hpp"
 
 using std::vector;
 
-using bpmodule::system::Atom;
-using bpmodule::system::System;
-using bpmodule::system::AtomSetUniverse;
+using pulsar::system::Atom;
+using pulsar::system::System;
+using pulsar::system::AtomSetUniverse;
 using LibTaskForce::Communicator;
-using bpmodule::exception::GeneralException;
+using pulsar::exception::GeneralException;
 
 typedef vector<Atom> AtomV_t;
-typedef bpmodule::modulemanager::ModuleManager MM_t;
+typedef pulsar::modulemanager::ModuleManager MM_t;
 typedef vector<double> Return_t;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulebase {
     
 class FDFunctor:public math::FDiffVisitor<double,Return_t>{

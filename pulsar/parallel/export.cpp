@@ -5,10 +5,10 @@
  */ 
 
 
-#include "bpmodule/parallel/InitFinalize.hpp"
-#include "bpmodule/python/Pybind11.hpp"
+#include "pulsar/parallel/InitFinalize.hpp"
+#include "pulsar/python/Pybind11.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace parallel {
 namespace export_python {
 
@@ -26,5 +26,5 @@ PYBIND11_PLUGIN(parallel)
 
 } // close namespace export_python
 } // close namespace parallel 
-} // close namespace bpmodule
+} // close namespace pulsar
 

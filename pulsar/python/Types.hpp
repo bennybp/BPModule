@@ -5,15 +5,15 @@
  */
 
 
-#ifndef BPMODULE_GUARD_PYTHON__TYPES_HPP_
-#define BPMODULE_GUARD_PYTHON__TYPES_HPP_
+#ifndef PULSAR_GUARD_PYTHON__TYPES_HPP_
+#define PULSAR_GUARD_PYTHON__TYPES_HPP_
 
 #include <string>
 
-#include "bpmodule/python/Pybind11_fwd.hpp"
+#include "pulsar/python/Pybind11_fwd.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace python {
 
 
@@ -43,6 +43,6 @@ bool HasCallableAttr(const pybind11::object & obj, const std::string & attr);
 
 
 } // close namespace python
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

@@ -5,15 +5,15 @@
  */ 
 
 
-#include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/python/Pybind11_stl.hpp"
-#include "bpmodule/python/Pybind11_functional.hpp"
-#include "bpmodule/python/Pybind11_operators.hpp"
-#include "bpmodule/math/Factorial.hpp"
-#include "bpmodule/math/Universe.hpp"
-#include "bpmodule/math/Point.hpp"
-#include "bpmodule/math/SimpleMatrix.hpp"
-#include "bpmodule/math/IrrepSpinMatrix.hpp"
+#include "pulsar/python/Pybind11.hpp"
+#include "pulsar/python/Pybind11_stl.hpp"
+#include "pulsar/python/Pybind11_functional.hpp"
+#include "pulsar/python/Pybind11_operators.hpp"
+#include "pulsar/math/Factorial.hpp"
+#include "pulsar/math/Universe.hpp"
+#include "pulsar/math/Point.hpp"
+#include "pulsar/math/SimpleMatrix.hpp"
+#include "pulsar/math/IrrepSpinMatrix.hpp"
 
 
 PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
@@ -22,7 +22,7 @@ PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
 
 //! \todo Export exact casts? Or have the equivalent with python?
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 namespace export_python {
 
@@ -233,5 +233,5 @@ PYBIND11_PLUGIN(math)
 
 } // close namespace export_python
 } // close namespace math 
-} // close namespace bpmodule
+} // close namespace pulsar
 

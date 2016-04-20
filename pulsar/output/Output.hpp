@@ -4,14 +4,14 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#ifndef BPMODULE_GUARD_OUTPUT__OUTPUT_HPP_
-#define BPMODULE_GUARD_OUTPUT__OUTPUT_HPP_
+#ifndef PULSAR_GUARD_OUTPUT__OUTPUT_HPP_
+#define PULSAR_GUARD_OUTPUT__OUTPUT_HPP_
 
-#include "bpmodule/output/OutputType.hpp"
-#include "bpmodule/util/Format.hpp"
+#include "pulsar/output/OutputType.hpp"
+#include "pulsar/util/Format.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace output {
 
 
@@ -30,7 +30,7 @@ namespace detail {
 
 /*! \brief Print formatted text to a stream
  *
- * \throw bpmodule::exception::GeneralException with malformed formats,
+ * \throw pulsar::exception::GeneralException with malformed formats,
  *        improper number of arguments, etc.
  *
  * \tparam Targs The types of the arguments to print
@@ -49,7 +49,7 @@ void GeneralOutput(std::ostream & os, OutputType type, const std::string & fmt, 
 
 /*! \brief Print formatted general output to a stream
  * 
- * \throw bpmodule::exception::GeneralException with malformed formats,
+ * \throw pulsar::exception::GeneralException with malformed formats,
  *        improper number of arguments, etc.
  *
  * \tparam Targs The types of the arguments to print
@@ -117,6 +117,6 @@ void Debug(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 
 
 } // close namespace output
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

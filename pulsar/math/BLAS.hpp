@@ -11,15 +11,15 @@
  * Created on April 13, 2016, 5:20 PM
  */
 
-#ifndef BLAS_HPP
-#define BLAS_HPP
+#ifndef PULSAR_GUARD_MATH__BLAS_HPP_
+#define PULSAR_GUARD_MATH__BLAS_HPP_
 
 #include <string>
 #include <array>
 extern "C" {
     void dsyev(char*,char*,int*,double*,int*, double*,double*,int*,int*);
 }
-namespace bpmodule{
+namespace pulsar{
 namespace math{
 
 

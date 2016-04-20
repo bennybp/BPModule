@@ -4,17 +4,17 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/system/BasisSet.hpp"
-#include "bpmodule/system/NFunction.hpp"
-#include "bpmodule/output/Output.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/exception/Assert.hpp"
-#include "bpmodule/util/HashSerializable.hpp"
+#include "pulsar/system/BasisSet.hpp"
+#include "pulsar/system/NFunction.hpp"
+#include "pulsar/output/Output.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/Assert.hpp"
+#include "pulsar/util/HashSerializable.hpp"
 
-using bpmodule::exception::Assert;
-using bpmodule::exception::BasisSetException;
+using pulsar::exception::Assert;
+using pulsar::exception::BasisSetException;
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -362,7 +362,7 @@ BasisSet BasisSet::ShrinkFit(void) const
 
 void BasisSet::Print(std::ostream & os) const
 {
-    using namespace bpmodule::output;
+    using namespace pulsar::output;
 
     size_t nshell = NShell();
 
@@ -392,4 +392,4 @@ void BasisSet::Print(std::ostream & os) const
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar

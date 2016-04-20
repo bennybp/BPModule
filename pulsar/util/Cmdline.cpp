@@ -6,11 +6,11 @@
 
 #include <cstring>
 
-#include "bpmodule/util/Cmdline.hpp"
-#include "bpmodule/output/GlobalOutput.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/util/Cmdline.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
-using namespace bpmodule::output;
+using namespace pulsar::output;
 
 
 namespace {
@@ -19,7 +19,7 @@ namespace {
   bool set_ = false;
 }
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 
@@ -82,4 +82,4 @@ void ClearCmdline(void)
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar

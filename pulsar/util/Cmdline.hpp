@@ -5,14 +5,14 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_UTIL__CMDLINE_HPP_
-#define BPMODULE_GUARD_UTIL__CMDLINE_HPP_
+#ifndef PULSAR_GUARD_UTIL__CMDLINE_HPP_
+#define PULSAR_GUARD_UTIL__CMDLINE_HPP_
 
 #include <vector>
 #include <string>
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 /*! Retrieves the number of arguments on the command line
@@ -35,7 +35,7 @@ void ClearCmdline(void);
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

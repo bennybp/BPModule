@@ -99,7 +99,7 @@ functionality from the first module.
 
 ## Using this to our advantage ##
 
-So how does this work in practice in BPModule? Well, it starts with `import`ing bpmodule.
+So how does this work in practice in Pulsar? Well, it starts with `import`ing pulsar.
 This is a traditional python library, with an `__init__.py` file. In that file the core modules
 (written in C++) are imported via `dlopen()`/`dlsym()` with three steps
 
@@ -116,7 +116,7 @@ This simplifies the build process tremendously, since modules don't have to be l
 at build time. In addition, external dependencies (such as taskforce, etc) only have to be linked to
 a single module. Then, when that module is loaded, that library comes along with it. Ta-dah!
 
-BPModule "modules" use a similar idea, although the module loading is handled in C++. The file is opened,
+Pulsar "modules" use a similar idea, although the module loading is handled in C++. The file is opened,
 a specific function is found, run, etc. And because the core was loaded with `RTLD_GLOBAL`, all core
 functionality (again, including the linked libraries) are available to the module without having to link
 to it at build time. Ta-dah! (again)
@@ -125,5 +125,5 @@ Note that modules are loaded with `RTLD_LOCAL`, since we want to compartmentaliz
 and sandbox the module and prevent contamination of the main symbol table.
 
 
-For more info on how BPModule modules are opened and used, 
+For more info on how Pulsar modules are opened and used, 
 see [Modules and Supermodules](@ref modulebasics)

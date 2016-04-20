@@ -1,5 +1,5 @@
-#ifndef BPMODULE_GUARD_BPMODULE__PRAGMA_H_
-#define BPMODULE_GUARD_BPMODULE__PRAGMA_H_
+#ifndef PULSAR_GUARD_PULSAR__PRAGMA_H_
+#define PULSAR_GUARD_PULSAR__PRAGMA_H_
 
 #ifdef __cplusplus
 extern "C" {

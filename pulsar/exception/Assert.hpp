@@ -1,11 +1,11 @@
-#ifndef BPMODULE_GUARD_EXCEPTION__ASSERT_HPP_
-#define BPMODULE_GUARD_EXCEPTION__ASSERT_HPP_
+#ifndef PULSAR_GUARD_EXCEPTION__ASSERT_HPP_
+#define PULSAR_GUARD_EXCEPTION__ASSERT_HPP_
 
 #include <string>
 
-#include "bpmodule/pragma.h"
+#include "pulsar/pragma.h"
 
-namespace bpmodule {
+namespace pulsar{
 namespace exception {
 
 PRAGMA_WARNING_PUSH
@@ -40,7 +40,7 @@ PRAGMA_WARNING_POP
 
 
 } // close namespace exception
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif
 

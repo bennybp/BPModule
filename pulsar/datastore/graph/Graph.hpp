@@ -1,5 +1,5 @@
-#ifndef BPMODULE_GUARD_GRAPH__GRAPH_HPP_
-#define BPMODULE_GUARD_GRAPH__GRAPH_HPP_
+#ifndef PULSAR_GUARD_GRAPH__GRAPH_HPP_
+#define PULSAR_GUARD_GRAPH__GRAPH_HPP_
 
 #include <functional>
 #include <tuple>
@@ -9,10 +9,10 @@
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/graphviz.hpp>
 
-#include "bpmodule/datastore/graph/FillMacro.h"
-#include "bpmodule/datastore/graph/GraphItr.hpp"
+#include "pulsar/datastore/graph/FillMacro.h"
+#include "pulsar/datastore/graph/GraphItr.hpp"
 
-namespace bpmodule{
+namespace pulsar{
 namespace datastore {
 namespace LibGraph{
 
@@ -610,7 +610,7 @@ inline std::ostream& operator<<(std::ostream& os,
 
 } // close namespace LibGraph
 } // close namespace datastore
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif /* GRAPH_GRAPH_HPP_ */

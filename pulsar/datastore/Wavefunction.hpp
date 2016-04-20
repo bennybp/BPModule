@@ -4,19 +4,19 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#ifndef BPMODULE_GUARD_DATASTORE__WAVEFUNCTION_HPP_
-#define BPMODULE_GUARD_DATASTORE__WAVEFUNCTION_HPP_
+#ifndef PULSAR_GUARD_DATASTORE__WAVEFUNCTION_HPP_
+#define PULSAR_GUARD_DATASTORE__WAVEFUNCTION_HPP_
 
 #include <memory>
 
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/math/IrrepSpinMatrix.hpp"
-#include "bpmodule/system/System.hpp"
-#include "bpmodule/util/HashSerializable.hpp"
-#include "bpmodule/util/Serialization.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/math/IrrepSpinMatrix.hpp"
+#include "pulsar/system/System.hpp"
+#include "pulsar/util/HashSerializable.hpp"
+#include "pulsar/util/Serialization.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 
 class Wavefunction

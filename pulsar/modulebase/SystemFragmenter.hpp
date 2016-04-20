@@ -5,13 +5,13 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_MODULEBASE__SYSTEMFRAGMENTER_HPP_
-#define BPMODULE_GUARD_MODULEBASE__SYSTEMFRAGMENTER_HPP_
+#ifndef PULSAR_GUARD_MODULEBASE__SYSTEMFRAGMENTER_HPP_
+#define PULSAR_GUARD_MODULEBASE__SYSTEMFRAGMENTER_HPP_
 
-#include "bpmodule/modulebase/ModuleBase.hpp"
-#include "bpmodule/system/System.hpp"
+#include "pulsar/modulebase/ModuleBase.hpp"
+#include "pulsar/system/System.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulebase {
 
 /*! \brief A module that fragments a system
@@ -82,6 +82,6 @@ class SystemFragmenter_Py : public SystemFragmenter
 };
 
 } // close namespace modulebase
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

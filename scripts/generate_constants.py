@@ -2,7 +2,7 @@
 
 import sys
 import mpmath as mp
-import bp_common
+import psr_common
 
 mp.dps=250
 mp.mp.dps = 250
@@ -59,7 +59,7 @@ constants["ATOMIC_UNIT_VELOCITY"]     =  constants['AU_VELOCITY_SI']
 keys = sorted(constants.keys())
 
 
-with bp_common.HeaderSourceFiles(outbase, "Various constants and conversion factors", 
+with psr_common.HeaderSourceFiles(outbase, "Various constants and conversion factors", 
                                  [], # no namespaces
                                  createsource = False,
                                  plainc = True) as src:

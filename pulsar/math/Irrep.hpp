@@ -4,11 +4,11 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_MATH__IRREP_HPP_
-#define BPMODULE_GUARD_MATH__IRREP_HPP_
+#ifndef PULSAR_GUARD_MATH__IRREP_HPP_
+#define PULSAR_GUARD_MATH__IRREP_HPP_
 
 
-namespace bpmodule{
+namespace pulsar{
 namespace math{
 
 //! \todo Add the rest
@@ -25,7 +25,7 @@ enum class Irrep {
 
 
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif
 

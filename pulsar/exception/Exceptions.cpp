@@ -1,16 +1,16 @@
 /*! \file
  *
- * \brief The base, general exception for BPModule (source)
+ * \brief The base, general exception for Pulsar (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
 
 #include <sstream>
 
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace exception {
 
 
@@ -68,4 +68,4 @@ const char * GeneralException::what(void) const noexcept
 
 
 } // close namespace exception
-} // close namespace bpmodule
+} // close namespace pulsar

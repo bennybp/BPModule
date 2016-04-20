@@ -5,8 +5,8 @@
  */
 
 
-#ifndef BPMODULE_GUARD_DATASTORE__OPTIONTYPES_HPP_
-#define BPMODULE_GUARD_DATASTORE__OPTIONTYPES_HPP_
+#ifndef PULSAR_GUARD_DATASTORE__OPTIONTYPES_HPP_
+#define PULSAR_GUARD_DATASTORE__OPTIONTYPES_HPP_
 
 
 #include <cstdint>
@@ -16,10 +16,10 @@
 #include <vector>
 #include <algorithm>
 
-#include "bpmodule/math/Cast.hpp"
-#include "bpmodule/math/Cast_stl.hpp"
+#include "pulsar/math/Cast.hpp"
+#include "pulsar/math/Cast_stl.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 
 
@@ -306,6 +306,6 @@ struct OptionCast<std::map<K1, M1>, std::map<K2, M2>>
 
 
 } // close namespace datastore
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

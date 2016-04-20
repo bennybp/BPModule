@@ -5,14 +5,14 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_OUTPUT__GLOBALOUTPUT_HPP_
-#define BPMODULE_GUARD_OUTPUT__GLOBALOUTPUT_HPP_
+#ifndef PULSAR_GUARD_OUTPUT__GLOBALOUTPUT_HPP_
+#define PULSAR_GUARD_OUTPUT__GLOBALOUTPUT_HPP_
 
 
-#include "bpmodule/output/OutputStream.hpp"
+#include "pulsar/output/OutputStream.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace output {
 
 
@@ -51,7 +51,7 @@ void EnableColor(bool enabled) noexcept;
 
 /*! \brief Print formatted text to the global output stream
  *
- * \throw bpmodule::exception::GeneralException with malformed formats,
+ * \throw pulsar::exception::GeneralException with malformed formats,
  *        improper number of arguments, etc.
  *
  * \tparam Targs The types of the arguments to print
@@ -69,7 +69,7 @@ void GlobalGeneralOutput(const std::string & fmt, OutputType type, const Targs&.
 
 /*! \brief Print formatted general output to the global output stream
  * 
- * \throw bpmodule::exception::GeneralException with malformed formats,
+ * \throw pulsar::exception::GeneralException with malformed formats,
  *        improper number of arguments, etc.
  *
  * \tparam Targs The types of the arguments to print
@@ -136,7 +136,7 @@ void GlobalDebug(const std::string & fmt, const Targs&... Fargs)
 
 
 } // close namespace output
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

@@ -5,12 +5,12 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_DATASTORE__GENERICBASE_HPP_
-#define BPMODULE_GUARD_DATASTORE__GENERICBASE_HPP_
+#ifndef PULSAR_GUARD_DATASTORE__GENERICBASE_HPP_
+#define PULSAR_GUARD_DATASTORE__GENERICBASE_HPP_
 
 #include <memory>
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 namespace detail {
 
@@ -90,6 +90,6 @@ class GenericBase
 
 } //closing namespace detail
 } //closing namespace datastore
-} //closing namespace bpmodule
+} //closing namespace pulsar
 
 #endif

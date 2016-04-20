@@ -5,23 +5,23 @@
  */ 
 
 
-#include "bpmodule/python/Pybind11_stl.hpp"
-#include "bpmodule/python/Pybind11_functional.hpp"
-#include "bpmodule/python/Pybind11_operators.hpp"
-#include "bpmodule/python/Pybind11_iterators.hpp"
-#include "bpmodule/python/Convert.hpp"
-#include "bpmodule/system/AMConvert.hpp"
-#include "bpmodule/system/AtomicInfo.hpp"
-#include "bpmodule/system/System.hpp"
-#include "bpmodule/system/BasisSet.hpp"
-#include "bpmodule/system/Symmetrizer.hpp"
-#include "bpmodule/system/SymmetryElements.hpp"
-#include "bpmodule/system/Ordering.hpp"
-#include "bpmodule/math/RegisterMathSet.hpp"
+#include "pulsar/python/Pybind11_stl.hpp"
+#include "pulsar/python/Pybind11_functional.hpp"
+#include "pulsar/python/Pybind11_operators.hpp"
+#include "pulsar/python/Pybind11_iterators.hpp"
+#include "pulsar/python/Convert.hpp"
+#include "pulsar/system/AMConvert.hpp"
+#include "pulsar/system/AtomicInfo.hpp"
+#include "pulsar/system/System.hpp"
+#include "pulsar/system/BasisSet.hpp"
+#include "pulsar/system/Symmetrizer.hpp"
+#include "pulsar/system/SymmetryElements.hpp"
+#include "pulsar/system/Ordering.hpp"
+#include "pulsar/math/RegisterMathSet.hpp"
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 namespace export_python {
 
@@ -330,5 +330,5 @@ PYBIND11_PLUGIN(system)
 
 } // close namespace export_python
 } // close namespace system 
-} // close namespace bpmodule
+} // close namespace pulsar
 

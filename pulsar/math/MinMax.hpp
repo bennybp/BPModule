@@ -1,9 +1,9 @@
-#ifndef BPMODULE_GUARD_MATH__MINMAX_HPP_
-#define BPMODULE_GUARD_MATH__MINMAX_HPP_
+#ifndef PULSAR_GUARD_MATH__MINMAX_HPP_
+#define PULSAR_GUARD_MATH__MINMAX_HPP_
 
 #include <algorithm>
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 
 
@@ -61,7 +61,7 @@ T MaxAbs(T v, Targs && ... args)
 
 
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

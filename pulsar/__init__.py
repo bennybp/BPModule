@@ -54,13 +54,13 @@ from .ModuleAdministrator import *
 thispath = os.path.dirname(os.path.realpath(__file__))
 toppath = os.path.realpath(os.path.join(thispath, "../../"))
 
-bpmodule_paths = { "base": thispath,
+pulsar_paths = { "base": thispath,
                    "basis": [ os.path.join(toppath, "basis") ]
                  }
 
 
 def Init(argv, out = "stdout", color = True, debug = False,nthreads=1):
-  """Initializes the BPModule core
+  """Initializes the Pulsar core
 
   Initializes MPI, tensor libraries, etc, as well as the
   output streams.

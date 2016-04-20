@@ -5,8 +5,8 @@
  */
 
 
-#include "bpmodule/util/Hasher.hpp"
-#include "bpmodule/util/Hash.hpp"
+#include "pulsar/util/Hasher.hpp"
+#include "pulsar/util/Hash.hpp"
 
 
 
@@ -54,7 +54,7 @@ static inline uint64_t fmix64 ( uint64_t k )
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 
@@ -245,5 +245,5 @@ Hash Hasher::Finalize(void)
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 

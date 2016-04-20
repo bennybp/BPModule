@@ -26,7 +26,7 @@
 #include "DFS.hpp"
 #include "FindSubGraph.hpp"
 
-using namespace bpmodule::LibGraph;
+using namespace pulsar::LibGraph;
 
 ///Class to test our graph search algorithm
 class NodeClass {

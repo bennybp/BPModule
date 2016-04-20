@@ -5,15 +5,15 @@ import sys
 import traceback 
 import operator
 
-# Add the bpmodule path
+# Add the pulsar path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "modules")
-sys.path.insert(0, bppath)
+psrpath = os.path.join(os.path.dirname(thispath), "modules")
+sys.path.insert(0, psrpath)
 
-import bpmodule as bp
-from bpmodule.output import *
-from bpmodule.testing import *
-from bpmodule.math import *
+import pulsar as psr
+from pulsar.output import *
+from pulsar.testing import *
+from pulsar.math import *
 
 from helper.SetOperations import TestSetOperations
 
@@ -105,6 +105,6 @@ def Run():
 
 
 
-bp.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.Init(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-bp.Finalize()
+psr.Finalize()

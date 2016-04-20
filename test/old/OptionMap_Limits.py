@@ -7,58 +7,58 @@ import argparse
 import copy
 import traceback 
 
-# Add the bpmodule path
+# Add the pulsar path
 thispath = os.path.dirname(os.path.realpath(__file__))
-bppath = os.path.join(os.path.dirname(thispath), "modules")
-sys.path.insert(0, bppath)
+psrpath = os.path.join(os.path.dirname(thispath), "modules")
+sys.path.insert(0, psrpath)
 
-import bpmodule as bp
+import pulsar as psr
 
 
 def Run():
     try:
-        bp.output.GlobalOutput("\n")
-        bp.output.GlobalOutput(bp.util.Line('-'))
+        psr.output.GlobalOutput("\n")
+        psr.output.GlobalOutput(psr.util.Line('-'))
 
         # The limits on various integer types
-        intlimitdict = { "sshort"             : bp.testing.Limits_sshort(),
-                         "ushort"             : bp.testing.Limits_ushort(),
-                         "sint"               : bp.testing.Limits_sint(),
-                         "uint"               : bp.testing.Limits_uint(),
-                         "slong"              : bp.testing.Limits_slong(),
-                         "ulong"              : bp.testing.Limits_ulong(),
-                         "slonglong"          : bp.testing.Limits_slonglong(),
-                         "ulonglong"          : bp.testing.Limits_ulonglong()
+        intlimitdict = { "sshort"             : psr.testing.Limits_sshort(),
+                         "ushort"             : psr.testing.Limits_ushort(),
+                         "sint"               : psr.testing.Limits_sint(),
+                         "uint"               : psr.testing.Limits_uint(),
+                         "slong"              : psr.testing.Limits_slong(),
+                         "ulong"              : psr.testing.Limits_ulong(),
+                         "slonglong"          : psr.testing.Limits_slonglong(),
+                         "ulonglong"          : psr.testing.Limits_ulonglong()
                        }
 
 
         # Dictionary of functions for getting/setting options through C++
-        intfuncdict = { "sshort"             : ( bp.testing.TestOptionMapGet_sshort,    bp.testing.TestOptionMapGet_vector_sshort ),
-                        "ushort"             : ( bp.testing.TestOptionMapGet_ushort,    bp.testing.TestOptionMapGet_vector_ushort ),
-                        "sint"               : ( bp.testing.TestOptionMapGet_sint,      bp.testing.TestOptionMapGet_vector_sint ),
-                        "uint"               : ( bp.testing.TestOptionMapGet_uint,      bp.testing.TestOptionMapGet_vector_uint ),
-                        "slong"              : ( bp.testing.TestOptionMapGet_slong,     bp.testing.TestOptionMapGet_vector_slong ),
-                        "ulong"              : ( bp.testing.TestOptionMapGet_ulong,     bp.testing.TestOptionMapGet_vector_ulong ),
-                        "slonglong"          : ( bp.testing.TestOptionMapGet_slonglong, bp.testing.TestOptionMapGet_vector_slonglong ),
-                        "ulonglong"          : ( bp.testing.TestOptionMapGet_ulonglong, bp.testing.TestOptionMapGet_vector_ulonglong ),
+        intfuncdict = { "sshort"             : ( psr.testing.TestOptionMapGet_sshort,    psr.testing.TestOptionMapGet_vector_sshort ),
+                        "ushort"             : ( psr.testing.TestOptionMapGet_ushort,    psr.testing.TestOptionMapGet_vector_ushort ),
+                        "sint"               : ( psr.testing.TestOptionMapGet_sint,      psr.testing.TestOptionMapGet_vector_sint ),
+                        "uint"               : ( psr.testing.TestOptionMapGet_uint,      psr.testing.TestOptionMapGet_vector_uint ),
+                        "slong"              : ( psr.testing.TestOptionMapGet_slong,     psr.testing.TestOptionMapGet_vector_slong ),
+                        "ulong"              : ( psr.testing.TestOptionMapGet_ulong,     psr.testing.TestOptionMapGet_vector_ulong ),
+                        "slonglong"          : ( psr.testing.TestOptionMapGet_slonglong, psr.testing.TestOptionMapGet_vector_slonglong ),
+                        "ulonglong"          : ( psr.testing.TestOptionMapGet_ulonglong, psr.testing.TestOptionMapGet_vector_ulonglong ),
                       }
 
 
  
         for k,v in intlimitdict.items():
-            bp.output.GlobalOutput("Limit for {:<18} : [ {:<21} , {:<21} ]\n".format(k, v[0], v[1]))
-        bp.output.GlobalOutput(bp.util.Line('-'))
-        bp.output.GlobalOutput("\n")
+            psr.output.GlobalOutput("Limit for {:<18} : [ {:<21} , {:<21} ]\n".format(k, v[0], v[1]))
+        psr.output.GlobalOutput(psr.util.Line('-'))
+        psr.output.GlobalOutput("\n")
 
 
-        tester = bp.testing.Tester("Testing passing and getting large numbers, etc, from OptionMap objects")
+        tester = psr.testing.Tester("Testing passing and getting large numbers, etc, from OptionMap objects")
         tester.PrintHeader()
 
         # loop over integer types
         for k,limits in intlimitdict.items():
 
             # create an OptionMap
-            opt = bp.datastore.OptionMap( "nomodule", 
+            opt = psr.datastore.OptionMap( "nomodule", 
                                         { "test_opt" : ( "int", None, True, None, "(no help)" ),
                                           "test_opt_vec" : ( "listint", None, True, None, "(no help)" ) },
                                         None)
@@ -80,10 +80,10 @@ def Run():
                     expected = val >= limits2[0] and val <= limits2[1]
 
                     s = "Getting {} as {}".format(k, k2)
-                    tester.Test(s, expected, bp.testing.PyTestFunc, v2[0], opt,  "test_opt")
+                    tester.Test(s, expected, psr.testing.PyTestFunc, v2[0], opt,  "test_opt")
 
                     s = "Getting {} as vector of {}".format(k, k2)
-                    tester.Test(s, expected, bp.testing.PyTestFunc, v2[1], opt,  "test_opt_vec")
+                    tester.Test(s, expected, psr.testing.PyTestFunc, v2[1], opt,  "test_opt_vec")
                     
 
 
@@ -91,15 +91,15 @@ def Run():
 
 
     except Exception as e:
-      bp.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      psr.output.GlobalOutput("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      bp.output.GlobalError("\n")
-      bp.output.GlobalError(str(e))
-      bp.output.GlobalError("\n")
+      psr.output.GlobalError("\n")
+      psr.output.GlobalError(str(e))
+      psr.output.GlobalError("\n")
 
 
 
 
-bp.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.Init(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-bp.Finalize()
+psr.Finalize()

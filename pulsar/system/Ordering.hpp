@@ -4,15 +4,15 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_SYSTEM__ORDERING_HPP_
-#define BPMODULE_GUARD_SYSTEM__ORDERING_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__ORDERING_HPP_
+#define PULSAR_GUARD_SYSTEM__ORDERING_HPP_
 
 #include <vector>
 #include <map>
-#include "bpmodule/system/BasisSet.hpp"
+#include "pulsar/system/BasisSet.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -109,7 +109,7 @@ const CartesianOrderingMap & AllCartesianOrderings(void);
 
 /*! \brief Obtain the ordering of m_l for a given angular momentum
  *
- * \throw bpmodule::exception::GeneralException if the value of the
+ * \throw pulsar::exception::GeneralException if the value of the
  *        angular momentum is out of range
  */
 const std::vector<int> & SphericalOrdering(int am);
@@ -117,7 +117,7 @@ const std::vector<int> & SphericalOrdering(int am);
 
 /*! \brief Obtain the ordering of cartesian gaussians for a given angular momentum
  *
- * \throw bpmodule::exception::GeneralException if the value of the
+ * \throw pulsar::exception::GeneralException if the value of the
  *        angular momentum is out of range
  */
 const std::vector<IJK> & CartesianOrdering(int am);
@@ -125,7 +125,7 @@ const std::vector<IJK> & CartesianOrdering(int am);
 
 /*! \brief Get the index of a spherical basis function in the usual ordering
  *
- * \throw bpmodule::exception::GeneralException if the value of the
+ * \throw pulsar::exception::GeneralException if the value of the
  *        angular momentum is out of range or if the value of ijk
  *        is not found for the given am
  *
@@ -137,7 +137,7 @@ size_t CartesianIndex(int am, IJK ijk);
 
 /*! \brief Get the index of a spherical basis function in the usual ordering
  *
- * \throw bpmodule::exception::GeneralException if the value of the
+ * \throw pulsar::exception::GeneralException if the value of the
  *        angular momentum is out of range or if the value of ijk
  *        is not found for the given am
  *
@@ -168,7 +168,7 @@ size_t SphericalIndex(int am, int m);
  *
  * \note \p src and \p dest is expected to be bs.NFunctions() * length in size
  *
- * \throw bpmodule::exception::GeneralException if there is an inconsistency (angular
+ * \throw pulsar::exception::GeneralException if there is an inconsistency (angular
  *        momentum out of range, and index out of range in the orderings, etc)
  */
 template<typename T>
@@ -346,7 +346,7 @@ DECLARE_EXTERN_TEMPLATE_REORDER(double)
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

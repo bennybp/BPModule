@@ -1,9 +1,9 @@
-#ifndef BPMODULE_GUARD_MATH__CAST_HPP_
-#define BPMODULE_GUARD_MATH__CAST_HPP_
+#ifndef PULSAR_GUARD_MATH__CAST_HPP_
+#define PULSAR_GUARD_MATH__CAST_HPP_
 
-#include "bpmodule/math/ExactCast.hpp"
+#include "pulsar/math/ExactCast.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 
 
@@ -15,7 +15,7 @@ namespace math {
  *
  * Cannot be used to convert integer <-> floating point. Use round_cast instead.
  *
- * \throw bpmodule::exception::MathException if there is a problem (overflow, underflow, etc)
+ * \throw pulsar::exception::MathException if there is a problem (overflow, underflow, etc)
  */
 //template<typename Target, typename Source>
 //typename std::enable_if<std::is_arithmetic<Source>::value && std::is_arithmetic<Target>::value, Target>::type
@@ -47,7 +47,7 @@ Target round_cast(Source s)
 
 
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

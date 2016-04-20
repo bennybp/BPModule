@@ -1,4 +1,4 @@
-set(BPMODULE_MATH_FILES
+set(PULSAR_MATH_FILES
             Binomial.cpp
             Factorial_LUT.cpp
             FiniteDiff.cpp
@@ -10,8 +10,8 @@ set(BPMODULE_MATH_FILES
   
 
 ADD_COREMODULE(math
-           "${BPMODULE_MATH_FILES}"
+           "${PULSAR_MATH_FILES}"
            ""
-           "${BPMODULE_MATH_LIBS}"
+           "${PULSAR_MATH_LIBS}"
            "")
 INSTALL_COREMODULE(math)

@@ -5,24 +5,24 @@
  */
 
 
-#ifndef BPMODULE_GUARD_PYTHON__CONVERT_HPP_
-#define BPMODULE_GUARD_PYTHON__CONVERT_HPP_
+#ifndef PULSAR_GUARD_PYTHON__CONVERT_HPP_
+#define PULSAR_GUARD_PYTHON__CONVERT_HPP_
 
-#include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/python/Pybind11_stl.hpp"
-#include "bpmodule/python/Errors.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/exception/Assert.hpp"
-#include "bpmodule/util/Mangle.hpp"
+#include "pulsar/python/Pybind11.hpp"
+#include "pulsar/python/Pybind11_stl.hpp"
+#include "pulsar/python/Errors.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/Assert.hpp"
+#include "pulsar/util/Mangle.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace python {
 
 
 
 /*! \brief Convert a python object to a C++ object
  *
- * \throw bpmodule::exception::PythonConvertException on error
+ * \throw pulsar::exception::PythonConvertException on error
  *
  * \tparam T The C++ type to convert to
  * \param [in] obj The python object to convert
@@ -30,9 +30,9 @@ namespace python {
 template<typename T>
 T ConvertToCpp(const pybind11::object & obj)
 {
-    using bpmodule::exception::PythonConvertException;
-    using bpmodule::exception::GeneralException;
-    using bpmodule::exception::Assert;
+    using pulsar::exception::PythonConvertException;
+    using pulsar::exception::GeneralException;
+    using pulsar::exception::Assert;
 
     Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
 
@@ -57,7 +57,7 @@ T ConvertToCpp(const pybind11::object & obj)
 
 /*! \brief Convert a C++ object to a python object
  *
- * \throw bpmodule::exception::PythonConvertException on error
+ * \throw pulsar::exception::PythonConvertException on error
  *
  * \tparam T The C++ type to convert from
  * \param [in] obj The python object to convert
@@ -67,7 +67,7 @@ template<typename T>
 pybind11::object ConvertToPy(const T & obj,
                              pybind11::return_value_policy pol = pybind11::return_value_policy::copy)
 {
-    using bpmodule::exception::PythonConvertException;
+    using pulsar::exception::PythonConvertException;
 
 
     // may NOT throw if there is an issue
@@ -123,6 +123,6 @@ pybind11::object ConvertToPy(const T * const obj, size_t n)
 
 
 } // close namespace python
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

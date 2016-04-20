@@ -4,17 +4,17 @@
 */
 
 
-#ifndef BPMODULE_GUARD_SYSTEM__ATOM_HPP_
-#define BPMODULE_GUARD_SYSTEM__ATOM_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__ATOM_HPP_
+#define PULSAR_GUARD_SYSTEM__ATOM_HPP_
 #include <iostream>
 #include <set>
 #include <map>
 
-#include "bpmodule/system/CoordType.hpp"
-#include "bpmodule/system/BasisShellInfo.hpp"
-#include "bpmodule/util/StringUtil.hpp"
+#include "pulsar/system/CoordType.hpp"
+#include "pulsar/system/BasisShellInfo.hpp"
+#include "pulsar/util/StringUtil.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 //Macro to define getter/setters and reduce code duplication
@@ -380,13 +380,13 @@ bool IsDummy(const Atom& AtomI);
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 
 ///Allows atoms to be hashed
 namespace std{
-    template<> struct hash<bpmodule::system::Atom>
+    template<> struct hash<pulsar::system::Atom>
     {
-        size_t operator()(const bpmodule::system::Atom& atom)const{
+        size_t operator()(const pulsar::system::Atom& atom)const{
             return atom.GetIdx();
         }
     };

@@ -4,22 +4,22 @@
  */
 
 
-#ifndef BPMODULE_GUARD_SYSTEM__SYSTEM_HPP_
-#define BPMODULE_GUARD_SYSTEM__SYSTEM_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__SYSTEM_HPP_
+#define PULSAR_GUARD_SYSTEM__SYSTEM_HPP_
 
 #include <unordered_map>
 #include <unordered_set>
-#include "bpmodule/system/Atom.hpp"
-#include "bpmodule/math/MathSet.hpp"
-#include "bpmodule/math/PointManipulation.hpp"
+#include "pulsar/system/Atom.hpp"
+#include "pulsar/math/MathSet.hpp"
+#include "pulsar/math/PointManipulation.hpp"
 
 // Instantiated in the cpp file
-extern template class bpmodule::math::Universe<bpmodule::system::Atom>;
-extern template class bpmodule::math::MathSet<bpmodule::system::Atom>;
+extern template class pulsar::math::Universe<pulsar::system::Atom>;
+extern template class pulsar::math::MathSet<pulsar::system::Atom>;
 
 
 // forward declare
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 class BasisSet;
 }
@@ -29,7 +29,7 @@ class Hash;
 }
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -512,7 +512,7 @@ inline std::ostream& operator<<(std::ostream& os, const System& Mol)
 typedef std::map<std::string, System> SystemMap;
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

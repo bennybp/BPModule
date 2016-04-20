@@ -5,19 +5,19 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_TESTING__TESTINGBASE_HPP_
-#define BPMODULE_GUARD_TESTING__TESTINGBASE_HPP_
+#ifndef PULSAR_GUARD_TESTING__TESTINGBASE_HPP_
+#define PULSAR_GUARD_TESTING__TESTINGBASE_HPP_
 
 #include <functional>
 
-#include "bpmodule/output/GlobalOutput.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
 
 
-using bpmodule::output::GlobalOutput;
-using bpmodule::output::GlobalError;
-using bpmodule::output::GlobalDebug;
+using pulsar::output::GlobalOutput;
+using pulsar::output::GlobalError;
+using pulsar::output::GlobalDebug;
 
-namespace bpmodule {
+namespace pulsar{
 namespace testing {
 
 
@@ -121,6 +121,6 @@ bool TestConstruct(Targs... Fargs)
 
 
 } // close namespace testing
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

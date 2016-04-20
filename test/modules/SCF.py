@@ -29,14 +29,14 @@ def CompareGrad(GradIn):
 
 def Run(mm):
     try:
-        tester = bp.testing.Tester("Testing SCF")
+        tester = psr.testing.Tester("Testing SCF")
         tester.PrintHeader()
 
         LoadDefaultModules(mm)
         
-        mm.ChangeOption("BP_SCF","BASIS_SET","sto-3g")
-        MyMod=mm.GetModule("BP_SCF",0)
-        mol=bp.system.MakeSystem("""
+        mm.ChangeOption("PSR_SCF","BASIS_SET","sto-3g")
+        MyMod=mm.GetModule("PSR_SCF",0)
+        mol=psr.system.MakeSystem("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
         H    0.5104418   0.8944555   0.5514190
@@ -49,7 +49,7 @@ def Run(mm):
         H   -0.5031835  -0.8251492  -2.0957959
         """)
         mol = ApplyBasis(mol,"sto-3g","sto-3g")
-        wfn=bp.datastore.Wavefunction()
+        wfn=psr.datastore.Wavefunction()
         wfn.system=mol
         MyMod.SetInitialWfn(wfn)
         
@@ -67,10 +67,10 @@ def Run(mm):
         
      
     except Exception as e:
-      bp.output.Output("Caught exception in main handler\n")
+      psr.output.Output("Caught exception in main handler\n")
       traceback.print_exc()
 
-with bp.ModuleAdministrator() as mm:
+with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-bp.Finalize()
+psr.Finalize()

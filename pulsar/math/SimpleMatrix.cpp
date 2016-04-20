@@ -4,10 +4,10 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/math/SimpleMatrix.hpp"
+#include "pulsar/math/SimpleMatrix.hpp"
 
 
-namespace bpmodule{
+namespace pulsar{
 namespace math{
 
 template class SimpleMatrix<float>;
@@ -21,4 +21,4 @@ template class SimpleVector<std::complex<double>>;
 
 
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar

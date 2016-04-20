@@ -4,20 +4,20 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/python/Call.hpp"
+#include "pulsar/python/Call.hpp"
 
 
-#include "bpmodule/datastore/OptionMap.hpp"
-#include "bpmodule/output/GlobalOutput.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/datastore/OptionMap.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
 
-using namespace bpmodule::python;
-using namespace bpmodule::exception;
-using namespace bpmodule::output;
+using namespace pulsar::python;
+using namespace pulsar::exception;
+using namespace pulsar::output;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace datastore {
 
 
@@ -333,5 +333,5 @@ void OptionMap::Print(std::ostream & os) const
 
 
 } // close namespace datastore
-} // close namespace bpmodule
+} // close namespace pulsar
 

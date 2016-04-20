@@ -5,20 +5,20 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
-#define BPMODULE_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
+#ifndef PULSAR_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
+#define PULSAR_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
 
 #include <atomic>
 
-#include "bpmodule/datastore/CacheData.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/modulemanager/ModuleCreationFuncs.hpp"
-#include "bpmodule/modulemanager/ModuleTree.hpp"
-#include "bpmodule/modulemanager/ModulePtr.hpp"
+#include "pulsar/datastore/CacheData.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/modulemanager/ModuleCreationFuncs.hpp"
+#include "pulsar/modulemanager/ModuleTree.hpp"
+#include "pulsar/modulemanager/ModulePtr.hpp"
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulemanager {
 
 
@@ -56,7 +56,7 @@ class ModuleManager
 
         /*! \brief Returns the information about a module with a given module key
          *
-         * \throw bpmodule::exception::ModuleManagerException
+         * \throw pulsar::exception::ModuleManagerException
          *        if the module key or its associated name doesn't exist in the database
          *
          * \param [in] modulekey A module key
@@ -82,7 +82,7 @@ class ModuleManager
          * This goes through and tests the module creation for all keys. It does
          * not attempt to cast them, though. This is a simple sanity check
          *
-         * \throw bpmodule::exception::ModuleCreateException if there is a problem
+         * \throw pulsar::exception::ModuleCreateException if there is a problem
          *
          * \exbasic
          * \todo make strong?
@@ -101,10 +101,10 @@ class ModuleManager
          * If the parent is not in use, the wavefunction is set to the final
          * wavefunction of the parent.
          *
-         * \throw bpmodule::exception::ModuleManagerException
+         * \throw pulsar::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
-         * \throw bpmodule::exception::ModuleCreateException if there are other
+         * \throw pulsar::exception::ModuleCreateException if there are other
          *        problems creating the module
          *
          * \exbasic
@@ -145,10 +145,10 @@ class ModuleManager
          * If the parent is not in use, the wavefunction is set to the final
          * wavefunction of the parent.
          *
-         * \throw bpmodule::exception::ModuleManagerException
+         * \throw pulsar::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
-         * \throw bpmodule::exception::ModuleCreateException if there are other
+         * \throw pulsar::exception::ModuleCreateException if there are other
          *        problems creating the module
          *
          * \exbasic
@@ -165,7 +165,7 @@ class ModuleManager
 
         /*! \brief Change an option for a module
          * 
-         * \throw bpmodule::exception::ModuleManagerException
+         * \throw pulsar::exception::ModuleManagerException
          *        if the key doesn't exist in the database or
          *        if options can't be changed since the module
          *        has been used.
@@ -189,7 +189,7 @@ class ModuleManager
          *
          * Options, etc, are copied from the original key.
          *
-         * \throw bpmodule::exception::ModuleManagerException
+         * \throw pulsar::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
          * \param [in] modulekey Existing module key to duplicate
@@ -212,7 +212,7 @@ class ModuleManager
 
         /*! \brief Change an option for a module (python version)
          * 
-         * \throw bpmodule::exception::ModuleManagerException
+         * \throw pulsar::exception::ModuleManagerException
          *        if the key doesn't exist in the database or
          *        if options can't be changed since the module
          *        has been used.
@@ -230,7 +230,7 @@ class ModuleManager
          * The supermodule is loaded via a handler, and then info
          * for the module is extracted from the supermodule information.
          *
-         * \throw bpmodule::exception::ModuleLoaderException if the key
+         * \throw pulsar::exception::ModuleLoaderException if the key
          *        already exists in the database or if \p mc doesn't
          *        contain a creator for the given module name (in \p mi)
          *
@@ -318,7 +318,7 @@ class ModuleManager
 
         /*! \brief Obtain stored internal info for a module (via module key) or throw an exception
          *
-         * \throw bpmodule::exception::ModuleManagerException
+         * \throw pulsar::exception::ModuleManagerException
          *        if the key or name doesn't exist
          *
          * \param [in] modulekey A module key
@@ -334,10 +334,10 @@ class ModuleManager
 
         /*! \brief Create a module via its creator function
          *
-         * \throw bpmodule::exception::ModuleManagerException
+         * \throw pulsar::exception::ModuleManagerException
          *        if the key doesn't exist in the database
          *
-         * \throw bpmodule::exception::ModuleCreateException if there are other
+         * \throw pulsar::exception::ModuleCreateException if there are other
          *        problems creating the module
          *
          * \return A pair with the first member being a raw pointer and
@@ -356,7 +356,7 @@ class ModuleManager
 
 
 } // close namespace modulemanager
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

@@ -5,13 +5,13 @@
  */
 
 
-#ifndef BPMODULE_GUARD_UTIL__HASHSERIALIZABLE_HPP_
-#define BPMODULE_GUARD_UTIL__HASHSERIALIZABLE_HPP_
+#ifndef PULSAR_GUARD_UTIL__HASHSERIALIZABLE_HPP_
+#define PULSAR_GUARD_UTIL__HASHSERIALIZABLE_HPP_
 
-#include "bpmodule/util/HashingArchive.hpp"
+#include "pulsar/util/HashingArchive.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 
@@ -31,14 +31,14 @@ Hash HashSerializable(const Targs &... args)
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 //////////////////////////////////////////////
 // Register. We only have an output archive
 // (must be done outside of namespaces)
 //////////////////////////////////////////////
-CEREAL_REGISTER_ARCHIVE(bpmodule::util::detail::HashingArchive)
+CEREAL_REGISTER_ARCHIVE(pulsar::util::detail::HashingArchive)
 
 
 #endif

@@ -4,16 +4,16 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/exception/Assert.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
-#include "bpmodule/system/BasisShellBase.hpp"
-#include "bpmodule/system/NFunction.hpp"
+#include "pulsar/exception/Assert.hpp"
+#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/system/BasisShellBase.hpp"
+#include "pulsar/system/NFunction.hpp"
 
-using bpmodule::exception::Assert;
-using bpmodule::exception::BasisSetException;
+using pulsar::exception::Assert;
+using pulsar::exception::BasisSetException;
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -99,7 +99,7 @@ size_t BasisShellBase::NGeneral(void) const noexcept
 
 size_t BasisShellBase::NFunctions(void) const noexcept
 {
-    return bpmodule::system::NFunction(type_, am_);
+    return pulsar::system::NFunction(type_, am_);
 }
 
 
@@ -311,5 +311,5 @@ bool BasisShellBase::BaseCompare(const BasisShellBase & rhs) const
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 

@@ -4,12 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_SYSTEM__COORDTYPE_HPP_
-#define BPMODULE_GUARD_SYSTEM__COORDTYPE_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__COORDTYPE_HPP_
+#define PULSAR_GUARD_SYSTEM__COORDTYPE_HPP_
 
-#include "bpmodule/math/Point.hpp"
+#include "pulsar/math/Point.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 typedef math::Point::CoordType CoordType;

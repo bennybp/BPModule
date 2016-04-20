@@ -1,5 +1,5 @@
-from bpmodule.datastore import OptionType
-from bpmodule.datastore import RangeCheck, GreaterThan, LessThan
+from pulsar.datastore import OptionType
+from pulsar.datastore import RangeCheck, GreaterThan, LessThan
 
 base_options = {
 

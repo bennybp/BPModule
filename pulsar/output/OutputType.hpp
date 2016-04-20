@@ -5,10 +5,10 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_OUTPUT__OUTPUTTYPE_HPP_
-#define BPMODULE_GUARD_OUTPUT__OUTPUTTYPE_HPP_
+#ifndef PULSAR_GUARD_OUTPUT__OUTPUTTYPE_HPP_
+#define PULSAR_GUARD_OUTPUT__OUTPUTTYPE_HPP_
 
-namespace bpmodule {
+namespace pulsar{
 namespace output {
 
 
@@ -26,7 +26,7 @@ enum class OutputType
 
 
 } // close namespace output
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

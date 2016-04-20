@@ -1,9 +1,9 @@
-#include "bpmodule/tensor/Tensor.hpp"
-#include "bpmodule/tensor/Matrix.hpp"
-#include "bpmodule/util/Cmdline.hpp"
+#include "pulsar/tensor/Tensor.hpp"
+#include "pulsar/tensor/Matrix.hpp"
+#include "pulsar/util/Cmdline.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace tensor {
 
 
@@ -23,4 +23,4 @@ void Finalize(void)
 
 
 } // close namespace tensor
-} // close namespace bpmodule
+} // close namespace pulsar

@@ -4,8 +4,8 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_UTIL__SERIALIZATIONARCHIVES_HPP_
-#define BPMODULE_GUARD_UTIL__SERIALIZATIONARCHIVES_HPP_
+#ifndef PULSAR_GUARD_UTIL__SERIALIZATIONARCHIVES_HPP_
+#define PULSAR_GUARD_UTIL__SERIALIZATIONARCHIVES_HPP_
 
 #include <sstream>
 #include <fstream>
@@ -13,19 +13,19 @@
 #include <cereal/access.hpp>
 #include <cereal/archives/binary.hpp>
 
-#include "bpmodule/util/HashingArchive.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/util/HashingArchive.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace util {
 
 namespace detail {
 
 
-/*! \brief Base class for archives in BPModule
+/*! \brief Base class for archives in Pulsar
  *
- * This provides the common functionality for data storage in BPModule.
+ * This provides the common functionality for data storage in Pulsar.
  * Data can be serialized to/unserialized from objects derived from this
  */
 template<typename STREAM>
@@ -34,7 +34,7 @@ class StdStreamArchive
     public:
         /*! \brief Start serialization into storage
          * 
-         * \throw bpmodule::exception::SerializationException if the object is
+         * \throw pulsar::exception::SerializationException if the object is
          *        already serializing or unserializing
          */
         void BeginSerialization(void)
@@ -58,7 +58,7 @@ class StdStreamArchive
          * 
          * The objects must be serializable
          * 
-         * \throw bpmodule::exception::SerializationException if we are not serializing or we
+         * \throw pulsar::exception::SerializationException if we are not serializing or we
          *        are unserializing.
          */
         template<typename... Targs>
@@ -79,7 +79,7 @@ class StdStreamArchive
          * 
          * \return The hash of all the serialized data
          * 
-         * \throw bpmodule::exception::SerializationException if the object is
+         * \throw pulsar::exception::SerializationException if the object is
          *        unserializing or if it is not serializing to begin with.
          */
         Hash EndSerialization(void)
@@ -102,7 +102,7 @@ class StdStreamArchive
 
         /*! \brief Start unserialization of stored data
          * 
-         * \throw bpmodule::exception::SerializationException if the object is
+         * \throw pulsar::exception::SerializationException if the object is
          *        already serializing or unserializing
          */
         void BeginUnserialization(void)
@@ -126,7 +126,7 @@ class StdStreamArchive
 
         /*! \brief Extract data from the archive
          * 
-         * \throw bpmodule::exception::SerializationException if we are serializing or we
+         * \throw pulsar::exception::SerializationException if we are serializing or we
          *        are not unserializing.
          */
         template<typename... Targs>
@@ -148,7 +148,7 @@ class StdStreamArchive
          * 
          * Returns a single object. Useful for types without a public default constructor
          * 
-         * \throw bpmodule::exception::SerializationException if we are serializing or we
+         * \throw pulsar::exception::SerializationException if we are serializing or we
          *        are not unserializing.
          */
         template<typename T>
@@ -163,7 +163,7 @@ class StdStreamArchive
 
         /*! \brief Stop unserialization
          * 
-         * \throw bpmodule::exception::SerializationException if the object is
+         * \throw pulsar::exception::SerializationException if the object is
          *        serializing or if it is not unserializing to begin with.
          */
         void EndUnserialization(void)
@@ -304,7 +304,7 @@ class FileArchive : public detail::StdStreamArchive<std::fstream>
 
 
 } // close namespace util
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 

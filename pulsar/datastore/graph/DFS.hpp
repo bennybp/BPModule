@@ -1,9 +1,9 @@
-#ifndef BPMODULE_GUARD_GRAPH__DFS_HPP_
-#define BPMODULE_GUARD_GRAPH__DFS_HPP_
+#ifndef PULSAR_GUARD_GRAPH__DFS_HPP_
+#define PULSAR_GUARD_GRAPH__DFS_HPP_
 
 #include <boost/graph/depth_first_search.hpp>
 
-namespace bpmodule{
+namespace pulsar{
 namespace datastore {
 namespace LibGraph{
 
@@ -217,6 +217,6 @@ class DFSBase:public boost::default_dfs_visitor{
 
 } // close namespace LibGraph
 } // close namespace datastore
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif /* GRAPH_DFS_HPP_ */

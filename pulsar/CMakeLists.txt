@@ -10,8 +10,8 @@ include("cmake/CoreModule.cmake")
 ##########################
 # Options to be passed in
 ##########################
-set(BPMODULE_CORE_PYTHON_LIBRARIES "" CACHE STRING "Python libraries to link to")
-set(BPMODULE_CORE_PYTHON_INCLUDE_DIRS "" CACHE STRING "Include directories for python")
+set(PULSAR_CORE_PYTHON_LIBRARIES "" CACHE STRING "Python libraries to link to")
+set(PULSAR_CORE_PYTHON_INCLUDE_DIRS "" CACHE STRING "Include directories for python")
 
 
 ##########################
@@ -47,8 +47,8 @@ string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 # Modules are created without a prefix
 set(CMAKE_SHARED_MODULE_PREFIX "")
 
-message(STATUS "Going to use python libraries: ${BPMODULE_CORE_PYTHON_LIBRARIES}")
-message(STATUS "Going to use python include dirs: ${BPMODULE_CORE_PYTHON_INCLUDE_DIRS}")
+message(STATUS "Going to use python libraries: ${PULSAR_CORE_PYTHON_LIBRARIES}")
+message(STATUS "Going to use python include dirs: ${PULSAR_CORE_PYTHON_INCLUDE_DIRS}")
 
 add_subdirectory(python)
 add_subdirectory(output)
@@ -68,8 +68,8 @@ add_subdirectory(testing)
 # Make a header-only interface library
 ######################################
 # Install the config file
-configure_file("bpmoduleConfig.cmake.in" "bpmoduleConfig.cmake" @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/bpmoduleConfig.cmake DESTINATION ${CMAKE_INSTALL_PREFIX})
+configure_file("pulsarConfig.cmake.in" "pulsarConfig.cmake" @ONLY)
+install(FILES ${CMAKE_BINARY_DIR}/pulsarConfig.cmake DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 # Install all python files (for all core modules)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION modules FILES_MATCHING PATTERN "*.py")

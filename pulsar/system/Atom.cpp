@@ -4,14 +4,14 @@
 */
 
 
-#include "bpmodule/system/Atom.hpp"
-#include "bpmodule/system/AtomicInfo.hpp"
-#include "bpmodule/math/Cast.hpp"
-#include "bpmodule/output/Output.hpp"
+#include "pulsar/system/Atom.hpp"
+#include "pulsar/system/AtomicInfo.hpp"
+#include "pulsar/math/Cast.hpp"
+#include "pulsar/output/Output.hpp"
 
-using namespace bpmodule::output;
+using namespace pulsar::output;
 
-namespace bpmodule {
+namespace pulsar{
 
 //    typedef std::set<const util::Enumeration<AtomProperty>*> Set_t;
 //    Set_t util::Enumeration<AtomProperty>::Enums_=Set_t();
@@ -165,5 +165,5 @@ bool IsCharge(const Atom& AtomI){
 }
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 

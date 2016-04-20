@@ -15,15 +15,15 @@ CREATED: 2016-04-20 12:00:20.664935
 **************************************************************/
 
 
-#ifndef BPMODULE_GUARD_MATH__FACTORIAL_LUT_HPP_
-#define BPMODULE_GUARD_MATH__FACTORIAL_LUT_HPP_
+#ifndef PULSAR_GUARD_MATH__FACTORIAL_LUT_HPP_
+#define PULSAR_GUARD_MATH__FACTORIAL_LUT_HPP_
 
 
 #include <cstdint>
 
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 namespace lut {
 
@@ -61,7 +61,7 @@ static const int DFAC_2NM1_DOUBLE_LUT_MAX_ = 150;      // Maximum index of dfac_
 
 } // closing namespace lut
 } // closing namespace math
-} // closing namespace bpmodule
+} // closing namespace pulsar
 
 
 

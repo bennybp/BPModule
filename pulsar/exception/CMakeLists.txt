@@ -1,11 +1,11 @@
-set(BPMODULE_EXCEPTION_FILES
+set(PULSAR_EXCEPTION_FILES
             Exceptions.cpp
             export.cpp
    )
 
 
 ADD_COREMODULE(exception
-           "${BPMODULE_EXCEPTION_FILES}"
+           "${PULSAR_EXCEPTION_FILES}"
            ""
            ""
            "")

@@ -1,6 +1,6 @@
 import re
-from bpmodule.system import BasisShellInfo, ShellType, StringToAM, AtomicZNumberFromSym
-from bpmodule.exception import GeneralException
+from pulsar.system import BasisShellInfo, ShellType, StringToAM, AtomicZNumberFromSym
+from pulsar.exception import GeneralException
 
 
 # Break apart a list into blocks, where the original list

@@ -5,12 +5,12 @@
  */
 
 
-#ifndef BPMODULE_GUARD_MATH__POINTMANIPULATION_HPP_
-#define BPMODULE_GUARD_MATH__POINTMANIPULATION_HPP_
+#ifndef PULSAR_GUARD_MATH__POINTMANIPULATION_HPP_
+#define PULSAR_GUARD_MATH__POINTMANIPULATION_HPP_
 
-#include "bpmodule/math/Cast.hpp"
+#include "pulsar/math/Cast.hpp"
 
-namespace bpmodule {
+namespace pulsar{
 namespace math {
 
 
@@ -259,6 +259,6 @@ Coord PointsCenter(const PointContainer & cont)
 }
 
 } // close namespace math
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

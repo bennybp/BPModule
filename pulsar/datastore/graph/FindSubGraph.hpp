@@ -1,5 +1,5 @@
-#ifndef BPMODULE_GUARD_GRAPH__FINDSUBGRAPH_HPP_
-#define BPMODULE_GUARD_GRAPH__FINDSUBGRAPH_HPP_
+#ifndef PULSAR_GUARD_GRAPH__FINDSUBGRAPH_HPP_
+#define PULSAR_GUARD_GRAPH__FINDSUBGRAPH_HPP_
 
 #include <map>
 #include <vector>
@@ -7,7 +7,7 @@
 #include <boost/graph/vf2_sub_graph_iso.hpp>
 
 
-namespace bpmodule{
+namespace pulsar{
 namespace datastore {
 namespace LibGraph{
 
@@ -201,7 +201,7 @@ class FindSubGraph{
 
 } // close namespace LibGraph
 } // close namespace datastore
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif /* GRAPH_FINDSUBGRAPH_HPP_ */

@@ -4,19 +4,19 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "bpmodule/python/Pybind11.hpp"
-#include "bpmodule/exception/Exceptions.hpp"
+#include "pulsar/python/Pybind11.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
-using namespace bpmodule::exception;
+using namespace pulsar::exception;
 
-namespace bpmodule {
+namespace pulsar{
 namespace exception {
 namespace export_python {
 
 
 PYBIND11_PLUGIN(exception)
 {
-    pybind11::module m("exception", "BPModule exceptions");
+    pybind11::module m("exception", "Pulsar exceptions");
 
     pybind11::class_<GeneralException>(m, "GeneralException")
     .def(pybind11::init<const std::string &>())
@@ -30,5 +30,5 @@ PYBIND11_PLUGIN(exception)
 
 } // close namespace export_python
 } // close namespace exception
-} // close namespace bpmodule
+} // close namespace pulsar
 

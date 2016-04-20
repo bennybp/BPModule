@@ -4,17 +4,17 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_SYSTEM__BASISSHELLBASE_HPP_
-#define BPMODULE_GUARD_SYSTEM__BASISSHELLBASE_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__BASISSHELLBASE_HPP_
+#define PULSAR_GUARD_SYSTEM__BASISSHELLBASE_HPP_
 
 #include <vector>
 
-#include "bpmodule/system/ShellType.hpp"
-#include "bpmodule/util/Serialization.hpp"
-#include "bpmodule/exception/Assert.hpp"
+#include "pulsar/system/ShellType.hpp"
+#include "pulsar/util/Serialization.hpp"
+#include "pulsar/exception/Assert.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -168,7 +168,7 @@ class BasisShellBase
 
         /*! \brief Get a single value for alpha (exponent)
          *
-         * \throw bpmodule::exception::BasisSetException on out-of-bounds access
+         * \throw pulsar::exception::BasisSetException on out-of-bounds access
          *
          * \param [in] i Index of the primitive to get
          */
@@ -178,7 +178,7 @@ class BasisShellBase
         
         /*! \brief Set a single value for alpha (exponent)
          *
-         * \throw bpmodule::exception::BasisSetException on out-of-bounds access
+         * \throw pulsar::exception::BasisSetException on out-of-bounds access
          *
          * \param [in] i Index of the primitive to set
          * \param [in] alpha The value to set the exponent to
@@ -189,7 +189,7 @@ class BasisShellBase
 
         /*! \brief Get a single value of a coefficient
          *
-         * \throw bpmodule::exception::BasisSetException on out-of-bounds access
+         * \throw pulsar::exception::BasisSetException on out-of-bounds access
          *
          * \param [in] n Index of the general contraction
          * \param [in] i Index in the segmented contraction
@@ -200,7 +200,7 @@ class BasisShellBase
 
         /*! \brief Set a single value of a coefficient
          *
-         * \throw bpmodule::exception::BasisSetException on out-of-bounds access
+         * \throw pulsar::exception::BasisSetException on out-of-bounds access
          *
          * \param [in] n Index of the general contraction
          * \param [in] i Index in the segmented contraction
@@ -215,7 +215,7 @@ class BasisShellBase
 
         /*! \brief Set all exponents via a vector
          *
-         * \throw bpmodule::exception::BasisSetException if the vector is not of the right length
+         * \throw pulsar::exception::BasisSetException if the vector is not of the right length
          */ 
         void SetAlphas(const std::vector<double> & alphas);
 
@@ -229,7 +229,7 @@ class BasisShellBase
 
         /*! \brief Set all coefficients for a general contraction via a vector
          * 
-         * \throw bpmodule::exception::BasisSetException if the vector is not of the right length
+         * \throw pulsar::exception::BasisSetException if the vector is not of the right length
          */
         void SetCoefs(size_t n, const std::vector<double> & coefs);
 
@@ -239,14 +239,14 @@ class BasisShellBase
 
         /*! \brief Set all coefficients for all general contractions via a vector
          * 
-         * \throw bpmodule::exception::BasisSetException if the vector is not of the right length
+         * \throw pulsar::exception::BasisSetException if the vector is not of the right length
          */
         void SetAllCoefs(const std::vector<double> & coefs);
 
 
         /*! \brief Set a primitive for a shell with no general contractions
          * 
-         * \throw bpmodule::exception::BasisSetException if the shell has more than
+         * \throw pulsar::exception::BasisSetException if the shell has more than
          *        one general contraction or if there is out-of-bounds access
          * 
          * \param [in] i Index of the primitive
@@ -258,7 +258,7 @@ class BasisShellBase
 
         /*! \brief Set all information for a primitive
          * 
-         * \throw bpmodule::exception::BasisSetException if \p coefs is not the right length
+         * \throw pulsar::exception::BasisSetException if \p coefs is not the right length
          *        or if there is out-of-bounds access
          *
          * \param [in] i Index of the primitive
@@ -337,7 +337,7 @@ class BasisShellBase
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 
 
 #endif

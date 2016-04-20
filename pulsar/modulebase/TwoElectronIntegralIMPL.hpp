@@ -5,13 +5,13 @@
  */ 
 
 
-#ifndef BPMODULE_GUARD_MODULEBASE__TWOELECTRONINTEGRALIMPL_HPP_
-#define BPMODULE_GUARD_MODULEBASE__TWOELECTRONINTEGRALIMPL_HPP_
+#ifndef PULSAR_GUARD_MODULEBASE__TWOELECTRONINTEGRALIMPL_HPP_
+#define PULSAR_GUARD_MODULEBASE__TWOELECTRONINTEGRALIMPL_HPP_
 
-#include "bpmodule/modulebase/ModuleBase.hpp"
+#include "pulsar/modulebase/ModuleBase.hpp"
 
 
-namespace bpmodule {
+namespace pulsar{
 namespace modulebase {
 
 /*! \brief Two-electron integral implementation
@@ -137,6 +137,6 @@ class TwoElectronIntegralIMPL_Py : public TwoElectronIntegralIMPL
 };
 
 } // close namespace modulebase
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif

@@ -4,12 +4,12 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPMODULE_GUARD_SYSTEM__AMCONVERT_HPP_
-#define BPMODULE_GUARD_SYSTEM__AMCONVERT_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__AMCONVERT_HPP_
+#define PULSAR_GUARD_SYSTEM__AMCONVERT_HPP_
 
 #include <string>
 
-namespace bpmodule {
+namespace pulsar{
 namespace system {
 
 
@@ -17,7 +17,7 @@ namespace system {
  *
  * The string is not case sensitive
  *
- * \throw bpmodule::exception::BasisSetException if the string is not found
+ * \throw pulsar::exception::BasisSetException if the string is not found
  */
 int StringToAM(const std::string & s);
 
@@ -27,13 +27,13 @@ int StringToAM(const std::string & s);
  *
  * The string is always lowercase
  *
- * \throw bpmodule::exception::BasisSetException if the integer is not found
+ * \throw pulsar::exception::BasisSetException if the integer is not found
  */
 std::string AMToString(int am);
 
 
 
 } // close namespace system
-} // close namespace bpmodule
+} // close namespace pulsar
 
 #endif
