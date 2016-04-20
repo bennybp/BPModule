@@ -36,7 +36,7 @@ def Run():
             u.Insert(a)
 
         s = System(u, True)
-        s = ApplySingleBasis(ShellType.Gaussian, "primary", "sto-3g", s)
+        s = ApplySingleBasis("primary", "sto-3g", s)
 
 
         w.system = s

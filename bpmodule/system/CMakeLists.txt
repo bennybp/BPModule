@@ -10,6 +10,8 @@ set(BPMODULE_SYSTEM_FILES
     BasisShellInfo.cpp
     BasisSetShell.cpp
     AMConvert.cpp
+    Ordering_LUT.cpp
+    Ordering.cpp
 
     export.cpp
     testing_export.cpp

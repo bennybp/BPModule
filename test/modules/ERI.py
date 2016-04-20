@@ -35,7 +35,7 @@ def Run(mm):
             u.Insert(a)
         s = System(u, True)
 
-        s = ApplySingleBasis(ShellType.Gaussian,"Primary","sto-3g",s)
+        s = ApplySingleBasis("Primary","sto-3g",s)
 
          
         eri = mm.GetModule("ERI", 0)

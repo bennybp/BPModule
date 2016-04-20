@@ -246,7 +246,7 @@ const BasisSetShell & BasisSet::UniqueShell(size_t i) const
 BasisShellInfo BasisSet::ShellInfo(size_t i) const
 {
     const BasisSetShell & bss = Shell(i);
-    BasisShellInfo bsi(bss.GetType(), bss.AM(), bss.IsCartesian(),
+    BasisShellInfo bsi(bss.GetType(), bss.AM(),
                        bss.NPrim(), bss.NGeneral());
 
     bsi.SetAlphas(bss.GetAlphas());
@@ -256,7 +256,6 @@ BasisShellInfo BasisSet::ShellInfo(size_t i) const
 
 size_t BasisSet::NPrim(void) const
 {
-    //! \todo generic lambda in C++14
     return std::accumulate(this->begin(), this->end(), static_cast<size_t>(0),
                            [](size_t sum, const BasisSetShell & sh)
                            { return sum + sh.NPrim(); } );
@@ -271,7 +270,6 @@ size_t BasisSet::NCoef(void) const
 
 size_t BasisSet::MaxNPrim(void) const
 {
-    //! \todo generic lambda in C++14
     return std::max_element(this->begin(), this->end(), 
                             [](const BasisSetShell & lhs, const BasisSetShell & rhs)
                             { return lhs.NPrim() < rhs.NPrim(); })->NPrim();
@@ -279,40 +277,29 @@ size_t BasisSet::MaxNPrim(void) const
 
 int BasisSet::MaxAM(void) const
 {
-    //! \todo generic lambda in C++14
     int max = std::max_element(this->begin(), this->end(), 
                                [](const BasisSetShell & lhs, const BasisSetShell & rhs)
                                { return std::abs(lhs.AM()) < std::abs(rhs.AM()); })->AM();
     return std::abs(max);
 }
 
-size_t BasisSet::NCartesian(void) const
+std::set<int> BasisSet::AllAM(void) const
 {
-    //! \todo generic lambda in C++14
-    return std::accumulate(this->begin(), this->end(), static_cast<size_t>(0),
-                           [](size_t sum, const BasisSetShell & sh)
-                           { return sum + sh.NCartesian(); } );
+    std::set<int> res;
+    for(const auto & it : *this)
+        res.insert(it.AM());
+    return res;
 }
 
 size_t BasisSet::NFunctions(void) const
 {
-    //! \todo generic lambda in C++14
     return std::accumulate(this->begin(), this->end(), static_cast<size_t>(0),
                            [](size_t sum, const BasisSetShell & sh)
                            { return sum + sh.NFunctions(); } );
 }
 
-size_t BasisSet::MaxNCartesian(void) const
-{
-    //! \todo generic lambda in C++14
-    return std::max_element(this->begin(), this->end(), 
-                            [](const BasisSetShell & lhs, const BasisSetShell & rhs)
-                            { return lhs.NCartesian() < rhs.NCartesian(); })->NCartesian();
-}
-
 size_t BasisSet::MaxNFunctions(void) const
 {
-    //! \todo generic lambda in C++14
     return std::max_element(this->begin(), this->end(), 
                             [](const BasisSetShell & lhs, const BasisSetShell & rhs)
                             { return lhs.NFunctions() < rhs.NFunctions(); })->NFunctions();
@@ -380,8 +367,8 @@ void BasisSet::Print(std::ostream & os) const
     size_t nshell = NShell();
 
     Output(os, "Basis set with %? shells\n", nshell);
-    Output(os, "NCart = %? , MaxAM = %?\n", NCartesian(), MaxAM());
-    Output(os, "MaxNCart = %? , MaxNPrim = %?\n", MaxNCartesian(), MaxNPrim());
+    Output(os, "NFunc = %? , MaxAM = %?\n", NFunctions(), MaxAM());
+    Output(os, "MaxNFunction = %? , MaxNPrim = %?\n", MaxNFunctions(), MaxNPrim());
     Debug(os, "Space usage: XYZ: %?/%?  Alpha: %?/%?  Coef %?/%?\n", xyz_pos_, max_nxyz_,
                                                                      alpha_pos_, max_nalpha_,
                                                                      coef_pos_, max_ncoef_);
@@ -390,7 +377,7 @@ void BasisSet::Print(std::ostream & os) const
     for(size_t i = 0; i < nshell; i++)
     {
         const auto & shell = Shell(i);
-        Output(os, "Shell %?  AM=%?  Cart=%?  NPrim=%? NGen=%?\n", i, shell.AM(), shell.IsCartesian(), shell.NPrim(), shell.NGeneral());
+        Output(os, "Shell %?  AM=%?  NPrim=%? NGen=%?\n", i, shell.AM(), shell.NPrim(), shell.NGeneral());
         Output(os, "Coordinates: % 16.8? % 16.8? % 16.8?\n", shell.GetCoords()[0], shell.GetCoords()[1], shell.GetCoords()[2]);
         for(size_t j = 0; j < shell.NPrim(); ++j)
         {

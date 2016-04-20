@@ -15,7 +15,7 @@ def AddShellsToAtom(label, desc, bsmap, atom):
     return atom2
 
 
-def ApplySingleBasis(bstype, bslabel, bsname, syst):
+def ApplySingleBasis(bslabel, bsname, syst):
     # find the file
     # look through all the paths
 
@@ -34,7 +34,7 @@ def ApplySingleBasis(bstype, bslabel, bsname, syst):
         raise ge
 
     # read the map
-    bsmap = BasisSetParsers.ReadBasisFile(bstype, bspath)
+    bsmap = BasisSetParsers.ReadBasisFile(bspath)
 
     # Apply to all atoms
     f = functools.partial(AddShellsToAtom, bslabel, bsname, bsmap)

@@ -18,9 +18,9 @@ namespace system {
 
 
 
-BasisShellInfo::BasisShellInfo(ShellType type, int am, bool cart, size_t nprim, size_t ngen,
+BasisShellInfo::BasisShellInfo(ShellType type, int am, size_t nprim, size_t ngen,
                                std::vector<double> && alphas, std::vector<double> && allcoefs)
-    : BasisShellBase(type, am, cart, nprim, ngen),
+    : BasisShellBase(type, am, nprim, ngen),
       alphas_(std::move(alphas)),
       coefs_(std::move(allcoefs))
 {
@@ -35,21 +35,21 @@ BasisShellInfo::BasisShellInfo(ShellType type, int am, bool cart, size_t nprim, 
 
 
 // Other constructors delegate to the above
-BasisShellInfo::BasisShellInfo(ShellType type, int am, bool cart, size_t nprim, size_t ngen)
-    : BasisShellInfo(type, am, cart, nprim, ngen,
+BasisShellInfo::BasisShellInfo(ShellType type, int am, size_t nprim, size_t ngen)
+    : BasisShellInfo(type, am, nprim, ngen,
                      std::move(std::vector<double>(nprim)),
                      std::move(std::vector<double>(nprim*ngen)))
 { }
 
-BasisShellInfo::BasisShellInfo(ShellType type, int am, bool cart, size_t nprim, size_t ngen,
+BasisShellInfo::BasisShellInfo(ShellType type, int am, size_t nprim, size_t ngen,
                                const std::vector<double> & alphas, const std::vector<double> & allcoefs)
-    : BasisShellInfo(type, am, cart, nprim, ngen,
+    : BasisShellInfo(type, am, nprim, ngen,
                      std::move(std::vector<double>(alphas)),
                      std::move(std::vector<double>(allcoefs)))
 { }
 
 BasisShellInfo::BasisShellInfo(const BasisShellBase & rhs)
-    : BasisShellInfo(rhs.GetType(), rhs.AM(), rhs.IsCartesian(),
+    : BasisShellInfo(rhs.GetType(), rhs.AM(),
                      rhs.NPrim(), rhs.NGeneral(), rhs.GetAlphas(), rhs.GetAllCoefs())
 { }
 

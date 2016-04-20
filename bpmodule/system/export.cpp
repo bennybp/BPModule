@@ -14,7 +14,7 @@
 #include "bpmodule/system/AtomicInfo.hpp"
 #include "bpmodule/system/System.hpp"
 #include "bpmodule/system/BasisSet.hpp"
-#include "bpmodule/python/Convert.hpp"
+#include "bpmodule/system/Ordering.hpp"
 #include "bpmodule/math/RegisterMathSet.hpp"
 
 
@@ -38,14 +38,28 @@ PYBIND11_PLUGIN(system)
     m.def("StringToAM", StringToAM);
     m.def("AMToString", AMToString);
 
+
+    ///////////////
+    // Ordering
+    ///////////////
+    m.def("AllSphericalOrdering", AllSphericalOrderings);
+    m.def("AllCartesianOrdering", AllCartesianOrderings);
+    m.def("SphericalOrdering", SphericalOrdering);
+    m.def("CartesianOrdering", CartesianOrdering);
+    m.def("SphericalIndex", SphericalIndex);
+    m.def("CartesianIndex", CartesianIndex);
+
+    //! \todo Reorder with python lists? Or opaque vectors
+
+
     ///////////////
     // Basis set
     ///////////////
 
-
     // Enumeration for basis set shell types
     pybind11::enum_<ShellType>(m, "ShellType")
-    .value("Gaussian", ShellType::Gaussian)
+    .value("SphericalGaussian", ShellType::SphericalGaussian)
+    .value("CartesianGaussian", ShellType::CartesianGaussian)
     .value("Slater", ShellType::Slater)
     ;
 
@@ -57,28 +71,20 @@ PYBIND11_PLUGIN(system)
               .def("NPrim", &BasisShellBase::NPrim)
               .def("NCoef", &BasisShellBase::NCoef)
               .def("NGeneral", &BasisShellBase::NGeneral)
-              .def("NCartesian", &BasisShellBase::NCartesian)
-              .def("NSpherical", &BasisShellBase::NSpherical)
               .def("NFunctions", &BasisShellBase::NFunctions)
               .def("IsCombiendAM", &BasisShellBase::IsCombinedAM)
-              .def("IsCartesian", &BasisShellBase::IsCartesian)
-              .def("IsSpherical", &BasisShellBase::IsSpherical)
-
               .def("Alpha", static_cast<double &(BasisShellBase::*)(size_t)>(&BasisShellBase::Alpha))
               .def("Coef", static_cast<double &(BasisShellBase::*)(size_t)>(&BasisShellBase::Alpha))
-
               .def("GetAlpha", &BasisShellBase::GetAlpha)
               .def("SetAlpha", &BasisShellBase::SetAlpha)
               .def("GetCoef", &BasisShellBase::GetCoef)
               .def("SetCoef", &BasisShellBase::SetCoef)
-
               .def("GetAlphas", &BasisShellBase::GetAlphas)
               .def("SetAlphas", &BasisShellBase::SetAlphas)
               .def("GetCoefs", &BasisShellBase::GetCoefs)
               .def("SetCoefs", &BasisShellBase::SetCoefs)
               .def("GetAllCoefs", &BasisShellBase::GetAllCoefs)
               .def("SetAllCoefs", &BasisShellBase::SetAllCoefs)
-
               .def("SetPrimitive", static_cast<void (BasisShellBase::*)(size_t, double, double)>(&BasisShellBase::SetPrimitive))
               .def("SetPrimitive", static_cast<void (BasisShellBase::*)(size_t, double, const std::vector<double> &)>(&BasisShellBase::SetPrimitive))
     ;
@@ -86,8 +92,8 @@ PYBIND11_PLUGIN(system)
 
     // BasisShellInfo class
     pybind11::class_<BasisShellInfo> bshell(m, "BasisShellInfo", bshellbase);
-    bshell.def(pybind11::init<ShellType, int, bool, int, int>())
-          .def(pybind11::init<ShellType, int, bool, int, int, const std::vector<double> &, const std::vector<double> &>())
+    bshell.def(pybind11::init<ShellType, int, int, int>())
+          .def(pybind11::init<ShellType, int, int, int, const std::vector<double> &, const std::vector<double> &>())
           .def(pybind11::self == pybind11::self)
           .def(pybind11::self != pybind11::self)
     ;
@@ -117,11 +123,10 @@ PYBIND11_PLUGIN(system)
     .def("NPrim", &BasisSet::NPrim)
     .def("NCoef", &BasisSet::NCoef)
     .def("NCoef", &BasisSet::NCoef)
-    .def("NCartesian", &BasisSet::NCartesian)
     .def("NFunctions", &BasisSet::NFunctions)
     .def("MaxNPrim", &BasisSet::MaxNPrim)
     .def("MaxAM", &BasisSet::MaxAM)
-    .def("MaxNCartesian", &BasisSet::MaxNCartesian)
+    .def("AllAM", &BasisSet::AllAM)
     .def("MaxNFunctions", &BasisSet::MaxNFunctions)
     .def("Transform", &BasisSet::Transform)
     .def("ShrinkFit", &BasisSet::ShrinkFit)

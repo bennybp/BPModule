@@ -82,24 +82,13 @@ class BasisSet
         /// Return the number of coefficients stored
         size_t NCoef(void) const;
 
-        /*! \brief Return the number of cartesian basis functions
-         *         represented by the basis set
-         *
-         * That is, the sum of the number of cartesian functions for all
-         * shells. This takes into account general contractions, etc.
-         * For example, a d-shell with 2 general contractions will count
-         * as 12 cartesian basis functions. This also takes into account
-         * combined shells, such as sp, spd, etc.
-         */
-        size_t NCartesian(void) const;
-
         /*! \brief Return the number of basis functions
          *         represented by the basis set
          *
          * That is, the sum of the number of functions for all
          * shells. This takes into account whether a shell is
-         * marked as spherical or cartesian. Similar to
-         * NCartesian, this takes into account general contractions.
+         * marked as spherical or cartesian. This takes into account general
+         * contractions.
          */
         size_t NFunctions(void) const;
 
@@ -113,11 +102,11 @@ class BasisSet
          */
         int MaxAM(void) const;
 
-        /*! \brief Return the maximum number of cartesians functions stored in a shell
+        /*! \brief Return a set of all angular momentum used in this basis set
          * 
-         * This takes into account combined shells (ie, spd = 10)
+         * This takes combined shells into account (ie, spd will count only as d).
          */
-        size_t MaxNCartesian(void) const;
+        std::set<int> AllAM(void) const;
 
         /*! \brief Return the maximum number of basis functions stored in a shell
          * 

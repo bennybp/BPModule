@@ -10,8 +10,8 @@ sys.path.insert(0, bppath)
 
 from StandardModules import *
 
-def ApplyBasis(syst,bsname,bslabel="primary",bstype=bp.system.ShellType.Gaussian):
-    return bp.system.ApplySingleBasis(bstype,bslabel,bsname,syst)
+def ApplyBasis(syst,bsname,bslabel="primary"):
+    return bp.system.ApplySingleBasis(bslabel,bsname,syst)
 
 def CompareEgy(EgyIn):
    return EgyIn+224.90851104986243<0.00001

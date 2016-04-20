@@ -8,22 +8,14 @@
 #define BPMODULE_GUARD_SYSTEM__BASISSHELLBASE_HPP_
 
 #include <vector>
+
+#include "bpmodule/system/ShellType.hpp"
 #include "bpmodule/util/Serialization.hpp"
 #include "bpmodule/exception/Assert.hpp"
 
 
 namespace bpmodule {
 namespace system {
-
-
-/*! \brief Type of basis shells */
-enum class ShellType
-{
-    Gaussian,
-    Slater
-};
-
-
 
 
 /*! \brief Base class for basis set shells
@@ -86,26 +78,9 @@ class BasisShellBase
         size_t NGeneral(void) const noexcept;
 
 
-        /*! \brief Get the number of cartesian functions represented by this shell
-         * 
-         * This takes into account general contractions and combined shells, so it
-         * is not simply based on the AM alone
-         */
-        size_t NCartesian(void) const noexcept;
-
-
-        /*! \brief Get the number of spherical functions represented by this shell
-         * 
-         * This takes into account general contractions and combined shells, so it
-         * is not simply based on the AM alone
-         */
-        size_t NSpherical(void) const noexcept;
-
-
         /*! \brief Get the number of functions represented by this shell
          *
-         * Returns NCartesian() if this shell represents cartesian basis functions,
-         * or NSpherical() if this shell represents spherical basis functions. 
+         * Depends on the type of shell (ie SphericalGaussian or CartesianGaussian).
          *
          * This takes into account general contractions and combined shells, so it
          * is not simply based on the AM alone
@@ -120,13 +95,6 @@ class BasisShellBase
          * For example, sp and spd shells.
          */
         bool IsCombinedAM(void) const noexcept;
-
-
-        /// Does this shell represent cartesian basis functions
-        bool IsCartesian(void) const noexcept;
-
-        /// Does this shell represent spherical basis functions
-        bool IsSpherical(void) const noexcept;
 
         ///@}
 
@@ -309,11 +277,10 @@ class BasisShellBase
          * 
          * \param [in] type Type of the shell
          * \param [in] am Angular momentum of the shell
-         * \param [in] cart True if this shell is cartesian, false if spherical
          * \param [in] nprim Number of primitives
          * \param [in] ngen Number of general contractions
          */
-        BasisShellBase(ShellType type, int am, bool cart, size_t nprim, size_t ngen);
+        BasisShellBase(ShellType type, int am, size_t nprim, size_t ngen);
 
 
         // compiler generated ok
@@ -333,7 +300,6 @@ class BasisShellBase
     private:
         ShellType type_;             //!< Gaussian, Slater, etc
         int am_;                     //!< Angular momentum
-        bool cart_;                  //!< Is cartesian?
         size_t nprim_;                  //!< Number of primitives
         size_t ngen_;                   //!< Number of general contractions
         double * alphas_;            //!< Exponents
@@ -358,7 +324,7 @@ class BasisShellBase
         {
             // of course, we don't do the pointers. They are owned
             // by somebody else. It's their responsibilty
-            ar(type_, am_, cart_, nprim_, ngen_);
+            ar(type_, am_, nprim_, ngen_);
         }
 
         ///@}

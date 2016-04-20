@@ -17,8 +17,8 @@ namespace bpmodule {
 namespace system {
 
 
-BasisShellBase::BasisShellBase(ShellType type, int am, bool cart, size_t nprim, size_t ngen)
-    : type_(type), am_(am), cart_(cart), nprim_(nprim), ngen_(ngen),
+BasisShellBase::BasisShellBase(ShellType type, int am, size_t nprim, size_t ngen)
+    : type_(type), am_(am), nprim_(nprim), ngen_(ngen),
       alphas_(nullptr), coefs_(nullptr)
 {
     // If this is sp, spd, spdf, etc, then ngen
@@ -97,35 +97,9 @@ size_t BasisShellBase::NGeneral(void) const noexcept
     return ngen_;
 }
 
-size_t BasisShellBase::NCartesian(void) const noexcept
-{
-    if(IsCombinedAM())
-        return NCARTESIAN(am_);
-    else
-        return ngen_*NCARTESIAN(am_);
-}
-
-size_t BasisShellBase::NSpherical(void) const noexcept
-{
-    if(IsCombinedAM())
-        return NSPHERICAL(am_);
-    else
-        return ngen_*NSPHERICAL(am_);
-}
-
 size_t BasisShellBase::NFunctions(void) const noexcept
 {
-    return (cart_ ? NCartesian() : NSpherical());
-}
-
-bool BasisShellBase::IsCartesian(void) const noexcept
-{
-    return cart_;
-}
-
-bool BasisShellBase::IsSpherical(void) const noexcept
-{
-    return !cart_;
+    return bpmodule::system::NFunction(type_, am_);
 }
 
 
@@ -328,7 +302,6 @@ bool BasisShellBase::BaseCompare(const BasisShellBase & rhs) const
                ngen_ == rhs.ngen_ &&
                nprim_ == rhs.nprim_ &&
                type_ == rhs.type_ &&
-               cart_ == rhs.cart_ &&
                ( (alphas_ == rhs.alphas_) || std::equal(alphas_, alphas_+nprim_, rhs.alphas_) ) &&
                ( (coefs_ == rhs.coefs_) || std::equal(coefs_, coefs_ + NCoef(), rhs.coefs_) )
            );

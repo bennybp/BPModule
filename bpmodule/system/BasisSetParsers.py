@@ -29,7 +29,7 @@ def BlockList(lst, separator, includesep = False):
 
 
 
-def ReadBasisFile(bstype, path):
+def ReadBasisFile(path):
     validcart = ["spherical", "cartesian"]
 
     basismap = {}
@@ -46,6 +46,7 @@ def ReadBasisFile(bstype, path):
                                "file", path, "type", cart)
 
     iscart = (cart == "cartesian")
+    bstype = ShellType.CartesianGaussian if iscart else ShellType.SphericalGaussian
 
     atomblocks = BlockList(lines[1:], r"\*\*\*\*", True) 
 
@@ -75,7 +76,7 @@ def ReadBasisFile(bstype, path):
 
             # We have all the information to create a shell now
             amint = StringToAM(am)
-            bsi = BasisShellInfo(bstype, amint, iscart, nprim, ngen) 
+            bsi = BasisShellInfo(bstype, amint, nprim, ngen) 
             for i in range(0, len(prims)):
                 bsi.SetPrimitive(i, float(prims[i][0]),
                                     [ float(d) for d in prims[i][1] ])
