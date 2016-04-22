@@ -138,8 +138,6 @@ class Test_Base_Py : public Test_Base
             return CallPyOverride<void>("RunTest_");
         }
 
-
-
         virtual void CallRunTest_(const std::string & other)
         {
             return CallPyOverride<void>("CallRunTest_", other);
@@ -150,14 +148,10 @@ class Test_Base_Py : public Test_Base
             return CallPyOverride<void>("CallRunTest2_", other1, other2);
         }
 
-
-
         virtual void TestThrow_(void)
         {
             return CallPyOverride<void>("TestThrow_");
         }
-
-
 
         virtual void CallThrow_(const std::string & other)
         {

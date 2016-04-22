@@ -269,6 +269,36 @@ class ModuleBase
             }
         }
 
+        /*! \copydocs FastCallFunction */
+        template<typename R, typename P, typename ... Targs1, typename ... Targs2>
+        R FastCallFunction( R(P::*func)(Targs1...) const, Targs2 &&... args) const
+        {
+            try {
+                static_assert(std::is_base_of<ModuleBase, P>::value, "Cannot call function of unrelated class");
+
+                const P * ptr = dynamic_cast<const P *>(this);                     // cast this to type P
+                return ((*ptr).*func)(std::forward<Targs1>(args)...);  // call the function
+            }
+            catch(exception::GeneralException & ex)
+            {
+                std::string s = util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
+                ex.AppendInfo("from", s);
+                throw;
+            }
+            catch(std::exception & ex)
+            {
+                std::string s = util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
+                throw exception::GeneralException(ex, "what", ex.what(),
+                                                  "from", s);
+            }
+            catch(...)
+            {
+                std::string s = util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
+                throw exception::GeneralException("Caught unknown exception. Get your debugger warmed up.",
+                                                  "from", s);
+            }
+        }
+
 
 
         /*! \brief Call a function, catching exceptions
@@ -290,41 +320,45 @@ class ModuleBase
             return FastCallFunction<R>(func, std::forward<Targs1>(args)...);
         }
 
+        /*! \copydocs CallFunction */
+        template<typename R, typename P, typename ... Targs1, typename ... Targs2>
+        R CallFunction( R(P::*func)(Targs1...) const, Targs2 &&... args) const
+        {
+            return FastCallFunction<R>(func, std::forward<Targs1>(args)...);
+        }
 
 
 
-        /*! \brief Calls a python function that overrides a virtual function
-         */ 
+        /*! \brief Calls a python function that overrides a virtual function */
         template<typename R, typename ... Targs>
         R CallPyOverride(const char * name, Targs &&... args)
         {
             pybind11::gil_scoped_acquire gil;
             pybind11::function overload = pybind11::get_overload(this, name);
             if(overload)
-            {
-                try {
-                    return python::CallPyFunc<R>(overload, std::forward<Targs>(args)...);
-                }
-                catch(exception::PythonCallException &)
-                {
-                    //ex.AppendInfo("vfunc", name);
-                    throw;
-                }
-            }
+                return python::CallPyFunc<R>(overload, std::forward<Targs>(args)...);
+            else
+                throw exception::GeneralException("Cannot find overridden function", "vfunc", name);
+        }
+
+        /*! \brief Calls a python function that overrides a virtual function */
+        template<typename R, typename ... Targs>
+        R CallPyOverride(const char * name, Targs &&... args) const
+        {
+            pybind11::gil_scoped_acquire gil;
+            pybind11::function overload = pybind11::get_overload(this, name);
+            if(overload)
+                return python::CallPyFunc<R>(overload, std::forward<Targs>(args)...);
             else
                 throw exception::GeneralException("Cannot find overridden function", "vfunc", name);
         }
 
 
-        /*! \brief Get the wavefunction for this tree node
-         *
-         * \throw std::logic_error if there is a severe developer error
-        const datastore::Wavefunction & Wfn(void) const;
-         */
-
-
-
-
+        bool HasPyOverride(const char * name) const
+        {
+            pybind11::function overload = pybind11::get_overload(this, name);
+            return (bool)overload;
+        }
 
 
     private:

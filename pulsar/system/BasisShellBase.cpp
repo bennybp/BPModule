@@ -77,6 +77,16 @@ int BasisShellBase::AM(void) const noexcept
     return am_;
 }
 
+int BasisShellBase::GeneralAM(size_t n) const
+{
+    ValidateGenIdx_(n);
+
+    if(IsCombinedAM())
+        return n;  // first is s, second is p, ...
+    else
+        return am_;
+}
+
 bool BasisShellBase::IsCombinedAM(void) const noexcept
 {
     return am_ < 0;
@@ -100,6 +110,11 @@ size_t BasisShellBase::NGeneral(void) const noexcept
 size_t BasisShellBase::NFunctions(void) const noexcept
 {
     return pulsar::system::NFunction(type_, am_);
+}
+
+size_t BasisShellBase::GeneralNFunctions(size_t n) const
+{
+    return pulsar::system::NFunction(type_, GeneralAM(n));
 }
 
 
@@ -241,7 +256,8 @@ void BasisShellBase::SetCoefs(size_t n, const std::vector<double> & coefs)
     ValidateGenIdx_(n);
 
     if(coefs.size() != nprim_)
-        throw BasisSetException("Incompatible dimensions for coefficients", "nprim", nprim_, "given", coefs.size());
+        throw BasisSetException("Incompatible dimensions for coefficients",
+                                "nprim", nprim_, "given", coefs.size());
 
     std::copy(coefs.begin(), coefs.end(), coefs_ + n*nprim_);
 }
@@ -256,7 +272,9 @@ void BasisShellBase::SetAllCoefs(const std::vector<double> & coefs)
 {
     AssertPtrs_();
     if(coefs.size() != NCoef())
-        throw BasisSetException("Incompatible dimensions for coefficients", "nprim", nprim_, "ngen", ngen_, "given", coefs.size());
+        throw BasisSetException("Incompatible dimensions for coefficients",
+                                "nprim", nprim_, "ngen", ngen_, "given", coefs.size());
+
     std::copy(coefs.begin(), coefs.end(), coefs_);
 }
 
@@ -275,7 +293,8 @@ void BasisShellBase::SetPrimitive(size_t i, double alpha, const std::vector<doub
     const size_t ncoefs = coefs.size();
 
     if(ncoefs != ngen_)
-        throw BasisSetException("Incompatible dimensions for coefficients", "ngeneral", ngen_, "given", ncoefs);
+        throw BasisSetException("Incompatible dimensions for coefficients",
+                                "ngeneral", ngen_, "given", ncoefs);
 
     alphas_[i] = alpha;
 

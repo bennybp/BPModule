@@ -29,8 +29,8 @@ class OneElectronIntegralIMPL : public ModuleBase
 
         /*! \brief Set the basis sets for the integrals
          * 
-         * \param [in] bs1 Basis set on the first center
-         * \param [in] bs2 Basis set on the second center
+         * \param [in] bs1 Basis set tag to use on the first center
+         * \param [in] bs1 Basis set tag to use on the second center
          */
         void SetBases(const std::string & bs1, const std::string & bs2)
         {
@@ -45,34 +45,28 @@ class OneElectronIntegralIMPL : public ModuleBase
          * \param [in] shell2 Shell index on the second center
          * \return Number of integrals calculated
          */
-        long Calculate(size_t deriv, size_t shell1, size_t shell2)
+        uint64_t Calculate(uint64_t deriv, uint64_t shell1, uint64_t shell2,
+                           double * outbuffer, size_t bufsize)
         {
-            return ModuleBase::CallFunction(&OneElectronIntegralIMPL::Calculate_, deriv, 
-                                                                                  shell1,
-                                                                                  shell2);
+            return ModuleBase::FastCallFunction(&OneElectronIntegralIMPL::Calculate_,
+                                                deriv, shell1, shell2, outbuffer, bufsize);
         }
 
-        /*! \brief Obtain the buffer to the stored integrals */
-        const double * GetBuf(void)
+        /*! \brief Calculate multiple integrals
+         *
+         * \param [in] deriv Derivative to calculate
+         * \param [in] shells1 Shell indices on the first center
+         * \param [in] shells2 Shell indices on the second center
+         * \return Number of integrals calculated
+         */
+        virtual uint64_t CalculateMulti(uint64_t deriv,
+                                        const std::vector<uint64_t> & shells1,
+                                        const std::vector<uint64_t> & shells2,
+                                        double * outbuffer, size_t bufsize)
         {
-            return ModuleBase::CallFunction(&OneElectronIntegralIMPL::GetBuf_);
+            return ModuleBase::FastCallFunction(&OneElectronIntegralIMPL::CalculateMulti_,
+                                                deriv, shells1, shells2, outbuffer, bufsize);
         }
-
-
-        /*! \brief Obtain how many integrals were last calculated */
-        long GetIntegralCount(void)
-        {
-            return ModuleBase::CallFunction(&OneElectronIntegralIMPL::GetIntegralCount_);
-        }
-
-
-        /*! \brief Obtain a copy of the buffer of stored integrals (for python) */
-        pybind11::object GetBufPy(void)
-        {
-            return python::ConvertToPy(GetBuf(), GetIntegralCount());  
-        }
-
-
 
         /////////////////////////////////////////
         // To be implemented by derived classes
@@ -82,16 +76,14 @@ class OneElectronIntegralIMPL : public ModuleBase
 
 
         //! \copydoc Calculate
-        virtual long Calculate_(size_t deriv, size_t shell1, size_t shell2) = 0;
+        virtual uint64_t Calculate_(uint64_t deriv, uint64_t shell1, uint64_t shell2,
+                                    double * outbuffer, size_t bufsize) = 0;
 
-
-        //! \copydoc GetBuf
-        virtual const double * GetBuf_(void) = 0;
-
-
-        //! \copydoc GetIntegralCount
-        virtual long GetIntegralCount_(void) = 0;
-        
+        //! \copydoc CalculateMulti
+        virtual uint64_t CalculateMulti_(uint64_t deriv,
+                                         const std::vector<uint64_t> & shells1, 
+                                         const std::vector<uint64_t> & shells2,
+                                         double * outbuffer, size_t bufsize) = 0;
 };
 
 
@@ -109,23 +101,32 @@ class OneElectronIntegralIMPL_Py : public OneElectronIntegralIMPL
         }
 
 
-        virtual long Calculate_(size_t deriv, size_t shell1, size_t shell2)
+        virtual uint64_t Calculate_(uint64_t deriv, uint64_t shell1, uint64_t shell2,
+                                    double * outbuffer, size_t bufsize)
         {
-            return CallPyOverride<long>("Calculate_", deriv, shell1, shell2);
+            pybind11::buffer_info buf(outbuffer,
+                                      sizeof(double),
+                                      pybind11::format_descriptor<double>::value(),
+                                      1, { bufsize },
+                                      { sizeof(double) });
+
+            return CallPyOverride<uint64_t>("Calculate_", deriv, shell1, buf, bufsize);
         }
 
 
-        virtual const double * GetBuf_(void)
+        virtual uint64_t CalculateMulti_(uint64_t deriv,
+                                         const std::vector<uint64_t> & shells1, 
+                                         const std::vector<uint64_t> & shells2,
+                                         double * outbuffer, size_t bufsize) 
         {
-            return CallPyOverride<double *>("GetBuf_");
+            pybind11::buffer_info buf(outbuffer,
+                                      sizeof(double),
+                                      pybind11::format_descriptor<double>::value(),
+                                      1, { bufsize },
+                                      { sizeof(double) });
+
+            return CallPyOverride<uint64_t>("CalculateMulti_", deriv, shells1, shells2, buf, bufsize);
         }
-
-
-        virtual long GetIntegralCount_(void)
-        {
-            return CallPyOverride<long>("GetIntegralCount_");
-        }
-
 };
 
 } // close namespace modulebase

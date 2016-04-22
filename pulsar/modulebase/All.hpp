@@ -16,9 +16,7 @@
 
 // Integrals
 #include "pulsar/modulebase/OneElectronIntegralIMPL.hpp"
-//#include "pulsar/modulebase/OneElectronIntegral.hpp"
 #include "pulsar/modulebase/TwoElectronIntegralIMPL.hpp"
-//#include "pulsar/modulebase/TwoElectronIntegral.hpp"
 
 #include "pulsar/modulebase/EnergyMethod.hpp"
 

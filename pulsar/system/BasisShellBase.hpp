@@ -64,6 +64,12 @@ class BasisShellBase
         /// Get this shells angular momentum
         int AM(void) const noexcept;
 
+        /*! Get the AM of a specific general contraction
+         *
+         * \throw pulsar::exception::BasisSetException on out-of-bounds access
+         */
+        int GeneralAM(size_t n) const;
+
         /// Get the number of primitives in this shell
         size_t NPrim(void) const noexcept;
 
@@ -86,6 +92,12 @@ class BasisShellBase
          * is not simply based on the AM alone
          */
         size_t NFunctions(void) const noexcept;
+
+        /*! Get the number of functions for a given general contraction
+         *
+         * \throw pulsar::exception::BasisSetException on out-of-bounds access
+         */
+        size_t GeneralNFunctions(size_t n) const;
 
 
         /*! \brief Is this shell a combined AM shell

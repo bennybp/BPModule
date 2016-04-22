@@ -89,8 +89,7 @@ PYBIND11_PLUGIN(modulebase)
             .def("MManager", &OneElectronIntegralIMPL_Py::MManager, pybind11::return_value_policy::reference_internal)
             .def("SetBases", &OneElectronIntegralIMPL::SetBases)
             .def("Calculate", &OneElectronIntegralIMPL::Calculate)
-            .def("GetIntegralCount", &OneElectronIntegralIMPL::GetIntegralCount)
-            .def("GetBuf", &OneElectronIntegralIMPL::GetBufPy)
+            .def("CalculateMulti", &OneElectronIntegralIMPL::CalculateMulti)
             ;
 
     /////////////////////////
@@ -103,9 +102,8 @@ PYBIND11_PLUGIN(modulebase)
             .def("Cache", &TwoElectronIntegralIMPL_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("MManager", &TwoElectronIntegralIMPL_Py::MManager, pybind11::return_value_policy::reference_internal)
             .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
-            .def("Calculate", &TwoElectronIntegralIMPL::Calculate)
-            .def("GetIntegralCount", &TwoElectronIntegralIMPL::GetIntegralCount)
-            .def("GetBuf", &TwoElectronIntegralIMPL::GetBufPy)
+            .def("Calculate", &TwoElectronIntegralIMPL::CalculatePy)
+            .def("CalculateMulti", &TwoElectronIntegralIMPL::CalculateMultiPy)
             ;
 
     ///////////////////////
