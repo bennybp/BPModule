@@ -79,7 +79,7 @@ public:
 
     const T * operator->()const
     {
-        return &(*this);
+        return &((*Set_)[*CurrIdx_]);
     }
 
     ///Prefix increment operator
