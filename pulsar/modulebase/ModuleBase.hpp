@@ -93,7 +93,7 @@ class ModuleBase
 
         /*! \brief Get the module type
          * 
-         * ie, Test_Base, TwoElectronIntegralIMPL, etc
+         * ie, Test_Base, TwoElectronIntegral, etc
          */
         std::string ModuleType(void) const;
 
@@ -220,6 +220,15 @@ class ModuleBase
 
 
 
+        ////////////////////////////////////////////////////
+        // WRAPPERS FOR DERIVED CLASS FUNCTION CALLS
+        ////////////////////////////////////////////////////
+
+        std::string ExceptionDescString(void) const
+        {
+            return util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
+        }
+
         /*! \brief Quickly call a function, catching exceptions
          *
          * Meant to be used to call virtual functions that are
@@ -242,6 +251,7 @@ class ModuleBase
             //////////////////////////////////////////////////////////////////
             // So you think you like pointers and templates?
             //////////////////////////////////////////////////////////////////
+            using exception::GeneralException;
 
             try {
                 static_assert(std::is_base_of<ModuleBase, P>::value, "Cannot call function of unrelated class");
@@ -249,23 +259,20 @@ class ModuleBase
                 P * ptr = dynamic_cast<P *>(this);                     // cast this to type P
                 return ((*ptr).*func)(std::forward<Targs1>(args)...);  // call the function
             }
-            catch(exception::GeneralException & ex)
+            catch(GeneralException & ex)
             {
-                std::string s = util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
-                ex.AppendInfo("from", s);
+                ex.AppendInfo("from", ExceptionDescString());
                 throw;
             }
             catch(std::exception & ex)
             {
-                std::string s = util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
-                throw exception::GeneralException(ex, "what", ex.what(),
-                                                  "from", s);
+                throw GeneralException(ex, "what", ex.what(),
+                                       "from", ExceptionDescString());
             }
             catch(...)
             {
-                std::string s = util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
-                throw exception::GeneralException("Caught unknown exception. Get your debugger warmed up.",
-                                                  "from", s);
+                throw GeneralException("Caught unknown exception. Get your debugger warmed up.",
+                                       "from", ExceptionDescString());
             }
         }
 
@@ -273,29 +280,28 @@ class ModuleBase
         template<typename R, typename P, typename ... Targs1, typename ... Targs2>
         R FastCallFunction( R(P::*func)(Targs1...) const, Targs2 &&... args) const
         {
+            using exception::GeneralException;
+
             try {
                 static_assert(std::is_base_of<ModuleBase, P>::value, "Cannot call function of unrelated class");
 
-                const P * ptr = dynamic_cast<const P *>(this);                     // cast this to type P
+                const P * ptr = dynamic_cast<const P *>(this);         // cast this to type P
                 return ((*ptr).*func)(std::forward<Targs1>(args)...);  // call the function
             }
-            catch(exception::GeneralException & ex)
+            catch(GeneralException & ex)
             {
-                std::string s = util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
-                ex.AppendInfo("from", s);
+                ex.AppendInfo("from", ExceptionDescString());
                 throw;
             }
             catch(std::exception & ex)
             {
-                std::string s = util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
-                throw exception::GeneralException(ex, "what", ex.what(),
-                                                  "from", s);
+                throw GeneralException(ex, "what", ex.what(),
+                                       "from", ExceptionDescString());
             }
             catch(...)
             {
-                std::string s = util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
-                throw exception::GeneralException("Caught unknown exception. Get your debugger warmed up.",
-                                                  "from", s);
+                throw GeneralException("Caught unknown exception. Get your debugger warmed up.",
+                                       "from", ExceptionDescString());
             }
         }
 
@@ -327,12 +333,12 @@ class ModuleBase
             return FastCallFunction<R>(func, std::forward<Targs1>(args)...);
         }
 
-
-
         /*! \brief Calls a python function that overrides a virtual function */
         template<typename R, typename ... Targs>
         R CallPyOverride(const char * name, Targs &&... args)
         {
+            // Module information is not appended to the exception since
+            // this should always be called from the derived class
             pybind11::gil_scoped_acquire gil;
             pybind11::function overload = pybind11::get_overload(this, name);
             if(overload)
@@ -345,6 +351,8 @@ class ModuleBase
         template<typename R, typename ... Targs>
         R CallPyOverride(const char * name, Targs &&... args) const
         {
+            // Module information is not appended to the exception since
+            // this should always be called from the derived class
             pybind11::gil_scoped_acquire gil;
             pybind11::function overload = pybind11::get_overload(this, name);
             if(overload)
@@ -354,6 +362,7 @@ class ModuleBase
         }
 
 
+        /*! \brief See if this class has a member implemented in python */
         bool HasPyOverride(const char * name) const
         {
             pybind11::function overload = pybind11::get_overload(this, name);
@@ -361,19 +370,54 @@ class ModuleBase
         }
 
 
+        ///////////////////////////////////////////
+        // Helpers for derived classes
+        ///////////////////////////////////////////
+        
+        /*! \brief Checks a python buffer for appropriate types and dimensions and returns
+         *         the internal pointer
+         * 
+         * \throw pulsar::exception::GeneralException if the type or number of dimensions
+         *        doesn't match
+         *
+         * \tparam T The expected type stored
+         * \param [in] ndim Expected number of dimensions
+         * \return A pair with the first element being the pointer and the second being
+         *         a vector of edge lengths
+         */
+        template<typename T>
+        std::pair<T *, std::vector<size_t>>
+        PythonBufferToPtr(pybind11::buffer & buf, int ndim)
+        {
+            using exception::GeneralException;
+
+            pybind11::buffer_info info = buf.request();
+            if (info.format != pybind11::format_descriptor<T>::value())
+                throw GeneralException("Bad format of python buffer",
+                                       "format", info.format,
+                                       "desired format", pybind11::format_descriptor<T>::value(),
+                                       "from", ExceptionDescString());
+
+
+            if (info.ndim != ndim)
+                throw GeneralException("Bad number of dimensions for python buffer",
+                                       "ndim", info.ndim,
+                                       "desired ndim", ndim,
+                                       "from", ExceptionDescString());
+
+            return { reinterpret_cast<T *>(info.ptr), info.shape };
+        }
+
+
     private:
         // allow ModuleManager to set up the pointers
         friend class modulemanager::ModuleManager;
 
-
-
         //! The unique ID of this module
         const ID_t id_;
 
-
         //! The type of module this is
         const char * modtype_;
-
 
         //! The ModuleManager in charge of this module
         modulemanager::ModuleManager * mlocator_;
@@ -410,6 +454,7 @@ class ModuleBase
          */
         void SetCache_(datastore::CacheData * cache) noexcept;
 };
+
 
 /*! \brief Forward some protected functions so that python
  *         can access them

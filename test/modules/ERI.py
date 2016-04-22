@@ -106,7 +106,7 @@ def Run(mm):
         tester.TestValue("Values for 1010 integrals", True, CompareList(list(outbuf[:n]), ref_1010, 1e-15))
 
         n = eri.CalculateMulti(1, [0, 1], [ 0 ], [0, 1], [ 0 ], outbuf)
-        tester.TestValue("Number of integrals for 1010", 25, n)
+        tester.TestValue("Number of integrals for calculate multi", 25, n)
         tester.TestValue("Values from CalculateMulti", True, CompareList(list(outbuf[:n]), ref_multi, 1e-15))
 
         tester.PrintResults() 

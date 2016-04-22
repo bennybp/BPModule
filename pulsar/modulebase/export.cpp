@@ -78,32 +78,43 @@ PYBIND11_PLUGIN(modulebase)
 
 
     /////////////////////////
-    // One electron integral implementation
+    // System integrals
     /////////////////////////
-    //! \todo Don't know about from Calculate to python
-    pybind11::class_<OneElectronIntegralIMPL_Py> oneelimpl(m, "OneElectronIntegralIMPL", mbase);
-    oneelimpl.alias<OneElectronIntegralIMPL>()
+    pybind11::class_<SystemIntegral_Py> sysint(m, "SystemIntegral", mbase);
+    sysint.alias<SystemIntegral>()
+          .def(pybind11::init<ID_t>())
+          .def_readonly("out", &SystemIntegral_Py::out, pybind11::return_value_policy::reference_internal) 
+          .def("Cache", &SystemIntegral_Py::Cache, pybind11::return_value_policy::reference_internal)
+          .def("MManager", &SystemIntegral_Py::MManager, pybind11::return_value_policy::reference_internal)
+          .def("Calculate", &SystemIntegral::CalculatePy)
+          ;
+
+    /////////////////////////
+    // One electron integral ementation
+    /////////////////////////
+    pybind11::class_<OneElectronIntegral_Py> oneel(m, "OneElectronIntegral", mbase);
+    oneel.alias<OneElectronIntegral>()
             .def(pybind11::init<ID_t>())
-            .def_readonly("out", &OneElectronIntegralIMPL_Py::out, pybind11::return_value_policy::reference_internal) 
-            .def("Cache", &OneElectronIntegralIMPL_Py::Cache, pybind11::return_value_policy::reference_internal)
-            .def("MManager", &OneElectronIntegralIMPL_Py::MManager, pybind11::return_value_policy::reference_internal)
-            .def("SetBases", &OneElectronIntegralIMPL::SetBases)
-            .def("Calculate", &OneElectronIntegralIMPL::Calculate)
-            .def("CalculateMulti", &OneElectronIntegralIMPL::CalculateMulti)
+            .def_readonly("out", &OneElectronIntegral_Py::out, pybind11::return_value_policy::reference_internal) 
+            .def("Cache", &OneElectronIntegral_Py::Cache, pybind11::return_value_policy::reference_internal)
+            .def("MManager", &OneElectronIntegral_Py::MManager, pybind11::return_value_policy::reference_internal)
+            .def("SetBases", &OneElectronIntegral::SetBases)
+            .def("Calculate", &OneElectronIntegral::Calculate)
+            .def("CalculateMulti", &OneElectronIntegral::CalculateMulti)
             ;
 
     /////////////////////////
-    // Two electron integral implementation
+    // Two electron integral ementation
     /////////////////////////
-    pybind11::class_<TwoElectronIntegralIMPL_Py> twoelimpl(m, "TwoElectronIntegralIMPL", mbase);
-    twoelimpl.alias<TwoElectronIntegralIMPL>()
+    pybind11::class_<TwoElectronIntegral_Py> twoel(m, "TwoElectronIntegral", mbase);
+    twoel.alias<TwoElectronIntegral>()
             .def(pybind11::init<ID_t>())
-            .def_readonly("out", &TwoElectronIntegralIMPL_Py::out, pybind11::return_value_policy::reference_internal) 
-            .def("Cache", &TwoElectronIntegralIMPL_Py::Cache, pybind11::return_value_policy::reference_internal)
-            .def("MManager", &TwoElectronIntegralIMPL_Py::MManager, pybind11::return_value_policy::reference_internal)
-            .def("SetBases", &TwoElectronIntegralIMPL::SetBases)
-            .def("Calculate", &TwoElectronIntegralIMPL::CalculatePy)
-            .def("CalculateMulti", &TwoElectronIntegralIMPL::CalculateMultiPy)
+            .def_readonly("out", &TwoElectronIntegral_Py::out, pybind11::return_value_policy::reference_internal) 
+            .def("Cache", &TwoElectronIntegral_Py::Cache, pybind11::return_value_policy::reference_internal)
+            .def("MManager", &TwoElectronIntegral_Py::MManager, pybind11::return_value_policy::reference_internal)
+            .def("SetBases", &TwoElectronIntegral::SetBases)
+            .def("Calculate", &TwoElectronIntegral::CalculatePy)
+            .def("CalculateMulti", &TwoElectronIntegral::CalculateMultiPy)
             ;
 
     ///////////////////////
