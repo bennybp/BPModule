@@ -12,6 +12,8 @@
 
 #include "pulsar/pragma.h"
 #include "pulsar/util/Serialization.hpp"
+#include "pulsar/util/bphash/Hasher.hpp"
+#include "pulsar/util/bphash/types/array.hpp"
 
 
 namespace pulsar{
@@ -21,6 +23,10 @@ namespace math{
 /*! \brief A simple class representing a Point
  *
  * Cartesian point of data type \p T
+ *
+ * \par Hashing
+ * The hash value of a point represents a unique value
+ * for the coordinates. 
  */
 template<typename T>
 class PointT
@@ -44,7 +50,7 @@ class PointT
         PointT & operator=(const PointT &) = default;
         PointT & operator=(PointT &&)      = default;
         virtual ~PointT()                  = default;
-        size_t size()const{return coords_.size();}
+        constexpr size_t size()const{return coords_.size();}
         
         
         bool operator==(const PointT & rhs) const
@@ -171,20 +177,31 @@ class PointT
             }
         }
 
+        /// Return a unique has of the point
+        util::Hash MyHash(void) const
+        {
+            return util::MakeHash(*this);
+        }
 
     private:
         CoordType coords_;
 
 
-        //! \name Serialization
+        //! \name Serialization and Hashing
         ///@{
         
         DECLARE_SERIALIZATION_FRIENDS
+        DECLARE_HASHING_FRIENDS
         
         template<class Archive>
         void serialize(Archive & ar)
         {
             ar(coords_);
+        }
+
+        void hash(util::Hasher & h) const
+        {
+            h(coords_);
         }
 
         ///@}

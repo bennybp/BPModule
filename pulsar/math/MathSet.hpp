@@ -8,7 +8,6 @@
 #ifndef PULSAR_GUARD_MATH__MATHSET_HPP_
 #define PULSAR_GUARD_MATH__MATHSET_HPP_
 
-#include <vector> //For default set container
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/math/Universe.hpp"
 
@@ -53,6 +52,12 @@ namespace math {
  *   would have taken that route)).  However, by storing a pointer to A, we
  *   need only compare against A's Elems_.
  *
+ * \par Hashing
+ *     The hash value of a MathSet is unique with respect to the values
+ *     of the universe (see the Universe class documentation) and
+ *     the values contained in this set. The hash will be
+ *     the same even if the pointers point to different locations.
+ *
  *   \param T The type of the object in the set
      \param U The type of the container holding the objects
  *
@@ -94,10 +99,11 @@ private:
         this->Elems_ = Elems;
     }
 
-    //! \name Serialization
+    //! \name Serialization and Hashing
     ///@{
 
     DECLARE_SERIALIZATION_FRIENDS
+    DECLARE_HASHING_FRIENDS
 
     /* We have to split load/save since the
      * the shared_ptr points to const data, and
@@ -115,6 +121,11 @@ private:
         std::shared_ptr<Base_t> Newuniverse;
         ar(cereal::base_class<Base_t>(this), Newuniverse);
         Universe_=std::move(Newuniverse);
+    }
+
+    void hash(util::Hasher & h) const
+    {
+        h(static_cast<const Base_t &>(*this), Universe_);
     }
 
     ///@}
@@ -475,6 +486,18 @@ public:
         for (const size_t& EI : this->Elems_)
             ss << (*Universe_)[EI] << " ";
         return ss.str();
+    }
+
+    /*! \brief obtain a unique hash of this MathSet
+     * 
+     * Hashes are the same if the Universes are equivalent
+     * and if the elements are equivalent. The hashes will
+     * be the same even if the two MathSets have different
+     * Universes.
+     */
+    util::Hash MyHash(void) const
+    {
+        return util::MakeHash(*this);
     }
 
 };

@@ -13,7 +13,6 @@
 #include <cereal/access.hpp>
 #include <cereal/archives/binary.hpp>
 
-#include "pulsar/util/HashingArchive.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 
 
@@ -49,7 +48,7 @@ class StdStreamArchive
             serializing_ = true;
             Reset_();
 
-            oarchive_ = std::unique_ptr<detail::HashingOutputArchive>(new detail::HashingOutputArchive(stream_));
+            oarchive_ = std::unique_ptr<cereal::BinaryOutputArchive>(new cereal::BinaryOutputArchive(stream_));
         }
 
 
@@ -82,7 +81,7 @@ class StdStreamArchive
          * \throw pulsar::exception::SerializationException if the object is
          *        unserializing or if it is not serializing to begin with.
          */
-        Hash EndSerialization(void)
+        void EndSerialization(void)
         {
             if(serializing_ == false)
                 throw exception::SerializationException("Can't stop serializing - Not serializing");
@@ -92,10 +91,8 @@ class StdStreamArchive
                 throw std::logic_error("OArchive is not valid, but we are ending serialization");
 
             serializing_ = false;
-            Hash hash = oarchive_->Finalize();
             oarchive_.reset();
             Reset_();
-            return hash; 
         }
 
 
@@ -227,7 +224,7 @@ class StdStreamArchive
 
     private:
         std::unique_ptr<cereal::BinaryInputArchive> iarchive_;
-        std::unique_ptr<detail::HashingOutputArchive> oarchive_;
+        std::unique_ptr<cereal::BinaryOutputArchive> oarchive_;
 
         void Reset_(void)
         {

@@ -4,6 +4,7 @@ set(PULSAR_DATASTORE_FILES
             OptionTypes.cpp
             OptionBase.cpp
             OptionMap.cpp
+            Wavefunction.cpp
             export.cpp
             testing_export.cpp
    )

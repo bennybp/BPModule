@@ -7,8 +7,7 @@ set(PULSAR_UTIL_FILES
             Filesystem.cpp
             export.cpp
 
-            Hash.cpp
-            Hasher.cpp
+            bphash/DataHasher.cpp
 
             vprintfcpp/Format.cpp
             vprintfcpp/Printf_wrap.cpp

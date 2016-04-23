@@ -71,7 +71,7 @@ class HeaderSourceFiles:
         ##########################
         if self.createsource:
             self.f = open(self.srcfile, 'w')
-            self.f.write("/*\\file\n")
+            self.f.write("/*!\\file\n")
             self.f.write(" *\n")
             self.f.write(" * \\brief {} (source)\n".format(self.desc))
             self.f.write("*/\n")
@@ -94,7 +94,7 @@ class HeaderSourceFiles:
         ##########################
         if self.createheader:
             self.fh = open(self.hfile, 'w')
-            self.fh.write("/*\\file\n")
+            self.fh.write("/*! \\file\n")
             self.fh.write(" *\n")
             self.fh.write(" * \\brief {} (header)\n".format(self.desc))
             self.fh.write("*/\n")

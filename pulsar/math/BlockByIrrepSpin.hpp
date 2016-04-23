@@ -9,14 +9,22 @@
 
 #include <map>
 #include "pulsar/util/Serialization.hpp"
-#include "pulsar/util/HashSerializable.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/math/Irrep.hpp"
+
+#include "pulsar/util/bphash/types/map.hpp"
+
 
 namespace pulsar{
 namespace math{
 
-
+/* \brief Maps spin and spatial symmetry to data
+ *
+ * \par Hashing
+ *     The hash value is unique with respect to the map between
+ *     the irrep/spatial symmetry and the hashing of data type \p T.
+ *     See that class for details.
+ */
 template<typename T>
 class BlockByIrrepSpin
 {
@@ -94,9 +102,15 @@ class BlockByIrrepSpin
             data_.clear();
         }
 
+        /*! \brief Obtain a hash of the data
+         *
+         * Details depend on what kind of data is stored.
+         * See the hashing functions of the stored type
+         * for details.
+         */
         util::Hash MyHash(void) const
         {
-            return util::HashSerializable(*this);
+            return util::MakeHash(*this);
         }
 
     private:
@@ -106,11 +120,17 @@ class BlockByIrrepSpin
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
+        DECLARE_HASHING_FRIENDS
 
         template<class Archive>
         void serialize(Archive & ar)
         {
             ar(data_);
+        }
+
+        void hash(util::Hasher & h) const
+        {
+            h(data_);
         }
 
         ///@}

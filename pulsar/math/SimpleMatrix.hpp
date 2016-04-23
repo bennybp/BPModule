@@ -15,7 +15,9 @@
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/util/Serialization.hpp"
-#include "pulsar/util/HashSerializable.hpp"
+#include "pulsar/util/bphash/Hasher.hpp"
+#include "pulsar/util/bphash/types/memory.hpp"
+#include "pulsar/util/bphash/types/complex.hpp"
 
 
 namespace pulsar{
@@ -28,6 +30,12 @@ namespace math{
  * favorite matrix/tensor library to do heavy-duty operations.
  *
  * Storage is in row-major order.
+ *
+ * \tparam T The type of data stored in the matrix
+ *
+ * \par Hashing
+ *     The hash value of a SimpleMatrix is unique with respect its
+ *     dimensions and the values it contains.
  */
 template<typename T>
 class SimpleMatrix
@@ -233,7 +241,7 @@ class SimpleMatrix
 
         util::Hash MyHash(void) const
         {
-            return util::HashSerializable(*this);
+            return util::MakeHash(*this);
         } 
     
 
@@ -258,6 +266,7 @@ class SimpleMatrix
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
+        DECLARE_HASHING_FRIENDS
 
         template<class Archive>
         void save(Archive & ar) const
@@ -278,10 +287,26 @@ class SimpleMatrix
                 ar(data_[i]);
         }
 
+        void hash(util::Hasher & h) const
+        {
+            h(nrows_, ncols_, size_,
+              util::HashPointer(data_, size_));
+        }
+
         ///@}
 };
 
 
+/* \brief A simple general-purpose dense vector storage class
+ *
+ * Like SimpleMatrix, this is generally meant only for storage.
+ *
+ * \tparam T The type of data stored in the vector
+ *
+ * \par Hashing
+ *     The hash value of a SimpleVector is unique with respect its
+ *     dimensions and the values it contains.
+ */
 template<typename T>
 class SimpleVector : public SimpleMatrix<T>
 {

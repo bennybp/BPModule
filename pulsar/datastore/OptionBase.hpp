@@ -15,6 +15,7 @@
 
 #include "pulsar/python/Pybind11_fwd.hpp"
 #include "pulsar/util/Serialization.hpp"
+#include "pulsar/util/bphash/Hasher_fwd.hpp"
 
 namespace pulsar{
 namespace datastore {
@@ -162,6 +163,7 @@ class OptionBase
         virtual ByteArray ToByteArray(void) const = 0;
 
 
+
         /////////////////////////////////////////
         // Python-related functions
         /////////////////////////////////////////
@@ -235,6 +237,9 @@ class OptionBase
         bool HasIssues(void) const;
 
 
+        util::Hash MyHash(void) const;
+
+
     protected:
         /*! \brief For serialization only
          * 
@@ -249,11 +254,8 @@ class OptionBase
         OptionBase(const OptionBase &) = default;
 
 
-        /*! \brief For serialization only
-         * 
-         * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
-         */
-        //void SetBase_(std::string && key, bool required, std::string && help);
+        virtual void hash_value(util::Hasher & h) const = 0;
+
 
 
     private:
@@ -266,7 +268,14 @@ class OptionBase
         //! The help string for this option
         std::string help_;
 
+        //! \name Hashing and Serialization
+        ///@{
 
+        DECLARE_HASHING_FRIENDS
+
+        virtual void hash(util::Hasher & h) const;
+
+        ///@}
 
 };
 

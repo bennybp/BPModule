@@ -16,6 +16,11 @@ namespace pulsar{
 namespace modulemanager {
 
 /*! \brief Structure that stores information about a module
+ *
+ * \par Hashing
+ * The hash value of a point represents a unique with respect to
+ * all the module information and the values for the options.
+ * See the hashing section of OptionMap for details on that.
  */
 struct ModuleInfo
 {
@@ -40,13 +45,16 @@ struct ModuleInfo
      *  See also the OptionMap comparison operator for details about that
      */
     bool operator==(const ModuleInfo & rhs) const;
-    
+
+
+    util::Hash MyHash(void) const;    
 
     private:
-        //! \name Serialization
+        //! \name Serialization and Hashing
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
+        DECLARE_HASHING_FRIENDS
 
         /* We have to split load/save since the
          * the shared_ptr points to const data, and
@@ -58,6 +66,8 @@ struct ModuleInfo
             ar(name, type, base, path);
             ar(version, description, authors, refs, options);
         }
+
+        void hash(util::Hasher & h) const;
 
         ///@}
 };

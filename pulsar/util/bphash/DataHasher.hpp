@@ -4,8 +4,8 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef PULSAR_GUARD_UTIL__HASHER_HPP_
-#define PULSAR_GUARD_UTIL__HASHER_HPP_
+#ifndef PULSAR_GUARD_BPHASH__DATAHASHER_HPP_
+#define PULSAR_GUARD_BPHASH__DATAHASHER_HPP_
 
 #include <cstdint>
 #include <memory>
@@ -29,7 +29,7 @@ class Hash;
  * Currently, the hash algorithm generates 128-bit
  * hashes.
  */
-class Hasher
+class DataHasher
 {
     private:
         static const uint64_t c1 = (0x87c37b91114253d5LLU);
@@ -50,13 +50,13 @@ class Hasher
         void UpdateBlock_(void);
 
     public:
-        Hasher(void);
-        ~Hasher(void) = default;
+        DataHasher(void);
+        ~DataHasher(void) = default;
 
-        Hasher(const Hasher &) = default;
-        Hasher & operator=(const Hasher &) = default;
-        Hasher(Hasher &&) = default;
-        Hasher & operator=(Hasher &&) = default;
+        DataHasher(const DataHasher &) = default;
+        DataHasher & operator=(const DataHasher &) = default;
+        DataHasher(DataHasher &&) = default;
+        DataHasher & operator=(DataHasher &&) = default;
 
         /*! \brief Add some data to the hash
          * 
@@ -65,17 +65,6 @@ class Hasher
          * until next time
          */
         void Update(void const * buffer, size_t size);
-
-        /*! \brief Add all data from a stream to the hash
-         * 
-         * Any remaining from the previous call will be done, and
-         * any that doesn't fill out a whole block will be stored
-         * until next time
-         *
-         * The internal positions of the stream are returned to where they
-         * originally were after the hashing operation.
-         */
-        void Update(std::istream & is);
 
         /*! \brief Finish hashing and report the hash
          *
@@ -90,6 +79,7 @@ class Hasher
          */
         void Reset(void);
 };
+
 
 
 } // close namespace util

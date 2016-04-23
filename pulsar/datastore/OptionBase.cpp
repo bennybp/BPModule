@@ -7,6 +7,9 @@
 
 #include "pulsar/datastore/OptionBase.hpp"
 
+#include "pulsar/util/bphash/Hasher.hpp"
+#include "pulsar/util/bphash/types/string.hpp"
+
 namespace pulsar{
 namespace datastore {
 
@@ -50,6 +53,19 @@ const std::string & OptionBase::Help(void) const noexcept
 bool OptionBase::HasIssues(void) const
 {
     return (GetIssues().size());
+}
+
+void OptionBase::hash(util::Hasher & h) const
+{
+    h(key_, required_, help_);
+
+    // call virtual function
+    hash_value(h);
+}
+
+util::Hash OptionBase::MyHash(void) const
+{
+    return util::MakeHash(*this);
 }
 
 

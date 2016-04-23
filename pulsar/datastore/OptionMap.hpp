@@ -14,6 +14,7 @@
 #include "pulsar/datastore/OptionHolder.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/util/StringUtil.hpp"
+#include "pulsar/util/bphash/Hasher_fwd.hpp"
 
 
 namespace pulsar{
@@ -318,6 +319,9 @@ class OptionMap
 
 
 
+        util::Hash MyHash(void) const;
+
+
 
         /////////////////////////////
         // Python
@@ -447,10 +451,11 @@ class OptionMap
 
 
 
-        //! \name Serialization
+        //! \name Serialization and Hashing
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
+        DECLARE_HASHING_FRIENDS
 
 
         template<class Archive>
@@ -486,6 +491,9 @@ class OptionMap
 
             lockvalid_ = true;
         }
+
+
+        void hash(util::Hasher & h) const;
 
         ///@}
 };

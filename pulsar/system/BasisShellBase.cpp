@@ -8,6 +8,7 @@
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/system/BasisShellBase.hpp"
 #include "pulsar/system/NFunction.hpp"
+#include "pulsar/util/bphash/Hasher.hpp"
 
 using pulsar::exception::Assert;
 using pulsar::exception::BasisSetException;
@@ -326,6 +327,19 @@ bool BasisShellBase::BaseCompare(const BasisShellBase & rhs) const
            );
 
     PRAGMA_WARNING_POP
+}
+
+
+util::Hash BasisShellBase::MyHash(void) const
+{
+    return util::MakeHash(*this);
+} 
+
+void BasisShellBase::hash(util::Hasher & h) const
+{
+    h(type_, am_, nprim_, ngen_,
+           util::HashPointer(alphas_, NPrim()),
+           util::HashPointer(coefs_, NCoef()));
 }
 
 

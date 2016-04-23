@@ -166,12 +166,17 @@ class OptionHolder : public OptionBase
 
         virtual ByteArray ToByteArray(void) const;
 
+
         /////////////////////////////////////////
         // Python-related functions
         /////////////////////////////////////////
         virtual pybind11::object GetPy(void) const;
 
         virtual void ChangePy(const pybind11::object & obj);
+
+    protected:
+
+        virtual void hash_value(util::Hasher & h) const;
 
 
     private:

@@ -10,6 +10,11 @@
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/output/Output.hpp"
 
+#include "pulsar/util/bphash/types/string.hpp"
+#include "pulsar/util/bphash/types/vector.hpp"
+#include "pulsar/util/bphash/types/set.hpp"
+#include "pulsar/util/bphash/types/map.hpp"
+
 using namespace pulsar::python;
 using namespace pulsar::exception;
 using namespace pulsar::util;
@@ -269,6 +274,17 @@ ByteArray OptionHolder<OPTTYPE>::ToByteArray(void) const
     mar.EndSerialization();
     return mar.ToByteArray();
 }
+
+
+template<OptionType OPTTYPE>
+void OptionHolder<OPTTYPE>::hash_value(util::Hasher & h) const
+{
+    if(HasValue())
+        h(Key(), Get());
+    else
+        h(Key(), std::string("__!%_NOVALUE_%!__"));
+}
+
 
 
 /////////////////////////////////////////

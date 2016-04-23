@@ -11,6 +11,7 @@
 
 #include "pulsar/system/ShellType.hpp"
 #include "pulsar/util/Serialization.hpp"
+#include "pulsar/util/bphash/Hasher_fwd.hpp"
 #include "pulsar/exception/Assert.hpp"
 
 
@@ -282,6 +283,8 @@ class BasisShellBase
         ///@}
 
 
+        util::Hash MyHash(void) const;
+
 
     protected:
 
@@ -330,6 +333,7 @@ class BasisShellBase
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
+        DECLARE_HASHING_FRIENDS
 
         template<class Archive>
         void serialize(Archive & ar)
@@ -338,6 +342,9 @@ class BasisShellBase
             // by somebody else. It's their responsibilty
             ar(type_, am_, nprim_, ngen_);
         }
+
+        void hash(util::Hasher & h) const;
+
 
         ///@}
 

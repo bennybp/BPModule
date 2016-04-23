@@ -5,6 +5,7 @@
  */
 
 #include "pulsar/system/BasisSetShell.hpp"
+#include "pulsar/util/bphash/Hasher.hpp"
 
 namespace pulsar{
 namespace system {
@@ -77,6 +78,18 @@ bool BasisSetShell::operator==(const BasisSetShell & rhs) const
 bool BasisSetShell::operator!=(const BasisSetShell & rhs) const
 {
     return !((*this) == rhs);
+}
+
+util::Hash BasisSetShell::MyHash(void) const
+{
+    return util::MakeHash(*this);
+} 
+
+void BasisSetShell::hash(util::Hasher & h) const
+{
+    h(static_cast<const BasisShellBase &>(*this),
+      util::HashPointer(xyz_, 3),
+      id_, center_); 
 }
 
 } // close namespace system

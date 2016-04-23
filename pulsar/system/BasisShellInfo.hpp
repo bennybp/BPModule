@@ -65,7 +65,7 @@ class BasisShellInfo : public BasisShellBase
 
 
 
-        //! \name Serialization
+        //! \name Serialization and Hashing
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
@@ -80,6 +80,8 @@ class BasisShellInfo : public BasisShellBase
             // if we are unserializing
             BasisShellBase::SetPtrs_(alphas_.data(), coefs_.data());
         }
+
+        // No need to hash anything here. Will be hashed by the base class 
 
         ///@}
 };

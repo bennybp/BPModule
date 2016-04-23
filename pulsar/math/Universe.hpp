@@ -13,10 +13,16 @@
 #include <memory> //Shared ptrs
 #include <algorithm> //For std::find
 #include <sstream> //For printing
+#include <vector> //For default set container
 #include <iterator> //std::iterator
 
-#include "pulsar/util/Serialization.hpp"
 #include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/util/Serialization.hpp"
+#include "pulsar/util/bphash/Hasher.hpp"
+#include "pulsar/util/bphash/types/set.hpp"
+#include "pulsar/util/bphash/types/memory.hpp"
+#include "pulsar/util/bphash/types/vector.hpp"
+
 
 
 namespace pulsar{
@@ -124,6 +130,11 @@ public:
  * 
  *   It is notable that copy,assignment, and binary operations (i.e. not +=, -=,
  *   etc.) return deep copies of the universe.  
+ *
+ * \par Hashing
+ *     The hash value of a Universe is unique with respect to the values
+ *     and the ordering in the container (if ordered). The hash will be
+ *     the same even if the pointers point to different locations.
  * 
  *   \param T The type of the element.  Should be very light weight, will be
  *            copied a lot.  Must be default constructable and comparable with
@@ -152,10 +163,11 @@ protected:
 
 
 private:
-    //! \name Serialization
+    //! \name Serialization and Hashing
     ///@{
     
     DECLARE_SERIALIZATION_FRIENDS
+    DECLARE_HASHING_FRIENDS
 
     /* We have to split load/save since MathSet uses
      * load/save, and these are inherited. If not,
@@ -172,6 +184,11 @@ private:
     void load(Archive & ar)
     {
         ar(Storage_, Elems_);
+    }
+
+    void hash(util::Hasher & h) const
+    {
+        h(Storage_, Elems_);
     }
 
     ///@}
@@ -588,6 +605,18 @@ public:
         std::stringstream ss;
         for (const T & EI : * this)ss << EI << " ";
         return ss.str();
+    }
+
+
+    /* \brief Return a hash of this universe
+     * 
+     * Hashes are the same if the held data is equivalent (ie,
+     * same values and same elements), and not necessarily
+     * point to the same data.
+     */
+    util::Hash MyHash(void) const
+    {
+        return util::MakeHash(*this);
     }
 };
 

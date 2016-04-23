@@ -85,6 +85,7 @@ PYBIND11_PLUGIN(datastore)
     .def("Compare", &OptionMap::Compare)
     .def("CompareSelect", &OptionMap::CompareSelect)
     .def("HasIssues", &OptionMap::HasIssues)
+    .def("MyHash", &OptionMap::MyHash)
     .def(pybind11::self == pybind11::self)
     ;
 

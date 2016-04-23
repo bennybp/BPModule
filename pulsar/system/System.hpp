@@ -13,6 +13,9 @@
 #include "pulsar/math/MathSet.hpp"
 #include "pulsar/math/PointManipulation.hpp"
 
+#include "pulsar/util/bphash/Hasher_fwd.hpp"
+
+
 // Instantiated in the cpp file
 extern template class pulsar::math::Universe<pulsar::system::Atom>;
 extern template class pulsar::math::MathSet<pulsar::system::Atom>;
@@ -76,17 +79,19 @@ private:
     void SetDefaults_(void);
 
 
-    //! \name Serialization
+    //! \name Serialization and Hashing
     ///@{
 
     DECLARE_SERIALIZATION_FRIENDS
+    DECLARE_HASHING_FRIENDS
 
     template<class Archive>
     void serialize(Archive & ar)
     {
-        // we aren't serializing the base class, so we do this manually
         ar(atoms_, charge_, multiplicity_, nelectrons_);
     }
+
+    void hash(util::Hasher & h) const;
 
     ///@}
 

@@ -1,3 +1,9 @@
+/*! \file
+ *
+ * \brief Factorial and similar functions
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
 #ifndef PULSAR_GUARD_MATH__FACTORIAL_HPP_
 #define PULSAR_GUARD_MATH__FACTORIAL_HPP_
 

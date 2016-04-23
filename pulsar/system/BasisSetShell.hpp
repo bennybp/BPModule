@@ -10,6 +10,7 @@
 #include "pulsar/types.h"
 #include "pulsar/system/BasisShellBase.hpp"
 #include "pulsar/system/CoordType.hpp"
+#include "pulsar/util/bphash/Hasher_fwd.hpp"
 
 namespace pulsar{
 namespace system {
@@ -88,6 +89,8 @@ class BasisSetShell : public BasisShellBase
          */
         BasisSetShell() = default;
 
+        util::Hash MyHash(void) const;
+
 
     private:
         friend class BasisSet;
@@ -103,6 +106,7 @@ class BasisSetShell : public BasisShellBase
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
+        DECLARE_HASHING_FRIENDS
 
         template<class Archive>
         void serialize(Archive & ar)
@@ -110,6 +114,9 @@ class BasisSetShell : public BasisShellBase
             ar(cereal::base_class<BasisShellBase>(this), id_, center_);
         }
 
+       
+        void hash(util::Hasher & h) const;
+ 
         ///@}
     
 };

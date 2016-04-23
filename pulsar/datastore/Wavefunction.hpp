@@ -9,16 +9,22 @@
 
 #include <memory>
 
-#include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/math/IrrepSpinMatrix.hpp"
 #include "pulsar/system/System.hpp"
-#include "pulsar/util/HashSerializable.hpp"
 #include "pulsar/util/Serialization.hpp"
+#include "pulsar/util/bphash/Hasher_fwd.hpp"
 
 
 namespace pulsar{
 namespace datastore {
 
+
+/*! \brief Stores the state of a system
+ *
+ * \par Hashing
+ * The hash of a wavefunction depends on the hash of
+ * its component parts. See hashing of System and IrrepSpinMatrices
+ */
 class Wavefunction
 {
     public:
@@ -26,38 +32,18 @@ class Wavefunction
         std::shared_ptr<const math::IrrepSpinMatrixD> cmat;
         std::shared_ptr<const math::IrrepSpinVectorD> epsilon;
 
-        util::Hash MyHash(void) const
-        {
-            return util::HashSerializable(*this);
-        }
+        /*! \brief Return a unique hash for this wavefunction */
+        util::Hash MyHash(void) const;
 
-        bool operator==(const Wavefunction & rhs) const
-        {
-            // check for pointer equivalence first
-            bool samesystem = (system == rhs.system);
-            bool samecmat = (cmat == rhs.cmat);
-            bool sameepsilon = (epsilon == rhs.epsilon);
-
-            // if the pointers aren't the same, check the 
-            // actual data
-            if(!samesystem && bool(system) && bool(rhs.system))
-                samesystem = ( (*system) == (*rhs.system) );
-
-            if(!samecmat && bool(cmat) && bool(rhs.cmat))
-                samecmat = ( (*cmat) == (*rhs.cmat) );
-
-            if(!sameepsilon && bool(epsilon) && bool(rhs.epsilon))
-                sameepsilon = ( (*epsilon) == (*rhs.epsilon) );
-                    
-            return (samesystem && samecmat && sameepsilon);
-        }
+        bool operator==(const Wavefunction & rhs) const;
 
 
     private:
-        //! \name Serialization
+        //! \name Serialization and Hashing
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
+        DECLARE_HASHING_FRIENDS
 
         /* We have to split load/save since the
          * the shared_ptr points to const data, and
@@ -82,6 +68,8 @@ class Wavefunction
             cmat = std::move(newcmat);
             epsilon = std::move(newepsilon);
         }
+
+        void hash(util::Hasher & h) const;
 
         ///@}
 };

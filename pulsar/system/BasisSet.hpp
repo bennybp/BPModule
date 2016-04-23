@@ -12,11 +12,7 @@
 #include "pulsar/system/BasisSetShell.hpp"
 #include "pulsar/system/BasisShellInfo.hpp"
 
-// forward declare
-namespace pulsar{
-namespace util {
-class Hash;
-} }
+#include "pulsar/util/bphash/Hasher_fwd.hpp"
 
 
 namespace pulsar{
@@ -255,10 +251,11 @@ class BasisSet
         void Allocate_(size_t nshells, size_t nprim, size_t ncoef, size_t nxyz);
 
 
-        //! \name Serialization
+        //! \name Serialization and Hashing
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
+        DECLARE_HASHING_FRIENDS
 
         template<class Archive>
         void save(Archive & ar) const
@@ -311,6 +308,10 @@ class BasisSet
                 offsetidx += 3;
             }
         }
+
+
+        void hash(util::Hasher & h) const;
+
 
         ///@}
 };

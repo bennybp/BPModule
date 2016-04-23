@@ -5,8 +5,8 @@
  */
 
 
-#include "pulsar/util/Hasher.hpp"
-#include "pulsar/util/Hash.hpp"
+#include "pulsar/util/bphash/DataHasher.hpp"
+#include "pulsar/util/bphash/Hash.hpp"
 
 
 
@@ -58,13 +58,13 @@ namespace pulsar{
 namespace util {
 
 
-Hasher::Hasher(void)
+DataHasher::DataHasher(void)
 {
     Reset();
 }
 
 
-void Hasher::Reset(void)
+void DataHasher::Reset(void)
 {
     h1 = h2 = 0;
     len_ = 0;
@@ -73,7 +73,7 @@ void Hasher::Reset(void)
 }
 
 
-void Hasher::UpdateBlock_(void)
+void DataHasher::UpdateBlock_(void)
 {
     // This function only does an entire 16-byte buffer
     // (that is stored as private member buffer_)
@@ -96,7 +96,7 @@ void Hasher::UpdateBlock_(void)
 
 
 
-void Hasher::Update(void const * buffer, size_t size)
+void DataHasher::Update(void const * buffer, size_t size)
 {
     if(size == 0)
         return; // got nothing to do
@@ -164,34 +164,7 @@ void Hasher::Update(void const * buffer, size_t size)
 }
 
 
-
-void Hasher::Update(std::istream & is)
-{
-    //! \todo Error checking
-    //if(!is.good())
-    //    throw exception
-
-    std::streampos orig = is.tellg();
-
-    is.seekg(0, is.beg); // seek to the beginning
-
-    char buffer[1024]; // 1K for reading from stream
-    std::streamsize count = 0;
-
-    // Just read from the stream, updating using this buffer
-    do {
-        is.read(buffer, 1024);
-        count = is.gcount();
-        Update(buffer, count);
-    } while(count > 0);
-
-    is.clear();
-    is.seekg(orig); // seek to the original position
-}
-
-
-
-Hash Hasher::Finalize(void)
+Hash DataHasher::Finalize(void)
 {
     // If we have any left over, we have to do that
     if(nbuffer_ > 0)
@@ -242,6 +215,7 @@ Hash Hasher::Finalize(void)
     // Create the hash object and return
     return Hash(h1, h2);
 }
+
 
 
 } // close namespace util

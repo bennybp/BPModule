@@ -9,7 +9,9 @@
 #include "pulsar/output/Output.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/exception/Assert.hpp"
-#include "pulsar/util/HashSerializable.hpp"
+
+#include "pulsar/util/bphash/types/memory.hpp"
+#include "pulsar/util/bphash/types/vector.hpp"
 
 using pulsar::exception::Assert;
 using pulsar::exception::BasisSetException;
@@ -116,7 +118,12 @@ bool BasisSet::operator!=(const BasisSet & rhs) const
 
 util::Hash BasisSet::MyHash(void) const
 {
-    return util::HashSerializable(*this);
+    return util::MakeHash(*this);
+}
+
+void BasisSet::hash(util::Hasher & h) const
+{
+    h(curid_, shells_, unique_shells_, storage_);
 }
 
 

@@ -13,6 +13,9 @@
 #include "pulsar/system/CoordType.hpp"
 #include "pulsar/system/BasisShellInfo.hpp"
 #include "pulsar/util/StringUtil.hpp"
+#include "pulsar/util/bphash/Hasher_fwd.hpp"
+
+
 
 namespace pulsar{
 namespace system {
@@ -64,26 +67,19 @@ class Atom : public math::Point
             SetType_ description;            //!< Description of basis
             BasisShellInfoVector shells;     //!< Actual basis
 
-            bool operator==(const BasisInfo_ & rhs) const
-            {
-                // note we have to check sizes first for std::equal 
-                return (
-                        shells == rhs.shells &&
-                        description.size() == rhs.description.size() &&
-                        std::equal(description.begin(), description.end(), rhs.description.begin())
-                       );
-            }
+            bool operator==(const BasisInfo_ & rhs) const;
 
 
-            //! \name Serialization
+            //! \name Serialization and Hashing
             ///@{
 
             template<class Archive>
             void serialize(Archive & ar)
             {
-                // we aren't serializing the base class, so we do this manually
                 ar(description, shells);
             }
+
+            void hash(util::Hasher & h) const;
 
             ///@}
         };
@@ -93,10 +89,11 @@ class Atom : public math::Point
 
 
 
-        //! \name Serialization
+        //! \name Serialization and Hashing
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
+        DECLARE_HASHING_FRIENDS
 
 
         template<class Archive>
@@ -109,6 +106,8 @@ class Atom : public math::Point
                                                 nelectrons_, covradius_,
                                                 vdwradius_, bshells_);
         }
+
+        void hash(util::Hasher & h) const;
 
         ///@}
 
@@ -289,6 +288,8 @@ class Atom : public math::Point
         void Print(std::ostream & os) const;
 
         ///@}
+
+        util::Hash MyHash(void) const;
 
 };
 

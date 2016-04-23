@@ -48,6 +48,8 @@ struct ModuleTreeNode
         //! \name Serialization
         ///@{
 
+        //! \todo hashing?
+
         DECLARE_SERIALIZATION_FRIENDS
 
         /* We have to split load/save since the

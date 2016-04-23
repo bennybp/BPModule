@@ -9,7 +9,7 @@
 #include "pulsar/python/Pybind11_operators.hpp"
 #include "pulsar/util/Cmdline.hpp"
 #include "pulsar/util/Memwatch.hpp"
-#include "pulsar/util/Hash.hpp"
+#include "pulsar/util/bphash/Hash.hpp"
 
 
 namespace pulsar{

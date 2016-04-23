@@ -9,6 +9,11 @@
 #include "pulsar/math/Cast.hpp"
 #include "pulsar/output/Output.hpp"
 
+#include "pulsar/util/bphash/types/string.hpp"
+#include "pulsar/util/bphash/types/set.hpp"
+#include "pulsar/util/bphash/types/map.hpp"
+#include "pulsar/util/bphash/types/vector.hpp"
+
 using namespace pulsar::output;
 
 namespace pulsar{
@@ -81,6 +86,36 @@ void Atom::Print(std::ostream & os) const
 {
     Output(os, "%-5?    %16.8?  %16.8?  %16.8?\n",
            GetSymbol(), GetCoords()[0], GetCoords()[1], GetCoords()[2]);
+}
+
+bool Atom::BasisInfo_::operator==(const BasisInfo_ & rhs) const
+{
+    // note we have to check sizes first for std::equal 
+    return (
+            shells == rhs.shells &&
+            description.size() == rhs.description.size() &&
+            std::equal(description.begin(), description.end(), rhs.description.begin())
+           );
+}
+
+util::Hash Atom::MyHash(void) const
+{
+    return util::MakeHash(*this);
+} 
+
+void Atom::hash(util::Hasher & h) const
+{
+    h(static_cast<const math::Point &>(*this),
+           idx_, Z_, isonum_,
+           mass_, isotopemass_,
+           charge_, multiplicity_,
+           nelectrons_, covradius_,
+           vdwradius_, bshells_);
+}
+
+void Atom::BasisInfo_::hash(util::Hasher & h) const
+{
+    h(description, shells);
 }
 
 

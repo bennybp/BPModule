@@ -10,6 +10,9 @@
 #include "pulsar/datastore/OptionMap.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 #include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/util/bphash/types/string.hpp"
+#include "pulsar/util/bphash/types/memory.hpp"
+#include "pulsar/util/bphash/types/map.hpp"
 
 
 using namespace pulsar::python;
@@ -267,6 +270,16 @@ void OptionMap::AddOption(std::string key, OptionType opttype, bool required,
                                                        validator, help, def);
 
     opmap_.emplace(std::move(key), std::move(oph));
+}
+
+util::Hash OptionMap::MyHash(void) const
+{
+    return util::MakeHash(*this);
+}
+
+void OptionMap::hash(util::Hasher & h) const
+{
+    h(modulekey_, opmap_);
 }
 
 

@@ -8,7 +8,6 @@
 #include "pulsar/system/BasisSet.hpp"
 #include "pulsar/system/AtomicInfo.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
-#include "pulsar/util/HashSerializable.hpp"
 #include "pulsar/math/PointManipulation.hpp"
 
 using pulsar::output::GlobalDebug;
@@ -174,11 +173,6 @@ bool System::operator==(const System& RHS)const
     return(CompareInfo(RHS) && atoms_ == RHS.atoms_);
 }
 
-util::Hash System::MyHash(void) const
-{
-    return util::HashSerializable(*this);
-}
-
 bool System::CompareInfo(const System & RHS)const
 {
     PRAGMA_WARNING_PUSH
@@ -284,6 +278,17 @@ std::string System::ToString()const
     std::stringstream ss;
     Print(ss);
     return ss.str();
+}
+
+
+util::Hash System::MyHash(void) const
+{
+    return util::MakeHash(*this);
+}
+
+void System::hash(util::Hasher & h) const
+{
+    h(atoms_, charge_, multiplicity_, nelectrons_);
 }
 
 ///Returns the distance between each pair of atoms in sys
