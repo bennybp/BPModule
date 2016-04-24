@@ -8,7 +8,7 @@
 #ifndef PULSAR_GUARD_TYPES__STRING_HPP_
 #define PULSAR_GUARD_TYPES__STRING_HPP_
 
-#include <string>
+//#include <string> // included via ContainerHelper
 #include "pulsar/util/bphash/types/ContainerHelper.hpp"
 
 namespace pulsar{

@@ -170,7 +170,7 @@ KeySet OptionMap::AllMissingReq(void) const
 }
 
 
-const OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
+const detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
 {
     if(opmap_.count(key))
         return opmap_.at(key).get();
@@ -178,7 +178,7 @@ const OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
         throw OptionException("Option key not found", "optionkey", key, "modulekey", modulekey_);
 }
 
-OptionBase * OptionMap::GetOrThrow_(const std::string & key)
+detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key)
 {
     if(opmap_.count(key))
         return opmap_.at(key).get();
@@ -266,8 +266,8 @@ void OptionMap::AddOption(std::string key, OptionType opttype, bool required,
         throw OptionException("Attempting to add duplicate option key",
                               "optionkey", key, "modulekey", modulekey_);
 
-    std::unique_ptr<OptionBase> oph = CreateOptionHolder(key, opttype, required,
-                                                       validator, help, def);
+    detail::OptionBasePtr oph = detail::CreateOptionHolder(key, opttype, required,
+                                                           validator, help, def);
 
     opmap_.emplace(std::move(key), std::move(oph));
 }
@@ -310,7 +310,7 @@ pybind11::object OptionMap::GetPy(const std::string & key) const
 
 void OptionMap::ChangePy(const std::string & key, const pybind11::object & obj)
 {
-    OptionBase * ptr = GetOrThrow_(key);
+    detail::OptionBase * ptr = GetOrThrow_(key);
     ptr->ChangePy(obj);
 
     if(lockvalid_)

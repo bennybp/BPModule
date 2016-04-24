@@ -12,8 +12,8 @@
 #include <cstdint>
 #include <set>
 #include <map>
-#include <string>
-#include <vector>
+//#include <string> // included via Cast.hpp
+//#include <vector> // included via Cast.hpp
 #include <algorithm>
 
 #include "pulsar/math/Cast.hpp"

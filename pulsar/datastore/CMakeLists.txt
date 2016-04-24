@@ -2,7 +2,6 @@ set(PULSAR_DATASTORE_FILES
             CacheData.cpp
             OptionHolder.cpp
             OptionTypes.cpp
-            OptionBase.cpp
             OptionMap.cpp
             Wavefunction.cpp
             export.cpp

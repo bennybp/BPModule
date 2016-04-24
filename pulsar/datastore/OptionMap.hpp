@@ -365,7 +365,7 @@ class OptionMap
         bool lockvalid_;
 
         //! Holds the options
-        std::map<std::string, std::unique_ptr<OptionBase>, util::CaseInsensitiveLess> opmap_;
+        std::map<std::string, detail::OptionBasePtr, util::CaseInsensitiveLess> opmap_;
 
         //!< Validates the whole options container
         WholeOptionValidator wholevalid_;
@@ -381,12 +381,12 @@ class OptionMap
          * \throw pulsar::exception::OptionException
          *        if a key doesn't exist
          */
-        const OptionBase * GetOrThrow_(const std::string & key) const;
+        const detail::OptionBase * GetOrThrow_(const std::string & key) const;
 
 
          /* \copydoc GetOrThrow_
          */
-        OptionBase * GetOrThrow_(const std::string & key);
+        detail::OptionBase * GetOrThrow_(const std::string & key);
 
 
         /*! \brief Get a pointer to OptionBase and cast it to an appropriate OptionBase
@@ -398,10 +398,10 @@ class OptionMap
          *        be cast to the desired type
          */
         template<OptionType OPTTYPE>
-        const OptionHolder<OPTTYPE> * GetOrThrow_Cast_(const std::string & key) const
+        const detail::OptionHolder<OPTTYPE> * GetOrThrow_Cast_(const std::string & key) const
         {
-            const OptionBase * ptr = GetOrThrow_(key);
-            const OptionHolder<OPTTYPE> * oh = dynamic_cast<const OptionHolder<OPTTYPE> *>(ptr);
+            const detail::OptionBase * ptr = GetOrThrow_(key);
+            const detail::OptionHolder<OPTTYPE> * oh = dynamic_cast<const detail::OptionHolder<OPTTYPE> *>(ptr);
             if(oh == nullptr)
                 throw exception::OptionException("Bad option cast", "optionkey", key,
                                                  "modulekey", modulekey_,
@@ -415,10 +415,10 @@ class OptionMap
         /*! \copydoc GetOrThrow_Cast_
          */
         template<OptionType OPTTYPE>
-        OptionHolder<OPTTYPE> * GetOrThrow_Cast_(const std::string & key)
+        detail::OptionHolder<OPTTYPE> * GetOrThrow_Cast_(const std::string & key)
         {
-            OptionBase * ptr = GetOrThrow_(key);
-            OptionHolder<OPTTYPE> * oh = dynamic_cast<OptionHolder<OPTTYPE> *>(ptr);
+            detail::OptionBase * ptr = GetOrThrow_(key);
+            detail::OptionHolder<OPTTYPE> * oh = dynamic_cast<detail::OptionHolder<OPTTYPE> *>(ptr);
             if(oh == nullptr)
                 throw exception::OptionException("Bad option cast", "optionkey", key,
                                                  "modulekey", modulekey_,
@@ -485,7 +485,7 @@ class OptionMap
                 OptionType opttype;
                 ByteArray ba;
                 ar(key, opttype, ba);
-                std::unique_ptr<OptionBase> opt = OptionHolderFromByteArray(opttype, ba);
+                detail::OptionBasePtr opt = detail::OptionHolderFromByteArray(opttype, ba);
                 opmap_.emplace(key, std::move(opt));
             }
 

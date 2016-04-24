@@ -8,33 +8,34 @@
 #ifndef PULSAR_GUARD_DATASTORE__OPTIONBASE_HPP_
 #define PULSAR_GUARD_DATASTORE__OPTIONBASE_HPP_
 
-#include <memory>
-#include <string>
-#include <vector>
 #include <ostream>
 
 #include "pulsar/python/Pybind11_fwd.hpp"
-#include "pulsar/util/Serialization.hpp"
-#include "pulsar/util/bphash/Hasher_fwd.hpp"
+#include "pulsar/util/Serialization_fwd.hpp"
+
+#include "pulsar/util/bphash/types/string.hpp" // Includes Hasher
 
 namespace pulsar{
 namespace datastore {
-
-
-// forward declare class
-class OptionBase;
-enum class OptionType;
-
-
 
 //! A collection of problems with an option
 typedef std::vector<std::string> OptionIssues;
 
 
+// forward declare
+enum class OptionType;
+
+
+
+
+namespace detail {
+
+
+// forward declare class
+class OptionBase;
+
 //! A pointer to an option
 typedef std::unique_ptr<OptionBase> OptionBasePtr;
-
-
 
 
 
@@ -51,10 +52,15 @@ class OptionBase
          * \param [in] required True if this is a required option
          * \param [in] help A help string for this option
          */
-        OptionBase(const std::string & key, bool required, const std::string & help);
+        OptionBase(const std::string & key, bool required, const std::string & help)
+            : key_(key), required_(required), help_(help)
+        {  }
+
 
         /// \copydocs OptionBase(const std::string &, bool, const std::string &)
-        OptionBase(std::string && key, bool required, std::string && help);
+        OptionBase(std::string && key, bool required, std::string && help)
+            : key_(std::move(key)), required_(required), help_(std::move(help))
+        { }
 
 
         virtual ~OptionBase() noexcept              = default;
@@ -155,6 +161,10 @@ class OptionBase
 
 
         /*! \brief Print out information about this option
+         *
+         * Will print its key, type, etc. If there is a problem
+         * with the option, the Error() output is used. If the
+         * option is not the default, the Changed() output is used.
          */
         virtual void Print(std::ostream & os) const = 0;
 
@@ -197,7 +207,10 @@ class OptionBase
          *
          * \exnothrow
          */
-        const std::string & Key(void) const noexcept;
+        const std::string & Key(void) const noexcept
+        {
+            return key_;
+        }
 
 
 
@@ -205,7 +218,10 @@ class OptionBase
          *
          * \exnothrow
          */
-        bool IsRequired(void) const noexcept;
+        bool IsRequired(void) const noexcept
+        {
+            return required_;
+        }
 
 
 
@@ -216,7 +232,10 @@ class OptionBase
          * \return True if there is a value or a default, or if this
          *         option is not required
          */
-        bool IsSetIfRequired(void) const noexcept;
+        bool IsSetIfRequired(void) const noexcept
+        {
+            return HasValue() || HasDefault() || !IsRequired();
+        }
 
 
 
@@ -225,7 +244,10 @@ class OptionBase
          *
          * \exnothrow
          */
-        const std::string & Help(void) const noexcept;
+        const std::string & Help(void) const noexcept
+        {
+            return help_;
+        }
 
 
 
@@ -234,10 +256,21 @@ class OptionBase
          * \throw pulsar::exception::PythonCallException if there is a problem
          *        with the validation function
          */
-        bool HasIssues(void) const;
+        bool HasIssues(void) const
+        {
+            return (GetIssues().size());
+        }
 
 
-        util::Hash MyHash(void) const;
+        /*! \brief Return a hash of this option
+         * 
+         * The hash includes whether or not defaults or values are
+         * set, etc.
+         */
+        util::Hash MyHash(void) const
+        {
+            return util::MakeHash(*this);
+        }
 
 
     protected:
@@ -254,6 +287,7 @@ class OptionBase
         OptionBase(const OptionBase &) = default;
 
 
+        /*! \brief Hash the contents of this option */
         virtual void hash_value(util::Hasher & h) const = 0;
 
 
@@ -273,18 +307,21 @@ class OptionBase
 
         DECLARE_HASHING_FRIENDS
 
-        virtual void hash(util::Hasher & h) const;
+        void hash(util::Hasher & h) const
+        {
+            h(key_, required_, help_);
+
+            // call virtual function
+            hash_value(h);
+        }
 
         ///@}
 
 };
 
 
-
-
-
-
-} //closing namespace datastore
-} //closing namespace pulsar
+} // close namespace detail
+} // close namespace datastore
+} // close namespace pulsar
 
 #endif

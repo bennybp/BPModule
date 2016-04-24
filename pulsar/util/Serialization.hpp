@@ -20,14 +20,13 @@
 #include <cereal/types/string.hpp>
 #include <cereal/types/complex.hpp>
 
+#include "pulsar/util/Serialization_fwd.hpp" // for ByteArray
 #include "pulsar/util/SerializationArchives.hpp"
 
 #define DECLARE_SERIALIZATION_FRIENDS \
     friend class cereal::access; \
     template<typename T> friend class pulsar::util::detail::StdStreamArchive;
 
-
-typedef std::vector<char> ByteArray;
 
 
 namespace pulsar{
