@@ -282,7 +282,6 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
     // NOTE - we do this first so that we don't create a module
     // if the options are bad (and an exception is thrown)
     ModuleInfo mi(se.mi);
-    mi.options.LockValid(true);
 
     // add the moduleinfo to the tree
     // (parentid, etc, will be set by the tree)

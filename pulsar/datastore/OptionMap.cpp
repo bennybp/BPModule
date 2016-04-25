@@ -60,14 +60,13 @@ void OptionMapIssues::Print(std::ostream & os) const
 // Member functions
 ////////////////////////////////////////////////
 OptionMap::OptionMap(const std::string & modulekey)
-    : modulekey_(modulekey), expert_(false), lockvalid_(false)
+    : modulekey_(modulekey), expert_(false)
 { }
 
 
 OptionMap::OptionMap(const OptionMap & rhs)
     : modulekey_(rhs.modulekey_),
       expert_(rhs.expert_),
-      lockvalid_(rhs.lockvalid_),
       wholevalid_(rhs.wholevalid_)
 {
     for(const auto & it : rhs.opmap_)
@@ -147,14 +146,6 @@ bool OptionMap::AllReqSet(void) const noexcept
 void OptionMap::SetExpert(bool expert) noexcept
 {
     expert_ = expert;
-}
-
-
-
-void OptionMap::LockValid(bool lockvalid)
-{
-    Validate_();
-    lockvalid_ = lockvalid;
 }
 
 
@@ -312,9 +303,6 @@ void OptionMap::ChangePy(const std::string & key, const pybind11::object & obj)
 {
     detail::OptionBase * ptr = GetOrThrow_(key);
     ptr->ChangePy(obj);
-
-    if(lockvalid_)
-        Validate_();
 }
 
 

@@ -196,21 +196,6 @@ class OptionMap
         void SetExpert(bool expert) noexcept;
 
 
-
-        /*! \brief Lock the validity of this map
-         *
-         * If true, this OptionMap to be fixed in a valid state.
-         * Additional changes will cause validation to be
-         * run and exceptions to possibly be thrown.
-         *
-         * The validity of this map is checked first if setting to true.
-         *
-         * \throw pulsar::exception::PythonCallException if there is a problem
-         *        with validation.
-         */
-        void LockValid(bool lockvalid);
-
-
         /*! \brief Dumps the options to the output
         */
         void Print(std::ostream & os) const;
@@ -280,8 +265,6 @@ class OptionMap
 
             GetOrThrow_Cast_<opt_type>(key)->Change(convval);
 
-            if(lockvalid_)
-                Validate_();
         }
 
 
@@ -360,9 +343,6 @@ class OptionMap
 
         //! If true, don't throw exceptions on validation errors
         bool expert_;
-
-        //! If true, changing the OptionMap causes validation to be run
-        bool lockvalid_;
 
         //! Holds the options
         std::map<std::string, detail::OptionBasePtr, util::CaseInsensitiveLess> opmap_;
@@ -461,8 +441,8 @@ class OptionMap
         template<class Archive>
         void save(Archive & ar) const
         {
-            // We don't do lockvalid - if we are unserializing, we are
-            // going to lock it. We also don't do validators
+            // We don't do validators - map should only be read-only
+            // after unserializing
             ar(modulekey_, expert_);
 
             // We have to do the options a special way
@@ -488,8 +468,6 @@ class OptionMap
                 detail::OptionBasePtr opt = detail::OptionHolderFromByteArray(opttype, ba);
                 opmap_.emplace(key, std::move(opt));
             }
-
-            lockvalid_ = true;
         }
 
 

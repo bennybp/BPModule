@@ -38,7 +38,7 @@ void ModuleInfo::Print(std::ostream & os) const
         Output(os, "                  %?\n", refs[i]);
 
     Output(os, "         Options: %?\n", options.Size());
-    //options.Print();
+    options.Print(os);
 }
 
 

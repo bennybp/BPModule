@@ -23,9 +23,12 @@ namespace detail {
 /*! \brief Converts an option value to a string
  */
 template<typename T>
-static std::vector<std::string> OptToString(const T & opt)
+std::vector<std::string> OptToString(const T & opt)
 {
-    return {util::FormatString("%-12.8?", opt)};
+    if(std::is_integral<T>::value)
+        return {util::FormatString("%-12?", opt)};
+    else
+        return {util::FormatString("%-12.8?", opt)};
 }
 
 /*! \brief Converts an option value to a string
