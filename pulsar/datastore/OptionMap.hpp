@@ -54,6 +54,16 @@ struct OptionMapIssues
  *
  * The options are stored as a key -> value map, with the
  * key being a string. The key is case insensitive.
+ *
+ * \par Hashing
+ *     The hash value of an OptionMap is unique with respect to the values
+ *     and defaults. This includes whether or not a value is set, even if
+ *     it is set to the default. (ie, an option with a value manually
+ *     set to the default and one without a value explicitly set will
+ *     have different hashes). See HashValues for one that just hashes
+ *     the values. Note that hashing does not include validators, but does
+ *     include the modulekey associated with the map and whether or not
+ *     expert mode is enabled.
  */
 class OptionMap
 {
@@ -286,10 +296,6 @@ class OptionMap
         bool operator==(const OptionMap & rhs) const;
 
 
-        /*! \brief Compare two OptionMap, but only with some keys
-         */
-        bool CompareSelect(const OptionMap & rhs, const KeySet & selection) const;
-
 
 
         /*! \brief Add an option to this map
@@ -302,8 +308,31 @@ class OptionMap
 
 
 
+        /*! \brief Obtain a unique hash for this OptionMap
+         * 
+         * This includes values and defaults, and the expert flag.
+         * It does not include validation functions.
+         */
         util::Hash MyHash(void) const;
 
+
+        /*! \brief Hash only the values of a set of options
+         *
+         * This hashes only the keys and values of options. It does
+         * not take into account where that value comes from.
+         *
+         * \throw pulsar::exception::OptionException if
+         *        the key does not exist
+         */ 
+        util::Hash HashValues(const std::set<std::string> & keys) const;
+
+
+        /*! \brief Hash only the values of all options
+         * 
+         * This hashes only the keys and values of options. It does
+         * not take into account where that value comes from.
+         */ 
+        util::Hash HashAllValues(void) const;
 
 
         /////////////////////////////
@@ -352,7 +381,9 @@ class OptionMap
 
 
 
-
+        //////////////////////////////
+        // Functions
+        //////////////////////////////
 
         /*! \brief Get an OptionBase or throw if the key doesn't exist
          *

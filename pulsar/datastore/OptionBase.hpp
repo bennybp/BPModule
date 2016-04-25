@@ -262,14 +262,11 @@ class OptionBase
         }
 
 
-        /*! \brief Return a hash of this option
-         * 
-         * The hash includes whether or not defaults or values are
-         * set, etc.
+        /*! \brief Add the key and value of this option to a hash
          */
-        util::Hash MyHash(void) const
+        void HashValue(util::Hasher & h) const
         {
-            return util::MakeHash(*this);
+            hash_value(h);
         }
 
 
@@ -287,9 +284,21 @@ class OptionBase
         OptionBase(const OptionBase &) = default;
 
 
+
+        //! \name Hashing and Serialization
+        ///@{
+
+        DECLARE_HASHING_FRIENDS
+
+        virtual void hash(util::Hasher & h) const
+        {
+            h(key_, required_, help_);
+        }
+
         /*! \brief Hash the contents of this option */
         virtual void hash_value(util::Hasher & h) const = 0;
 
+        ///@}
 
 
     private:
@@ -302,20 +311,6 @@ class OptionBase
         //! The help string for this option
         std::string help_;
 
-        //! \name Hashing and Serialization
-        ///@{
-
-        DECLARE_HASHING_FRIENDS
-
-        void hash(util::Hasher & h) const
-        {
-            h(key_, required_, help_);
-
-            // call virtual function
-            hash_value(h);
-        }
-
-        ///@}
 
 };
 

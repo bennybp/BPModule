@@ -228,27 +228,6 @@ bool OptionMap::operator==(const OptionMap & rhs) const
 }
 
 
-bool OptionMap::CompareSelect(const OptionMap & rhs, const KeySet & selection) const
-{
-    //! \todo Too strict or not strict enough? What if one doesn't have it but the other doesn't have a value?
-    for(const auto & it : selection)
-    {
-        // if one has it but not the other
-        if(HasKey(it) != rhs.HasKey(it))
-            return false;
-
-        // if they both have it
-        if(HasKey(it) && rhs.HasKey(it))
-            if(opmap_.at(it)->Compare(*(rhs.opmap_.at(it))) == false)
-                return false;
-
-        // if neither have it that's ok?
-    }
-
-    return true;
-}
-
-
 void OptionMap::AddOption(std::string key, OptionType opttype, bool required,
                           const pybind11::object & validator, std::string help,
                           const pybind11::object & def)
@@ -268,9 +247,35 @@ util::Hash OptionMap::MyHash(void) const
     return util::MakeHash(*this);
 }
 
+util::Hash OptionMap::HashValues(const std::set<std::string> & keys) const
+{
+    util::Hasher h;
+    h(modulekey_);
+
+    for(const auto & it : keys)
+    {
+        const detail::OptionBase * op = GetOrThrow_(it);
+        op->HashValue(h);
+    }
+
+    return h.Finalize();
+}
+
+util::Hash OptionMap::HashAllValues(void) const
+{
+    util::Hasher h;
+    h(modulekey_);
+
+    for(const auto & it : opmap_)
+        it.second->HashValue(h);
+
+    return h.Finalize();
+}
+
+
 void OptionMap::hash(util::Hasher & h) const
 {
-    h(modulekey_, opmap_);
+    h(modulekey_, expert_, opmap_);
 }
 
 

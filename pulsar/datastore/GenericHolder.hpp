@@ -50,8 +50,7 @@ class GenericHolder : public GenericBase
          * \param [in] m The object to move
          */
         GenericHolder(T && m)
-            : obj(m)
-
+            : obj(std::move(m))
         { }
 
 

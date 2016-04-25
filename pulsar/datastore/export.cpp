@@ -82,9 +82,10 @@ PYBIND11_PLUGIN(datastore)
     .def("Get", &OptionMap::GetPy)
     .def("ModuleKey", &OptionMap::ModuleKey, pybind11::return_value_policy::copy)
     .def("Compare", &OptionMap::Compare)
-    .def("CompareSelect", &OptionMap::CompareSelect)
     .def("HasIssues", &OptionMap::HasIssues)
     .def("MyHash", &OptionMap::MyHash)
+    .def("HashValues", &OptionMap::HashValues)
+    .def("HashAllValues", &OptionMap::HashAllValues)
     .def(pybind11::self == pybind11::self)
     ;
 
@@ -109,26 +110,20 @@ PYBIND11_PLUGIN(datastore)
     //!\todo GetCopy and GetRef are equivalent for python
     ////////////////////////////////////////
     pybind11::class_<CacheData>(m, "CacheData")
-    .def("CountKey", &CacheData::CountKey)
     .def("Size", &CacheData::Size)
     .def("GetKeys", &CacheData::GetKeys)
     .def("Erase", &CacheData::Erase)
     .def("Print", &CacheData::Print)
-    .def("HasData", &CacheData::HasData,
+    .def("Count", &CacheData::Count,
                    "See if the cache has some data",
-                   pybind11::arg("key"),
-                   pybind11::arg("opt") = OptionMap(),
-                   pybind11::arg("sigopt") = pybind11::list())
+                   pybind11::arg("key"))
     .def("Get", &CacheData::GetPy, 
                 "Get reference", pybind11::return_value_policy::reference_internal,
-                pybind11::arg("key"),
-                pybind11::arg("opt") = OptionMap(),
-                pybind11::arg("sigopt") = pybind11::list())
+                pybind11::arg("key"))
     .def("Set", &CacheData::SetPy, 
                 "Set data",
                 pybind11::arg("key"), 
-                pybind11::arg("obj"),
-                pybind11::arg("opt") = OptionMap())
+                pybind11::arg("obj"))
     ;
 
 

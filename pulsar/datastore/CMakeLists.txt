@@ -1,5 +1,4 @@
 set(PULSAR_DATASTORE_FILES
-            CacheData.cpp
             OptionHolder.cpp
             OptionTypes.cpp
             OptionMap.cpp

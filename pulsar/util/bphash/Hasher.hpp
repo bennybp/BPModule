@@ -151,6 +151,19 @@ Hash MakeHash(const Targs &... args)
 }
 
 
+/*! \brief Convenience function for a range from a container
+ */
+template<typename InputIterator>
+Hash MakeHashRange(InputIterator first, InputIterator last)
+{
+    Hasher hasher;
+
+    for(auto it = first; it != last; ++it)
+        hasher(*it);
+    return hasher.Finalize();
+}
+
+
 //////////////////////////////////////////
 // Helper for pointers
 //////////////////////////////////////////
@@ -236,7 +249,7 @@ DECLARE_FUNDAMENTAL_HASHER(long double)
 
 #undef DECLARE_FUNDAMENTAL_HASHER
 
-} // close namespaec detail
+} // close namespace detail
 
 
 

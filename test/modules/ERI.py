@@ -93,19 +93,19 @@ def Run(mm):
 
         outbuf = array.array('d', [0]*1024)
 
-        n = eri.Calculate(1, 0, 0, 0, 0, outbuf)
+        n = eri.Calculate(0, 0, 0, 0, 0, outbuf)
         tester.TestValue("Number of integrals for 0000", 1, n)
         tester.TestValue("Values for 0000 integrals", True, CompareList(list(outbuf[:n]), ref_0000, 1e-15))
 
-        n = eri.Calculate(1, 1, 0, 0, 0, outbuf)
+        n = eri.Calculate(0, 1, 0, 0, 0, outbuf)
         tester.TestValue("Number of integrals for 1000", 4, n)
         tester.TestValue("Values for 1000 integrals", True, CompareList(list(outbuf[:n]), ref_1000, 1e-15))
 
-        n = eri.Calculate(1, 1, 0, 1, 0, outbuf)
+        n = eri.Calculate(0, 1, 0, 1, 0, outbuf)
         tester.TestValue("Number of integrals for 1010", 16, n)
         tester.TestValue("Values for 1010 integrals", True, CompareList(list(outbuf[:n]), ref_1010, 1e-15))
 
-        n = eri.CalculateMulti(1, [0, 1], [ 0 ], [0, 1], [ 0 ], outbuf)
+        n = eri.CalculateMulti(0, [0, 1], [ 0 ], [0, 1], [ 0 ], outbuf)
         tester.TestValue("Number of integrals for calculate multi", 25, n)
         tester.TestValue("Values from CalculateMulti", True, CompareList(list(outbuf[:n]), ref_multi, 1e-15))
 

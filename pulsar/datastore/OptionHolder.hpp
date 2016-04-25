@@ -17,6 +17,8 @@
 #include "pulsar/python/Call.hpp"
 #include "pulsar/output/Output.hpp"
 
+#include "pulsar/util/bphash/types/memory.hpp"
+
 namespace pulsar{
 namespace datastore {
 namespace detail {
@@ -401,16 +403,6 @@ class OptionHolder : public OptionBase
             Change(val);
         }
 
-    protected:
-
-        virtual void hash_value(util::Hasher & h) const
-        {
-            if(HasValue())
-                h(Key(), Get());
-            else
-                h(Key(), std::string("__!%_NOVALUE_%!__"));
-        }
-
 
     private:
         friend OptionBasePtr OptionHolderFromByteArray(OptionType, const ByteArray &);
@@ -445,6 +437,30 @@ class OptionHolder : public OptionBase
         ValidatorFunc validator_;
 
 
+        //! \name Hashing and Serialization
+        ///@{
+
+        DECLARE_HASHING_FRIENDS
+
+        void hash(util::Hasher & h) const
+        {
+            OptionBase::hash(h);
+            h(value_, default_);
+        }
+
+
+        void hash_value(util::Hasher & h) const
+        {
+            h(static_cast<const OptionBase &>(*this));
+
+            if(HasValue())
+                h(Get());
+            else
+                h(std::string("__!%_NOVALUE_%!__"));
+        }
+
+
+        ///@}
 };
 
 
