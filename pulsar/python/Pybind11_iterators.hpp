@@ -75,7 +75,7 @@ void RegisterPyRefIterator(pybind11::module & m, const char * contname)
 {
     std::string itname = std::string(contname) + "_iterator";
     pybind11::class_<PyRefIterator<Container>>(m, itname.c_str())
-    .def("__next__", &PyRefIterator<Container>::next)
+    .def("__next__", &PyRefIterator<Container>::next, pybind11::return_value_policy::reference_internal)
     .def("__iter__", [](PyRefIterator<Container> & it) -> PyRefIterator<Container> & { return it; });
 }
 
