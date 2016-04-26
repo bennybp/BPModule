@@ -6,8 +6,8 @@
 #include <array>
 #include <unordered_set>
 #include <iostream>
-#include "pulsar/system/Symmetrizer.hpp"
-#include "pulsar/system/SymmetryElements.hpp"
+#include "pulsar/system/symmetry/Symmetrizer.hpp"
+#include "pulsar/system/symmetry/SymmetryElements.hpp"
 #include "pulsar/system/System.hpp"
 #include "pulsar/math/Point.hpp"
 #include "pulsar/math/NumberTheory.hpp"
@@ -66,7 +66,7 @@ bool IsGood(const System& Mol,const SymmEl_t& E,const Vector_t& Ax,double Tol){
     }
     double a0=1.0/BOHR_RADIUS_ANGSTROMS,Denom=0.0;
     if(E.SSymbol=="i")Denom=AJ.Magnitude();
-    else if(E.SSymbol=="m")Denom=fabs(Dot(AJ,Ax));
+    else if(E.HMSymbol=="m")Denom=fabs(Dot(AJ,Ax));
     else Denom=PerpDist(Ax,AJ);
     return(MaxDist/(Denom>a0?Denom:1.0))<Tol;
 }
@@ -89,60 +89,77 @@ AtomSet_t GetCircularSet(const System& Mol,const Vector_t& Ax,double T){
     return CircularSet;
 }
 
+Vector_t Orient(const Vector_t& Axis){
+    //Fix orientation so counter/clockwise are same direction
+    //We do this by requiring our axis to point "up" in a right handed
+    //coordinate system.  If it lies in the XY plane we then require that
+    //the y-coordinate be positive, and if it lies on the x axis the x
+    //coordinate need be positive.  To accomplish any of these we need to
+    //invert through the origin if the given component is negative
+    if(fabs(Axis[2])>1e-2){//Not in XY plane
+        if(Axis[2]>0.0)return Vector_t(Axis);//Pointing up already
+    }
+    else if(fabs(Axis[1])>1e-2){//Not on X-axis
+        if(Axis[1]>0.0)return Vector_t(Axis);//Positive Y already
+    }
+    else{if(Axis[0]>0.0)return Vector_t(Axis);}//Positive X already
+    return {-1.0*Axis[0],-1.0*Axis[1],-1.0*Axis[2]};
+}
+
 //Looks for Sn along axis Axis to within tolerance T, if found added to Es
 void FindSn(const System& M,const Vector_t& Axis,size_t n,double T,Elems_t& Es){
-    ImproperRotation Sns[2]={{Axis,n,1},{Axis,2*n,1}};
-    for(const ImproperRotation& Si: Sns){
-        if(IsGood(M,Si,Axis,T)){
-            const bool Odd=n%2==1;
-            size_t Max=(Odd?2*n:n),Self=(Odd?n:n/2),Inc(Odd?2:1);
-            for(size_t i=1;i<Max;i+=Inc){
-                std::pair<size_t,size_t> Frac=math::Reduce(i,n);
-                if(i!=Self)
-                    Es.insert(ImproperRotation(Axis,Frac.second,Frac.first));
-            }
-        }
+    ImproperRotation Sn2(Axis,2*n,1),Sn(Axis,n,1);
+    if(n!=2&&IsGood(M,Sn,Axis,T)){
+       const bool Odd=n%2==1;
+       size_t Max=(Odd?2*n:n),Self=(Odd?n:n/2),Inc(Odd?2:1);
+       for(size_t i=1;i<Max;i+=Inc){
+         std::pair<size_t,size_t> Frac=math::Reduce(i,n);
+         if(i!=Self)Es.insert(ImproperRotation(Axis,Frac.second,Frac.first));
+       }
+    }
+    if(IsGood(M,Sn2,Axis,T)){
+       for(size_t i=1;i<2*n;++i){//Always even
+         std::pair<size_t,size_t> Frac=math::Reduce(i,2*n);
+         if(i!=n)Es.insert(ImproperRotation(Axis,Frac.second,Frac.first));
+       } 
     }
 }
 
 //Looks for reflection normal to axis
-void FindSigma(const System& Mol,const Vector_t& Axis,double Tol,Elems_t& Es){
-    MirrorPlane Sigma(Axis);
-    if(IsGood(Mol,Sigma,Axis,Tol))Es.insert(Sigma);
+void FindSigma(const System& Mol,const Vector_t& Axis,double Tol,
+               Elems_t& Es){
+    Vector_t NewAxis=Orient(Axis);
+    MirrorPlane Sigma(NewAxis);
+    if(IsGood(Mol,Sigma,NewAxis,Tol))
+        Es.insert(Sigma);
 }
 
 
 //Determines if Axis is a Cn to within Tol.  Axis must be unit vector
 //Also looks for Sn coincident with Cn and sigma perpendicular to Cn
-//S2==i so don't look for that
-void FindCn(const System& Mol,Vector_t Axis,double Tol,Elems_t& Elems){
-    //Fix orientation so counter/clockwise are same direction
-    //We do this by requiring our axis to point "up" in a right handed
-    //coordinate system.  If it lies in the XY plane we then require that
-    //the y coordinate is positive.  In the case that the axis is parallel to
-    //the x axis we then require x to be positive.  Note we get our sign right
-    //even if the axis is just slightly not in the XY plane or on the Y-axis
-    //so strict comparison with 0.0 is justified
-    if(fabs(Axis[2])>0.0)Axis[2]=fabs(Axis[2]);
-    else if(fabs(Axis[1])>0.0)Axis[1]=fabs(Axis[1]);
-    else Axis[0]=fabs(Axis[0]);
-    AtomSet_t CSet=GetCircularSet(Mol,Axis,Tol);
+void FindCn(const System& Mol,const Vector_t& Axis,double Tol,
+            Elems_t& Elems){
+    Vector_t NewAxis=Orient(Axis);
+    AtomSet_t CSet=GetCircularSet(Mol,NewAxis,Tol);
     for(size_t n=CSet.size();n>1;--n){
-        Rotation Cn(Axis,n,1);
-        if(IsGood(Mol,Cn,Axis,Tol)){
+        Rotation Cn(NewAxis,n,1);
+        if(IsGood(Mol,Cn,NewAxis,Tol)){
             for(size_t m=1;m<=n-1;++m){//All n-1 applications of Cn
                 std::pair<size_t,size_t> Frac=math::Reduce(m,n);
-                Elems.insert(Rotation(Axis,Frac.second,Frac.first));
+                Elems.insert(Rotation(NewAxis,Frac.second,Frac.first));
             }
-            FindSigma(Mol,Axis,Tol,Elems);
-            if(n!=2)FindSn(Mol,Axis,n,Tol,Elems);
+            FindSigma(Mol,NewAxis,Tol,Elems);
+            FindSn(Mol,NewAxis,n,Tol,Elems);
             break;
         }
     }//Loop over circular set
 }
 
-void Symmetrizer::GetSymmetry(const System& Mol)const{
-    const double DegenTol=0.01,SymTol=0.1;
+SymmetryGroup Symmetrizer::GetSymmetry(const System& Mol)const{
+    if(Mol.Size()==1)
+        return SymmetryGroup({},"Kh","oo/moo");
+    
+    const double SymTol=0.1;
     Elems_t Elems;
     //RankedGroups FoundGroups;
     Point CoM=Mol.CenterOfMass();
@@ -153,13 +170,21 @@ void Symmetrizer::GetSymmetry(const System& Mol)const{
 
     //Our molecule aligned with the principal moments of inertia
     System PrinMol=CenteredMol.Rotate(I);
+    
+    //Taking Trent's percentage based check idea, we'll go with 1% of largest
+    double DegenTol=0.01*Moments[2];
     size_t NumDegen=AreEqual(Moments[1],Moments[0],DegenTol)+
             AreEqual(Moments[2],Moments[1],DegenTol)+
             AreEqual(Moments[2],Moments[0],DegenTol);
-
     //Find center of inversion, if it exists it's at the origin
     if(IsGood(PrinMol,CoI,{0.0,0.0,0.0},SymTol))Elems.insert(CoI);
-
+    
+    if(NumDegen==1 && fabs(Moments[0])<SymTol){//Linear molecule
+        Elems.insert(SymmetryElement({},"C_oo","oo"));
+        return AssignGroup(Elems);
+    }
+    
+    
     //Rotation about principal axes
     for(size_t i=0;i<3;++i){
         Vector_t Axis={0.0,0.0,0.0};
@@ -201,11 +226,8 @@ void Symmetrizer::GetSymmetry(const System& Mol)const{
             if(!AtomsAreEqual(AI,BI))continue;
             double CosTheta=
                     Dot(AI,BI)/(AI.Magnitude()*BI.Magnitude());
-            //std::cout<<CosTheta<<std::endl;
-            if(AreEqual(CosTheta,1.0,DegenTol))continue;//Parallel
-            //std::cout<<"Not parallel"<<std::endl;
-            if(AreEqual(CosTheta,-1.0,DegenTol))continue;//Anti-parallel
-            //std::cout<<"Not anti-parallel"<<std::endl;
+            if(AreEqual(CosTheta,1.0,SymTol))continue;//Parallel
+            if(AreEqual(CosTheta,-1.0,SymTol))continue;//Anti-parallel
             math::Point BiSec=AI+BI;
             double Mag=BiSec.Magnitude();
             Vector_t Axis={BiSec[0]/Mag,BiSec[1]/Mag,BiSec[2]/Mag};
@@ -224,12 +246,8 @@ void Symmetrizer::GetSymmetry(const System& Mol)const{
 
     }
 
-    for(const SymmetryElement& Gi:Elems){
-        std::cout<<Gi<<" ";
-    }
-    std::cout<<std::endl;
-
-    //return FoundGroups;
+    std::cout<<AssignGroup(Elems)<<std::endl;
+    return AssignGroup(Elems);
 }
 
 

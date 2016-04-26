@@ -14,10 +14,11 @@
 #include "pulsar/system/AtomicInfo.hpp"
 #include "pulsar/system/System.hpp"
 #include "pulsar/system/BasisSet.hpp"
-#include "pulsar/system/Symmetrizer.hpp"
-#include "pulsar/system/SymmetryElements.hpp"
 #include "pulsar/system/AOOrdering.hpp"
 #include "pulsar/system/SphericalTransform.hpp"
+#include "pulsar/system/symmetry/Symmetrizer.hpp"
+#include "pulsar/system/symmetry/SymmetryElements.hpp"
+#include "pulsar/system/symmetry/SymmetryGroup.hpp"
 #include "pulsar/math/RegisterMathSet.hpp"
 
 
@@ -352,6 +353,17 @@ PYBIND11_PLUGIN(system)
     
     m.attr("Identity")=pybind11::cast(SymmetryElement(Identity));
     m.attr("CoI")=pybind11::cast(SymmetryElement(CoI));
+    
+    pybind11::class_<SymmetryGroup>(m,"SymmetryGroup")
+    .def(pybind11::init<const std::unordered_set<SymmetryElement>&,
+                        const std::string&,const std::string&>())
+    .def(pybind11::init<const SymmetryGroup&>())
+    .def_readonly("Elem",&SymmetryGroup::Elems)
+    .def_readonly("SSymbol",&SymmetryGroup::SSymbol)
+    .def_readonly("HMSymbol",&SymmetryGroup::HMSymbol)
+    ;
+    
+    
     
     // Export the testing stuff
     export_testing(m);

@@ -45,13 +45,12 @@ struct SymmetryElement{
      *         other's
      *
      *  I originally had this as an exact equality; however numeric precision
-     *  caused that to fail so I introduced a threshold of 1.0 e^-5.  Then
-     *  the notion of clockwise versus counter-clockwise rotation threw
-     *  this off (they get different SSymbol's so symbol equality failed).  At
-     *  first that seems like it should fail, but the problem is 
-     *  rotation is always clockwise around a positive axis, but sometimes we
-     *  have negative axes as our rotation axis.
-     *  define an axis through the CoM and an atom or bond midpoint
+     *  caused that to fail so I introduced a threshold of 1.0e-5.  That
+     *  threshold is too tight and I had to drop it to 1.0e-2.  Ultimately,
+     *  these matrices are numerically quite noisy, even for structures that
+     *  are reasonably close to their symmetric geometries.  The large
+     *  in magnitude elements of these matrices are on the order of 0.1 to 1.0
+     *  so this still represents a threshold that is 10 to 100% smaller.
      */
     bool operator==(const SymmetryElement& Other)const;
     

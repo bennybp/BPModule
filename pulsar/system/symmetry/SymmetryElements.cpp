@@ -4,9 +4,8 @@
  * and open the template in the editor.
  */
 #include <iostream>
-#include "pulsar/system/SymmetryElements.hpp"
+#include "pulsar/system/symmetry/SymmetryElements.hpp"
 #include "pulsar/math/Geometry.hpp"
-#include "pulsar/system/SymmetryElements.hpp"
 
     using std::string;
     using std::to_string;
@@ -19,7 +18,7 @@ namespace system{
 
     
 bool SymmetryElement::operator==(const SymmetryElement& Other)const{
-    const double Tol=1.0e-4;
+    const double Tol=1.0e-2;
     bool MatSame=true;
     for(size_t i=0;i<9&&MatSame;++i)
         MatSame=(fabs(Elem[i]-Other.Elem[i])<Tol);
