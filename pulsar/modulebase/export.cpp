@@ -90,7 +90,7 @@ PYBIND11_PLUGIN(modulebase)
           ;
 
     /////////////////////////
-    // One electron integral ementation
+    // One electron integral implementation
     /////////////////////////
     pybind11::class_<OneElectronIntegral_Py> oneel(m, "OneElectronIntegral", mbase);
     oneel.alias<OneElectronIntegral>()
@@ -99,12 +99,12 @@ PYBIND11_PLUGIN(modulebase)
             .def("Cache", &OneElectronIntegral_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("MManager", &OneElectronIntegral_Py::MManager, pybind11::return_value_policy::reference_internal)
             .def("SetBases", &OneElectronIntegral::SetBases)
-            .def("Calculate", &OneElectronIntegral::Calculate)
-            .def("CalculateMulti", &OneElectronIntegral::CalculateMulti)
+            .def("Calculate", &OneElectronIntegral::CalculatePy)
+            .def("CalculateMulti", &OneElectronIntegral::CalculateMultiPy)
             ;
 
     /////////////////////////
-    // Two electron integral ementation
+    // Two electron integral implementation
     /////////////////////////
     pybind11::class_<TwoElectronIntegral_Py> twoel(m, "TwoElectronIntegral", mbase);
     twoel.alias<TwoElectronIntegral>()

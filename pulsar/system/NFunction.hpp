@@ -24,35 +24,56 @@ namespace system {
 //////////////////////////////
 // Cartesian
 //////////////////////////////
+
+/*! \brief Sum of the number of cartesian gaussians in am = 0
+ *         through the given am
+ */
+inline int NSumCartesianGaussian(int am)
+{
+    int ncart = 0;
+    for(int i = 0; i <= am; ++i)
+        ncart += NCartesianGaussian_(i);
+    return ncart;
+}
+
+
+
+/*! \brief Number of cartesian gaussians in a single AM
+ */
 inline int NCartesianGaussian(int am)
 {
     if(am >= 0) // "Normal" angular momentum
         return NCartesianGaussian_(am);
     else // "Special" combination (sp, spd, etc)
-    {
-        int ncart = 0;
-        for(int i = 0; i >= am; --i)
-            ncart += NCartesianGaussian_(-i);
-        return ncart;
-    }
+        return NSumCartesianGaussian(-am);
 }
+
 
 
 
 //////////////////////////////
 // Spherical Harmonics
 //////////////////////////////
+/*! \brief Sum of the number of spherical gaussians in am = 0
+ *         through the given am
+ */
+inline int NSumSphericalGaussian(int am)
+{
+    int nsph = 0;
+    for(int i = 0; i <= am; ++i)
+        nsph += NSphericalGaussian_(i);
+    return nsph;
+}
+
+
+/*! \brief Number of spherical gaussians in a single AM
+ */
 inline int NSphericalGaussian(int am)
 {
     if(am >= 0) // "Normal" angular momentum
         return NSphericalGaussian_(am);
     else // "Special" combination (sp, spd, etc)
-    {
-        int ncart = 0;
-        for(int i = 0; i >= am; --i)
-            ncart += NSphericalGaussian_(-i);
-        return ncart;
-    }
+        return NSumSphericalGaussian_(-am);
 }
 
 

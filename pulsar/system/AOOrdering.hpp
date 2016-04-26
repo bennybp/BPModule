@@ -82,6 +82,19 @@ const std::vector<IJK> & CartesianOrdering(int am);
 size_t CartesianIndex(int am, IJK ijk);
 
 
+/*! \brief Get the index of a cartesian gaussian basis function
+ *         among functions for all AM in pulsar ordering
+ *
+ * \throw pulsar::exception::BasisSetException if the value of the
+ *        angular momentum is out of range or if the value of ijk
+ *        is not found for the given am
+ *
+ * \param [in] am The angular momentum to search for
+ * \param [in] ijk Exponents on x, y, and z of the cartesian gaussian
+ */
+size_t FullCartesianIndex(int am, IJK ijk);
+
+
 /*! \brief Get the index of a spherical gaussian basis function
  *         in pulsar ordering
  *
@@ -93,6 +106,19 @@ size_t CartesianIndex(int am, IJK ijk);
  * \param [in] m The value of m_l of the spherical harmonic to search for
  */
 size_t SphericalIndex(int am, int m);
+
+
+/*! \brief Get the index of a spherical gaussian basis function
+ *         among functions for all AM in pulsar ordering
+ *
+ * \throw pulsar::exception::BasisSetException if the value of the
+ *        angular momentum is out of range or if the value of m
+ *        is not found for the given am
+ *
+ * \param [in] am The angular momentum to search for
+ * \param [in] m The value of m_l of the spherical harmonic to search for
+ */
+size_t FullSphericalIndex(int am, int m);
 
 
 

@@ -64,6 +64,31 @@ size_t CartesianIndex(int am, IJK ijk)
 }
 
 
+size_t FullCartesianIndex(int am, IJK ijk)
+{
+    // we could just use the ordering for negative am, but
+    // that doesn't necessarily go to the highest AM
+
+    size_t idx = CartesianIndex(am, ijk);
+    if(idx <= 0)  // "negative" am would already include the lower AM
+        return idx;
+    else
+        return idx + NCartesianGaussian(am-1);
+}
+
+size_t FullSphericalIndex(int am, int m)
+{
+    // we could just use the ordering for negative am, but
+    // that doesn't necessarily go to the highest AM
+
+    size_t idx = SphericalIndex(am, ijk);
+    if(idx <= 0)  // "negative" am would already include the lower AM
+        return idx;
+    else
+        return idx + NSphericalGaussian(am-1);
+}
+
+
 size_t SphericalIndex(int am, int m)
 {
     const auto & svec = SphericalOrdering(am);
