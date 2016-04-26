@@ -7,9 +7,6 @@ set(PULSAR_SYSTEM_FILES
     SymmetryElements.cpp
     System.cpp
     BasisSet.cpp
-    BasisShellBase.cpp
-    BasisShellInfo.cpp
-    BasisSetShell.cpp
     AMConvert.cpp
     AOOrdering_LUT.cpp
     AOOrdering.cpp

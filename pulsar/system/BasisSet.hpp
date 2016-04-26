@@ -37,7 +37,7 @@ class BasisSet
     public:
         typedef std::vector<BasisSetShell>::const_iterator const_iterator;
         typedef BasisSetShell value_type;
-        typedef std::function<BasisSetShell (const BasisSetShell &)> TransformerFunc;
+        typedef std::function<BasisShellInfo (const BasisShellInfo &, const CoordType &)> TransformerFunc;
 
         /*! \brief Construct a basis set object
          *
@@ -262,7 +262,7 @@ class BasisSet
         {
             // serialize the size info
             ar(max_nxyz_, max_nalpha_, max_ncoef_);
-            ar(xyz_pos_, alpha_pos_, coef_pos_);
+            ar(xyz_pos_, alpha_pos_, coef_pos_, curid_);
 
             // serialize the storage and shell info
             ar(storage_, shells_, unique_shells_);
@@ -287,7 +287,7 @@ class BasisSet
         {
             // load the size info
             ar(max_nxyz_, max_nalpha_, max_ncoef_);
-            ar(xyz_pos_, alpha_pos_, coef_pos_);
+            ar(xyz_pos_, alpha_pos_, coef_pos_, curid_);
 
             // storage and shell info
             ar(storage_, shells_, unique_shells_);

@@ -38,6 +38,8 @@ class BasisSetShell : public BasisShellBase
     public:
 
         /*! \brief Constructor
+         *
+         * Will copy data from \p bshell to the new storage space
          * 
          * \param [in] bshell Another shell to copy
          * \param [in] alphaptr Pointer to where this shell's exponents are
@@ -45,41 +47,77 @@ class BasisSetShell : public BasisShellBase
          * \param [in] xyzptr Pointer to where this shell's coordinates are
          */
         BasisSetShell(const BasisSetShell & bshell,
-                      double * alphaptr, double * coefptr, double * xyzptr) ASSERTIONS_ONLY;
+                      double * alphaptr, double * coefptr, double * xyzptr) ASSERTIONS_ONLY
+            : BasisSetShell(bshell, alphaptr, coefptr, xyzptr,
+                            bshell.GetID(), bshell.GetCenter())
+        { }
 
         BasisSetShell(const BasisShellBase & bshell,
                       double * alphaptr, double * coefptr, double * xyzptr,
-                      ID_t id, ID_t center) ASSERTIONS_ONLY;
+                      ID_t id, ID_t center) ASSERTIONS_ONLY
+            : BasisShellBase(bshell.GetType(), bshell.AM(), bshell.NPrim(), bshell.NGeneral()),
+              id_(id), center_(center)
+        {
+            SetPtrs_(alphaptr, coefptr, xyzptr);
+        }
 
 
-        // compiler generated ok
-        BasisSetShell(const BasisSetShell & rhs)             = default;
+        // compiler generated ok for move only
+        BasisSetShell(const BasisSetShell & rhs)             = delete;
         BasisSetShell(BasisSetShell && rhs)                  = default;
-        BasisSetShell & operator=(const BasisSetShell & rhs) = default;
+        BasisSetShell & operator=(const BasisSetShell & rhs) = delete;
         BasisSetShell & operator=(BasisSetShell && rhs)      = default;
 
         /// Get the ID of this shell in the basis set 
-        ID_t GetID(void) const noexcept;
+        ID_t GetID(void) const noexcept { return id_; }
 
         /// Get the ID of the center that this shell is on
-        ID_t GetCenter(void) const noexcept;
+        ID_t GetCenter(void) const noexcept { return center_; }
 
         /// Get the coordinates of the shell
-        CoordType GetCoords(void) const;
+        CoordType GetCoords(void) const { return CoordType{xyz_[0], xyz_[1], xyz_[2]}; }
 
 
         ///@{ Raw, unsafe, fast
 
         /// Get a pointer to the coordinates of the shell
-        const double * CoordsPtr(void) const noexcept;
+        const double * CoordsPtr(void) const ASSERTIONS_ONLY
+        {
+            using namespace exception;
+            Assert<BasisSetException>(xyz_ != nullptr, "Null XYZ pointer in BasisSetShell");
+            return xyz_;
+        }
 
         /// Get a pointer to the coordinates of the shell
-        double * CoordsPtr(void) noexcept;
+        double * CoordsPtr(void) ASSERTIONS_ONLY
+        {
+            using namespace exception;
+            Assert<BasisSetException>(xyz_ != nullptr, "Null XYZ pointer in BasisSetShell");
+            return xyz_;
+        }
 
         ///@}
 
-        bool operator==(const BasisSetShell & rhs) const;
-        bool operator!=(const BasisSetShell & rhs) const;
+        bool operator==(const BasisSetShell & rhs) const
+        {
+            if(this == &rhs)
+                return true;
+
+            // this is done manually (rather than "using")
+            // prevent implicit comparison between one type and another
+            return (
+                      id_ == rhs.id_ &&
+                      center_ == rhs.center_ &&
+                      std::equal(xyz_, xyz_+3, rhs.xyz_) &&
+                      BasisShellBase::BaseCompare_(rhs)
+                   );
+        }
+
+
+        bool operator!=(const BasisSetShell & rhs) const
+        {
+            return !((*this) == rhs);
+        }
 
 
         /*! \brief For serialization only
@@ -89,7 +127,10 @@ class BasisSetShell : public BasisShellBase
          */
         BasisSetShell() = default;
 
-        util::Hash MyHash(void) const;
+        util::Hash MyHash(void) const
+        {
+            return util::MakeHash(*this);
+        } 
 
 
     private:
@@ -99,7 +140,11 @@ class BasisSetShell : public BasisShellBase
         ID_t center_;      //!< ID of the center
         double * xyz_;     //!< XYZ coordindates of this center
 
-        void SetPtrs_(double * alphaptr, double * coefptr, double * xyzptr);
+        void SetPtrs_(double * alphaptr, double * coefptr, double * xyzptr)
+        {
+            BasisShellBase::SetPtrs_(alphaptr, coefptr); 
+            xyz_ = xyzptr;
+        }
 
 
         //! \name Serialization
@@ -115,7 +160,12 @@ class BasisSetShell : public BasisShellBase
         }
 
        
-        void hash(util::Hasher & h) const;
+        void hash(util::Hasher & h) const
+        {
+            h(static_cast<const BasisShellBase &>(*this),
+              util::HashPointer(xyz_, 3),
+              id_, center_); 
+        }
  
         ///@}
     

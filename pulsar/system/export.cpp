@@ -135,7 +135,7 @@ PYBIND11_PLUGIN(system)
 
 
     // Main BasisSet class
-    python::RegisterPyCopyIterator<BasisSet>(m, "BasisSet");
+    python::RegisterPyRefIterator<BasisSet>(m, "BasisSet");
 
     pybind11::class_<BasisSet>(m, "BasisSet")
     .def(pybind11::init<size_t, size_t, size_t, size_t>())
@@ -161,7 +161,7 @@ PYBIND11_PLUGIN(system)
     .def("__iter__", [](pybind11::object obj)
             {
                 const BasisSet & cont = obj.cast<const BasisSet &>();
-                return python::PyCopyIterator<BasisSet>(cont, cont.begin(), obj);
+                return python::PyRefIterator<BasisSet>(cont, cont.begin(), obj);
             })
     ;
     ;

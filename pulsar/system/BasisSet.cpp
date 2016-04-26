@@ -43,7 +43,7 @@ BasisSet::BasisSet(const BasisSet & rhs)
     // so we have to rebuild them
     ResetPointers_();
 
-    shells_.reserve(rhs.shells_.size());
+    //shells_.reserve(rhs.shells_.size());
     for(const auto & it : rhs.shells_)
     {
         // determine offsets for this shells xyz, alpha, and coefs
@@ -52,9 +52,9 @@ BasisSet::BasisSet(const BasisSet & rhs)
         ptrdiff_t coef_offset =  it.AllCoefsPtr() - rhs.storage_.data();
         ptrdiff_t xyz_offset =   it.CoordsPtr()   - rhs.storage_.data();
         double * sbegin = storage_.data();
-        shells_.push_back(BasisSetShell(it, sbegin + alpha_offset,
-                                            sbegin + coef_offset,
-                                            sbegin + xyz_offset));
+        shells_.push_back(std::move(BasisSetShell(it, sbegin + alpha_offset,
+                                                  sbegin + coef_offset,
+                                                  sbegin + xyz_offset)));
     }
 
     // double check
@@ -158,7 +158,7 @@ void BasisSet::AddShell_(const BasisShellBase & bshell,
 
     // Check to see if alpha & coefs has been added already
     it = std::find_if(shells_.begin(), shells_.end(),
-                      [& bshell](const BasisSetShell & b) { return b.BaseCompare(bshell); });
+                      [& bshell](const BasisSetShell & b) { return b.BaseCompare_(bshell); });
 
 
     if(it != shells_.end())
@@ -327,10 +327,10 @@ BasisSet BasisSet::Transform(BasisSet::TransformerFunc transformer) const
     BasisSet bs(NShell(), NPrim(), NCoef(), 3*NPrim());
     for(const auto & shell : shells_)
     {
-        GlobalDebug("Coefs:\n");
-        for(const auto & c : shell.GetAllCoefs())
-            GlobalDebug("   %12.8e\n", c);
-        bs.AddShell_(transformer(shell));
+        BasisShellInfo bsi(shell);
+        CoordType xyz = shell.GetCoords();
+
+        bs.AddShell(transformer(shell, xyz), shell.GetID(), xyz);
     }
 
     return bs.ShrinkFit();
