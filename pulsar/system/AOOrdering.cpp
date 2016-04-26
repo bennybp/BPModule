@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include "pulsar/system/AOOrdering.hpp"
+#include "pulsar/system/NFunction.hpp"
 #include "pulsar/system/BasisSet.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 
@@ -81,7 +82,7 @@ size_t FullSphericalIndex(int am, int m)
     // we could just use the ordering for negative am, but
     // that doesn't necessarily go to the highest AM
 
-    size_t idx = SphericalIndex(am, ijk);
+    size_t idx = SphericalIndex(am, m);
     if(idx <= 0)  // "negative" am would already include the lower AM
         return idx;
     else

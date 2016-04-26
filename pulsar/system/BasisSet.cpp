@@ -326,7 +326,12 @@ BasisSet BasisSet::Transform(BasisSet::TransformerFunc transformer) const
 {
     BasisSet bs(NShell(), NPrim(), NCoef(), 3*NPrim());
     for(const auto & shell : shells_)
+    {
+        GlobalDebug("Coefs:\n");
+        for(const auto & c : shell.GetAllCoefs())
+            GlobalDebug("   %12.8e\n", c);
         bs.AddShell_(transformer(shell));
+    }
 
     return bs.ShrinkFit();
 }

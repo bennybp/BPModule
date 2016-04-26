@@ -73,7 +73,7 @@ inline int NSphericalGaussian(int am)
     if(am >= 0) // "Normal" angular momentum
         return NSphericalGaussian_(am);
     else // "Special" combination (sp, spd, etc)
-        return NSumSphericalGaussian_(-am);
+        return NSumSphericalGaussian(-am);
 }
 
 
