@@ -28,7 +28,7 @@ struct IntegerCheck
 template<typename T>
 struct IntegerCheck<T, true>
 {
-    static bool IsInteger(T val)
+    static bool IsInteger(T /*dummy*/)
     {
         return true; 
     }

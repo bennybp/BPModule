@@ -8,7 +8,7 @@
 #define PULSAR_GUARD_SYSTEM__SPHERICALTRANSFORMINTEGRAL_HPP_
 
 
-#include "pulsar/system/SphericalTransform.h"
+#include "pulsar/system/SphericalTransform.hpp"
 
 namespace pulsar{
 namespace system {
