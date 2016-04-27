@@ -18,9 +18,6 @@ namespace pulsar{
 namespace system {
 
 
-// forward declare
-class BasisSet;
-
 
 //! Transformation coefficient of a cartesian gaussian
 struct SphericalTransformCoefficient
@@ -45,6 +42,10 @@ typedef std::map<int, SphericalTransformCoefs> SphericalTransformMap;
 const SphericalTransformMap & AllSphericalTransforms(void) noexcept;
 
 
+/*! \brief Obtain the spherical transformations used by pulsar for
+ *         for a specific angular momentum
+ */
+const std::vector<SphericalTransformCoefficient> & SphericalTransformForAM(int am);
 
 
 /*! \brief Transform a block of cartesian AO data to spherical harmonics
@@ -65,15 +66,18 @@ inline void SphericalTransformBlock(const SphericalTransformCoefs & coefs,
                                     T * RESTRICT dest,
                                     size_t width, int am, size_t niter)
 {
-    const int ncart = NCartesianGaussian(am);
-    const int nsph = NSphericalGaussian(am);
+    const size_t ncart = NCartesianGaussian(am);
+    const size_t nsph = NSphericalGaussian(am);
 
     for(size_t n = 0; n < niter; n++)
     {   
         for(const auto & it : coefs)
         {
+            const size_t sph_start = it.sphidx * width;
+            const size_t cart_start = it.cartidx * width;
+
             for(size_t i = 0; i < width; i++)
-                dest[it.sphidx * width + i] += it.coef * src[it.cartidx * width + i];
+                dest[sph_start + i] += it.coef * src[cart_start + i];
         }
 
         src += ncart*width;

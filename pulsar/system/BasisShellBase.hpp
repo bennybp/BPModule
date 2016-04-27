@@ -120,21 +120,12 @@ class BasisShellBase
          *
          * \param [in] i Index of the primitive to get
          */
-        const double & Alpha(size_t i) const ASSERTIONS_ONLY
+        double Alpha(size_t i) const ASSERTIONS_ONLY
         {
             AssertPtrs_();
             AssertPrimIdx_(i);
             return alphas_[i]; 
         }
-
-        /// \copydocs Alpha(size_t i) const
-        double & Alpha(size_t i) ASSERTIONS_ONLY
-        {
-            AssertPtrs_();
-            AssertPrimIdx_(i);
-            return alphas_[i]; 
-        }
-
 
 
         /*! \brief Get a single value of a coefficient
@@ -142,16 +133,7 @@ class BasisShellBase
          * \param [in] n Index of the general contraction
          * \param [in] i Index in the segmented contraction
          */
-        const double & Coef(size_t n, size_t i) const ASSERTIONS_ONLY
-        {
-            AssertPtrs_();
-            AssertPrimIdx_(i);
-            AssertGenIdx_(n);
-            return coefs_[n*nprim_+i]; 
-        }
-
-        /// \copydocs Coef(size_t n, size_t i) const
-        double & Coef(size_t n, size_t i) ASSERTIONS_ONLY
+        double Coef(size_t n, size_t i) const ASSERTIONS_ONLY
         {
             AssertPtrs_();
             AssertPrimIdx_(i);
@@ -253,7 +235,7 @@ class BasisShellBase
         {
             AssertPtrs_();
             ValidatePrimIdx_(i);
-            Alpha(i) = alpha;
+            alphas_[i] = alpha;
         }
 
 
@@ -288,7 +270,7 @@ class BasisShellBase
             AssertPtrs_();
             ValidatePrimIdx_(i);
             ValidateGenIdx_(n);
-            Coef(n, i) = coef;
+            coefs_[n*nprim_+i] = coef;
         }
 
 
@@ -410,7 +392,7 @@ class BasisShellBase
             alphas_[i] = alpha;
 
             for(size_t n = 0; n < ngen_; n++)
-                Coef(n, i) = coefs[n];
+                SetCoef(n, i, coefs[n]);
         }
         ///@}
 

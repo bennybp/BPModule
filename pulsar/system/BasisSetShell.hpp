@@ -74,29 +74,6 @@ class BasisSetShell : public BasisShellBase
         /// Get the ID of the center that this shell is on
         ID_t GetCenter(void) const noexcept { return center_; }
 
-        /// Get the coordinates of the shell
-        CoordType GetCoords(void) const { return CoordType{xyz_[0], xyz_[1], xyz_[2]}; }
-
-
-        ///@{ Raw, unsafe, fast
-
-        /// Get a pointer to the coordinates of the shell
-        const double * CoordsPtr(void) const ASSERTIONS_ONLY
-        {
-            using namespace exception;
-            Assert<BasisSetException>(xyz_ != nullptr, "Null XYZ pointer in BasisSetShell");
-            return xyz_;
-        }
-
-        /// Get a pointer to the coordinates of the shell
-        double * CoordsPtr(void) ASSERTIONS_ONLY
-        {
-            using namespace exception;
-            Assert<BasisSetException>(xyz_ != nullptr, "Null XYZ pointer in BasisSetShell");
-            return xyz_;
-        }
-
-        ///@}
 
         bool operator==(const BasisSetShell & rhs) const
         {
@@ -119,6 +96,71 @@ class BasisSetShell : public BasisShellBase
             return !((*this) == rhs);
         }
 
+        ///@{ Safe, slow access to data
+
+        /// Get the coordinates of the shell
+        CoordType GetCoords(void) const ASSERTIONS_ONLY
+        {
+            AssertXYZPtr_();
+            return CoordType{xyz_[0], xyz_[1], xyz_[2]};
+        }
+
+        /// Set the coordinates of the shell
+        void SetCoords(const CoordType coords) const
+        {
+            xyz_[0] = coords[0];
+            xyz_[1] = coords[1];
+            xyz_[2] = coords[2];
+        }
+
+        /// Get a single coordinate of the shell
+        double GetCoord(unsigned int i) const
+        {
+            AssertXYZPtr_();
+            ValidateXYZIdx_(i);
+            return xyz_[i];
+        }
+
+        /// Set a single coordinate of the shell
+        void SetCoord(unsigned int i, double val)
+        {
+            AssertXYZPtr_();
+            ValidateXYZIdx_(i);
+            xyz_[i] = val;
+        }
+
+        ///@}
+
+
+
+
+        ///@{ Raw, unsafe, fast
+
+        /// Get a pointer to the coordinates of the shell
+        const double * CoordsPtr(void) const ASSERTIONS_ONLY
+        {
+            AssertXYZPtr_();
+            return xyz_;
+        }
+
+        /// Get a pointer to the coordinates of the shell
+        double * CoordsPtr(void) ASSERTIONS_ONLY
+        {
+            AssertXYZPtr_();
+            return xyz_;
+        }
+
+        double Coord(unsigned int i) const ASSERTIONS_ONLY
+        {
+            AssertXYZPtr_();
+            AssertXYZIdx_(i);
+            return xyz_[i];
+        }
+
+        ///@}
+
+
+
 
         /*! \brief For serialization only
          * 
@@ -139,6 +181,29 @@ class BasisSetShell : public BasisShellBase
         ID_t id_;          //!< Unique id for this shell
         ID_t center_;      //!< ID of the center
         double * xyz_;     //!< XYZ coordindates of this center
+
+
+        void AssertXYZPtr_(void) const
+        {
+            using namespace exception;
+            Assert<BasisSetException>(xyz_ != nullptr, "Null pointers in BasisSetShell");
+        }
+
+        void ValidateXYZIdx_(unsigned int i) const
+        {
+            using namespace exception;
+            if(i > 2)
+                throw BasisSetException("Attempt to access coordinate direction that does not exist",
+                                        "i", i);
+        }
+
+        void AssertXYZIdx_(unsigned int i) const
+        {
+            using namespace exception;
+            Assert<BasisSetException>(i < 3, "Attempt to access coordinate direction that does not exist",
+                                             "i", i);
+        }
+
 
         void SetPtrs_(double * alphaptr, double * coefptr, double * xyzptr)
         {

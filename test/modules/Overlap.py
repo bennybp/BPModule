@@ -48,7 +48,7 @@ def Run(mm):
             u.Insert(a)
         s = System(u, True)
 
-        s = ApplySingleBasis("Primary","sto-3g",s)
+        s = ApplySingleBasis("Primary","DZP",s)
 
          
         nr = mm.GetModule("AO_OVERLAP", 0)
@@ -62,7 +62,7 @@ def Run(mm):
         tester.PrintHeader()
 
         outbuf = array.array('d', [0]*64)
-        n = nr.Calculate(0, 3, 1, outbuf) 
+        n = nr.Calculate(0, 6, 6, outbuf) 
         print("Calculated {} integrals".format(n))
         print(outbuf[:n])
 

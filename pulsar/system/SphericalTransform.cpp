@@ -5,6 +5,7 @@
  */
 
 
+#include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/system/SphericalTransform.hpp"
 
 using namespace pulsar::exception;
@@ -23,6 +24,18 @@ namespace lut {
 const SphericalTransformMap & AllSphericalTransforms(void) noexcept
 {
     return lut::spherical_transform_map_;
+}
+
+
+const std::vector<SphericalTransformCoefficient> & SphericalTransformForAM(int am)
+{
+    using exception::GeneralException;
+
+    if(lut::spherical_transform_map_.count(am) == 0)
+        throw GeneralException("Angular momentum out of range for spherical transform",
+                               "am", am);
+
+    return lut::spherical_transform_map_.at(am);
 }
 
 

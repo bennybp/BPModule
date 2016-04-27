@@ -9,7 +9,8 @@
 #define PULSAR_GUARD_MODULEBASE__ONEELECTRONINTEGRAL_HPP_
 
 #include "pulsar/modulebase/ModuleBase.hpp"
-
+#include "pulsar/system/BasisSetShell.hpp"
+#include "pulsar/system/SphericalTransform.hpp"
 
 namespace pulsar{
 namespace modulebase {
@@ -113,6 +114,7 @@ class OneElectronIntegral : public ModuleBase
                                                 deriv, shells1, shells2,
                                                 ptrinfo.first, ptrinfo.second[0]);
         }
+
 
 
         /////////////////////////////////////////
