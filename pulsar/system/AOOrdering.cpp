@@ -30,7 +30,7 @@ const AOOrderingMaps & AllAOOrderings(void) noexcept
 }
 
 
-const std::vector<int> & SphericalOrdering(int am)
+const std::vector<int8_t> & SphericalOrdering(int am)
 {
     const auto & order = AllAOOrderings().spherical_order;
 

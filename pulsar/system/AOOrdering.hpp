@@ -8,6 +8,7 @@
 #define PULSAR_GUARD_SYSTEM__AOORDERING_HPP_
 
 #include <map>
+#include <cstdint>
 #include "pulsar/math/Reorder.hpp"
 #include "pulsar/system/ShellType.hpp"
 
@@ -21,10 +22,10 @@ class BasisSet;
 
 
 /// Exponents on the x, y, z prefactors of a cartesian gaussian
-typedef std::array<int, 3> IJK;
+typedef std::array<uint8_t, 3> IJK;
 
 /// Maps angular momentum to a vector of m_l values in the desired order
-typedef std::map<int, std::vector<int>> SphericalAOOrderingMap;
+typedef std::map<int, std::vector<int8_t>> SphericalAOOrderingMap;
 
 /// Maps angular momentum to a vector of IJK in the desired order
 typedef std::map<int, std::vector<IJK>> CartesianAOOrderingMap;
@@ -57,7 +58,7 @@ const AOOrderingMaps & AllAOOrderings(void) noexcept;
  * \throw pulsar::exception::BasisSetException if the value of the
  *        angular momentum is out of range
  */
-const std::vector<int> & SphericalOrdering(int am);
+const std::vector<int8_t> & SphericalOrdering(int am);
 
 
 /*! \brief Obtain the ordering in pulsar of cartesian gaussians for
