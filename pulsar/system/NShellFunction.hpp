@@ -19,7 +19,7 @@ namespace system {
 //////////////////////////////
 // Cartesian
 //////////////////////////////
-size_t NCartesianGaussian(const BasisShellBase & bs)
+inline size_t NCartesianGaussianInShell(const BasisShellBase & bs)
 {
     const int am = bs.AM();
     size_t cart = NCartesianGaussian(am);
@@ -34,11 +34,16 @@ size_t NCartesianGaussian(const BasisShellBase & bs)
         return cart * bs.NGeneral();
 }
 
+inline size_t NCartesianGaussianForShellAM(const BasisShellBase & bs)
+{
+    return NCartesianGaussian(bs.AM());
+}
+
 
 //////////////////////////////
 // Spherical Harmonics
 //////////////////////////////
-size_t NSphericalGaussian(const BasisShellBase & bs)
+inline size_t NSphericalGaussianShell(const BasisShellBase & bs)
 {
     const int am = bs.AM();
     size_t sph = NSphericalGaussian(am);
@@ -51,6 +56,12 @@ size_t NSphericalGaussian(const BasisShellBase & bs)
         return sph;
     else
         return sph * bs.NGeneral();
+}
+
+
+inline size_t NSphericalGaussianForShellAM(const BasisShellBase & bs)
+{
+    return NSphericalGaussian(bs.AM());
 }
 
 

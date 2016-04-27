@@ -84,7 +84,8 @@ macro(ADD_COREMODULE MODULE_NAME
       #################
       # Includes
       #################
-      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${CMAKE_SOURCE_DIR}/../) # TODO - HACKY
+      get_filename_component(CMAKE_SOURCE_DIR_PARENT ${CMAKE_SOURCE_DIR} DIRECTORY)
+      list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${CMAKE_SOURCE_DIR_PARENT})
 
       # Passed in
       list(APPEND ${MODULE_NAME}_CXX_INCLUDES ${MODULE_CXX_INCLUDES})

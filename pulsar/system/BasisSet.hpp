@@ -110,6 +110,11 @@ class BasisSet
          */
         size_t MaxNFunctions(void) const;
 
+
+        /*! \brief Find some maximum property (ncartesian, etc)
+         */
+        size_t MaxProperty(std::function<size_t(const BasisSetShell &)> func) const;
+
         ///@}
 
         /// \name Shell information and manipulation

@@ -322,6 +322,14 @@ BasisSet::const_iterator BasisSet::end(void) const
     return shells_.end();
 }
 
+size_t BasisSet::MaxProperty(std::function<size_t(const BasisSetShell &)> func) const
+{
+    size_t m = 0;
+    for(const auto & it : shells_)
+        m = std::max(m, func(it));
+    return m;
+}
+
 BasisSet BasisSet::Transform(BasisSet::TransformerFunc transformer) const
 {
     BasisSet bs(NShell(), NPrim(), NCoef(), 3*NPrim());
