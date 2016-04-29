@@ -38,7 +38,7 @@ def Run(mm):
 
         # Load the python modules
         #             supermodule              module name    key
-        mm.LoadModule("OneElectronIntegrals",  "Overlap",     "AO_OVERLAP")
+        mm.LoadModule("OneElectronIntegrals",  "KineticEnergy",     "AO_KENERGY")
         mm.Print(out)
         mm.SanityCheck()
   
@@ -48,21 +48,22 @@ def Run(mm):
             u.Insert(a)
         s = System(u, True)
 
-        s = ApplySingleBasis("Primary","sto-3g",s)
+        s = ApplySingleBasis("Primary","DZP",s)
 
          
-        nr = mm.GetModule("AO_OVERLAP", 0)
+        nr = mm.GetModule("AO_KENERGY", 0)
         nr.EnableDebug(True)
         iwfn = Wavefunction()
         iwfn.system = s
         nr.SetInitialWfn(iwfn)
         nr.SetBases("Primary", "Primary")
 
-        tester = Tester("Testing Overlap integrals")
+        tester = Tester("Testing Kinetic Energy integrals")
         tester.PrintHeader()
 
+
         outbuf = array.array('d', [0]*64)
-        n = nr.Calculate(0, 1, 2, outbuf) 
+        n = nr.Calculate(0, 6, 6, outbuf) 
         print("Calculated {} integrals".format(n))
         print(outbuf[:n])
 

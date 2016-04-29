@@ -14,7 +14,7 @@ namespace pulsar{
 namespace system {
 
 
-/*! \brief Transforms one-electron integrals over gaussian basis functions
+/*! \brief Transforms two-center integrals over gaussian basis functions
  *
  * The integrals should all be in cartesian and correspond to the integrals
  * for sh1 and sh2. Whether each is transformed depends on the type
@@ -30,11 +30,12 @@ namespace system {
  *
  * Cartesian ordering is expected to be pulsar ordering.
  */
-void CartesianToSpherical_OneElectron(const system::BasisSetShell & sh1,
-                                      const system::BasisSetShell & sh2,
-                                      double const * RESTRICT source,
-                                      double * RESTRICT dest,
-                                      double * RESTRICT work)
+inline
+void CartesianToSpherical_2Center(const system::BasisSetShell & sh1,
+                                  const system::BasisSetShell & sh2,
+                                  double const * RESTRICT source,
+                                  double * RESTRICT dest,
+                                  double * RESTRICT work)
 {
     using namespace system;
 
@@ -67,8 +68,6 @@ void CartesianToSpherical_OneElectron(const system::BasisSetShell & sh1,
 
         if(isspherical1 && isspherical2)
         {
-            std::fill(work, work + nsph1*ncart2, 0.0);
-            std::fill(dest, dest + nsph12, 0.0);
             const auto & coef1 = SphericalTransformForAM(am1);
             const auto & coef2 = SphericalTransformForAM(am2);
 
@@ -83,28 +82,25 @@ void CartesianToSpherical_OneElectron(const system::BasisSetShell & sh1,
         }
         else if(isspherical1)
         {
-            std::fill(dest, dest + nsph1*ncart2, 0.0);
-
+            //! \todo testme
             // transform first index right into dest
             const auto & coef1 = SphericalTransformForAM(am1);
             SphericalTransformBlock(coef1, source, dest, ncart2, am1, 1);
-
             dest += nsph1*ncart2;
         }
         else
         {
-            std::fill(dest, dest + ncart1*nsph2, 0.0);
-
+            //! \todo testme
             // transform second index right into dest
             const auto & coef2 = SphericalTransformForAM(am2);
             SphericalTransformBlock(coef2, source, dest, 1, am2, ncart1);
-
             dest += nsph2*ncart1;
         }
 
         source += ncart12;
     }
 }
+
 
 
 } // close namespace system

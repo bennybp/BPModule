@@ -50,11 +50,10 @@ const std::vector<SphericalTransformCoefficient> & SphericalTransformForAM(int a
 
 /*! \brief Transform a block of cartesian AO data to spherical harmonics
  *
- * \warning \p dest must be zeroed before calling
  * \warning \p src and \p dest are expected to be the correct sizes. It is up
  *          to the caller to make sure. The size of \p src should be
- *          nspherical(am) * width * niter. The size of \p dest should be
- *          ncartesian(am) * width * niter
+ *          ncartesian(am) * width * niter. The size of \p dest should be
+ *          nspherical(am) * width * niter
  *
  * \warning \p src and \p dest must not point to the same location
  *
@@ -68,6 +67,8 @@ inline void SphericalTransformBlock(const SphericalTransformCoefs & coefs,
 {
     const size_t ncart = NCartesianGaussian(am);
     const size_t nsph = NSphericalGaussian(am);
+
+    std::fill(dest, dest + width*niter*nsph, 0.0);
 
     for(size_t n = 0; n < niter; n++)
     {   
