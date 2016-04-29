@@ -235,9 +235,10 @@ void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo, const std
                                   "modulepath", minfo.path, "modulename", minfo.name);
 
     // check for duplicates
-    if(store_.count(minfo.name))
-        throw ModuleLoadException("Cannot load module: duplicate module name",
-                                  "modulepath", minfo.path, "modulename", minfo.name);
+    if(store_.count(modulekey))
+        throw ModuleLoadException("Cannot load module: duplicate key",
+                                  "modulepath", minfo.path, "modulename", minfo.name,
+                                  "modulekey", modulekey);
 
     // Using the handler, load the module
     if(!loadhandlers_.count(minfo.type))
