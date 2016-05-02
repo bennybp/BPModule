@@ -9,5 +9,5 @@ sys.path.insert(0, psrpath)
 
 import pulsar as psr
 
-def ApplyBasis(syst,bsname,bslabel="primary",bstype=psr.system.ShellType.Gaussian):
-    return psr.system.ApplySingleBasis(bstype,bslabel,bsname,syst)
+def ApplyBasis(syst,bsname,bslabel="primary"):
+    return psr.system.ApplySingleBasis(bslabel,bsname,syst)
