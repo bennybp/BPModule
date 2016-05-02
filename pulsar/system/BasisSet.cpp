@@ -16,6 +16,8 @@
 using pulsar::exception::Assert;
 using pulsar::exception::BasisSetException;
 
+/*! \todo std::max_element requires that the container not be empty. Clean that up */
+
 namespace pulsar{
 namespace system {
 
@@ -43,7 +45,7 @@ BasisSet::BasisSet(const BasisSet & rhs)
     // so we have to rebuild them
     ResetPointers_();
 
-    //shells_.reserve(rhs.shells_.size());
+    shells_.reserve(rhs.shells_.size());
     for(const auto & it : rhs.shells_)
     {
         // determine offsets for this shells xyz, alpha, and coefs
@@ -277,14 +279,20 @@ size_t BasisSet::NCoef(void) const
 
 size_t BasisSet::MaxNPrim(void) const
 {
-    return std::max_element(this->begin(), this->end(), 
-                            [](const BasisSetShell & lhs, const BasisSetShell & rhs)
-                            { return lhs.NPrim() < rhs.NPrim(); })->NPrim();
+    if(NShell())
+        return std::max_element(this->begin(), this->end(), 
+                                [](const BasisSetShell & lhs, const BasisSetShell & rhs)
+                                { return lhs.NPrim() < rhs.NPrim(); })->NPrim();
+    else
+        return 0; //! \todo exception?
 }
 
 int BasisSet::MaxAM(void) const
 {
-    int max = std::max_element(this->begin(), this->end(), 
+    int max = 0;
+
+    if(NShell())
+        max = std::max_element(this->begin(), this->end(), 
                                [](const BasisSetShell & lhs, const BasisSetShell & rhs)
                                { return std::abs(lhs.AM()) < std::abs(rhs.AM()); })->AM();
     return std::abs(max);
@@ -307,9 +315,12 @@ size_t BasisSet::NFunctions(void) const
 
 size_t BasisSet::MaxNFunctions(void) const
 {
-    return std::max_element(this->begin(), this->end(), 
-                            [](const BasisSetShell & lhs, const BasisSetShell & rhs)
-                            { return lhs.NFunctions() < rhs.NFunctions(); })->NFunctions();
+    if(NShell())
+        return std::max_element(this->begin(), this->end(), 
+                                [](const BasisSetShell & lhs, const BasisSetShell & rhs)
+                                { return lhs.NFunctions() < rhs.NFunctions(); })->NFunctions();
+    else
+        return 0;
 }
 
 BasisSet::const_iterator BasisSet::begin(void) const
