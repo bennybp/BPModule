@@ -65,10 +65,8 @@ class BasisShellBase
         {
             ValidateGenIdx_(n);
 
-            if(IsCombinedAM())
-                return n;  // first is s, second is p, ...
-            else
-                return am_;
+            // if IsCombinedAM(), first is s, second is p, ...
+            return (IsCombinedAM()) ? n : am_;
         }
 
         /// Get the number of primitives in this shell
@@ -92,7 +90,8 @@ class BasisShellBase
          * This takes into account general contractions and combined shells, so it
          * is not simply based on the AM alone
          */
-        size_t NFunctions(void) const noexcept { return system::NFunction(type_, am_); }
+        size_t NFunctions(void) const noexcept { return nfunc_; }
+
 
         /*! Get the number of functions for a given general contraction
          *
@@ -413,15 +412,20 @@ class BasisShellBase
          * \param [in] ngen Number of general contractions
          */
         BasisShellBase(ShellType type, int am, size_t nprim, size_t ngen)
-            : type_(type), am_(am), nprim_(nprim), ngen_(ngen),
+            : type_(type), am_(am), nprim_(nprim), ngen_(ngen), nfunc_(0),
               alphas_(nullptr), coefs_(nullptr)
         {
             using namespace exception;
+
             // If this is sp, spd, spdf, etc, then ngen
             // must be exactly 2, 3, 4 respectively
             if(am < 0 && ((-am)+1) != ngen)
                 throw BasisSetException("Invalid number of general contractions for special AM",
                                                    "am", am, "expected_ngen", ((-am)+1));
+
+            // calculate the number of functions
+            for(size_t i = 0; i < ngen_; i++)
+                nfunc_ += GeneralNFunctions(i);   
         }
 
 
@@ -479,6 +483,7 @@ class BasisShellBase
         int am_;           //!< Angular momentum
         size_t nprim_;     //!< Number of primitives
         size_t ngen_;      //!< Number of general contractions
+        size_t nfunc_;     //!< Number of functions in total (stored for convenience)
         double * alphas_;  //!< Exponents
         double * coefs_;   //!< Coefficients
 
@@ -533,12 +538,12 @@ class BasisShellBase
         {
             // of course, we don't do the pointers. They are owned
             // by somebody else. It's their responsibilty
-            ar(type_, am_, nprim_, ngen_);
+            ar(type_, am_, nprim_, ngen_, nfunc_);
         }
 
         void hash(util::Hasher & h) const
         {
-            h(type_, am_, nprim_, ngen_,
+            h(type_, am_, nprim_, ngen_, nfunc_,
                    util::HashPointer(alphas_, NPrim()),
                    util::HashPointer(coefs_, NCoef()));
         }
