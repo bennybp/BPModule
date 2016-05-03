@@ -61,6 +61,11 @@ class PointT
             PRAGMA_WARNING_POP
         }
 
+        bool operator!=(const PointT & rhs) const
+        {
+            return !((*this) == rhs);
+        }
+
         T & operator[](size_t i) { return coords_[i]; }
         T & at(size_t i) { return coords_.at(i); }
 
@@ -216,6 +221,7 @@ PointT<T> operator*(double c,const PointT<T>& P){
 template<typename T>
 std::ostream& operator<<(std::ostream& os,const PointT<T>& P){
     P.Print(os);
+    return os;
 }
 
 typedef PointT<double> Point;
