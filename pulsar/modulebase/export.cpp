@@ -42,6 +42,7 @@ PYBIND11_PLUGIN(modulebase)
          .def("SetInitialWfn",&ModuleBase::SetInitialWfn)
          .def("SetFinalWfn",&ModuleBase::SetFinalWfn)
          .def("CreateChildModule", &ModuleBase::CreateChildModulePy)
+         .def("CreateChildModuleFromOption", &ModuleBase::CreateChildModuleFromOptionPy)
          .def("EnableDebug", &ModuleBase::EnableDebug)
          .def("DebugEnabled", &ModuleBase::DebugEnabled)
          ;

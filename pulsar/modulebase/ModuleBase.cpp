@@ -162,6 +162,12 @@ pybind11::object ModuleBase::CreateChildModulePy(const std::string & key) const
     return mlocator_->GetModulePy(key, id_);
 }
 
+pybind11::object ModuleBase::CreateChildModuleFromOptionPy(const std::string & optionkey) const
+{
+    std::string modulekey = Options().Get<std::string>(optionkey);
+    return mlocator_->GetModulePy(modulekey, id_);
+}
+
 CacheData & ModuleBase::Cache(void) const noexcept
 {
     if(cache_ == nullptr)

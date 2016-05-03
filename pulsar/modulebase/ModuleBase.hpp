@@ -185,6 +185,17 @@ class ModuleBase
         }
 
 
+        /*! \brief Create a module that is a child of this one,
+         *         obtaining the modulekey from an option
+         */ 
+        template<typename T>
+        modulemanager::ModulePtr<T> CreateChildModuleFromOption(const std::string & optionkey) const
+        {
+            std::string modulekey = Options().Get<std::string>(optionkey);
+            return mlocator_->GetModule<T>(modulekey, id_);
+        }
+
+
 
         /*! \brief Create a module that is a child of this one
          *
@@ -192,6 +203,12 @@ class ModuleBase
          */ 
         pybind11::object CreateChildModulePy(const std::string & key) const;
 
+        /*! \brief Create a module that is a child of this one
+         *         obtaining the modulekey from an option
+         *
+         * Python version 
+         */ 
+        pybind11::object CreateChildModuleFromOptionPy(const std::string & optionkey) const;
 
 
     protected:
