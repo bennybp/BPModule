@@ -28,6 +28,12 @@ template<typename T>
 class ModulePtr
 {
     public:
+        /*! \brief Default constructor
+         * 
+         * Exceptions will be thrown if the object is dereferenced
+         */
+        ModulePtr(void) { }
+
         /*! \brief Constructor from an IMPL holder rvalue reference
          */
         ModulePtr(std::unique_ptr<detail::ModuleIMPLHolder> && holder)
@@ -114,6 +120,13 @@ class ModulePtr
 class PyModulePtr
 {
     public:
+        /*! \brief Default constructor
+         * 
+         * Exceptions will be thrown if the object is dereferenced
+         */
+        PyModulePtr(void) { }
+
+        
         /*! \brief Constructor
          *
          * Moves the held module from the unique pointer
