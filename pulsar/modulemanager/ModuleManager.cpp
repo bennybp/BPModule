@@ -142,7 +142,7 @@ void ModuleManager::TestAll(void)
 
         if(!it.second.mi.options.AllReqSet())
         {
-            GlobalError("Error - module %? [key %?]\" failed options test - required options are missing", it.second.mi.name, it.first);
+            GlobalError("Error - module %? [key %?]\" failed options test - required options are missing\n", it.second.mi.name, it.first);
 
             auto missingreq = it.second.mi.options.AllMissingReq();
             for(const auto & optit : missingreq)
