@@ -273,6 +273,8 @@ PYBIND11_PLUGIN(system)
     .def("Contains", &System::Contains)
     .def("Insert", static_cast<System &(System::*)(const Atom &)>(&System::Insert),
                    pybind11::return_value_policy::reference)
+    .def("GetUniverse", &System::GetUniverse)
+    .def("AsUniverse", &System::AsUniverse)
     .def("GetCharge",&System::GetCharge)
     .def("GetNElectrons",&System::GetNElectrons)
     .def("GetBasisSet", &System::GetBasisSet)

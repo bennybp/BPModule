@@ -47,6 +47,8 @@ void RegisterMathSet(pybind11::module & m,
     .def("MyHash", &T::MyHash)
     .def("Size", &T::Size)
     .def("Idx",  &T::Idx)
+    .def("AsUniverse", &T::AsUniverse)
+    .def("GetUniverse", &T::GetUniverse)
     .def("Contains", &T::Contains)
     .def("ContainsIdx", &T::ContainsIdx)
     .def("InsertIdx", &T::InsertIdx)

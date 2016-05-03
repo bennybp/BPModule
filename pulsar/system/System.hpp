@@ -115,10 +115,20 @@ public:
 
     /*! \brief Construct a system given a universe
      *
+     * The universe will be shared with the data that was passed in
+     *
      * \param [in] universe The universe this system should use 
      * \param [in] fill Make this system contain all the elements of the universe
      */
     System(std::shared_ptr<const AtomSetUniverse> universe, bool fill);
+
+    /*! \brief Construct a system given a universe
+     * 
+     * The data from the universe will be copied.
+     *
+     * \param [in] universe The universe this system should use 
+     * \param [in] fill Make this system contain all the elements of the universe
+     */
     System(const AtomSetUniverse& universe, bool fill);
 
     /*! \brief For serialization only
@@ -410,6 +420,24 @@ public:
     System Rotate(const MatrixType & mat) const
     {
         return Transform(std::bind(math::RotatePoint_Copy<Atom, MatrixType>, std::placeholders::_1, mat));
+    }
+
+
+    /*! \brief Obtain the universe in use by this system
+     */
+    std::shared_ptr<const AtomSetUniverse> GetUniverse(void) const
+    {
+        return atoms_.GetUniverse();
+    }
+
+    /*! \brief Obtain the atoms from this system as a new universe
+     * 
+     * The universe is not linked to this system in any way. Other information
+     * (such as symmetry, etc) is obviously not copied.
+     */
+    AtomSetUniverse AsUniverse(void) const
+    {
+        return atoms_.AsUniverse();
     }
 
     ///@}

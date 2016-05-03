@@ -173,11 +173,31 @@ public:
     MathSet(My_t&&) = default;
 
     ///Returns a deep copy of everything
-    virtual My_t Clone()const
+    My_t Clone()const
     {
         return My_t(std::shared_ptr<Base_t>(new Base_t(*Universe_)), this->Elems_);
         //                                      ^^ Deep copy universe, copy elements
     }
+
+
+    /// Obtain the universe used by this set
+    std::shared_ptr<const Base_t> GetUniverse(void) const
+    {
+        return Universe_;
+    } 
+
+
+    /*! \brief Obtain the contents of this MathSet as a new universe
+     *
+     * The new universe is not linked to this object in any way
+     */
+    Base_t AsUniverse(void) const
+    {
+        Base_t newuniverse;
+        for(const auto & it : *this)
+            newuniverse.Insert(it);
+        return newuniverse;
+    }   
 
 
     ///@}
