@@ -177,11 +177,20 @@ class ModuleManager
         template<typename T>
         void ChangeOption(const std::string & modulekey, const std::string & optkey, const T & value)
         {
+            using namespace exception;
+
             StoreEntry & se = GetOrThrow_(modulekey);
             if(se.ncalled != 0)
-                throw exception::ModuleManagerException("Attempting to change options for a previously-used module key",
+                throw ModuleManagerException("Attempting to change options for a previously-used module key",
                                              "modulekey", modulekey, "optkey", optkey);
-            se.mi.options.Change(optkey, value);
+            try {
+                se.mi.options.Change(optkey, value);
+            }
+            catch(exception::GeneralException & ex)
+            {
+                ex.AppendInfo("modulekey", modulekey);
+                throw;
+            }
         }
 
 

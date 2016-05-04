@@ -277,12 +277,29 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
     // obtain the information for this key
     StoreEntry & se = GetOrThrow_(modulekey);
 
-    // obtain the options and lock their validity
-    // this will also validate them and throw an
-    // exception if they are invalid (and not in expert mode)
+    // obtain the options and validate them.
+    // Throw an exception if they are invalid (and not in expert mode)
     // NOTE - we do this first so that we don't create a module
     // if the options are bad (and an exception is thrown)
     ModuleInfo mi(se.mi);
+
+    OptionMapIssues iss = se.mi.options.GetIssues();
+    if(!iss.OK())
+    {
+        if(se.mi.options.IsExpert())
+        {
+            GlobalWarning("Options for module key %? has issues, but expert mode is on", modulekey);
+            GlobalWarning(iss.String());
+        }
+        else
+        {
+            std::stringstream ss;
+            iss.Print(ss);
+            throw OptionException("Options for module are not valid", "modulekey", modulekey,
+                                  "issues", ss.str());
+        }
+    }
+
 
     // add the moduleinfo to the tree
     // (parentid, etc, will be set by the tree)
@@ -397,7 +414,14 @@ void ModuleManager::ChangeOptionPy(const std::string & modulekey, const std::str
     if(se.ncalled != 0)
         throw ModuleManagerException("Attempting to change options for a previously-used module key", "modulekey", modulekey, "optkey", optkey);
 
-    se.mi.options.ChangePy(optkey, value);
+    try {
+        se.mi.options.ChangePy(optkey, value);
+    }
+    catch(exception::GeneralException & ex)
+    {
+        ex.AppendInfo("modulekey", modulekey);
+        throw;
+    }
 }
 
 

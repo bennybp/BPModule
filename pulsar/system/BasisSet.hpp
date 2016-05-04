@@ -65,7 +65,11 @@ class BasisSet
 
         /// \name General information
         ///@{
-        //
+
+
+        /// Return a set of the stored types
+        std::set<ShellType> GetTypes(void) const;
+
         /// Return the number of shells currently stored
         size_t NShell(void) const noexcept;
 

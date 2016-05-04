@@ -299,18 +299,19 @@ class OptionHolder : public OptionBase
             def.resize(m);
 
             std::string req = (IsRequired() ? "True" : "False");
+            std::string isset = (IsSet() ? "True" : "False");
 
             // print the first line
             std::vector<std::string> optlines;
-            optlines.push_back(FormatString("          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n",
-                                            Key(), TypeString(), val[0], def[0], req,  Help()));
+            optlines.push_back(FormatString("    %-20?   %-20?   %-8?   %-20?   %-20?   %-8?   %?\n",
+                                            Key(), TypeString(), isset, val[0], def[0], req,  Help()));
 
 
             // now other lines
             for(size_t i = 1; i < m; i++)
             {
-                optlines.push_back(FormatString("          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n",
-                                                "", "", val[i], def[i], "", ""));
+                optlines.push_back(FormatString("    %-20?   %-20?   %-8?   %-20?   %-20?   %-8?   %?\n",
+                                                "", "", "", val[i], def[i], "", ""));
             }
            
             // now actually print 

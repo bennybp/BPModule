@@ -157,12 +157,12 @@ ModuleManager & ModuleBase::MManager(void) const
     return *mlocator_;
 }
 
-pybind11::object ModuleBase::CreateChildModulePy(const std::string & key) const
+pybind11::object ModuleBase::CreateChildPy(const std::string & key) const
 {
     return mlocator_->GetModulePy(key, id_);
 }
 
-pybind11::object ModuleBase::CreateChildModuleFromOptionPy(const std::string & optionkey) const
+pybind11::object ModuleBase::CreateChildFromOptionPy(const std::string & optionkey) const
 {
     std::string modulekey = Options().Get<std::string>(optionkey);
     return mlocator_->GetModulePy(modulekey, id_);

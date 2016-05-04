@@ -30,6 +30,7 @@ typedef std::vector<std::string> WholeOptionMapIssues;
 
 
 //! Holds all issues related to an OptionMap
+//! \todo python export
 struct OptionMapIssues
 {
     WholeOptionMapIssues toplevel;                  //!< Issues with the map itself
@@ -44,6 +45,9 @@ struct OptionMapIssues
 
     /*! \brief Print issues (if there are any) */
     void Print(std::ostream & os) const;
+
+    /*! \brief Obtain the issues as a string */
+    std::string String(void) const;
 
 };
 
@@ -62,15 +66,12 @@ struct OptionMapIssues
  *     set to the default and one without a value explicitly set will
  *     have different hashes). See HashValues for one that just hashes
  *     the values. Note that hashing does not include validators, but does
- *     include the modulekey associated with the map and whether or not
- *     expert mode is enabled.
+ *     include whether or not expert mode is enabled.
  */
 class OptionMap
 {
     public:
-        OptionMap(void) = default;
-
-        OptionMap(const std::string & modulekey);
+        OptionMap(void);
 
         ~OptionMap(void) = default;
 
@@ -92,13 +93,6 @@ class OptionMap
 
         OptionMap(OptionMap &&)                  = default;
         OptionMap & operator=(OptionMap &&)      = default;
-
-
-
-        /*! \brief Return the module key that these options belong to
-         */
-        const std::string & ModuleKey(void) const noexcept;
-
 
 
         /*! \brief Determine if this object contains a value for a key
@@ -206,6 +200,13 @@ class OptionMap
         void SetExpert(bool expert) noexcept;
 
 
+
+        /*! \brief See if expert mode is enabled
+         */
+        bool IsExpert(void) const noexcept;
+
+
+
         /*! \brief Dumps the options to the output
         */
         void Print(std::ostream & os) const;
@@ -237,7 +238,7 @@ class OptionMap
             }
             catch(const std::exception & ex)
             {
-                throw exception::OptionException(ex, "optionkey", key, "modulekey", modulekey_);
+                throw exception::OptionException(ex, "optionkey", key);
             }
         }
 
@@ -270,11 +271,10 @@ class OptionMap
             catch(const std::exception & ex)
             {
                 // convert to an OptionException and add the key
-                throw exception::OptionException(ex, "optionkey", key, "modulekey", modulekey_);
+                throw exception::OptionException(ex, "optionkey", key);
             }
 
             GetOrThrow_Cast_<opt_type>(key)->Change(convval);
-
         }
 
 
@@ -365,11 +365,6 @@ class OptionMap
         //! Function that validates the whole option container
         typedef std::function<WholeOptionMapIssues (const OptionMap &)> WholeOptionValidator;
 
-
-
-        //! The module these options belong to
-        std::string modulekey_;
-
         //! If true, don't throw exceptions on validation errors
         bool expert_;
 
@@ -415,7 +410,6 @@ class OptionMap
             const detail::OptionHolder<OPTTYPE> * oh = dynamic_cast<const detail::OptionHolder<OPTTYPE> *>(ptr);
             if(oh == nullptr)
                 throw exception::OptionException("Bad option cast", "optionkey", key,
-                                                 "modulekey", modulekey_,
                                                  "fromtype", ptr->TypeString(),
                                                  "totype", OptionTypeToString(OPTTYPE)); 
 
@@ -432,7 +426,6 @@ class OptionMap
             detail::OptionHolder<OPTTYPE> * oh = dynamic_cast<detail::OptionHolder<OPTTYPE> *>(ptr);
             if(oh == nullptr)
                 throw exception::OptionException("Bad option cast", "optionkey", key,
-                                                 "modulekey", modulekey_,
                                                  "fromtype", ptr->TypeString(),
                                                  "totype", OptionTypeToString(OPTTYPE)); 
 
@@ -454,14 +447,6 @@ class OptionMap
         }
 
 
-        /*! \brief Validate and throw an exception if necessary
-         * 
-         * Validation errors will throw an exception if not in expert mode
-         */
-        void Validate_(void) const;
-
-
-
         //! \name Serialization and Hashing
         ///@{
 
@@ -474,7 +459,7 @@ class OptionMap
         {
             // We don't do validators - map should only be read-only
             // after unserializing
-            ar(modulekey_, expert_);
+            ar(expert_);
 
             // We have to do the options a special way
             // static cast for size - just to be absolutely sure
@@ -487,7 +472,7 @@ class OptionMap
         void load(Archive & ar)
         {
             size_t size;
-            ar(modulekey_, expert_, size);
+            ar(expert_, size);
 
             // We have to do the options a special way
             for(size_t i = 0; i < size; i++)

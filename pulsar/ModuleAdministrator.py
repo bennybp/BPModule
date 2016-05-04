@@ -29,6 +29,13 @@ class ModuleAdministrator(modulemanager.ModuleManager):
     def LoadModule(self, supermodule, modulename, modulekey):
         output.GlobalOutput("Importing {} module from supermodule {} under key {}\n".format(modulename, supermodule, modulekey))
 
+        if supermodule == "" or supermodule == None:
+            raise exception.GeneralException("Empty supermodule given to LoadModule") 
+        if modulename == "" or modulename == None:
+            raise exception.GeneralException("Empty modulename given to LoadModule") 
+        if modulekey == "" or modulekey == None:
+            raise exception.GeneralException("Empty modulekey given to LoadModule") 
+
         try:
             # update the paths
             oldpath = sys.path

@@ -55,18 +55,23 @@ void OptionMapIssues::Print(std::ostream & os) const
     }
 }
 
+std::string OptionMapIssues::String(void) const
+{
+    std::stringstream ss;
+    Print(ss);
+    return ss.str();
+}
 
 ////////////////////////////////////////////////
 // Member functions
 ////////////////////////////////////////////////
-OptionMap::OptionMap(const std::string & modulekey)
-    : modulekey_(modulekey), expert_(false)
+OptionMap::OptionMap(void)
+    : expert_(false)
 { }
 
 
 OptionMap::OptionMap(const OptionMap & rhs)
-    : modulekey_(rhs.modulekey_),
-      expert_(rhs.expert_),
+    : expert_(rhs.expert_),
       wholevalid_(rhs.wholevalid_)
 {
     for(const auto & it : rhs.opmap_)
@@ -83,13 +88,6 @@ OptionMap & OptionMap::operator=(const OptionMap & rhs)
     OptionMap copy(rhs);
     swap(*this, copy);
     return *this;
-}
-
-
-
-const std::string & OptionMap::ModuleKey(void) const noexcept
-{
-    return modulekey_;
 }
 
 
@@ -148,6 +146,11 @@ void OptionMap::SetExpert(bool expert) noexcept
     expert_ = expert;
 }
 
+bool OptionMap::IsExpert(void) const noexcept
+{
+    return expert_;
+}
+
 
 
 KeySet OptionMap::AllMissingReq(void) const
@@ -166,7 +169,7 @@ const detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key) const
     if(opmap_.count(key))
         return opmap_.at(key).get();
     else
-        throw OptionException("Option key not found", "optionkey", key, "modulekey", modulekey_);
+        throw OptionException("Option key not found", "optionkey", key);
 }
 
 detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key)
@@ -174,7 +177,7 @@ detail::OptionBase * OptionMap::GetOrThrow_(const std::string & key)
     if(opmap_.count(key))
         return opmap_.at(key).get();
     else
-        throw OptionException("Option key not found", "optionkey", key, "modulekey", modulekey_);
+        throw OptionException("Option key not found", "optionkey", key);
 }
 
 
@@ -234,7 +237,7 @@ void OptionMap::AddOption(std::string key, OptionType opttype, bool required,
 {
     if(HasKey(key))
         throw OptionException("Attempting to add duplicate option key",
-                              "optionkey", key, "modulekey", modulekey_);
+                              "optionkey", key);
 
     detail::OptionBasePtr oph = detail::CreateOptionHolder(key, opttype, required,
                                                            validator, help, def);
@@ -250,7 +253,6 @@ util::Hash OptionMap::MyHash(void) const
 util::Hash OptionMap::HashValues(const std::set<std::string> & keys) const
 {
     util::Hasher h;
-    h(modulekey_);
 
     for(const auto & it : keys)
     {
@@ -264,7 +266,6 @@ util::Hash OptionMap::HashValues(const std::set<std::string> & keys) const
 util::Hash OptionMap::HashAllValues(void) const
 {
     util::Hasher h;
-    h(modulekey_);
 
     for(const auto & it : opmap_)
         it.second->HashValue(h);
@@ -275,23 +276,7 @@ util::Hash OptionMap::HashAllValues(void) const
 
 void OptionMap::hash(util::Hasher & h) const
 {
-    h(modulekey_, expert_, opmap_);
-}
-
-
-void OptionMap::Validate_(void) const
-{
-    if(!expert_)
-    {
-        OptionMapIssues omi = GetIssues();
-
-        if(!omi.OK())
-        {
-            std::stringstream ss;
-            omi.Print(ss);
-            throw OptionException("Error - OptionMap in invalid state", "issues", ss.str());
-        }
-    }
+    h(expert_, opmap_);
 }
 
 
@@ -322,9 +307,9 @@ void OptionMap::Print(std::ostream & os) const
     {
         Output(os, "\n");
         std::string s20(20, '-');
-        std::string s10(10, '-');
-        Output(os, "          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n", "Option", "Type", "Value", "Default", "Required", "Description");
-        Output(os, "          %-20?      %-20?      %-20?      %-20?     %-10?       %?\n", s20, s20, s20, s20, s10, s20);
+        std::string s8(8, '-');
+        Output(os, "    %-20?   %-20?   %-8?   %-20?   %-20?   %-8?   %?\n", "Option", "Type", "IsSet", "Value", "Default", "Required", "Description");
+        Output(os, "    %-20?   %-20?   %-8?   %-20?   %-20?   %-8?   %?\n", s20, s20, s8, s20, s20, s8, s20);
 
         for(const auto & it : opmap_)
             it.second->Print(os);

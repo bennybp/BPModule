@@ -129,6 +129,15 @@ void BasisSet::hash(util::Hasher & h) const
 }
 
 
+std::set<ShellType> BasisSet::GetTypes(void) const
+{
+    std::set<ShellType> types;
+    for(const auto & s : shells_)
+        types.insert(s.GetType());
+    return types;
+}
+
+
 void BasisSet::AddShell_(const BasisShellBase & bshell,
                          ID_t id, ID_t center,
                          const CoordType & xyz)
