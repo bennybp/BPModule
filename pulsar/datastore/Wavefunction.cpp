@@ -19,6 +19,7 @@ bool Wavefunction::operator==(const Wavefunction & rhs) const
     bool samesystem = (system == rhs.system);
     bool samecmat = (cmat == rhs.cmat);
     bool sameepsilon = (epsilon == rhs.epsilon);
+    bool sameoccupations = (occupations == rhs.occupations);
 
     // if the pointers aren't the same, check the 
     // actual data
@@ -30,15 +31,17 @@ bool Wavefunction::operator==(const Wavefunction & rhs) const
 
     if(!sameepsilon && bool(epsilon) && bool(rhs.epsilon))
         sameepsilon = ( (*epsilon) == (*rhs.epsilon) );
-            
+
+    if(!sameoccupations && bool(occupations) && bool(rhs.occupations))
+        sameoccupations = ( (*occupations) == (*rhs.occupations) );
+
     return (samesystem && samecmat && sameepsilon);
 }
 
 
 void Wavefunction::hash(util::Hasher & h) const
 {
-    //! \todo fix with bphash
-    h(system, cmat, epsilon);
+    h(system, cmat, epsilon, occupations);
 }
 
 

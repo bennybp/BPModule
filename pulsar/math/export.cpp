@@ -41,11 +41,13 @@ static void RegisterMatrices(pybind11::module & m, const char * type)
     std::string vname("SimpleVector");
     std::string isname("IrrepSpinMatrix");
     std::string isvname("IrrepSpinVector");
+    std::string issname("IrrepSpinScalar");
 
     name += type;
     vname += type;
     isname += type;
     isvname += type;
+    issname += type;
 
     pybind11::class_<SimpleMatrix<T>, std::shared_ptr<SimpleMatrix<T>>> mclass(m, name.c_str());
     mclass.def(pybind11::init<>())
@@ -116,10 +118,10 @@ static void RegisterMatrices(pybind11::module & m, const char * type)
             .def("Set", &IrrepSpinMatrix<T>::Set)
             .def("Erase", &IrrepSpinMatrix<T>::Erase)
             .def("Clear", &IrrepSpinMatrix<T>::Clear)
-            .def("MyHash", &SimpleMatrix<T>::MyHash)
+            .def("MyHash", &IrrepSpinMatrix<T>::MyHash)
     ;
 
-    pybind11::class_<IrrepSpinVector<T>, std::shared_ptr<IrrepSpinVector<T>>> isvclass(m, isvname.c_str(), mclass);
+    pybind11::class_<IrrepSpinVector<T>, std::shared_ptr<IrrepSpinVector<T>>> isvclass(m, isvname.c_str());
     isvclass.def(pybind11::init<>())
             .def(pybind11::init<const IrrepSpinVector<T> &>())
             .def(pybind11::self == pybind11::self)
@@ -128,7 +130,19 @@ static void RegisterMatrices(pybind11::module & m, const char * type)
             .def("Set", &IrrepSpinVector<T>::Set)
             .def("Erase", &IrrepSpinVector<T>::Erase)
             .def("Clear", &IrrepSpinVector<T>::Clear)
-            .def("MyHash", &SimpleVector<T>::MyHash)
+            .def("MyHash", &IrrepSpinVector<T>::MyHash)
+    ;
+
+    pybind11::class_<IrrepSpinScalar<T>, std::shared_ptr<IrrepSpinScalar<T>>> issclass(m, issname.c_str());
+    issclass.def(pybind11::init<>())
+            .def(pybind11::init<const IrrepSpinScalar<T> &>())
+            .def(pybind11::self == pybind11::self)
+            .def("Has", &IrrepSpinScalar<T>::Has)
+            .def("Get", static_cast<T &(IrrepSpinScalar<T>::*)(Irrep, int)>(&IrrepSpinScalar<T>::Get))
+            .def("Set", &IrrepSpinScalar<T>::Set)
+            .def("Erase", &IrrepSpinScalar<T>::Erase)
+            .def("Clear", &IrrepSpinScalar<T>::Clear)
+            .def("MyHash", &IrrepSpinScalar<T>::MyHash)
     ;
 }
 

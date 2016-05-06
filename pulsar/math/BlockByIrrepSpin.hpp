@@ -30,6 +30,9 @@ class BlockByIrrepSpin
 {
     public:
         typedef std::pair<Irrep, int> IrrepSpin;
+        typedef typename std::map<IrrepSpin, T>::iterator iterator;
+        typedef typename std::map<IrrepSpin, T>::const_iterator const_iterator;
+
 
         //! \todo cannot be default due to some compiler issues
         BlockByIrrepSpin() {};
@@ -101,6 +104,16 @@ class BlockByIrrepSpin
         {
             data_.clear();
         }
+
+
+        iterator begin(void) { return data_.begin(); }
+
+        const_iterator begin(void) const { return data_.begin(); }
+
+        iterator end(void) { return data_.end(); }
+
+        const_iterator end(void) const { return data_.end(); }
+
 
         /*! \brief Obtain a hash of the data
          *

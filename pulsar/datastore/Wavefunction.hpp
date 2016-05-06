@@ -31,6 +31,7 @@ class Wavefunction
         std::shared_ptr<const system::System> system;
         std::shared_ptr<const math::IrrepSpinMatrixD> cmat;
         std::shared_ptr<const math::IrrepSpinVectorD> epsilon;
+        std::shared_ptr<const math::IrrepSpinVectorD> occupations;
 
         /*! \brief Return a unique hash for this wavefunction */
         util::Hash MyHash(void) const;
@@ -52,7 +53,7 @@ class Wavefunction
         template<class Archive>
         void save(Archive & ar) const
         {
-            ar(system, cmat, epsilon);
+            ar(system, cmat, epsilon, occupations);
         }
 
         template<class Archive>
@@ -61,12 +62,14 @@ class Wavefunction
             std::shared_ptr<system::System> newsystem;
             std::shared_ptr<math::IrrepSpinMatrixD> newcmat;
             std::shared_ptr<math::IrrepSpinVectorD> newepsilon;
+            std::shared_ptr<math::IrrepSpinVectorD> newocc;
 
-            ar(newsystem, newcmat, newepsilon);
+            ar(newsystem, newcmat, newepsilon, newocc);
 
             system = std::move(newsystem);
             cmat = std::move(newcmat);
             epsilon = std::move(newepsilon);
+            occupations = std::move(newocc);
         }
 
         void hash(util::Hasher & h) const;
