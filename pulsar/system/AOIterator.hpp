@@ -2,6 +2,7 @@
 #define PULSAR_GUARD_SYSTEM__AOITERATOR_HPP_
 
 #include "pulsar/system/BasisShellBase.hpp"
+#include "pulsar/system/GeneralShellIterator.hpp"
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 
@@ -18,30 +19,37 @@ class AOIterator
     public:
         typedef std::reference_wrapper<const BasisShellBase> wrap_type;
 
-        AOIterator(const std::array<wrap_type, N> shells)
-            : shells_(shells)
+        AOIterator(const std::array<wrap_type, N> shells, bool splitcombined)
         {
             totalnfunc_ = 1;
 
             // fill in the information
             for(int i = 0; i < N; i++)
             {
+                const BasisShellBase & sh = shells[i].get();
+
                 // store the total number of functions
-                totalnfunc_ *= shells_[i].get().NFunctions();
+                totalnfunc_ *= sh.NFunctions();
 
                 genidx_[i] = funcidx_[i] = shellfuncidx_[i] = 0;
 
-                ngen_[i] = shells_[i].get().NGeneral();
-                nfunc_[i].resize(ngen_[i]);
-                for(size_t j = 0; j < ngen_[i]; j++)
-                    nfunc_[i][j] = shells_[i].get().GeneralNFunctions(j);
+                if(splitcombined && sh.IsCombinedAM())
+                {
+                    ngen_[i] = 1;
+                    nfunc_[i].push_back(sh.NFunctions());
+                }
+                else
+                {
+                    ngen_[i] = sh.NGeneral();
+                    nfunc_[i].resize(ngen_[i]);
+                    for(size_t j = 0; j < ngen_[i]; j++)
+                        nfunc_[i][j] = sh.GeneralNFunctions(j);
+                }
             }
 
             // start at zero
             totalidx_ = 0;
             valid_ = true;
-
-
         }
 
         AOIterator(const AOIterator &) = default;
@@ -95,7 +103,7 @@ class AOIterator
             return funcidx_[n];
         }
 
-        /*! \brief Return the index of the current function with respect to the beginning of the shell shell
+        /*! \brief Return the index of the current function with respect to the beginning of the shell
          */ 
         template<int N>
         size_t ShellFunctionIdx(void) const noexcept
@@ -171,7 +179,7 @@ class AOIterator
 
 
     private:
-        std::array<wrap_type, N> shells_;
+        
         std::array<size_t, N> ngen_;               //! Number of general contractions in each shell
         std::array<std::vector<size_t>, N> nfunc_; //! Number of functions in each general contraction in each shell.
                                                    //  Each nfunc_[i] vector should be of length ngen_[i]

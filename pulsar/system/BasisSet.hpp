@@ -149,6 +149,12 @@ class BasisSet
         const BasisSetShell & UniqueShell(size_t i) const;
 
 
+        /*! \brief Obtain the index of where a shell's functions start
+          * in the overall basis set
+          */
+        size_t ShellStart(size_t i) const;
+
+
         /* \brief Obtain information about a shell as a ShellInfo object
          * 
          * The ShellInfo will not contain information about the center or
@@ -227,6 +233,7 @@ class BasisSet
         std::vector<BasisSetShell> shells_;
         std::vector<size_t> unique_shells_;
         std::vector<double> storage_; // storage for alpha and coef
+        std::vector<size_t> shellstart_;
 
         // for filling
         size_t max_nxyz_;
@@ -274,7 +281,7 @@ class BasisSet
             ar(xyz_pos_, alpha_pos_, coef_pos_, curid_);
 
             // serialize the storage and shell info
-            ar(storage_, shells_, unique_shells_);
+            ar(storage_, shells_, unique_shells_, shellstart_);
 
             // offsets for xyz, alpha, and coef for each shell
             std::vector<ptrdiff_t> offsets;
@@ -299,7 +306,7 @@ class BasisSet
             ar(xyz_pos_, alpha_pos_, coef_pos_, curid_);
 
             // storage and shell info
-            ar(storage_, shells_, unique_shells_);
+            ar(storage_, shells_, unique_shells_, shellstart_);
 
             // offsets for xyz, alpha, and coef for each shell
             std::vector<ptrdiff_t> offsets;

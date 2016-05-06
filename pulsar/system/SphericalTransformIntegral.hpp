@@ -9,9 +9,133 @@
 
 
 #include "pulsar/system/SphericalTransform.hpp"
+#include "pulsar/system/NShellFunction.hpp"
+#include "pulsar/system/GeneralShellIterator.hpp"
 
 namespace pulsar{
 namespace system {
+
+/* Transformation of a generic batch of integrals
+ *
+ * The integrals should all be in cartesian form.
+ * Whether each is transformed depends on the type
+ * stored in the shells in the array.
+ *
+ * \p source size should be the number of cartesian integrals
+ * (taking into account general contractions). Work should also be
+ * that size.
+ *
+ * \p dest should be big enough to hold the transformed integrals.
+ * This depends on if each shell is spherical or not. For simplicity,
+ * this could be as big as \p source.
+ *
+ * Cartesian ordering is expected to be pulsar ordering.
+ */
+template<int N>
+void CartesianToSpherical(std::array<std::reference_wrapper<const system::BasisShellBase>, N> shells,
+                          double * source, double * dest, double * work)
+{
+    using namespace system;
+
+    std::array<bool, N> isspherical;
+    size_t allncart = 1;  // Total number of cartesians in this container
+    int nsphshells = 0;   // How many of the BasisShellBases are spherical
+
+    for(int i = 0; i < N; i++)
+    {
+        const system::BasisShellBase & sh = shells[i].get();
+        const bool issph = isspherical[i] = (sh.GetType() == ShellType::SphericalGaussian);
+
+        isspherical[i] = issph;
+        allncart *= NCartesianGaussianInShell(shells[i]);
+
+        if(issph)
+            nsphshells++;
+    }
+
+
+    if(nsphshells == 0) // nothing to do
+    {
+        std::copy(source, source + allncart, dest);
+        return;
+    }
+
+
+
+    // iterator over the general contractions
+    // We have the transformations for combined AM shells, so
+    // no need to split them in the iterator.
+    system::GeneralShellIterator<N> gsi(shells, false);
+
+    // this is equivalent to an N-level for loop over the combinations of
+    // the general contractions
+    do {
+        double * buf1 = source;   
+        double * buf2 = work;
+
+        std::array<int, N> gam;  // am for this general contraction combination
+        std::array<size_t, N> gncart; // number of cartesians for this general contraction combination
+        std::array<size_t, N> gnfunc; // number of functions for this general contraction combination
+
+        // store how much to advance the source and destination pointers
+        size_t source_adv = 1;
+        size_t dest_adv = 1;
+
+        for(int i = 0; i < N; i++)
+        {
+            const size_t genidx = gsi.GeneralIdx(i);
+            gam[i] = gsi.AM(i);
+            gncart[i] = NCartesianGaussian(gam[i]);
+            gnfunc[i] = shells[i].get().GeneralNFunctions(genidx);
+
+            source_adv *= gncart[i]; // source holds only cartesian
+            dest_adv *= gnfunc[i];
+        }
+
+
+        // the starting width is the number of cartesian functions for
+        // the last (N-1) shells. However, we divide first inside the loop
+        size_t width = 1;
+        for(int i = 0; i < N; i++)
+            width *= gncart[i];
+
+        // the starting number of iterations is 1, of course
+        size_t niter = 1;
+
+        // loop over the N shells and transform if we have to
+        for(int i = 0; i < N; i++)
+        {
+            width /= gncart[i];
+
+            if(isspherical[i])
+            {
+                const auto & coef = SphericalTransformForAM(gam[i]);
+
+                SphericalTransformBlock(coef, buf1, buf2, width, gam[i], niter);
+
+                // swap the source and destination
+                std::swap(buf1, buf2);
+            }
+
+            niter *= gnfunc[i];
+        }
+
+        // buf1 always contains the final, transformed, intergals since we swap at
+        // the end of the above loop. It may point to either source or work, though.
+
+        // We have to copy to the destination
+        // buf1 will always contain the final transformed integrals (since we always swap at the
+        // end of the loop).
+        // The amount we did is equivalent to how much we have to advance the buffer pointers
+
+        // dest_adv is also the number of final transformed integrals we did
+        std::copy(buf1, buf1 + dest_adv, dest);
+
+        source += source_adv;
+        dest += dest_adv;
+
+    } while(gsi.Next());
+}
 
 
 /*! \brief Transforms two-center integrals over gaussian basis functions
@@ -31,76 +155,38 @@ namespace system {
  * Cartesian ordering is expected to be pulsar ordering.
  */
 inline
-void CartesianToSpherical_2Center(const system::BasisSetShell & sh1,
-                                  const system::BasisSetShell & sh2,
-                                  double const * RESTRICT source,
-                                  double * RESTRICT dest,
-                                  double * RESTRICT work)
+void CartesianToSpherical_2Center(const system::BasisShellBase & sh1,
+                                  const system::BasisShellBase & sh2,
+                                  double * source,
+                                  double * dest,
+                                  double * work)
 {
-    using namespace system;
-
-    bool isspherical1 = sh1.GetType() == ShellType::SphericalGaussian;
-    bool isspherical2 = sh2.GetType() == ShellType::SphericalGaussian;
-
-    if(!isspherical1 && !isspherical2)
-    {
-        // you probably shouldn't have even called this function
-        std::copy(source, source + sh1.NFunctions()*sh2.NFunctions(), dest);
-        return;
-    }
-
-    size_t ngen1 = sh1.NGeneral();
-    size_t ngen2 = sh2.NGeneral();
-
-    for(size_t ng1 = 0; ng1 < ngen1; ng1++)
-    for(size_t ng2 = 0; ng2 < ngen2; ng2++)
-    {
-        const int am1 = sh1.GeneralAM(ng1);
-        const int am2 = sh2.GeneralAM(ng2);
-
-        const size_t ncart1 = NCartesianGaussian(am1);
-        const size_t ncart2 = NCartesianGaussian(am2);
-        const size_t ncart12 = ncart1 * ncart2;
-
-        const size_t nsph1 = NSphericalGaussian(am1);
-        const size_t nsph2 = NSphericalGaussian(am2);
-        const size_t nsph12 = nsph1 * nsph2;
-
-        if(isspherical1 && isspherical2)
-        {
-            const auto & coef1 = SphericalTransformForAM(am1);
-            const auto & coef2 = SphericalTransformForAM(am2);
-
-            // we have to use the workspace
-            // transform first index
-            SphericalTransformBlock(coef1, source, work, ncart2, am1, 1);
-
-            // second index
-            SphericalTransformBlock(coef2, work, dest, 1, am2, nsph1);
-
-            dest += nsph12;
-        }
-        else if(isspherical1)
-        {
-            //! \todo testme
-            // transform first index right into dest
-            const auto & coef1 = SphericalTransformForAM(am1);
-            SphericalTransformBlock(coef1, source, dest, ncart2, am1, 1);
-            dest += nsph1*ncart2;
-        }
-        else
-        {
-            //! \todo testme
-            // transform second index right into dest
-            const auto & coef2 = SphericalTransformForAM(am2);
-            SphericalTransformBlock(coef2, source, dest, 1, am2, ncart1);
-            dest += nsph2*ncart1;
-        }
-
-        source += ncart12;
-    }
+    CartesianToSpherical<2>({{sh1, sh2}}, source, dest, work);
 }
 
+inline
+void CartesianToSpherical_3Center(const system::BasisShellBase & sh1,
+                                  const system::BasisShellBase & sh2,
+                                  const system::BasisShellBase & sh3,
+                                  double * source,
+                                  double * dest,
+                                  double * work)
+{
+    CartesianToSpherical<3>({{sh1, sh2, sh3}}, source, dest, work);
+}
+
+
+inline
+void CartesianToSpherical_4Center(const system::BasisShellBase & sh1,
+                                  const system::BasisShellBase & sh2,
+                                  const system::BasisShellBase & sh3,
+                                  const system::BasisShellBase & sh4,
+                                  double * source,
+                                  double * dest,
+                                  double * work)
+{
+    CartesianToSpherical<4>({{sh1, sh2, sh3, sh4}}, source, dest, work);
+}
 
 
 } // close namespace system

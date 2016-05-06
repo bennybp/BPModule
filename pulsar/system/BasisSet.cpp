@@ -137,6 +137,19 @@ std::set<ShellType> BasisSet::GetTypes(void) const
     return types;
 }
 
+size_t BasisSet::ShellStart(size_t i) const
+{
+    Assert<BasisSetException>(shells_.size() == shellstart_.size(),
+                              "Developer error. nshells != length of shellstart",
+                              "nshells", shells_.size(), "nshellstart", shellstart_.size());
+
+    if(i < shellstart_.size())
+        return shellstart_[i];
+    else
+        throw BasisSetException("Shell index out of range",
+                                "index", i, "nshells", shellstart_.size());
+}
+
 
 void BasisSet::AddShell_(const BasisShellBase & bshell,
                          ID_t id, ID_t center,
@@ -207,10 +220,20 @@ void BasisSet::AddShell_(const BasisShellBase & bshell,
         // actually add the shell
         shells_.push_back(BasisSetShell(bshell, my_alpha, my_coef, my_xyz, id, center));
 
+
         // advance these
         alpha_pos_ += bshell.NPrim();
         coef_pos_ += bshell.NCoef();
     }
+
+    // add the starting point
+    // (which is the previous starting point plus the previous number of functions)
+    // Don't forget, we added the new shell already, so we want the next to last
+    // shell in shells_
+    if(shellstart_.size() == 0)
+        shellstart_.push_back(0);
+    else
+        shellstart_.push_back(shellstart_.back() + shells_[shells_.size()-2].NFunctions());
 }
 
 
@@ -245,6 +268,10 @@ size_t BasisSet::NUniqueShell(void) const noexcept
 
 const BasisSetShell & BasisSet::Shell(size_t i) const
 {
+    Assert<BasisSetException>(shells_.size() == shellstart_.size(),
+                              "Developer error. nshells != length of shellstart",
+                              "nshells", shells_.size(), "nshellstart", shellstart_.size());
+
     if(i < shells_.size())
         return shells_[i];
     else
