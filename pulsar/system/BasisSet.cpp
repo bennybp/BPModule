@@ -33,6 +33,7 @@ BasisSet::BasisSet(const BasisSet & rhs)
     : curid_(rhs.curid_),
       unique_shells_(rhs.unique_shells_),
       storage_(rhs.storage_),
+      shellstart_(rhs.shellstart_),
       max_nxyz_(rhs.max_nxyz_),
       max_nalpha_(rhs.max_nalpha_),
       max_ncoef_(rhs.max_ncoef_),

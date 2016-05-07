@@ -92,13 +92,22 @@ PYBIND11_PLUGIN(datastore)
     ///////////////////////
     // Wavefunction
     ///////////////////////
-    pybind11::class_<Wavefunction>(m, "Wavefunction") //! \todo python init for wfn?
+    pybind11::class_<Wavefunction>(m, "Wavefunction")
     .def(pybind11::init<>())
-    .def("MyHash", &Wavefunction::MyHash)
     .def(pybind11::self == pybind11::self)
-    .def_readwrite("system", &Wavefunction::system)
-    .def_readwrite("cmat", &Wavefunction::cmat)
-    .def_readwrite("epsilon", &Wavefunction::epsilon)
+    .def(pybind11::self != pybind11::self)
+    .def("GetSystem", &Wavefunction::GetSystem)
+    .def("GetSystemHash", &Wavefunction::GetSystemHash)
+    .def("SetSystem", static_cast<void (Wavefunction::*)(std::shared_ptr<const system::System>)>(&Wavefunction::SetSystem))
+    .def("GetCMat", &Wavefunction::GetCMat)
+    .def("GetCMatHash", &Wavefunction::GetCMatHash)
+    .def("SetCMat", static_cast<void (Wavefunction::*)(std::shared_ptr<const math::IrrepSpinMatrixD>)>(&Wavefunction::SetCMat))
+    .def("GetEpsilon", &Wavefunction::GetEpsilon)
+    .def("GetEpsilonHash", &Wavefunction::GetEpsilonHash)
+    .def("SetEpsilon", static_cast<void (Wavefunction::*)(std::shared_ptr<const math::IrrepSpinVectorD>)>(&Wavefunction::SetEpsilon))
+    .def("GetOccupations", &Wavefunction::GetOccupations)
+    .def("GetOccupationsHash", &Wavefunction::GetOccupationsHash)
+    .def("SetOccupations", static_cast<void (Wavefunction::*)(std::shared_ptr<const math::IrrepSpinVectorD>)>(&Wavefunction::SetOccupations))
     ;
   
 

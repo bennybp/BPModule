@@ -80,7 +80,7 @@ def Run():
                         opttype, True, None, "No help", None)
 
         # Adding multiple elements
-        optmap = OptionMap("nomodule")
+        optmap = OptionMap()
         for k, v in allvals: 
             s = "Test adding {}".format(k)
             opttype = opttypemap[k]

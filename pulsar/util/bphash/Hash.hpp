@@ -29,6 +29,9 @@ class DataHasher;
 class Hash
 {
     public:
+        /// Construct as a hash of zeros
+        Hash() noexcept : Hash(0, 0) { };
+
         Hash(const Hash &) noexcept             = default;
         Hash & operator=(const Hash &) noexcept = default;
         Hash(Hash &&) noexcept                  = default;
@@ -66,9 +69,6 @@ class Hash
 
         //!< The hash as a number
         std::array<uint64_t, 2> hash_;
-
-        /// Construct as a hash of zeros
-        Hash() noexcept : Hash(0, 0) { };
 
         /*! \brief Construct given the lower and upper 64-bit parts */
         Hash(uint64_t h1, uint64_t h2) noexcept : hash_{h1, h2} { }

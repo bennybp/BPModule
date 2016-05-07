@@ -76,7 +76,7 @@ def Run(mm):
         mol = ApplyBasis(mol,aTZ,aTZ)
         mol = ApplyBasis(mol,aQZ,aQZ)
         wfn=psr.datastore.Wavefunction()
-        wfn.system=mol
+        wfn.SetSystem(mol)
         MyMod.SetInitialWfn(wfn)
         
 

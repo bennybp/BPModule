@@ -2,7 +2,7 @@
  *
  * \brief General wavefunction class
  * \author Benjamin Pritchard (ben@bennyp.org)
- */
+ */ 
 
 #ifndef PULSAR_GUARD_DATASTORE__WAVEFUNCTION_HPP_
 #define PULSAR_GUARD_DATASTORE__WAVEFUNCTION_HPP_
@@ -15,7 +15,7 @@
 #include "pulsar/util/bphash/Hash.hpp"
 #include "pulsar/util/bphash/Hasher_fwd.hpp"
 
-namespace pulsar {
+namespace pulsar{
 namespace datastore {
 
 
@@ -28,10 +28,7 @@ namespace datastore {
 class Wavefunction
 {
     public:
-        std::shared_ptr<const system::System> GetSystem(void) const
-        {
-            return system.first;
-        }
+        std::shared_ptr<const system::System> GetSystem(void) const { return system.first; }
 
         util::Hash GetSystemHash(void) const
         {
@@ -43,90 +40,35 @@ class Wavefunction
             system = {sys, sys ? sys->MyHash() : util::Hash()};
         }
 
-        void SetSystem(const system::System & sys)
-        {
-            SetSystem(std::make_shared<const system::System>(sys));
-        }
-
-        void SetSystem(system::System && sys)
-        {
-            SetSystem(std::make_shared<const system::System>(std::move(sys)));
-        }
-
-        std::shared_ptr<const math::IrrepSpinMatrixD> GetCMat(void) const
-        {
-            return cmat.first;
-        }
+        std::shared_ptr<const math::IrrepSpinMatrixD> GetCMat(void) const { return cmat.first; }
 
         util::Hash GetCMatHash(void) const
         {
             return cmat.second;
         }
 
-        void SetCMat(std::shared_ptr<const math::IrrepSpinMatrixD> c)
+        void SetCMat(std::shared_ptr<const math::IrrepSpinMatrixD> c) { cmat = {c, c->MyHash()}; }
         {
             cmat = {c, c ? c->MyHash() : util::Hash()};
         }
 
-        void SetCMat(const math::IrrepSpinMatrixD & c)
-        {
-            SetCMat(std::make_shared<const math::IrrepSpinMatrixD>(c));
-        }
 
-        void SetCMat(math::IrrepSpinMatrixD && c)
-        {
-            SetCMat(std::make_shared<const math::IrrepSpinMatrixD>(std::move(c)));
-        }
+        std::shared_ptr<const math::IrrepSpinVectorD> GetEpsilon(void) const { return epsilon.first; }
 
-        std::shared_ptr<const math::IrrepSpinVectorD> GetEpsilon(void) const
-        {
-            return epsilon.first;
-        }
+        util::Hash GetEpsilonHash(void) const { return epsilon.second; }
 
-        util::Hash GetEpsilonHash(void) const
-        {
-            return epsilon.second;
-        }
-
-        void SetEpsilon(std::shared_ptr<const math::IrrepSpinVectorD> e)
+        void SetEpsilon(std::shared_ptr<const math::IrrepSpinVectorD> e) { epsilon = {e, e->MyHash()}; }
         {
             epsilon = {e, e ? e->MyHash() : util::Hash()};
         }
 
-        void SetEpsilon(const math::IrrepSpinVectorD & e)
-        {
-            SetEpsilon(std::make_shared<const math::IrrepSpinVectorD>(e));
-        }
+        std::shared_ptr<const math::IrrepSpinVectorD> GetOccupations(void) const { return occupations.first; }
 
-        void SetEpsilon(math::IrrepSpinVectorD && e)
-        {
-            SetEpsilon(std::make_shared<const math::IrrepSpinVectorD>(std::move(e)));
-        }
+        util::Hash GetOccupationsHash(void) const { return occupations.second; }
 
-
-        std::shared_ptr<const math::IrrepSpinVectorD> GetOccupations(void) const
-        {
-            return occupations.first;
-        }
-
-        util::Hash GetOccupationsHash(void) const
-        {
-            return occupations.second;
-        }
-
-        void SetOccupations(std::shared_ptr<const math::IrrepSpinVectorD> occ)
+        void SetOccupations(std::shared_ptr<const math::IrrepSpinVectorD> occ) { occupations = {occ, occ->MyHash()}; }
         {
             occupations = {occ, occ ? occ->MyHash() : util::Hash()};
-        }
-
-        void SetOccupations(const math::IrrepSpinVectorD & occ)
-        {
-            SetOccupations(std::make_shared<const math::IrrepSpinVectorD>(occ));
-        }
-
-        void SetOccupations(math::IrrepSpinVectorD && occ)
-        {
-            SetOccupations(std::make_shared<const math::IrrepSpinVectorD>(std::move(occ)));
         }
 
         bool operator==(const Wavefunction & rhs) const;

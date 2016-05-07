@@ -16,32 +16,37 @@ namespace datastore {
 bool Wavefunction::operator==(const Wavefunction & rhs) const
 {
     // check for pointer equivalence first
-    bool samesystem = (system == rhs.system);
-    bool samecmat = (cmat == rhs.cmat);
-    bool sameepsilon = (epsilon == rhs.epsilon);
-    bool sameoccupations = (occupations == rhs.occupations);
+    bool samesystem = (system.first == rhs.system.first);
+    bool samecmat = (cmat.first == rhs.cmat.first);
+    bool sameepsilon = (epsilon.first == rhs.epsilon.first);
+    bool sameoccupations = (occupations.first == rhs.occupations.first);
 
     // if the pointers aren't the same, check the 
     // actual data
-    if(!samesystem && bool(system) && bool(rhs.system))
-        samesystem = ( (*system) == (*rhs.system) );
+    if(!samesystem && bool(system.first) && bool(rhs.system.first))
+        samesystem = ( (*system.first) == (*rhs.system.first) );
 
-    if(!samecmat && bool(cmat) && bool(rhs.cmat))
-        samecmat = ( (*cmat) == (*rhs.cmat) );
+    if(!samecmat && bool(cmat.first) && bool(rhs.cmat.first))
+        samecmat = ( (*cmat.first) == (*rhs.cmat.first) );
 
-    if(!sameepsilon && bool(epsilon) && bool(rhs.epsilon))
-        sameepsilon = ( (*epsilon) == (*rhs.epsilon) );
+    if(!sameepsilon && bool(epsilon.first) && bool(rhs.epsilon.first))
+        sameepsilon = ( (*epsilon.first) == (*rhs.epsilon.first) );
 
-    if(!sameoccupations && bool(occupations) && bool(rhs.occupations))
-        sameoccupations = ( (*occupations) == (*rhs.occupations) );
+    if(!sameoccupations && bool(occupations.first) && bool(rhs.occupations.first))
+        sameoccupations = ( (*occupations.first) == (*rhs.occupations.first) );
 
-    return (samesystem && samecmat && sameepsilon);
+    return (samesystem && samecmat && sameepsilon && sameoccupations);
 }
 
 
+bool Wavefunction::operator!=(const Wavefunction & rhs) const
+{
+    return !((*this) == rhs);
+}
+
 void Wavefunction::hash(util::Hasher & h) const
 {
-    h(system, cmat, epsilon, occupations);
+    h(system.first, cmat.first, epsilon.first, occupations.first);
 }
 
 
@@ -49,6 +54,7 @@ util::Hash Wavefunction::MyHash(void) const
 {
     return util::MakeHash(*this);
 }
+
 
 
 } // close namespace datastore

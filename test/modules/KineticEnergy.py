@@ -54,7 +54,7 @@ def Run(mm):
         nr = mm.GetModule("AO_KENERGY", 0)
         nr.EnableDebug(True)
         iwfn = Wavefunction()
-        iwfn.system = s
+        iwfn.SetSystem(s)
         nr.SetInitialWfn(iwfn)
         nr.SetBases("Primary", "Primary")
 

@@ -38,38 +38,48 @@ def Run(mm):
 
         # Load the python modules
         #             supermodule              module name    key
+        mm.LoadModule("Methods",               "BPTest",                   "SCF")
+        mm.LoadModule("SystemIntegrals",       "NuclearRepulsion",         "NUC_REP")
+        mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_OVERLAP")
+        mm.LoadModule("OneElectronIntegrals",  "KineticEnergy",            "AO_KINETIC")
         mm.LoadModule("OneElectronIntegrals",  "OneElectronPotential",     "AO_NUCEL")
+        mm.LoadModule("TwoElectronIntegrals",  "ReferenceERI",             "AO_ERI")
+
+        # Set the OneElectronPotential module to use the atom grid (ie, nuclear-electron attraction)
         mm.ChangeOption("AO_NUCEL", "grid", "ATOMS")
+
+        # Tell the SCF which modules to use
+        mm.ChangeOption("SCF", "KEY_NUC_REPULSION", "NUC_REP")
+        mm.ChangeOption("SCF", "KEY_AO_OVERLAP",    "AO_OVERLAP")
+        mm.ChangeOption("SCF", "KEY_AO_NUCATT",     "AO_NUCEL")
+        mm.ChangeOption("SCF", "KEY_AO_KINETIC",    "AO_KINETIC")
+        mm.ChangeOption("SCF", "KEY_AO_ERI",        "AO_ERI")
+
         mm.Print(out)
         mm.SanityCheck()
   
+
+
         atoms = list(water2)
         u = AtomSetUniverse()
         for a in atoms:
             u.Insert(a)
         s = System(u, True)
 
-        s = ApplySingleBasis("Primary","DZP",s)
+        s = ApplySingleBasis("Primary","sto-3g",s)
 
          
-        nr = mm.GetModule("AO_NUCEL", 0)
+        nr = mm.GetModule("SCF", 0)
         nr.EnableDebug(True)
         iwfn = Wavefunction()
         iwfn.SetSystem(s)
         nr.SetInitialWfn(iwfn)
-        nr.SetBases("Primary", "Primary")
 
-        tester = Tester("Testing Nuclear Electron Attraction integrals")
+        a = nr.Deriv(0)
+        print(a)
+
+        tester = Tester("Testing simple energy calculation")
         tester.PrintHeader()
-
-        outbuf = array.array('d', [0]*64)
-        n = nr.Calculate(0, 0, 0, outbuf) 
-        print("Calculated {} integrals".format(n))
-        print(outbuf[:n])
-
-        #tester.TestValue("H2O Nuclear repulsion", True, CompareList(ref_h2o, list(outbuf[:n]), 1e-14))
-
-        tester.PrintResults() 
 
 
     except Exception as e:

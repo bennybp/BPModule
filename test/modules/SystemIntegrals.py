@@ -54,7 +54,7 @@ def Run(mm):
         nr = mm.GetModule("NUC_REP", 0)
         nr.EnableDebug(True)
         iwfn = Wavefunction()
-        iwfn.system = s
+        iwfn.SetSystem(s)
         nr.SetInitialWfn(iwfn)
 
         tester = Tester("Testing basic System integrals")
