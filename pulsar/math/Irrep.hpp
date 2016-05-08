@@ -14,6 +14,7 @@ namespace math{
 //! \todo Add the rest
 //! \todo ToString, etc
 enum class Irrep {
+  A,
   A1, A1g, A1u,
   A2, A2g, A2u,
   B1, B1g, B1u,

@@ -77,10 +77,8 @@ class SimpleMatrix
 
         /*! \brief Deep copy constructor */
         SimpleMatrix(const SimpleMatrix & rhs)
-            : SimpleMatrix(rhs.nrows_, rhs.ncols_)
-        {
-            std::copy(rhs.data_.get(), rhs.data_.get() + size_, data_.get());
-        }
+            : SimpleMatrix(rhs.nrows_, rhs.ncols_, rhs.data_.get())
+        { }
 
 
 
@@ -340,7 +338,7 @@ class SimpleVector : public SimpleMatrix<T>
         { }
 
         SimpleVector(SimpleVector && rhs)
-            : SimpleMatrix<T>(static_cast<SimpleMatrix<T> &&>(rhs))
+            : SimpleMatrix<T>(std::move(rhs))
         { }
 
         SimpleVector & operator=(SimpleVector &&) = default;
@@ -354,7 +352,7 @@ class SimpleVector : public SimpleMatrix<T>
          */
         T & operator()(size_t i) ASSERTIONS_ONLY
         {
-            return static_cast<SimpleMatrix<T>>(*this)(1, i);
+            return SimpleMatrix<T>::operator()(0, i);
         }
 
         /*! \brief Obtain a const reference to an element
@@ -364,7 +362,7 @@ class SimpleVector : public SimpleMatrix<T>
          */
         const T & operator()(size_t i) const ASSERTIONS_ONLY
         {
-            return static_cast<SimpleMatrix<T>>(*this)(1, i);
+            return SimpleMatrix<T>::operator()(0, i);
         }
 
         /*! \brief Obtain a reference to an element
@@ -374,7 +372,7 @@ class SimpleVector : public SimpleMatrix<T>
          */
         T & At(size_t i)
         {
-            return SimpleMatrix<T>::At(1, i);
+            return SimpleMatrix<T>::At(0, i);
         }
 
         /*! \brief Obtain a const reference to an element
@@ -384,7 +382,7 @@ class SimpleVector : public SimpleMatrix<T>
          */
         const T & At(size_t i) const
         {
-            return SimpleMatrix<T>::At(1, i);
+            return SimpleMatrix<T>::At(0, i);
         }
 
 

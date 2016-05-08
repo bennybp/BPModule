@@ -58,6 +58,25 @@ class BlockByIrrepSpin
             return data_.count({irrep, spin});
         }
 
+        std::set<Irrep> GetIrreps(void) const
+        {
+            std::set<Irrep> ret;
+            for(const auto & it : data_)
+                ret.insert(it.first.first);
+            return ret;
+        }
+
+        std::set<int> GetSpins(Irrep irrep) const
+        {
+            std::set<int> ret;
+            for(const auto & it : data_)
+            {
+                if(it.first.first == irrep)
+                    ret.insert(it.first.second);
+            }
+            return ret;
+        }
+
 
         T & Get(Irrep irrep, int spin)
         {
@@ -104,15 +123,6 @@ class BlockByIrrepSpin
         {
             data_.clear();
         }
-
-
-        iterator begin(void) { return data_.begin(); }
-
-        const_iterator begin(void) const { return data_.begin(); }
-
-        iterator end(void) { return data_.end(); }
-
-        const_iterator end(void) const { return data_.end(); }
 
 
         /*! \brief Obtain a hash of the data
