@@ -118,8 +118,6 @@ static void RegisterMatrices(pybind11::module & m, const char * type)
             .def("GetSpins", &IrrepSpinMatrix<T>::GetSpins)
             .def("Get", static_cast<SimpleMatrix<T> &(IrrepSpinMatrix<T>::*)(Irrep, int)>(&IrrepSpinMatrix<T>::Get))
             .def("Set", &IrrepSpinMatrix<T>::Set)
-            .def("Erase", &IrrepSpinMatrix<T>::Erase)
-            .def("Clear", &IrrepSpinMatrix<T>::Clear)
             .def("MyHash", &IrrepSpinMatrix<T>::MyHash)
     ;
 
@@ -132,8 +130,6 @@ static void RegisterMatrices(pybind11::module & m, const char * type)
             .def("GetIrreps", &IrrepSpinVector<T>::GetIrreps)
             .def("GetSpins", &IrrepSpinVector<T>::GetSpins)
             .def("Set", &IrrepSpinVector<T>::Set)
-            .def("Erase", &IrrepSpinVector<T>::Erase)
-            .def("Clear", &IrrepSpinVector<T>::Clear)
             .def("MyHash", &IrrepSpinVector<T>::MyHash)
     ;
 
@@ -146,8 +142,6 @@ static void RegisterMatrices(pybind11::module & m, const char * type)
             .def("GetSpins", &IrrepSpinScalar<T>::GetSpins)
             .def("Get", static_cast<T &(IrrepSpinScalar<T>::*)(Irrep, int)>(&IrrepSpinScalar<T>::Get))
             .def("Set", &IrrepSpinScalar<T>::Set)
-            .def("Erase", &IrrepSpinScalar<T>::Erase)
-            .def("Clear", &IrrepSpinScalar<T>::Clear)
             .def("MyHash", &IrrepSpinScalar<T>::MyHash)
     ;
 }

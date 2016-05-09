@@ -29,9 +29,11 @@ template<typename T>
 class BlockByIrrepSpin
 {
     public:
-        typedef std::pair<Irrep, int> IrrepSpin;
-        typedef typename std::map<IrrepSpin, T>::iterator iterator;
-        typedef typename std::map<IrrepSpin, T>::const_iterator const_iterator;
+        typedef typename std::map<int, T> SpinMap;
+        typedef typename std::map<Irrep, SpinMap> IrrepSpinMap;
+
+        typedef typename IrrepSpinMap::iterator iterator;
+        typedef typename IrrepSpinMap::const_iterator const_iterator;
 
 
         //! \todo cannot be default due to some compiler issues
@@ -55,24 +57,27 @@ class BlockByIrrepSpin
 
         bool Has(Irrep irrep, int spin) const
         {
-            return data_.count({irrep, spin});
+            if(data_.count(irrep))
+                return data_.at(irrep).count(spin);
+            else
+                return 0;
         }
 
         std::set<Irrep> GetIrreps(void) const
         {
             std::set<Irrep> ret;
             for(const auto & it : data_)
-                ret.insert(it.first.first);
+                ret.insert(it.first);
             return ret;
         }
 
         std::set<int> GetSpins(Irrep irrep) const
         {
             std::set<int> ret;
-            for(const auto & it : data_)
+            if(data_.count(irrep))
             {
-                if(it.first.first == irrep)
-                    ret.insert(it.first.second);
+                for(const auto & it : data_.at(irrep))
+                    ret.insert(it.first);
             }
             return ret;
         }
@@ -85,7 +90,7 @@ class BlockByIrrepSpin
             //    throw exception::MathException("No matrix with this irrep/spin",
             //                                   "irrep", irrep, "spin", spin);    
 
-            return data_.at({irrep, spin});
+            return data_.at(irrep).at(spin);
         }
 
         const T & Get(Irrep irrep, int spin) const
@@ -95,33 +100,114 @@ class BlockByIrrepSpin
             //    throw exception::MathException("No matrix with this irrep/spin",
             //                                   "irrep", irrep, "spin", spin);    
 
-            return data_.at({irrep, spin});
+            return data_.at(irrep).at(spin);
         }
 
         void Set(Irrep irrep, int spin, const T & val)
         {
-            if(!Has(irrep, spin))
-                data_.emplace(IrrepSpin{irrep, spin}, val);
+            if(data_.count(irrep) == 0)
+            {
+                // will create a new SpinMap
+                data_[irrep].emplace(spin, val);
+            }
             else
-                data_[{irrep, spin}] = val;
+            {
+                if(data_.at(irrep).count(spin))
+                    data_[irrep].erase(spin);  // avoid operator=
+
+                data_.at(irrep).emplace(spin, val);
+            }
         }
 
         void Take(Irrep irrep, int spin, T && val)
         {
-            if(!Has(irrep, spin))
-                data_.emplace(IrrepSpin{irrep, spin}, std::move(val));
+            if(data_.count(irrep) == 0)
+            {
+                // will create a new SpinMap
+                data_[irrep].emplace(spin, std::move(val));
+            }
             else
-                data_[{irrep, spin}] = std::move(val);
+            {
+                if(data_.at(irrep).count(spin))
+                    data_[irrep].erase(spin);  // avoid operator=
+
+                data_.at(irrep).emplace(spin, std::move(val));
+            }
         }
 
-        void Erase(Irrep irrep, int spin)
+
+        iterator begin(void) { return data_.begin(); }
+
+        const_iterator begin(void) const { return data_.begin(); }
+
+        iterator end(void) { return data_.end(); }
+
+        const_iterator end(void) const { return data_.end(); }
+
+
+        template<typename U>
+        BlockByIrrepSpin<U> TransformType(std::function<U (Irrep, int, const T &)> f) const
         {
-            data_.erase({irrep, spin});
+            BlockByIrrepSpin<U> ret;
+            for(const auto & irrepit : *this)
+            for(const auto & spinit : irrepit.second)
+                ret.Take(irrepit.first, spinit.first, f(irrepit.first, spinit.first, spinit.second));
+            return ret;
         }
 
-        void Clear(void)
+        template<typename U>
+        BlockByIrrepSpin<U> TransformType(std::function<U (const T &)> f) const
         {
-            data_.clear();
+            BlockByIrrepSpin<U> ret;
+            for(const auto & irrepit : *this)
+            for(const auto & spinit : irrepit.second)
+                ret.Take(irrepit.first, spinit.first, f(spinit.second));
+            return ret;
+        }
+
+        BlockByIrrepSpin Transform(std::function<T (Irrep, int, const T &)> f) const
+        {
+            return TransformType<T>(f);
+        }  
+
+        BlockByIrrepSpin Transform(std::function<T (const T &)> f) const
+        {
+            return TransformType<T>(f);
+        }  
+
+        void TransformInPlace(std::function<void(Irrep, int, T &)> f)
+        {
+            for(auto & irrepit : *this)
+            for(auto & spinit : irrepit.second)
+                f(irrepit.first, spinit.first, spinit.second);
+        }
+
+        void TransformInPlace(std::function<void(T &)> f)
+        {
+            for(auto & irrepit : *this)
+            for(auto & spinit : irrepit.second)
+                f(spinit.second);
+        }
+
+        //! Does this object have same irrep/spin structure as another
+        template<typename U>
+        bool SameStructure(const BlockByIrrepSpin<U> & rhs) const
+        {
+            for(const auto & irrepit : *this)
+            for(const auto & spinit : irrepit.second)
+            {
+                if(!rhs.Has(irrepit.first, spinit.first))
+                    return false;
+            }
+
+            for(const auto & irrepit : rhs)
+            for(const auto & spinit : irrepit.second)
+            {
+                if(Has(irrepit.first, spinit.first))
+                    return false;
+            }
+
+            return false;
         }
 
 
@@ -137,7 +223,7 @@ class BlockByIrrepSpin
         }
 
     private:
-        std::map<IrrepSpin, T> data_;
+        IrrepSpinMap data_;
 
         //! \name Serialization
         ///@{

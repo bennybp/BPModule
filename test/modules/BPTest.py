@@ -39,6 +39,7 @@ def Run(mm):
         # Load the python modules
         #             supermodule              module name    key
         mm.LoadModule("Methods",               "BPTest",                   "SCF")
+        mm.LoadModule("Methods",               "CoreGuess",                "IGUESS")
         mm.LoadModule("SystemIntegrals",       "NuclearRepulsion",         "NUC_REP")
         mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_OVERLAP")
         mm.LoadModule("OneElectronIntegrals",  "KineticEnergy",            "AO_KINETIC")
@@ -48,12 +49,21 @@ def Run(mm):
         # Set the OneElectronPotential module to use the atom grid (ie, nuclear-electron attraction)
         mm.ChangeOption("AO_NUCEL", "grid", "ATOMS")
 
+        # Tell the core guess which modules to use
+        mm.ChangeOption("IGUESS", "KEY_NUC_REPULSION", "NUC_REP")
+        mm.ChangeOption("IGUESS", "KEY_AO_OVERLAP",    "AO_OVERLAP")
+        mm.ChangeOption("IGUESS", "KEY_AO_NUCATT",     "AO_NUCEL")
+        mm.ChangeOption("IGUESS", "KEY_AO_KINETIC",    "AO_KINETIC")
+
         # Tell the SCF which modules to use
         mm.ChangeOption("SCF", "KEY_NUC_REPULSION", "NUC_REP")
         mm.ChangeOption("SCF", "KEY_AO_OVERLAP",    "AO_OVERLAP")
         mm.ChangeOption("SCF", "KEY_AO_NUCATT",     "AO_NUCEL")
         mm.ChangeOption("SCF", "KEY_AO_KINETIC",    "AO_KINETIC")
         mm.ChangeOption("SCF", "KEY_AO_ERI",        "AO_ERI")
+        mm.ChangeOption("SCF", "KEY_INITIAL_GUESS", "IGUESS")
+
+
 
         mm.Print(out)
         mm.SanityCheck()

@@ -51,7 +51,7 @@ class SimpleMatrix
         { }
 
         /*! \brief Construct a matrix by copying data from a raw pointer */
-        SimpleMatrix(size_t nrows, size_t ncols, T * data)
+        SimpleMatrix(size_t nrows, size_t ncols, const T * data)
             : SimpleMatrix(nrows, ncols)
         {
             std::copy(data, data + size_, data_.get());
@@ -318,7 +318,7 @@ class SimpleVector : public SimpleMatrix<T>
         { }
 
         /*! \brief Construct a vector by copying data from a raw pointer */
-        SimpleVector(size_t nelements, T * data)
+        SimpleVector(size_t nelements, const T * data)
             : SimpleMatrix<T>(1, nelements, data)
         { }
 

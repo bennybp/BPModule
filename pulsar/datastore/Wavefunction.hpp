@@ -28,6 +28,11 @@ namespace datastore {
 class Wavefunction
 {
     public:
+        bool HasSystem(void) const noexcept
+        {
+            return static_cast<bool>(system.first);
+        }
+
         std::shared_ptr<const system::System> GetSystem(void) const
         {
             return system.first;
@@ -51,6 +56,11 @@ class Wavefunction
         void SetSystem(system::System && sys)
         {
             SetSystem(std::make_shared<const system::System>(std::move(sys)));
+        }
+
+        bool HasCMat(void) const noexcept
+        {
+            return static_cast<bool>(cmat.first);
         }
 
         std::shared_ptr<const math::IrrepSpinMatrixD> GetCMat(void) const
@@ -78,6 +88,11 @@ class Wavefunction
             SetCMat(std::make_shared<const math::IrrepSpinMatrixD>(std::move(c)));
         }
 
+        bool HasEpsilon(void) const noexcept
+        {
+            return static_cast<bool>(epsilon.first);
+        }
+
         std::shared_ptr<const math::IrrepSpinVectorD> GetEpsilon(void) const
         {
             return epsilon.first;
@@ -103,6 +118,10 @@ class Wavefunction
             SetEpsilon(std::make_shared<const math::IrrepSpinVectorD>(std::move(e)));
         }
 
+        bool HasOccupations(void) const noexcept
+        {
+            return static_cast<bool>(occupations.first);
+        }
 
         std::shared_ptr<const math::IrrepSpinVectorD> GetOccupations(void) const
         {
@@ -128,6 +147,29 @@ class Wavefunction
         {
             SetOccupations(std::make_shared<const math::IrrepSpinVectorD>(std::move(occ)));
         }
+
+        void ValidCheck(void) const
+        {
+            using exception::GeneralException;
+
+            // check for consistent irreps, spins, etc,
+            // accross all members 
+            //! \todo compare with system?
+            if(cmat.first)
+            {
+                if(epsilon.first && !cmat.first->SameStructure(*epsilon.first))
+                    throw GeneralException("Inconsistent shape: epsilon and cmat");
+                if(occupations.first && !cmat.first->SameStructure(*occupations.first))
+                    throw GeneralException("Inconsistent shape: occupations and cmat");
+            }
+
+            if(epsilon.first)
+            {
+                if(occupations.first && !epsilon.first->SameStructure(*occupations.first))
+                    throw GeneralException("Inconsistent shape: occupations and epsilon");
+            }
+        }
+
 
         bool operator==(const Wavefunction & rhs) const;
 

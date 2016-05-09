@@ -346,12 +346,14 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
         if(ModuleInUse(parentid))
         {
             GlobalDebug("Module %? - using initial wavefunction of inuse parent %?\n", static_cast<ID_t>(curid_), parentid);
+            parent.initial_wfn.ValidCheck();
             me.initial_wfn = parent.initial_wfn;
             me.final_wfn = parent.initial_wfn;
         }
         else
         {
             GlobalDebug("Module %? - using final wavefunction of destroyed parent %?\n", static_cast<ID_t>(curid_), parentid);
+            parent.initial_wfn.ValidCheck();
             me.initial_wfn = parent.final_wfn;
             me.final_wfn = parent.final_wfn;
         }
