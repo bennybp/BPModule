@@ -28,6 +28,10 @@ template<typename T>
 class ModulePtr
 {
     public:
+        ModulePtr(void)
+            : holder_(nullptr), ptr_(nullptr)
+        {  }
+
         /*! \brief Constructor from an IMPL holder rvalue reference
          */
         ModulePtr(std::unique_ptr<detail::ModuleIMPLHolder> && holder)
