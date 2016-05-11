@@ -108,42 +108,11 @@ const ModuleTreeNode & ModuleBase::MyNode(void) const
     return *treenode_;
 }
 
-Wavefunction & ModuleBase::InitialWfn(void)
-{
-    return MyNode().initial_wfn;
-}
-
-const Wavefunction & ModuleBase::InitialWfn(void) const
-{
-    return MyNode().initial_wfn;
-}
-
-
-void ModuleBase::SetInitialWfn(const Wavefunction& wfn)
-{
-    MyNode().initial_wfn=wfn;
-}
-
-Wavefunction & ModuleBase::FinalWfn(void)
-{
-    return MyNode().final_wfn;
-}
-
-const Wavefunction & ModuleBase::FinalWfn(void) const
-{
-    return MyNode().final_wfn;
-}
-
-void ModuleBase::SetFinalWfn(const Wavefunction& wfn)
-{
-    MyNode().final_wfn=wfn;
-}
-
-
 std::string ModuleBase::GetOutput(void) const
 {
     return MyNode().output;
 }
+
 
 
 ////////////////////////////////

@@ -35,10 +35,11 @@ class SystemIntegral : public ModuleBase
          * \return Number of integrals calculated
          */
         uint64_t Calculate(uint64_t deriv,
+                           const system::System & sys,
                            double * outbuffer, size_t bufsize)
         {
             return ModuleBase::FastCallFunction(&SystemIntegral::Calculate_,
-                                                deriv, outbuffer, bufsize);
+                                                deriv, sys, outbuffer, bufsize);
         }
 
 
@@ -50,12 +51,13 @@ class SystemIntegral : public ModuleBase
          * \param [in] outbuffer Where to place the completed integrals
          * \return Number of integrals calculated
          */
-        uint64_t CalculatePy(uint64_t deriv, pybind11::buffer outbuffer)
+        uint64_t CalculatePy(uint64_t deriv, const system::System & sys,
+                             pybind11::buffer outbuffer)
         {
             auto ptrinfo = PythonBufferToPtr<double>(outbuffer, 1);
 
             return ModuleBase::FastCallFunction(&SystemIntegral::Calculate_,
-                                                deriv, ptrinfo.first, ptrinfo.second[0]);
+                                                deriv, sys, ptrinfo.first, ptrinfo.second[0]);
         }
 
 
@@ -63,7 +65,8 @@ class SystemIntegral : public ModuleBase
         // To be implemented by derived classes
         /////////////////////////////////////////
         //! \copydoc Calculate
-        virtual uint64_t Calculate_(uint64_t deriv, double * outbuffer, size_t bufsize) = 0;
+        virtual uint64_t Calculate_(uint64_t deriv, const system::System & sys, 
+                                    double * outbuffer, size_t bufsize) = 0;
 };
 
 
@@ -74,7 +77,8 @@ class SystemIntegral_Py : public SystemIntegral
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
     
-        virtual uint64_t Calculate_(uint64_t deriv, double * outbuffer, size_t bufsize)
+        virtual uint64_t Calculate_(uint64_t deriv, const system::System & sys,
+                                    double * outbuffer, size_t bufsize)
         {
             //! \todo untested, won't work
             pybind11::buffer_info buf(outbuffer,
@@ -83,7 +87,7 @@ class SystemIntegral_Py : public SystemIntegral
                                       1, { bufsize },
                                       { sizeof(double) });
 
-            return CallPyOverride<uint64_t>("Calculate_", deriv, buf, bufsize);
+            return CallPyOverride<uint64_t>("Calculate_", deriv, sys, buf, bufsize);
         }
 };
 

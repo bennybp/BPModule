@@ -39,25 +39,25 @@ def Run():
         s = ApplySingleBasis("primary", "sto-3g", s)
 
 
-        w.SetSystem(s)
+        w.system = s
         tester.Test("Serialization with system", True,
                     TestSerialization_Wavefunction, w)
 
         cmat = IrrepSpinMatrixD()
         cmat.Set(Irrep.A1, 0, SimpleMatrixD(2, 2, [1, 2, 3, 4]))
-        w.SetCMat(cmat)
+        w.cmat = cmat
         tester.Test("Serialization with cmat", True,
                     TestSerialization_Wavefunction, w)
 
         epsilon = IrrepSpinVectorD()
         epsilon.Set(Irrep.E2, 0, SimpleVectorD(2, [1, 2]))
-        w.SetEpsilon(epsilon)
+        w.epsilon = epsilon
         tester.Test("Serialization with epsilon", True,
                     TestSerialization_Wavefunction, w)
 
         occupations = IrrepSpinVectorD()
         occupations.Set(Irrep.A2, 0, SimpleVectorD(2, [1, 2]))
-        w.SetOccupations(occupations)
+        w.occupations = occupations
         tester.Test("Serialization with occupations", True,
                     TestSerialization_Wavefunction, w)
  

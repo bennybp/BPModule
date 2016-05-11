@@ -307,8 +307,7 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
                       se.mi,          // module info
                       std::string(),  // output
                       curid_,         // module id
-                      Wavefunction(), // initial wfn
-                      Wavefunction(), // final wfn
+                      {},             // wavefunctions
                       true            // module is in use
                      };
 
@@ -335,29 +334,8 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
 
 
     // If there is a parent, get its wavefunction and use that
-    if(parentid != 0)
-    {
-        if(!mtree_.HasID(parentid))
-            throw exception::ModuleCreateException("Parent does not exit on map", "parentid", parentid);
-
-        const ModuleTreeNode & parent = mtree_.GetByID(parentid);
-
-        // if the parent is inuse, use its initial wfn. Else, use its final
-        if(ModuleInUse(parentid))
-        {
-            GlobalDebug("Module %? - using initial wavefunction of inuse parent %?\n", static_cast<ID_t>(curid_), parentid);
-            parent.initial_wfn.ValidCheck();
-            me.initial_wfn = parent.initial_wfn;
-            me.final_wfn = parent.initial_wfn;
-        }
-        else
-        {
-            GlobalDebug("Module %? - using final wavefunction of destroyed parent %?\n", static_cast<ID_t>(curid_), parentid);
-            parent.initial_wfn.ValidCheck();
-            me.initial_wfn = parent.final_wfn;
-            me.final_wfn = parent.final_wfn;
-        }
-    }
+    if(parentid != 0 && !mtree_.HasID(parentid))
+        throw exception::ModuleCreateException("Parent does not exist on map", "parentid", parentid);
 
     // move the data to the tree
     // "me" should not be accessed after this, so

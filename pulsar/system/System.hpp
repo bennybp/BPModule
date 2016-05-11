@@ -187,7 +187,7 @@ public:
     bool CompareInfo(const System & RHS)const;
 
 
-    /*! \brief Obtain a hash of this BasisSet */
+    /*! \brief Obtain a hash of this system */
     util::Hash MyHash(void) const;
 
     ///@}

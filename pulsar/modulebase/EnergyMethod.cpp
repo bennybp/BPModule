@@ -18,6 +18,7 @@ using std::vector;
 
 using pulsar::system::Atom;
 using pulsar::system::System;
+using pulsar::datastore::Wavefunction;
 using pulsar::system::AtomSetUniverse;
 using LibTaskForce::Communicator;
 using pulsar::exception::GeneralException;
@@ -37,6 +38,7 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
         size_t Order_;
         const AtomV_t& Atoms_;
         MM_t& MM_;
+        const datastore::Wavefunction & Wfn_;
         std::string Key_;
         ID_t ID_;
     public:
@@ -58,14 +60,14 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
                     NewU<<Atoms_[j];
             }
             Module_t NewModule=MM_.GetModule<EnergyMethod>(Key_,ID_);
-            NewModule->InitialWfn().SetSystem( 
-                    std::make_shared<const System>(System(NewU,true)));
-            return NewModule->Deriv(Order_-1);
+            Wavefunction NewWfn(Wfn_);
+            NewWfn.system = std::make_shared<const System>(System(NewU,true));
+            return NewModule->Deriv(Order_-1,NewWfn).second;
         }
         
         FDFunctor(size_t Order,const AtomV_t& Atoms,
-                  MM_t& MM,std::string Key,ID_t ID):
-            Order_(Order),Atoms_(Atoms),MM_(MM),Key_(Key),ID_(ID){}
+                  MM_t& MM,const datastore::Wavefunction & Wfn, std::string Key,ID_t ID):
+            Order_(Order),Atoms_(Atoms),MM_(MM),Wfn_(Wfn),Key_(Key),ID_(ID){}
 };    
 
 
@@ -73,11 +75,13 @@ size_t EnergyMethod::MaxDeriv()const{
     return Options().Get<size_t>("MAX_DERIV");
 } 
  
-Return_t EnergyMethod::FiniteDifference(size_t Order){
+
+EnergyMethod::DerivReturnType
+EnergyMethod::FiniteDifference(size_t Order, const datastore::Wavefunction & Wfn){
     if(Order==0)
         throw GeneralException("I do not know how to obtain an energy via "
                                "finite difference.");
-    const System& Mol=*(InitialWfn().GetSystem());
+    const System& Mol=*(Wfn.system);
     vector<Atom> Atoms;
     vector<Return_t> TempDeriv;
     //I don't know why the fill constructor is not working...
@@ -88,7 +92,7 @@ Return_t EnergyMethod::FiniteDifference(size_t Order){
     
     math::CentralDiff<double,Return_t> FD(NewComm);
 
-    FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),Key(),ID());
+    FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),Wfn,Key(),ID());
     TempDeriv=FD.Run(Thing2Run,3*Mol.Size(),
                      Options().Get<double>("FDIFF_DISPLACEMENT"),
                      Options().Get<size_t>("FDIFF_STENCIL_SIZE"));
@@ -97,7 +101,8 @@ Return_t EnergyMethod::FiniteDifference(size_t Order){
        for(double j :  TempDeriv[i])
            TempDeriv[0].push_back(j);
 
-    return TempDeriv[0];
+    //! \todo what wfn to return
+    return {Wfn, TempDeriv[0]};
 }
     
 }}

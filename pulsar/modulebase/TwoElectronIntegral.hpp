@@ -34,10 +34,11 @@ class TwoElectronIntegral : public ModuleBase
          * \param [in] bs3 Basis set tag to use for the third center
          * \param [in] bs4 Basis set tag to use for the fourth center
          */
-        void SetBases(const std::string & bs1, const std::string & bs2,
+        void SetBases(const system::System & sys,
+                      const std::string & bs1, const std::string & bs2,
                       const std::string & bs3, const std::string & bs4)
         {
-            return ModuleBase::CallFunction(&TwoElectronIntegral::SetBases_, bs1, bs2, bs3, bs4);
+            return ModuleBase::CallFunction(&TwoElectronIntegral::SetBases_, sys, bs1, bs2, bs3, bs4);
         }
 
 
@@ -138,7 +139,8 @@ class TwoElectronIntegral : public ModuleBase
         // To be implemented by derived classes
         /////////////////////////////////////////
         //! \copydoc SetBases
-        virtual void SetBases_(const std::string & bs1, const std::string & bs2,
+        virtual void SetBases_(const system::System & sys,
+                               const std::string & bs1, const std::string & bs2,
                                const std::string & bs3, const std::string & bs4) = 0;
 
 
@@ -187,11 +189,12 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
-        virtual void SetBases_(const std::string & bs1, const std::string & bs2,
+        virtual void SetBases_(const system::System & sys,
+                               const std::string & bs1, const std::string & bs2,
                                const std::string & bs3, const std::string & bs4)
 
         {
-            return CallPyOverride<void>("SetBases_", bs1, bs2, bs3, bs4);
+            return CallPyOverride<void>("SetBases_", sys, bs1, bs2, bs3, bs4);
         }
 
 

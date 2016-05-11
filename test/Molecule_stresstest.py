@@ -15,10 +15,11 @@ psrpath = os.path.join(os.path.dirname(thispath), "modules")
 sys.path.insert(0, psrpath)
 
 import pulsar as psr
+from pulsar.system import *
 
 
 onemillion = 1000000
-ntest = 5*onemillion
+ntest = 10000
 
 
 def Run():
@@ -33,6 +34,9 @@ def Run():
         for i in range(0, ntest):
             molu.Insert(psr.system.CreateAtom(i, [ random.uniform(-1000, 1000), random.uniform(-1000, 1000), random.uniform(-1000, 1000) ], 6))
         mol = psr.system.System(molu, True)
+
+        mol = ApplySingleBasis("Primary","sto-3g",mol)
+
         time1 = perf_counter()
         psr.output.GlobalOutput("Size: {}\n".format(mol.Size()))
         psr.output.GlobalOutput("     Time to fill: {}\n".format(time1-time0))
@@ -54,8 +58,25 @@ def Run():
         com = mol.CenterOfMass()
         time1 = perf_counter()
         psr.output.GlobalOutput(" Time to find COM: {}\n".format(time1-time0))
-        psr.output.GlobalOutput("COM: {}".format(com.GetCoords()))
+        psr.output.GlobalOutput("COM: {}\n".format(com.GetCoords()))
 
+        time0 = perf_counter()
+        h = mol.MyHash().String()
+        time1 = perf_counter()
+        psr.output.GlobalOutput("Time to find hash: {}\n".format(time1-time0))
+        psr.output.GlobalOutput("Hash: {}\n".format(h))
+
+        time0 = perf_counter()
+        bs = mol.GetBasisSet("Primary")
+        time1 = perf_counter()
+        psr.output.GlobalOutput("Time to get BS: {}\n".format(time1-time0))
+
+        time0 = perf_counter()
+        h = bs.MyHash().String()
+        time1 = perf_counter()
+        psr.output.GlobalOutput("Time to find BS hash: {}\n".format(time1-time0))
+        psr.output.GlobalOutput("Basis set size: {}\n".format(bs.NFunctions()))
+        psr.output.GlobalOutput("Hash: {}\n".format(h))
 
         tester.PrintResults() 
 

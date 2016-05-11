@@ -97,7 +97,7 @@ class BasisShellBase
          *
          * \throw pulsar::exception::BasisSetException on out-of-bounds access
          */
-        size_t GeneralNFunctions(size_t n) const { return system::NFunction(type_, GeneralAM(n)); }
+        size_t GeneralNFunctions(size_t n) const { return system::NFunctions(type_, GeneralAM(n)); }
 
 
         /*! \brief Is this shell a combined AM shell

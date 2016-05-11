@@ -40,8 +40,10 @@ def Run(mm):
         #             supermodule              module name    key
         mm.LoadModule("Methods",               "BPTest",                   "SCF")
         mm.LoadModule("Methods",               "CoreGuess",                "IGUESS")
+        mm.LoadModule("Methods",               "HFIterate",                "SCFITER")
         mm.LoadModule("SystemIntegrals",       "NuclearRepulsion",         "NUC_REP")
         mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_OVERLAP")
+        mm.LoadModule("OneElectronIntegrals",  "CoreBuild",                "AO_COREBUILD")
         mm.LoadModule("OneElectronIntegrals",  "KineticEnergy",            "AO_KINETIC")
         mm.LoadModule("OneElectronIntegrals",  "OneElectronPotential",     "AO_NUCEL")
         mm.LoadModule("TwoElectronIntegrals",  "ReferenceERI",             "AO_ERI")
@@ -49,19 +51,28 @@ def Run(mm):
         # Set the OneElectronPotential module to use the atom grid (ie, nuclear-electron attraction)
         mm.ChangeOption("AO_NUCEL", "grid", "ATOMS")
 
+        # SCF Iterations settings
+        mm.ChangeOption("SCFITER",  "KEY_AO_COREBUILD",    "AO_COREBUILD")
+        mm.ChangeOption("SCFITER",  "KEY_AO_OVERLAP",      "AO_OVERLAP")
+        mm.ChangeOption("SCFITER",  "KEY_AO_ERI",          "AO_ERI")
+        mm.ChangeOption("SCFITER",  "KEY_NUC_REPULSION",   "NUC_REP")
+
+
+        # Tell the core builder which modules to use
+        mm.ChangeOption("AO_COREBUILD", "KEY_AO_KINETIC", "AO_KINETIC")
+        mm.ChangeOption("AO_COREBUILD", "KEY_AO_NUCATT",  "AO_NUCEL")
+
         # Tell the core guess which modules to use
         mm.ChangeOption("IGUESS", "KEY_NUC_REPULSION", "NUC_REP")
         mm.ChangeOption("IGUESS", "KEY_AO_OVERLAP",    "AO_OVERLAP")
-        mm.ChangeOption("IGUESS", "KEY_AO_NUCATT",     "AO_NUCEL")
-        mm.ChangeOption("IGUESS", "KEY_AO_KINETIC",    "AO_KINETIC")
+        mm.ChangeOption("IGUESS", "KEY_AO_COREBUILD",  "AO_COREBUILD")
 
         # Tell the SCF which modules to use
         mm.ChangeOption("SCF", "KEY_NUC_REPULSION", "NUC_REP")
         mm.ChangeOption("SCF", "KEY_AO_OVERLAP",    "AO_OVERLAP")
-        mm.ChangeOption("SCF", "KEY_AO_NUCATT",     "AO_NUCEL")
-        mm.ChangeOption("SCF", "KEY_AO_KINETIC",    "AO_KINETIC")
-        mm.ChangeOption("SCF", "KEY_AO_ERI",        "AO_ERI")
+        mm.ChangeOption("SCF", "KEY_AO_COREBUILD",  "AO_COREBUILD")
         mm.ChangeOption("SCF", "KEY_INITIAL_GUESS", "IGUESS")
+        mm.ChangeOption("SCF", "KEY_SCF_ITERATOR",  "SCFITER")
 
 
 
@@ -82,10 +93,9 @@ def Run(mm):
         nr = mm.GetModule("SCF", 0)
         nr.EnableDebug(True)
         iwfn = Wavefunction()
-        iwfn.SetSystem(s)
-        nr.SetInitialWfn(iwfn)
+        iwfn.system = s
 
-        a = nr.Deriv(0)
+        a = nr.Energy(iwfn)
         print(a)
 
         tester = Tester("Testing simple energy calculation")

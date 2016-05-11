@@ -54,10 +54,7 @@ def Run(mm):
          
         nr = mm.GetModule("AO_NUCEL", 0)
         nr.EnableDebug(True)
-        iwfn = Wavefunction()
-        iwfn.SetSystem(s)
-        nr.SetInitialWfn(iwfn)
-        nr.SetBases("Primary", "Primary")
+        nr.SetBases(s, "Primary", "Primary")
 
         tester = Tester("Testing Nuclear Electron Attraction integrals")
         tester.PrintHeader()

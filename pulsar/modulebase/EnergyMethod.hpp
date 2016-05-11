@@ -32,17 +32,20 @@ class EnergyMethod : public ModuleBase
 {   
     public:
         typedef EnergyMethod BaseType;
+        typedef std::pair<datastore::Wavefunction, double> EnergyReturnType;
+        typedef std::pair<datastore::Wavefunction, std::vector<double>> DerivReturnType;
         
         EnergyMethod(ID_t id): ModuleBase(id,"EnergyMethod"){ }
         
         ///The call users use, tries to use available analytic derivatives
-        std::vector<double> Deriv(size_t Order){
-            if(Order>MaxDeriv()) return FiniteDifference(Order);
-            return ModuleBase::CallFunction(&EnergyMethod::Deriv_,Order);
+        DerivReturnType Deriv(size_t Order, const datastore::Wavefunction & wfn)
+        {
+            if(Order>MaxDeriv()) return FiniteDifference(Order, wfn);
+            return ModuleBase::CallFunction(&EnergyMethod::Deriv_,Order, wfn);
         }
         
         /// This is the function you override.  
-        virtual std::vector<double> Deriv_(size_t Order)=0;
+        virtual DerivReturnType Deriv_(size_t Order, const datastore::Wavefunction & wfn)=0;
         
         ///Returns the maximum order for which analytic derivative are coded
         ///reads it from option MAX_DERIV
@@ -56,16 +59,20 @@ class EnergyMethod : public ModuleBase
          *   calling Deriv until analytic derivatives are available.  Hence,
          *   setting MAX_DERIV controls the level of nesting
          */ 
-        std::vector<double> FiniteDifference(size_t Order);
+        DerivReturnType FiniteDifference(size_t Order, const datastore::Wavefunction & wfn);
         
         ///@{
         ///Convenience functions
         ///Returns the energy of this method
-        double Energy(){return Deriv(0)[0];}
+        EnergyReturnType Energy(const datastore::Wavefunction & wfn){
+            auto ret = Deriv(0,wfn);
+            return {ret.first, ret.second[0]};
+        }
+
         ///Returns the nuclear gradient of this method
-        std::vector<double> Gradient(){return Deriv(1);}
+        DerivReturnType Gradient(const datastore::Wavefunction & wfn){return Deriv(1,wfn);}
         ///Returns the nuclear Hessian of this method
-        std::vector<double> Hessian(){return Deriv(2);}
+        DerivReturnType Hessian(const datastore::Wavefunction & wfn){return Deriv(2,wfn);}
         ///@}
 };
 
@@ -75,8 +82,8 @@ class EnergyMethod_Py : public EnergyMethod{
         using EnergyMethod::EnergyMethod;
         MODULEBASE_FORWARD_PROTECTED_TO_PY
                 
-        virtual std::vector<double> Deriv_(size_t Order){
-            return CallPyOverride<std::vector<double>>("Deriv_",Order);
+        virtual DerivReturnType Deriv_(size_t Order,const datastore::Wavefunction & wfn){
+            return CallPyOverride<DerivReturnType>("Deriv_",Order,wfn);
         }    
 };
 

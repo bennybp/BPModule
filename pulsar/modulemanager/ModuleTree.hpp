@@ -25,6 +25,8 @@ namespace modulemanager {
  */
 struct ModuleTreeNode
 {
+    typedef std::pair<const datastore::Wavefunction, const datastore::Wavefunction> WfnPair;
+    
     /*
      * This is a simple structure, and the compiler-generated constructors, move
      * constructor, etc, should be OK
@@ -33,9 +35,8 @@ struct ModuleTreeNode
     modulemanager::ModuleInfo minfo;      //!< The information for the module
     std::string output;                   //!< Output captured from the module
 
-    ID_t id;                     //!< ID of the created module (also identifies this node)
-    datastore::Wavefunction initial_wfn;  //!< Wavefunction this module started with
-    datastore::Wavefunction final_wfn;    //!< Wavefunction this module ended with
+    ID_t id;                              //!< ID of the created module (also identifies this node)
+    std::vector<WfnPair> wfns;            //!< Wavefunctions calculated by this module
 
     // is the tree node in use
     bool inuse;
@@ -60,7 +61,7 @@ struct ModuleTreeNode
         void serialize(Archive & ar)
         {
             ar(modulekey, minfo, output, id);
-            ar(initial_wfn, final_wfn);
+            ar(wfns);
             ar(parentid, children);
         }
 

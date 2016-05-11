@@ -53,9 +53,6 @@ def Run(mm):
          
         nr = mm.GetModule("NUC_REP", 0)
         nr.EnableDebug(True)
-        iwfn = Wavefunction()
-        iwfn.SetSystem(s)
-        nr.SetInitialWfn(iwfn)
 
         tester = Tester("Testing basic System integrals")
         tester.PrintHeader()
@@ -63,7 +60,7 @@ def Run(mm):
         ref_h2o = [ 8.80146556478736 ] 
 
         outbuf = array.array('d', [0]*64)
-        n = nr.Calculate(0, outbuf) 
+        n = nr.Calculate(0, s, outbuf) 
 
         tester.TestValue("H2O Nuclear repulsion", True, CompareList(ref_h2o, list(outbuf[:n]), 1e-14))
 

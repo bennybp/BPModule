@@ -12,7 +12,6 @@
 #include "pulsar/math/IrrepSpinMatrix.hpp"
 #include "pulsar/system/System.hpp"
 #include "pulsar/util/Serialization.hpp"
-#include "pulsar/util/bphash/Hash.hpp"
 #include "pulsar/util/bphash/Hasher_fwd.hpp"
 
 namespace pulsar {
@@ -28,125 +27,10 @@ namespace datastore {
 class Wavefunction
 {
     public:
-        bool HasSystem(void) const noexcept
-        {
-            return static_cast<bool>(system.first);
-        }
-
-        std::shared_ptr<const system::System> GetSystem(void) const
-        {
-            return system.first;
-        }
-
-        util::Hash GetSystemHash(void) const
-        {
-            return system.second;
-        }
-
-        void SetSystem(std::shared_ptr<const system::System> sys)
-        {
-            system = {sys, sys ? sys->MyHash() : util::Hash()};
-        }
-
-        void SetSystem(const system::System & sys)
-        {
-            SetSystem(std::make_shared<const system::System>(sys));
-        }
-
-        void SetSystem(system::System && sys)
-        {
-            SetSystem(std::make_shared<const system::System>(std::move(sys)));
-        }
-
-        bool HasCMat(void) const noexcept
-        {
-            return static_cast<bool>(cmat.first);
-        }
-
-        std::shared_ptr<const math::IrrepSpinMatrixD> GetCMat(void) const
-        {
-            return cmat.first;
-        }
-
-        util::Hash GetCMatHash(void) const
-        {
-            return cmat.second;
-        }
-
-        void SetCMat(std::shared_ptr<const math::IrrepSpinMatrixD> c)
-        {
-            cmat = {c, c ? c->MyHash() : util::Hash()};
-        }
-
-        void SetCMat(const math::IrrepSpinMatrixD & c)
-        {
-            SetCMat(std::make_shared<const math::IrrepSpinMatrixD>(c));
-        }
-
-        void SetCMat(math::IrrepSpinMatrixD && c)
-        {
-            SetCMat(std::make_shared<const math::IrrepSpinMatrixD>(std::move(c)));
-        }
-
-        bool HasEpsilon(void) const noexcept
-        {
-            return static_cast<bool>(epsilon.first);
-        }
-
-        std::shared_ptr<const math::IrrepSpinVectorD> GetEpsilon(void) const
-        {
-            return epsilon.first;
-        }
-
-        util::Hash GetEpsilonHash(void) const
-        {
-            return epsilon.second;
-        }
-
-        void SetEpsilon(std::shared_ptr<const math::IrrepSpinVectorD> e)
-        {
-            epsilon = {e, e ? e->MyHash() : util::Hash()};
-        }
-
-        void SetEpsilon(const math::IrrepSpinVectorD & e)
-        {
-            SetEpsilon(std::make_shared<const math::IrrepSpinVectorD>(e));
-        }
-
-        void SetEpsilon(math::IrrepSpinVectorD && e)
-        {
-            SetEpsilon(std::make_shared<const math::IrrepSpinVectorD>(std::move(e)));
-        }
-
-        bool HasOccupations(void) const noexcept
-        {
-            return static_cast<bool>(occupations.first);
-        }
-
-        std::shared_ptr<const math::IrrepSpinVectorD> GetOccupations(void) const
-        {
-            return occupations.first;
-        }
-
-        util::Hash GetOccupationsHash(void) const
-        {
-            return occupations.second;
-        }
-
-        void SetOccupations(std::shared_ptr<const math::IrrepSpinVectorD> occ)
-        {
-            occupations = {occ, occ ? occ->MyHash() : util::Hash()};
-        }
-
-        void SetOccupations(const math::IrrepSpinVectorD & occ)
-        {
-            SetOccupations(std::make_shared<const math::IrrepSpinVectorD>(occ));
-        }
-
-        void SetOccupations(math::IrrepSpinVectorD && occ)
-        {
-            SetOccupations(std::make_shared<const math::IrrepSpinVectorD>(std::move(occ)));
-        }
+        std::shared_ptr<const system::System> system;
+        std::shared_ptr<const math::IrrepSpinMatrixD> cmat;
+        std::shared_ptr<const math::IrrepSpinVectorD> epsilon;
+        std::shared_ptr<const math::IrrepSpinVectorD> occupations;
 
         void ValidCheck(void) const
         {
@@ -155,17 +39,17 @@ class Wavefunction
             // check for consistent irreps, spins, etc,
             // accross all members 
             //! \todo compare with system?
-            if(cmat.first)
+            if(cmat)
             {
-                if(epsilon.first && !cmat.first->SameStructure(*epsilon.first))
+                if(epsilon && !cmat->SameStructure(*epsilon))
                     throw GeneralException("Inconsistent shape: epsilon and cmat");
-                if(occupations.first && !cmat.first->SameStructure(*occupations.first))
+                if(occupations && !cmat->SameStructure(*occupations))
                     throw GeneralException("Inconsistent shape: occupations and cmat");
             }
 
-            if(epsilon.first)
+            if(epsilon)
             {
-                if(occupations.first && !epsilon.first->SameStructure(*occupations.first))
+                if(occupations && !epsilon->SameStructure(*occupations))
                     throw GeneralException("Inconsistent shape: occupations and epsilon");
             }
         }
@@ -178,10 +62,6 @@ class Wavefunction
         util::Hash MyHash(void) const;
 
     private:
-        std::pair<std::shared_ptr<const system::System>,         util::Hash> system;
-        std::pair<std::shared_ptr<const math::IrrepSpinMatrixD>, util::Hash> cmat;
-        std::pair<std::shared_ptr<const math::IrrepSpinVectorD>, util::Hash> epsilon;
-        std::pair<std::shared_ptr<const math::IrrepSpinVectorD>, util::Hash> occupations;
 
         //! \name Serialization and Hashing
         ///@{
@@ -196,7 +76,7 @@ class Wavefunction
         template<class Archive>
         void save(Archive & ar) const
         {
-            ar(system.first, cmat.first, epsilon.first, occupations.first);
+            ar(system, cmat, epsilon, occupations);
         }
 
         template<class Archive>
@@ -209,10 +89,10 @@ class Wavefunction
 
             ar(newsystem, newcmat, newepsilon, newocc);
 
-            SetSystem(newsystem);
-            SetCMat(newcmat);
-            SetEpsilon(newepsilon);
-            SetOccupations(newocc);
+            system = newsystem; 
+            cmat = newcmat;
+            epsilon = newepsilon;
+            occupations = newocc;
         }
 
         void hash(util::Hasher & h) const;

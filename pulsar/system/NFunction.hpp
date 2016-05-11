@@ -90,7 +90,7 @@ inline int NSphericalGaussian(int am)
  *
  * \throw pulsar::exception::BasisSetException if the type is unknown
  */
-inline int NFunction(ShellType type, int am)
+inline int NFunctions(ShellType type, int am)
 {
     switch(type)
     {
@@ -113,11 +113,11 @@ inline int NFunction(ShellType type, int am)
  * \throw pulsar::exception::BasisSetException if the type is unknown
  */
 template<typename Container>
-int NFunction(ShellType type, const Container & amcont)
+int NFunctions(ShellType type, const Container & amcont)
 {
     return std::accumulate(amcont.begin(), amcont.end(), static_cast<int>(0),
                           [type](int sum, int am)
-                          { return sum *= NFunction(type, am); });
+                          { return sum *= NFunctions(type, am); });
 }
 
 

@@ -78,9 +78,6 @@ def TestIrrepSpinMatrix(tester, mattype, ismattype, pytype, testserial):
     ismat3.Set(Irrep.E1, 0, mattype(2, 3, mat2))
     tester.TestValue("Comparison of modified irrep spin matrices", False, ismat3 == ismat2)
 
-    ismat3.Erase(Irrep.E1, 0)
-    tester.TestValue("Comparison of modified irrep spin matrices", True, ismat3 == ismat2)
-
     ismat3 = ismattype(ismat1)
     ismat3.Set(Irrep.A2, 1, mattype(2, 3, mat1))
     tester.TestValue("Comparison of modified irrep spin matrices", False, ismat3 == ismat2)
@@ -98,10 +95,7 @@ def TestIrrepSpinMatrix(tester, mattype, ismattype, pytype, testserial):
     tester.Test("Getting unset matrix", False, ismat2.Get, Irrep.E2, 1)
 
     ismat4 = ismattype()
-    ismat2.Clear()
-    tester.TestValue("Comparison of empty irrep spin matrices", True, ismat4 == ismat2)
     tester.TestValue("Comparison of empty irrep spin matrices", True, ismat4 == ismat4)
-    tester.TestValue("Comparison of empty irrep spin matrices", True, ismat2 == ismat2)
 
     tester.Test("Serialization of IrrepSpinMatrix", True, testserial, ismat1)
     

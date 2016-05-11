@@ -17,6 +17,7 @@
 #include "pulsar/output/TeeBufToString.hpp"
 #include "pulsar/util/Format.hpp"
 #include "pulsar/python/Call.hpp"
+#include "pulsar/datastore/Wavefunction.hpp" // needed by basically all derived classes
 
 
 // forward declarations
@@ -127,48 +128,6 @@ class ModuleBase
          * \throw std::logic_error if there is a severe developer error
          */
         const modulemanager::ModuleTreeNode & MyNode(void) const;
-
-
-        /*! \brief Get the initial wavefunction from this module's tree node
-         *
-         * \throw std::logic_error if there is a severe developer error
-         */
-        datastore::Wavefunction & InitialWfn(void);
-
-
-        /*! \brief Get the initial wavefunction from this module's tree node
-         *
-         * \throw std::logic_error if there is a severe developer error
-         */
-        const datastore::Wavefunction & InitialWfn(void) const;
-       
- 
-        /*! \brief Allows you to set the initial wavefunction on this module's tree node
-         * 
-         * \note Only really here to allow setting via python
-         */
-        void SetInitialWfn(const datastore::Wavefunction& Wfn);
-
-
-        /*! \brief Get the final wavefunction from this module's tree node
-         *
-         * \throw std::logic_error if there is a severe developer error
-         */
-        datastore::Wavefunction & FinalWfn(void);
-
-
-        /*! \brief Get the final wavefunction from this module's tree node
-         *
-         * \throw std::logic_error if there is a severe developer error
-         */
-        const datastore::Wavefunction & FinalWfn(void) const;
-       
- 
-        /*! \brief Allows you to set the final wavefunction on this module's tree node
-         * 
-         * \note Only really here to allow setting via python
-         */
-        void SetFinalWfn(const datastore::Wavefunction& Wfn);
 
 
         /*! \brief Get the output from this module's tree node
