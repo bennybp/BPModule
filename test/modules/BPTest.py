@@ -68,9 +68,6 @@ def Run(mm):
         mm.ChangeOption("IGUESS", "KEY_AO_COREBUILD",  "AO_COREBUILD")
 
         # Tell the SCF which modules to use
-        mm.ChangeOption("SCF", "KEY_NUC_REPULSION", "NUC_REP")
-        mm.ChangeOption("SCF", "KEY_AO_OVERLAP",    "AO_OVERLAP")
-        mm.ChangeOption("SCF", "KEY_AO_COREBUILD",  "AO_COREBUILD")
         mm.ChangeOption("SCF", "KEY_INITIAL_GUESS", "IGUESS")
         mm.ChangeOption("SCF", "KEY_SCF_ITERATOR",  "SCFITER")
 
@@ -96,7 +93,6 @@ def Run(mm):
         iwfn.system = s
 
         a = nr.Energy(iwfn)
-        print(a)
 
         tester = Tester("Testing simple energy calculation")
         tester.PrintHeader()

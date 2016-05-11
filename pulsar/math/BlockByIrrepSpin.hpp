@@ -203,11 +203,11 @@ class BlockByIrrepSpin
             for(const auto & irrepit : rhs)
             for(const auto & spinit : irrepit.second)
             {
-                if(Has(irrepit.first, spinit.first))
+                if(!Has(irrepit.first, spinit.first))
                     return false;
             }
 
-            return false;
+            return true;
         }
 
 
