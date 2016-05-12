@@ -71,13 +71,13 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
 };    
 
 
-size_t EnergyMethod::MaxDeriv()const{
+size_t EnergyMethod::MaxDeriv_()const{
     return Options().Get<size_t>("MAX_DERIV");
 } 
  
 
 EnergyMethod::DerivReturnType
-EnergyMethod::FiniteDifference(size_t Order, const datastore::Wavefunction & Wfn){
+EnergyMethod::FiniteDifference_(size_t Order, const datastore::Wavefunction & Wfn){
     if(Order==0)
         throw GeneralException("I do not know how to obtain an energy via "
                                "finite difference.");

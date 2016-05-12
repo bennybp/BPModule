@@ -115,6 +115,30 @@ PYBIND11_PLUGIN(modulebase)
             ;
 
     ///////////////////////
+    // SCF Iterator
+    ///////////////////////
+    pybind11::class_<SCFIterator_Py> scfiter(m, "SCFIterator", mbase);
+    scfiter.alias<SCFIterator>()
+            .def(pybind11::init<ID_t>())
+            .def_readonly("out", &SCFIterator_Py::out, pybind11::return_value_policy::reference_internal) 
+            .def("Cache", &SCFIterator_Py::Cache, pybind11::return_value_policy::reference_internal)
+            .def("MManager", &SCFIterator_Py::MManager, pybind11::return_value_policy::reference_internal)
+            .def("Next", &SCFIterator::Next)
+            ;
+
+    ///////////////////////
+    // Fock Builder
+    ///////////////////////
+    pybind11::class_<FockBuilder_Py> fockbuild(m, "FockBuilder", mbase);
+    fockbuild.alias<FockBuilder>()
+             .def(pybind11::init<ID_t>())
+             .def_readonly("out", &FockBuilder_Py::out, pybind11::return_value_policy::reference_internal) 
+             .def("Cache", &FockBuilder_Py::Cache, pybind11::return_value_policy::reference_internal)
+             .def("MManager", &FockBuilder_Py::MManager, pybind11::return_value_policy::reference_internal)
+             .def("Build", &FockBuilder::Build)
+            ;
+
+    ///////////////////////
     // Method base class
     ///////////////////////
     pybind11::class_<EnergyMethod_Py> energymethod(m, "EnergyMethod", mbase);
