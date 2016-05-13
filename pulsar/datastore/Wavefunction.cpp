@@ -20,6 +20,7 @@ bool Wavefunction::operator==(const Wavefunction & rhs) const
     bool samecmat = (cmat == rhs.cmat);
     bool sameepsilon = (epsilon == rhs.epsilon);
     bool sameoccupations = (occupations == rhs.occupations);
+    bool sameopdm = (opdm == rhs.opdm);
 
     // if the pointers aren't the same, check the 
     // actual data
@@ -35,7 +36,10 @@ bool Wavefunction::operator==(const Wavefunction & rhs) const
     if(!sameoccupations && bool(occupations) && bool(rhs.occupations))
         sameoccupations = ( (*occupations) == (*rhs.occupations) );
 
-    return (samesystem && samecmat && sameepsilon && sameoccupations);
+    if(!sameopdm && bool(opdm) && bool(rhs.opdm))
+        sameopdm = ( (*opdm) == (*rhs.opdm) );
+
+    return (samesystem && samecmat && sameepsilon && sameoccupations && sameopdm);
 }
 
 

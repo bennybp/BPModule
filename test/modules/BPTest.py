@@ -41,6 +41,7 @@ def Run(mm):
         mm.LoadModule("Methods",               "BPTest",                   "SCF")
         mm.LoadModule("Methods",               "CoreGuess",                "IGUESS")
         mm.LoadModule("Methods",               "HFIterate",                "SCFITER")
+        mm.LoadModule("Methods",               "BasicFockBuild",           "FOCKBUILD")
         mm.LoadModule("SystemIntegrals",       "NuclearRepulsion",         "NUC_REP")
         mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_OVERLAP")
         mm.LoadModule("OneElectronIntegrals",  "CoreBuild",                "AO_COREBUILD")
@@ -52,10 +53,12 @@ def Run(mm):
         mm.ChangeOption("AO_NUCEL", "grid", "ATOMS")
 
         # SCF Iterations settings
-        mm.ChangeOption("SCFITER",  "KEY_AO_COREBUILD",    "AO_COREBUILD")
         mm.ChangeOption("SCFITER",  "KEY_AO_OVERLAP",      "AO_OVERLAP")
-        mm.ChangeOption("SCFITER",  "KEY_AO_ERI",          "AO_ERI")
-        mm.ChangeOption("SCFITER",  "KEY_NUC_REPULSION",   "NUC_REP")
+
+        # Fock builder
+        mm.ChangeOption("FOCKBUILD",  "KEY_AO_OVERLAP",    "AO_OVERLAP")
+        mm.ChangeOption("FOCKBUILD",  "KEY_AO_COREBUILD",  "AO_COREBUILD")
+        mm.ChangeOption("FOCKBUILD",  "KEY_AO_ERI",        "AO_ERI")
 
 
         # Tell the core builder which modules to use
@@ -70,6 +73,9 @@ def Run(mm):
         # Tell the SCF which modules to use
         mm.ChangeOption("SCF", "KEY_INITIAL_GUESS", "IGUESS")
         mm.ChangeOption("SCF", "KEY_SCF_ITERATOR",  "SCFITER")
+        mm.ChangeOption("SCF", "KEY_FOCK_BUILDER",  "FOCKBUILD")
+        mm.ChangeOption("SCF", "KEY_AO_COREBUILD",  "AO_COREBUILD")
+        mm.ChangeOption("SCF", "KEY_NUC_REPULSION", "NUC_REP")
 
 
 

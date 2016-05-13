@@ -28,9 +28,10 @@ class Wavefunction
 {
     public:
         std::shared_ptr<const system::System> system;
-        std::shared_ptr<const math::IrrepSpinMatrixD> cmat;
-        std::shared_ptr<const math::IrrepSpinVectorD> epsilon;
-        std::shared_ptr<const math::IrrepSpinVectorD> occupations;
+        std::shared_ptr<const math::IrrepSpinMatrixD> cmat;        //!< MO Coefficient Matrix
+        std::shared_ptr<const math::IrrepSpinMatrixD> opdm;        //!< One-particle density matrix
+        std::shared_ptr<const math::IrrepSpinVectorD> epsilon;     //!< Orbital energies
+        std::shared_ptr<const math::IrrepSpinVectorD> occupations; //!< Occupation of MOs
 
         void ValidCheck(void) const
         {
@@ -41,10 +42,20 @@ class Wavefunction
             //! \todo compare with system?
             if(cmat)
             {
+                if(opdm && !cmat->SameStructure(*opdm))
+                    throw GeneralException("Inconsistent shape: opdm and cmat");
                 if(epsilon && !cmat->SameStructure(*epsilon))
                     throw GeneralException("Inconsistent shape: epsilon and cmat");
                 if(occupations && !cmat->SameStructure(*occupations))
                     throw GeneralException("Inconsistent shape: occupations and cmat");
+            }
+
+            if(opdm)
+            {
+                if(epsilon && !opdm->SameStructure(*epsilon))
+                    throw GeneralException("Inconsistent shape: epsilon and opdm");
+                if(occupations && !opdm->SameStructure(*occupations))
+                    throw GeneralException("Inconsistent shape: occupations and opdm");
             }
 
             if(epsilon)

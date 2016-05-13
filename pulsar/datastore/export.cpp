@@ -99,6 +99,7 @@ PYBIND11_PLUGIN(datastore)
     .def("ValidCheck", &Wavefunction::ValidCheck)
     .def_readwrite("system", &Wavefunction::system)
     .def_readwrite("cmat", &Wavefunction::cmat)
+    .def_readwrite("opdm", &Wavefunction::opdm)
     .def_readwrite("occupations", &Wavefunction::occupations)
     .def_readwrite("epsilon", &Wavefunction::epsilon)
     ;
