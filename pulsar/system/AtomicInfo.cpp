@@ -66,7 +66,7 @@ const AtomicData & AtomicInfoFromSym(const std::string & sym)
 
 const IsotopeData & IsotopeInfoFromZ(int Z, int isonum)
 {
-    AtomicData ad = AtomicInfoFromZ(Z);
+    const AtomicData & ad = AtomicInfoFromZ(Z);
     
     for(const auto & it : ad.isotopes)
         if(it.isonum == isonum)
