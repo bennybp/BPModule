@@ -7,6 +7,7 @@
 #include "pulsar/system/BasisSet.hpp"
 #include "pulsar/system/NFunction.hpp"
 #include "pulsar/output/Output.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/exception/Assert.hpp"
 

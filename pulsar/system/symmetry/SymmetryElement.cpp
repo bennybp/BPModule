@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 #include <iostream>
-#include "pulsar/system/symmetry/SymmetryElements.hpp"
+#include "pulsar/system/symmetry/SymmetryElement.hpp"
 #include "pulsar/math/Geometry.hpp"
+#include "pulsar/math/MinMax.hpp"
 
     using std::string;
     using std::to_string;
@@ -18,7 +19,9 @@ namespace system{
 
     
 bool SymmetryElement::operator==(const SymmetryElement& Other)const{
-    const double Tol=1.0e-2;
+    double MaxVal=0.0;
+    for(size_t i=0;i<9;++i)MaxVal=math::MaxAbs(MaxVal,Other.Elem[i]);
+    double Tol=0.1*MaxVal;
     bool MatSame=true;
     for(size_t i=0;i<9&&MatSame;++i)
         MatSame=(fabs(Elem[i]-Other.Elem[i])<Tol);
@@ -27,7 +30,7 @@ bool SymmetryElement::operator==(const SymmetryElement& Other)const{
     
 std::ostream& SymmetryElement::Print(std::ostream& os)const{
         os<<SSymbol;
-        for(double i: Elem)os<<" "<<i;
+        //for(double i: Elem)os<<" "<<i;
         return os;
 }
 

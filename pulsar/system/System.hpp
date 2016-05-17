@@ -10,9 +10,9 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "pulsar/system/Atom.hpp"
+#include "pulsar/system/Space.hpp"
 #include "pulsar/math/MathSet.hpp"
 #include "pulsar/math/PointManipulation.hpp"
-
 #include "pulsar/util/bphash/Hasher_fwd.hpp"
 
 
@@ -25,6 +25,7 @@ extern template class pulsar::math::MathSet<pulsar::system::Atom>;
 namespace pulsar{
 namespace system {
 class BasisSet;
+class Space;
 }
 namespace util {
 class Hash;
@@ -69,7 +70,8 @@ private:
     double charge_; //!< Total charge on this system
     double multiplicity_; //!< Total multiplicity of the system
     double nelectrons_; //!< Total number of electrons in the system 
-
+    
+    Space Space_;//!< The space this system lives in
 
     // For use from transformations, etc
     System(const AtomSet & atoms);
@@ -96,6 +98,8 @@ private:
     ///@}
 
 public:
+    
+    
     typedef AtomSet::value_type value_type;
     typedef AtomSet::const_iterator const_iterator;
 
@@ -156,29 +160,35 @@ public:
 
     /*! \brief Get the charge of the system */
     double GetCharge(void) const;
+    
+    /*! \brief Set the charge of the system */
+    void SetCharge(double charge);
 
     /*! \brief Get the charge of the system as determined by summing
      *         the charges on all atoms */
     double GetSumCharge(void) const;
 
-    /*! \brief Set the charge of the system */
-    void SetCharge(double charge);
-
     /*! \brief Get the number of electrons in the system */
     double GetNElectrons(void) const;
+    
+    /*! \brief Set the number of electrons in the system */
+    void SetNElectrons(double nelectrons);
 
     /*! \brief Get the number of electrons in the system as
      *         determined by summing the number of electrons for all atoms*/
     double GetSumNElectrons(void) const;
-
-    /*! \brief Set the number of electrons in the system */
-    void SetNElectrons(double nelectrons);
 
     /*! \brief Get the multiplicity of the System */
     double GetMultiplicity(void) const;
 
     /*! \brief Set the multiplicity of the System */
     void SetMultiplicity(double m);
+    
+    /*! \brief Returns the space associated with the system*/
+    Space GetSpace(void) const;
+    
+    /*! \brief Sets the space associated with the system*/
+    void SetSpace(const Space& space);
 
     ///Returns true if the system contains the atom
     bool Contains(const Atom& AnAtom)const;

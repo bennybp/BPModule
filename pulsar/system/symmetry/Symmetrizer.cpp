@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include <iostream>
 #include "pulsar/system/symmetry/Symmetrizer.hpp"
-#include "pulsar/system/symmetry/SymmetryElements.hpp"
+#include "pulsar/system/symmetry/SymmetryElement.hpp"
 #include "pulsar/system/System.hpp"
 #include "pulsar/math/Point.hpp"
 #include "pulsar/math/NumberTheory.hpp"
@@ -15,6 +15,7 @@
 #include "pulsar/math/Checking.hpp"
 #include "pulsar/constants.h"
 #include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/math/CombItr.hpp"
 
 
 namespace pulsar{
@@ -107,20 +108,31 @@ Vector_t Orient(const Vector_t& Axis){
 }
 
 //Looks for Sn along axis Axis to within tolerance T, if found added to Es
+//I know that Sn^n==s,S_2=i, and I think Sn^{2m}==Cn^2m
+//It appears odds have to go around 4Pi to come back to their original position
+//For even Sn axes there is a tendancy for their factors to lie along the 
+//axis as well, which we fine by looping over all rotations
 void FindSn(const System& M,const Vector_t& Axis,size_t n,double T,Elems_t& Es){
     ImproperRotation Sn2(Axis,2*n,1),Sn(Axis,n,1);
     if(n!=2&&IsGood(M,Sn,Axis,T)){
        const bool Odd=n%2==1;
-       size_t Max=(Odd?2*n:n),Self=(Odd?n:n/2),Inc(Odd?2:1);
-       for(size_t i=1;i<Max;i+=Inc){
+       size_t Max=(Odd?2*n:n);
+       for(size_t i=1;i<Max;i+=2){
          std::pair<size_t,size_t> Frac=math::Reduce(i,n);
-         if(i!=Self)Es.insert(ImproperRotation(Axis,Frac.second,Frac.first));
+         if(Frac==std::make_pair<size_t,size_t>(1,1))continue;//Sn^n
+         if(Frac==std::make_pair<size_t,size_t>(1,2))continue;//S2
+         ImproperRotation Sm(Axis,Frac.second,Frac.first);
+         if(IsGood(M,Sm,Axis,T))Es.insert(Sm);
        }
     }
     if(IsGood(M,Sn2,Axis,T)){
-       for(size_t i=1;i<2*n;++i){//Always even
+       for(size_t i=1;i<2*n;i+=2){//Always even n==2*n for Sn2
          std::pair<size_t,size_t> Frac=math::Reduce(i,2*n);
-         if(i!=n)Es.insert(ImproperRotation(Axis,Frac.second,Frac.first));
+         if(i!=n){             
+             ImproperRotation Sm(Axis,Frac.second,Frac.first);
+             if(IsGood(M,Sm,Axis,T))
+                Es.insert(Sm);
+         }
        } 
     }
 }
@@ -146,7 +158,11 @@ void FindCn(const System& Mol,const Vector_t& Axis,double Tol,
         if(IsGood(Mol,Cn,NewAxis,Tol)){
             for(size_t m=1;m<=n-1;++m){//All n-1 applications of Cn
                 std::pair<size_t,size_t> Frac=math::Reduce(m,n);
-                Elems.insert(Rotation(NewAxis,Frac.second,Frac.first));
+                Rotation Cm(NewAxis,Frac.second,Frac.first);
+                if(IsGood(Mol,Cm,NewAxis,Tol)){
+                    Elems.insert(Cm);
+                    FindSn(Mol,NewAxis,Frac.second,Tol,Elems);
+                }
             }
             FindSigma(Mol,NewAxis,Tol,Elems);
             FindSn(Mol,NewAxis,n,Tol,Elems);
@@ -157,7 +173,7 @@ void FindCn(const System& Mol,const Vector_t& Axis,double Tol,
 
 SymmetryGroup Symmetrizer::GetSymmetry(const System& Mol)const{
     if(Mol.Size()==1)
-        return SymmetryGroup({},"Kh","oo/moo");
+        return PointGroup::Kh({});
     
     const double SymTol=0.1;
     Elems_t Elems;
@@ -171,8 +187,8 @@ SymmetryGroup Symmetrizer::GetSymmetry(const System& Mol)const{
     //Our molecule aligned with the principal moments of inertia
     System PrinMol=CenteredMol.Rotate(I);
     
-    //Taking Trent's percentage based check idea, we'll go with 1% of largest
-    double DegenTol=0.01*Moments[2];
+    //Taking Trent's percentage based check idea, we'll go with 5% of largest
+    double DegenTol=0.05*Moments[2];
     size_t NumDegen=AreEqual(Moments[1],Moments[0],DegenTol)+
             AreEqual(Moments[2],Moments[1],DegenTol)+
             AreEqual(Moments[2],Moments[0],DegenTol);
@@ -183,7 +199,7 @@ SymmetryGroup Symmetrizer::GetSymmetry(const System& Mol)const{
         Elems.insert(SymmetryElement({},"C_oo","oo"));
         return AssignGroup(Elems);
     }
-    
+    //std::cout<<NumDegen<<" "<<Moments[0]<<" "<<Moments[1]<<" "<<Moments[2]<<std::endl;
     
     //Rotation about principal axes
     for(size_t i=0;i<3;++i){
@@ -242,11 +258,20 @@ SymmetryGroup Symmetrizer::GetSymmetry(const System& Mol)const{
         }
     }
     if(NumDegen==3){
-        //Figure out cubic groups...
+        //If we have a tetrahedron our highest found axis is C_2
+        //If we have a cube our highest found axis is C_3
+        //If we have an octahedron our highest found axis is C_4
+        //If we have a dodecahedron our highest found axis is C_3
+        //If we have an icosahedron our highest found axis is C_5
+        
 
     }
-
+    
+    //for(const auto& i: Elems)std::cout<<i<<" ";
+    //std::cout<<std::endl;
+    
     std::cout<<AssignGroup(Elems)<<std::endl;
+    
     return AssignGroup(Elems);
 }
 

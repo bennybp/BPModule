@@ -5,14 +5,14 @@
  */
 
 /* 
- * File:   SymmetryElements.hpp
+ * File:   SymmetryElement.hpp
  * Author: richard
  *
  * Created on April 13, 2016, 3:38 PM
  */
 
-#ifndef PULSAR_GUARD_SYSTEM__SYMMETRYELEMENTS_HPP_
-#define PULSAR_GUARD_SYSTEM__SYMMETRYELEMENTS_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__SYMMETRYELEMENT_HPP_
+#define PULSAR_GUARD_SYSTEM__SYMMETRYELEMENT_HPP_
 
 #include <array>
 #include <string>
@@ -46,11 +46,8 @@ struct SymmetryElement{
      *
      *  I originally had this as an exact equality; however numeric precision
      *  caused that to fail so I introduced a threshold of 1.0e-5.  That
-     *  threshold is too tight and I had to drop it to 1.0e-2.  Ultimately,
-     *  these matrices are numerically quite noisy, even for structures that
-     *  are reasonably close to their symmetric geometries.  The large
-     *  in magnitude elements of these matrices are on the order of 0.1 to 1.0
-     *  so this still represents a threshold that is 10 to 100% smaller.
+     *  threshold is too tight and I had to dropped it 1.0e-2.  That was still
+     *  too tight so I tried 10% of the largest absolute element.
      */
     bool operator==(const SymmetryElement& Other)const;
     
@@ -101,5 +98,5 @@ template<> struct hash<pulsar::system::SymmetryElement>{
 };
 }
 
-#endif /* SYMMETRYELEMENTS_HPP */
+#endif /* SYMMETRYELEMENT_HPP */
 

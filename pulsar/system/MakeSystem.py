@@ -1,4 +1,5 @@
 import re
+import math
 import pulsar as psr
 from pulsar.exception import GeneralException
 
@@ -16,6 +17,12 @@ def MakeSystem(SomeString):
       * 'X' may be: 
         * 'bohr', 'au', or 'a.u.' for atomic units
         * 'ang'or angstrom for Angstroms
+    * Unit cells of crystals may be used as input.  This is done by providing
+      the fractional coordinates of your atoms and the cell's dimensions
+      * sides are specified by 'sides a b c'
+        * Units can be specified by units keyword
+      * angles are specified by 'angles alpha beta gamma'
+        * Units are in degrees
     * The following are currently supported in Psi4, but presently ignored:
       * 'no_reorient' or 'noreorient' request that molecule not be reoriented
       * 'no_com' or 'nocom' request that molecule not be translated to center of mass
@@ -64,11 +71,23 @@ def MakeSystem(SomeString):
     #Matches any line that starts with '@ ' or 'Gh(X)'
     ghost = re.compile(r'@(.*)|Gh\((.*)\)', re.IGNORECASE)
 
+    #Mathches a line that starts with 'sides' and has three numbers
+    UCsides = re.compile(r'^\s*sides\s*(\d+|\d+\.\d+)\s*(\d+|\d+\.\d+)\s*(\d+|\d+\.\d+)\s*$',re.IGNORECASE)
 
-    DaAtoms={"SYSTEM":[]} #Atoms per fragment, SYSTEM is all atoms
+    #Mathches a line that starts with 'sides' and has three numbers
+    UCangles = re.compile(r'^\s*angles\s*(\d+|\d+\.\d+)\s*(\d+|\d+\.\d+)\s*(\d+|\d+\.\d+)\s*$',re.IGNORECASE)
+
+    Systems=[0] #Atoms per fragment
+    Zs=[] #Atomic number of each atom
     ToAU=1/0.52917721067
     Charge=[0] #Charges, 0-th element is full system, i-th (i>0) is i-th frag
     Mult=[1] #Multiplicities, same as charges
+    Sides=[]
+    Angles=[]
+    Carts=[]
+    
+    def NFrags():
+        return len(Systems)-1
 
     lines = re.split('\n', SomeString)
     for line in lines:
@@ -81,15 +100,26 @@ def MakeSystem(SomeString):
 
         # handle charge and multiplicity
         elif cgmp.match(line):
-            Charge[len(DaAtoms)-1] = int(cgmp.match(line).group(1))
-            Mult[len(DaAtoms)-1] = int(cgmp.match(line).group(2))
+            Charge[NFrags()] = int(cgmp.match(line).group(1))
+            Mult[NFrags()] = int(cgmp.match(line).group(2))
 
         # handle fragment markers and default fragment cgmp
         elif frag.match(line):
+            Systems.append(0)
             Charge.append(0)
             Mult.append(1)
             DaAtoms[len(DaAtoms)]=[]
+        
+        # handle UC stuff
+        elif UCsides.match(line):
+            for i in range(1,4):
+                Sides.append(float(UCsides.match(line).group(i)))
+                
+        elif UCangles.match(line):
+            for i in range(1,4):
+                Angles.append(float(UCangles.match(line).group(i)))
 
+        # handle atoms
         elif atom.match(line.split()[0].strip()):
                 entries = re.split(r'\s+|\s*,\s*', line.strip())
                 atomm = atom.match(line.split()[0].strip().upper())
@@ -100,25 +130,54 @@ def MakeSystem(SomeString):
                 ghostAtom = False if (atomm.group('gh1') is None and atomm.group('gh2') is None) else True
 
                 # handle cartesians
-                Carts=[]
                 if len(entries) == 4:
-                    Carts.append(ToAU*float(entries[1]))
-                    Carts.append(ToAU*float(entries[2]))
-                    Carts.append(ToAU*float(entries[3]))
+                    for i in range(1,4):
+                        Carts.append(float(entries[i]))
+                Zs.append(psr.system.AtomicZNumberFromSym(atomSym))
+                Systems[NFrags()]+=1
                 
-                TempAtom=psr.system.CreateAtom(len(DaAtoms["SYSTEM"]),Carts,psr.system.AtomicZNumberFromSym(atomSym))
-                DaAtoms["SYSTEM"].append(TempAtom)
-                if len(DaAtoms) > 1:
-                   DaAtoms[len(DaAtoms)-1].append(TempAtom)
         else:
             raise GeneralException('MakeSystem: Unidentifiable line in geometry specification: %s' % (line))
 
+    DaSpace=psr.system.Space()
+    Periodic=(len(Sides)==3 and len(Angles)==3)
+    NewSides=[ToAU*i for i in Sides]
+    if Periodic:
+        DaSpace=psr.system.Space(Angles,NewSides)
+        ToAU=1.0
     molu=psr.system.AtomSetUniverse()
-    for i in DaAtoms["SYSTEM"]:
-        molu.Insert(i)
+    for i in range(0,len(Zs)):
+        TempCarts=[ToAU*Carts[3*i+j] for j in range(0,3)]
+        molu.Insert(psr.system.CreateAtom(i,TempCarts,Zs[i]))
     DaSys=psr.system.System(molu,True)
-    #DaSys.SetCharge(Charge[0])
-    #DaSys.SetMultiplicity(Mult[0])
+    DaSys.SetSpace(DaSpace)
+    DaSys.SetCharge(Charge[0])
+    DaSys.SetMultiplicity(Mult[0])
+    if Periodic:
+        CosA=[math.cos(math.radians(i)) for i in Angles]
+        CosBG=CosA[1]*CosA[2]
+        SinG=math.sin(math.radians(Angles[2]))
+        v=math.sqrt(1-CosA[0]**2-CosA[1]**2-CosA[2]**2-2*CosA[0]*CosBG)
+        molu=psr.system.AtomSetUniverse()
+        Temp=DaSys.Rotate([NewSides[0],NewSides[1]*CosA[2],NewSides[2]*CosA[1],
+                     0,NewSides[1]*SinG,NewSides[2]*(CosA[0]-CosBG)/SinG,
+                     0,0,NewSides[2]*v/SinG])
+        for x in range(0,3):
+            for y in range(0,3):
+                for z in range(0,3,1):
+                    Temp2=Temp.Translate([(x-1)*NewSides[0],
+                                          (y-1)*NewSides[1],
+                                          (z-1)*NewSides[2]])
+                    for i in Temp2:
+                        Diff=[math.fabs(i[j]-.1*NewSides[j]) for j in range(0,3)]
+                        for j in range(0,3):
+                            if Diff[j]<NewSides[j] or math.fabs(i[j])<.1:
+                              if j==2 and not molu.Contains(i):
+                                 molu.Insert(i)
+                            else:
+                              break
+                                  
+        DaSys=psr.system.System(molu,True)
     return DaSys
 
 

@@ -13,13 +13,12 @@
 #include "pulsar/system/AMConvert.hpp"
 #include "pulsar/system/AtomicInfo.hpp"
 #include "pulsar/system/System.hpp"
+#include "pulsar/system/Space.hpp"
 #include "pulsar/system/BasisSet.hpp"
 #include "pulsar/system/AOOrdering.hpp"
 #include "pulsar/system/SphericalTransform.hpp"
-#include "pulsar/system/symmetry/Symmetrizer.hpp"
-#include "pulsar/system/symmetry/SymmetryElements.hpp"
-#include "pulsar/system/symmetry/SymmetryGroup.hpp"
 #include "pulsar/math/RegisterMathSet.hpp"
+
 
 
 
@@ -29,6 +28,8 @@ namespace export_python {
 
 // in testing_export.cpp
 void export_testing(pybind11::module & m);
+// in symmetry/ExportSymmetry.cpp
+void export_symmetry(pybind11::module & m);
 
 
 
@@ -266,6 +267,14 @@ PYBIND11_PLUGIN(system)
     math::RegisterUniverse<AtomSetUniverse>(m, "AtomSetUniverse");
 
     
+    pybind11::class_<Space>(m,"Space")
+      .def(pybind11::init<>())
+      .def(pybind11::init<const std::array<double,3>&,
+                           const std::array<double,3>&>())
+      .def_readonly("LatticeSides",&Space::LatticeSides)
+      .def_readonly("LatticeAngles",&Space::LatticeAngles)
+    ;
+    
     // Main system class 
     python::RegisterPyCopyIterator<System>(m, "System");
 
@@ -279,7 +288,13 @@ PYBIND11_PLUGIN(system)
     .def("GetUniverse", &System::GetUniverse)
     .def("AsUniverse", &System::AsUniverse)
     .def("GetCharge",&System::GetCharge)
+    .def("SetCharge",&System::SetCharge)
+    .def("GetMultiplicity",&System::GetMultiplicity)
+    .def("SetMultiplicity",&System::SetMultiplicity)
     .def("GetNElectrons",&System::GetNElectrons)
+    .def("SetNElectrons",&System::SetNElectrons)
+    .def("GetSpace",&System::GetSpace)
+    .def("SetSpace",&System::SetSpace)
     .def("GetBasisSet", &System::GetBasisSet)
     .def("MyHash", &System::MyHash)
     .def("Translate", &System::Translate<std::array<double, 3>>)
@@ -323,51 +338,11 @@ PYBIND11_PLUGIN(system)
             })
     ;
 
-    pybind11::class_<Symmetrizer>(m, "Symmetrizer")
-    .def(pybind11::init<>())
-    .def("GetSymmetry",&Symmetrizer::GetSymmetry);
-    
-    pybind11::class_<SymmetryElement>(m,"SymmetryElement")
-    .def(pybind11::init<const std::array<double,9>&,
-                        const std::string&,const std::string&>())
-    .def(pybind11::init<const SymmetryElement&>())
-    .def_readonly("Elem",&SymmetryElement::Elem)
-    .def_readonly("SSymbol",&SymmetryElement::SSymbol)
-    .def_readonly("HMSymbol",&SymmetryElement::HMSymbol)
-    ;
-    
-    pybind11::class_<MirrorPlane>
-    (m,"MirrorPlane",pybind11::base<SymmetryElement>())
-    .def(pybind11::init<const std::array<double,3>&>())
-    ;
-    
-    pybind11::class_<Rotation>
-    (m,"Rotation",pybind11::base<SymmetryElement>())
-    .def(pybind11::init<const std::array<double,3>&,size_t,size_t>())
-    ;
-    
-    pybind11::class_<ImproperRotation>
-    (m,"ImproperRotation",pybind11::base<SymmetryElement>())
-    .def(pybind11::init<const std::array<double,3>&,size_t,size_t>())
-    ;
-    
-    m.attr("Identity")=pybind11::cast(SymmetryElement(Identity));
-    m.attr("CoI")=pybind11::cast(SymmetryElement(CoI));
-    
-    pybind11::class_<SymmetryGroup>(m,"SymmetryGroup")
-    .def(pybind11::init<const std::unordered_set<SymmetryElement>&,
-                        const std::string&,const std::string&>())
-    .def(pybind11::init<const SymmetryGroup&>())
-    .def_readonly("Elem",&SymmetryGroup::Elems)
-    .def_readonly("SSymbol",&SymmetryGroup::SSymbol)
-    .def_readonly("HMSymbol",&SymmetryGroup::HMSymbol)
-    ;
-    
-    
-    
+ 
     // Export the testing stuff
     export_testing(m);
-
+    export_symmetry(m);
+    
     return m.ptr();
 }
 

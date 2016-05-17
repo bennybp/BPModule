@@ -98,6 +98,17 @@ void System::SetMultiplicity(double m)
     multiplicity_=m;
 }
 
+Space System::GetSpace(void) const
+{
+    return Space_;
+}
+
+void System::SetSpace(const Space& S)
+{
+    Space_=S;
+}
+
+
 bool System::Contains(const Atom& AnAtom)const
 {
     return atoms_.Contains(AnAtom);
