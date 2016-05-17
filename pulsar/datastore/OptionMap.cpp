@@ -41,7 +41,7 @@ void OptionMapIssues::Print(std::ostream & os) const
     {
         Warning(os, "    OptionMap top level issues:\n");
         for(const auto & it : toplevel)
-            Warning(os, "        %?", it);
+            Warning(os, "        %?\n", it);
     }
     if(optissues.size())
     {

@@ -39,7 +39,7 @@ void GeneralException::AppendInfo(const std::string & key, const std::string & v
         oldw = ss.width(24);
         ss << " ";
         ss.width(oldw);
-        ss << "     " << str << "\n";
+        ss << "     " << str;
     }
 
 
