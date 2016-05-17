@@ -6,7 +6,7 @@
 
 
 #include <cmath>
-
+#include <type_traits>
 
 namespace pulsar{
 namespace math {
