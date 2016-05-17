@@ -194,59 +194,12 @@ std::vector<double> Moment(const PointContainer& cont,
     for(size_t i=0;i<DoF;++i)Moments[i]/=Total;
     return Moments;
 }
-/*! \brief Find the center of a container of points
- * RMR-same as weighted except with weights of 1.0
-template<typename Coord, typename PointContainer>
-Coord PointsCenter(const PointContainer & cont)
-{
-    typedef typename Coord::value_type type_t;
-
-    std::array<type_t, 3> coord{0,0,0};
-
-    size_t n = 0;
-    for(const auto & it : cont)
-    {
-        coord[0] += it[0];
-        coord[1] += it[1];
-        coord[2] += it[2];
-        n++;
-    }
-
-    typename Coord::value_type n2 = math::numeric_cast<type_t>(n);
-
-    coord[0] /= n2;
-    coord[1] /= n2;
-    coord[2] /= n2;
-
-    return Coord{coord[0], coord[1], coord[2]};
-}*/
-
 
 /*! \brief Find the weighted center of a container of points
  */
 template<typename Coord, typename PointContainer>
 Coord WeightedPointsCenter(const PointContainer & cont, std::function<double (const typename PointContainer::value_type &)> weighter)
 {
-    /*typedef typename Coord::value_type type_t;
-
-    std::array<type_t, 3> coord{0,0,0};
-
-    type_t sumweight = 0;
-    for(const auto & it : cont)
-    {
-        // the weighter function returns type R, and we need to cast it to type_t
-        const type_t weight = math::numeric_cast<type_t>(weighter(it));
-
-        coord[0] += weight * it[0];
-        coord[1] += weight * it[1];
-        coord[2] += weight * it[2];
-        sumweight += weight;
-    }
-
-    coord[0] /= sumweight;
-    coord[1] /= sumweight;
-    coord[2] /= sumweight;
-    */
      std::vector<double> coord=Moment<1>(cont,weighter);
      return Coord{coord[0],coord[1],coord[2]};
 }
