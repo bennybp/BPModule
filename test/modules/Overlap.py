@@ -39,6 +39,7 @@ def Run(mm):
         # Load the python modules
         #             supermodule              module name    key
         mm.LoadModule("OneElectronIntegrals",  "Overlap",     "AO_OVERLAP")
+        mm.ChangeOption("AO_OVERLAP", "TYPE", "OVERLAP")
         mm.Print(out)
         mm.SanityCheck()
   

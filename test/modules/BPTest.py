@@ -38,16 +38,25 @@ def Run(mm):
 
         # Load the python modules
         #             supermodule              module name    key
-        mm.LoadModule("Methods",               "BPTest",                   "SCF")
+        mm.LoadModule("Methods",               "DIIS",                     "SCF")
         mm.LoadModule("Methods",               "CoreGuess",                "IGUESS")
         mm.LoadModule("Methods",               "HFIterate",                "SCFITER")
         mm.LoadModule("Methods",               "BasicFockBuild",           "FOCKBUILD")
         mm.LoadModule("SystemIntegrals",       "NuclearRepulsion",         "NUC_REP")
         mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_OVERLAP")
+        mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_DIPOLEX")
+        mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_DIPOLEY")
+        mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_DIPOLEZ")
         mm.LoadModule("OneElectronIntegrals",  "CoreBuild",                "AO_COREBUILD")
         mm.LoadModule("OneElectronIntegrals",  "KineticEnergy",            "AO_KINETIC")
         mm.LoadModule("OneElectronIntegrals",  "OneElectronPotential",     "AO_NUCEL")
-        mm.LoadModule("TwoElectronIntegrals",  "ReferenceERI",             "AO_ERI")
+        mm.LoadModule("SimintERI",             "SimintERI",                "AO_ERI")
+
+        # Options for overlap
+        mm.ChangeOption("AO_OVERLAP", "TYPE", "OVERLAP")
+        mm.ChangeOption("AO_DIPOLEX", "TYPE", "DIPOLE_X")
+        mm.ChangeOption("AO_DIPOLEY", "TYPE", "DIPOLE_Y")
+        mm.ChangeOption("AO_DIPOLEZ", "TYPE", "DIPOLE_Z")
 
         # Set the OneElectronPotential module to use the atom grid (ie, nuclear-electron attraction)
         mm.ChangeOption("AO_NUCEL", "grid", "ATOMS")
@@ -76,6 +85,10 @@ def Run(mm):
         mm.ChangeOption("SCF", "KEY_FOCK_BUILDER",  "FOCKBUILD")
         mm.ChangeOption("SCF", "KEY_AO_COREBUILD",  "AO_COREBUILD")
         mm.ChangeOption("SCF", "KEY_NUC_REPULSION", "NUC_REP")
+        mm.ChangeOption("SCF", "KEY_AO_OVERLAP",    "AO_OVERLAP")
+        mm.ChangeOption("SCF", "MAX_ITER", 1000)
+        mm.ChangeOption("SCF", "E_TOLERANCE", 1e-10)
+        mm.ChangeOption("SCF", "DENS_TOLERANCE", 1e-8)
 
 
 
@@ -90,7 +103,7 @@ def Run(mm):
             u.Insert(a)
         s = System(u, True)
 
-        s = ApplySingleBasis("Primary","sto-3g",s)
+        s = ApplySingleBasis("Primary","aug-cc-pvtz",s)
 
          
         nr = mm.GetModule("SCF", 0)
