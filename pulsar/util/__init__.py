@@ -1,5 +1,3 @@
-from .modinfo import *
-
 # SO file
 from .util import *
 

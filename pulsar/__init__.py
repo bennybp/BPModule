@@ -82,16 +82,6 @@ def Init(argv, out = "stdout", color = True, debug = False,nthreads=1):
   tensor.Init()
 
 
-  # Set some info about the base module and
-  # print it
-  # Also, set some options (currently unused)
-  for name,minfo in modulemanager.minfo.items():
-      minfo["name"] = name
-      minfo["key"] = "CORE"
-      minfo["path"] = os.path.dirname(modulemanager.__file__) + "/"
-
-
-
 def Finalize():
   output.GlobalOutput("Finalizing tensors\n")
   tensor.Finalize()

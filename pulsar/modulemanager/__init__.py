@@ -1,4 +1,3 @@
-from .modinfo import *
 from .ModuleTreePrinters import *
 
 # SO file
