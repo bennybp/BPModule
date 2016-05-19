@@ -21,5 +21,6 @@
 #include "pulsar/modulebase/SCFIterator.hpp"
 #include "pulsar/modulebase/EnergyMethod.hpp"
 #include "pulsar/modulebase/FockBuilder.hpp"
+#include "pulsar/modulebase/PropertyCalculator.hpp"
 
 #endif

@@ -139,6 +139,18 @@ PYBIND11_PLUGIN(modulebase)
             ;
 
     ///////////////////////
+    // Property Calculator
+    ///////////////////////
+    pybind11::class_<PropertyCalculator_Py> propcalc(m, "PropertyCalculator", mbase);
+    propcalc.alias<PropertyCalculator>()
+            .def(pybind11::init<ID_t>())
+            .def_readonly("out", &PropertyCalculator_Py::out, pybind11::return_value_policy::reference_internal) 
+            .def("Cache", &PropertyCalculator_Py::Cache, pybind11::return_value_policy::reference_internal)
+            .def("MManager", &PropertyCalculator_Py::MManager, pybind11::return_value_policy::reference_internal)
+            .def("Calculate", &PropertyCalculator::Calculate)
+           ;
+
+    ///////////////////////
     // Method base class
     ///////////////////////
     pybind11::class_<EnergyMethod_Py> energymethod(m, "EnergyMethod", mbase);

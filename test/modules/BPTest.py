@@ -43,20 +43,20 @@ def Run(mm):
         mm.LoadModule("Methods",               "HFIterate",                "SCFITER")
         mm.LoadModule("Methods",               "BasicFockBuild",           "FOCKBUILD")
         mm.LoadModule("SystemIntegrals",       "NuclearRepulsion",         "NUC_REP")
+        mm.LoadModule("SystemIntegrals",       "NuclearDipole",            "NUC_DIP")
         mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_OVERLAP")
-        mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_DIPOLEX")
-        mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_DIPOLEY")
-        mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_DIPOLEZ")
         mm.LoadModule("OneElectronIntegrals",  "CoreBuild",                "AO_COREBUILD")
         mm.LoadModule("OneElectronIntegrals",  "KineticEnergy",            "AO_KINETIC")
         mm.LoadModule("OneElectronIntegrals",  "OneElectronPotential",     "AO_NUCEL")
         mm.LoadModule("SimintERI",             "SimintERI",                "AO_ERI")
 
-        # Options for overlap
-        mm.ChangeOption("AO_OVERLAP", "TYPE", "OVERLAP")
-        mm.ChangeOption("AO_DIPOLEX", "TYPE", "DIPOLE_X")
-        mm.ChangeOption("AO_DIPOLEY", "TYPE", "DIPOLE_Y")
-        mm.ChangeOption("AO_DIPOLEZ", "TYPE", "DIPOLE_Z")
+        mm.LoadModule("OneElectronIntegrals",  "Dipole",                   "AO_DIPOLEX")
+        mm.LoadModule("OneElectronIntegrals",  "Dipole",                   "AO_DIPOLEY")
+        mm.LoadModule("OneElectronIntegrals",  "Dipole",                   "AO_DIPOLEZ")
+        mm.LoadModule("OneElectronIntegrals",  "OneElectronProperty",      "PROP_DIPOLE_X")
+        mm.LoadModule("OneElectronIntegrals",  "OneElectronProperty",      "PROP_DIPOLE_Y")
+        mm.LoadModule("OneElectronIntegrals",  "OneElectronProperty",      "PROP_DIPOLE_Z")
+
 
         # Set the OneElectronPotential module to use the atom grid (ie, nuclear-electron attraction)
         mm.ChangeOption("AO_NUCEL", "grid", "ATOMS")
@@ -90,7 +90,13 @@ def Run(mm):
         mm.ChangeOption("SCF", "E_TOLERANCE", 1e-10)
         mm.ChangeOption("SCF", "DENS_TOLERANCE", 1e-8)
 
-
+        # Dipole calculator
+        mm.ChangeOption("AO_DIPOLEX",    "TYPE",          "DIPOLE_X");
+        mm.ChangeOption("AO_DIPOLEY",    "TYPE",          "DIPOLE_Y");
+        mm.ChangeOption("AO_DIPOLEZ",    "TYPE",          "DIPOLE_Z");
+        mm.ChangeOption("PROP_DIPOLE_X", "KEY_ONEEL_MOD", "AO_DIPOLEX");
+        mm.ChangeOption("PROP_DIPOLE_Y", "KEY_ONEEL_MOD", "AO_DIPOLEY");
+        mm.ChangeOption("PROP_DIPOLE_Z", "KEY_ONEEL_MOD", "AO_DIPOLEZ");
 
         mm.Print(out)
         mm.SanityCheck()
@@ -103,7 +109,7 @@ def Run(mm):
             u.Insert(a)
         s = System(u, True)
 
-        s = ApplySingleBasis("Primary","aug-cc-pvtz",s)
+        s = ApplySingleBasis("Primary","sto-3g",s)
 
          
         nr = mm.GetModule("SCF", 0)
@@ -111,7 +117,25 @@ def Run(mm):
         iwfn = Wavefunction()
         iwfn.system = s
 
-        a = nr.Energy(iwfn)
+        ret = nr.Energy(iwfn)
+        newwfn,nrg = ret
+
+        ndip = mm.GetModule("NUC_DIP", 0)
+        dx = mm.GetModule("PROP_DIPOLE_X", 0)
+        dy = mm.GetModule("PROP_DIPOLE_Y", 0)
+        dz = mm.GetModule("PROP_DIPOLE_Z", 0)
+        dipx = dx.Calculate(newwfn, "Primary", "Primary")[0]
+        dipy = dy.Calculate(newwfn, "Primary", "Primary")[0]
+        dipz = dz.Calculate(newwfn, "Primary", "Primary")[0]
+
+        nucdip = array.array('d', [0]*3)
+        n = ndip.Calculate(0, newwfn.system, nucdip)
+
+        print("Final energy: {}".format(nrg))
+        print("Electronic dipole moment: {} {} {}".format(dipx, dipy, dipz))
+        print("Nuclear dipole moment: {} {} {}".format(nucdip[0], nucdip[1], nucdip[2]))
+        print("Total dipole moment: {} {} {}".format(dipx + nucdip[0], dipy + nucdip[1], dipz + nucdip[2]))
+        
 
         tester = Tester("Testing simple energy calculation")
         tester.PrintHeader()
