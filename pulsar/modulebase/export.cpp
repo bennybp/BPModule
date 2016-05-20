@@ -15,6 +15,8 @@ using pulsar::modulemanager::ModuleInfo;
 using pulsar::datastore::OptionMap;
 
 
+PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>)
+
 
 namespace pulsar{
 namespace modulebase {

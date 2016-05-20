@@ -33,10 +33,11 @@ class OneElectronIntegral : public ModuleBase
          * \param [in] bs1 Basis set tag to use on the first center
          * \param [in] bs1 Basis set tag to use on the second center
          */
-        void SetBases(const system::System & sys,
-                      const std::string & bs1, const std::string & bs2)
+        void SetBases(const datastore::Wavefunction & wfn,
+                      const system::BasisSet & bs1,
+                      const system::BasisSet & bs2)
         {
-            return ModuleBase::CallFunction(&OneElectronIntegral::SetBases_, sys, bs1, bs2);
+            return ModuleBase::CallFunction(&OneElectronIntegral::SetBases_, wfn, bs1, bs2);
         }
 
 
@@ -122,8 +123,9 @@ class OneElectronIntegral : public ModuleBase
         // To be implemented by derived classes
         /////////////////////////////////////////
         //! \copydoc SetBases
-        virtual void SetBases_(const system::System & sys,
-                               const std::string & bs1, const std::string & bs2) = 0;
+        virtual void SetBases_(const datastore::Wavefunction & wfn,
+                               const system::BasisSet & bs1,
+                               const system::BasisSet & bs2) = 0;
 
 
         //! \copydoc Calculate
@@ -165,11 +167,12 @@ class OneElectronIntegral_Py : public OneElectronIntegral
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
     
-        virtual void SetBases_(const system::System & sys,
-                               const std::string & bs1, const std::string & bs2)
+        virtual void SetBases_(const datastore::Wavefunction & wfn,
+                               const system::BasisSet & bs1,
+                               const system::BasisSet & bs2)
 
         {
-            return CallPyOverride<void>("SetBases_", sys, bs1, bs2);
+            return CallPyOverride<void>("SetBases_", wfn, bs1, bs2);
         }
 
 
@@ -208,7 +211,7 @@ class OneElectronIntegral_Py : public OneElectronIntegral
             }
             else
                 return OneElectronIntegral::CalculateMulti_(deriv, shells1, shells2,
-                                                                outbuffer, bufsize);
+                                                            outbuffer, bufsize);
         }
 };
 

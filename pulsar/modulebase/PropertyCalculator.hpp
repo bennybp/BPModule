@@ -31,8 +31,8 @@ class PropertyCalculator : public ModuleBase
          *
          */
         std::vector<double> Calculate(const datastore::Wavefunction & wfn,
-                                      const std::string & bs1,
-                                      const std::string & bs2)
+                                      const system::BasisSet & bs1,
+                                      const system::BasisSet & bs2)
         {
             return ModuleBase::FastCallFunction(&PropertyCalculator::Calculate_,
                                                 wfn, bs1, bs2);
@@ -44,8 +44,8 @@ class PropertyCalculator : public ModuleBase
         /////////////////////////////////////////
         //! \copydoc Calculate
         virtual std::vector<double> Calculate_(const datastore::Wavefunction & wfn,
-                                      const std::string & bs1,
-                                      const std::string & bs2) = 0;
+                                               const system::BasisSet & bs1,
+                                               const system::BasisSet & bs2) = 0;
 };
 
 
@@ -57,8 +57,8 @@ class PropertyCalculator_Py : public PropertyCalculator
         MODULEBASE_FORWARD_PROTECTED_TO_PY
     
         virtual std::vector<double> Calculate_(const datastore::Wavefunction & wfn,
-                                      const std::string & bs1,
-                                      const std::string & bs2)
+                                               const system::BasisSet & bs1,
+                                               const system::BasisSet & bs2)
         {
             return CallPyOverride<std::vector<double>>("Calculate_", wfn, bs1, bs2);
         }
