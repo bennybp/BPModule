@@ -33,7 +33,7 @@ namespace system {
  */
 template<int N>
 void CartesianToSpherical(std::array<std::reference_wrapper<const system::BasisShellBase>, N> shells,
-                          double * source, double * dest, double * work)
+                          double * source, double * dest, double * work, int ncomp)
 {
     using namespace system;
 
@@ -56,85 +56,88 @@ void CartesianToSpherical(std::array<std::reference_wrapper<const system::BasisS
 
     if(nsphshells == 0) // nothing to do
     {
-        std::copy(source, source + allncart, dest);
+        std::copy(source, source + ncomp*allncart, dest);
         return;
     }
 
 
+    // loop over the number of specified components
+    for(int c = 0; c < ncomp; c++)
+    {
+        // iterator over the general contractions
+        // We have the transformations for combined AM shells, so
+        // no need to split them in the iterator.
+        system::GeneralShellIterator<N> gsi(shells, false);
 
-    // iterator over the general contractions
-    // We have the transformations for combined AM shells, so
-    // no need to split them in the iterator.
-    system::GeneralShellIterator<N> gsi(shells, false);
+        // this is equivalent to an N-level for loop over the combinations of
+        // the general contractions
+        do {
+            double * buf1 = source;
+            double * buf2 = work;
 
-    // this is equivalent to an N-level for loop over the combinations of
-    // the general contractions
-    do {
-        double * buf1 = source;   
-        double * buf2 = work;
+            std::array<int, N> gam;  // am for this general contraction combination
+            std::array<size_t, N> gncart; // number of cartesians for this general contraction combination
+            std::array<size_t, N> gnfunc; // number of functions for this general contraction combination
 
-        std::array<int, N> gam;  // am for this general contraction combination
-        std::array<size_t, N> gncart; // number of cartesians for this general contraction combination
-        std::array<size_t, N> gnfunc; // number of functions for this general contraction combination
+            // store how much to advance the source and destination pointers
+            size_t source_adv = 1;
+            size_t dest_adv = 1;
 
-        // store how much to advance the source and destination pointers
-        size_t source_adv = 1;
-        size_t dest_adv = 1;
-
-        for(int i = 0; i < N; i++)
-        {
-            const size_t genidx = gsi.GeneralIdx(i);
-            gam[i] = gsi.AM(i);
-            gncart[i] = NCartesianGaussian(gam[i]);
-            gnfunc[i] = shells[i].get().GeneralNFunctions(genidx);
-
-            source_adv *= gncart[i]; // source holds only cartesian
-            dest_adv *= gnfunc[i];
-        }
-
-
-        // the starting width is the number of cartesian functions for
-        // the last (N-1) shells. However, we divide first inside the loop
-        size_t width = 1;
-        for(int i = 0; i < N; i++)
-            width *= gncart[i];
-
-        // the starting number of iterations is 1, of course
-        size_t niter = 1;
-
-        // loop over the N shells and transform if we have to
-        for(int i = 0; i < N; i++)
-        {
-            width /= gncart[i];
-
-            if(isspherical[i])
+            for(int i = 0; i < N; i++)
             {
-                const auto & coef = SphericalTransformForAM(gam[i]);
+                const size_t genidx = gsi.GeneralIdx(i);
+                gam[i] = gsi.AM(i);
+                gncart[i] = NCartesianGaussian(gam[i]);
+                gnfunc[i] = shells[i].get().GeneralNFunctions(genidx);
 
-                SphericalTransformBlock(coef, buf1, buf2, width, gam[i], niter);
-
-                // swap the source and destination
-                std::swap(buf1, buf2);
+                source_adv *= gncart[i]; // source holds only cartesian
+                dest_adv *= gnfunc[i];
             }
 
-            niter *= gnfunc[i];
-        }
 
-        // buf1 always contains the final, transformed, intergals since we swap at
-        // the end of the above loop. It may point to either source or work, though.
+            // the starting width is the number of cartesian functions for
+            // the last (N-1) shells. However, we divide first inside the loop
+            size_t width = 1;
+            for(int i = 0; i < N; i++)
+                width *= gncart[i];
 
-        // We have to copy to the destination
-        // buf1 will always contain the final transformed integrals (since we always swap at the
-        // end of the loop).
-        // The amount we did is equivalent to how much we have to advance the buffer pointers
+            // the starting number of iterations is 1, of course
+            size_t niter = 1;
 
-        // dest_adv is also the number of final transformed integrals we did
-        std::copy(buf1, buf1 + dest_adv, dest);
+            // loop over the N shells and transform if we have to
+            for(int i = 0; i < N; i++)
+            {
+                width /= gncart[i];
 
-        source += source_adv;
-        dest += dest_adv;
+                if(isspherical[i])
+                {
+                    const auto & coef = SphericalTransformForAM(gam[i]);
 
-    } while(gsi.Next());
+                    SphericalTransformBlock(coef, buf1, buf2, width, gam[i], niter);
+
+                    // swap the source and destination
+                    std::swap(buf1, buf2);
+                }
+
+                niter *= gnfunc[i];
+            }
+
+            // buf1 always contains the final, transformed, intergals since we swap at
+            // the end of the above loop. It may point to either source or work, though.
+
+            // We have to copy to the destination
+            // buf1 will always contain the final transformed integrals (since we always swap at the
+            // end of the loop).
+            // The amount we did is equivalent to how much we have to advance the buffer pointers
+
+            // dest_adv is also the number of final transformed integrals we did
+            std::copy(buf1, buf1 + dest_adv, dest);
+
+            source += source_adv;
+            dest += dest_adv;
+
+        } while(gsi.Next());
+    }
 }
 
 
@@ -157,22 +160,20 @@ void CartesianToSpherical(std::array<std::reference_wrapper<const system::BasisS
 inline
 void CartesianToSpherical_2Center(const system::BasisShellBase & sh1,
                                   const system::BasisShellBase & sh2,
-                                  double * source,
-                                  double * dest,
-                                  double * work)
+                                  double * source, double * dest, double * work,
+                                  int ncomp)
 {
-    CartesianToSpherical<2>({{sh1, sh2}}, source, dest, work);
+    CartesianToSpherical<2>({{sh1, sh2}}, source, dest, work, ncomp);
 }
 
 inline
 void CartesianToSpherical_3Center(const system::BasisShellBase & sh1,
                                   const system::BasisShellBase & sh2,
                                   const system::BasisShellBase & sh3,
-                                  double * source,
-                                  double * dest,
-                                  double * work)
+                                  double * source, double * dest, double * work,
+                                  int ncomp)
 {
-    CartesianToSpherical<3>({{sh1, sh2, sh3}}, source, dest, work);
+    CartesianToSpherical<3>({{sh1, sh2, sh3}}, source, dest, work, ncomp);
 }
 
 
@@ -181,11 +182,10 @@ void CartesianToSpherical_4Center(const system::BasisShellBase & sh1,
                                   const system::BasisShellBase & sh2,
                                   const system::BasisShellBase & sh3,
                                   const system::BasisShellBase & sh4,
-                                  double * source,
-                                  double * dest,
-                                  double * work)
+                                  double * source, double * dest, double * work,
+                                  int ncomp)
 {
-    CartesianToSpherical<4>({{sh1, sh2, sh3, sh4}}, source, dest, work);
+    CartesianToSpherical<4>({{sh1, sh2, sh3, sh4}}, source, dest, work, ncomp);
 }
 
 

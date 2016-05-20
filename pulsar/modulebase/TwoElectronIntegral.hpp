@@ -44,6 +44,16 @@ class TwoElectronIntegral : public ModuleBase
         }
 
 
+        /*! Return the number of components calculated by this module
+         * 
+         * For example, something that calculates x,y,z component would return 3
+         */
+        unsigned int NComponents(void) const 
+        {
+            return ModuleBase::CallFunction(&TwoElectronIntegral::NComponents_);
+        }
+
+
         /*! \brief Calculate an integral
          *
          * \param [in] deriv Derivative to calculate
@@ -148,6 +158,13 @@ class TwoElectronIntegral : public ModuleBase
                                const system::BasisSet & bs4) = 0;
 
 
+        //! \copydoc NComponents
+        virtual unsigned int NComponents_(void) const 
+        {
+            return 1;
+        }
+
+
         //! \copydoc Calculate
         virtual uint64_t Calculate_(uint64_t deriv,
                                     uint64_t shell1, uint64_t shell2,
@@ -201,6 +218,15 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
 
         {
             return CallPyOverride<void>("SetBases_", wfn, bs1, bs2, bs3, bs4);
+        }
+
+
+        virtual unsigned int NComponents_(void) const 
+        {
+            if(HasPyOverride("NComponents_"))
+                return CallPyOverride<unsigned int>("NComponents_");
+            else
+                return TwoElectronIntegral::NComponents_();
         }
 
 

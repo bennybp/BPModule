@@ -17,6 +17,7 @@ from pulsar.testing import *
 from pulsar.system import *
 from pulsar.datastore import *
 from pulsar.output import *
+from pulsar.modulemanager.ModuleTreePrinters import PrintDotTree
 
 from helper.TestAtoms import water2
 
@@ -38,7 +39,8 @@ def Run(mm):
 
         # Load the python modules
         #             supermodule              module name    key
-        mm.LoadModule("Methods",               "DIIS",                     "SCF")
+        mm.LoadModule("Methods",               "DIIS",                     "SCF_DIIS")
+        mm.LoadModule("Methods",               "Damping",                  "SCF_DAMPING")
         mm.LoadModule("Methods",               "CoreGuess",                "IGUESS")
         mm.LoadModule("Methods",               "HFIterate",                "SCFITER")
         mm.LoadModule("Methods",               "BasicFockBuild",           "FOCKBUILD")
@@ -48,14 +50,11 @@ def Run(mm):
         mm.LoadModule("OneElectronIntegrals",  "CoreBuild",                "AO_COREBUILD")
         mm.LoadModule("OneElectronIntegrals",  "KineticEnergy",            "AO_KINETIC")
         mm.LoadModule("OneElectronIntegrals",  "OneElectronPotential",     "AO_NUCEL")
-        mm.LoadModule("SimintERI",             "SimintERI",                "AO_ERI")
+        mm.LoadModule("SimintERI",            "SimintERI",                "AO_ERI")
+        #mm.LoadModule("TwoElectronIntegrals",  "ReferenceERI",                "AO_ERI")
 
-        mm.LoadModule("OneElectronIntegrals",  "Dipole",                   "AO_DIPOLEX")
-        mm.LoadModule("OneElectronIntegrals",  "Dipole",                   "AO_DIPOLEY")
-        mm.LoadModule("OneElectronIntegrals",  "Dipole",                   "AO_DIPOLEZ")
-        mm.LoadModule("OneElectronIntegrals",  "OneElectronProperty",      "PROP_DIPOLE_X")
-        mm.LoadModule("OneElectronIntegrals",  "OneElectronProperty",      "PROP_DIPOLE_Y")
-        mm.LoadModule("OneElectronIntegrals",  "OneElectronProperty",      "PROP_DIPOLE_Z")
+        mm.LoadModule("OneElectronIntegrals",  "Dipole",                   "AO_DIPOLE")
+        mm.LoadModule("OneElectronIntegrals",  "OneElectronProperty",      "PROP_DIPOLE")
 
 
         # Set the OneElectronPotential module to use the atom grid (ie, nuclear-electron attraction)
@@ -80,26 +79,30 @@ def Run(mm):
         mm.ChangeOption("IGUESS", "KEY_AO_COREBUILD",  "AO_COREBUILD")
 
         # Tell the SCF which modules to use
-        mm.ChangeOption("SCF", "KEY_INITIAL_GUESS", "IGUESS")
-        mm.ChangeOption("SCF", "KEY_SCF_ITERATOR",  "SCFITER")
-        mm.ChangeOption("SCF", "KEY_FOCK_BUILDER",  "FOCKBUILD")
-        mm.ChangeOption("SCF", "KEY_AO_COREBUILD",  "AO_COREBUILD")
-        mm.ChangeOption("SCF", "KEY_NUC_REPULSION", "NUC_REP")
-        mm.ChangeOption("SCF", "KEY_AO_OVERLAP",    "AO_OVERLAP")
-        mm.ChangeOption("SCF", "MAX_ITER", 1000)
-        mm.ChangeOption("SCF", "E_TOLERANCE", 1e-10)
-        mm.ChangeOption("SCF", "DENS_TOLERANCE", 1e-8)
+        mm.ChangeOption("SCF_DIIS", "KEY_INITIAL_GUESS", "IGUESS")
+        mm.ChangeOption("SCF_DIIS", "KEY_SCF_ITERATOR",  "SCFITER")
+        mm.ChangeOption("SCF_DIIS", "KEY_FOCK_BUILDER",  "FOCKBUILD")
+        mm.ChangeOption("SCF_DIIS", "KEY_AO_COREBUILD",  "AO_COREBUILD")
+        mm.ChangeOption("SCF_DIIS", "KEY_NUC_REPULSION", "NUC_REP")
+        mm.ChangeOption("SCF_DIIS", "KEY_AO_OVERLAP",    "AO_OVERLAP")
+        mm.ChangeOption("SCF_DIIS", "MAX_ITER", 1000)
+        mm.ChangeOption("SCF_DIIS", "E_TOLERANCE", 1e-10)
+        mm.ChangeOption("SCF_DIIS", "DENS_TOLERANCE", 1e-8)
+
+        mm.ChangeOption("SCF_DAMPING", "KEY_INITIAL_GUESS", "IGUESS")
+        mm.ChangeOption("SCF_DAMPING", "KEY_SCF_ITERATOR",  "SCFITER")
+        mm.ChangeOption("SCF_DAMPING", "KEY_FOCK_BUILDER",  "FOCKBUILD")
+        mm.ChangeOption("SCF_DAMPING", "KEY_AO_COREBUILD",  "AO_COREBUILD")
+        mm.ChangeOption("SCF_DAMPING", "KEY_NUC_REPULSION", "NUC_REP")
+        mm.ChangeOption("SCF_DAMPING", "MAX_ITER", 1000)
+        mm.ChangeOption("SCF_DAMPING", "E_TOLERANCE", 1e-10)
+        mm.ChangeOption("SCF_DAMPING", "DENS_TOLERANCE", 1e-8)
 
         # Dipole calculator
-        mm.ChangeOption("AO_DIPOLEX",    "TYPE",          "DIPOLE_X");
-        mm.ChangeOption("AO_DIPOLEY",    "TYPE",          "DIPOLE_Y");
-        mm.ChangeOption("AO_DIPOLEZ",    "TYPE",          "DIPOLE_Z");
-        mm.ChangeOption("PROP_DIPOLE_X", "KEY_ONEEL_MOD", "AO_DIPOLEX");
-        mm.ChangeOption("PROP_DIPOLE_Y", "KEY_ONEEL_MOD", "AO_DIPOLEY");
-        mm.ChangeOption("PROP_DIPOLE_Z", "KEY_ONEEL_MOD", "AO_DIPOLEZ");
+        mm.ChangeOption("PROP_DIPOLE", "KEY_ONEEL_MOD", "AO_DIPOLE");
 
         mm.Print(out)
-        mm.SanityCheck()
+        #mm.SanityCheck()
   
 
 
@@ -112,7 +115,7 @@ def Run(mm):
         s = ApplySingleBasis("Primary","sto-3g",s)
 
          
-        nr = mm.GetModule("SCF", 0)
+        nr = mm.GetModule("SCF_DIIS", 0)
         nr.EnableDebug(True)
         iwfn = Wavefunction()
         iwfn.system = s
@@ -121,21 +124,19 @@ def Run(mm):
         newwfn,nrg = ret
 
         ndip = mm.GetModule("NUC_DIP", 0)
-        dx = mm.GetModule("PROP_DIPOLE_X", 0)
-        dy = mm.GetModule("PROP_DIPOLE_Y", 0)
-        dz = mm.GetModule("PROP_DIPOLE_Z", 0)
-        dipx = dx.Calculate(newwfn, "Primary", "Primary")[0]
-        dipy = dy.Calculate(newwfn, "Primary", "Primary")[0]
-        dipz = dz.Calculate(newwfn, "Primary", "Primary")[0]
+        dipmod = mm.GetModule("PROP_DIPOLE", 0)
+
+        bs = s.GetBasisSet("Primary")
+        dip = dipmod.Calculate(newwfn, bs, bs)
 
         nucdip = array.array('d', [0]*3)
         n = ndip.Calculate(0, newwfn.system, nucdip)
 
         print("Final energy: {}".format(nrg))
-        print("Electronic dipole moment: {} {} {}".format(dipx, dipy, dipz))
+        print("Electronic dipole moment: {} {} {}".format(dip[0], dip[1], dip[2]))
         print("Nuclear dipole moment: {} {} {}".format(nucdip[0], nucdip[1], nucdip[2]))
-        print("Total dipole moment: {} {} {}".format(dipx + nucdip[0], dipy + nucdip[1], dipz + nucdip[2]))
-        
+        print("Total dipole moment: {} {} {}".format(dip[0] + nucdip[0], dip[1] + nucdip[1], dip[2] + nucdip[2]))
+
 
         tester = Tester("Testing simple energy calculation")
         tester.PrintHeader()
@@ -151,5 +152,9 @@ psr.Init(sys.argv, out = "stdout", color = True, debug = True)
 
 with psr.ModuleAdministrator() as mm:
     Run(mm)
+
+dotout = PrintDotTree(mm)
+with open("module_tree.dot", 'w') as f:
+  f.write(dotout)
 
 psr.Finalize()

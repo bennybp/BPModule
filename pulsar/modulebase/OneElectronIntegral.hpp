@@ -41,6 +41,17 @@ class OneElectronIntegral : public ModuleBase
         }
 
 
+
+        /*! Return the number of components calculated by this module
+         * 
+         * For example, something that calculates x,y,z component would return 3
+         */
+        unsigned int NComponents(void) const 
+        {
+            return ModuleBase::CallFunction(&OneElectronIntegral::NComponents_);
+        }
+
+
         /*! \brief Calculate an integral
          *
          * \param [in] deriv Derivative to calculate
@@ -128,6 +139,12 @@ class OneElectronIntegral : public ModuleBase
                                const system::BasisSet & bs2) = 0;
 
 
+        //! \copydoc NComponents
+        virtual unsigned int NComponents_(void) const 
+        {
+            return 1;
+        }
+
         //! \copydoc Calculate
         virtual uint64_t Calculate_(uint64_t deriv, uint64_t shell1, uint64_t shell2,
                                     double * outbuffer, size_t bufsize) = 0;
@@ -173,6 +190,15 @@ class OneElectronIntegral_Py : public OneElectronIntegral
 
         {
             return CallPyOverride<void>("SetBases_", wfn, bs1, bs2);
+        }
+
+
+        virtual unsigned int NComponents_(void) const 
+        {
+            if(HasPyOverride("NComponents_"))
+                return CallPyOverride<unsigned int>("NComponents_");
+            else
+                return OneElectronIntegral::NComponents_();
         }
 
 
