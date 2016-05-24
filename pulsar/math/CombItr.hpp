@@ -17,10 +17,13 @@
 #include <vector>
 #include "pulsar/exception/Exceptions.hpp"
 namespace pulsar{
+namespace system{
+class System;
+}
 namespace math{
 
 /** \brief An iterator to generate all combinations from n objects,
- *         k at a time
+ *         k at a time, i.e. all k-combinations
  *
  *  A combination is an unordered set, which is math speak for
  *  the combination {1,2,3} equals {2,3,1}, i.e. the order of the
@@ -34,187 +37,168 @@ namespace math{
  *  Anyways, this iterator generates all unique combinations of the
  *  elements in some input set.  The combinations come back in so
  *  called lexical order (generalization of alphabetical order to
- *  arbitrary sets), where the order is that
- *  of the elements in your input set, not their values (i.e. if you
- *  gave the set {2,3,1} and wanted all pairs you would get:
+ *  arbitrary sets) of the positions in your input set, not their values 
+ *  i.e. if you  gave the set {2,3,1} and wanted all pairs you would get
+ *  (positions shown in parentheses):
  *  \verbatim
  *  2 3 (0 1)
  *  2 1 (0 2)
  *  3 1 (1 2)
  *  \endverbatim
- *  where the values in parentheses are the indices.  Note that this
- *  is distinctly different than:
+ *  Note that this is distinct from:
  *  \verbatim
  *  1 2
  *  1 3
  *  2 3
  *  \endverbatim
- *  which is lexical order of the elements in that set).
+ *  which is lexical order of the elements in that set.
  *
- *
- *  The actual implementation of this is really nasty if you are not
- *  comfortable with STL container iterator arithmetic.  Basically
- *  what happens is we store 2K iterators the first K are iterators
- *  to our current elements, the second K are the stopping spots
- *  of each element.  Starting from the right of our first K we
- *  find the first iterator we can increment by seeing which one
- *  doesn't equal its ending iterator upon being increased.  Once we
- *  find it, we set all iterators higher than it so that we are in a
- *  valid combination.
- *
- *  If that's too technical, here's all you need to know you can give
- *  me any STL container that is forward and reverse iteratable (which
- *  is almost all of them).  For simplicity let's assume you gave
- *  me a vector of integers:
+ *  Here's all you need to use this class.  Assume you have a container
+ *  of type MyContainerType, then:
  *  \code
- *  //The type of this iterator
- *  typedef CombItr<std::vector<int> > CombItr_t;
+ *  //The type of the combination iterator
+ *  typedef CombItr<MyContainerType> ItrType;
  *
- *  //Declare a set of integers
- *  std::vector<int> MySet;
+ *  //Get your already filled container somehow
+ *  MyContainerType MySet=MagicalFunction();
+ * 
+ *  //Assuming we want all k-combinations
+ *  ItrType(MySet,K);
  *
- *  //Fill it
- *  for(size_t i=0;i<5;i++)MySet.push_back(i);
- *  //Set now contains: {0,1,2,3,4}
+ *  //Now loop over combinations
+ *  while(MyItr){
+ *     MyContainerType CurrentComb=*MyItr;
  *
- *  //Make a combination iterator that will generate all
- *  //combinations from our set taken K at a time
- *  int K=3;
- *  CombItr_t MyItr(MySet,K);
- *
- *  //Now loop
- *  for(;!MyItr.Done();++MyItr){
- *      for(size_t i=0;i<K;i++)
- *         std::cout<<(*MyItr)[i]<<" ";
- *      std::cout<<std::endl;
+ *     //Do stuff with combination
+ * 
+ *     //Increment iterator
+ *     ++MyItr;
  *  }
  *  \endcode
- *
- *  The output should be:
- *  \verbatim
-    0 1 2
-    0 1 3
-    0 1 4
-    0 2 3
-    0 2 4
-    0 3 4
-    1 2 3
-    1 2 4
-    1 3 4
-    2 3 4
-    \endverbatim
-
-    Again, nearly every STL container should work.  It is worth
-    noting however, that the combination you get back is of the
-    same type of as the container you gave me.  So, if you gave
-    me an std::vector of matrices, you will get combinations
-    back that are std::vectors of matrices.  Hence, I strongly
-    recommend that your objects copy quickly, i.e. you should
-    probably be giving me plain old data types, pointers, or
-    iterators....
-  
-    \todo I wrote this awhile ago, should probably be C++11-ified
+ *  
+ *  Note that you get your combinations back in whatever container type we
+ *  are iterating over.
 
     \param T The type of the set you want the combinations of.
+ *           Must minimally be:
+ *           - Default constructable
+ *           - Forward iterable (have begin() and end() functions)
+ *           - A member type called const_iterator which is a typedef of a 
+ *             constant iterator to that class.
+ *           - Possess a function insert(const_iterator,U) that inserts an
+ *             element of type U (whatever type is your set) BEFORE the
+ *             iterator passed in
+ *           Basically all containers in the STL satisfy these criteria (I
+ *           think only queue, stack, and array do not satisfy them.  Queue
+ *           and stack basically fail all criteria, array does not have an
+ *           insert member)
  */
 template <typename T>
 class CombItr {
    private:
       ///The current combination
       T Comb_;
+      
       ///The number of elements in each combination
       size_t K_;
+
       ///Typedefs to keep my sanity...
       typedef typename T::const_iterator TItr_t;
       typedef std::vector<TItr_t> Index_t;
+      
       ///The current iterator
       Index_t Indices_;
-      ///Where each index stops
-      Index_t End_;
       ///The set the user gave us
       const T& Set_;
+      
       ///Are we done?
       bool Done_;
+      
+      ///Constructor code factorization
+      void Initialize();
+      
       ///Sets Comb_ to the next combination
       void Next();
+      
+      ///Function that resets Comb_
+      void ResetComb();
    public:
       ///Makes a new iterator that will run through Set, K at a time
       CombItr(const T& Set, size_t K);
+      ///Makes a copy of the other iterator
+      CombItr(const CombItr<T>& Other)=default;
       ///Returns the combination this iterator points to
       const T& operator*()const{return Comb_;}
       ///Returns true if we have run through all combinations
       bool Done()const{return Done_;}
+      ///True while the iterator still has combinations left
+      operator bool()const{return !Done();}
       ///Allows access to the member functions of your container
       const T* operator->()const{return &Comb_;}
-      ///Increments the iterator
-      const CombItr<T>& operator++(){Next();return *this;}
+      ///Increments the iterator before returning it
+      CombItr<T>& operator++(){Next();return *this;}
+      ///Increments the iterator after returning it
+      CombItr<T> operator++(int){CombItr<T> Temp(*this);Next();return Temp;}
+      
 };
+
+///Specializations of CombItr for system
+template<> void math::CombItr<system::System>::ResetComb();
+template<> math::CombItr<system::System>::CombItr(const system::System& Set,size_t K);
 
 /*********** Implementations ***************/
 template <typename T>
 CombItr<T>::CombItr(const T& Set, size_t K) :
-      K_(K), End_(K),Set_(Set), Done_(false) {
-   if (Set.size()<K)
+      K_(K),Indices_(K),Set_(Set), Done_(false) {
+    Initialize();
+}
+
+template<typename T>
+void CombItr<T>::Initialize(){
+    if (Set_.size()<K_)
     throw pulsar::exception::GeneralException(
            "I don't know how to generate combinations with"
-           " more items than you gave me....");
+           " more items than you gave me....",
+           "NObjects",Set_.size(),"Requested K",K_);
 
-   ///Form the starting combination
-   TItr_t ElemI=Set.begin();
-   while (Indices_.size()<K) {
-      Indices_.push_back(ElemI);
-      Comb_.insert(Comb_.end(), *ElemI);
-      ++ElemI;
+   //Form the starting combination
+   TItr_t ElemI=Set_.begin();
+   for(size_t i=0;i<K_;++i,++ElemI){
+       Indices_[i]=ElemI;
+       Comb_.insert(Comb_.end(), *ElemI);       
    }
-   ///Get the ending iterator for each index
-   typedef typename T::const_reverse_iterator rTItr_t;
-   rTItr_t ElemJ=Set.rbegin();
-   typedef typename Index_t::reverse_iterator rItr_t;
-   rItr_t EndI=End_.rbegin(),EndEnd=End_.rend();
-   for(;EndI!=EndEnd;++EndI,++ElemJ)
-      (*EndI)=ElemJ.base();
 }
 
 template <typename T>
 void CombItr<T>::Next() {
-   //Loop from the end of our indices backwards looking for one
-   //we can increment
-   typedef typename Index_t::reverse_iterator rItr_t;
-   typedef typename Index_t::iterator Itr_t;
-   rItr_t It=Indices_.rbegin(),ItEnd=Indices_.rend(),
-         EndIt=End_.rbegin();
-   bool reset=false;
-   for (; It!=ItEnd; ++It,++EndIt) {
-      //Increment the iterator It is pointing to, not It!!!!
-      ++(*It);
-      //Check if that increment was good
-      if (*It!=*EndIt)break;
-      //If not, we will need to reset all indices right of this one
-      reset=true;
-   }
-   if (It==ItEnd) {//We ran out of indices...
-      Done_=true;
-      return;
-   }
-   else if (reset) {
-      //Increment our reverse iterator once so the forward iterator
-      //returned by it is at the same location (silly reverse to
-      //forward semantics...)
-      ++It;
-      Itr_t It2=It.base(),It2End=Indices_.end();
-      while(true){//Reset being tripped guarantees us one loop
-         TItr_t TempItr=(*It2);
-         ++It2;
-         if(It2==It2End)break;
-         (*It2)=TempItr;
-         ++(*It2);
-      }
-   }
-   //Finally fill in Combination
-   Itr_t ElemI=Indices_.begin(),ElemEnd=Indices_.end();
-   T Temp;
-   for(;ElemI!=ElemEnd;++ElemI)Temp.insert(Temp.end(),*(*ElemI));
-   Comb_=Temp;
+    //Check indices right to left
+    for(size_t i=1;i<=K_;++i){
+        const size_t Offset=K_-i;
+        TItr_t NewIdx=Indices_[Offset];
+        ++NewIdx;
+        bool Good=false;
+        //Try to reset all indices to the right
+        for(size_t j=0;j<i;++j,++NewIdx){
+            if(NewIdx==Set_.end())break;//i can't be incremented anymore
+            Indices_[Offset+j]=NewIdx;
+            if(j==i-1)Good=true;//Successfully incremented all indices
+        }
+        if(Good)break;//Combination is good we are done
+        else if(i==K_){//Out of combinations
+            Done_=true;
+            return;
+        }
+    }
+    ResetComb();
+    for(const TItr_t Idx: Indices_)
+        Comb_.insert(Comb_.end(),*Idx);
+}
+
+template<typename T>
+void CombItr<T>::ResetComb() {
+    //Fill in combination
+    T NewComb;
+    Comb_=NewComb;    
 }
 
 }}//End namespaces

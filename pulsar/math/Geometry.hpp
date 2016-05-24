@@ -17,11 +17,20 @@
 #include<array>
 #include<cmath>
 #include "pulsar/constants.h"//For Pi
+#include "pulsar/math/BLAS.hpp"
 namespace pulsar{
 namespace math{
 
+///Given three points returns the norm of the plane they lie in
+template<typename T>
+std::array<double,3> GetPlane(const T& p1,const T& p2, const T& p3){
+    typedef std::array<double,3> V_t;
+    return Cross(V_t({p2[0]-p1[0],p2[1]-p1[1],p2[2]-p1[2]}),
+                 V_t({p3[0]-p1[0],p3[1]-p1[1],p3[2]-p1[2]}));
+}
 
-//Returns rotation matrix about the unit vector by \p n degrees
+
+///Returns rotation matrix about the unit vector by \p n degrees
 template<typename T>
 std::array<double,9> Rotation(const T& Axis, double ndegrees){
     const double angle=ndegrees*PI/180.0,x=Axis[0],y=Axis[1],z=Axis[2];

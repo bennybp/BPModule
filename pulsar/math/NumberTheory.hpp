@@ -24,19 +24,29 @@
 namespace pulsar{
 namespace math{
 
-///Computes and returns all factors of \p Num
+///Computes and returns all factors of \p Num (including 1 and Num)
 template<typename T>
 std::set<T> Factors(T Num){
     if(!IsInteger(Num))
         throw pulsar::exception::GeneralException("Integer required");
     std::set<T> f;
-    for(T i=1;i<=(T)floor(sqrt(numeric_cast<double>(Num)));++i)
+    T max=(T)floor(sqrt(numeric_cast<double>(Num)));
+    for(T i=1;i<=max;++i)
         if(Num%i==0){
             f.insert(i);
             f.insert(Num/i);
         }
     return f;
 }
+
+///Returns true if \p Num is prime
+template<typename T>
+bool IsPrime(T Num){
+    std::set<T> facs=Factors(Num);
+    return facs.size()==2;
+}
+
+
 
 ///Variadic template recursion endpoint
 template<typename T>
@@ -58,6 +68,12 @@ template<typename T,typename ...Args>
 T LargestCommonFactor(T N1,Args ...args){
     std::set<T> LCFs=CommonFactors(N1,args...);
     return *LCFs.rbegin();
+}
+
+///Returns true if the numbers are relatively prime (no common factors)
+template<typename ...Args>
+bool RelativelyPrime(Args...args){
+    return CommonFactors(args...).size()==1;
 }
 
 ///Reduces the fraction \p n over \p d, returns reduced pair (n,d)

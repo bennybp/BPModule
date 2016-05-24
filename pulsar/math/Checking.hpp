@@ -6,7 +6,7 @@
 
 
 #include <cmath>
-
+#include <type_traits>
 
 namespace pulsar{
 namespace math {
@@ -64,6 +64,13 @@ bool AreEqual(const T& lhs,const T& rhs,const T& Tol){
     return(fabs(lhs-rhs)<Tol);
 }
 
+///Checks if all elements within an STL-like container have the same value
+template<typename T,typename U>
+bool AreEqual(const T& array,const U& value, const U& Tol){
+    for(const U& elem: array)
+        if(!AreEqual(elem,value,Tol))return false;
+    return true;
+}
 
 } // close namespace math
 } // close namespace pulsar

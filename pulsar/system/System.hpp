@@ -10,10 +10,11 @@
 #include <unordered_map>
 #include <unordered_set>
 #include "pulsar/system/Atom.hpp"
+#include "pulsar/system/Space.hpp"
 #include "pulsar/math/MathSet.hpp"
 #include "pulsar/math/PointManipulation.hpp"
-
 #include "pulsar/util/bphash/Hasher_fwd.hpp"
+#include "pulsar/util/Hash.hpp"
 
 
 // Instantiated in the cpp file
@@ -25,6 +26,7 @@ extern template class pulsar::math::MathSet<pulsar::system::Atom>;
 namespace pulsar{
 namespace system {
 class BasisSet;
+class Space;
 }
 namespace util {
 class Hash;
@@ -69,7 +71,8 @@ private:
     double charge_; //!< Total charge on this system
     double multiplicity_; //!< Total multiplicity of the system
     double nelectrons_; //!< Total number of electrons in the system 
-
+    
+    Space Space_;//!< The space this system lives in
 
     // For use from transformations, etc
     System(const AtomSet & atoms);
@@ -96,6 +99,8 @@ private:
     ///@}
 
 public:
+    
+    
     typedef AtomSet::value_type value_type;
     typedef AtomSet::const_iterator const_iterator;
 
@@ -152,33 +157,39 @@ public:
     ///@{ 
 
     /*! \brief Return the number of Atoms in the System (NOT the Universe) */
-    size_t Size(void) const;
+    size_t size(void) const;
 
     /*! \brief Get the charge of the system */
     double GetCharge(void) const;
+    
+    /*! \brief Set the charge of the system */
+    void SetCharge(double charge);
 
     /*! \brief Get the charge of the system as determined by summing
      *         the charges on all atoms */
     double GetSumCharge(void) const;
 
-    /*! \brief Set the charge of the system */
-    void SetCharge(double charge);
-
     /*! \brief Get the number of electrons in the system */
     double GetNElectrons(void) const;
+    
+    /*! \brief Set the number of electrons in the system */
+    void SetNElectrons(double nelectrons);
 
     /*! \brief Get the number of electrons in the system as
      *         determined by summing the number of electrons for all atoms*/
     double GetSumNElectrons(void) const;
-
-    /*! \brief Set the number of electrons in the system */
-    void SetNElectrons(double nelectrons);
 
     /*! \brief Get the multiplicity of the System */
     double GetMultiplicity(void) const;
 
     /*! \brief Set the multiplicity of the System */
     void SetMultiplicity(double m);
+    
+    /*! \brief Returns the space associated with the system*/
+    Space GetSpace(void) const;
+    
+    /*! \brief Sets the space associated with the system*/
+    void SetSpace(const Space& space);
 
     ///Returns true if the system contains the atom
     bool Contains(const Atom& AnAtom)const;
@@ -251,6 +262,12 @@ public:
      * \todo Exceptions from MathSet
      */
     System & Insert(const Atom & atom);
+    
+    ///For compatability with STL algorithms
+    template<typename T>
+    System & insert(const T&,const Atom& atom){
+        return this->Insert(atom);
+    }
 
     /*! \brief Insert an atom into this system
      * 
@@ -259,6 +276,13 @@ public:
      * \todo Exceptions from MathSet
      */
     System & Insert(Atom && atom);
+    
+    ///For compatability with STL algorithms
+    template<typename T>
+    System & insert(const T&,Atom&& atom){
+        return this->Insert(atom);
+    }
+    
 
     System & UnionAssign(const System& RHS);
     System Union(const System& RHS) const;
@@ -412,7 +436,10 @@ public:
         return Transform(std::bind(math::TranslatePoint_Copy<Atom, VectorType>, std::placeholders::_1, vec));
     }
 
-    /*! \brief Rotate the system
+    /*! \brief Rotates the system point by point
+     * 
+     *  Given a rotation matrix R, this function takes the point from the
+     *  column space to the row space.
      * 
      * \tparam VectorType A type corresponding to a MatrixConcept
      */
@@ -443,12 +470,16 @@ public:
     ///@}
 };
 
-///Returns the distance between each pair of atoms in sys
-std::vector<double> GetDistance(const System& sys);
+typedef std::unordered_map<std::pair<Atom,Atom>,double> DistMat_t;
 
+///Returns the distance between each pair of atoms in sys
+DistMat_t GetDistance(const System& sys);
+
+
+typedef std::unordered_map<Atom, std::unordered_set<Atom>> Conn_t;
 ///Returns connectivity data of sys, using covalent radii.  Atoms are considered
 ///bonded if Tolerance*sum of covRaddii is greater than distance
-std::unordered_map<Atom, std::unordered_set<Atom>> GetConns(const System& sys, double Tolerance = 1.20);
+Conn_t GetConns(const System& sys, double Tolerance = 1.20);
 
 /** \brief Given a molecule that has been translated to the center of mass
  *         this function computes the inertia tensor for that system
@@ -536,6 +567,7 @@ std::unordered_map<Atom, std::unordered_set<Atom>> GetConns(const System& sys, d
  */
 std::array<double,9> InertiaTensor(const System& Mol);
 
+
 inline std::ostream& operator<<(std::ostream& os, const System& Mol)
 {
     return os << Mol.ToString();
@@ -543,6 +575,10 @@ inline std::ostream& operator<<(std::ostream& os, const System& Mol)
 
 //! A map of systems (fragments, etc), MIM uses fact that this is ordered
 typedef std::map<std::string, System> SystemMap;
+
+///Helper function that converts a system to Angstroms
+System ToAngstroms(const System& sys);
+
 
 } // close namespace system
 } // close namespace pulsar

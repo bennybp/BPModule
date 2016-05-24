@@ -5,14 +5,14 @@
  */
 
 /* 
- * File:   SymmetryElements.hpp
+ * File:   SymmetryElement.hpp
  * Author: richard
  *
  * Created on April 13, 2016, 3:38 PM
  */
 
-#ifndef PULSAR_GUARD_SYSTEM__SYMMETRYELEMENTS_HPP_
-#define PULSAR_GUARD_SYSTEM__SYMMETRYELEMENTS_HPP_
+#ifndef PULSAR_GUARD_SYSTEM__SYMMETRYELEMENT_HPP_
+#define PULSAR_GUARD_SYSTEM__SYMMETRYELEMENT_HPP_
 
 #include <array>
 #include <string>
@@ -38,20 +38,22 @@ struct SymmetryElement{
                     const std::string& SSym,const std::string& HMSym):
                     Elem(Op),SSymbol(SSym),HMSymbol(HMSym){}
     
-    ///Performs a deep copy
+    ///Deep copy operators
     SymmetryElement(const SymmetryElement&)=default;
+    SymmetryElement& operator=(const SymmetryElement&)=delete;
+
+    
+    SymmetryElement(SymmetryElement&&)=default;
+    SymmetryElement& operator=(SymmetryElement&&)=delete;
+    
     
     /** \brief Returns true if this SymmetryElement's Elem is the same as 
      *         other's
      *
      *  I originally had this as an exact equality; however numeric precision
-     *  caused that to fail so I introduced a threshold of 1.0 e^-5.  Then
-     *  the notion of clockwise versus counter-clockwise rotation threw
-     *  this off (they get different SSymbol's so symbol equality failed).  At
-     *  first that seems like it should fail, but the problem is 
-     *  rotation is always clockwise around a positive axis, but sometimes we
-     *  have negative axes as our rotation axis.
-     *  define an axis through the CoM and an atom or bond midpoint
+     *  caused that to fail so I introduced a threshold of 1.0e-5.  That
+     *  threshold is too tight and I had to dropped it 1.0e-2.  That was still
+     *  too tight so I tried 10% of the largest absolute element.
      */
     bool operator==(const SymmetryElement& Other)const;
     
@@ -85,6 +87,10 @@ extern const SymmetryElement Identity;
 ///Instance of symmetry element that is a center of inversion
 extern const SymmetryElement CoI;
 
+///Instance of an arbitrary rotation axis
+extern const SymmetryElement Coo;
+
+
 ///Allows printing of element
 inline std::ostream& operator<<(std::ostream& os, const SymmetryElement& E){
     return E.Print(os);
@@ -102,5 +108,5 @@ template<> struct hash<pulsar::system::SymmetryElement>{
 };
 }
 
-#endif /* SYMMETRYELEMENTS_HPP */
+#endif /* SYMMETRYELEMENT_HPP */
 

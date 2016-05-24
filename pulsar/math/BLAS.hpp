@@ -16,9 +16,23 @@
 
 #include <string>
 #include <array>
+#include <complex>
+#include <tuple>
+#include <vector>
+#include "pulsar/exception/Exceptions.hpp"
+
+
 extern "C" {
-    void dsyev(char*,char*,int*,double*,int*, double*,double*,int*,int*);
+    void dsyev(char*,char*,int*,double*,int*,double*,double*,int*,int*);
+    void dgeev(char*,char*,int*,double*,int*,double*,double*,double*,int*,
+               double*,int*,double*,int*,int*);
 }
+
+///The return type of the non-symmetric diagonalizer
+typedef std::tuple<std::vector<std::complex<double>>,
+                   std::vector<double>,
+                   std::vector<double>> NonSymmDiagReturn_t;
+
 namespace pulsar{
 namespace math{
 
@@ -60,6 +74,51 @@ void SymmetricDiagonalize(Mat_t& Matrix,EVal_t& EVals,
     delete [] work;
 }
 
+/** \brief Returns the eigenvalues and optionally the eigenvectors (left and/or
+ *         right) of a non-symmetric real square matrix
+ *   
+ *  \param[in] Matrix The matrix to diagonalize
+ *  \param[in] n The dimension of the matrix
+ *  \param[in] Stride The stride of the matrix, 0 means there's no gap between
+ *                    rows
+ *  \param[in] RVecs True if you want the right eigenvectors
+ *  \param[in] LVecs True if you want the left eigenvectors
+ * 
+ *  \return A tuple whose first element is the eigenvalues (which in general
+ *  are complex), the second element is the right eigenvectors, and the third
+ *  is the left eigenvectors.  If you requested that a certain eigenvector 
+ *  not be computed than you should not access that element.
+ *
+ */
+template<typename Mat_t>
+NonSymmDiagReturn_t NonSymmetricDiagonalize(Mat_t Matrix,int n,
+                             int Stride=0,
+                              bool RVecs=true,bool LVecs=true){
+    int info,lwork=-1;
+    if(Stride==0)Stride=n;
+    double wkopt;
+    char rv=RVecs?'V':'N',lv=LVecs?'V':'N';
+    double evalReal[n],evalImag[n];
+    std::vector<double> vl(LVecs?n*Stride:1),vr(RVecs?n*Stride:1);
+    dgeev(&rv,&lv,&n,Matrix.data(),&Stride,
+          evalReal,evalImag,vl.data(),&n,vr.data(),&n,&wkopt,&lwork,&info);
+
+    lwork=(int)wkopt;
+    double* work=new double[lwork];
+    dgeev(&rv,&lv,&n,Matrix.data(),&Stride,
+            evalReal,evalImag,vl.data(),&n,vr.data(),&n,work,&lwork,&info);
+    if(info!=0){
+        throw exception::GeneralException("There was a problem diagonalizing"
+                "your matrix.","info code:",info);
+    }
+    delete [] work;
+    std::vector<std::complex<double>> Evals(n);
+    for(size_t i=0;i<(size_t)n;++i)
+        Evals[i]=std::complex<double>(evalReal[i],evalImag[i]);
+    return std::make_tuple(Evals,vr,vl);
+    
+}
+
 ///Returns the cross product of two vectors
 ///\todo write in terms of wedge product
 template<typename T1,typename T2>
@@ -79,6 +138,12 @@ double Dot(const T1& LHS,const T2& RHS){
     return sum;
 }
 
-}}//End namespaces
+template<typename T1>
+std::array<double,3> Normalize(const T1& Vec){
+    double mag=sqrt(Dot(Vec,Vec));
+    return {Vec[0]/mag,Vec[1]/mag,Vec[2]/mag};
+}
+
+}}//End namespace
 #endif /* BLAS_HPP */
 

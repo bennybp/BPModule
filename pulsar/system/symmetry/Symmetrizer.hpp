@@ -15,7 +15,7 @@
 #define PULSAR_GUARD_SYSTEM__SYMMETRIZER_HPP_
 
 #include <map>
-//#include "pulsar/system/SymmetryGroups.hpp"
+#include "pulsar/system/symmetry/SymmetryGroup.hpp"
 
 namespace pulsar{
 namespace system{
@@ -63,9 +63,8 @@ class Symmetrizer{
          * the C2 axis and the H-H bisector.  So now I'm also checking
          * for planes parallel to and perpendicular to a principle axis.
          *  
-         *  
          */
-        void GetSymmetry(const System& Mol)const;
+        SymmetryGroup GetSymmetry(const System& Mol)const;
 };
 
 }}//End namespaces

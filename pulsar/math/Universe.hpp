@@ -60,8 +60,12 @@ public:
     ///Type being iterated over
     typedef T value_type;
 
+    ///Resulting iterator is unusable unless it is set equal to usable version
+    ConstSetItr()=default;
     ConstSetItr(const ConstSetItr&) = default;
     ConstSetItr& operator=(const ConstSetItr&) = default;
+    ConstSetItr(ConstSetItr&&) = default;
+    ConstSetItr& operator=(ConstSetItr&&) = default;
     ~ConstSetItr() = default;
 
     ///Returns true if this iterator is equal to RHS
@@ -239,6 +243,11 @@ public:
     {
         return Elems_.size();
     }
+    
+    size_t size()const noexcept
+    {
+        return Elems_.size();
+    }
 
     ///Returns a const iterator to the beginning of the universe 
     const_iterator begin()const
@@ -320,6 +329,10 @@ public:
         return *this;
     }
 
+    template<typename Itr>
+    My_t& insert(const Itr&,const T& elem){
+        return Insert(elem);
+    }
     
      /** \brief Moves an element to this universe
      * 
