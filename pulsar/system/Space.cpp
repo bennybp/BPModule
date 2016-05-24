@@ -17,6 +17,10 @@ bool Space::IsPeriodic()const{
     return false;
 }
 
+//double Space::Volume()const{
+//    return !IsPeriodic()?Inf:sqrt(1-cos(Lattic))
+//}
+
 Space::Space():Space({90.0,90.0,90.0},{Inf,Inf,Inf}){}
 
 }}//End namespaces

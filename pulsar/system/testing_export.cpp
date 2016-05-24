@@ -22,7 +22,7 @@ struct SystemCompare
 {
     bool operator()(const System & lhs, const System & rhs) const
     {
-        return (lhs.Size() == rhs.Size() &&
+        return (lhs.size() == rhs.size() &&
                 lhs.CompareInfo(rhs) &&
                 std::equal(lhs.begin(), lhs.end(), rhs.begin()));
     }

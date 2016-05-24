@@ -73,8 +73,12 @@ def Run(mm):
         D4d=psr.system.Dnd(4)
         D5d=psr.system.Dnd(5)
         S4=psr.system.Sn(4)
+        Coov=psr.system.Coov()
+        Dooh=psr.system.Dooh()
+        Kh=psr.system.Kh()
         Elems={"Cs":["E","s"],
                "Ci":["E","i"],
+               "C1":["E"],
                "C2":["E","C_2"],
                "C3":["E","C_3","C_3^2"],
                "C2v":["E","C_2","s","s"],
@@ -105,8 +109,10 @@ def Run(mm):
                "D5d":["E","C_5","C_5^2","C_5^3","C_5^4",
                       "C_2","C_2","C_2","C_2","C_2","i",
                       "S_10","S_10^9","S_10^3","S_10^7","s","s","s","s","s"],
-               "S4":["E","S_4","S_4^3","C_2"]
-                    
+               "S4":["E","S_4","S_4^3","C_2"],
+               "Coov":["E","C_oo"],
+               "Dooh":["E","C_oo","i"],
+               "Kh":["E"]                    
         }
 
         Syms=[Cs,Ci,C2,C3,#C4,C5,C6,
@@ -116,33 +122,32 @@ def Run(mm):
               D2h,D3h,D4h,D5h,D6h,
               D2d,D3d,D4d,D5d,#D6d,
               S4,#S6,S8,S10,
+              Coov,Dooh,Kh,
               "Td","Oh","Ih",#T,Th,O,I,
-              "Coov","Dooh","Kh"
         ]
-        Mols=[CH2BrCl,PeroxideDimer,
-              Peroxide,NO3H3,
+        Mols=[CH2BrCl,PeroxideDimer,Peroxide,NO3H3,
               Water,Ammonia,BrF5,Corannulene,
               Diazene,BoricAcid,
               Twistane,
               Napthalene,EthaneEclip,PtCl4,C5H5Anion,Benzene,
               Allene,EthaneStag,S8,FerroceneStag,
               C8F4H4,
+              C2HCl,C2H2,He,
               Methane,SF6,C60,
-              C2HCl,C2H2,He
         ]
        
         #LoadDefaultModules(mm)
-        f=open("Test.xyz",'w')
+        Symmer=psr.system.Symmetrizer()
+        f=open("Test.xyz","w")
         f.write(str(BzCrystal.Size())+"\n\n")
         for i in BzCrystal:
-            f.write(str(i.GetSymbol())+" "+str(i[0]/1.889725989)+" "+str(i[1]/1.889725989)+" "+str(i[2]/1.889725989)+"\n")
+            f.write(i.GetSymbol()+" "+str(i[0]*0.529177)+" "+str(i[1]*0.529177)+" "+str(i[2]*0.529177)+"\n")
         f.close()
-        Symmer=psr.system.Symmetrizer()
         Symmer.GetSymmetry(BzCrystal)
         exit()
-
-        for i in range(0,len(Syms)):
+        for i in range(0,24):
             TestPG(tester,Syms[i],Symmer.GetSymmetry(Mols[i]),Elems)
+        tester.PrintResults()
         
      
     except Exception as e:

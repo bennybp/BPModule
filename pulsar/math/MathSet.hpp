@@ -210,6 +210,11 @@ public:
     {
         return this->Elems_.size();
     }
+    
+    size_t size(void)const noexcept
+    {
+        return this->Elems_.size();
+    }
 
     const_iterator begin() const
     {
@@ -247,6 +252,11 @@ public:
         UniverseContains(Elem);
         this->Elems_.insert(Idx(Elem));
         return *this;
+    }
+    
+    template<typename itr>
+    My_t& insert(const itr&,const T& Elem){
+        return Insert(Elem);
     }
 
     My_t& InsertIdx(size_t Idx)

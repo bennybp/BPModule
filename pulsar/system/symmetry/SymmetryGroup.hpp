@@ -91,12 +91,14 @@ struct Ci:public SymmetryGroup{
 struct Coov:public SymmetryGroup{
     Coov(const std::unordered_set<SymmetryElement>&Es):
     SymmetryGroup(Es,"Coov","oom"){}
+    Coov();
 };
 
 ///Helper for linear w/ inversion
 struct Dooh:public SymmetryGroup{
     Dooh(const std::unordered_set<SymmetryElement>& Es):
     SymmetryGroup(Es,"Dooh","oo/mm"){}
+    Dooh();
 };
 
 struct T:public SymmetryGroup{
@@ -137,6 +139,7 @@ struct Ih:public SymmetryGroup{
 struct Kh:public SymmetryGroup{
     Kh(const std::unordered_set<SymmetryElement>& Es):
     SymmetryGroup(Es,"Kh","oo/moo"){}
+    Kh():Kh(std::unordered_set<SymmetryElement>()){}
 };
 
 }//End namespace PointGroup

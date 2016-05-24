@@ -4,12 +4,17 @@
  * and open the template in the editor.
  */
 #include <array>
+#include <vector>
 #include <unordered_set>
+#include <unordered_map>
 #include <iostream>
 #include "pulsar/system/symmetry/Symmetrizer.hpp"
 #include "pulsar/system/symmetry/SymmetryElement.hpp"
+#include "pulsar/system/Atom.hpp"
 #include "pulsar/system/System.hpp"
+#include "pulsar/math/CombItr.hpp"
 #include "pulsar/math/Point.hpp"
+#include "pulsar/math/Geometry.hpp"
 #include "pulsar/math/NumberTheory.hpp"
 #include "pulsar/math/BLAS.hpp"
 #include "pulsar/math/Checking.hpp"
@@ -21,6 +26,7 @@
 namespace pulsar{
 namespace system{
 
+using std::make_pair;
 using pulsar::math::Point;
 using pulsar::math::AreEqual;
 using pulsar::math::Dot;
@@ -31,28 +37,17 @@ typedef std::array<double,3> Vector_t;
 typedef std::array<double,9> Matrix_t;
 typedef std::unordered_set<SymmetryElement> Elems_t;
 typedef SymmetryElement SymmEl_t;
+typedef std::vector<std::vector<Atom> > SEASet_t;
+typedef std::tuple<System,Vector_t,Matrix_t> MoISys_t;
 
 //The condition for two atoms being equal
+
 inline bool AtomsAreEqual(const Atom& AI,const Atom& BI){
     return AI.GetZ()==BI.GetZ();
 }
 
-/*
- *    Let \f$x\f$ be a unit vector aligned with an axis that passes
- *    through the origin and let \f$p\f$ be a vector from the origin
- *    to some point in space.  The perpendicular distance from
- *    the point and the axis is given by:
- *    \f[
- *       d=|p\times(p-x)|=|\left{p_zy-p_yz,p_xz-p_zx,p_yx-p_xy\right}|
- *    \f]
- *
- */
-inline double PerpDist(const Vector_t& Axis,const Atom& Point){
-    Vector_t Temp=Cross(Point,Axis);
-    return sqrt(Dot(Temp,Temp));
-}
-
 //True if manipulated system is symmetrically equivalent to within tol
+
 bool IsGood(const System& Mol,const SymmEl_t& E,const Vector_t& Ax,double Tol){
     System New=Mol.Rotate(E.Elem);
     double MaxDist=-1.0;//The furthest any atom is from its closest partner
@@ -68,210 +63,304 @@ bool IsGood(const System& Mol,const SymmEl_t& E,const Vector_t& Ax,double Tol){
     double a0=1.0/BOHR_RADIUS_ANGSTROMS,Denom=0.0;
     if(E.SSymbol=="i")Denom=AJ.Magnitude();
     else if(E.HMSymbol=="m")Denom=fabs(Dot(AJ,Ax));
-    else Denom=PerpDist(Ax,AJ);
+    else{//Use perpindicular distance
+        Vector_t Temp=Cross(AJ,Ax);
+        Denom=sqrt(Dot(Temp,Temp));
+    }
     return(MaxDist/(Denom>a0?Denom:1.0))<Tol;
 }
 
-//Returns an arbitrary circular set about a given Axis, Axis must be unit vector
-AtomSet_t GetCircularSet(const System& Mol,const Vector_t& Ax,double T){
-    AtomSet_t CircularSet;
-    for(const Atom& AI:Mol){
-        if(PerpDist(Ax,AI)>T){
-            double Height=Dot(Ax,AI);
-            CircularSet.insert(AI);
-            for(const Atom& BI:Mol){
-                if(AI==BI||!AtomsAreEqual(AI,BI))continue;
-                if(PerpDist(Ax,BI)>T&&AreEqual(Dot(Ax,BI),Height,T))
-                    CircularSet.insert(BI);
-            }
-            break;
-        }
-    }
-    return CircularSet;
-}
-
-Vector_t Orient(const Vector_t& Axis){
+template<typename T>
+Vector_t Orient(const T& Axis){
+    Vector_t NAxis=math::Normalize(Axis);
     //Fix orientation so counter/clockwise are same direction
     //We do this by requiring our axis to point "up" in a right handed
     //coordinate system.  If it lies in the XY plane we then require that
     //the y-coordinate be positive, and if it lies on the x axis the x
     //coordinate need be positive.  To accomplish any of these we need to
     //invert through the origin if the given component is negative
-    if(fabs(Axis[2])>1e-2){//Not in XY plane
-        if(Axis[2]>0.0)return Vector_t(Axis);//Pointing up already
+    if(fabs(NAxis[2])>1e-2){//Not in XY plane
+        if(NAxis[2]>0.0)return Vector_t(NAxis);//Pointing up already
     }
-    else if(fabs(Axis[1])>1e-2){//Not on X-axis
-        if(Axis[1]>0.0)return Vector_t(Axis);//Positive Y already
+    else if(fabs(NAxis[1])>1e-2){//Not on X-axis
+        if(NAxis[1]>0.0)return Vector_t(NAxis);//Positive Y already
     }
-    else{if(Axis[0]>0.0)return Vector_t(Axis);}//Positive X already
-    return {-1.0*Axis[0],-1.0*Axis[1],-1.0*Axis[2]};
+    else{
+        if(NAxis[0]>0.0)return Vector_t(NAxis);
+    }//Positive X already
+    return
+    {
+        -1.0*NAxis[0],-1.0*NAxis[1],-1.0*NAxis[2]
+    };
 }
 
-//Looks for Sn along axis Axis to within tolerance T, if found added to Es
-//I know that Sn^n==s,S_2=i, and I think Sn^{2m}==Cn^2m
-//It appears odds have to go around 4Pi to come back to their original position
-//For even Sn axes there is a tendancy for their factors to lie along the 
-//axis as well, which we fine by looping over all rotations
-void FindSn(const System& M,const Vector_t& Axis,size_t n,double T,Elems_t& Es){
-    ImproperRotation Sn2(Axis,2*n,1),Sn(Axis,n,1);
-    if(n!=2&&IsGood(M,Sn,Axis,T)){
-       const bool Odd=n%2==1;
-       size_t Max=(Odd?2*n:n);
-       for(size_t i=1;i<Max;i+=2){
-         std::pair<size_t,size_t> Frac=math::Reduce(i,n);
-         if(Frac==std::make_pair<size_t,size_t>(1,1))continue;//Sn^n
-         if(Frac==std::make_pair<size_t,size_t>(1,2))continue;//S2
-         ImproperRotation Sm(Axis,Frac.second,Frac.first);
-         if(IsGood(M,Sm,Axis,T))Es.insert(Sm);
-       }
-    }
-    if(IsGood(M,Sn2,Axis,T)){
-       for(size_t i=1;i<2*n;i+=2){//Always even n==2*n for Sn2
-         std::pair<size_t,size_t> Frac=math::Reduce(i,2*n);
-         if(i!=n){             
-             ImproperRotation Sm(Axis,Frac.second,Frac.first);
-             if(IsGood(M,Sm,Axis,T))
-                Es.insert(Sm);
-         }
-       } 
-    }
-}
+///Finds all symmetry equivalent atoms
 
-//Looks for reflection normal to axis
-void FindSigma(const System& Mol,const Vector_t& Axis,double Tol,
-               Elems_t& Es){
-    Vector_t NewAxis=Orient(Axis);
-    MirrorPlane Sigma(NewAxis);
-    if(IsGood(Mol,Sigma,NewAxis,Tol))
-        Es.insert(Sigma);
-}
+SEASet_t FindSEAs(const System& Mol,double Tol){
+    DistMat_t DistMat=pulsar::system::GetDistance(Mol);
+    SEASet_t SEAs;
+    //Little class to enforce equality to within a tolerance
 
+    struct AreLess{
+        double Tol;
 
-//Determines if Axis is a Cn to within Tol.  Axis must be unit vector
-//Also looks for Sn coincident with Cn and sigma perpendicular to Cn
-void FindCn(const System& Mol,const Vector_t& Axis,double Tol,
-            Elems_t& Elems){
-    Vector_t NewAxis=Orient(Axis);
-    AtomSet_t CSet=GetCircularSet(Mol,NewAxis,Tol);
-    for(size_t n=CSet.size();n>1;--n){
-        Rotation Cn(NewAxis,n,1);
-        if(IsGood(Mol,Cn,NewAxis,Tol)){
-            for(size_t m=1;m<=n-1;++m){//All n-1 applications of Cn
-                std::pair<size_t,size_t> Frac=math::Reduce(m,n);
-                Rotation Cm(NewAxis,Frac.second,Frac.first);
-                if(IsGood(Mol,Cm,NewAxis,Tol)){
-                    Elems.insert(Cm);
-                    FindSn(Mol,NewAxis,Frac.second,Tol,Elems);
-                }
-            }
-            FindSigma(Mol,NewAxis,Tol,Elems);
-            FindSn(Mol,NewAxis,n,Tol,Elems);
-            break;
+        bool operator()(double LHS,double RHS)const{
+            return LHS<RHS && !AreEqual(LHS,RHS,Tol);
         }
-    }//Loop over circular set
+    } Comparer;
+
+    Comparer.Tol=Tol;
+    std::unordered_map<Atom,bool> IsGood;
+    for(Atom atomI:Mol)IsGood.emplace(atomI,true);
+    System::const_iterator atomI=Mol.begin(),atomK=Mol.begin();
+
+    for(;atomI!=Mol.end();++atomI){//Loop over unassigned atoms
+        if(!IsGood.at(*atomI))continue;
+        SEAs.push_back(std::vector<Atom>({*atomI}));
+        IsGood.at(*atomI)=false;
+        std::multiset<double,AreLess> ColI(Comparer);
+        for(const Atom atomJ:Mol){
+            if((*atomI)==atomJ)continue;
+            ColI.insert(DistMat[{*atomI,atomJ}
+            ]);
+        }
+        atomK=atomI;
+        for(++atomK;atomK!=Mol.end();++atomK){
+            if(!IsGood.at(*atomK)||!AtomsAreEqual(*atomI,*atomK))continue;
+            std::multiset<double,AreLess> CopyColI(ColI);
+            for(const Atom atomJ:Mol){
+                if(*atomK==atomJ)continue;
+                double dist=DistMat[{*atomK,atomJ}
+                ];
+                auto Location=CopyColI.find(dist);
+                if(Location==CopyColI.end())break;
+                CopyColI.erase(Location);
+            }
+            if(CopyColI.size()==0){
+                SEAs.back().push_back(*atomK);
+                IsGood.at(*atomK)=false;
+            }
+        }
+    }
+    return SEAs;
 }
 
-SymmetryGroup Symmetrizer::GetSymmetry(const System& Mol)const{
-    if(Mol.Size()==1)
-        return PointGroup::Kh({});
-    
-    const double SymTol=0.1;
-    Elems_t Elems;
-    //RankedGroups FoundGroups;
+//System Symmetrizer::Symmetrize(const System& Mol,double Tol)const{
+//    
+//}
+
+MoISys_t MoIOrient(const System& Mol){
     Point CoM=Mol.CenterOfMass();
     System CenteredMol=Mol.Translate(-1.0*CoM);
     Matrix_t I=InertiaTensor(CenteredMol);
     Vector_t Moments{0.0,0.0,0.0};
     math::SymmetricDiagonalize(I,Moments);
-
     //Our molecule aligned with the principal moments of inertia
-    System PrinMol=CenteredMol.Rotate(I);
-    
+    //System PrinMol=CenteredMol.Rotate(I);
+    return std::make_tuple(CenteredMol,Moments,I);
+}
+
+size_t NDegen(const Vector_t& Moments){
     //Taking Trent's percentage based check idea, we'll go with 5% of largest
     double DegenTol=0.05*Moments[2];
-    size_t NumDegen=AreEqual(Moments[1],Moments[0],DegenTol)+
+    return AreEqual(Moments[1],Moments[0],DegenTol)+
             AreEqual(Moments[2],Moments[1],DegenTol)+
             AreEqual(Moments[2],Moments[0],DegenTol);
-    //Find center of inversion, if it exists it's at the origin
-    if(IsGood(PrinMol,CoI,{0.0,0.0,0.0},SymTol))Elems.insert(CoI);
-    
-    if(NumDegen==1 && fabs(Moments[0])<SymTol){//Linear molecule
-        Elems.insert(SymmetryElement({},"C_oo","oo"));
+}
+
+Vector_t Transform(const Vector_t& Old,
+                   const System& OldSys,const System& NewSys){
+    Point Shift=NewSys.CenterOfMass()-OldSys.CenterOfMass();
+    return {Old[0]+Shift[0],Old[1]+Shift[1],Old[2]+Shift[2]};
+}
+
+typedef std::pair<Vector_t,size_t> Axis_t;
+
+inline bool IsPlanar(const Vector_t& Moments){
+    return math::AreEqual(Moments[0]+Moments[1],Moments[2],0.05*Moments[2]);
+}
+
+std::set<Axis_t> NewGetCns(const System& PrinMol,const SEASet_t& SEAs,double Tol){
+
+    //We are going to queue up a set of possible rotation axes
+    std::set<Axis_t> Axes;
+    for(const std::vector<Atom>& SEA:SEAs){
+        if(SEA.size()==1)continue;//No info there...
+        math::CombItr<std::vector<Atom>>AtomPair(SEA,2);
+        while(AtomPair){
+            //Condition A for finding C2s
+            Point BiSec=(*AtomPair)[0]+(*AtomPair)[1];
+            if(!AreEqual(BiSec,0.0,Tol))
+                Axes.insert(make_pair(Orient(BiSec),2));
+            ++AtomPair;
+            if(SEA.size()!=2)continue;
+            //Condition C for finding C2s
+            for(const std::vector<Atom>& SEA2:SEAs){
+                if(SEA2.size()!=2)continue;
+                if(SEA2==SEA)break;
+                Axes.insert(
+                  make_pair(Orient(Cross(SEA[1]-SEA[0],SEA2[1]-SEA2[0])),2)
+                );
+            }
+        }
+        if(SEA.size()==2)continue;
+
+
+        System NSEA(PrinMol.AsUniverse(),false);
+        for(const Atom atomI:SEA){
+            //Condition B for finding C2s
+            Axes.insert(std::make_pair(Orient(atomI),2));
+            NSEA.Insert(atomI);
+        }
+        MoISys_t PrinSEA=MoIOrient(NSEA);
+        System NewSEA=std::get<0>(PrinSEA);
+        Vector_t SEAMoms=std::get<1>(PrinSEA);
+        if(IsPlanar(SEAMoms)){
+            Vector_t PlaneNorm=Orient(math::GetPlane(SEA[0],SEA[1],SEA[2]));
+            Axes.insert(make_pair(PlaneNorm,SEA.size()));
+        }
+        else{
+            Matrix_t Is=std::get<2>(PrinSEA);
+            size_t max=3,min=0,k=SEA.size()/2;
+            double MomTol=0.05*SEAMoms[2];
+            if(AreEqual(SEAMoms[0],SEAMoms[1],MomTol))min=2;
+            else if(AreEqual(SEAMoms[1],SEAMoms[2],MomTol))max=1;
+            else k=2;
+            for(size_t i=min;i<max;++i){
+                Vector_t Temp={Is[i*3],Is[i*3+1],Is[i*3+2]};
+                Axes.insert(make_pair(Orient(Transform(Temp,NewSEA,PrinMol)),k));
+            }
+        }
+
+    }
+    return Axes;
+}
+
+inline void FindCoI(const System& Mol,Elems_t& Elems,double Tol){
+    if(IsGood(Mol,CoI,{0.0,0.0,0.0},Tol))
+        Elems.insert(CoI);
+}
+
+//The check for linearity based off of moments of inertia
+
+inline bool IsLinear(const Vector_t& Moments){
+    size_t NumDegen=NDegen(Moments);
+    return(NumDegen==1&&AreEqual(Moments[0],0.0,1.0E-3));
+}
+
+//Looks for Cn and if found repeatedly applies it
+
+void CheckCn(int n,const System& Mol,const Vector_t& Axis,
+             double Tol,Elems_t& Elems){
+    Rotation Cm(Axis,n,1);
+    if(!IsGood(Mol,Cm,Axis,Tol))return;
+    Elems.insert(Cm);
+    for(int i=2;i<n;++i)
+        if(math::RelativelyPrime(n,i))
+            Elems.insert(Rotation(Axis,n,i));
+}
+
+//Looks for Sn and if found repeatedly applies it and adds to the Elems
+
+void CheckSn(size_t n,const System& Mol,const Vector_t& Axis,
+             double Tol,Elems_t& Elems){
+    if(n<3)return;
+    ImproperRotation Sm(Axis,n,1);
+    if(!IsGood(Mol,Sm,Axis,Tol))return;
+    Elems.insert(Sm);
+    const bool Odd=n%2==1;
+    const size_t Max=(Odd?2*n:n);
+    for(size_t i=3;i<Max;i+=2){
+        std::pair<size_t,size_t> Frac=math::Reduce(i,n);
+        if(Frac==std::make_pair<size_t,size_t>(1,1))continue;//Sn^n
+        if(Frac==std::make_pair<size_t,size_t>(1,2))continue;//S2
+        Elems.insert(ImproperRotation(Axis,Frac.second,Frac.first));
+    }
+}
+
+SymmetryGroup Symmetrizer::GetSymmetry(const System& Mol)const{
+    if(Mol.size()==1)
+        return PointGroup::Kh({});
+    const double SymTol=0.1;
+
+
+    MoISys_t PMol=MoIOrient(Mol);
+    System PrinMol=std::get<0>(PMol);
+    Vector_t Moments=std::get<1>(PMol);
+    Elems_t Elems;
+
+    //Find center of inversion 1st b/c linear may have
+    FindCoI(PrinMol,Elems,SymTol);
+
+    if(IsLinear(Moments)){//Linear molecule
+        Elems.insert(Coo);
         return AssignGroup(Elems);
     }
-    //std::cout<<NumDegen<<" "<<Moments[0]<<" "<<Moments[1]<<" "<<Moments[2]<<std::endl;
-    
-    //Rotation about principal axes
-    for(size_t i=0;i<3;++i){
-        Vector_t Axis={0.0,0.0,0.0};
-        Axis[i]=1.0;
-        const size_t OldSize=Elems.size();
-        FindCn(PrinMol,Axis,SymTol,Elems);
-        if(Elems.size()==OldSize)continue;
-        //Also check parallel to a found rotational axis
-        for(size_t j=0;j<3;++j){
-            if(i==j)continue;
-            Vector_t Axis2={0.0,0.0,0.0};
-            Axis2[j]=1.0;
-            FindSigma(PrinMol,Axis2,SymTol,Elems);
-        }
-    }
 
-    //Rotation about atoms
-    for(const Atom& AI:PrinMol){
-        if(AreEqual(AI[0],0.0,SymTol)&&
-           AreEqual(AI[1],0.0,SymTol)&&
-           AreEqual(AI[2],0.0,SymTol))continue;//At CoM
-        const double mag=AI.Magnitude();
-        Vector_t Axis={AI[0]/mag,AI[1]/mag,AI[2]/mag};
-        const size_t OldSize=Elems.size();
-        if(NumDegen>0)
-            FindCn(PrinMol,Axis,SymTol,Elems);
-        if(NumDegen!=3&&Elems.size()==OldSize){
-            FindSigma(PrinMol,Axis,SymTol,Elems);
-
-        }
-    }
-
-    //Now axes at midpoints between like atoms
-    //Note: U+V bisects vectors U and V
-    for(const Atom& AI:PrinMol){
-        for(const Atom& BI:PrinMol){
-            //std::cout<<AI<<" "<<BI<<std::endl;
-            if(AI==BI)break;
-            if(!AtomsAreEqual(AI,BI))continue;
-            double CosTheta=
-                    Dot(AI,BI)/(AI.Magnitude()*BI.Magnitude());
-            if(AreEqual(CosTheta,1.0,SymTol))continue;//Parallel
-            if(AreEqual(CosTheta,-1.0,SymTol))continue;//Anti-parallel
-            math::Point BiSec=AI+BI;
-            double Mag=BiSec.Magnitude();
-            Vector_t Axis={BiSec[0]/Mag,BiSec[1]/Mag,BiSec[2]/Mag};
-            if(NumDegen>0)
-                FindCn(PrinMol,Axis,SymTol,Elems);
-            if(NumDegen!=3){//Try plane perp to this
-                BiSec=AI-BI;
-                Mag=BiSec.Magnitude();
-                Axis={BiSec[0]/Mag,BiSec[1]/Mag,BiSec[2]/Mag};
-                FindSigma(PrinMol,Axis,SymTol,Elems);
+    //If it's planar that plane is a symmetry element
+    if(IsPlanar(Moments)){
+        Atom atomI;
+        for(const Atom& atomJ: PrinMol)//Can't be at origin
+            if(!AreEqual(atomJ,0.0,SymTol)){
+                atomI=atomJ;
+                break;
+            }
+        Vector_t NatomI=math::Normalize(atomI);
+        for(const Atom atomJ:PrinMol){
+            if(atomI==atomJ)continue;
+            if(AreEqual(atomJ,0.0,SymTol))continue;
+            Vector_t NatomJ=math::Normalize(atomJ);
+            if(!AreEqual(fabs(Dot(NatomI,NatomJ)),1.0,0.001)){//Not linear
+                Vector_t Norm=Orient(Cross(NatomI,NatomJ));
+                MirrorPlane Sigma(Norm);
+                if(IsGood(PrinMol,Sigma,Norm,SymTol))
+                    Elems.insert(Sigma);
+                break;
             }
         }
     }
-    if(NumDegen==3){
-        //If we have a tetrahedron our highest found axis is C_2
-        //If we have a cube our highest found axis is C_3
-        //If we have an octahedron our highest found axis is C_4
-        //If we have a dodecahedron our highest found axis is C_3
-        //If we have an icosahedron our highest found axis is C_5
-        
 
+    //Determine symmetry equivalaent atoms SEAs
+    SEASet_t SEAs=FindSEAs(PrinMol,SymTol);
+
+    if(SEAs.size()==PrinMol.size())
+        return AssignGroup(Elems);
+
+    std::set<Axis_t> Axes=NewGetCns(PrinMol,SEAs,SymTol);
+
+    for(const Axis_t& axis:Axes){
+        for(int k:math::Factors(axis.second)){
+            if(k==1)continue;
+            Rotation Cm(axis.first,k,1);
+            size_t Old=Elems.size();
+            CheckCn(k,PrinMol,axis.first,SymTol,Elems);
+            if(Elems.size()!=Old){
+                CheckSn(k,PrinMol,axis.first,SymTol,Elems);
+                CheckSn(2*k,PrinMol,axis.first,SymTol,Elems);
+            }
+        }
+    }
+    std::set<Vector_t> Planes;
+    for(std::vector<Atom> SEA:SEAs){
+        if(SEA.size()<2)continue;
+        math::CombItr<std::vector<Atom>>AtomPairs(SEA,2);
+        while(AtomPairs){
+            Vector_t Norm=math::Normalize((*AtomPairs)[0]-(*AtomPairs)[1]);
+            Planes.insert(Orient(Norm));
+            ++AtomPairs;
+        }
     }
     
-    //for(const auto& i: Elems)std::cout<<i<<" ";
+    for(Vector_t Norm: Planes){
+        MirrorPlane Sigma(Norm);
+        if(IsGood(PrinMol,Sigma,Norm,SymTol))
+            Elems.insert(Sigma);
+    }
+
+    //for(const auto& i:Elems)std::cout<<i<<" ";
     //std::cout<<std::endl;
-    
     std::cout<<AssignGroup(Elems)<<std::endl;
-    
+
     return AssignGroup(Elems);
 }
 

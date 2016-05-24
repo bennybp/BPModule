@@ -29,6 +29,10 @@ struct Space{
     ///True if sides are not infinite
     bool IsPeriodic()const;
     
+    ///Returns the volume of the cell
+    //double Volume()const;
+    
+    
     ///Makes a space with custom lattice
     Space(const std::array<double,3>& A,const std::array<double,3>& S):
         LatticeSides(S),LatticeAngles(A){}

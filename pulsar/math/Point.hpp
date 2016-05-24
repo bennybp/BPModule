@@ -34,15 +34,16 @@ class PointT
     public:
         typedef std::array<T, 3> CoordType;
         typedef typename CoordType::value_type value_type;
-
+        typedef typename CoordType::const_iterator const_iterator;
+        typedef typename CoordType::iterator iterator;
+        
         PointT(const CoordType & coords)
             : coords_(coords)
         { }
 
         PointT(T x, T y, T z)
             : coords_{x,y,z}
-        { }
-
+        { }            
 
         PointT()                           = default;
         PointT(const PointT &)             = default;
@@ -52,6 +53,10 @@ class PointT
         virtual ~PointT()                  = default;
         constexpr size_t size()const{return coords_.size();}
         
+        const_iterator begin()const{return coords_.begin();}
+        iterator begin(){return coords_.begin();}
+        const_iterator end()const{return coords_.end();}
+        iterator end(){return coords_.end();}
         
         bool operator==(const PointT & rhs) const
         {

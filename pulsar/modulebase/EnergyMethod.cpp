@@ -93,7 +93,7 @@ EnergyMethod::FiniteDifference_(size_t Order, const datastore::Wavefunction & Wf
     math::CentralDiff<double,Return_t> FD(NewComm);
 
     FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),Wfn,Key(),ID());
-    TempDeriv=FD.Run(Thing2Run,3*Mol.Size(),
+    TempDeriv=FD.Run(Thing2Run,3*Mol.size(),
                      Options().Get<double>("FDIFF_DISPLACEMENT"),
                      Options().Get<size_t>("FDIFF_STENCIL_SIZE"));
     //Flatten the array & abuse fact that TempDeriv[0] is the first comp    

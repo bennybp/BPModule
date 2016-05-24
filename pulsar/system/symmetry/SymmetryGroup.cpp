@@ -8,6 +8,7 @@
 #include "pulsar/system/symmetry/SymmetryGroup.hpp"
 #include "pulsar/math/BLAS.hpp"
 #include "pulsar/math/NumberTheory.hpp"
+#include "pulsar/math/Checking.hpp"
 #include "pulsar/constants.h"
 #include "pulsar/exception/Exceptions.hpp"
 
@@ -16,6 +17,8 @@ namespace system{
 
 using std::to_string;
 typedef std::unordered_set<SymmetryElement> Elem_t;
+using exception::GeneralException;
+
 
 inline std::string DnhMHSym(size_t n){
     if(n==2)return "mmm";
@@ -140,7 +143,8 @@ Cnh::Cnh(const Elem_t& Es,size_t n):
 Cnh::Cnh(size_t n):Cnh(GenCnhElems(n),n){}
 
 Sn::Sn(const Elem_t& Es,size_t n):
-    SymmetryGroup(Es,"S"+to_string(n*2),"["+to_string(n)+"]"){}
+    SymmetryGroup(Es,"S"+to_string(n),"["+to_string(n)+"]"){}
+
 Sn::Sn(size_t n):Sn(GenSnElems(n),n){}
 
 Dn::Dn(const Elem_t& Es,size_t n):
@@ -155,6 +159,10 @@ Dnd::Dnd(const Elem_t& Es,size_t n):
     SymmetryGroup(Es,"D"+to_string(n)+"d",
                   (n%2==0?"["+to_string(n*2)+"]2":"["+to_string(n)+"]")+"m"){}
 Dnd::Dnd(size_t n):Dnd(GenDndElems(n),n){}
+
+Coov::Coov():Coov({Coo}){}
+
+Dooh::Dooh():Dooh({Coo,CoI}){}
 
 }//End PointGroup namespace
 
@@ -176,9 +184,20 @@ std::array<double,3> GetPrincipleAxis(const Elem_t& Elems,size_t n){
             PrincipleAxis=pElem_t(new SymmetryElement(Ei));
             break;
         }
+    //Want right eigenvector with eigenvalue 1
     NonSymmDiagReturn_t EigenSys=
             math::NonSymmetricDiagonalize(PrincipleAxis->Elem,3);
-    return {get<1>(EigenSys)[6],get<1>(EigenSys)[7],get<1>(EigenSys)[8]};
+    size_t Axis=2;//Will usually be the last eigenvector, but not always
+    std::vector<std::complex<double>> Evs=get<0>(EigenSys);
+    for(size_t i=3;i>0;--i){
+        if(math::AreEqual(Evs[i-1].real(),1.0,1e-3)&&
+           math::AreEqual(Evs[i-1].imag(),0.0,1e-3)){
+            Axis=i-1;
+            break;
+        }
+    }
+    std::vector<double> Evec=get<1>(EigenSys);
+    return {Evec[Axis*3],Evec[Axis*3+1],Evec[Axis*3+2]};
 }
 
 SymmetryGroup AssignGroup(const Elem_t& Elems){
@@ -217,6 +236,8 @@ SymmetryGroup AssignGroup(const Elem_t& Elems){
                    acos((Ei.Elem[0]+Ei.Elem[4]+Ei.Elem[8]-1.0)/2.0));
     }
     size_t n= (size_t)(std::round(2*PI/MinTheta));
+    if(n==0)throw GeneralException(
+       "Your symmetry elements do not constitute a point group");
     MirrorPlane Sigmah(GetPrincipleAxis(Elems,n)); 
     if(Contains(Elems,"C_2",n)){
         if(Elems.count(Sigmah)==1)return Dnh(Elems,n);
@@ -225,7 +246,7 @@ SymmetryGroup AssignGroup(const Elem_t& Elems){
     }
     if(Elems.count(Sigmah)==1)return Cnh(Elems,n);
     if(Contains(Elems,"s"))return Cnv(Elems,n);
-    if(Contains(Elems,"S_"+to_string(2*n)))return Sn(Elems,n);
+    if(Contains(Elems,"S_"+to_string(2*n)))return Sn(Elems,2*n);
     return Cn(Elems,n);
 }
 

@@ -7,7 +7,9 @@
 #include "pulsar/system/System.hpp"
 #include "pulsar/system/BasisSet.hpp"
 #include "pulsar/system/AtomicInfo.hpp"
+#include "pulsar/constants.h"
 #include "pulsar/output/GlobalOutput.hpp"
+#include "pulsar/math/CombItr.hpp"
 #include "pulsar/math/PointManipulation.hpp"
 
 using pulsar::output::GlobalDebug;
@@ -49,7 +51,7 @@ System::System(const AtomSetUniverse& universe,bool fill):
 }
 
 
-size_t System::Size(void) const
+size_t System::size(void) const
 {
     return atoms_.Size();
 }
@@ -306,63 +308,40 @@ void System::hash(util::Hasher & h) const
 }
 
 ///Returns the distance between each pair of atoms in sys
-std::vector<double> GetDistance(const System& sys)
+DistMat_t GetDistance(const System& sys)
 {
-    size_t size=sys.Size();
-    std::vector<double> DM(size*size,0.0);
-    //Loop over the lower triangle of the matrix, setting upper as well
-    size_t I=0;
-
+    DistMat_t DM;
     for(const Atom& atomI:sys)
     {
-        size_t J=0;
-
         for(const Atom& atomJ:sys)
         {
             if(atomJ==atomI)break;
-
-            DM[I*size+J]=atomI.Distance(atomJ);
-            DM[J*size+I]=DM[I*size+J];
-            ++J;
+            double dist=atomI.Distance(atomJ);
+            DM.emplace(std::make_pair(atomI,atomJ),dist);
+            DM.emplace(std::make_pair(atomJ,atomI),dist);
         }
-
-        ++I;
     }
-
     return DM;
 }
 
-typedef std::unordered_map<Atom,std::unordered_set<Atom>> Conn_t;
 Conn_t GetConns(const System& sys,double Tolerance)
 {
     Conn_t Conns;
-
+    
     for(const Atom& AtomI:sys)Conns[AtomI]=std::unordered_set<Atom>();
 
-    std::vector<double> Dist=GetDistance(sys);
-    size_t I=0,size=sys.Size();
-
-    for(const Atom& AtomI:sys)
+    for(const Atom& atomI:sys)
     {
-        size_t J=0;
-        double Irad=AtomI.GetCovRadius();
-
-        for(const Atom& AtomJ:sys)
+        double radI=atomI.GetCovRadius();
+        for(const Atom& atomJ:sys)
         {
-            if(AtomI==AtomJ)break;
-
-            double Jrad=AtomJ.GetCovRadius();
-
-            if(Dist[I*size+J]<Tolerance*(Irad+Jrad))
+            if(atomI==atomJ)break;
+            if(atomI.Distance(atomJ)<Tolerance*(radI+atomJ.GetCovRadius()))
             {
-                Conns[AtomI].insert(AtomJ);
-                Conns[AtomJ].insert(AtomI);
+                Conns[atomI].insert(atomJ);
+                Conns[atomJ].insert(atomI);
             }
-
-            ++J;
         }
-
-        ++I;
     }
 
     return Conns;
@@ -384,6 +363,32 @@ std::array<double,9> InertiaTensor(const System& Mol){
     
 }
 
+System ToAngstroms(const System& Sys){
+    return Sys.Transform([](const Atom& i)->Atom{
+        std::array<double,3> NewCoords;
+        std::transform(i.begin(),i.end(),NewCoords.begin(),
+                       [](const double& a){return a*BOHR_RADIUS_ANGSTROMS;});
+        Atom Clone(i);
+        Clone.SetCoords(NewCoords);
+        return Clone;
+    });
+}
+
 } // close namespace system
+
+namespace math{
+using system::System;
+template<> CombItr<System>::CombItr(const System& Set, size_t K):
+Comb_(Set.AsUniverse(),false),K_(K),Indices_(K),Set_(Set),Done_(false)
+{
+    Initialize();
+}
+
+template<> void CombItr<System>::ResetComb(){
+    Comb_=System(Set_.AsUniverse(),false);
+}
+
+}
+
 } // close namespace pulsar
 

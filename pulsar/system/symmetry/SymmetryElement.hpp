@@ -38,8 +38,14 @@ struct SymmetryElement{
                     const std::string& SSym,const std::string& HMSym):
                     Elem(Op),SSymbol(SSym),HMSymbol(HMSym){}
     
-    ///Performs a deep copy
+    ///Deep copy operators
     SymmetryElement(const SymmetryElement&)=default;
+    SymmetryElement& operator=(const SymmetryElement&)=delete;
+
+    
+    SymmetryElement(SymmetryElement&&)=default;
+    SymmetryElement& operator=(SymmetryElement&&)=delete;
+    
     
     /** \brief Returns true if this SymmetryElement's Elem is the same as 
      *         other's
@@ -80,6 +86,10 @@ extern const SymmetryElement Identity;
 
 ///Instance of symmetry element that is a center of inversion
 extern const SymmetryElement CoI;
+
+///Instance of an arbitrary rotation axis
+extern const SymmetryElement Coo;
+
 
 ///Allows printing of element
 inline std::ostream& operator<<(std::ostream& os, const SymmetryElement& E){

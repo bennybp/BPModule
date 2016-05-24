@@ -30,11 +30,9 @@ bool SymmetryElement::operator==(const SymmetryElement& Other)const{
     
 std::ostream& SymmetryElement::Print(std::ostream& os)const{
         os<<SSymbol;
-        //for(double i: Elem)os<<" "<<i;
+        //for(size_t i=0;i<3;++i){for(size_t j=0;j<3;++j)os<<" "<<Elem[i*3+j];os<<std::endl;}
         return os;
 }
-
-
     
 const SymmetryElement Identity({1.0,0.0,0.0,
                                 0.0,1.0,0.0,
@@ -44,6 +42,8 @@ const SymmetryElement Identity({1.0,0.0,0.0,
 const SymmetryElement CoI({-1.0,0.0,0.0,
                             0.0,-1.0,0.0,
                             0.0,0.0,-1.0},"i","[1]");
+                            
+const SymmetryElement Coo({},"C_oo","oo");
 
 inline double ToDegrees(size_t n,size_t m){
     return 360.0/(static_cast<double>(n)/static_cast<double>(m));

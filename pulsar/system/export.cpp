@@ -17,6 +17,7 @@
 #include "pulsar/system/BasisSet.hpp"
 #include "pulsar/system/AOOrdering.hpp"
 #include "pulsar/system/SphericalTransform.hpp"
+#include "pulsar/system/CrystalFunctions.hpp"
 #include "pulsar/math/RegisterMathSet.hpp"
 
 
@@ -220,7 +221,13 @@ PYBIND11_PLUGIN(system)
     m.def("AtomicMultiplicityFromZ", AtomicMultiplicityFromZ);
     m.def("AtomicMultiplicityFromSym", AtomicMultiplicityFromSym);
     m.def("InertiaTensor",InertiaTensor);
-
+    m.def("GetConns",GetConns);
+    
+    
+    m.def("Frac2Cart",Frac2Cart);
+    m.def("MakeSuperCell",MakeSuperCell);
+    m.def("CarveUC",CarveUC);
+    m.def("CleanUC",CleanUC);
 
     // Atom structure
     // Atom class
@@ -281,7 +288,7 @@ PYBIND11_PLUGIN(system)
     pybind11::class_<System, std::shared_ptr<System>>(m,"System")
     .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
     .def(pybind11::init<const System &>())
-    .def("Size",&System::Size)
+    .def("Size",&System::size)
     .def("Contains", &System::Contains)
     .def("Insert", static_cast<System &(System::*)(const Atom &)>(&System::Insert),
                    pybind11::return_value_policy::reference)
@@ -328,7 +335,7 @@ PYBIND11_PLUGIN(system)
     .def(pybind11::self < pybind11::self)
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
-    .def("__len__",         &System::Size)
+    .def("__len__",         &System::size)
     .def("__contains__",    &System::Contains)
     .def("__str__",&System::ToString)
     .def("__iter__", [](pybind11::object obj)

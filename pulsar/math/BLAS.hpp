@@ -19,6 +19,9 @@
 #include <complex>
 #include <tuple>
 #include <vector>
+#include "pulsar/exception/Exceptions.hpp"
+
+
 extern "C" {
     void dsyev(char*,char*,int*,double*,int*,double*,double*,int*,int*);
     void dgeev(char*,char*,int*,double*,int*,double*,double*,double*,int*,
@@ -99,10 +102,15 @@ NonSymmDiagReturn_t NonSymmetricDiagonalize(Mat_t Matrix,int n,
     std::vector<double> vl(LVecs?n*Stride:1),vr(RVecs?n*Stride:1);
     dgeev(&rv,&lv,&n,Matrix.data(),&Stride,
           evalReal,evalImag,vl.data(),&n,vr.data(),&n,&wkopt,&lwork,&info);
+
     lwork=(int)wkopt;
     double* work=new double[lwork];
     dgeev(&rv,&lv,&n,Matrix.data(),&Stride,
             evalReal,evalImag,vl.data(),&n,vr.data(),&n,work,&lwork,&info);
+    if(info!=0){
+        throw exception::GeneralException("There was a problem diagonalizing"
+                "your matrix.","info code:",info);
+    }
     delete [] work;
     std::vector<std::complex<double>> Evals(n);
     for(size_t i=0;i<(size_t)n;++i)
@@ -130,6 +138,12 @@ double Dot(const T1& LHS,const T2& RHS){
     return sum;
 }
 
-}}//End namespaces
+template<typename T1>
+std::array<double,3> Normalize(const T1& Vec){
+    double mag=sqrt(Dot(Vec,Vec));
+    return {Vec[0]/mag,Vec[1]/mag,Vec[2]/mag};
+}
+
+}}//End namespace
 #endif /* BLAS_HPP */
 
