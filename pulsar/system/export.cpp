@@ -127,8 +127,6 @@ PYBIND11_PLUGIN(system)
 
     // BasisSetShell class
     pybind11::class_<BasisSetShell>(m, "BasisSetShell", bshell)
-    .def("GetID", &BasisSetShell::GetID)
-    .def("GetCenter", &BasisSetShell::GetCenter)
     .def("GetCoords", &BasisSetShell::GetCoords)
     .def("SetCoords", &BasisSetShell::GetCoords)
     .def("GetCoord", &BasisSetShell::GetCoord)
@@ -227,7 +225,6 @@ PYBIND11_PLUGIN(system)
     pybind11::class_<Atom>(m, "Atom", pybind11::base<math::Point>())
     .def(pybind11::init<const Atom &>())
     .def("MyHash", &Atom::MyHash)
-    .def("GetIdx", &Atom::GetIdx)
     .def("GetZ", &Atom::GetZ)
     .def("SetZ", &Atom::SetZ)
     .def("GetIsonum", &Atom::GetIsonum)
@@ -257,10 +254,10 @@ PYBIND11_PLUGIN(system)
    
 
     // Atom creators
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, CoordType, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, CoordType, int, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(CoordType, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(CoordType, int, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, int)>(CreateAtom));
 
     // Export AtomSetUniverse
     // No need to export AtomSet (at the moment)

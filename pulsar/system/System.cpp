@@ -277,7 +277,7 @@ BasisSet System::GetBasisSet(const std::string & basislabel) const
     // now add them
     for(const auto & atom:*this)
         for(const auto & bshell:atom.GetShells(basislabel))
-            bs.AddShell(bshell,atom.GetIdx(),atom.GetCoords());
+            bs.AddShell(bshell,atom.GetCoords());
 
     // shrink the basis set
     return bs.ShrinkFit();

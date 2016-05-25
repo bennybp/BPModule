@@ -39,24 +39,16 @@ class BasisSetShell : public BasisShellBase
 
         /*! \brief Constructor
          *
-         * Will copy data from \p bshell to the new storage space
+         * Will NOT copy data from \p bshell to the new storage space
          * 
          * \param [in] bshell Another shell to copy
          * \param [in] alphaptr Pointer to where this shell's exponents are
          * \param [in] coefptr Pointer to where this shell's coefficients are
          * \param [in] xyzptr Pointer to where this shell's coordinates are
          */
-        BasisSetShell(const BasisSetShell & bshell,
-                      double * alphaptr, double * coefptr, double * xyzptr) ASSERTIONS_ONLY
-            : BasisSetShell(bshell, alphaptr, coefptr, xyzptr,
-                            bshell.GetID(), bshell.GetCenter())
-        { }
-
         BasisSetShell(const BasisShellBase & bshell,
-                      double * alphaptr, double * coefptr, double * xyzptr,
-                      ID_t id, ID_t center) ASSERTIONS_ONLY
-            : BasisShellBase(bshell.GetType(), bshell.AM(), bshell.NPrim(), bshell.NGeneral()),
-              id_(id), center_(center)
+                      double * alphaptr, double * coefptr, double * xyzptr) ASSERTIONS_ONLY
+            : BasisShellBase(bshell.GetType(), bshell.AM(), bshell.NPrim(), bshell.NGeneral())
         {
             SetPtrs_(alphaptr, coefptr, xyzptr);
         }
@@ -68,13 +60,6 @@ class BasisSetShell : public BasisShellBase
         BasisSetShell & operator=(const BasisSetShell & rhs) = delete;
         BasisSetShell & operator=(BasisSetShell && rhs)      = default;
 
-        /// Get the ID of this shell in the basis set 
-        ID_t GetID(void) const noexcept { return id_; }
-
-        /// Get the ID of the center that this shell is on
-        ID_t GetCenter(void) const noexcept { return center_; }
-
-
         bool operator==(const BasisSetShell & rhs) const
         {
             if(this == &rhs)
@@ -83,8 +68,6 @@ class BasisSetShell : public BasisShellBase
             // this is done manually (rather than "using")
             // prevent implicit comparison between one type and another
             return (
-                      id_ == rhs.id_ &&
-                      center_ == rhs.center_ &&
                       std::equal(xyz_, xyz_+3, rhs.xyz_) &&
                       BasisShellBase::BaseCompare_(rhs)
                    );
@@ -178,8 +161,6 @@ class BasisSetShell : public BasisShellBase
     private:
         friend class BasisSet;
 
-        ID_t id_;          //!< Unique id for this shell
-        ID_t center_;      //!< ID of the center
         double * xyz_;     //!< XYZ coordindates of this center
 
 
@@ -221,15 +202,14 @@ class BasisSetShell : public BasisShellBase
         template<class Archive>
         void serialize(Archive & ar)
         {
-            ar(cereal::base_class<BasisShellBase>(this), id_, center_);
+            ar(cereal::base_class<BasisShellBase>(this));
         }
 
        
         void hash(util::Hasher & h) const
         {
             h(static_cast<const BasisShellBase &>(*this),
-              util::HashPointer(xyz_, 3),
-              id_, center_); 
+              util::HashPointer(xyz_, 3));
         }
  
         ///@}
