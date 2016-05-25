@@ -8,8 +8,8 @@
 #ifndef PULSAR_GUARD_PYTHON__CONVERT_HPP_
 #define PULSAR_GUARD_PYTHON__CONVERT_HPP_
 
-#include "pulsar/python/Pybind11.hpp"
-#include "pulsar/python/Pybind11_stl.hpp"
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 #include "pulsar/python/Errors.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/exception/Assert.hpp"

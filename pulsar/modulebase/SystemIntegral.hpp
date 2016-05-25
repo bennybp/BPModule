@@ -83,7 +83,7 @@ class SystemIntegral_Py : public SystemIntegral
             //! \todo untested, won't work
             pybind11::buffer_info buf(outbuffer,
                                       sizeof(double),
-                                      pybind11::format_descriptor<double>::value(),
+                                      pybind11::format_descriptor<double>::value,
                                       1, { bufsize },
                                       { sizeof(double) });
 

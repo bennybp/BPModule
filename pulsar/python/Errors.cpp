@@ -7,7 +7,7 @@
 #include "pulsar/python/Errors.hpp"
 #include "pulsar/python/Types.hpp"
 #include "pulsar/exception/Exceptions.hpp"
-#include "pulsar/python/Pybind11.hpp"
+#include <pybind11/pybind11.h>
 
 using pulsar::exception::GeneralException;
 

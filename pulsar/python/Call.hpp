@@ -43,7 +43,7 @@ Ret CallPyFunc(const pybind11::object & obj, Targs &&... Fargs)
 
 
     try {
-        ret = obj.call(std::forward<Targs>(Fargs)...);
+        ret = obj(std::forward<Targs>(Fargs)...);
     }
     catch(const std::exception &)
     {

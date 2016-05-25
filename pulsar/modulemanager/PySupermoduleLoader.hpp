@@ -12,7 +12,7 @@
 
 #include "pulsar/modulemanager/SupermoduleLoaderBase.hpp"
 #include "pulsar/modulemanager/ModuleCreationFuncs.hpp"
-#include "pulsar/python/Pybind11.hpp"
+#include <pybind11/pybind11.h>
 
 
 namespace pulsar{
