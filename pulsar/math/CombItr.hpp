@@ -16,10 +16,9 @@
 
 #include <vector>
 #include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/system/System.hpp"
+
 namespace pulsar{
-namespace system{
-class System;
-}
 namespace math{
 
 /** \brief An iterator to generate all combinations from n objects,

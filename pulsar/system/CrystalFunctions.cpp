@@ -11,6 +11,7 @@
 #include "pulsar/math/CombItr.hpp"
 #include "pulsar/constants.h"
 #include "pulsar/system/Space.hpp"
+#include "System.hpp"
 
 
 typedef std::array<double,3> Vector_t;
@@ -31,9 +32,10 @@ AtomSetUniverse Frac2Cart(const AtomSetUniverse& DaU,const Space& DaSpace){
     double v=sqrt(1-CosA[0]*CosA[0]-CosA[1]*CosA[1]-CosA[2]*CosA[2]
                   -2*CosA[0]*CosBG);
     System DaSys(DaU,true);
-    System Temp=DaSys.Rotate(std::array<double,9>({Sides[0],Sides[1]*CosA[2],Sides[2]*CosA[1],
-                             0,Sides[2]*SinG,Sides[2]*(CosA[0]-CosBG)/SinG,
-                             0,0,Sides[2]*v/SinG}));
+    System Temp=DaSys.Rotate(std::array<double,9>(
+            {Sides[0],Sides[1]*CosA[2],Sides[2]*CosA[1],
+                    0,Sides[1]*SinG   ,Sides[2]*(CosA[0]-CosBG)/SinG,
+                    0,               0,Sides[2]*v/SinG}));
     return Temp.AsUniverse()-DaU;
 }
 
@@ -52,6 +54,7 @@ AtomSetUniverse MakeSuperCell(const AtomSetUniverse& DaU,
     return NewU;
 }
 
+//Gets all atoms attached to a given atom
 void Recursion(const Conn_t& Conns,const Atom& atomI,AtomSetUniverse& NewU){
     for(const Atom& atomJ: Conns.at(atomI))
         if(!NewU.Contains(atomJ)){
@@ -90,25 +93,48 @@ AtomSetUniverse CarveUC(const AtomSetUniverse& SC,
     return System(NewU,true).Translate(Trans).AsUniverse();              
 }
 
+bool CleanUCRecurse(AtomSetUniverse& MolU,
+                    const System& Mol,const AtomSetUniverse& NewU,
+                    const Vector_t& Sides,
+                    Vector_t& Idx, size_t depth){
+    if(depth==3){
+        AtomSetUniverse NewMol=Mol.Translate(Idx).AsUniverse();
+        if(NewMol==MolU)return true;
+        NewMol/=NewU;
+        if(NewMol.size()!=0)return false;
+    }
+    else{
+        for(size_t x: util::Range<0,3>()){
+            Idx[depth]=(int(x)-1)*Sides[depth];
+            if(!CleanUCRecurse(MolU,Mol,NewU,Sides,Idx,depth+1))return false;
+        }
+    }
+    return true;
+}
+
 AtomSetUniverse CleanUC(const AtomSetUniverse& UC, 
                         const std::array<double,3>& Sides){
-    AtomSetUniverse NewUC,SC=MakeSuperCell(UC,{3,3,3},Sides);
-    NewUC=CarveUC(SC,Sides);
-    std::cout<<ToAngstroms(System(NewUC,true))<<std::endl;
-            exit(1);
+    AtomSetUniverse ActiveAtoms(UC),NewUC(UC);
     while(true){
-        size_t OldSize=NewUC.size();
-        SC=MakeSuperCell(NewUC,{3,3,3},Sides);
-        math::CombItr<AtomSetUniverse> Pairs(SC,2);
-        while(Pairs){
-            std::cout<<(*Pairs)[0]<<" "<<(*Pairs)[1]<<std::endl;
-            if((*Pairs)[0]==(*Pairs)[1])
-                std::cout<<(*Pairs)[0]<<(*Pairs)[1]<<std::endl;
-            ++Pairs;
+        size_t Size=NewUC.size();
+        System CurrentUC(NewUC,true);
+        Conn_t Conns=GetConns(CurrentUC);
+        while(ActiveAtoms.size()!=0){
+            const Atom& AtomI=*ActiveAtoms.begin();
+            AtomSetUniverse MolU;
+            Recursion(Conns,AtomI,MolU);
+            System Mol(MolU,true);
+            Vector_t Idx;
+            if(!CleanUCRecurse(MolU,Mol,NewUC,Sides,Idx,0)){
+                NewUC-=MolU;
+                ActiveAtoms=NewUC;
+                break;
+            }
+            ActiveAtoms-=MolU;
         }
-        exit(1);
-        
+        if(NewUC.size()==Size)break;
     }
+    return NewUC;
 }
 
 }}//End namespaces

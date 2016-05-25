@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 #include <limits>
+#include <cmath>
 #include "pulsar/system/Space.hpp"
 
 namespace pulsar{
@@ -13,7 +14,7 @@ const double Inf=std::numeric_limits<double>::infinity();
 
 bool Space::IsPeriodic()const{
     for(double s : LatticeSides)
-        if(s!=Inf)return true;
+        if(std::isfinite(s))return true;
     return false;
 }
 

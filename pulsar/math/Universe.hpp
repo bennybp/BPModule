@@ -115,7 +115,11 @@ public:
  *   Note every mathematical set is capable of being viewed as a universe,
  *   which is why MathSet derives from this class.  MathSet differs from
  *   Universe in that MathSet contains a pointer to the Universe it belongs
- *   to, whereas Universe's universe is all possible elements.
+ *   to, whereas Universe's universe is conceptually all possible elements.
+ *   Whether this set is a true set in the sense that there are no repeat
+ *   elements, depends on the container used to implement it.  By default, this
+ *   is an std::vector, which will not enforce this condition and hence will
+ *   in general allow duplicates.
  * 
  *   Essentially, We have added a few features on top of the std::set.
  *   Namely, we can now do unions, intersections, set diff, etc.
@@ -127,8 +131,8 @@ public:
  *   are objects of type MathSet, only store the indices of the elements in the
  *   storage container that they contain.  As long as the storage class defines
  *   an interface, which we layout below, any class can be used to fill this
- *   role, in particular we use this feature to be
- *   able to store our points contigiously, while being able to store each
+ *   role. In particular this feature will allow one to store points 
+ *   contigiously, while being able to store each
  *   point as a separate object (whose real data lives in the storage container
  *   ).
  * 

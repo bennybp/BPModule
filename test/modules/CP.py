@@ -57,17 +57,16 @@ def Run(mm):
         """)
         mol = ApplyBasis(mol,"sto-3g","sto-3g")
         wfn=psr.datastore.Wavefunction()
-        wfn.SetSystem(mol)
-        MyMod.SetInitialWfn(wfn)
+        wfn.system=mol
         
 
-        Egy=MyMod.Deriv(0)
+        NewWfn,Egy=MyMod.Deriv(0,wfn)
         tester.Test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
-        Egy=MyMod.Energy()
+        NewWfn,Egy=MyMod.Energy(wfn)
         tester.Test("Testing Energy via Energy()", True, CompareEgy, Egy)
-        Egy=MyMod.Deriv(1)
+        NewWfn,Egy=MyMod.Deriv(1,wfn)
         tester.Test("Testing Gradient via Deriv(1)", True, CompareGrad, Egy)
-        Egy=MyMod.Gradient()
+        NewWfn,Egy=MyMod.Gradient(wfn)
         tester.Test("Testing Energy via Gradient()", True, CompareGrad, Egy)
         
      
