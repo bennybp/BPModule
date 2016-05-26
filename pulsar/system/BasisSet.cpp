@@ -24,15 +24,13 @@ namespace system {
 
 
 BasisSet::BasisSet(size_t nshells, size_t nprim, size_t ncoef, size_t nxyz)
-    : curid_(0)
 {
     Allocate_(nshells, nprim, ncoef, nxyz);
 }
 
 
 BasisSet::BasisSet(const BasisSet & rhs)
-    : curid_(rhs.curid_),
-      unique_shells_(rhs.unique_shells_),
+    : unique_shells_(rhs.unique_shells_),
       storage_(rhs.storage_),
       shellstart_(rhs.shellstart_),
       max_nxyz_(rhs.max_nxyz_),
@@ -127,7 +125,7 @@ util::Hash BasisSet::MyHash(void) const
 
 void BasisSet::hash(util::Hasher & h) const
 {
-    h(curid_, shells_, unique_shells_, storage_);
+    h(shells_, unique_shells_, storage_);
 }
 
 
@@ -154,7 +152,6 @@ size_t BasisSet::ShellStart(size_t i) const
 
 
 void BasisSet::AddShell_(const BasisShellBase & bshell,
-                         ID_t id, ID_t center,
                          const CoordType & xyz)
 {
     // have the coordinates been added already?
@@ -190,10 +187,10 @@ void BasisSet::AddShell_(const BasisShellBase & bshell,
     if(it != shells_.end())
     {
         // equivalent shell already exists! Use the primitives,
-        // but copy center, etc, from bshell
+        // but copy coords, etc from from bshell
         shells_.push_back(BasisSetShell(bshell,
                                         it->AlphaPtr(), it->AllCoefsPtr(),
-                                        my_xyz, id, center));
+                                        my_xyz));
     }
     else
     {
@@ -220,7 +217,7 @@ void BasisSet::AddShell_(const BasisShellBase & bshell,
         unique_shells_.push_back(shells_.size());
 
         // actually add the shell
-        shells_.push_back(BasisSetShell(bshell, my_alpha, my_coef, my_xyz, id, center));
+        shells_.push_back(BasisSetShell(bshell, my_alpha, my_coef, my_xyz));
 
 
         // advance these
@@ -243,17 +240,16 @@ void BasisSet::AddShell_(const BasisSetShell & bshell)
 {
     // Adds an existing basis set shell
     // Will copy all data
-    AddShell_(bshell, bshell.GetID(), bshell.GetCenter(), bshell.GetCoords());
+    AddShell_(bshell, bshell.GetCoords());
 }
 
 
 void BasisSet::AddShell(const BasisShellInfo & bshell,
-                        ID_t center,
                         const CoordType & xyz)
 {
     // Add from a BasisShellInfo
     // Will copy all data
-    AddShell_(bshell, curid_++, center, xyz);
+    AddShell_(bshell, xyz);
 }
 
 size_t BasisSet::NShell(void) const noexcept
@@ -387,7 +383,7 @@ BasisSet BasisSet::Transform(BasisSet::TransformerFunc transformer) const
         BasisShellInfo bsi(shell);
         CoordType xyz = shell.GetCoords();
 
-        bs.AddShell(transformer(shell, xyz), shell.GetID(), xyz);
+        bs.AddShell(transformer(shell, xyz), xyz);
     }
 
     return bs.ShrinkFit();
@@ -421,9 +417,6 @@ BasisSet BasisSet::ShrinkFit(void) const
     // using the private functions. This will check for overflow, etc
     for(const auto & it : shells_)
         newbs.AddShell_(it);
-
-    // Set the curid_
-    newbs.curid_ = curid_;
 
     return newbs;
 }

@@ -23,12 +23,11 @@ namespace pulsar{
 namespace system {
 
 
-Atom::Atom(size_t idx, CoordType xyz, int Z, int isonum, double mass,
+Atom::Atom(CoordType xyz, int Z, int isonum, double mass,
            double isotopemass, double charge, double multiplicity,
            double nelectrons,double covradius, double vdwradius)
 {
     // we do it this way in case we change where the info is stored
-    idx_ = idx;
     SetCoords(xyz);
     SetZ(Z);
     SetIsonum(isonum);
@@ -106,7 +105,7 @@ util::Hash Atom::MyHash(void) const
 void Atom::hash(util::Hasher & h) const
 {
     h(static_cast<const math::Point &>(*this),
-           idx_, Z_, isonum_,
+           Z_, isonum_,
            mass_, isotopemass_,
            charge_, multiplicity_,
            nelectrons_, covradius_,
@@ -130,17 +129,16 @@ std::ostream& operator<<(std::ostream& os,const Atom& A)
 // Free functions
 ////////////////////////////////
 
-Atom CreateAtom(size_t idx, CoordType xyz, int Z)
+Atom CreateAtom(CoordType xyz, int Z)
 {
     int isonum = MostCommonIsotopeFromZ(Z);
-    return CreateAtom(idx, xyz, Z, isonum);
+    return CreateAtom(xyz, Z, isonum);
 
 }
 
-Atom CreateAtom(size_t idx, CoordType xyz, int Z, int isonum)
+Atom CreateAtom(CoordType xyz, int Z, int isonum)
 {
-    return Atom(idx,
-                xyz,
+    return Atom(xyz,
                 Z,
                 isonum,
                 AtomicMassFromZ(Z),
@@ -153,17 +151,17 @@ Atom CreateAtom(size_t idx, CoordType xyz, int Z, int isonum)
                 );  //! 0 charge, nelectrons = Z
 }
 
-Atom CreateAtom(size_t idx, double x, double y, double z, int Z)
+Atom CreateAtom(double x, double y, double z, int Z)
 {
-    return CreateAtom(idx, {x,y,z}, Z);
+    return CreateAtom({x,y,z}, Z);
 }
 
-Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum)
+Atom CreateAtom(double x, double y, double z, int Z, int isonum)
 {
-    return CreateAtom(idx, {x,y,z}, Z, isonum);
+    return CreateAtom({x,y,z}, Z, isonum);
 }
 
-Atom MakeGhost(size_t idx,const Atom& AtomI){
+Atom MakeGhost(const Atom& AtomI){
   Atom AtomJ(AtomI);//copy basis
   AtomJ.SetZ(0);
   AtomJ.SetIsonum(0);
@@ -176,26 +174,26 @@ Atom MakeGhost(size_t idx,const Atom& AtomI){
   return AtomJ;
 }
 
-Atom MakeDummy(size_t idx,CoordType xyz){
-      return CreateAtom(idx,xyz,-1);
+Atom MakeDummy(CoordType xyz){
+      return CreateAtom(xyz,-1);
 }
 
-Atom MakeCharge(size_t idx,double charge,CoordType xyz){
-    return CreateAtom(idx,xyz,-2);
+Atom MakeCharge(double charge,CoordType xyz){
+    return CreateAtom(xyz,-2);
 }
 
 bool IsGhost(const Atom& AtomI){
-    Atom AtomJ=MakeGhost(0,AtomI);
+    Atom AtomJ=MakeGhost(AtomI);
     return AtomJ==AtomI;
 }
 
 bool IsDummy(const Atom& AtomI){
-    Atom AtomJ=MakeDummy(0,AtomI);
+    Atom AtomJ=MakeDummy(AtomI);
     return AtomJ==AtomI;
 }
 
 bool IsCharge(const Atom& AtomI){
-    Atom AtomJ=MakeCharge(0,AtomI);
+    Atom AtomJ=MakeCharge(AtomI);
     return AtomJ==AtomI;
 }
 

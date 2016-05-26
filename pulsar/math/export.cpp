@@ -5,10 +5,11 @@
  */ 
 
 
-#include "pulsar/python/Pybind11.hpp"
-#include "pulsar/python/Pybind11_stl.hpp"
-#include "pulsar/python/Pybind11_functional.hpp"
-#include "pulsar/python/Pybind11_operators.hpp"
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/complex.h>
+#include <pybind11/functional.h>
+#include <pybind11/operators.h>
 #include "pulsar/math/Factorial.hpp"
 #include "pulsar/math/Universe.hpp"
 #include "pulsar/math/Point.hpp"
@@ -74,7 +75,7 @@ static void RegisterMatrices(pybind11::module & m, const char * type)
                return pybind11::buffer_info(
                    m.Data(),                                 /* Pointer to buffer */
                    sizeof(T),                                /* Size of one scalar */
-                   pybind11::format_descriptor<T>::value(),  /* Python struct-style format descriptor */
+                   pybind11::format_descriptor<T>::value,    /* Python struct-style format descriptor */
                    2,                                        /* Number of dimensions */
                    { m.NRows(), m.NCols() },                 /* Buffer dimensions */
                    { sizeof(T) * m.NRows(),                  /* Strides (in bytes) for each index */
@@ -101,7 +102,7 @@ static void RegisterMatrices(pybind11::module & m, const char * type)
                return pybind11::buffer_info(
                    m.Data(),                                /* Pointer to buffer */
                    sizeof(T),                               /* Size of one scalar */
-                   pybind11::format_descriptor<T>::value(), /* Python struct-style format descriptor */
+                   pybind11::format_descriptor<T>::value,   /* Python struct-style format descriptor */
                    1,                                       /* Number of dimensions */
                    { m.Size()  },                           /* Buffer dimensions */
                    { sizeof(T) }                            /* Strides (in bytes) for each index */

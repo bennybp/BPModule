@@ -182,7 +182,7 @@ class BasisSet
          *                    correspond to an entry in a System.
          * \param [in] xyz Coordinates for this shell
          */
-        void AddShell(const BasisShellInfo & bshell, ID_t center,
+        void AddShell(const BasisShellInfo & bshell,
                       const CoordType & xyz);
 
         ///@}
@@ -248,9 +248,8 @@ class BasisSet
         size_t coef_pos_;
 
 
-        /// Adds a shell, copying the information from bshell and setting id, etc
-        void AddShell_(const BasisShellBase & bshell, ID_t id,
-                       ID_t center, const CoordType & xyz);
+        /// Adds a shell, copying the information from bshell
+        void AddShell_(const BasisShellBase & bshell, const CoordType & xyz);
 
         /// Adds a shell, copying the information from bshell
         void AddShell_(const BasisSetShell & bshell);

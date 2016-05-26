@@ -5,7 +5,7 @@
  */ 
 
 
-#include "pulsar/python/Pybind11.hpp"
+#include <pybind11/pybind11.h>
 #include "pulsar/tensor/InitFinalize.hpp"
 
 

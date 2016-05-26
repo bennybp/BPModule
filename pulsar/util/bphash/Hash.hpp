@@ -45,6 +45,12 @@ class Hash
         bool operator<=(const Hash & rhs) const noexcept { return hash_ <= rhs.hash_; } 
 
 
+        /*! \brief Truncate the hash to a size_t
+         * 
+         * Useful if using for a specialization of std::hash
+         */
+        size_t Truncate(void) const noexcept { return hash_[0]; }
+
         /*! \brief Return a string representation of the hash
          *
          * The string representation is the usual hex representation,

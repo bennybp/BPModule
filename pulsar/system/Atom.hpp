@@ -14,6 +14,7 @@
 #include "pulsar/system/BasisShellInfo.hpp"
 #include "pulsar/util/StringUtil.hpp"
 #include "pulsar/util/bphash/Hasher_fwd.hpp"
+#include "pulsar/util/bphash/Hash.hpp"
 
 
 
@@ -45,7 +46,6 @@ void Set##PFxnName(PType value)noexcept{PName##_ =value;}
 class Atom : public math::Point
 {
     private:
-        size_t idx_;   //!< Unique index of the atom
         int Z_;        //!< Atomic Z number (as integer. Also stored as a (double) weight)
         int isonum_;   //!< Isotope number
 
@@ -100,7 +100,7 @@ class Atom : public math::Point
         void serialize(Archive & ar)
         {
             // we aren't serializing the base class, so we do this manually
-            ar(cereal::base_class<math::Point>(this), idx_, Z_, isonum_,
+            ar(cereal::base_class<math::Point>(this), Z_, isonum_,
                                                 mass_, isotopemass_,
                                                 charge_, multiplicity_,
                                                 nelectrons_, covradius_,
@@ -115,7 +115,7 @@ class Atom : public math::Point
     public:
         /*! \brief Constructor
          */
-        Atom(size_t idx,  CoordType xyz, int Z, int isonum, double mass,
+        Atom(CoordType xyz, int Z, int isonum, double mass,
              double isotopemass, double charge, double multiplicity,
              double nelectrons,double covradius,double vdwradius);
 
@@ -156,15 +156,7 @@ class Atom : public math::Point
          * such as storing the data elsewhere
          */
 
-        /*! \brief Get the unique index of this atom
-         *
-         * Typically, the index will represent the input ordering
-         */
-        size_t GetIdx(void) const noexcept
-        {
-            return idx_;
-        }
-        
+
         /*! \brief Get the name of the element */
         std::string GetName(void) const;
 
@@ -303,11 +295,11 @@ std::ostream& operator<<(std::ostream& os,const Atom& A);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(size_t idx, CoordType xyz, int Z);
+Atom CreateAtom(CoordType xyz, int Z);
 
 
-/*! \copydoc CreateAtom(size_t idx, CoordType xyz, int Z) */
-Atom CreateAtom(size_t idx, double x, double y, double z, int Z);
+/*! \copydoc CreateAtom(CoordType xyz, int Z) */
+Atom CreateAtom(double x, double y, double z, int Z);
 
 
 
@@ -315,11 +307,11 @@ Atom CreateAtom(size_t idx, double x, double y, double z, int Z);
  *
  * The rest of the data is filled in automatically
  */
-Atom CreateAtom(size_t idx, CoordType xyz, int Z, int isonum);
+Atom CreateAtom(CoordType xyz, int Z, int isonum);
 
 
-/*! \copydoc CreateAtom(size_t idx, CoordType xyz, int Z, int isonum) */ 
-Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum);
+/*! \copydoc CreateAtom(CoordType xyz, int Z, int isonum) */ 
+Atom CreateAtom(double x, double y, double z, int Z, int isonum);
 
 
 ///@{\name Ghost Atom Functions
@@ -331,8 +323,8 @@ Atom CreateAtom(size_t idx, double x, double y, double z, int Z, int isonum);
  *  Z information will be lost.  In practice this poses no problems for
  *  any existing BSSE method.
  */
-///Makes a copy of AtomI that is a ghost atom with new index idx
-Atom MakeGhost(size_t idx, const Atom& AtomI);
+///Makes a copy of AtomI that is a ghost atom
+Atom MakeGhost(const Atom& AtomI);
 ///Returns true if AtomI is a ghost atom
 bool IsGhost(const Atom& AtomI);
 ///@}
@@ -343,14 +335,14 @@ bool IsGhost(const Atom& AtomI);
  *  no other properties.
  */
 ///Makes a charge from a charge and coordinates
-Atom MakeCharge(size_t idx,double Charge,CoordType xyz);
+Atom MakeCharge(double Charge,CoordType xyz);
 ///Copies AtomI into a point charge
-inline Atom MakeCharge(size_t idx, const Atom& AtomI){
-    return MakeCharge(idx,AtomI.GetCharge(),AtomI.GetCoords());
+inline Atom MakeCharge(const Atom& AtomI){
+    return MakeCharge(AtomI.GetCharge(),AtomI.GetCoords());
 }
 ///Makes a point charge from a charge and coordinates
-inline Atom MakeCharge(size_t idx, double Charge, double x, double y, double z){
-    return MakeCharge(idx,Charge, {x,y,z});
+inline Atom MakeCharge(double Charge, double x, double y, double z){
+    return MakeCharge(Charge, {x,y,z});
 }
 ///Returns true if AtomI is a point charge
 bool IsCharge(const Atom& AtomI);
@@ -362,15 +354,15 @@ bool IsCharge(const Atom& AtomI);
  *  no other properties.
  */
 ///Makes a dummy atom from coordinates
-Atom MakeDummy(size_t idx,CoordType xyz);
+Atom MakeDummy(CoordType xyz);
 
 ///Copies AtomI into a dummy atom
-inline Atom MakeDummy(size_t idx, const Atom& AtomI){
-    return MakeDummy(idx,AtomI.GetCoords());
+inline Atom MakeDummy(const Atom& AtomI){
+    return MakeDummy(AtomI.GetCoords());
 }
 ///Makes a dummy atom from component coordinates
-inline Atom MakeDummy(size_t idx, double x, double y, double z){
-    return MakeDummy(idx,{x,y,z});
+inline Atom MakeDummy(double x, double y, double z){
+    return MakeDummy({x,y,z});
 }
 ///Returns true if AtomI is a dummy atom
 bool IsDummy(const Atom& AtomI);
@@ -388,7 +380,7 @@ namespace std{
     template<> struct hash<pulsar::system::Atom>
     {
         size_t operator()(const pulsar::system::Atom& atom)const{
-            return atom.GetIdx();
+            return atom.MyHash().Truncate();
         }
     };
 }

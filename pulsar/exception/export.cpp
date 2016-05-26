@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "pulsar/python/Pybind11.hpp"
+#include <pybind11/pybind11.h>
 #include "pulsar/exception/Exceptions.hpp"
 
 using namespace pulsar::exception;

@@ -5,10 +5,9 @@
  */ 
 
 
-#include "pulsar/python/Pybind11_stl.hpp"
-#include "pulsar/python/Pybind11_functional.hpp"
-#include "pulsar/python/Pybind11_operators.hpp"
-#include "pulsar/python/Pybind11_iterators.hpp"
+#include <pybind11/stl.h>
+#include <pybind11/functional.h>
+#include <pybind11/operators.h>
 #include "pulsar/python/Convert.hpp"
 #include "pulsar/system/AMConvert.hpp"
 #include "pulsar/system/AtomicInfo.hpp"
@@ -128,8 +127,6 @@ PYBIND11_PLUGIN(system)
 
     // BasisSetShell class
     pybind11::class_<BasisSetShell>(m, "BasisSetShell", bshell)
-    .def("GetID", &BasisSetShell::GetID)
-    .def("GetCenter", &BasisSetShell::GetCenter)
     .def("GetCoords", &BasisSetShell::GetCoords)
     .def("SetCoords", &BasisSetShell::GetCoords)
     .def("GetCoord", &BasisSetShell::GetCoord)
@@ -140,8 +137,6 @@ PYBIND11_PLUGIN(system)
     ;
 
 
-    // Main BasisSet class
-    python::RegisterPyRefIterator<BasisSet>(m, "BasisSet");
 
     pybind11::class_<BasisSet>(m, "BasisSet")
     .def(pybind11::init<size_t, size_t, size_t, size_t>())
@@ -167,12 +162,8 @@ PYBIND11_PLUGIN(system)
     .def("MyHash", &BasisSet::MyHash)
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
-    .def("__iter__", [](pybind11::object obj)
-            {
-                const BasisSet & cont = obj.cast<const BasisSet &>();
-                return python::PyRefIterator<BasisSet>(cont, cont.begin(), obj);
-            })
-    ;
+    .def("__iter__", [](const BasisSet & t) { return pybind11::make_iterator(t.begin(), t.end()); },
+                     pybind11::keep_alive<0, 1>() )
     ;
 
 
@@ -236,7 +227,6 @@ PYBIND11_PLUGIN(system)
     pybind11::class_<Atom>(m, "Atom", pybind11::base<math::Point>())
     .def(pybind11::init<const Atom &>())
     .def("MyHash", &Atom::MyHash)
-    .def("GetIdx", &Atom::GetIdx)
     .def("GetZ", &Atom::GetZ)
     .def("SetZ", &Atom::SetZ)
     .def("GetIsonum", &Atom::GetIsonum)
@@ -266,10 +256,10 @@ PYBIND11_PLUGIN(system)
    
 
     // Atom creators
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, CoordType, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, CoordType, int, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(size_t, double, double, double, int, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(CoordType, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(CoordType, int, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int)>(CreateAtom));
+    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, int)>(CreateAtom));
 
     // Export AtomSetUniverse
     // No need to export AtomSet (at the moment)
@@ -284,8 +274,6 @@ PYBIND11_PLUGIN(system)
       .def_readonly("LatticeAngles",&Space::LatticeAngles)
     ;
     
-    // Main system class 
-    python::RegisterPyCopyIterator<System>(m, "System");
 
     pybind11::class_<System, std::shared_ptr<System>>(m,"System")
     .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
@@ -340,11 +328,8 @@ PYBIND11_PLUGIN(system)
     .def("__len__",         &System::size)
     .def("__contains__",    &System::Contains)
     .def("__str__",&System::ToString)
-    .def("__iter__", [](pybind11::object obj)
-            {
-                const System & cont = obj.cast<const System &>();
-                return python::PyCopyIterator<System>(cont, cont.begin(), obj);
-            })
+    .def("__iter__", [](const System & t) { return pybind11::make_iterator(t.begin(), t.end()); },
+                     pybind11::keep_alive<0, 1>() )
     ;
 
  

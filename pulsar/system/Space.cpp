@@ -25,3 +25,4 @@ bool Space::IsPeriodic()const{
 Space::Space():Space({90.0,90.0,90.0},{Inf,Inf,Inf}){}
 
 }}//End namespaces
+

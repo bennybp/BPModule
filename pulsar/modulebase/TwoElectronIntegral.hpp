@@ -239,7 +239,7 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
 
             pybind11::buffer_info buf(outbuffer,
                                       sizeof(double),
-                                      pybind11::format_descriptor<double>::value(),
+                                      pybind11::format_descriptor<double>::value,
                                       1, { bufsize },
                                       { sizeof(double) });
 
@@ -262,7 +262,7 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
 
                 pybind11::buffer_info pybuf(outbuffer,
                                             sizeof(double),
-                                            pybind11::format_descriptor<double>::value(),
+                                            pybind11::format_descriptor<double>::value,
                                             1, { bufsize },
                                             { sizeof(double) });
 

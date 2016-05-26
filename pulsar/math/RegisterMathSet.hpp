@@ -7,11 +7,10 @@
 #ifndef PULSAR_GUARD_MATH__REGISTERMATHSET_HPP_
 #define PULSAR_GUARD_MATH__REGISTERMATHSET_HPP_
 
-#include "pulsar/python/Pybind11.hpp"
-#include "pulsar/python/Pybind11_stl.hpp"
-#include "pulsar/python/Pybind11_functional.hpp"
-#include "pulsar/python/Pybind11_operators.hpp"
-#include "pulsar/python/Pybind11_iterators.hpp"
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/functional.h>
+#include <pybind11/operators.h>
 #include "pulsar/math/Universe.hpp"
 #include "pulsar/math/MathSet.hpp"
 
@@ -36,9 +35,6 @@ void RegisterMathSet(pybind11::module & m,
                      const char * mathsetname)
 {
     typedef typename T::value_type value_type;
-
-    // Register the iterator
-    python::RegisterPyCopyIterator<T>(m, mathsetname);
 
     // Register the MathSet
     pybind11::class_<T>(m, mathsetname)
@@ -83,11 +79,8 @@ void RegisterMathSet(pybind11::module & m,
     .def("__len__",         &T::Size)
     .def("__contains__",    &T::Contains)
     .def("__str__",&T::ToString)
-    .def("__iter__", [](pybind11::object obj)
-            {
-                const T & cont = obj.cast<const T &>();
-                return python::PyCopyIterator<T>(cont, cont.begin(), obj);
-            })
+    .def("__iter__", [](const T & t) { return pybind11::make_iterator(t.begin(), t.end()); },
+                     pybind11::keep_alive<0, 1>() )
     ;
 }
 
@@ -98,9 +91,6 @@ void RegisterUniverse(pybind11::module & m,
 {
     typedef typename T::value_type value_type;
 
-
-    // Register the iterator
-    python::RegisterPyCopyIterator<T>(m, universename);
 
     // Register the universe
     pybind11::class_<T,std::shared_ptr<T>>(m, universename)
@@ -141,11 +131,8 @@ void RegisterUniverse(pybind11::module & m,
     .def("__contains__",    &T::Contains)
     .def("__getitem__",     &T::At)
     .def("__str__",&T::ToString)
-    .def("__iter__", [](pybind11::object obj)
-            {
-                const T & cont = obj.cast<const T &>();
-                return python::PyCopyIterator<T>(cont, cont.begin(), obj);
-            })
+    .def("__iter__", [](const T & t) { return pybind11::make_iterator(t.begin(), t.end()); },
+                     pybind11::keep_alive<0, 1>() )
     ;
 
 }

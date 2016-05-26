@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include "pulsar/python/Pybind11_fwd.hpp"
+#include <pybind11/pybind11.h>
 
 
 namespace pulsar{

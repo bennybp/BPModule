@@ -117,7 +117,8 @@ def MakeSystem(SomeString):
     molu=psr.system.AtomSetUniverse()
     for i in range(0,len(Zs)):
         TempCarts=[ToAU*Carts[3*i+j] for j in range(0,3)]
-        molu.Insert(psr.system.CreateAtom(i,TempCarts,Zs[i]))
+        molu.Insert(psr.system.CreateAtom(TempCarts,Zs[i]))
+    DaSys=psr.system.System(molu,True)
     if Periodic:
         Newu=psr.system.Frac2Cart(molu,DaSpace)
         UC=psr.system.CarveUC(
