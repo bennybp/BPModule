@@ -5,6 +5,7 @@ INPUT+=  dox/basic.md \
          dox/modulebasics.md \
          dox/options.md \
          dox/philosophy.md \
-         dox/shared.md
+         dox/shared.md \
+         dox/systems.md
 
 INPUT += dox/mainpage.dox
