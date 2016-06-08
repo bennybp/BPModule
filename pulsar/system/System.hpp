@@ -125,7 +125,7 @@ public:
      * \param [in] universe The universe this system should use 
      * \param [in] fill Make this system contain all the elements of the universe
      */
-    System(std::shared_ptr<const AtomSetUniverse> universe, bool fill);
+    explicit System(std::shared_ptr<const AtomSetUniverse> universe, bool fill);
 
     /*! \brief Construct a system given a universe
      * 
@@ -134,7 +134,7 @@ public:
      * \param [in] universe The universe this system should use 
      * \param [in] fill Make this system contain all the elements of the universe
      */
-    System(const AtomSetUniverse& universe, bool fill);
+    explicit System(const AtomSetUniverse& universe, bool fill);
 
     /*! \brief For serialization only
      * 
@@ -267,6 +267,16 @@ public:
     template<typename T>
     System & insert(const T&,const Atom& atom){
         return this->Insert(atom);
+    }
+    
+    ///Range based insertion
+    template<typename Begin_t,typename End_t>
+    System & insert(Begin_t begin,End_t end){
+        while(begin!=end){
+            this->Insert(*begin);
+            ++begin;
+        }
+        return *this;
     }
 
     /*! \brief Insert an atom into this system

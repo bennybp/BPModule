@@ -102,7 +102,9 @@ EnergyMethod::FiniteDifference_(size_t Order, const datastore::Wavefunction & Wf
            TempDeriv[0].push_back(j);
 
     //! \todo what wfn to return
-    return {Wfn, TempDeriv[0]};
+    EnergyMethod::DerivReturnType CWfn=
+            CreateChild<EnergyMethod>(Key())->Deriv(Order-1,Wfn);
+    return {CWfn.first, TempDeriv[0]};
 }
     
 }}

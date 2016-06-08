@@ -167,7 +167,12 @@ public:
 
 
     ///Deep copies elements, shallow copies Universe_ and (and Storage_)
-    My_t& operator=(const My_t &) = default;
+    My_t & operator=(const My_t & RHS){//appears to also not work defaulted
+        if(this==&RHS)return *this;
+        Base_t::operator=(RHS);
+        Universe_=RHS.Universe_;
+        return *this;
+    }
     MathSet & operator=(My_t&&) = default;
     MathSet(const My_t&) = default;
     MathSet(My_t&&) = default;

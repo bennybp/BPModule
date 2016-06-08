@@ -115,7 +115,11 @@ public:
  *   Note every mathematical set is capable of being viewed as a universe,
  *   which is why MathSet derives from this class.  MathSet differs from
  *   Universe in that MathSet contains a pointer to the Universe it belongs
- *   to, whereas Universe's universe is all possible elements.
+ *   to, whereas Universe's universe is conceptually all possible elements.
+ *   Whether this set is a true set in the sense that there are no repeat
+ *   elements, depends on the container used to implement it.  By default, this
+ *   is an std::vector, which will not enforce this condition and hence will
+ *   in general allow duplicates.
  * 
  *   Essentially, We have added a few features on top of the std::set.
  *   Namely, we can now do unions, intersections, set diff, etc.
@@ -127,8 +131,8 @@ public:
  *   are objects of type MathSet, only store the indices of the elements in the
  *   storage container that they contain.  As long as the storage class defines
  *   an interface, which we layout below, any class can be used to fill this
- *   role, in particular we use this feature to be
- *   able to store our points contigiously, while being able to store each
+ *   role. In particular this feature will allow one to store points 
+ *   contigiously, while being able to store each
  *   point as a separate object (whose real data lives in the storage container
  *   ).
  * 
@@ -213,6 +217,24 @@ public:
     ///Deep copies the universe
     Universe(const My_t& RHS) 
       : Storage_(new U(*RHS.Storage_)), Elems_(RHS.Elems_) { }
+    
+    ///Creates universe that contains elements in constructor (attempts to use
+    ///different types will fail to initialize U)
+    template<typename...Args>
+    Universe(T arg1,Args...args):Storage_(std::make_shared<U>({arg1,args...})){
+        for(size_t i=0;i<Storage_->size();++i)Elems_.insert(i);
+    }
+    
+    ///Special case of one initial value
+    Universe(T arg):
+        Storage_(std::make_shared<U>(U({arg}))),Elems_({0}){}
+    
+    ///Creates universe that contains elements in initializer list
+    Universe(std::initializer_list<T> l):Storage_(std::make_shared<U>(l)){
+        for(size_t i=0;i<Storage_->size();++i)Elems_.insert(i);
+    }
+
+    
     ///Deep copies during assignment
     My_t& operator=(const My_t & RHS)
     {
@@ -223,6 +245,7 @@ public:
         }
         return *this;
     }
+    
 
     ///Move assignment
     My_t & operator=(My_t &&) = default;

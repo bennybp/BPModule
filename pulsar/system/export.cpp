@@ -217,7 +217,9 @@ PYBIND11_PLUGIN(system)
     
     m.def("Frac2Cart",Frac2Cart);
     m.def("MakeSuperCell",MakeSuperCell);
-    m.def("CarveUC",CarveUC);
+    m.def("CarveUC",CarveUC,pybind11::arg("SC"),pybind11::arg("Sides"),
+                            pybind11::arg("MinScale")=1.0,
+                            pybind11::arg("MaxScale")=2.0);
     m.def("CleanUC",CleanUC);
 
     // Atom structure

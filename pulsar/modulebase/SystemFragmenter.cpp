@@ -7,74 +7,85 @@
 #include<limits>//for max of double
 #include "pulsar/modulebase/SystemFragmenter.hpp"
 #include "pulsar/datastore/OptionMap.hpp"
-#include "pulsar/math/CombItr.hpp"
+#include "pulsar/math/PowerSetItr.hpp"
 #include "pulsar/math/Point.hpp"
+#include "install/include/pulsar/modulebase/ModuleBase.hpp"
 
 using pulsar::datastore::OptionMap;
-using pulsar::system::System;
-using pulsar::system::SystemMap;
-using pulsar::math::Point;
-typedef typename SystemMap::value_type Frag_t;
+
+using namespace pulsar::system;
+using namespace pulsar::math;
+using Frag_t=SystemMap::value_type;
+using Thresh_t=std::map<size_t,double>;
 
 namespace pulsar{
 namespace modulebase{
 
-SystemMap SystemFragmenter::Fragmentize(const System & mol){
-    const OptionMap& DaOptions=Options();
-    size_t N=DaOptions.Get<size_t>("TRUNCATION_ORDER");
-    std::map<size_t,double> Truncs=
-        DaOptions.Get<std::map<size_t,double>>("DISTANCE_THRESHOLDS");
-    SystemMap Frags= 
-            ModuleBase::CallFunction(&SystemFragmenter::Fragmentize_, mol);
-    SystemMap NMers=Frags;
-    for(size_t n=2;n<=N;++n){
-        //Defaults to about 1e308 a.u., or about 1e271 times the size of
-        //the observable universe...I think that is equivalent to no cut-off
-        double dist=(Truncs.count(n)==1?
-                     Truncs.at(n):std::numeric_limits<double>::max());
-        SystemMap Temp=MakeNMers(Frags,n,dist);
-        NMers.insert(Temp.begin(),Temp.end());
+//Recursive function for establishing the weight of each nmer
+//Note b/c we are possibly leaving some out we can't use the closed formulas
+void GetCoef(bool Even,const SNType& SN,NMerSetType& NMers){
+    if(NMers.count(SN)==0)return;//We assumed this interaction is negligible
+    NMers[SN].Weight+=(Even?1.0:-1.0);
+    PowerSetItr<SNType> Frags(SN,1,SN.size()-1);
+    while(Frags){
+        GetCoef(!Even,*Frags,NMers);
+        ++Frags;
     }
-    return NMers;
 }
+
+NMerSetType SystemFragmenter::MakeNMers(const NMerSetType& Frags){
+    const size_t NEnd=
+        std::min(Options().Get<size_t>("TRUNCATION_ORDER"),Frags.size());
+    Thresh_t Dists=Options().Get<Thresh_t>("DISTANCE_THRESHOLDS");
+    NMerSetType NMers;
+    const double DaMax=std::numeric_limits<double>::max();
     
-SystemMap SystemFragmenter::MakeNMers(const SystemMap& Frags, 
-                                      size_t N, double Dist){
-    SystemMap NMers;
-    //Make sure we work in two stupid scenarios i.e. N==0 or 1
-    if(N==0)return NMers;//Empty set
-    if(N==1)return Frags;//The fragments we were given
-    math::CombItr<SystemMap> Comb(Frags,N);
-    while(!Comb.Done()){
-        std::stringstream Name;
-        std::vector<Point> CoMs;
-        for(const Frag_t& Frag : *Comb){
-            Name<<Frag.first;
-            CoMs.push_back(Frag.second.CenterOfMass());
-            if(CoMs.size()!=N)Name<<"_";
+    
+    //Make sure we work in two stupid base case scenarios
+    if(NEnd==0)return NMers;//Empty set
+    if(NEnd==1)return Frags;//The fragments we were given
+    
+    //Real scenarios follow...
+    PowerSetItr<NMerSetType> Comb(Frags,1,NEnd);
+    while(Comb){
+        const size_t N=Comb->size();
+        const double Thresh=(Dists.count(N)==1?N*Dists.at(N)*Dists.at(N):DaMax);
+        NMerInfo DaNMer;
+        for(const auto& Frag : *Comb){
+            const NMerInfo& NMer=Frag.second;
+            DaNMer.SN.insert(NMer.SN.begin(),NMer.SN.end());
+            if(DaNMer.NMer.size()==0)DaNMer.NMer=NMer.NMer;
+            else DaNMer.NMer.insert(NMer.NMer.begin(),NMer.NMer.end());
+            DaNMer.Weight=0.0;
         }
-        /* Here's the plan.  What we are doing here is sort of isomorphic to
-         * finding bonds. Basically two fragments are "bonded" if their centers
-         * of mass are within a distance Dist.  Once we've figured out the
-         * number of bonds each fragment makes we care that together they
-         * form one molecule.  A basic graph-theory result says that a graph
-         * (with no loops or parallel edges) must have at least (N-1)(N-2)/2+1 
-         * edges to be connected. So we count bonds, if we hit that many our
-         * NMer is a go.
-         */
-        size_t NEdges=0;
-        for(size_t i=0;i<N;++i)
-            for(size_t j=0;j<i;++j)
-                if(CoMs[i].Distance(CoMs[j])<Dist)++NEdges;
-        if(NEdges>=((N-1)*(N-2)/2+1)){
-            System NMer(Comb->begin()->second);
-            for(const Frag_t& Frag: *Comb)//First operation is null
-                NMer+=Frag.second;
-            NMers.emplace(Name.str(),NMer);
+        double RHS=0.0;
+        const Point CoM=DaNMer.NMer.CenterOfMass();
+        for(const auto& Frag: *Comb){//We needed the CoM, hence the two loops
+            const double Dist=Frag.second.NMer.CenterOfMass().Distance(CoM);
+            RHS+=Dist*Dist;
         }
+        if(Thresh>=RHS)NMers.insert({DaNMer.SN,DaNMer});
         ++Comb;       
     }
-
+    for(const typename NMerSetType::value_type& NMerI: NMers)
+        GetCoef(true,NMerI.first,NMers);
     return NMers;
 }
+
+std::map<std::string,NMerInfo> SystemFragmenter_Py::
+    Py_Fragmentize(const system::System& mol){
+            NMerSetType Temp=Fragmentize(mol);
+            std::map<std::string,NMerInfo> RV;
+            for(const auto& NMerI: Temp){
+                std::string key;
+                for(const std::string& str:NMerI.first){
+                    key+=str;
+                    key+="_";
+                }
+                RV.emplace(key,NMerI.second);
+            }
+            return RV;
+}
+
+
 }}//end namespaces

@@ -66,13 +66,20 @@ PYBIND11_PLUGIN(modulebase)
     /////////////////////////
     // System Fragmenters
     /////////////////////////
+    pybind11::class_<NMerInfo> (m,"NMerInfo")
+        .def(pybind11::init<>())
+        .def_readwrite("SN",&NMerInfo::SN)
+        .def_readwrite("NMer",&NMerInfo::NMer)
+        .def_readwrite("Weight",&NMerInfo::Weight)
+        ;
+    
     pybind11::class_<SystemFragmenter_Py> sysfrag(m, "SystemFragmenter", mbase);
     sysfrag.alias<SystemFragmenter>()
             .def(pybind11::init<ID_t>())
             .def_readonly("out", &SystemFragmenter_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &SystemFragmenter_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("MManager", &SystemFragmenter_Py::MManager, pybind11::return_value_policy::reference_internal)
-            .def("Fragmentize", &SystemFragmenter::Fragmentize)
+            .def("Fragmentize", &SystemFragmenter_Py::Py_Fragmentize)
     ;
 
 

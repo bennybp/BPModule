@@ -11,7 +11,8 @@
 
   - \ref compiling_page
   - \ref testing_page
-  - \ref usage_page
+  - User notes
+    - [Making and Using Systems](@ref systems)
   - Developer notes
     - [Basic Filesystem Layout](@ref basic)
     - [Exceptions and Error Handeling](@ref except)

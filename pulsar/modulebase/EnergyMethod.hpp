@@ -17,6 +17,11 @@
 namespace pulsar{
 namespace modulebase {
 
+typedef std::pair<datastore::Wavefunction, double> EnergyReturnType;
+typedef std::pair<datastore::Wavefunction, std::vector<double>> DerivReturnType;
+        
+
+
 /*! \brief This is the base class for modules that can compute derivatives of
  *  the electronic energy with respect to nuclear coordinates.
  * 
@@ -32,8 +37,8 @@ class EnergyMethod : public ModuleBase
 {   
     public:
         typedef EnergyMethod BaseType;
-        typedef std::pair<datastore::Wavefunction, double> EnergyReturnType;
-        typedef std::pair<datastore::Wavefunction, std::vector<double>> DerivReturnType;
+        using EnergyReturnType=EnergyReturnType;
+        using DerivReturnType=DerivReturnType;
         
         EnergyMethod(ID_t id): ModuleBase(id,"EnergyMethod"){ }
         

@@ -121,7 +121,11 @@ def MakeSystem(SomeString):
     DaSys=psr.system.System(molu,True)
     if Periodic:
         Newu=psr.system.Frac2Cart(molu,DaSpace)
-        DaSys=psr.system.CleanUC(Newu,DaSpace.LatticeSides)
+        UC=psr.system.CarveUC(
+            psr.system.MakeSuperCell(Newu,[3,3,3],DaSpace.LatticeSides),
+            DaSpace.LatticeSides)
+        molu=psr.system.CleanUC(UC,DaSpace.LatticeSides)
+    DaSys=psr.system.System(molu,True)
     DaSys.SetSpace(DaSpace)
     DaSys.SetCharge(Charge[0])
     DaSys.SetMultiplicity(Mult[0])

@@ -34,9 +34,11 @@ namespace util{
  *  4
  *  \endverbatim
  *  
- *  Iteration range is [Begin,End)
+ *  Iteration range is [Begin,End).  By default End is 0, if you know it at
+ *  compile time you should insert it otherwise you need to pass End to the
+ *  constructor
  */
-template<size_t Begin,size_t End>
+template<size_t Begin,size_t End=0>
 struct Range{
     struct iterator{
         size_t value_;
@@ -50,8 +52,11 @@ struct Range{
         }
         iterator operator++(){++value_;return *this;}
     };
+    const size_t End_;
+    Range():End_(End){}
+    Range(size_t EndIn):End_(EndIn){}
     iterator begin()const{return iterator(Begin);}
-    iterator end()const{return iterator(End);}
+    iterator end()const{return iterator(End_);}
 };
 
 }}//End namespace pulsar

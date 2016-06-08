@@ -26,12 +26,17 @@ extern "C" {
     void dsyev(char*,char*,int*,double*,int*,double*,double*,int*,int*);
     void dgeev(char*,char*,int*,double*,int*,double*,double*,double*,int*,
                double*,int*,double*,int*,int*);
+    void dgesvd(char*, char*, int*,int*,double*,int*,double*,double*,int*,
+                double*,int*,double*,int*,int*);
 }
 
 ///The return type of the non-symmetric diagonalizer
 typedef std::tuple<std::vector<std::complex<double>>,
                    std::vector<double>,
                    std::vector<double>> NonSymmDiagReturn_t;
+
+typedef std::tuple<std::vector<double>,std::vector<double>,std::vector<double>>
+    SVDReturn_t;
 
 namespace pulsar{
 namespace math{
@@ -118,6 +123,30 @@ NonSymmDiagReturn_t NonSymmetricDiagonalize(Mat_t Matrix,int n,
     return std::make_tuple(Evals,vr,vl);
     
 }
+
+template<typename Mat_t>
+SVDReturn_t SVD(Mat_t M, size_t m, size_t n,size_t LDA=0,size_t LDU=0,
+        size_t LDVT=0){
+    LDA=std::max(LDA,m);
+    LDU=std::max(LDU,m);
+    LDVT=std::max(LDVT,n);
+    int info,lwork=-1;
+    double wkopt;
+    std::vector<double> SVals(n),LVecs(LDU*m),RVecs(LDVT*n);
+    dgesvd("S","S",(int*)(&m),(int*)(&n),M.data(),(int*)(&LDA),SVals.data(),
+           LVecs.data(),(int*)(&LDU),RVecs.data(),(int*)(&LDVT),&wkopt,&lwork,
+            &info);
+    lwork=(int)wkopt;
+    std::vector<double> work(lwork);
+    dgesvd("S","S",(int*)(&m),(int*)(&n),M.data(),(int*)(&LDA),SVals.data(),
+           LVecs.data(),(int*)(&LDU),RVecs.data(),(int*)(&LDVT),work.data(),
+           &lwork,&info);
+    if(info > 0)
+        throw exception::GeneralException("SVD failed to converge");
+    
+    return std::make_tuple(LVecs,SVals,RVecs);    
+};
+
 
 ///Returns the cross product of two vectors
 ///\todo write in terms of wedge product
