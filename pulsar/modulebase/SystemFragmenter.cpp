@@ -9,7 +9,7 @@
 #include "pulsar/datastore/OptionMap.hpp"
 #include "pulsar/math/PowerSetItr.hpp"
 #include "pulsar/math/Point.hpp"
-#include "install/include/pulsar/modulebase/ModuleBase.hpp"
+#include "pulsar/modulebase/ModuleBase.hpp"
 
 using pulsar::datastore::OptionMap;
 
