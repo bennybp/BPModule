@@ -12,7 +12,7 @@ def ApplyBasis(syst,bsname,bslabel="primary"):
     return psr.system.ApplySingleBasis(bslabel,bsname,syst)
 
 def CompareEgy(EgyIn):
-   return EgyIn+224.89287653924677<0.00001
+   return abs(EgyIn+224.89287653924677)<0.00001
 
 def CompareGrad(GradIn):
    CorrectGrad=[
@@ -37,12 +37,10 @@ def Run(mm):
         tester.PrintHeader()
        
         LoadDefaultModules(mm)
-        
-        mm.ChangeOption("PSR_SCF","BASIS_SET","STO-3G")
+        mm.ChangeOption("PSR_SCF","BASIS_SET","sto-3g")
         mm.ChangeOption("PSR_CP","METHOD","PSR_SCF")
-        mm.ChangeOption("PSR_CP","MAX_DERIV",1)
- 
-        MyMod=mm.GetModule("PSR_CP",0)
+        mm.ChangeOption("PSR_MBE","METHOD","PSR_SCF")
+
         mol=psr.system.MakeSystem("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
@@ -58,17 +56,19 @@ def Run(mm):
         mol = ApplyBasis(mol,"sto-3g","sto-3g")
         wfn=psr.datastore.Wavefunction()
         wfn.system=mol
-        
+
+        MyMod=mm.GetModule("PSR_CP",0)
 
         NewWfn,Egy=MyMod.Deriv(0,wfn)
-        tester.Test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
+        tester.Test("Testing CP Energy via Deriv(0)", True, CompareEgy, Egy[0])
         NewWfn,Egy=MyMod.Energy(wfn)
-        tester.Test("Testing Energy via Energy()", True, CompareEgy, Egy)
+        tester.Test("Testing CP Energy via Energy()", True, CompareEgy, Egy)
         NewWfn,Egy=MyMod.Deriv(1,wfn)
-        tester.Test("Testing Gradient via Deriv(1)", True, CompareGrad, Egy)
+        tester.Test("Testing CP Gradient via Deriv(1)", True, CompareGrad, Egy)
         NewWfn,Egy=MyMod.Gradient(wfn)
-        tester.Test("Testing Energy via Gradient()", True, CompareGrad, Egy)
+        tester.Test("Testing CP Gradient via Gradient()", True, CompareGrad, Egy)
         
+        tester.PrintResults()
      
     except Exception as e:
       psr.output.Output("Caught exception in main handler\n")

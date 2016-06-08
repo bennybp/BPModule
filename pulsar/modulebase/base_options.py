@@ -9,6 +9,14 @@ base_options = {
 
   "SystemFragmenter" :
   {
+    "TRUNCATION_ORDER" : (OptionType.Int, 1, False, GreaterThan(0),
+                          'Unions of up to how many monomers should be taken'),
+    "DISTANCE_THRESHOLDS" : (OptionType.DictIntFloat,{},False,
+                    None,'A int->float dictionary where the int, call it n, is'\
+                    ' the n-mer and the float is the maximum distance '\
+                    'that the n monomers can be apart, e.g. {2:3.14} means '\
+                    'that dimers whose centers of mass are more than 3.14 '\
+                    'Angstroms apart are excluded.')   
   },
 
   "EnergyMethod" :

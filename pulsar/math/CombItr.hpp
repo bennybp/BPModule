@@ -170,6 +170,10 @@ void CombItr<T>::Initialize(){
 
 template <typename T>
 void CombItr<T>::Next() {
+    if(K_==0){
+        Done_=true;
+        return;
+    }
     //Check indices right to left
     for(size_t i=1;i<=K_;++i){
         const size_t Offset=K_-i;

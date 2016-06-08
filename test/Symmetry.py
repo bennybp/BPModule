@@ -9,7 +9,7 @@ thispath = os.path.dirname(os.path.realpath(__file__))
 psrpath = os.path.join(os.path.dirname(thispath), "modules")
 sys.path.insert(0, psrpath)
 
-#from StandardModules import *
+from StandardModules import *
 from helper.Molecules import *
 
 def RightEs(PG,Elems):
@@ -136,15 +136,8 @@ def Run(mm):
               Methane,SF6,C60,
         ]
        
-        #LoadDefaultModules(mm)
+        LoadDefaultModules(mm)
         Symmer=psr.system.Symmetrizer()
-        f=open("Test.xyz","w")
-        f.write(str(BzCrystal.Size())+"\n\n")
-        for i in BzCrystal:
-            f.write(i.GetSymbol()+" "+str(i[0]*0.529177)+" "+str(i[1]*0.529177)+" "+str(i[2]*0.529177)+"\n")
-        f.close()
-        Symmer.GetSymmetry(BzCrystal)
-        exit()
         for i in range(0,24):
             TestPG(tester,Syms[i],Symmer.GetSymmetry(Mols[i]),Elems)
         tester.PrintResults()

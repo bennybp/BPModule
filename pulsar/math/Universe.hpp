@@ -217,6 +217,24 @@ public:
     ///Deep copies the universe
     Universe(const My_t& RHS) 
       : Storage_(new U(*RHS.Storage_)), Elems_(RHS.Elems_) { }
+    
+    ///Creates universe that contains elements in constructor (attempts to use
+    ///different types will fail to initialize U)
+    template<typename...Args>
+    Universe(T arg1,Args...args):Storage_(std::make_shared<U>({arg1,args...})){
+        for(size_t i=0;i<Storage_->size();++i)Elems_.insert(i);
+    }
+    
+    ///Special case of one initial value
+    Universe(T arg):
+        Storage_(std::make_shared<U>(U({arg}))),Elems_({0}){}
+    
+    ///Creates universe that contains elements in initializer list
+    Universe(std::initializer_list<T> l):Storage_(std::make_shared<U>(l)){
+        for(size_t i=0;i<Storage_->size();++i)Elems_.insert(i);
+    }
+
+    
     ///Deep copies during assignment
     My_t& operator=(const My_t & RHS)
     {
@@ -227,6 +245,7 @@ public:
         }
         return *this;
     }
+    
 
     ///Move assignment
     My_t & operator=(My_t &&) = default;

@@ -169,8 +169,9 @@ class PowerSetItr{
       PowerSetItr(const T& Set, int Min=-1, int Max=-1);
       ///Returns true if we have iterated over the whole range
       bool Done()const{return Done_;}
+      operator bool()const{return !Done_;}
       ///Moves on to the next subset
-      const PowerSetItr<T>& operator++(){Next();return *this;}
+      PowerSetItr<T>& operator++(){Next();return *this;}
       ///Returns the current subset
       const T& operator*()const{return CurrentIt_->operator*();}
       ///Allows access of the subset's container's members

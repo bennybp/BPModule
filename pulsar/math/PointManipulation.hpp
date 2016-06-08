@@ -9,6 +9,7 @@
 #define PULSAR_GUARD_MATH__POINTMANIPULATION_HPP_
 
 #include "pulsar/math/Cast.hpp"
+#include "pulsar/util/IterTools.hpp"
 
 namespace pulsar{
 namespace math {
@@ -118,7 +119,15 @@ PointContainer RotatePointContainer_Copy(const PointContainer & cont, const Flat
     return ret;
 }
 
-
+///Converts a container of points into a std::vector<double>
+template<typename PointContainer>
+std::vector<double> ToDoubleStar(const PointContainer& pc){
+    std::vector<double> RV;
+    for(const auto& point: pc)
+        for(size_t i: util::Range<0,3>())
+            RV.push_back(point[i]);
+    return RV;
+}
 
 
 
