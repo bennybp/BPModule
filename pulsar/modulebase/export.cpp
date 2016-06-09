@@ -15,8 +15,6 @@ using pulsar::modulemanager::ModuleInfo;
 using pulsar::datastore::OptionMap;
 
 
-PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>)
-
 
 namespace pulsar{
 namespace modulebase {
@@ -49,9 +47,8 @@ PYBIND11_PLUGIN(modulebase)
     /////////////////////////
     // Test class
     /////////////////////////
-    pybind11::class_<Test_Base_Py> testbase(m, "Test_Base", mbase);
-    testbase.alias<Test_Base>()
-            .def(pybind11::init<ID_t>())
+    pybind11::class_<Test_Base, std::unique_ptr<Test_Base>, Test_Base_Py> testbase(m, "Test_Base", mbase);
+    testbase.def(pybind11::init<ID_t>())
             .def_readonly("out", &Test_Base_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &Test_Base_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("MManager", &Test_Base_Py::MManager, pybind11::return_value_policy::reference_internal)
@@ -73,22 +70,20 @@ PYBIND11_PLUGIN(modulebase)
         .def_readwrite("Weight",&NMerInfo::Weight)
         ;
     
-    pybind11::class_<SystemFragmenter_Py> sysfrag(m, "SystemFragmenter", mbase);
-    sysfrag.alias<SystemFragmenter>()
-            .def(pybind11::init<ID_t>())
-            .def_readonly("out", &SystemFragmenter_Py::out, pybind11::return_value_policy::reference_internal) 
-            .def("Cache", &SystemFragmenter_Py::Cache, pybind11::return_value_policy::reference_internal)
-            .def("MManager", &SystemFragmenter_Py::MManager, pybind11::return_value_policy::reference_internal)
-            .def("Fragmentize", &SystemFragmenter_Py::Py_Fragmentize)
+    pybind11::class_<SystemFragmenter, std::unique_ptr<SystemFragmenter>, SystemFragmenter_Py> sysfrag(m, "SystemFragmenter", mbase);
+    sysfrag.def(pybind11::init<ID_t>())
+           .def_readonly("out", &SystemFragmenter_Py::out, pybind11::return_value_policy::reference_internal) 
+           .def("Cache", &SystemFragmenter_Py::Cache, pybind11::return_value_policy::reference_internal)
+           .def("MManager", &SystemFragmenter_Py::MManager, pybind11::return_value_policy::reference_internal)
+           .def("Fragmentize", &SystemFragmenter_Py::Py_Fragmentize)
     ;
 
 
     /////////////////////////
     // System integrals
     /////////////////////////
-    pybind11::class_<SystemIntegral_Py> sysint(m, "SystemIntegral", mbase);
-    sysint.alias<SystemIntegral>()
-          .def(pybind11::init<ID_t>())
+    pybind11::class_<SystemIntegral, std::unique_ptr<SystemIntegral>, SystemIntegral_Py> sysint(m, "SystemIntegral", mbase);
+    sysint.def(pybind11::init<ID_t>())
           .def_readonly("out", &SystemIntegral_Py::out, pybind11::return_value_policy::reference_internal) 
           .def("Cache", &SystemIntegral_Py::Cache, pybind11::return_value_policy::reference_internal)
           .def("MManager", &SystemIntegral_Py::MManager, pybind11::return_value_policy::reference_internal)
@@ -98,51 +93,47 @@ PYBIND11_PLUGIN(modulebase)
     /////////////////////////
     // One electron integral implementation
     /////////////////////////
-    pybind11::class_<OneElectronIntegral_Py> oneel(m, "OneElectronIntegral", mbase);
-    oneel.alias<OneElectronIntegral>()
-            .def(pybind11::init<ID_t>())
-            .def_readonly("out", &OneElectronIntegral_Py::out, pybind11::return_value_policy::reference_internal) 
-            .def("Cache", &OneElectronIntegral_Py::Cache, pybind11::return_value_policy::reference_internal)
-            .def("MManager", &OneElectronIntegral_Py::MManager, pybind11::return_value_policy::reference_internal)
-            .def("SetBases", &OneElectronIntegral::SetBases)
-            .def("NComponents", &OneElectronIntegral::NComponents)
-            .def("Calculate", &OneElectronIntegral::CalculatePy)
-            .def("CalculateMulti", &OneElectronIntegral::CalculateMultiPy)
-            ;
+    pybind11::class_<OneElectronIntegral, std::unique_ptr<OneElectronIntegral>, OneElectronIntegral_Py> oneel(m, "OneElectronIntegral", mbase);
+    oneel.def(pybind11::init<ID_t>())
+         .def_readonly("out", &OneElectronIntegral_Py::out, pybind11::return_value_policy::reference_internal) 
+         .def("Cache", &OneElectronIntegral_Py::Cache, pybind11::return_value_policy::reference_internal)
+         .def("MManager", &OneElectronIntegral_Py::MManager, pybind11::return_value_policy::reference_internal)
+         .def("SetBases", &OneElectronIntegral::SetBases)
+         .def("NComponents", &OneElectronIntegral::NComponents)
+         .def("Calculate", &OneElectronIntegral::CalculatePy)
+         .def("CalculateMulti", &OneElectronIntegral::CalculateMultiPy)
+         ;
 
     /////////////////////////
     // Two electron integral implementation
     /////////////////////////
-    pybind11::class_<TwoElectronIntegral_Py> twoel(m, "TwoElectronIntegral", mbase);
-    twoel.alias<TwoElectronIntegral>()
-            .def(pybind11::init<ID_t>())
-            .def_readonly("out", &TwoElectronIntegral_Py::out, pybind11::return_value_policy::reference_internal) 
-            .def("Cache", &TwoElectronIntegral_Py::Cache, pybind11::return_value_policy::reference_internal)
-            .def("MManager", &TwoElectronIntegral_Py::MManager, pybind11::return_value_policy::reference_internal)
-            .def("SetBases", &TwoElectronIntegral::SetBases)
-            .def("NComponents", &TwoElectronIntegral::NComponents)
-            .def("Calculate", &TwoElectronIntegral::CalculatePy)
-            .def("CalculateMulti", &TwoElectronIntegral::CalculateMultiPy)
-            ;
+    pybind11::class_<TwoElectronIntegral, std::unique_ptr<TwoElectronIntegral>, TwoElectronIntegral_Py> twoel(m, "TwoElectronIntegral", mbase);
+    twoel.def(pybind11::init<ID_t>())
+         .def_readonly("out", &TwoElectronIntegral_Py::out, pybind11::return_value_policy::reference_internal) 
+         .def("Cache", &TwoElectronIntegral_Py::Cache, pybind11::return_value_policy::reference_internal)
+         .def("MManager", &TwoElectronIntegral_Py::MManager, pybind11::return_value_policy::reference_internal)
+         .def("SetBases", &TwoElectronIntegral::SetBases)
+         .def("NComponents", &TwoElectronIntegral::NComponents)
+         .def("Calculate", &TwoElectronIntegral::CalculatePy)
+         .def("CalculateMulti", &TwoElectronIntegral::CalculateMultiPy)
+         ;
 
     ///////////////////////
     // SCF Iterator
     ///////////////////////
-    pybind11::class_<SCFIterator_Py> scfiter(m, "SCFIterator", mbase);
-    scfiter.alias<SCFIterator>()
-            .def(pybind11::init<ID_t>())
-            .def_readonly("out", &SCFIterator_Py::out, pybind11::return_value_policy::reference_internal) 
-            .def("Cache", &SCFIterator_Py::Cache, pybind11::return_value_policy::reference_internal)
-            .def("MManager", &SCFIterator_Py::MManager, pybind11::return_value_policy::reference_internal)
-            .def("Next", &SCFIterator::Next)
+    pybind11::class_<SCFIterator, std::unique_ptr<SCFIterator>, SCFIterator_Py> scfiter(m, "SCFIterator", mbase);
+    scfiter.def(pybind11::init<ID_t>())
+           .def_readonly("out", &SCFIterator_Py::out, pybind11::return_value_policy::reference_internal) 
+           .def("Cache", &SCFIterator_Py::Cache, pybind11::return_value_policy::reference_internal)
+           .def("MManager", &SCFIterator_Py::MManager, pybind11::return_value_policy::reference_internal)
+           .def("Next", &SCFIterator::Next)
             ;
 
     ///////////////////////
     // Fock Builder
     ///////////////////////
-    pybind11::class_<FockBuilder_Py> fockbuild(m, "FockBuilder", mbase);
-    fockbuild.alias<FockBuilder>()
-             .def(pybind11::init<ID_t>())
+    pybind11::class_<FockBuilder, std::unique_ptr<FockBuilder>, FockBuilder_Py> fockbuild(m, "FockBuilder", mbase);
+    fockbuild.def(pybind11::init<ID_t>())
              .def_readonly("out", &FockBuilder_Py::out, pybind11::return_value_policy::reference_internal) 
              .def("Cache", &FockBuilder_Py::Cache, pybind11::return_value_policy::reference_internal)
              .def("MManager", &FockBuilder_Py::MManager, pybind11::return_value_policy::reference_internal)
@@ -152,9 +143,8 @@ PYBIND11_PLUGIN(modulebase)
     ///////////////////////
     // Property Calculator
     ///////////////////////
-    pybind11::class_<PropertyCalculator_Py> propcalc(m, "PropertyCalculator", mbase);
-    propcalc.alias<PropertyCalculator>()
-            .def(pybind11::init<ID_t>())
+    pybind11::class_<PropertyCalculator, std::unique_ptr<PropertyCalculator>, PropertyCalculator_Py> propcalc(m, "PropertyCalculator", mbase);
+    propcalc.def(pybind11::init<ID_t>())
             .def_readonly("out", &PropertyCalculator_Py::out, pybind11::return_value_policy::reference_internal) 
             .def("Cache", &PropertyCalculator_Py::Cache, pybind11::return_value_policy::reference_internal)
             .def("MManager", &PropertyCalculator_Py::MManager, pybind11::return_value_policy::reference_internal)
@@ -164,17 +154,16 @@ PYBIND11_PLUGIN(modulebase)
     ///////////////////////
     // Method base class
     ///////////////////////
-    pybind11::class_<EnergyMethod_Py> energymethod(m, "EnergyMethod", mbase);
-    energymethod.alias<EnergyMethod>()
-            .def(pybind11::init<ID_t>())
-            .def_readonly("out", &EnergyMethod_Py::out, pybind11::return_value_policy::reference_internal) 
-            .def("Cache", &EnergyMethod_Py::Cache, pybind11::return_value_policy::reference_internal)
-            .def("MManager", &EnergyMethod_Py::MManager, pybind11::return_value_policy::reference_internal)
-            .def("Deriv", &EnergyMethod::Deriv)
-            .def("Energy",&EnergyMethod::Energy)
-            .def("Gradient",&EnergyMethod::Gradient)
-            .def("Hessian",&EnergyMethod::Hessian)
-            ;
+    pybind11::class_<EnergyMethod, std::unique_ptr<EnergyMethod>, EnergyMethod_Py> energymethod(m, "EnergyMethod", mbase);
+    energymethod.def(pybind11::init<ID_t>())
+                .def_readonly("out", &EnergyMethod_Py::out, pybind11::return_value_policy::reference_internal) 
+                .def("Cache", &EnergyMethod_Py::Cache, pybind11::return_value_policy::reference_internal)
+                .def("MManager", &EnergyMethod_Py::MManager, pybind11::return_value_policy::reference_internal)
+                .def("Deriv", &EnergyMethod::Deriv)
+                .def("Energy",&EnergyMethod::Energy)
+                .def("Gradient",&EnergyMethod::Gradient)
+                .def("Hessian",&EnergyMethod::Hessian)
+                ;
     return m.ptr();
 }
 } // close namespace export_python

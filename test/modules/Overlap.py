@@ -49,11 +49,14 @@ def Run(mm):
         s = System(u, True)
 
         s = ApplySingleBasis("Primary","sto-3g",s)
+        wfn = Wavefunction()
+        wfn.system = s
+        bs = s.GetBasisSet("Primary")
 
          
         nr = mm.GetModule("AO_OVERLAP", 0)
         nr.EnableDebug(True)
-        nr.SetBases(s, "Primary", "Primary")
+        nr.SetBases(wfn, bs, bs)
 
         tester = Tester("Testing Overlap integrals")
         tester.PrintHeader()
