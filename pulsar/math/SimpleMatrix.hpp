@@ -15,9 +15,9 @@
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/util/Serialization.hpp"
-#include "pulsar/util/bphash/Hasher.hpp"
-#include "pulsar/util/bphash/types/memory.hpp"
-#include "pulsar/util/bphash/types/complex.hpp"
+#include "bphash/Hasher.hpp"
+#include "bphash/types/memory.hpp"
+#include "bphash/types/complex.hpp"
 
 
 namespace pulsar{
@@ -237,9 +237,9 @@ class SimpleMatrix
             data_ = std::move(data);
         }
 
-        util::Hash MyHash(void) const
+        bphash::HashValue MyHash(void) const
         {
-            return util::MakeHash(*this);
+            return bphash::MakeHash(bphash::HashType::Hash128, *this);
         } 
     
 
@@ -264,7 +264,7 @@ class SimpleMatrix
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        friend class bphash::Hasher;
 
         template<class Archive>
         void save(Archive & ar) const
@@ -285,10 +285,10 @@ class SimpleMatrix
                 ar(data_[i]);
         }
 
-        void hash(util::Hasher & h) const
+        void hash(bphash::Hasher & h) const
         {
             h(nrows_, ncols_, size_,
-              util::HashPointer(data_, size_));
+              bphash::HashPointer(data_, size_));
         }
 
         ///@}

@@ -13,7 +13,7 @@
 #include <pybind11/pybind11.h>
 #include "pulsar/util/Serialization_fwd.hpp"
 
-#include "pulsar/util/bphash/types/string.hpp" // Includes Hasher
+#include "bphash/types/string.hpp" // Includes Hasher
 
 namespace pulsar{
 namespace datastore {
@@ -264,7 +264,7 @@ class OptionBase
 
         /*! \brief Add the key and value of this option to a hash
          */
-        void HashValue(util::Hasher & h) const
+        void HashValue(bphash::Hasher & h) const
         {
             hash_value(h);
         }
@@ -288,15 +288,15 @@ class OptionBase
         //! \name Hashing and Serialization
         ///@{
 
-        DECLARE_HASHING_FRIENDS
+        friend class bphash::Hasher;
 
-        virtual void hash(util::Hasher & h) const
+        virtual void hash(bphash::Hasher & h) const
         {
             h(key_, required_, help_);
         }
 
         /*! \brief Hash the contents of this option */
-        virtual void hash_value(util::Hasher & h) const = 0;
+        virtual void hash_value(bphash::Hasher & h) const = 0;
 
         ///@}
 

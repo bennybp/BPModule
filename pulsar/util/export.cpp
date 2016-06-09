@@ -9,7 +9,6 @@
 #include <pybind11/operators.h>
 #include "pulsar/util/Cmdline.hpp"
 #include "pulsar/util/Memwatch.hpp"
-#include "pulsar/util/bphash/Hash.hpp"
 
 
 namespace pulsar{
@@ -24,20 +23,6 @@ PYBIND11_PLUGIN(util)
     // command line
     m.def("SetCmdline", SetCmdline);
     m.def("ClearCmdline", ClearCmdline);
-
-    //////////////////////////
-    // Hashing
-    //////////////////////////
-    pybind11::class_<Hash>(m, "Hash")
-    .def("String", &Hash::String)
-    .def("__str__", &Hash::String)
-    .def(pybind11::self == pybind11::self)
-    .def(pybind11::self != pybind11::self)
-    .def(pybind11::self < pybind11::self)
-    .def(pybind11::self <= pybind11::self)
-    .def(pybind11::self > pybind11::self)
-    .def(pybind11::self >= pybind11::self)
-    ;
 
     //////////////////////////
     // Memwatch

@@ -12,7 +12,7 @@
 #include "pulsar/system/ShellType.hpp"
 #include "pulsar/system/NFunction.hpp"
 #include "pulsar/util/Serialization.hpp"
-#include "pulsar/util/bphash/Hasher.hpp"
+#include "bphash/Hasher.hpp"
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 
@@ -396,9 +396,9 @@ class BasisShellBase
         ///@}
 
 
-        util::Hash MyHash(void) const
+        bphash::HashValue MyHash(void) const
         {
-            return util::MakeHash(*this);
+            return bphash::MakeHash(bphash::HashType::Hash128, *this);
         } 
 
 
@@ -531,7 +531,7 @@ class BasisShellBase
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        friend class bphash::Hasher;
 
         template<class Archive>
         void serialize(Archive & ar)
@@ -541,11 +541,11 @@ class BasisShellBase
             ar(type_, am_, nprim_, ngen_, nfunc_);
         }
 
-        void hash(util::Hasher & h) const
+        void hash(bphash::Hasher & h) const
         {
             h(type_, am_, nprim_, ngen_, nfunc_,
-                   util::HashPointer(alphas_, NPrim()),
-                   util::HashPointer(coefs_, NCoef()));
+                   bphash::HashPointer(alphas_, NPrim()),
+                   bphash::HashPointer(coefs_, NCoef()));
         }
 
 

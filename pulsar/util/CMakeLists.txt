@@ -7,8 +7,6 @@ set(PULSAR_UTIL_FILES
             Filesystem.cpp
             export.cpp
 
-            bphash/DataHasher.cpp
-
             vprintfcpp/Format.cpp
             vprintfcpp/Printf_wrap.cpp
    )
@@ -17,7 +15,7 @@ set(PULSAR_UTIL_FILES
 ADD_COREMODULE(util 
            "${PULSAR_UTIL_FILES}"
            ""
-           "${MEMWATCH_LIBRARIES}"
+           "${MEMWATCH_LIBRARIES};bphash"
            "${MEMWATCH_INCLUDE_DIR}")
 
 set_target_properties(util PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/external/memwatch/lib")

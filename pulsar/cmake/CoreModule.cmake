@@ -118,6 +118,9 @@ macro(ADD_COREMODULE MODULE_NAME
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${MPI_CXX_LINK_FLAGS})
       list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS ${MPI_CXX_LIBRARIES})
 
+      # External interface libraries
+      list(APPEND ${MODULE_NAME}_CXX_LINK_FLAGS bphash)
+
 
 
       target_link_libraries(${MODULE_NAME} ${${MODULE_NAME}_CXX_LINK_FLAGS})

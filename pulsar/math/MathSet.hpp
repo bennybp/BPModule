@@ -103,7 +103,7 @@ private:
     ///@{
 
     DECLARE_SERIALIZATION_FRIENDS
-    DECLARE_HASHING_FRIENDS
+    friend class bphash::Hasher;
 
     /* We have to split load/save since the
      * the shared_ptr points to const data, and
@@ -123,7 +123,7 @@ private:
         Universe_=std::move(Newuniverse);
     }
 
-    void hash(util::Hasher & h) const
+    void hash(bphash::Hasher & h) const
     {
         h(static_cast<const Base_t &>(*this), Universe_);
     }
@@ -530,9 +530,9 @@ public:
      * be the same even if the two MathSets have different
      * Universes.
      */
-    util::Hash MyHash(void) const
+    bphash::HashValue MyHash(void) const
     {
-        return util::MakeHash(*this);
+        return bphash::MakeHash(bphash::HashType::Hash128, *this);
     }
 
 };

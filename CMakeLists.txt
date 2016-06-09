@@ -85,10 +85,11 @@ ExternalProject_Add(pulsar_core
                     INSTALL_COMMAND $(MAKE) install DESTDIR=${CMAKE_BINARY_DIR}/stage
 )
 add_dependencies(pulsar_core memwatch_external
-                               pybind11_external
-                               cereal_external
-                               libtaskforce_external
-                               libtensor_external 
+                             bphash_external
+                             pybind11_external
+                             cereal_external
+                             libtaskforce_external
+                             libtensor_external 
                )
 
 

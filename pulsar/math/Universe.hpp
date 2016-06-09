@@ -18,10 +18,10 @@
 
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/util/Serialization.hpp"
-#include "pulsar/util/bphash/Hasher.hpp"
-#include "pulsar/util/bphash/types/set.hpp"
-#include "pulsar/util/bphash/types/memory.hpp"
-#include "pulsar/util/bphash/types/vector.hpp"
+#include "bphash/Hasher.hpp"
+#include "bphash/types/set.hpp"
+#include "bphash/types/memory.hpp"
+#include "bphash/types/vector.hpp"
 
 
 
@@ -175,7 +175,7 @@ private:
     ///@{
     
     DECLARE_SERIALIZATION_FRIENDS
-    DECLARE_HASHING_FRIENDS
+    friend class bphash::Hasher;
 
     /* We have to split load/save since MathSet uses
      * load/save, and these are inherited. If not,
@@ -194,7 +194,7 @@ private:
         ar(Storage_, Elems_);
     }
 
-    void hash(util::Hasher & h) const
+    void hash(bphash::Hasher & h) const
     {
         h(Storage_, Elems_);
     }
@@ -650,9 +650,9 @@ public:
      * same values and same elements), and not necessarily
      * point to the same data.
      */
-    util::Hash MyHash(void) const
+    bphash::HashValue MyHash(void) const
     {
-        return util::MakeHash(*this);
+        return bphash::MakeHash(bphash::HashType::Hash128, *this);
     }
 };
 

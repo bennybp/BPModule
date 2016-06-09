@@ -12,7 +12,7 @@
 #include "pulsar/math/IrrepSpinMatrix.hpp"
 #include "pulsar/system/System.hpp"
 #include "pulsar/util/Serialization.hpp"
-#include "pulsar/util/bphash/Hasher_fwd.hpp"
+#include "bphash/Hasher.hpp"
 
 namespace pulsar {
 namespace datastore {
@@ -70,7 +70,7 @@ class Wavefunction
 
         bool operator!=(const Wavefunction & rhs) const;
 
-        util::Hash MyHash(void) const;
+        bphash::HashValue MyHash(void) const;
 
     private:
 
@@ -78,7 +78,7 @@ class Wavefunction
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        friend class bphash::Hasher;
 
         /* We have to split load/save since the
          * the shared_ptr points to const data, and
@@ -106,7 +106,7 @@ class Wavefunction
             occupations = newocc;
         }
 
-        void hash(util::Hasher & h) const;
+        void hash(bphash::Hasher & h) const;
 
         ///@}
 };

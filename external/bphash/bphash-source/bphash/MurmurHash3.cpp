@@ -1,12 +1,11 @@
 /*! \file
  *
- * \brief A class for hashing data (source)
+ * \brief MurmurHash3 hash implementation (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
 
-#include "pulsar/util/bphash/DataHasher.hpp"
-#include "pulsar/util/bphash/Hash.hpp"
+#include "bphash/MurmurHash3.hpp"
 
 
 
@@ -25,8 +24,6 @@
 // This is not a cryptographic hash, so if you are using it as
 // one, you are very, very wrong.
 /////////////////////////////////////////////////////////////////
-
-
 
 
 //////////////////////////////////////////
@@ -48,23 +45,25 @@ static inline uint64_t fmix64 ( uint64_t k )
 
   return k;
 }
-//////////////////////////////////////////
-// End small functions for the hash algo
-//////////////////////////////////////////
 
 
 
-namespace pulsar{
-namespace util {
+namespace bphash {
+namespace detail {
 
 
-DataHasher::DataHasher(void)
+
+////////////////////////////////
+// Public functions
+////////////////////////////////
+
+MurmurHash3::MurmurHash3(void)
 {
-    Reset();
+    reset();
 }
 
 
-void DataHasher::Reset(void)
+void MurmurHash3::reset(void)
 {
     h1 = h2 = 0;
     len_ = 0;
@@ -73,30 +72,7 @@ void DataHasher::Reset(void)
 }
 
 
-void DataHasher::UpdateBlock_(void)
-{
-    // This function only does an entire 16-byte buffer
-    // (that is stored as private member buffer_)
-    const uint64_t * block64 = (const uint64_t *)(buffer_.data());  // 2 * uint64_t
-
-    uint64_t k1 = block64[0];
-    uint64_t k2 = block64[1];
-
-    k1 *= c1; k1  = rotl64(k1,31); k1 *= c2; h1 ^= k1;
-
-    h1 = rotl64(h1,27); h1 += h2; h1 = h1*5+0x52dce729;
-
-    k2 *= c2; k2  = rotl64(k2,33); k2 *= c1; h2 ^= k2;
-
-    h2 = rotl64(h2,31); h2 += h1; h2 = h2*5+0x38495ab5;
-
-    // Update how much we've actually hashed
-    len_ += 16;
-}
-
-
-
-void DataHasher::Update(void const * buffer, size_t size)
+void MurmurHash3::update(void const * buffer, size_t size)
 {
     if(size == 0)
         return; // got nothing to do
@@ -130,10 +106,10 @@ void DataHasher::Update(void const * buffer, size_t size)
     std::copy(data, data + dataidx, buffer_.begin() + nbuffer_);
 
 
-    do 
+    do
     {
         // Hash what is currently in the buffer
-        UpdateBlock_();
+        update_block_();
 
         // How much do we have left to do?
         // Note: We know from above that, on first iteration, ntodo >= 16, so this
@@ -145,26 +121,26 @@ void DataHasher::Update(void const * buffer, size_t size)
         size_t tocopy = 16;
 
         // Is here some left in data that won't fill the buffer?
-        if((dataidx + 16) >= size)    
+        if((dataidx + 16) >= size)
             tocopy = size - dataidx;
 
         // Actually copy the data to the internal buffer
         std::copy(data + dataidx, data + dataidx + tocopy, buffer_.begin());
 
-        // Update where we are in the input data
+        // update where we are in the input data
         // (it's ok if this goes past the end, because this loop should be terminating then)
         dataidx += tocopy;
 
         // How much is in the buffer
         nbuffer_ = ntodo;
-        
+
     } while(ntodo >= 16);
 
-    // Any remainder/tail will be left in the buffer for next time        
+    // Any remainder/tail will be left in the buffer for next time
 }
 
 
-Hash DataHasher::Finalize(void)
+HashValue MurmurHash3::finalize(void)
 {
     // If we have any left over, we have to do that
     if(nbuffer_ > 0)
@@ -213,11 +189,50 @@ Hash DataHasher::Finalize(void)
     h2 += h1;
 
     // Create the hash object and return
-    return Hash(h1, h2);
+    return HashValue{ static_cast<uint8_t>(h1),
+                      static_cast<uint8_t>(h1 >> 8),
+                      static_cast<uint8_t>(h1 >> 16),
+                      static_cast<uint8_t>(h1 >> 24),
+                      static_cast<uint8_t>(h1 >> 32),
+                      static_cast<uint8_t>(h1 >> 40),
+                      static_cast<uint8_t>(h1 >> 48),
+                      static_cast<uint8_t>(h1 >> 56),
+                      static_cast<uint8_t>(h2),
+                      static_cast<uint8_t>(h2 >> 8),
+                      static_cast<uint8_t>(h2 >> 16),
+                      static_cast<uint8_t>(h2 >> 24),
+                      static_cast<uint8_t>(h2 >> 32),
+                      static_cast<uint8_t>(h2 >> 40),
+                      static_cast<uint8_t>(h2 >> 48),
+                      static_cast<uint8_t>(h2 >> 56) };
 }
 
 
+////////////////////////////////
+// Private member functions
+////////////////////////////////
+void MurmurHash3::update_block_(void)
+{
+    // This function only does an entire 16-byte buffer
+    // (that is stored as private member buffer_)
+    const uint64_t * block64 = (const uint64_t *)(buffer_.data());
 
-} // close namespace util
-} // close namespace pulsar
+    uint64_t k1 = block64[0];
+    uint64_t k2 = block64[1];
+
+    k1 *= c1; k1  = rotl64(k1,31); k1 *= c2; h1 ^= k1;
+
+    h1 = rotl64(h1,27); h1 += h2; h1 = h1*5+0x52dce729;
+
+    k2 *= c2; k2  = rotl64(k2,33); k2 *= c1; h2 ^= k2;
+
+    h2 = rotl64(h2,31); h2 += h1; h2 = h2*5+0x38495ab5;
+
+    // update how much we've actually hashed
+    len_ += 16;
+}
+
+
+} // close namespace detail
+} // close namespace bphash
 

@@ -12,7 +12,7 @@
 #include "pulsar/math/IrrepSpinMatrix.hpp"
 
 // Needed for the string mathset test
-#include "pulsar/util/bphash/types/string.hpp"
+#include "bphash/types/string.hpp"
 
 namespace pulsar{
 namespace math {

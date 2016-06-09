@@ -10,10 +10,10 @@
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/output/Output.hpp"
 
-#include "pulsar/util/bphash/types/string.hpp"
-#include "pulsar/util/bphash/types/vector.hpp"
-#include "pulsar/util/bphash/types/set.hpp"
-#include "pulsar/util/bphash/types/map.hpp"
+#include "bphash/types/string.hpp"
+#include "bphash/types/vector.hpp"
+#include "bphash/types/set.hpp"
+#include "bphash/types/map.hpp"
 
 using namespace pulsar::python;
 using namespace pulsar::exception;

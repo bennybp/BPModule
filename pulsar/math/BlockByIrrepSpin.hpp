@@ -12,7 +12,7 @@
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/math/Irrep.hpp"
 
-#include "pulsar/util/bphash/types/map.hpp"
+#include "bphash/types/map.hpp"
 
 
 namespace pulsar{
@@ -217,9 +217,9 @@ class BlockByIrrepSpin
          * See the hashing functions of the stored type
          * for details.
          */
-        util::Hash MyHash(void) const
+        bphash::HashValue MyHash(void) const
         {
-            return util::MakeHash(*this);
+            return bphash::MakeHash(bphash::HashType::Hash128, *this);
         }
 
     private:
@@ -229,7 +229,7 @@ class BlockByIrrepSpin
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        friend class bphash::Hasher;
 
         template<class Archive>
         void serialize(Archive & ar)
@@ -237,7 +237,7 @@ class BlockByIrrepSpin
             ar(data_);
         }
 
-        void hash(util::Hasher & h) const
+        void hash(bphash::Hasher & h) const
         {
             h(data_);
         }

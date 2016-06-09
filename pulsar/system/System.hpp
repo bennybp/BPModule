@@ -13,7 +13,7 @@
 #include "pulsar/system/Space.hpp"
 #include "pulsar/math/MathSet.hpp"
 #include "pulsar/math/PointManipulation.hpp"
-#include "pulsar/util/bphash/Hasher_fwd.hpp"
+#include "bphash/Hasher.hpp"
 #include "pulsar/util/Hash.hpp"
 
 
@@ -86,7 +86,7 @@ private:
     ///@{
 
     DECLARE_SERIALIZATION_FRIENDS
-    DECLARE_HASHING_FRIENDS
+    friend class bphash::Hasher;
 
     template<class Archive>
     void serialize(Archive & ar)
@@ -94,7 +94,7 @@ private:
         ar(atoms_, charge_, multiplicity_, nelectrons_);
     }
 
-    void hash(util::Hasher & h) const;
+    void hash(bphash::Hasher & h) const;
 
     ///@}
 
@@ -199,7 +199,7 @@ public:
 
 
     /*! \brief Obtain a hash of this system */
-    util::Hash MyHash(void) const;
+    bphash::HashValue MyHash(void) const;
 
     ///@}
 

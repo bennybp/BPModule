@@ -8,6 +8,7 @@
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 add_subdirectory(memwatch)
+add_subdirectory(bphash)
 add_subdirectory(pybind11)
 add_subdirectory(cereal)
 add_subdirectory(libtaskforce)

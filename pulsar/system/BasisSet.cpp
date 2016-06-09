@@ -11,8 +11,8 @@
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/exception/Assert.hpp"
 
-#include "pulsar/util/bphash/types/memory.hpp"
-#include "pulsar/util/bphash/types/vector.hpp"
+#include "bphash/types/memory.hpp"
+#include "bphash/types/vector.hpp"
 
 using pulsar::exception::Assert;
 using pulsar::exception::BasisSetException;
@@ -118,12 +118,12 @@ bool BasisSet::operator!=(const BasisSet & rhs) const
 }
 
 
-util::Hash BasisSet::MyHash(void) const
+bphash::HashValue BasisSet::MyHash(void) const
 {
-    return util::MakeHash(*this);
+    return bphash::MakeHash(bphash::HashType::Hash128, *this);
 }
 
-void BasisSet::hash(util::Hasher & h) const
+void BasisSet::hash(bphash::Hasher & h) const
 {
     h(shells_, unique_shells_, storage_);
 }

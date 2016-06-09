@@ -9,10 +9,10 @@
 #include "pulsar/math/Cast.hpp"
 #include "pulsar/output/Output.hpp"
 
-#include "pulsar/util/bphash/types/string.hpp"
-#include "pulsar/util/bphash/types/set.hpp"
-#include "pulsar/util/bphash/types/map.hpp"
-#include "pulsar/util/bphash/types/vector.hpp"
+#include "bphash/types/string.hpp"
+#include "bphash/types/set.hpp"
+#include "bphash/types/map.hpp"
+#include "bphash/types/vector.hpp"
 
 using namespace pulsar::output;
 
@@ -97,12 +97,12 @@ bool Atom::BasisInfo_::operator==(const BasisInfo_ & rhs) const
            );
 }
 
-util::Hash Atom::MyHash(void) const
+bphash::HashValue Atom::MyHash(void) const
 {
-    return util::MakeHash(*this);
+    return bphash::MakeHash(bphash::HashType::Hash128, *this);
 } 
 
-void Atom::hash(util::Hasher & h) const
+void Atom::hash(bphash::Hasher & h) const
 {
     h(static_cast<const math::Point &>(*this),
            Z_, isonum_,
@@ -112,7 +112,7 @@ void Atom::hash(util::Hasher & h) const
            vdwradius_, bshells_);
 }
 
-void Atom::BasisInfo_::hash(util::Hasher & h) const
+void Atom::BasisInfo_::hash(bphash::Hasher & h) const
 {
     h(description, shells);
 }

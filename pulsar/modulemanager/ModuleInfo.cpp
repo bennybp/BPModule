@@ -8,8 +8,8 @@
 #include "pulsar/modulemanager/ModuleInfo.hpp"
 #include "pulsar/output/Output.hpp"
 
-#include "pulsar/util/bphash/types/string.hpp"
-#include "pulsar/util/bphash/types/vector.hpp"
+#include "bphash/types/string.hpp"
+#include "bphash/types/vector.hpp"
 
 
 namespace pulsar{
@@ -42,13 +42,13 @@ void ModuleInfo::Print(std::ostream & os) const
 }
 
 
-util::Hash ModuleInfo::MyHash(void) const
+bphash::HashValue ModuleInfo::MyHash(void) const
 {
-    return util::MakeHash(*this);
+    return bphash::MakeHash(bphash::HashType::Hash128, *this);
 }
 
 
-void ModuleInfo::hash(util::Hasher & h) const
+void ModuleInfo::hash(bphash::Hasher & h) const
 {
     h(name, type, base, path, version, description,
       authors, refs, options); 

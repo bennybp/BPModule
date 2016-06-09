@@ -297,12 +297,12 @@ std::string System::ToString()const
 }
 
 
-util::Hash System::MyHash(void) const
+bphash::HashValue System::MyHash(void) const
 {
-    return util::MakeHash(*this);
+    return bphash::MakeHash(bphash::HashType::Hash128, *this);
 }
 
-void System::hash(util::Hasher & h) const
+void System::hash(bphash::Hasher & h) const
 {
     h(atoms_, charge_, multiplicity_, nelectrons_);
 }

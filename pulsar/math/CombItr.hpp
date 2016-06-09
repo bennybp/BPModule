@@ -194,7 +194,7 @@ void CombItr<T>::Next() {
     }
     ResetComb();
     for(const TItr_t Idx: Indices_)
-        Comb_.insert(Comb_.end(),*Idx);
+        Comb_.insert(Comb_.end(), *Idx);
 }
 
 template<typename T>

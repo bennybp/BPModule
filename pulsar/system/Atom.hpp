@@ -13,8 +13,8 @@
 #include "pulsar/system/CoordType.hpp"
 #include "pulsar/system/BasisShellInfo.hpp"
 #include "pulsar/util/StringUtil.hpp"
-#include "pulsar/util/bphash/Hasher_fwd.hpp"
-#include "pulsar/util/bphash/Hash.hpp"
+#include "bphash/Hasher.hpp"
+#include "bphash/Hash.hpp"
 
 
 
@@ -79,7 +79,7 @@ class Atom : public math::Point
                 ar(description, shells);
             }
 
-            void hash(util::Hasher & h) const;
+            void hash(bphash::Hasher & h) const;
 
             ///@}
         };
@@ -93,7 +93,7 @@ class Atom : public math::Point
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        friend class bphash::Hasher;
 
 
         template<class Archive>
@@ -107,7 +107,7 @@ class Atom : public math::Point
                                                 vdwradius_, bshells_);
         }
 
-        void hash(util::Hasher & h) const;
+        void hash(bphash::Hasher & h) const;
 
         ///@}
 
@@ -281,7 +281,7 @@ class Atom : public math::Point
 
         ///@}
 
-        util::Hash MyHash(void) const;
+        bphash::HashValue MyHash(void) const;
 
 };
 
@@ -380,7 +380,7 @@ namespace std{
     template<> struct hash<pulsar::system::Atom>
     {
         size_t operator()(const pulsar::system::Atom& atom)const{
-            return atom.MyHash().Truncate();
+            return bphash::convert_hash<size_t>(atom.MyHash());
         }
     };
 }

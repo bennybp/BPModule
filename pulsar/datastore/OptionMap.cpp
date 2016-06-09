@@ -10,9 +10,9 @@
 #include "pulsar/datastore/OptionMap.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 #include "pulsar/exception/Exceptions.hpp"
-#include "pulsar/util/bphash/types/string.hpp"
-#include "pulsar/util/bphash/types/memory.hpp"
-#include "pulsar/util/bphash/types/map.hpp"
+#include "bphash/types/string.hpp"
+#include "bphash/types/memory.hpp"
+#include "bphash/types/map.hpp"
 
 
 using namespace pulsar::python;
@@ -245,14 +245,14 @@ void OptionMap::AddOption(std::string key, OptionType opttype, bool required,
     opmap_.emplace(std::move(key), std::move(oph));
 }
 
-util::Hash OptionMap::MyHash(void) const
+bphash::HashValue OptionMap::MyHash(void) const
 {
-    return util::MakeHash(*this);
+    return bphash::MakeHash(bphash::HashType::Hash128, *this);
 }
 
-util::Hash OptionMap::HashValues(const std::set<std::string> & keys) const
+bphash::HashValue OptionMap::HashValues(const std::set<std::string> & keys) const
 {
-    util::Hasher h;
+    bphash::Hasher h(bphash::HashType::Hash128);
 
     for(const auto & it : keys)
     {
@@ -260,21 +260,21 @@ util::Hash OptionMap::HashValues(const std::set<std::string> & keys) const
         op->HashValue(h);
     }
 
-    return h.Finalize();
+    return h.finalize();
 }
 
-util::Hash OptionMap::HashAllValues(void) const
+bphash::HashValue OptionMap::HashAllValues(void) const
 {
-    util::Hasher h;
+    bphash::Hasher h(bphash::HashType::Hash128);
 
     for(const auto & it : opmap_)
         it.second->HashValue(h);
 
-    return h.Finalize();
+    return h.finalize();
 }
 
 
-void OptionMap::hash(util::Hasher & h) const
+void OptionMap::hash(bphash::Hasher & h) const
 {
     h(expert_, opmap_);
 }

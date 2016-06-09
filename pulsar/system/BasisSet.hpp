@@ -12,8 +12,6 @@
 #include "pulsar/system/BasisSetShell.hpp"
 #include "pulsar/system/BasisShellInfo.hpp"
 
-#include "pulsar/util/bphash/Hasher_fwd.hpp"
-
 
 namespace pulsar{
 namespace system {
@@ -217,7 +215,7 @@ class BasisSet
         const_iterator end(void) const;
 
         /*! \brief Obtain a hash of this BasisSet */
-        util::Hash MyHash(void) const;
+        bphash::HashValue MyHash(void) const;
 
 
         /*! \brief For serialization only
@@ -270,7 +268,7 @@ class BasisSet
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        friend class bphash::Hasher;
 
         template<class Archive>
         void save(Archive & ar) const
@@ -325,7 +323,7 @@ class BasisSet
         }
 
 
-        void hash(util::Hasher & h) const;
+        void hash(bphash::Hasher & h) const;
 
 
         ///@}

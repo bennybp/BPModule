@@ -15,9 +15,9 @@ struct GridPointT
 
 
     /// Return a unique has of the point
-    util::Hash MyHash(void) const
+    bphash::HashValue MyHash(void) const
     {
-        return util::MakeHash(*this);
+        return bphash::MakeHash(bphash::HashType::Hash128, *this);
     }
 
     bool operator==(const GridPointT & rhs) const
@@ -46,7 +46,7 @@ struct GridPointT
         ///@{
         
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        friend class bphash::Hasher;
         
         template<class Archive>
         void serialize(Archive & ar)
@@ -54,7 +54,7 @@ struct GridPointT
             ar(coords, value);
         }
 
-        void hash(util::Hasher & h) const
+        void hash(bphash::Hasher & h) const
         {
             h(coords, value);
         }

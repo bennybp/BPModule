@@ -12,8 +12,8 @@
 
 #include "pulsar/pragma.h"
 #include "pulsar/util/Serialization.hpp"
-#include "pulsar/util/bphash/Hasher.hpp"
-#include "pulsar/util/bphash/types/array.hpp"
+#include "bphash/Hasher.hpp"
+#include "bphash/types/array.hpp"
 
 
 namespace pulsar{
@@ -188,9 +188,9 @@ class PointT
         }
 
         /// Return a unique has of the point
-        util::Hash MyHash(void) const
+        bphash::HashValue MyHash(void) const
         {
-            return util::MakeHash(*this);
+            return bphash::MakeHash(bphash::HashType::Hash128, *this);
         }
 
     private:
@@ -201,7 +201,7 @@ class PointT
         ///@{
         
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        friend class bphash::Hasher;
         
         template<class Archive>
         void serialize(Archive & ar)
@@ -209,7 +209,7 @@ class PointT
             ar(coords_);
         }
 
-        void hash(util::Hasher & h) const
+        void hash(bphash::Hasher & h) const
         {
             h(coords_);
         }

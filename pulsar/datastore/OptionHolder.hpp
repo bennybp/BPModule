@@ -17,7 +17,7 @@
 #include "pulsar/python/Call.hpp"
 #include "pulsar/output/Output.hpp"
 
-#include "pulsar/util/bphash/types/memory.hpp"
+#include "bphash/types/memory.hpp"
 
 namespace pulsar{
 namespace datastore {
@@ -441,16 +441,16 @@ class OptionHolder : public OptionBase
         //! \name Hashing and Serialization
         ///@{
 
-        DECLARE_HASHING_FRIENDS
+        friend class bphash::Hasher;
 
-        void hash(util::Hasher & h) const
+        void hash(bphash::Hasher & h) const
         {
             OptionBase::hash(h);
             h(value_, default_);
         }
 
 
-        void hash_value(util::Hasher & h) const
+        void hash_value(bphash::Hasher & h) const
         {
             h(static_cast<const OptionBase &>(*this));
 

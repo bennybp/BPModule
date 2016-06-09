@@ -14,7 +14,7 @@
 #include "pulsar/datastore/OptionHolder.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/util/StringUtil.hpp"
-#include "pulsar/util/bphash/Hasher_fwd.hpp"
+#include "bphash/Hasher.hpp"
 
 
 namespace pulsar{
@@ -313,7 +313,7 @@ class OptionMap
          * This includes values and defaults, and the expert flag.
          * It does not include validation functions.
          */
-        util::Hash MyHash(void) const;
+        bphash::HashValue MyHash(void) const;
 
 
         /*! \brief Hash only the values of a set of options
@@ -324,7 +324,7 @@ class OptionMap
          * \throw pulsar::exception::OptionException if
          *        the key does not exist
          */ 
-        util::Hash HashValues(const std::set<std::string> & keys) const;
+        bphash::HashValue HashValues(const std::set<std::string> & keys) const;
 
 
         /*! \brief Hash only the values of all options
@@ -332,7 +332,7 @@ class OptionMap
          * This hashes only the keys and values of options. It does
          * not take into account where that value comes from.
          */ 
-        util::Hash HashAllValues(void) const;
+        bphash::HashValue HashAllValues(void) const;
 
 
         /////////////////////////////
@@ -451,7 +451,7 @@ class OptionMap
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        friend class bphash::Hasher;
 
 
         template<class Archive>
@@ -487,7 +487,7 @@ class OptionMap
         }
 
 
-        void hash(util::Hasher & h) const;
+        void hash(bphash::Hasher & h) const;
 
         ///@}
 };

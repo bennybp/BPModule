@@ -47,14 +47,14 @@ struct ModuleInfo
     bool operator==(const ModuleInfo & rhs) const;
 
 
-    util::Hash MyHash(void) const;    
+    bphash::HashValue MyHash(void) const;    
 
     private:
         //! \name Serialization and Hashing
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        friend class bphash::Hasher;
 
         /* We have to split load/save since the
          * the shared_ptr points to const data, and
@@ -67,7 +67,7 @@ struct ModuleInfo
             ar(version, description, authors, refs, options);
         }
 
-        void hash(util::Hasher & h) const;
+        void hash(bphash::Hasher & h) const;
 
         ///@}
 };

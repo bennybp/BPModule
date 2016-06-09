@@ -8,7 +8,6 @@
 #include <memory>
 
 #include "pulsar/datastore/Wavefunction.hpp"
-#include "pulsar/util/bphash/Hasher.hpp"
 
 namespace pulsar{
 namespace datastore {
@@ -48,15 +47,15 @@ bool Wavefunction::operator!=(const Wavefunction & rhs) const
     return !((*this) == rhs);
 }
 
-void Wavefunction::hash(util::Hasher & h) const
+void Wavefunction::hash(bphash::Hasher & h) const
 {
     h(system, cmat, epsilon, occupations);
 }
 
 
-util::Hash Wavefunction::MyHash(void) const
+bphash::HashValue Wavefunction::MyHash(void) const
 {
-    return util::MakeHash(*this);
+    return bphash::MakeHash(bphash::HashType::Hash128, *this);
 }
 
 
