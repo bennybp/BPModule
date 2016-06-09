@@ -105,6 +105,14 @@ class ModuleBase
          */
         const datastore::OptionMap & Options(void) const;
 
+
+        /*! \brief Get the OptionMap object for this module
+         *
+         * \throw std::logic_error if there is a severe developer error
+         */
+        datastore::OptionMap & Options(void);
+
+
         /*! \brief Print the information for this module
          *
          * \throw std::logic_error if there is a severe developer error
@@ -185,7 +193,6 @@ class ModuleBase
          * \throw std::logic_error if it hasn't been set
          */
         modulemanager::ModuleManager & MManager(void) const;
-
 
 
         /*! \brief Get the cache object for this module
