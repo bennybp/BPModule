@@ -14,17 +14,15 @@ namespace exception {
 namespace export_python {
 
 
-PYBIND11_PLUGIN(exception)
+void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m("exception", "Pulsar exceptions");
+    pybind11::module m = mtop.def_submodule("exception", "Pulsar exceptions");
 
     pybind11::class_<GeneralException>(m, "GeneralException")
     .def(pybind11::init<const std::string &>())
     .def("AppendInfo", static_cast<void(GeneralException::*)(const std::string &, const std::string &)>(&GeneralException::AppendInfo))
     .def("what", &GeneralException::what)
     ;
-
-    return m.ptr();
 }
 
 

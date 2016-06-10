@@ -6,12 +6,6 @@ set(PULSAR_MATH_FILES
             IrrepSpinMatrix.cpp
             export.cpp
             testing_export.cpp
-   )
-  
 
-ADD_COREMODULE(math
-           "${PULSAR_MATH_FILES}"
-           ""
-           "${PULSAR_MATH_LIBS}"
-           "")
-INSTALL_COREMODULE(math)
+            PARENT_SCOPE
+   )

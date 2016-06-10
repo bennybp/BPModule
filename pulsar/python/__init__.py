@@ -1,2 +1,2 @@
 # SO file
-from .python import *
+from ..pulsar_core.python import *

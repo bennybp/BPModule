@@ -29,9 +29,9 @@ namespace export_python {
 void export_testing(pybind11::module & m);
 
 
-PYBIND11_PLUGIN(datastore)
+void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m("datastore", "Data storage classes");
+    pybind11::module m = mtop.def_submodule("datastore", "Data storage classes");
 
 
     //////////////////
@@ -130,8 +130,6 @@ PYBIND11_PLUGIN(datastore)
 
     // Export the testing stuff
     export_testing(m);
-
-    return m.ptr();
 }
 
 

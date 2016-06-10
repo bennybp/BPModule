@@ -1,6 +1,3 @@
-# Main namespace
-from . import modulemanager
-
 def IterateModuleTree(mm):
     iterator = mm.FlatTreeBegin()
 

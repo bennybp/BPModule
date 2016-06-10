@@ -1,14 +1,7 @@
-set(PULSAR_PYTHON_HELPER_FILES
+set(PULSAR_PYTHON_FILES
         Types.cpp
         Errors.cpp
         export.cpp
+
+        PARENT_SCOPE
    )
-
-
-ADD_COREMODULE(python
-           "${PULSAR_PYTHON_HELPER_FILES}"
-           ""
-           ""
-           "")
-
-INSTALL_COREMODULE(python)

@@ -1,4 +1,4 @@
-from .ModuleTreePrinters import *
-
 # SO file
-from .modulemanager import *
+from ..pulsar_core.modulemanager import *
+
+from .ModuleTreePrinters import *

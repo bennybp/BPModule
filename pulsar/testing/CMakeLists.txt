@@ -2,13 +2,6 @@ set(PULSAR_TESTING_FILES
             TestDatastore.cpp
             TestOptions.cpp
             export.cpp
+
+            PARENT_SCOPE
    )
-
-
-ADD_COREMODULE(testing
-           "${PULSAR_TESTING_FILES}"
-           ""
-           ""
-           "")
-
-INSTALL_COREMODULE(testing)

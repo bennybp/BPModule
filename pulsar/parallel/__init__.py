@@ -1,2 +1,2 @@
 # SO file
-from .parallel import *
+from ..pulsar_core.parallel import *

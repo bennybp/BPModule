@@ -3,13 +3,6 @@ set(PULSAR_OUTPUT_FILES
             Output.cpp 
             Table.cpp
             export.cpp
+
+            PARENT_SCOPE
    )
-
-
-ADD_COREMODULE(output 
-           "${PULSAR_OUTPUT_FILES}"
-           ""
-           ""
-           "")
-
-INSTALL_COREMODULE(output)

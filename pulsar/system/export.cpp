@@ -33,9 +33,9 @@ void export_symmetry(pybind11::module & m);
 
 
 
-PYBIND11_PLUGIN(system)
+void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m("system", "Molecular system specification");
+    pybind11::module m = mtop.def_submodule("system", "Molecular system specification");
 
     ///////////////
     // Angular momentum
@@ -336,8 +336,6 @@ PYBIND11_PLUGIN(system)
     // Export the testing stuff
     export_testing(m);
     export_symmetry(m);
-    
-    return m.ptr();
 }
 
 

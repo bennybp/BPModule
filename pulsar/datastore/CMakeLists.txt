@@ -5,14 +5,6 @@ set(PULSAR_DATASTORE_FILES
             Wavefunction.cpp
             export.cpp
             testing_export.cpp
+
+            PARENT_SCOPE
    )
-
-  
-ADD_COREMODULE(datastore
-           "${PULSAR_DATASTORE_FILES}"
-           ""
-           ""
-           "")
-
-INSTALL_COREMODULE(datastore)
-

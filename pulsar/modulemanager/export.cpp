@@ -20,9 +20,9 @@ namespace export_python {
 // in testing_export.cpp
 void export_testing(pybind11::module & m);
 
-PYBIND11_PLUGIN(modulemanager)
+void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m("modulemanager", "Module loading and location");
+    pybind11::module m = mtop.def_submodule("modulemanager", "Module loading and location");
 
     //////////////////////
     // ModuleInfo
@@ -118,8 +118,6 @@ PYBIND11_PLUGIN(modulemanager)
 
     // Export the testing stuff
     export_testing(m);
-
-    return m.ptr();
 }
 
 

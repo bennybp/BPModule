@@ -1,2 +1,2 @@
 # SO file
-from .math import *
+from ..pulsar_core.math import *

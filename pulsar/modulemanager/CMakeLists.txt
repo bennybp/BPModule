@@ -8,14 +8,6 @@ set(PULSAR_MODULEMANAGER_FILES
             ModuleTree_iterators.cpp
             export.cpp
             testing_export.cpp
+
+            PARENT_SCOPE
    )
-
-
-ADD_COREMODULE(modulemanager
-           "${PULSAR_MODULEMANAGER_FILES}"
-           ""
-           ""
-           "")
-
-INSTALL_COREMODULE(modulemanager)
-
