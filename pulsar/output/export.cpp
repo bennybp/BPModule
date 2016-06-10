@@ -19,9 +19,9 @@ namespace export_python {
 // Main boost python part
 ////////////////////////////
 
-PYBIND11_PLUGIN(output)
+void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m("output", "Output functionality");
+    pybind11::module m = mtop.def_submodule("output", "Output functionality");
 
     // Enumeration for output types
     pybind11::enum_<OutputType>(m, "OutputType")
@@ -64,8 +64,6 @@ PYBIND11_PLUGIN(output)
     m.def("GlobalWarning", GlobalWarning<>);
     m.def("GlobalSuccess", GlobalSuccess<>);
     m.def("GlobalDebug",   GlobalDebug<>);
-
-    return m.ptr();
 }
 
 

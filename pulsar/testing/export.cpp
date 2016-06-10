@@ -27,9 +27,9 @@ namespace pulsar{
 namespace testing {
 namespace export_python {
 
-PYBIND11_PLUGIN(testing)
+void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m("testing", "Some helpers for testing");
+    pybind11::module m = mtop.def_submodule("testing", "Some helpers for testing");
 
     // Limits for various types
     m.def("Limits_sshort", Limits<signed short>);
@@ -167,12 +167,6 @@ PYBIND11_PLUGIN(testing)
     m.def("TestOptionMapChange_vector_double",     &TestOptionMap_Change<std::vector<double>>);
     m.def("TestOptionMapChange_vector_longdouble", &TestOptionMap_Change<std::vector<long double>>);
     m.def("TestOptionMapChange_vector_string",     &TestOptionMap_Change<std::vector<std::string>>);
-
-
-
-
-
-    return m.ptr();
 }
 
 

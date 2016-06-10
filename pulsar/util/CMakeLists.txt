@@ -9,15 +9,6 @@ set(PULSAR_UTIL_FILES
 
             vprintfcpp/Format.cpp
             vprintfcpp/Printf_wrap.cpp
+
+            PARENT_SCOPE
    )
-
-
-ADD_COREMODULE(util 
-           "${PULSAR_UTIL_FILES}"
-           ""
-           "${MEMWATCH_LIBRARIES};bphash"
-           "${MEMWATCH_INCLUDE_DIR}")
-
-set_target_properties(util PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/external/memwatch/lib")
-
-INSTALL_COREMODULE(util)

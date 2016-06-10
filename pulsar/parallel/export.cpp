@@ -12,15 +12,13 @@ namespace pulsar{
 namespace parallel {
 namespace export_python {
 
-PYBIND11_PLUGIN(parallel)
+void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m("parallel", "Parallelization stuff");
+    pybind11::module m = mtop.def_submodule("parallel", "Parallelization stuff");
 
     // Parallelization
     m.def("Init", Init);
     m.def("Finalize", Finalize);
-
-    return m.ptr();
 }
 
 

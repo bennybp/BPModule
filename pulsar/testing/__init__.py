@@ -1,5 +1,5 @@
 # SO file
-from .testing import *
+from ..pulsar_core.testing import *
 
 # Tester class
 from .Tester import *

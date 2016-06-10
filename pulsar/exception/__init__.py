@@ -1,5 +1,5 @@
 # SO file
-from .exception import *
+from ..pulsar_core.exception import *
 
 # Python versions
 from .Exceptions import *

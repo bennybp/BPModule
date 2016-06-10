@@ -1,2 +1,2 @@
 # SO file
-from .output import *
+from ..pulsar_core.output import *

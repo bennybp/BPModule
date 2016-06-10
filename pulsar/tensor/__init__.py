@@ -1,2 +1,2 @@
 # SO file
-from .tensor import *
+from ..pulsar_core.tensor import *

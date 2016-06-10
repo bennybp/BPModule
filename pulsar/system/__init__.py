@@ -1,5 +1,5 @@
 # SO file
-from .system import *
+from ..pulsar_core.system import *
 
 # Misc
 from .BasisSetParsers import *

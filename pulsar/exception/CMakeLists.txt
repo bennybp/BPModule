@@ -1,14 +1,6 @@
 set(PULSAR_EXCEPTION_FILES
             Exceptions.cpp
             export.cpp
+
+            PARENT_SCOPE
    )
-
-
-ADD_COREMODULE(exception
-           "${PULSAR_EXCEPTION_FILES}"
-           ""
-           ""
-           "")
-
-
-INSTALL_COREMODULE(exception)

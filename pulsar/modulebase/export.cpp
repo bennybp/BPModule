@@ -22,9 +22,9 @@ namespace export_python {
 
 
 
-PYBIND11_PLUGIN(modulebase)
+void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m("modulebase", "Base classes for all modules");
+    pybind11::module m = mtop.def_submodule("modulebase", "Base classes for all modules");
 
     ///////////////////////
     // Module Base classes
@@ -164,7 +164,6 @@ PYBIND11_PLUGIN(modulebase)
                 .def("Gradient",&EnergyMethod::Gradient)
                 .def("Hessian",&EnergyMethod::Hessian)
                 ;
-    return m.ptr();
 }
 } // close namespace export_python
 } // close namespace modulebase

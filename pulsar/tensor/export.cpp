@@ -13,14 +13,12 @@ namespace pulsar{
 namespace tensor {
 namespace export_python {
 
-PYBIND11_PLUGIN(tensor)
+void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m("tensor", "Matrix and Tensor classes");
+    pybind11::module m = mtop.def_submodule("tensor", "Matrix and Tensor classes");
 
     m.def("Init", Init);
     m.def("Finalize", Finalize);
-
-    return m.ptr();
 }
 
 

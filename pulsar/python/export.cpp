@@ -12,11 +12,9 @@ namespace python {
 namespace export_python {
 
 
-PYBIND11_PLUGIN(python)
+void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m("python", "Some helper functions for python stuff");
-
-    return m.ptr();
+    pybind11::module m = mtop.def_submodule("python", "Some helper functions for python stuff");
 }
 
 

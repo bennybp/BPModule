@@ -12,14 +12,13 @@ import importlib
 olddl = sys.getdlopenflags()
 sys.setdlopenflags(os.RTLD_LAZY | os.RTLD_GLOBAL)
 
+# Import the main so file
+# Components remain part of pulsar_core namespace until
+# imported by the individual sub-packages below
+from . import pulsar_core
 
-###############################################
-# Some slight ordering of importing
-# Despite using RTLD_LAZY, the
-# PyInit_** functions may require some
-# symbols to be loaded when they are called
-###############################################
-
+# Each of these imports its namespace from pulsar_core
+# into the main pulsar namespace
 from . import exception
 from . import util
 from . import output
@@ -34,6 +33,7 @@ from . import modulebase
 from . import modulemanager
 
 from . import testing
+
 
 # restore old DL flags
 sys.setdlopenflags(olddl)

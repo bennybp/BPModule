@@ -149,9 +149,9 @@ static void RegisterMatrices(pybind11::module & m, const char * type)
 
 
 
-PYBIND11_PLUGIN(math)
+void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m("math", "Some common math operations");
+    pybind11::module m = mtop.def_submodule("math", "Some common math operations");
 
     m.def("Factorial", Factorial); 
     m.def("FactorialF", FactorialF); 
@@ -247,8 +247,6 @@ PYBIND11_PLUGIN(math)
 
     // Export the testing stuff
     export_testing(m);
-
-    return m.ptr();
 }
 
 

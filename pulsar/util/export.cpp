@@ -16,9 +16,9 @@ namespace util {
 namespace export_python {
 
 
-PYBIND11_PLUGIN(util)
+void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m("util", "Miscellaneous utilities");
+    pybind11::module m = mtop.def_submodule("util", "Miscellaneous utilities");
 
     // command line
     m.def("SetCmdline", SetCmdline);
@@ -31,8 +31,6 @@ PYBIND11_PLUGIN(util)
     m.def("Memwatch_allocated", Memwatch_allocated);
     m.def("Memwatch_setlimit", Memwatch_setlimit);
     m.def("Memwatch_getlimit", Memwatch_getlimit);
-
-    return m.ptr();
 }
 
 

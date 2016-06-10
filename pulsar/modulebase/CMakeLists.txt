@@ -3,13 +3,6 @@ set(PULSAR_MODULEBASE_FILES
             ModuleBase.cpp
             SystemFragmenter.cpp
             export.cpp
+
+            PARENT_SCOPE
    )
-
-
-ADD_COREMODULE(modulebase
-           "${PULSAR_MODULEBASE_FILES}"
-           ""
-           ""
-           "")
-
-INSTALL_COREMODULE(modulebase)
