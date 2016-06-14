@@ -6,7 +6,7 @@ find_package(cereal QUIET)
 # If not found, build it
 # (Actually, cereal doesn't have a make install, so skip building, etc,
 # and just copy the headers
-if(NOT PYBIND11_FOUND)
+if(NOT CEREAL_FOUND)
   message(STATUS "We will install cereal for you")
   ExternalProject_Add(cereal_external
                       SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cereal-source
