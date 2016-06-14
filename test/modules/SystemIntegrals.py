@@ -60,7 +60,8 @@ def Run(mm):
         ref_h2o = [ 8.80146556478736 ] 
 
         outbuf = array.array('d', [0]*64)
-        n = nr.Calculate(0, s, outbuf) 
+        nr.Initialize(0, s)
+        n = nr.Calculate(outbuf) 
 
         tester.TestValue("H2O Nuclear repulsion", True, CompareList(ref_h2o, list(outbuf[:n]), 1e-14))
 

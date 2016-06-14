@@ -31,6 +31,7 @@ EXPORT_SUBMODULE(testing)
 EXPORT_SUBMODULE(util)
 
 
+
 ////////////////////////////////////////
 // Main export for pulsar
 ////////////////////////////////////////
@@ -60,3 +61,5 @@ PYBIND11_PLUGIN(pulsar_core)
 } // close namespace export_python
 } // close namespace pulsar
 
+
+#undef EXPORT_SUBMODULE

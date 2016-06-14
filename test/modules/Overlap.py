@@ -56,13 +56,13 @@ def Run(mm):
          
         nr = mm.GetModule("AO_OVERLAP", 0)
         nr.EnableDebug(True)
-        nr.SetBases(wfn, bs, bs)
+        nr.Initialize(0, wfn, bs, bs)
 
         tester = Tester("Testing Overlap integrals")
         tester.PrintHeader()
 
         outbuf = array.array('d', [0]*64)
-        n = nr.Calculate(0, 1, 2, outbuf) 
+        n = nr.Calculate(1, 2, outbuf) 
         print("Calculated {} integrals".format(n))
         print(outbuf[:n])
 

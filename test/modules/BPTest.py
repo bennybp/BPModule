@@ -127,10 +127,11 @@ def Run(mm):
         dipmod = mm.GetModule("PROP_DIPOLE", 0)
 
         bs = s.GetBasisSet("Primary")
-        dip = dipmod.Calculate(newwfn, bs, bs)
+        dip = dipmod.Calculate(0, newwfn, bs, bs)
 
         nucdip = array.array('d', [0]*3)
-        n = ndip.Calculate(0, newwfn.system, nucdip)
+        ndip.Initialize(0, newwfn.system)
+        n = ndip.Calculate(nucdip)
 
         print("Final energy: {}".format(nrg))
         print("Electronic dipole moment: {} {} {}".format(dip[0], dip[1], dip[2]))

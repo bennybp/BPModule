@@ -49,18 +49,21 @@ def Run(mm):
             u.Insert(a)
         s = System(u, True)
 
-        s = ApplySingleBasis("Primary","DZP",s)
+        s = ApplySingleBasis("Primary","sto-3g",s)
+        wfn = Wavefunction()
+        wfn.system = s
+        bs = s.GetBasisSet("Primary")
 
          
         nr = mm.GetModule("AO_NUCEL", 0)
         nr.EnableDebug(True)
-        nr.SetBases(s, "Primary", "Primary")
+        nr.Initialize(0, wfn, bs, bs)
 
         tester = Tester("Testing Nuclear Electron Attraction integrals")
         tester.PrintHeader()
 
         outbuf = array.array('d', [0]*64)
-        n = nr.Calculate(0, 0, 0, outbuf) 
+        n = nr.Calculate(0, 0, outbuf) 
         print("Calculated {} integrals".format(n))
         print(outbuf[:n])
 
