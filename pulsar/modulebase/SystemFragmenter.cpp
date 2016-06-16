@@ -39,12 +39,12 @@ NMerSetType SystemFragmenter::MakeNMers(const NMerSetType& Frags){
     Thresh_t Dists=Options().Get<Thresh_t>("DISTANCE_THRESHOLDS");
     NMerSetType NMers;
     const double DaMax=std::numeric_limits<double>::max();
-    
-    
+
+
     //Make sure we work in two stupid base case scenarios
     if(NEnd==0)return NMers;//Empty set
     if(NEnd==1)return Frags;//The fragments we were given
-    
+
     //Real scenarios follow...
     PowerSetItr<NMerSetType> Comb(Frags,1,NEnd);
     while(Comb){
@@ -65,7 +65,7 @@ NMerSetType SystemFragmenter::MakeNMers(const NMerSetType& Frags){
             RHS+=Dist*Dist;
         }
         if(Thresh>=RHS)NMers.insert({DaNMer.SN,DaNMer});
-        ++Comb;       
+        ++Comb;
     }
     for(const typename NMerSetType::value_type& NMerI: NMers)
         GetCoef(true,NMerI.first,NMers);

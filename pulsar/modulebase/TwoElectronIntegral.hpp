@@ -9,6 +9,7 @@
 #define PULSAR_GUARD_MODULEBASE__TWOELECTRONINTEGRAL_HPP_
 
 #include "pulsar/modulebase/ModuleBase.hpp"
+#include "pulsar/system/BasisSet.hpp"
 
 
 namespace pulsar{
@@ -48,10 +49,10 @@ class TwoElectronIntegral : public ModuleBase
 
 
         /*! Return the number of components calculated by this module
-         * 
+         *
          * For example, something that calculates x,y,z component would return 3
          */
-        unsigned int NComponents(void) const 
+        unsigned int NComponents(void) const
         {
             return ModuleBase::CallFunction(&TwoElectronIntegral::NComponents_);
         }
@@ -155,7 +156,7 @@ class TwoElectronIntegral : public ModuleBase
 
 
         //! \copydoc NComponents
-        virtual unsigned int NComponents_(void) const 
+        virtual unsigned int NComponents_(void) const
         {
             return 1;
         }
@@ -216,7 +217,7 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
         }
 
 
-        virtual unsigned int NComponents_(void) const 
+        virtual unsigned int NComponents_(void) const
         {
             if(HasPyOverride("NComponents_"))
                 return CallPyOverride<unsigned int>("NComponents_");

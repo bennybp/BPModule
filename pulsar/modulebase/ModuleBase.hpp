@@ -93,7 +93,7 @@ class ModuleBase
 
 
         /*! \brief Get the module type
-         * 
+         *
          * ie, Test_Base, TwoElectronIntegral, etc
          */
         std::string ModuleType(void) const;
@@ -122,12 +122,12 @@ class ModuleBase
 
         /*! \brief Enable debug output for this module
          */
-        void EnableDebug(bool debug) noexcept; 
+        void EnableDebug(bool debug) noexcept;
 
 
         /*! \brief Is debug output enabled for this module
          */
-        bool DebugEnabled(void) const noexcept; 
+        bool DebugEnabled(void) const noexcept;
 
 
 
@@ -140,11 +140,11 @@ class ModuleBase
 
         /*! \brief Get the output from this module's tree node
          */
-        std::string GetOutput(void) const; 
+        std::string GetOutput(void) const;
 
 
         /*! \brief Create a module that is a child of this one
-         */ 
+         */
         template<typename T>
         modulemanager::ModulePtr<T> CreateChild(const std::string & key) const
         {
@@ -154,7 +154,7 @@ class ModuleBase
 
         /*! \brief Create a module that is a child of this one,
          *         obtaining the modulekey from an option
-         */ 
+         */
         template<typename T>
         modulemanager::ModulePtr<T> CreateChildFromOption(const std::string & optionkey) const
         {
@@ -166,15 +166,15 @@ class ModuleBase
 
         /*! \brief Create a module that is a child of this one
          *
-         * Python version 
-         */ 
+         * Python version
+         */
         pybind11::object CreateChildPy(const std::string & key) const;
 
         /*! \brief Create a module that is a child of this one
          *         obtaining the modulekey from an option
          *
-         * Python version 
-         */ 
+         * Python version
+         */
         pybind11::object CreateChildFromOptionPy(const std::string & optionkey) const;
 
 
@@ -291,7 +291,7 @@ class ModuleBase
 
 
         /*! \brief Call a function, catching exceptions
-         * 
+         *
          * Meant to be used to call virtual functions that are
          * implemented in a the derived class.
          *
@@ -356,10 +356,10 @@ class ModuleBase
         ///////////////////////////////////////////
         // Helpers for derived classes
         ///////////////////////////////////////////
-        
+
         /*! \brief Checks a python buffer for appropriate types and dimensions and returns
          *         the internal pointer
-         * 
+         *
          * \throw pulsar::exception::GeneralException if the type or number of dimensions
          *        doesn't match
          *
@@ -427,7 +427,7 @@ class ModuleBase
 
 
         /*! \brief Get the tree node pointer
-         * 
+         *
          * non-const version is private
          */
         modulemanager::ModuleTreeNode & MyNode(void);

@@ -2,7 +2,7 @@
  *
  * \brief Calculation of properties
  * \author Ben Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef PULSAR_GUARD_MODULEBASE__PROPERTYCALCULATOR_HPP_
@@ -57,7 +57,7 @@ class PropertyCalculator_Py : public PropertyCalculator
         using PropertyCalculator::PropertyCalculator;
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
-    
+
         virtual std::vector<double> Calculate_(unsigned int deriv,
                                                const datastore::Wavefunction & wfn,
                                                const system::BasisSet & bs1,

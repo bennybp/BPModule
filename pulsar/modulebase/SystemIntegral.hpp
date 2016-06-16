@@ -2,7 +2,7 @@
  *
  * \brief Integrals that deal only with System (header)
  * \author Ben Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef PULSAR_GUARD_MODULEBASE__SYSTEMINTEGRAL_HPP_
@@ -28,7 +28,7 @@ class SystemIntegral : public ModuleBase
 
 
         /*! \brief Initialize the integral computation
-         * 
+         *
          * \param [in] deriv Derivative to calculate
          * \param [in] sys System for which we are calculating the integrals
          */
@@ -93,7 +93,7 @@ class SystemIntegral_Py : public SystemIntegral
         {
             return CallPyOverride<void>("Initialize_", deriv, sys);
         }
-    
+
         virtual uint64_t Calculate_(double * outbuffer, size_t bufsize)
         {
             //! \todo untested, won't work

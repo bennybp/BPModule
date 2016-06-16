@@ -49,7 +49,8 @@ bool Wavefunction::operator!=(const Wavefunction & rhs) const
 
 void Wavefunction::hash(bphash::Hasher & h) const
 {
-    h(system, cmat, epsilon, occupations);
+    //! \todo hashing of matrices
+    h(system);
 }
 
 

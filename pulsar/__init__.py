@@ -78,14 +78,8 @@ def Init(argv, out = "stdout", color = True, debug = False,nthreads=1):
   # Initialize Parallel
   parallel.Init(nthreads)
 
-  # Initialize tensor
-  tensor.Init()
-
 
 def Finalize():
-  output.GlobalOutput("Finalizing tensors\n")
-  tensor.Finalize()
-
   output.GlobalOutput("Finalizing parallelization\n")
   parallel.Finalize()
 

@@ -2,15 +2,14 @@
  *
  * \brief One-electron integral implementation (header)
  * \author Ben Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef PULSAR_GUARD_MODULEBASE__ONEELECTRONINTEGRAL_HPP_
 #define PULSAR_GUARD_MODULEBASE__ONEELECTRONINTEGRAL_HPP_
 
 #include "pulsar/modulebase/ModuleBase.hpp"
-#include "pulsar/system/BasisSetShell.hpp"
-#include "pulsar/system/SphericalTransform.hpp"
+#include "pulsar/system/BasisSet.hpp"
 
 namespace pulsar{
 namespace modulebase {
@@ -29,7 +28,7 @@ class OneElectronIntegral : public ModuleBase
 
 
         /*! \brief Initialize the integral computation
-         * 
+         *
          * \param [in] deriv Derivative to calculate
          * \param [in] wfn Wavefunction to use to calculate integrals
          * \param [in] bs1 Basis set tag to use on the first center
@@ -46,10 +45,10 @@ class OneElectronIntegral : public ModuleBase
 
 
         /*! Return the number of components calculated by this module
-         * 
+         *
          * For example, something that calculates x,y,z component would return 3
          */
-        unsigned int NComponents(void) const 
+        unsigned int NComponents(void) const
         {
             return ModuleBase::CallFunction(&OneElectronIntegral::NComponents_);
         }
@@ -136,7 +135,7 @@ class OneElectronIntegral : public ModuleBase
 
 
         //! \copydoc NComponents
-        virtual unsigned int NComponents_(void) const 
+        virtual unsigned int NComponents_(void) const
         {
             return 1;
         }
@@ -146,7 +145,7 @@ class OneElectronIntegral : public ModuleBase
                                     double * outbuffer, size_t bufsize) = 0;
 
         //! \copydoc CalculateMulti
-        virtual uint64_t CalculateMulti_(const std::vector<uint64_t> & shells1, 
+        virtual uint64_t CalculateMulti_(const std::vector<uint64_t> & shells1,
                                          const std::vector<uint64_t> & shells2,
                                          double * outbuffer, size_t bufsize)
         {
@@ -178,7 +177,7 @@ class OneElectronIntegral_Py : public OneElectronIntegral
         using OneElectronIntegral::OneElectronIntegral;
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
-    
+
         virtual void Initialize_(unsigned int deriv,
                                  const datastore::Wavefunction & wfn,
                                  const system::BasisSet & bs1,
@@ -189,7 +188,7 @@ class OneElectronIntegral_Py : public OneElectronIntegral
         }
 
 
-        virtual unsigned int NComponents_(void) const 
+        virtual unsigned int NComponents_(void) const
         {
             if(HasPyOverride("NComponents_"))
                 return CallPyOverride<unsigned int>("NComponents_");
@@ -213,9 +212,9 @@ class OneElectronIntegral_Py : public OneElectronIntegral
         }
 
 
-        virtual uint64_t CalculateMulti_(const std::vector<uint64_t> & shells1, 
+        virtual uint64_t CalculateMulti_(const std::vector<uint64_t> & shells1,
                                          const std::vector<uint64_t> & shells2,
-                                         double * outbuffer, size_t bufsize) 
+                                         double * outbuffer, size_t bufsize)
         {
             if(HasPyOverride("CalculateMulti_"))
             {

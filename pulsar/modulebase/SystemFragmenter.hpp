@@ -31,25 +31,25 @@ struct NMerInfo {
 using NMerSetType = std::map<SNType, NMerInfo>; //< The type of a set of NMers
 
 /*! \brief A module that fragments a system and makes all n-mers
- * 
+ *
  *  There is really only one reason people worry about fragments in
  *  electronic structure theory and that is to get at properties of parts
  *  of a larger system.  In SAPT and MBE-like methods the fragments are used
  *  to understand the many-body interactions among molecules in a larger cluster
  *  or crystal.  For BSSE methods we can obtain more accurate relative energies
  *  by ensuring each part of the system is computed consistently.
- * 
+ *
  *  For an \f$N\f$ atom system there are \f$B_N\f$, ways to assign the atoms
  *  into fragments, where \f$B_N\f$ is the \f$N\f$-th Bell number, which is
  *  basically infinity for any \f$N\f$ typically considered in quantum
  *  chemistry.  This means that it is unlikely any two quantum chemists are
  *  going to want the same fragmentation scheme.  Thus we allow you to
  *  develop your own scheme via making fragmentation a module.
- * 
+ *
  *  When designing your fragmentation module you are free to use whatever
  *  parameters you'd like as criteria. There are some common criteria like
  *  bonds and distances that we'd like you to use the same terms for though.
- * 
+ *
  *  At the end of the day what this module aims to do is return a set of
  *  \f$n\f$-mers (unions of \f$n\f$ fragments) that were obtained via
  *  an algorithm.  For each \f$n\f$-mer we typically want a unique,systematic,
@@ -58,15 +58,15 @@ using NMerSetType = std::map<SNType, NMerInfo>; //< The type of a set of NMers
  *  the intrinsic weight of properties associated with that \f$n\f$-mer when
  *  we sum up \f$n\f$-mer properties.  The combination of this data
  *  is what I have called an NMerInfo struct (I probably should use a tuple,
- *  but find the get<n> syntax clunky).  
- *  
+ *  but find the get<n> syntax clunky).
+ *
  *  Furthermore it is likely that you will want some common functions, which
  *  we put in this base class as protected functions you may use in your
  *  algorithm, but you are free to ignore them if they don't do what you want.
  *  If you find a better way to do any of them please make a pull request.
- * 
+ *
  *  It is also usually the case that we want to screen based on who tightly
- *  cluster the \f$n\f$-mer is.  The standard deviation, \f$\sigma\f$, is a 
+ *  cluster the \f$n\f$-mer is.  The standard deviation, \f$\sigma\f$, is a
  *  measure of how tightly a
  *  group of \f$N\f$ points are clustered together.  \f$\sigma\f$ is defined
  *  as:
@@ -91,27 +91,27 @@ using NMerSetType = std::map<SNType, NMerInfo>; //< The type of a set of NMers
  *  exceeds \f$N\f$ times the threshold squared it is
  *  impossible for the remaining \f$N-n\f$ points to be clustered tightly
  *  enough even if they all literally sat at the mean point.
- * 
+ *
  *  For an \f$N\f$-mer the logical choice of \f$r_0\f$ is the center of
  *  mass and \f$r_i\f$ is the center of mass for each monomer in the
  *  \f$N\f$-mer.
- *  
+ *
  *
  */
 class SystemFragmenter : public ModuleBase {
 protected:
 
     /** \brief Function for taking all unions of a set of fragments
-     * 
+     *
      *   For a lot of methods that depend on fragments you need to consider
      *   pairs of fragments, triples of fragments, etc.  This function takes
      *   a SystemMap of fragments and takes all N-way unions of them.
-     * 
+     *
      *   \param[in] Frags The monomers we want the unions of
-     *   
+     *
      *   The truncation order is read from option "TRUNCATION_ORDER" and the
      *   distance threholds are read in from option "DISTANCE_THRESHOLDS"
-     *   \param[in] Dist The maximum distance 
+     *   \param[in] Dist The maximum distance
      */
     NMerSetType MakeNMers(const NMerSetType& Frags);
 
@@ -119,7 +119,7 @@ protected:
     // To be implemented by derived classes
     /////////////////////////////////////////
     /*! \copydoc Fragmentize
-     * 
+     *
      *   This function should produce the fundamental fragments.
      *   Creation of the n-mers (unions of fragments taken n at a time)
      *   will be handled automatically by the Fragmentize function
@@ -139,7 +139,7 @@ public:
     }
 
     /*! \brief Fragment the system
-     * 
+     *
      *   The main call users of this class should call
      */
     NMerSetType Fragmentize(const system::System & mol)

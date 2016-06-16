@@ -65,6 +65,7 @@ void export_testing(pybind11::module & m)
     m.def("TestSerialization_Point",             &TestSerialization<Point>);
     m.def("TestSerialization_StringSetUniverse", &TestSerialization<Universe<std::string>>);
     m.def("TestSerialization_StringSet",         &TestSerialization<MathSet<std::string>, MathSetCompare<std::string>>);
+    /*
     m.def("TestSerialization_SimpleMatrixF",     &TestSerialization<SimpleMatrixF>);
     m.def("TestSerialization_SimpleMatrixD",     &TestSerialization<SimpleMatrixD>);
     m.def("TestSerialization_IrrepSpinMatrixF",  &TestSerialization<IrrepSpinMatrixF>);
@@ -73,6 +74,7 @@ void export_testing(pybind11::module & m)
     m.def("TestSerialization_SimpleVectorD",     &TestSerialization<SimpleVectorD>);
     m.def("TestSerialization_IrrepSpinVectorF",  &TestSerialization<IrrepSpinVectorF>);
     m.def("TestSerialization_IrrepSpinVectorD",  &TestSerialization<IrrepSpinVectorD>);
+    */
 }
 
 

@@ -30,7 +30,7 @@ typedef vector<double> Return_t;
 
 namespace pulsar{
 namespace modulebase {
-    
+
 class FDFunctor:public math::FDiffVisitor<double,Return_t>{
     private:
         typedef  math::FDiffVisitor<double,Return_t> Base_t;
@@ -44,10 +44,10 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
     public:
         //Base class operators are fine in all but two cases
         using Base_t::operator();
-        
+
         //Returns the i-th Cartesian coordinate of our molecule
         double operator()(size_t i)const{return Atoms_[(i-i%3)/3][i%3];}
-        
+
         Return_t operator()(size_t i,const double& newcoord)const{
             AtomSetUniverse NewU;
             for(size_t j=0;j<Atoms_.size();++j){
@@ -64,17 +64,17 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
             NewWfn.system = std::make_shared<const System>(System(NewU,true));
             return NewModule->Deriv(Order_-1,NewWfn).second;
         }
-        
+
         FDFunctor(size_t Order,const AtomV_t& Atoms,
                   MM_t& MM,const datastore::Wavefunction & Wfn, std::string Key,ID_t ID):
             Order_(Order),Atoms_(Atoms),MM_(MM),Wfn_(Wfn),Key_(Key),ID_(ID){}
-};    
+};
 
 
 size_t EnergyMethod::MaxDeriv_()const{
     return Options().Get<size_t>("MAX_DERIV");
-} 
- 
+}
+
 
 EnergyMethod::DerivReturnType
 EnergyMethod::FiniteDifference_(size_t Order, const datastore::Wavefunction & Wfn){
@@ -89,14 +89,14 @@ EnergyMethod::FiniteDifference_(size_t Order, const datastore::Wavefunction & Wf
           Atoms.push_back(AnAtom);
     const Communicator& Comm=parallel::GetEnv().Comm();
     Communicator NewComm=Comm.Split(Comm.NThreads(),1);
-    
+
     math::CentralDiff<double,Return_t> FD(NewComm);
 
     FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),Wfn,Key(),ID());
     TempDeriv=FD.Run(Thing2Run,3*Mol.size(),
                      Options().Get<double>("FDIFF_DISPLACEMENT"),
                      Options().Get<size_t>("FDIFF_STENCIL_SIZE"));
-    //Flatten the array & abuse fact that TempDeriv[0] is the first comp    
+    //Flatten the array & abuse fact that TempDeriv[0] is the first comp
     for(size_t i=1;i<TempDeriv.size();++i)
        for(double j :  TempDeriv[i])
            TempDeriv[0].push_back(j);
@@ -106,5 +106,5 @@ EnergyMethod::FiniteDifference_(size_t Order, const datastore::Wavefunction & Wf
             CreateChild<EnergyMethod>(Key())->Deriv(Order-1,Wfn);
     return {CWfn.first, TempDeriv[0]};
 }
-    
+
 }}

@@ -16,7 +16,7 @@ base_options = {
                     ' the n-mer and the float is the maximum distance '\
                     'that the n monomers can be apart, e.g. {2:3.14} means '\
                     'that dimers whose centers of mass are more than 3.14 '\
-                    'Angstroms apart are excluded.')   
+                    'Angstroms apart are excluded.')
   },
 
   "EnergyMethod" :
@@ -31,7 +31,7 @@ base_options = {
                           'The displacement (a.u.) for finite difference computations'),
     "FDIFF_STENCIL_SIZE" : (OptionType.Int,3,False,None,
                           'The number of stencil points (points at which the function '\
-                          'will be sampled) for the finite difference computation.'),                      
+                          'will be sampled) for the finite difference computation.'),
     #RMR This only makes sense for iterative methods and a priori it is not clear
     #to me that most methods are iterative
     "E_TOLERANCE"     :  (OptionType.Float, 1.0e-8, False, GreaterThan(0),

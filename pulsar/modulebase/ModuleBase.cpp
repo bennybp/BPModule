@@ -2,7 +2,7 @@
  *
  * \brief The base class for all modules (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #include "pulsar/modulebase/ModuleBase.hpp"
@@ -57,19 +57,19 @@ ID_t ModuleBase::ID(void) const noexcept
 }
 
 
-std::string ModuleBase::Key(void) const 
+std::string ModuleBase::Key(void) const
 {
     return MyNode().modulekey;
 }
 
 
-std::string ModuleBase::Name(void) const 
+std::string ModuleBase::Name(void) const
 {
     return MyNode().minfo.name;
 }
 
 
-std::string ModuleBase::Version(void) const 
+std::string ModuleBase::Version(void) const
 {
     return MyNode().minfo.version;
 }

@@ -2,7 +2,7 @@
  *
  * \brief Includes all module header files (for convenience)
  * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ */
 
 
 #ifndef PULSAR_GUARD_MODULEBASE__ALL_HPP_
