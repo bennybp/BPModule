@@ -21,7 +21,7 @@ class OneElectronCacher : public ModuleBase
 {
     public:
         typedef OneElectronCacher BaseType;
-        typedef std::vector<std::shared_ptr<math::TensorImpl<2, double>>> ReturnType;
+        typedef std::vector<std::shared_ptr<const math::TensorImpl<2, double>>> ReturnType;
 
         OneElectronCacher(ID_t id)
             : ModuleBase(id, "OneElectronCacher")

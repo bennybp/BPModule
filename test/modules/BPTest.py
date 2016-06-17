@@ -50,6 +50,7 @@ def Run(mm):
         mm.LoadModule("Integrals",  "CoreBuild",                "AO_COREBUILD")
         mm.LoadModule("Integrals",  "KineticEnergy",            "AO_KINETIC")
         mm.LoadModule("Integrals",  "OneElectronPotential",     "AO_NUCEL")
+        mm.LoadModule("Integrals",  "EigenCacher",              "ONEEL_CACHE")
         mm.LoadModule("SimintERI",  "SimintERI",                "AO_ERI")
         #mm.LoadModule("TwoElectronIntegrals",  "ReferenceERI",                "AO_ERI")
 
@@ -62,11 +63,13 @@ def Run(mm):
 
         # SCF Iterations settings
         mm.ChangeOption("SCFITER",  "KEY_AO_OVERLAP",      "AO_OVERLAP")
+        mm.ChangeOption("SCFITER",  "KEY_AO_CACHER",       "ONEEL_CACHE")
 
         # Fock builder
         mm.ChangeOption("FOCKBUILD",  "KEY_AO_OVERLAP",    "AO_OVERLAP")
         mm.ChangeOption("FOCKBUILD",  "KEY_AO_COREBUILD",  "AO_COREBUILD")
         mm.ChangeOption("FOCKBUILD",  "KEY_AO_ERI",        "AO_ERI")
+        mm.ChangeOption("FOCKBUILD",  "KEY_AO_CACHER",     "ONEEL_CACHE")
 
 
         # Tell the core builder which modules to use
@@ -76,6 +79,7 @@ def Run(mm):
         mm.ChangeOption("IGUESS", "KEY_NUC_REPULSION", "NUC_REP")
         mm.ChangeOption("IGUESS", "KEY_AO_OVERLAP",    "AO_OVERLAP")
         mm.ChangeOption("IGUESS", "KEY_AO_COREBUILD",  "AO_COREBUILD")
+        mm.ChangeOption("IGUESS", "KEY_AO_CACHER",     "ONEEL_CACHE")
 
         # Tell the SCF which modules to use
         mm.ChangeOption("SCF_DIIS", "KEY_INITIAL_GUESS", "IGUESS")
@@ -87,6 +91,7 @@ def Run(mm):
         mm.ChangeOption("SCF_DIIS", "MAX_ITER", 1000)
         mm.ChangeOption("SCF_DIIS", "E_TOLERANCE", 1e-10)
         mm.ChangeOption("SCF_DIIS", "DENS_TOLERANCE", 1e-8)
+        mm.ChangeOption("SCF_DIIS", "KEY_AO_CACHER",     "ONEEL_CACHE")
 
         mm.ChangeOption("SCF_DAMPING", "KEY_INITIAL_GUESS", "IGUESS")
         mm.ChangeOption("SCF_DAMPING", "KEY_SCF_ITERATOR",  "SCFITER")
@@ -96,10 +101,12 @@ def Run(mm):
         mm.ChangeOption("SCF_DAMPING", "MAX_ITER", 1000)
         mm.ChangeOption("SCF_DAMPING", "E_TOLERANCE", 1e-10)
         mm.ChangeOption("SCF_DAMPING", "DENS_TOLERANCE", 1e-8)
+        mm.ChangeOption("SCF_DAMPING", "KEY_AO_CACHER",     "ONEEL_CACHE")
 
         # Dipole calculator
         mm.ChangeOption("PROP_DIPOLE", "KEY_ONEEL_MOD", "AO_DIPOLE");
 
+        mm.EnableDebugAll(True)
         mm.Print(out)
         #mm.SanityCheck()
   
@@ -115,7 +122,6 @@ def Run(mm):
 
          
         nr = mm.GetModule("SCF_DIIS", 0)
-        nr.EnableDebug(True)
         iwfn = Wavefunction()
         iwfn.system = s
 
