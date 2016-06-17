@@ -105,6 +105,17 @@ void export_pybind11(pybind11::module & mtop)
          .def("CalculateMulti", &OneElectronIntegral::CalculateMultiPy)
          ;
 
+    ///////////////////////////
+    // One electron cacher
+    ///////////////////////////
+    pybind11::class_<OneElectronCacher, std::unique_ptr<OneElectronCacher>, OneElectronCacher_Py> oneelcache(m, "OneElectronCacher", mbase);
+    oneelcache.def(pybind11::init<ID_t>())
+              .def_readonly("out", &OneElectronCacher_Py::out, pybind11::return_value_policy::reference_internal)
+              .def("Cache", &OneElectronCacher_Py::Cache, pybind11::return_value_policy::reference_internal)
+              .def("MManager", &OneElectronCacher_Py::MManager, pybind11::return_value_policy::reference_internal)
+              .def("Calculate", &OneElectronCacher::Calculate)
+         ;
+
     /////////////////////////
     // Two electron integral implementation
     /////////////////////////

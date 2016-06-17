@@ -39,22 +39,22 @@ def Run(mm):
 
         # Load the python modules
         #             supermodule              module name    key
-        mm.LoadModule("Methods",               "DIIS",                     "SCF_DIIS")
-        mm.LoadModule("Methods",               "Damping",                  "SCF_DAMPING")
-        mm.LoadModule("Methods",               "CoreGuess",                "IGUESS")
-        mm.LoadModule("Methods",               "HFIterate",                "SCFITER")
-        mm.LoadModule("Methods",               "BasicFockBuild",           "FOCKBUILD")
-        mm.LoadModule("SystemIntegrals",       "NuclearRepulsion",         "NUC_REP")
-        mm.LoadModule("SystemIntegrals",       "NuclearDipole",            "NUC_DIP")
-        mm.LoadModule("OneElectronIntegrals",  "Overlap",                  "AO_OVERLAP")
-        mm.LoadModule("OneElectronIntegrals",  "CoreBuild",                "AO_COREBUILD")
-        mm.LoadModule("OneElectronIntegrals",  "KineticEnergy",            "AO_KINETIC")
-        mm.LoadModule("OneElectronIntegrals",  "OneElectronPotential",     "AO_NUCEL")
-        mm.LoadModule("SimintERI",            "SimintERI",                "AO_ERI")
+        mm.LoadModule("Methods",    "DIIS",                     "SCF_DIIS")
+        mm.LoadModule("Methods",    "Damping",                  "SCF_DAMPING")
+        mm.LoadModule("Methods",    "CoreGuess",                "IGUESS")
+        mm.LoadModule("Methods",    "HFIterate",                "SCFITER")
+        mm.LoadModule("Methods",    "BasicFockBuild",           "FOCKBUILD")
+        mm.LoadModule("Integrals",  "NuclearRepulsion",         "NUC_REP")
+        mm.LoadModule("Integrals",  "NuclearDipole",            "NUC_DIP")
+        mm.LoadModule("Integrals",  "Overlap",                  "AO_OVERLAP")
+        mm.LoadModule("Integrals",  "CoreBuild",                "AO_COREBUILD")
+        mm.LoadModule("Integrals",  "KineticEnergy",            "AO_KINETIC")
+        mm.LoadModule("Integrals",  "OneElectronPotential",     "AO_NUCEL")
+        mm.LoadModule("SimintERI",  "SimintERI",                "AO_ERI")
         #mm.LoadModule("TwoElectronIntegrals",  "ReferenceERI",                "AO_ERI")
 
-        mm.LoadModule("OneElectronIntegrals",  "Dipole",                   "AO_DIPOLE")
-        mm.LoadModule("OneElectronIntegrals",  "OneElectronProperty",      "PROP_DIPOLE")
+        mm.LoadModule("Integrals",  "Dipole",                   "AO_DIPOLE")
+        mm.LoadModule("Integrals",  "OneElectronProperty",      "PROP_DIPOLE")
 
 
         # Set the OneElectronPotential module to use the atom grid (ie, nuclear-electron attraction)
@@ -70,8 +70,7 @@ def Run(mm):
 
 
         # Tell the core builder which modules to use
-        mm.ChangeOption("AO_COREBUILD", "KEY_AO_KINETIC", "AO_KINETIC")
-        mm.ChangeOption("AO_COREBUILD", "KEY_AO_NUCATT",  "AO_NUCEL")
+        mm.ChangeOption("AO_COREBUILD", "KEY_AO_CORE_TERMS", [ "AO_KINETIC", "AO_NUCEL" ])
 
         # Tell the core guess which modules to use
         mm.ChangeOption("IGUESS", "KEY_NUC_REPULSION", "NUC_REP")
