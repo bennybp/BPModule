@@ -26,7 +26,6 @@ EXPORT_SUBMODULE(output)
 EXPORT_SUBMODULE(parallel)
 EXPORT_SUBMODULE(python)
 EXPORT_SUBMODULE(system)
-EXPORT_SUBMODULE(tensor)
 EXPORT_SUBMODULE(testing)
 EXPORT_SUBMODULE(util)
 
@@ -50,7 +49,6 @@ PYBIND11_PLUGIN(pulsar_core)
     parallel::export_python::export_pybind11(mtop);
     python::export_python::export_pybind11(mtop);
     system::export_python::export_pybind11(mtop);
-    tensor::export_python::export_pybind11(mtop);
     testing::export_python::export_pybind11(mtop);
     util::export_python::export_pybind11(mtop);
 

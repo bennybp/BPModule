@@ -7,7 +7,6 @@ set(PULSAR_EXTERNAL_DIR "${CMAKE_CURRENT_LIST_DIR}/external")
 list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/pybind11")
 list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/memwatch")
 list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/libtaskforce")
-list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/tensor")
 list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/bphash")
 
 # And the find macros
@@ -18,7 +17,6 @@ list(APPEND CMAKE_MODULE_PATH "${PULSAR_EXTERNAL_DIR}/cmake")
 find_package(memwatch REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(libtaskforce REQUIRED)
-find_package(tensor REQUIRED)
 find_package(bphash REQUIRED)
 
 # Create the target to link against

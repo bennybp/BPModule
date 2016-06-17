@@ -3,7 +3,7 @@
 
 
 namespace pulsar{
-namespace tensor {
+namespace math {
 
 
 template<size_t Rank, typename DataType>
@@ -19,7 +19,7 @@ class TensorImpl
 
 
 
-} // close namespace tensor
+} // close namespace math
 } // close namespace pulsar
 
 

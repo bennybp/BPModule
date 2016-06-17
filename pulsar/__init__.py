@@ -26,7 +26,6 @@ from . import parallel
 from . import python
 from . import math
 
-from . import tensor
 from . import system
 from . import datastore
 from . import modulebase
@@ -62,7 +61,7 @@ pulsar_paths = { "base": thispath,
 def Init(argv, out = "stdout", color = True, debug = False,nthreads=1):
   """Initializes the Pulsar core
 
-  Initializes MPI, tensor libraries, etc, as well as the
+  Initializes MPI, libraries, etc, as well as the
   output streams.
   """
 

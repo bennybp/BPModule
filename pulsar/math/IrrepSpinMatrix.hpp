@@ -7,7 +7,7 @@
 #ifndef PULSAR_GUARD_MATH__IRREPSPINMATRIX_HPP_
 #define PULSAR_GUARD_MATH__IRREPSPINMATRIX_HPP_
 
-#include "pulsar/tensor/TensorImpl.hpp"
+#include "pulsar/math/TensorImpl.hpp"
 #include "pulsar/math/BlockByIrrepSpin.hpp"
 
 
@@ -15,10 +15,10 @@ namespace pulsar{
 namespace math{
 
 template<typename T>
-using IrrepSpinMatrix = BlockByIrrepSpin<std::shared_ptr<tensor::TensorImpl<2, T>>>;
+using IrrepSpinMatrix = BlockByIrrepSpin<std::shared_ptr<math::TensorImpl<2, T>>>;
 
 template<typename T>
-using IrrepSpinVector = BlockByIrrepSpin<std::shared_ptr<tensor::TensorImpl<1, T>>>;
+using IrrepSpinVector = BlockByIrrepSpin<std::shared_ptr<math::TensorImpl<1, T>>>;
 
 template<typename T>
 using IrrepSpinScalar = BlockByIrrepSpin<T>;

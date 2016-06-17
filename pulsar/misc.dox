@@ -38,10 +38,6 @@
  *  \brief Helper classes and functions for exceptions
  */
 
-/*! \namespace pulsar::tensor
- *  \brief Helper classes and functions for tensors and matrices
- */
-
 /*! \namespace pulsar::util
  *  \brief Miscellaneous funcionality, such as string formatting, etc
  */
