@@ -5,8 +5,8 @@
  */
 
 
-#ifndef PULSAR_GUARD_MODULEBASE__ONEELECTRONCACHER_HPP_
-#define PULSAR_GUARD_MODULEBASE__ONEELECTRONCACHER_HPP_
+#ifndef PULSAR_GUARD_MODULEBASE__ONEELECTRONMATRIX_HPP_
+#define PULSAR_GUARD_MODULEBASE__ONEELECTRONMATRIX_HPP_
 
 #include "pulsar/modulebase/ModuleBase.hpp"
 #include "pulsar/system/BasisSet.hpp"
@@ -17,14 +17,14 @@ namespace modulebase {
 /*! \brief One-electron integral implementation
  *
  */
-class OneElectronCacher : public ModuleBase
+class OneElectronMatrix : public ModuleBase
 {
     public:
-        typedef OneElectronCacher BaseType;
+        typedef OneElectronMatrix BaseType;
         typedef std::vector<std::shared_ptr<const math::TensorImpl<2, double>>> ReturnType;
 
-        OneElectronCacher(ID_t id)
-            : ModuleBase(id, "OneElectronCacher")
+        OneElectronMatrix(ID_t id)
+            : ModuleBase(id, "OneElectronMatrix")
         { }
 
 
@@ -40,7 +40,7 @@ class OneElectronCacher : public ModuleBase
                              unsigned int deriv, const datastore::Wavefunction & wfn,
                              const system::BasisSet & bs1, const system::BasisSet & bs2)
         {
-            return ModuleBase::FastCallFunction(&OneElectronCacher::Calculate_,
+            return ModuleBase::FastCallFunction(&OneElectronMatrix::Calculate_,
                                                 key, deriv, wfn, bs1, bs2);
         }
 
@@ -57,10 +57,10 @@ class OneElectronCacher : public ModuleBase
 };
 
 
-class OneElectronCacher_Py : public OneElectronCacher
+class OneElectronMatrix_Py : public OneElectronMatrix
 {
     public:
-        using OneElectronCacher::OneElectronCacher;
+        using OneElectronMatrix::OneElectronMatrix;
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 

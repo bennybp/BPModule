@@ -17,7 +17,7 @@
 // Integrals
 #include "pulsar/modulebase/SystemIntegral.hpp"
 #include "pulsar/modulebase/OneElectronIntegral.hpp"
-#include "pulsar/modulebase/OneElectronCacher.hpp"
+#include "pulsar/modulebase/OneElectronMatrix.hpp"
 #include "pulsar/modulebase/TwoElectronIntegral.hpp"
 #include "pulsar/modulebase/SCFIterator.hpp"
 #include "pulsar/modulebase/EnergyMethod.hpp"
