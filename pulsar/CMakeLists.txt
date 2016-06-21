@@ -13,7 +13,6 @@ set(PULSAR_CORE_PYTHON_INCLUDE_DIRS "" CACHE STRING "Include directories for pyt
 ##########################
 find_package(OpenMP REQUIRED)
 find_package(MPI REQUIRED)
-find_package(Boost REQUIRED)
 
 
 ##########################
@@ -77,7 +76,7 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
 
     # some useless remarks
     #  1418  : external function definition with no prior declaration
-    #  1419  : external declaration in primary source file (happens in boost files)
+    #  1419  : external declaration in primary source file 
     #   383  : value copied to temporary, reference to temporary used (generally ok in c++)
     #   981  : operands are evaluated in unspecified order (generally ok in c++)
     #   869  : parameter "XXX" was never referenced.
@@ -123,7 +122,6 @@ list(APPEND PULSAR_CORE_CXX_INCLUDES ${PULSAR_CORE_PARENT_DIR})
 
 # External dependencies (mark as system includes)
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${MEMWATCH_INCLUDE_DIR})
-list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${Boost_INCLUDE_DIRS})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${PULSAR_CORE_PYTHON_INCLUDE_DIRS})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${MPI_CXX_INCLUDE_PATH})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${PYBIND11_INCLUDE_DIR})
@@ -141,7 +139,6 @@ list(APPEND PULSAR_CORE_LINK_FLAGS bphash)
 list(APPEND PULSAR_CORE_LINK_FLAGS libtaskforce)
 
 list(APPEND PULSAR_CORE_LINK_FLAGS ${OpenMP_CXX_FLAGS})
-list(APPEND PULSAR_CORE_LINK_FLAGS ${Boost_FLAGS})
 list(APPEND PULSAR_CORE_LINK_FLAGS ${PULSAR_CORE_PYTHON_LIBRARIES})
 list(APPEND PULSAR_CORE_LINK_FLAGS ${MPI_CXX_LINK_FLAGS})
 list(APPEND PULSAR_CORE_LINK_FLAGS ${MPI_CXX_FLAGS})

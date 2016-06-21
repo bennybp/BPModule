@@ -90,9 +90,6 @@ You must have the following already compiled and available:
     * Used as one interface language
     * Used to generate source files
   * CMake version 3.0 or higher
-  * Boost 
-    * Graph (header-only)
-    * Format (header-only)
   * GCC or Intel compiler with C++11 support
     * GCC recommended for now, but Intel is regularly tested too
   * Basic Linear Algebra System (BLAS) library

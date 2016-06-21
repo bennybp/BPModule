@@ -15,10 +15,6 @@ namespace output {
 namespace export_python {
 
 
-////////////////////////////
-// Main boost python part
-////////////////////////////
-
 void export_pybind11(pybind11::module & mtop)
 {
     pybind11::module m = mtop.def_submodule("output", "Output functionality");

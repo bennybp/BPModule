@@ -338,7 +338,7 @@ class OptionMap
         /////////////////////////////
         // Python
         /////////////////////////////
-        /*! \brief Change an option by passing a boost::python object
+        /*! \brief Change an option by passing a python object
          *
          * \throw pulsar::exception::OptionException if there is
          *        a problem with the option (nonexistant key, validation, conversion, etc)
