@@ -12,14 +12,14 @@ namespace system{
 
 const double Inf=std::numeric_limits<double>::infinity();
 
-bool Space::IsPeriodic()const{
-    for(double s : LatticeSides)
+bool Space::is_periodic()const{
+    for(double s : lattice_sides)
         if(std::isfinite(s))return true;
     return false;
 }
 
 //double Space::Volume()const{
-//    return !IsPeriodic()?Inf:sqrt(1-cos(Lattic))
+//    return !is_periodic()?Inf:sqrt(1-cos(Lattic))
 //}
 
 Space::Space():Space({90.0,90.0,90.0},{Inf,Inf,Inf}){}

@@ -39,17 +39,17 @@ void export_pybind11(pybind11::module & mtop)
 {
     pybind11::module m = mtop.def_submodule("math", "Some common math operations");
 
-    m.def("Factorial", Factorial); 
-    m.def("FactorialF", FactorialF); 
-    m.def("FactorialD", FactorialD); 
+    m.def("factorial", factorial); 
+    m.def("factorial_f", factorial_f); 
+    m.def("factorial_d", factorial_d); 
 
-    m.def("DoubleFactorial", DoubleFactorial); 
-    m.def("DoubleFactorialF", DoubleFactorialF); 
-    m.def("DoubleFactorialD", DoubleFactorialD); 
+    m.def("double_factorial", double_factorial); 
+    m.def("double_factorial_f", double_factorial_f); 
+    m.def("double_factorial_d", double_factorial_d); 
 
-    m.def("Double2nm1Factorial", Double2nm1Factorial); 
-    m.def("Double2nm1FactorialF", Double2nm1FactorialF); 
-    m.def("Double2nm1FactorialD", Double2nm1FactorialD);
+    m.def("double_2nm1_factorial", double_2nm1_factorial); 
+    m.def("double_2nm1_factorial_f", double_2nm1_factorial_f); 
+    m.def("double_2nm1_factorial_d", double_2nm1_factorial_d);
 
 
 
@@ -62,13 +62,13 @@ void export_pybind11(pybind11::module & mtop)
     pybind11::class_<Point>(m, "Point")
     .def(pybind11::init<double, double, double>()) 
     .def(pybind11::init<const Point::CoordType &>()) 
-    .def("GetCoords", &Point::GetCoords)
-    .def("SetCoords", static_cast<void (Point::*)(double, double, double)>(&Point::SetCoords))
-    .def("SetCoords", static_cast<void (Point::*)(const Point::CoordType &)>(&Point::SetCoords))
-    .def("Distance", &Point::Distance)
-    .def("Magnitude", &Point::Magnitude)
-    .def("Print", &Point::Print)
-    .def("MyHash", &Point::MyHash)
+    .def("get_coords", &Point::get_coords)
+    .def("set_coords", static_cast<void (Point::*)(double, double, double)>(&Point::set_coords))
+    .def("set_coords", static_cast<void (Point::*)(const Point::CoordType &)>(&Point::set_coords))
+    .def("distance", &Point::distance)
+    .def("magnitude", &Point::magnitude)
+    .def("print", &Point::print)
+    .def("my_hash", &Point::my_hash)
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
     .def(pybind11::self += pybind11::self)
@@ -89,7 +89,7 @@ void export_pybind11(pybind11::module & mtop)
                         })
     .def("__str__",[](const Point& p){
                         std::stringstream ss;
-                        p.Print(ss);
+                        p.print(ss);
                         return ss.str();})
     ;
 
@@ -97,12 +97,12 @@ void export_pybind11(pybind11::module & mtop)
     pybind11::class_<GridPoint>(m, "GridPoint")
     .def_readwrite("coords", &GridPoint::coords)
     .def_readwrite("value", &GridPoint::value)
-    .def("MyHash", &GridPoint::MyHash)
+    .def("my_hash", &GridPoint::my_hash)
     ;
 
 
-    RegisterUniverse<Universe<GridPoint>>(m, "GridUniverse"); 
-    RegisterMathSet<MathSet<GridPoint>>(m, "Grid"); 
+    register_Universe<Universe<GridPoint>>(m, "GridUniverse"); 
+    register_MathSet<MathSet<GridPoint>>(m, "Grid"); 
 
 
 

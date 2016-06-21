@@ -84,11 +84,11 @@ class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag,
         /*! \brief Postfix increment */
         ConstModuleTreeIter operator++(int);
 
-        /*! \brief Advance the iterator
+        /*! \brief advance the iterator
          *
          * Similar to prefix increment. Mostly for use from python.
          */
-        void Advance(void);
+        void advance(void);
 
 
         /*! \brief Get a reference to the node data
@@ -98,7 +98,7 @@ class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag,
          * \throw pulsar::exception::ModuleManagerException if the current
          *        node does not exist (ie, we are past the end)
          */
-        const ModuleTreeNode & GetRef(void) const;
+        const ModuleTreeNode & get_ref(void) const;
 
 
         // comparison
@@ -159,11 +159,11 @@ class ConstModuleFlatTreeIter
         /*! \brief Postfix increment */
         ConstModuleFlatTreeIter operator++(int);
 
-        /*! \brief Advance the iterator
+        /*! \brief advance the iterator
          *
          * Similar to prefix increment. Mostly for use from python.
          */
-        void Advance(void);
+        void advance(void);
 
         /*! \brief Get a reference to the node data
          *
@@ -172,7 +172,7 @@ class ConstModuleFlatTreeIter
          * \throw pulsar::exception::ModuleManagerException if the current
          *        node does not exist (ie, we are past the end)
          */
-        const ModuleTreeNode & GetRef(void) const;
+        const ModuleTreeNode & get_ref(void) const;
 
         // comparison
         bool operator==(const ConstModuleFlatTreeIter & rhs) const;

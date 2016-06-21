@@ -59,10 +59,10 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
                 else
                     NewU<<Atoms_[j];
             }
-            Module_t NewModule=MM_.GetModule<EnergyMethod>(Key_,ID_);
+            Module_t NewModule=MM_.get_module<EnergyMethod>(Key_,ID_);
             Wavefunction NewWfn(Wfn_);
             NewWfn.system = std::make_shared<const System>(System(NewU,true));
-            return NewModule->Deriv(Order_-1,NewWfn).second;
+            return NewModule->deriv(Order_-1,NewWfn).second;
         }
 
         FDFunctor(size_t Order,const AtomV_t& Atoms,
@@ -71,13 +71,13 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
 };
 
 
-size_t EnergyMethod::MaxDeriv_()const{
-    return Options().Get<size_t>("MAX_DERIV");
+size_t EnergyMethod::max_deriv_()const{
+    return options().get<size_t>("MAX_DERIV");
 }
 
 
 EnergyMethod::DerivReturnType
-EnergyMethod::FiniteDifference_(size_t Order, const datastore::Wavefunction & Wfn){
+EnergyMethod::finite_difference_(size_t Order, const datastore::Wavefunction & Wfn){
     if(Order==0)
         throw GeneralException("I do not know how to obtain an energy via "
                                "finite difference.");
@@ -92,10 +92,10 @@ EnergyMethod::FiniteDifference_(size_t Order, const datastore::Wavefunction & Wf
 
     math::CentralDiff<double,Return_t> FD(NewComm);
 
-    FDFunctor Thing2Run=FDFunctor(Order,Atoms,MManager(),Wfn,Key(),ID());
+    FDFunctor Thing2Run=FDFunctor(Order,Atoms,module_manager(),Wfn,key(),id());
     TempDeriv=FD.Run(Thing2Run,3*Mol.size(),
-                     Options().Get<double>("FDIFF_DISPLACEMENT"),
-                     Options().Get<size_t>("FDIFF_STENCIL_SIZE"));
+                     options().get<double>("FDIFF_DISPLACEMENT"),
+                     options().get<size_t>("FDIFF_STENCIL_SIZE"));
     //Flatten the array & abuse fact that TempDeriv[0] is the first comp
     for(size_t i=1;i<TempDeriv.size();++i)
        for(double j :  TempDeriv[i])
@@ -103,7 +103,7 @@ EnergyMethod::FiniteDifference_(size_t Order, const datastore::Wavefunction & Wf
 
     //! \todo what wfn to return
     EnergyMethod::DerivReturnType CWfn=
-            CreateChild<EnergyMethod>(Key())->Deriv(Order-1,Wfn);
+            create_child<EnergyMethod>(key())->deriv(Order-1,Wfn);
     return {CWfn.first, TempDeriv[0]};
 }
 

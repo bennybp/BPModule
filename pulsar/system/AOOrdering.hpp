@@ -49,7 +49,7 @@ typedef std::map<ShellType, AMReorderMap> BSReorderMap;
 
 /*! \brief Obtain the ordering in pulsar for all
  *         available angular momenta */
-const AOOrderingMaps & AllAOOrderings(void) noexcept;
+const AOOrderingMaps & all_ao_orderings(void) noexcept;
 
 
 /*! \brief Obtain the ordering in pulsar of m_l for gaussians of
@@ -58,7 +58,7 @@ const AOOrderingMaps & AllAOOrderings(void) noexcept;
  * \throw pulsar::exception::BasisSetException if the value of the
  *        angular momentum is out of range
  */
-const std::vector<int8_t> & SphericalOrdering(int am);
+const std::vector<int8_t> & spherical_ordering(int am);
 
 
 /*! \brief Obtain the ordering in pulsar of cartesian gaussians for
@@ -67,7 +67,7 @@ const std::vector<int8_t> & SphericalOrdering(int am);
  * \throw pulsar::exception::BasisSetException if the value of the
  *        angular momentum is out of range
  */
-const std::vector<IJK> & CartesianOrdering(int am);
+const std::vector<IJK> & cartesian_ordering(int am);
 
 
 /*! \brief Get the index of a cartesian gaussian basis function
@@ -80,11 +80,11 @@ const std::vector<IJK> & CartesianOrdering(int am);
  * \param [in] am The angular momentum to search for
  * \param [in] ijk Exponents on x, y, and z of the cartesian gaussian
  */
-size_t CartesianIndex(int am, IJK ijk);
+size_t cartesian_index(int am, IJK ijk);
 
 
 /*! \brief Get the index of a cartesian gaussian basis function
- *         among functions for all AM in pulsar ordering
+ *         among functions for [0, \p am] in pulsar ordering
  *
  * \throw pulsar::exception::BasisSetException if the value of the
  *        angular momentum is out of range or if the value of ijk
@@ -93,7 +93,7 @@ size_t CartesianIndex(int am, IJK ijk);
  * \param [in] am The angular momentum to search for
  * \param [in] ijk Exponents on x, y, and z of the cartesian gaussian
  */
-size_t FullCartesianIndex(int am, IJK ijk);
+size_t full_cartesian_index(int am, IJK ijk);
 
 
 /*! \brief Get the index of a spherical gaussian basis function
@@ -106,11 +106,11 @@ size_t FullCartesianIndex(int am, IJK ijk);
  * \param [in] am The angular momentum to search for
  * \param [in] m The value of m_l of the spherical harmonic to search for
  */
-size_t SphericalIndex(int am, int m);
+size_t spherical_index(int am, int m);
 
 
 /*! \brief Get the index of a spherical gaussian basis function
- *         among functions for all AM in pulsar ordering
+ *         among functions for [0, \p am] in pulsar ordering
  *
  * \throw pulsar::exception::BasisSetException if the value of the
  *        angular momentum is out of range or if the value of m
@@ -119,7 +119,7 @@ size_t SphericalIndex(int am, int m);
  * \param [in] am The angular momentum to search for
  * \param [in] m The value of m_l of the spherical harmonic to search for
  */
-size_t FullSphericalIndex(int am, int m);
+size_t full_spherical_index(int am, int m);
 
 
 
@@ -135,8 +135,8 @@ size_t FullSphericalIndex(int am, int m);
  * \throw pulsar::exception::MathException if an element
  *        in \p dest does not exist in \p src
  */ 
-BSReorderMap MakeBSReorderMap(const AOOrderingMaps & src,
-                              const AOOrderingMaps & dest);
+BSReorderMap make_basis_reorder_map(const AOOrderingMaps & src,
+                                    const AOOrderingMaps & dest);
 
 
 
@@ -148,14 +148,14 @@ BSReorderMap MakeBSReorderMap(const AOOrderingMaps & src,
  * \p bs BasisSet. The result is a complete mapping of AO from
  * one basis set ordering to another.
  *
- * If this were applied to a vector or array of bs.NFunctions()
+ * If this were applied to a vector or array of bs.n_functions()
  * elements, this would reorder the entire vector or array to the
  * new ordering.
  *
  * \throw pulsar::exception::BasisSetException if ordering data is
  *        missing for a given angular momentum and/or shell type.
  */
-std::vector<size_t> MakeAOBasisOrdering(const BasisSet & bs, const BSReorderMap & bm);
+std::vector<size_t> make_ao_basis_ordering(const BasisSet & bs, const BSReorderMap & bm);
 
 
 

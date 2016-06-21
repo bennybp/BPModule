@@ -29,7 +29,7 @@ inline std::string DnhMHSym(size_t n){
 inline Elem_t GenCnElems(size_t n){
     Elem_t Results;
     for(size_t i=1;i<n;++i){
-        std::pair<size_t,size_t> Frac=math::Reduce(i,n);
+        std::pair<size_t,size_t> Frac=math::reduce(i,n);
         Results.insert(Rotation({0.0,0.0,1.0},Frac.second,Frac.first));
     }
     return Results;
@@ -49,7 +49,7 @@ inline Elem_t GenSnElems(size_t n){
     Elem_t Results=GenCnElems(Even?n/2:n);
     const size_t Max=(Even?n:2*n);
     for(size_t i=1;i<Max;i+=2){
-        std::pair<size_t,size_t> Frac=math::Reduce(i,n);
+        std::pair<size_t,size_t> Frac=math::reduce(i,n);
         if(Frac==std::make_pair<size_t,size_t>(1,2))Results.insert(CoI);
         else if(Frac==std::make_pair<size_t,size_t>(1,1))
             Results.insert(MirrorPlane({0.0,0.0,1.0}));
@@ -62,7 +62,7 @@ inline Elem_t GenSnElems(size_t n){
 inline Elem_t GenCnhElems(size_t n){
     Elem_t Results=GenSnElems(n);
     if(n%2==0){//Have to manually get other S groups and Cn
-        std::set<size_t> Fs=math::Factors(n);
+        std::set<size_t> Fs=math::factors(n);
         for(size_t Fi:Fs){
             Elem_t Temp=GenSnElems(Fi);
             Results.insert(Temp.begin(),Temp.end());
@@ -112,17 +112,17 @@ inline Elem_t AddE(const Elem_t& Es){
 
 SymmetryGroup::SymmetryGroup(const Elem_t& Es,
                   const std::string SSym,const std::string HMSym):
-                  Elems(AddE(Es)),SSymbol(SSym),HMSymbol(HMSym){
+                  symmetry_elements(AddE(Es)),schoenflies_symbol(SSym),hm_symbol(HMSym){
 }
 
-bool SymmetryGroup::Finite()const{
-    return (SSymbol!="Kh"&&SSymbol!="Coov"&&SSymbol!="Dooh");
+bool SymmetryGroup::finite()const{
+    return (schoenflies_symbol!="Kh"&&schoenflies_symbol!="Coov"&&schoenflies_symbol!="Dooh");
 }
 
-size_t SymmetryGroup::Order()const{
-    if(!Finite())
+size_t SymmetryGroup::order()const{
+    if(!finite())
         throw exception::GeneralException("Group is infinite order");
-    return Elems.size();
+    return symmetry_elements.size();
 }
 
 namespace PointGroup{
@@ -166,32 +166,32 @@ Dooh::Dooh():Dooh({Coo,CoI}){}
 
 }//End PointGroup namespace
 
-bool Contains(const Elem_t& Elems,const std::string& SSym,size_t Mult=1){
+bool contains(const Elem_t& Elems,const std::string& SSym,size_t Mult=1){
     for(const SymmetryElement& Ei: Elems){
-        if(Ei.SSymbol==SSym)Mult--;
+        if(Ei.schoenflies_symbol==SSym)Mult--;
         if(Mult==0)return true;
     }
     return false;
 }
 
-std::array<double,3> GetPrincipleAxis(const Elem_t& Elems,size_t n){
+std::array<double,3> get_principle_axis(const Elem_t& Elems,size_t n){
     typedef std::unique_ptr<SymmetryElement> pElem_t;
     using std::get;
     pElem_t PrincipleAxis;;
     std::string nstr=to_string(n);
     for(const auto& Ei: Elems)
-        if(Ei.SSymbol==("C_"+nstr)){
+        if(Ei.schoenflies_symbol==("C_"+nstr)){
             PrincipleAxis=pElem_t(new SymmetryElement(Ei));
             break;
         }
     //Want right eigenvector with eigenvalue 1
     NonSymmDiagReturn_t EigenSys=
-            math::NonSymmetricDiagonalize(PrincipleAxis->Elem,3);
+            math::NonSymmetricDiagonalize(PrincipleAxis->element_matrix,3);
     size_t Axis=2;//Will usually be the last eigenvector, but not always
     std::vector<std::complex<double>> Evs=get<0>(EigenSys);
     for(size_t i=3;i>0;--i){
-        if(math::AreEqual(Evs[i-1].real(),1.0,1e-3)&&
-           math::AreEqual(Evs[i-1].imag(),0.0,1e-3)){
+        if(math::are_equal(Evs[i-1].real(),1.0,1e-3)&&
+           math::are_equal(Evs[i-1].imag(),0.0,1e-3)){
             Axis=i-1;
             break;
         }
@@ -200,53 +200,53 @@ std::array<double,3> GetPrincipleAxis(const Elem_t& Elems,size_t n){
     return {Evec[Axis*3],Evec[Axis*3+1],Evec[Axis*3+2]};
 }
 
-SymmetryGroup AssignGroup(const Elem_t& Elems){
+SymmetryGroup assign_group(const Elem_t& Elems){
     using namespace PointGroup;
-    if(Contains(Elems,"C_oo")){//Find linear groups
-        if(Contains(Elems,"i"))return Dooh(Elems);
+    if(contains(Elems,"C_oo")){//Find linear groups
+        if(contains(Elems,"i"))return Dooh(Elems);
         return Coov(Elems);
     }
-    if(Contains(Elems,"C_3",2)){//Cubic groups
-        if(Contains(Elems,"C_5",2)){
-            if(Contains(Elems,"i"))return Ih(Elems);
+    if(contains(Elems,"C_3",2)){//Cubic groups
+        if(contains(Elems,"C_5",2)){
+            if(contains(Elems,"i"))return Ih(Elems);
             return I(Elems);
         }
-        if(Contains(Elems,"C_4",2)){
-            if(Contains(Elems,"i"))return Oh(Elems);
+        if(contains(Elems,"C_4",2)){
+            if(contains(Elems,"i"))return Oh(Elems);
             return O(Elems);
         }
-        if(Contains(Elems,"s")){
-            if(Contains(Elems,"i")) return Th(Elems);
+        if(contains(Elems,"s")){
+            if(contains(Elems,"i")) return Th(Elems);
             return Td(Elems);
         }
         return T(Elems);
     }
     if(Elems.size()<2){//Low symmetry groups
-        if(Contains(Elems,"s"))return Cs(Elems);
-        if(Contains(Elems,"i"))return Ci(Elems);
-        if(Contains(Elems,"C_2"))return Cn(Elems,2);
+        if(contains(Elems,"s"))return Cs(Elems);
+        if(contains(Elems,"i"))return Ci(Elems);
+        if(contains(Elems,"C_2"))return Cn(Elems,2);
         return Cn(Elems,1);
     }
     //Find n for the principal axis and establish some strings we'll need
     double MinTheta=360.0;
     for(const auto& Ei: Elems){
-        if(Ei.SSymbol.at(0)!='C')continue;
+        if(Ei.schoenflies_symbol.at(0)!='C')continue;
         MinTheta=
           std::min(MinTheta,
-                   acos((Ei.Elem[0]+Ei.Elem[4]+Ei.Elem[8]-1.0)/2.0));
+                   acos((Ei.element_matrix[0]+Ei.element_matrix[4]+Ei.element_matrix[8]-1.0)/2.0));
     }
     size_t n= (size_t)(std::round(2*PI/MinTheta));
     if(n==0)throw GeneralException(
        "Your symmetry elements do not constitute a point group");
-    MirrorPlane Sigmah(GetPrincipleAxis(Elems,n)); 
-    if(Contains(Elems,"C_2",n)){
+    MirrorPlane Sigmah(get_principle_axis(Elems,n)); 
+    if(contains(Elems,"C_2",n)){
         if(Elems.count(Sigmah)==1)return Dnh(Elems,n);
-        if(Contains(Elems,"s"))return Dnd(Elems,n);
+        if(contains(Elems,"s"))return Dnd(Elems,n);
         return Dn(Elems,n);
     }
     if(Elems.count(Sigmah)==1)return Cnh(Elems,n);
-    if(Contains(Elems,"s"))return Cnv(Elems,n);
-    if(Contains(Elems,"S_"+to_string(2*n)))return Sn(Elems,2*n);
+    if(contains(Elems,"s"))return Cnv(Elems,n);
+    if(contains(Elems,"S_"+to_string(2*n)))return Sn(Elems,2*n);
     return Cn(Elems,n);
 }
 

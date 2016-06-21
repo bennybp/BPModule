@@ -40,14 +40,14 @@ struct OptionMapIssues
      *
      * Returns true if there are no issues stored in this structure
      */
-    bool OK(void) const;
+    bool ok(void) const;
 
 
-    /*! \brief Print issues (if there are any) */
-    void Print(std::ostream & os) const;
+    /*! \brief print issues (if there are any) */
+    void print(std::ostream & os) const;
 
     /*! \brief Obtain the issues as a string */
-    std::string String(void) const;
+    std::string to_string(void) const;
 
 };
 
@@ -64,7 +64,7 @@ struct OptionMapIssues
  *     and defaults. This includes whether or not a value is set, even if
  *     it is set to the default. (ie, an option with a value manually
  *     set to the default and one without a value explicitly set will
- *     have different hashes). See HashValues for one that just hashes
+ *     have different hashes). See hash_values for one that just hashes
  *     the values. Note that hashing does not include validators, but does
  *     include whether or not expert mode is enabled.
  */
@@ -103,7 +103,7 @@ class OptionMap
          * \param [in] key The key to the data
          * \return True if the key exists and has a value, false otherwise
          */
-        bool Has(const std::string & key) const;
+        bool has(const std::string & key) const;
 
 
 
@@ -112,7 +112,7 @@ class OptionMap
          * \param [in] key The key to the data
          * \return True if the key exists, false otherwise
          */
-        bool HasKey(const std::string & key) const;
+        bool has_key(const std::string & key) const;
 
 
 
@@ -122,7 +122,7 @@ class OptionMap
          *
          * \return Number of elements in this container
          */
-        size_t Size(void) const noexcept;
+        size_t size(void) const noexcept;
 
 
 
@@ -131,7 +131,7 @@ class OptionMap
          * \throw pulsar::exception::OptionException if
          *        the key doesn't exist
          */
-        bool IsDefault(const std::string & key) const;
+        bool is_default(const std::string & key) const;
 
 
 
@@ -141,7 +141,7 @@ class OptionMap
          * Ie, is the option set by the user. This is true even
          * if it is explicitly set to the default value.
          */
-        bool IsSet(const std::string & key) const;
+        bool is_set(const std::string & key) const;
 
 
 
@@ -152,7 +152,7 @@ class OptionMap
          *
          * \exstrong
          */
-        void ResetToDefault(const std::string & key);
+        void reset_to_default(const std::string & key);
 
 
 
@@ -160,12 +160,12 @@ class OptionMap
          *
          * \exnothrow
          */
-        bool AllReqSet(void) const noexcept;
+        bool all_req_set(void) const noexcept;
 
 
         /*! \brief Obtain the option keys for all missing required options
          */
-        KeySet AllMissingReq(void) const;
+        KeySet all_missing_req(void) const;
 
 
 
@@ -179,7 +179,7 @@ class OptionMap
          * \throw pulsar::exception::PythonCallException if there is a problem
          *        with calling a validation function
          */
-        OptionMapIssues GetIssues(void) const;
+        OptionMapIssues get_issues(void) const;
 
 
 
@@ -188,7 +188,7 @@ class OptionMap
          * \throw pulsar::exception::PythonCallException if there is a problem
          *        with validation.
          */
-        bool HasIssues(void) const;
+        bool has_issues(void) const;
 
 
 
@@ -197,19 +197,19 @@ class OptionMap
          * In expert mode, some failures (mostly invalid options) will print warnings,
          * but an exception will not be thrown
          */
-        void SetExpert(bool expert) noexcept;
+        void set_expert(bool expert) noexcept;
 
 
 
         /*! \brief See if expert mode is enabled
          */
-        bool IsExpert(void) const noexcept;
+        bool is_expert(void) const noexcept;
 
 
 
         /*! \brief Dumps the options to the output
         */
-        void Print(std::ostream & os) const;
+        void print(std::ostream & os) const;
 
 
 
@@ -224,17 +224,17 @@ class OptionMap
          *        cast to the appropriate type
          */
         template<typename T>
-        T Get(const std::string & key) const
+        T get(const std::string & key) const
         {
             static constexpr OptionType opt_type = OptionTypeMap<T>::opt_type;
             typedef typename OptionTypeInfo<opt_type>::stored_type stored_type;
 
             CheckType_<T>();
 
-            stored_type val = GetOrThrow_Cast_<opt_type>(key)->Get();
+            stored_type val = get_or_throw_Cast_<opt_type>(key)->Get();
 
             try {
-                return OptionCast<T,stored_type>::Cast(val);
+                return OptionCast<T,stored_type>::cast(val);
             }
             catch(const std::exception & ex)
             {
@@ -256,7 +256,7 @@ class OptionMap
          * \exstrong
          */
         template<typename T>
-        void Change(const std::string & key, const T & value)
+        void change(const std::string & key, const T & value)
         {
             static constexpr OptionType opt_type = OptionTypeMap<T>::opt_type;
             typedef typename OptionTypeInfo<opt_type>::stored_type stored_type;
@@ -266,7 +266,7 @@ class OptionMap
             stored_type convval;
 
             try {
-                 convval = OptionCast<stored_type, T>::Cast(value);
+                 convval = OptionCast<stored_type, T>::cast(value);
             }
             catch(const std::exception & ex)
             {
@@ -274,7 +274,7 @@ class OptionMap
                 throw exception::OptionException(ex, "optionkey", key);
             }
 
-            GetOrThrow_Cast_<opt_type>(key)->Change(convval);
+            get_or_throw_Cast_<opt_type>(key)->Change(convval);
         }
 
 
@@ -286,10 +286,10 @@ class OptionMap
          * comes from (default or user-supplied), just that
          * the value obtained from Get() match
          */
-        bool Compare(const OptionMap & rhs) const; 
+        bool compare(const OptionMap & rhs) const; 
 
 
-        /*! \copydocs Compare(const OptionMap & rhs) const
+        /*! \copydocs compare(const OptionMap & rhs) const
          * 
          * \todo does this make sense?
          */
@@ -302,9 +302,9 @@ class OptionMap
          *
          * \todo exceptions 
          */
-        void AddOption(std::string key, OptionType opttype, bool required,
-                       const pybind11::object & validator, std::string help,
-                       const pybind11::object & def);
+        void add_option(std::string key, OptionType opttype, bool required,
+                        const pybind11::object & validator, std::string help,
+                        const pybind11::object & def);
 
 
 
@@ -313,7 +313,7 @@ class OptionMap
          * This includes values and defaults, and the expert flag.
          * It does not include validation functions.
          */
-        bphash::HashValue MyHash(void) const;
+        bphash::HashValue my_hash(void) const;
 
 
         /*! \brief Hash only the values of a set of options
@@ -324,7 +324,7 @@ class OptionMap
          * \throw pulsar::exception::OptionException if
          *        the key does not exist
          */ 
-        bphash::HashValue HashValues(const std::set<std::string> & keys) const;
+        bphash::HashValue hash_values(const std::set<std::string> & keys) const;
 
 
         /*! \brief Hash only the values of all options
@@ -332,7 +332,7 @@ class OptionMap
          * This hashes only the keys and values of options. It does
          * not take into account where that value comes from.
          */ 
-        bphash::HashValue HashAllValues(void) const;
+        bphash::HashValue hash_all_values(void) const;
 
 
         /////////////////////////////
@@ -348,7 +348,7 @@ class OptionMap
          *
          * \exstrong
          */
-        void ChangePy(const std::string & key, const pybind11::object & obj);
+        void change_py(const std::string & key, const pybind11::object & obj);
 
 
 
@@ -357,7 +357,7 @@ class OptionMap
          * \throw pulsar::exception::OptionException if there is
          *        a problem with the option (nonexistant key, validation, conversion, etc)
          */
-        pybind11::object GetPy(const std::string & key) const;
+        pybind11::object get_py(const std::string & key) const;
 
 
 
@@ -387,12 +387,12 @@ class OptionMap
          * \throw pulsar::exception::OptionException
          *        if a key doesn't exist
          */
-        const detail::OptionBase * GetOrThrow_(const std::string & key) const;
+        const detail::OptionBase * get_or_throw_(const std::string & key) const;
 
 
-         /* \copydoc GetOrThrow_
+         /* \copydoc get_or_throw_
          */
-        detail::OptionBase * GetOrThrow_(const std::string & key);
+        detail::OptionBase * get_or_throw_(const std::string & key);
 
 
         /*! \brief Get a pointer to OptionBase and cast it to an appropriate OptionBase
@@ -404,29 +404,29 @@ class OptionMap
          *        be cast to the desired type
          */
         template<OptionType OPTTYPE>
-        const detail::OptionHolder<OPTTYPE> * GetOrThrow_Cast_(const std::string & key) const
+        const detail::OptionHolder<OPTTYPE> * get_or_throw_Cast_(const std::string & key) const
         {
-            const detail::OptionBase * ptr = GetOrThrow_(key);
+            const detail::OptionBase * ptr = get_or_throw_(key);
             const detail::OptionHolder<OPTTYPE> * oh = dynamic_cast<const detail::OptionHolder<OPTTYPE> *>(ptr);
             if(oh == nullptr)
                 throw exception::OptionException("Bad option cast", "optionkey", key,
-                                                 "fromtype", ptr->TypeString(),
+                                                 "fromtype", ptr->type_string(),
                                                  "totype", OptionTypeToString(OPTTYPE)); 
 
             return oh;
         }
 
 
-        /*! \copydoc GetOrThrow_Cast_
+        /*! \copydoc get_or_throw_Cast_
          */
         template<OptionType OPTTYPE>
-        detail::OptionHolder<OPTTYPE> * GetOrThrow_Cast_(const std::string & key)
+        detail::OptionHolder<OPTTYPE> * get_or_throw_Cast_(const std::string & key)
         {
-            detail::OptionBase * ptr = GetOrThrow_(key);
+            detail::OptionBase * ptr = get_or_throw_(key);
             detail::OptionHolder<OPTTYPE> * oh = dynamic_cast<detail::OptionHolder<OPTTYPE> *>(ptr);
             if(oh == nullptr)
                 throw exception::OptionException("Bad option cast", "optionkey", key,
-                                                 "fromtype", ptr->TypeString(),
+                                                 "fromtype", ptr->type_string(),
                                                  "totype", OptionTypeToString(OPTTYPE)); 
 
             return oh;
@@ -465,7 +465,7 @@ class OptionMap
             // static cast for size - just to be absolutely sure
             ar(static_cast<size_t>(opmap_.size()));
             for(const auto & it : opmap_)
-                ar(it.first, it.second->Type(), it.second->ToByteArray());
+                ar(it.first, it.second->type(), it.second->to_byte_array());
         }
 
         template<class Archive>

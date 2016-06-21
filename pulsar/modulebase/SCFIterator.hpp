@@ -23,13 +23,13 @@ class SCFIterator : public ModuleBase
 
         /*! \brief Form a new wavefunction based on the given wfn and fock matrix
          */
-        datastore::Wavefunction Next(const datastore::Wavefunction & wfn, const math::IrrepSpinMatrixD & fmat)
+        datastore::Wavefunction next(const datastore::Wavefunction & wfn, const math::IrrepSpinMatrixD & fmat)
         {
-            return ModuleBase::CallFunction(&SCFIterator::Next_, wfn, fmat);
+            return ModuleBase::call_function(&SCFIterator::next_, wfn, fmat);
         }
 
 
-        virtual datastore::Wavefunction Next_(const datastore::Wavefunction & wfn, const math::IrrepSpinMatrixD & fmat) = 0;
+        virtual datastore::Wavefunction next_(const datastore::Wavefunction & wfn, const math::IrrepSpinMatrixD & fmat) = 0;
 
 };
 
@@ -38,9 +38,9 @@ class SCFIterator_Py : public SCFIterator{
         using SCFIterator::SCFIterator;
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
-        virtual datastore::Wavefunction Next_(const datastore::Wavefunction & wfn, const math::IrrepSpinMatrixD & fmat)
+        virtual datastore::Wavefunction next_(const datastore::Wavefunction & wfn, const math::IrrepSpinMatrixD & fmat)
         {
-            return CallPyOverride<datastore::Wavefunction>("Next_", wfn, fmat);
+            return call_py_override<datastore::Wavefunction>("next_", wfn, fmat);
         }
 };
 

@@ -35,9 +35,9 @@ struct ModuleInfo
     datastore::OptionMap options;      //!< Options for the module
 
 
-    /*! \brief Print out this info
+    /*! \brief print out this info
     */
-    void Print(std::ostream & os) const;
+    void print(std::ostream & os) const;
 
 
     /*! \brief Comapre two ModuleInfo
@@ -47,7 +47,7 @@ struct ModuleInfo
     bool operator==(const ModuleInfo & rhs) const;
 
 
-    bphash::HashValue MyHash(void) const;    
+    bphash::HashValue my_hash(void) const;    
 
     private:
         //! \name Serialization and Hashing

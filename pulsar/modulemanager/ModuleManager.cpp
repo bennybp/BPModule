@@ -49,13 +49,13 @@ ModuleManager::~ModuleManager()
      * Warn of any in-use modules
      */
     size_t ninuse = 0;
-    for(auto it = mtree_.FlatBegin(); it != mtree_.FlatEnd(); ++it)
+    for(auto it = mtree_.flat_begin(); it != mtree_.flat_end(); ++it)
         ninuse += (it->inuse ? 1 : 0);
                         
     if(ninuse)
-        GlobalWarning("ModuleManager is destructing with %? modules in use\n", ninuse);
+        print_global_warning("ModuleManager is destructing with %? modules in use\n", ninuse);
     else
-        GlobalSuccess("ModuleManager has no modules in use\n");
+        print_global_success("ModuleManager has no modules in use\n");
 
 
     /*
@@ -72,7 +72,7 @@ ModuleManager::~ModuleManager()
      * The tree contains System, so that must be cleared before unloading
      *  as well
      */
-    mtree_.Clear();
+    mtree_.clear();
 
 
 
@@ -81,32 +81,32 @@ ModuleManager::~ModuleManager()
 }
 
 
-size_t ModuleManager::Size(void) const noexcept
+size_t ModuleManager::size(void) const noexcept
 {
     return store_.size();
 }
 
 
-bool ModuleManager::HasKey(const std::string & modulekey) const
+bool ModuleManager::has_key(const std::string & modulekey) const
 {
     return store_.count(modulekey);
 }
 
 
-ModuleInfo ModuleManager::ModuleKeyInfo(const std::string & modulekey) const
+ModuleInfo ModuleManager::module_key_info(const std::string & modulekey) const
 {
-    return GetOrThrow_(modulekey).mi;
+    return get_or_throw_(modulekey).mi;
 }
 
 
-void ModuleManager::DuplicateKey(const std::string & modulekey, const std::string newkey)
+void ModuleManager::duplicate_key(const std::string & modulekey, const std::string newkey)
 {
-    if(HasKey(newkey))
+    if(has_key(newkey))
         throw ModuleLoadException("Cannot duplicate key: new key already exists",
                                   "modulekey", modulekey, "newkey", newkey);
 
     // copy
-    StoreEntry se = GetOrThrow_(modulekey);
+    StoreEntry se = get_or_throw_(modulekey);
 
     // set the number of times this key has been called
     se.ncalled = 0;
@@ -114,81 +114,81 @@ void ModuleManager::DuplicateKey(const std::string & modulekey, const std::strin
     store_.emplace(newkey, std::move(se));
 }
 
-std::string ModuleManager::GenerateUniqueKey() const{
+std::string ModuleManager::generate_unique_key() const{
     std::random_device r;
     std::default_random_engine e(r());
     std::uniform_int_distribution<int> dist;
     std::stringstream ss;
     do{
         ss<<dist(e);
-    }while(HasKey(ss.str()));
+    }while(has_key(ss.str()));
     return ss.str();
 }
 
-void ModuleManager::Print(std::ostream & os) const
+void ModuleManager::print(std::ostream & os) const
 {
     for(const auto & it : store_)
-        it.second.mi.Print(os);
+        it.second.mi.print(os);
 }
 
 
-void ModuleManager::TestAll(void)
+void ModuleManager::test_all(void)
 {
     //! \todo needs rewriting and cleanup
-    GlobalDebug("Testing all modules\n");
+    print_global_debug("Testing all modules\n");
     for(const auto & it : store_)
     {
-        GlobalDebug("Testing %? (%?)...\n", it.first, it.second.mi.name);
+        print_global_debug("Testing %? (%?)...\n", it.first, it.second.mi.name);
 
-        if(!it.second.mi.options.AllReqSet())
+        if(!it.second.mi.options.all_req_set())
         {
-            GlobalError("Error - module %? [key %?]\" failed options test - required options are missing\n", it.second.mi.name, it.first);
+            print_global_error("Error - module %? [key %?]\" failed options test - required options are missing\n", it.second.mi.name, it.first);
 
-            auto missingreq = it.second.mi.options.AllMissingReq();
+            auto missingreq = it.second.mi.options.all_missing_req();
             for(const auto & optit : missingreq)
-                GlobalError("    Missing \"%?\"\n", optit);
+                print_global_error("    Missing \"%?\"\n", optit);
         }
 
 
-        GlobalDebug("Test of %? OK\n", it.first);
+        print_global_debug("Test of %? OK\n", it.first);
     }
 
-    GlobalDebug("Testing getting of modules\n");
+    print_global_debug("Testing getting of modules\n");
     for(const auto & it : store_)
     {
         try {
-            GetModule<ModuleBase>(it.first, 0);
+            get_module<ModuleBase>(it.first, 0);
         }
         catch(std::exception & ex)
         {
-            GlobalError("Error - module %? [key %?]\" failed test loading!\n", it.second.mi.name, it.first);
-            throw GeneralException(ex, "location", "TestAll");
+            print_global_error("Error - module %? [key %?]\" failed test loading!\n", it.second.mi.name, it.first);
+            throw GeneralException(ex, "location", "test_all");
         }
     }
 
-    GlobalDebug("Testing done!\n");
+    print_global_debug("Testing done!\n");
 }
 
 
-ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string & modulekey)
+ModuleManager::StoreEntry & ModuleManager::get_or_throw_(const std::string & modulekey)
 {
-    if(HasKey(modulekey))
+    if(has_key(modulekey))
         return store_.at(modulekey);
     else
         throw ModuleManagerException("Missing module key in ModuleManager", "modulekey", modulekey);
 }
 
 
-const ModuleManager::StoreEntry & ModuleManager::GetOrThrow_(const std::string & modulekey) const
+const ModuleManager::StoreEntry & ModuleManager::get_or_throw_(const std::string & modulekey) const
 {
-    if(HasKey(modulekey))
+    if(has_key(modulekey))
         return store_.at(modulekey);
     else
         throw ModuleManagerException("Missing module key in ModuleManager", "modulekey", modulekey);
 }
 
 
-void ModuleManager::EnableDebug(const std::string & modulekey, bool debug)
+void ModuleManager::enable_debug(const std::string & modulekey, bool debug)
 {
     if(debug)
         keydebug_.insert(modulekey);
@@ -197,37 +197,37 @@ void ModuleManager::EnableDebug(const std::string & modulekey, bool debug)
 }
 
 
-void ModuleManager::EnableDebugAll(bool debug) noexcept
+void ModuleManager::enable_debug_all(bool debug) noexcept
 {
     debugall_ = debug;
 }
 
 
-ModuleTree::const_iterator ModuleManager::TreeBegin(ID_t startid) const
+ModuleTree::const_iterator ModuleManager::tree_begin(ID_t startid) const
 {
-    return mtree_.Begin(startid);
+    return mtree_.begin(startid);
 }
 
-ModuleTree::const_iterator ModuleManager::TreeEnd(void) const
+ModuleTree::const_iterator ModuleManager::tree_end(void) const
 {
-    return mtree_.End();
+    return mtree_.end();
 }
 
-ModuleTree::const_flat_iterator ModuleManager::FlatTreeBegin(void) const
+ModuleTree::const_flat_iterator ModuleManager::flat_tree_begin(void) const
 {
-    return mtree_.FlatBegin();
+    return mtree_.flat_begin();
 }
 
-ModuleTree::const_flat_iterator ModuleManager::FlatTreeEnd(void) const
+ModuleTree::const_flat_iterator ModuleManager::flat_tree_end(void) const
 {
-    return mtree_.FlatEnd();
+    return mtree_.flat_end();
 }
 
 
 /////////////////////////////////////////
 // Module Loading
 /////////////////////////////////////////
-void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo, const std::string & modulekey)
+void ModuleManager::load_module_from_minfo(const ModuleInfo & minfo, const std::string & modulekey)
 {
     // path set in the module info?
     if(minfo.path.size() == 0)
@@ -246,25 +246,25 @@ void ModuleManager::LoadModuleFromModuleInfo(const ModuleInfo & minfo, const std
                                   "modulepath", minfo.path, "modulename", minfo.name, "type", minfo.type);
 
     // may throw an exception. Exception should be a ModuleLoadException
-    const ModuleCreationFuncs & mcf = loadhandlers_.at(minfo.type)->LoadSupermodule(minfo.path);
+    const ModuleCreationFuncs & mcf = loadhandlers_.at(minfo.type)->load_supermodule(minfo.path);
 
     // See if this supermodule actually create a module with this name
-    if(!mcf.HasCreator(minfo.name))
+    if(!mcf.has_creator(minfo.name))
         throw ModuleLoadException("Creators from this supermodule cannot create a module with this name",
                                   "path", minfo.path, "modulename", minfo.name);
 
     // add to store with the given module name
     // Arguments: module info, creator, ncalled
-    store_.emplace(modulekey, StoreEntry{minfo, mcf.GetCreator(minfo.name), 0});
+    store_.emplace(modulekey, StoreEntry{minfo, mcf.get_creator(minfo.name), 0});
 }
 
 
-bool ModuleManager::ModuleInUse(ID_t id) const
+bool ModuleManager::module_in_use(ID_t id) const
 {
-    if(!mtree_.HasID(id))
+    if(!mtree_.has_id(id))
         return false;
     else
-        return mtree_.GetByID(id).inuse;
+        return mtree_.get_by_id(id).inuse;
 }
 
 
@@ -275,7 +275,7 @@ std::unique_ptr<detail::ModuleIMPLHolder>
 ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
 {
     // obtain the information for this key
-    StoreEntry & se = GetOrThrow_(modulekey);
+    StoreEntry & se = get_or_throw_(modulekey);
 
     // obtain the options and validate them.
     // Throw an exception if they are invalid (and not in expert mode)
@@ -283,18 +283,18 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
     // if the options are bad (and an exception is thrown)
     ModuleInfo mi(se.mi);
 
-    OptionMapIssues iss = se.mi.options.GetIssues();
-    if(!iss.OK())
+    OptionMapIssues iss = se.mi.options.get_issues();
+    if(!iss.ok())
     {
-        if(se.mi.options.IsExpert())
+        if(se.mi.options.is_expert())
         {
-            GlobalWarning("Options for module key %? has issues, but expert mode is on", modulekey);
-            GlobalWarning(iss.String());
+            print_global_warning("Options for module key %? has issues, but expert mode is on", modulekey);
+            print_global_warning(iss.to_string());
         }
         else
         {
             std::stringstream ss;
-            iss.Print(ss);
+            iss.print(ss);
             throw OptionException("Options for module are not valid", "modulekey", modulekey,
                                   "issues", ss.str());
         }
@@ -334,32 +334,32 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
 
 
     // If there is a parent, get its wavefunction and use that
-    if(parentid != 0 && !mtree_.HasID(parentid))
+    if(parentid != 0 && !mtree_.has_id(parentid))
         throw exception::ModuleCreateException("Parent does not exist on map", "parentid", parentid);
 
     // move the data to the tree
     // "me" should not be accessed after this, so
     // we load a reference to it
-    mtree_.Insert(std::move(me), parentid);
-    ModuleTreeNode & mtn = mtree_.GetByID(curid_);
+    mtree_.insert(std::move(me), parentid);
+    ModuleTreeNode & mtn = mtree_.get_by_id(curid_);
 
 
     // set the info for the module
     // (set via C++ functions)
     ModuleBase * p = umbptr->CppPtr();
-    p->SetMManager_(this);
-    p->SetTreeNode_(&mtn); // also sets up output tee
+    p->set_module_manager_(this);
+    p->set_tree_node_(&mtn); // also sets up output tee
 
 
     // Debugging enabled for this module?
     if(debugall_ || keydebug_.count(modulekey))
-        p->EnableDebug(true);
+        p->enable_debug(true);
 
 
     // get this module's cache
     // don't use .at() -- we need it created if it doesn't exist already
     std::string mbstr = MakeCacheKey(mtn.minfo);
-    p->SetCache_(&(cachemap_[mbstr]));
+    p->set_cache_(&(cachemap_[mbstr]));
 
     // next id
     curid_++;
@@ -376,7 +376,7 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
 ////////////////////
 // Python
 ////////////////////
-pybind11::object ModuleManager::GetModulePy(const std::string & modulekey,
+pybind11::object ModuleManager::get_module_py(const std::string & modulekey,
                                             ID_t parentid)
 {
     std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(modulekey, parentid);
@@ -385,21 +385,21 @@ pybind11::object ModuleManager::GetModulePy(const std::string & modulekey,
     // can take ownership and we can avoid having
     // a copy constructor for PyModulePtr
 
-    return python::ConvertToPy(new PyModulePtr(std::move(umbptr)), pybind11::return_value_policy::take_ownership);
+    return python::convert_to_py(new PyModulePtr(std::move(umbptr)), pybind11::return_value_policy::take_ownership);
 }
 
-void ModuleManager::ChangeOptionPy(const std::string & modulekey, const std::string & optkey, const pybind11::object & value)
+void ModuleManager::change_option_py(const std::string & modulekey, const std::string & optkey, const pybind11::object & value)
 {
-    StoreEntry & se = GetOrThrow_(modulekey);
+    StoreEntry & se = get_or_throw_(modulekey);
     if(se.ncalled != 0)
         throw ModuleManagerException("Attempting to change options for a previously-used module key", "modulekey", modulekey, "optkey", optkey);
 
     try {
-        se.mi.options.ChangePy(optkey, value);
+        se.mi.options.change_py(optkey, value);
     }
     catch(exception::GeneralException & ex)
     {
-        ex.AppendInfo("modulekey", modulekey);
+        ex.append_info("modulekey", modulekey);
         throw;
     }
 }

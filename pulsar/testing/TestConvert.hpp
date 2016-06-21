@@ -21,7 +21,7 @@ namespace testing {
 
 /*! \brief An class not exported to python
  *
- * Used to test failure of ConvertToPy
+ * Used to test failure of convert_to_py
  */
 template<typename T>
 struct FailObject
@@ -39,9 +39,9 @@ struct FailObject
  * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
-int TestConvertToCpp(pybind11::object obj)
+int Testconvert_to_cpp(pybind11::object obj)
 {
-    return TestFunc(pulsar::python::ConvertToCpp<T>, obj);
+    return TestFunc(pulsar::python::convert_to_cpp<T>, obj);
 }
 
 
@@ -53,9 +53,9 @@ int TestConvertToCpp(pybind11::object obj)
  * \return 1 if the conversion fails, 0 if it succeeds
  */
 template<typename T>
-int TestConvertToPy(const T & obj)
+int Testconvert_to_py(const T & obj)
 {
-    return TestFunc(pulsar::python::ConvertToPy<T>, obj);
+    return TestFunc(pulsar::python::convert_to_py<T>, obj);
 }
 
 
@@ -69,15 +69,15 @@ int TestConvertToPy(const T & obj)
 template<typename T>
 void PyCppPy(pybind11::object obj)
 {
-    T t = python::ConvertToCpp<T>(obj);
-    pybind11::object obj2 = python::ConvertToPy<T>(t);
+    T t = python::convert_to_cpp<T>(obj);
+    pybind11::object obj2 = python::convert_to_py<T>(t);
 }
 
 
 
 /*! \brief A single Python-to-C++-to-python round trip conversion that fails
  *
- * This should fail due to the object being passwd to ConvertToPy not
+ * This should fail due to the object being passwd to convert_to_py not
  * being exported to python
  *
  * \tparam T C++ type to use
@@ -88,9 +88,9 @@ void PyCppPy(pybind11::object obj)
 template<typename T>
 void PyCppPy_Fail(pybind11::object obj)
 {
-    T t = python::ConvertToCpp<T>(obj);
+    T t = python::convert_to_cpp<T>(obj);
     FailObject<T> fo{t};
-    pybind11::object obj2 = python::ConvertToPy<FailObject<T>>(fo);
+    pybind11::object obj2 = python::convert_to_py<FailObject<T>>(fo);
 }
 
 

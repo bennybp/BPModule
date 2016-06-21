@@ -73,7 +73,7 @@ namespace pulsar{
 namespace system {
 
 
-int StringToAM(const std::string & s)
+int string_to_am(const std::string & s)
 {
     if(toi_.count(s))
         return toi_.at(s);
@@ -82,7 +82,7 @@ int StringToAM(const std::string & s)
 }
 
 
-std::string AMToString(int am)
+std::string am_to_string(int am)
 {
     if(tostr_.count(am))
         return tostr_.at(am);

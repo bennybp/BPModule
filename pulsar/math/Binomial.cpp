@@ -25,7 +25,7 @@ using pulsar::exception::GeneralException;
 namespace pulsar{
     namespace math{
 
-double Beta(double a,double b){
+double beta(double a,double b){
     errno=0;
     if(math_errhandling & MATH_ERREXCEPT)feclearexcept(FE_ALL_EXCEPT);
     double result=lgamma(a);
@@ -47,7 +47,7 @@ double Beta(double a,double b){
     return exp(result);
 }        
      
-double BinomialCoefficient(size_t n, size_t k){
+double binomial_coefficient(size_t n, size_t k){
     if(k>n)return 0.0;
     if((k==0)||(k==n))return 1.0;
     if((k==1)||(k==n-1))return (double)n;
@@ -59,9 +59,9 @@ double BinomialCoefficient(size_t n, size_t k){
     }
     else{
         if(k<n-k)
-            result=k*Beta((double)k,(double)(n-k+1));
+            result=k*beta((double)k,(double)(n-k+1));
         else
-            result=(n-k)*Beta((double)(k+1),double(n-k));
+            result=(n-k)*beta((double)(k+1),double(n-k));
     }    
     return result;
 }

@@ -19,49 +19,49 @@ namespace system {
 //////////////////////////////
 // Cartesian
 //////////////////////////////
-inline size_t NCartesianGaussianInShell(const BasisShellBase & bs)
+inline size_t n_cartesian_gaussian_in_shell(const BasisShellBase & bs)
 {
-    const int am = bs.AM();
-    size_t cart = NCartesianGaussian(am);
+    const int am = bs.am();
+    size_t cart = n_cartesian_gaussian(am);
 
 
     // if am < 0, the general contraction is included
-    // in the NCartesianGaussian
+    // in the n_cartesian_gaussian
 
     if(am < 0)
         return cart;
     else
-        return cart * bs.NGeneral();
+        return cart * bs.n_general_contractions();
 }
 
-inline size_t NCartesianGaussianForShellAM(const BasisShellBase & bs)
+inline size_t n_cartesian_gaussian_for_shell_am(const BasisShellBase & bs)
 {
-    return NCartesianGaussian(bs.AM());
+    return n_cartesian_gaussian(bs.am());
 }
 
 
 //////////////////////////////
 // Spherical Harmonics
 //////////////////////////////
-inline size_t NSphericalGaussianShell(const BasisShellBase & bs)
+inline size_t n_spherical_gaussian_shell(const BasisShellBase & bs)
 {
-    const int am = bs.AM();
-    size_t sph = NSphericalGaussian(am);
+    const int am = bs.am();
+    size_t sph = n_spherical_gaussian(am);
 
 
     // if am < 0, the general contraction is included
-    // in the NSphericalGaussian
+    // in the n_spherical_gaussian
 
     if(am < 0)
         return sph;
     else
-        return sph * bs.NGeneral();
+        return sph * bs.n_general_contractions();
 }
 
 
-inline size_t NSphericalGaussianForShellAM(const BasisShellBase & bs)
+inline size_t n_spherical_gaussian_for_shell_am(const BasisShellBase & bs)
 {
-    return NSphericalGaussian(bs.AM());
+    return n_spherical_gaussian(bs.am());
 }
 
 

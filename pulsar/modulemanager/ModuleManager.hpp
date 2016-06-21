@@ -51,7 +51,7 @@ class ModuleManager
          *
          * \exnothrow
          */
-        size_t Size(void) const noexcept;
+        size_t size(void) const noexcept;
 
 
         /*! \brief Returns the information about a module with a given module key
@@ -61,12 +61,12 @@ class ModuleManager
          *
          * \param [in] modulekey A module key
          */
-        ModuleInfo ModuleKeyInfo(const std::string & modulekey) const;
+        ModuleInfo module_key_info(const std::string & modulekey) const;
 
 
-        /*! \brief Prints all the information about the loaded modules
+        /*! \brief prints all the information about the loaded modules
          */
-        void Print(std::ostream & os) const;
+        void print(std::ostream & os) const;
 
 
         /*! \brief Returns true if a module with the given module key exists in the database
@@ -74,7 +74,7 @@ class ModuleManager
          * \param [in] modulekey A module key
          * \return True if the key exists in the map, false if it doesn't
          */
-        bool HasKey(const std::string & modulekey) const;
+        bool has_key(const std::string & modulekey) const;
 
 
         /*! \brief Test the creation of all modules
@@ -87,7 +87,7 @@ class ModuleManager
          * \exbasic
          * \todo make strong?
          */
-        void TestAll(void);
+        void test_all(void);
 
 
         /*! \brief Create a new module as a wrapped C++ object
@@ -117,7 +117,7 @@ class ModuleManager
          * \return A wrapped C++ object of the requested type
          */
         template<typename T>
-        ModulePtr<T> GetModule(const std::string & modulekey, ID_t parentid)
+        ModulePtr<T> get_module(const std::string & modulekey, ID_t parentid)
         {
             // may throw
             std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(modulekey, parentid);
@@ -125,7 +125,7 @@ class ModuleManager
             if(!umbptr->IsType<T>())
                 throw exception::ModuleCreateException("Module for this key is not of the right type",
                                                        "modulekey", modulekey,
-                                                       "expectedtype", util::DemangleCppType<T>());
+                                                       "expectedtype", util::demangle_cpp_type<T>());
 
             // create the ModulePtr type
             ModulePtr<T> mod(std::move(umbptr));
@@ -156,11 +156,11 @@ class ModuleManager
          *
          * \return The module wrapped in a python object
          */
-        pybind11::object GetModulePy(const std::string & modulekey, ID_t parentid);
+        pybind11::object get_module_py(const std::string & modulekey, ID_t parentid);
 
         /*! \brief Check to see if a module is currently in use
          */
-        bool ModuleInUse(ID_t id) const;
+        bool module_in_use(ID_t id) const;
 
 
         /*! \brief Change an option for a module
@@ -175,20 +175,20 @@ class ModuleManager
          * \param [in] value The value to set the option to
          */
         template<typename T>
-        void ChangeOption(const std::string & modulekey, const std::string & optkey, const T & value)
+        void change_option(const std::string & modulekey, const std::string & optkey, const T & value)
         {
             using namespace exception;
 
-            StoreEntry & se = GetOrThrow_(modulekey);
+            StoreEntry & se = get_or_throw_(modulekey);
             if(se.ncalled != 0)
                 throw ModuleManagerException("Attempting to change options for a previously-used module key",
                                              "modulekey", modulekey, "optkey", optkey);
             try {
-                se.mi.options.Change(optkey, value);
+                se.mi.options.change(optkey, value);
             }
             catch(exception::GeneralException & ex)
             {
-                ex.AppendInfo("modulekey", modulekey);
+                ex.append_info("modulekey", modulekey);
                 throw;
             }
         }
@@ -204,7 +204,7 @@ class ModuleManager
          * \param [in] modulekey Existing module key to duplicate
          * \param [in] newkey New key to be associated with the module
          */
-        void DuplicateKey(const std::string & modulekey, const std::string newkey);
+        void duplicate_key(const std::string & modulekey, const std::string newkey);
 
         /*! \brief Generates a unique module key
          *
@@ -216,7 +216,7 @@ class ModuleManager
          * 
          *   \return A random unique key that is not tied to any module yet
          */
-        std::string GenerateUniqueKey(void)const;
+        std::string generate_unique_key(void)const;
         
 
         /*! \brief Change an option for a module (python version)
@@ -230,7 +230,7 @@ class ModuleManager
          * \param [in] optkey The key of the option to change
          * \param [in] value The value to set the option to
          */
-        void ChangeOptionPy(const std::string & modulekey, const std::string & optkey, const pybind11::object & value);
+        void change_option_py(const std::string & modulekey, const std::string & optkey, const pybind11::object & value);
 
 
 
@@ -249,30 +249,30 @@ class ModuleManager
          * \param [in] minfo Information about the module
          * \param [in] modulekey The key to associate with the module
          */
-        void LoadModuleFromModuleInfo(const ModuleInfo & minfo, const std::string & modulekey);
+        void load_module_from_minfo(const ModuleInfo & minfo, const std::string & modulekey);
 
 
         /*! \brief Enable debugging for a specific key
          *
          * The key doesn't have to exist -- it will be used if it is ever loaded
          */
-        void EnableDebug(const std::string & modulekey, bool debug);
+        void enable_debug(const std::string & modulekey, bool debug);
 
 
         /*! \brief Enable debug printing on all modules
          */
-        void EnableDebugAll(bool debug) noexcept;
+        void enable_debug_all(bool debug) noexcept;
 
 
-        /*! \brief Begin iterating over the module tree
+        /*! \brief begin iterating over the module tree
          */
-        ModuleTree::const_iterator TreeBegin(ID_t startid) const;
+        ModuleTree::const_iterator tree_begin(ID_t startid) const;
 
-        ModuleTree::const_iterator TreeEnd(void) const;
+        ModuleTree::const_iterator tree_end(void) const;
 
-        ModuleTree::const_flat_iterator FlatTreeBegin(void) const;
+        ModuleTree::const_flat_iterator flat_tree_begin(void) const;
 
-        ModuleTree::const_flat_iterator FlatTreeEnd(void) const;
+        ModuleTree::const_flat_iterator flat_tree_end(void) const;
 
 
     private:
@@ -332,12 +332,12 @@ class ModuleManager
          *
          * \param [in] modulekey A module key
          */
-        const StoreEntry & GetOrThrow_(const std::string & modulekey) const;
+        const StoreEntry & get_or_throw_(const std::string & modulekey) const;
 
 
-        /*! \copydoc GetOrThrow_
+        /*! \copydoc get_or_throw_
          */
-        StoreEntry & GetOrThrow_(const std::string & modulekey);
+        StoreEntry & get_or_throw_(const std::string & modulekey);
 
 
 

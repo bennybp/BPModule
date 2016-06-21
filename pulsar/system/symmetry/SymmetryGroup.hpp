@@ -24,30 +24,31 @@ namespace system{
 
 ///Base class for a group of symmetry elements
 struct SymmetryGroup{
-    ///The set of elements in this group
-    const std::unordered_set<SymmetryElement> Elems;
-    ///Schoenflies symbol
-    const std::string SSymbol;
-    ///Hermann-Mauguin symbol
-    const std::string HMSymbol;
-    ///Returns the order of the group, throws if group is infinite order
-    size_t Order()const;
-    ///True if this is a finite group
-    bool Finite()const;
     ///Builds a new SymmetryGroup, auto adds identity
     SymmetryGroup(const std::unordered_set<SymmetryElement>& Es,
                   const std::string SSym,const std::string HMSym);
-    ///Prints the group the given buffer
-    void Print(std::ostream& os)const{os<<SSymbol;}
+
+    ///The set of elements in this group
+    const std::unordered_set<SymmetryElement> symmetry_elements;
+    ///Schoenflies symbol
+    const std::string schoenflies_symbol;
+    ///Hermann-Mauguin symbol
+    const std::string hm_symbol;
+    ///Returns the order of the group, throws if group is infinite order
+    size_t order()const;
+    ///True if this is a finite group
+    bool finite()const;
+    ///prints the group the given buffer
+    void print(std::ostream& os)const{os<<schoenflies_symbol;}
 };
 
 inline std::ostream& operator<<(std::ostream& os, const SymmetryGroup& G){
-    G.Print(os);
+    G.print(os);
     return os;
 }
 
 ///Follows flow-chart logic to assign point group
-SymmetryGroup AssignGroup(const std::unordered_set<SymmetryElement>& Elems);
+SymmetryGroup assign_group(const std::unordered_set<SymmetryElement>& Elems);
 
 ///This namespace contains interfaces whose entire purpose is to set up the
 ///SymmetryGroup correctly and then be sliced off

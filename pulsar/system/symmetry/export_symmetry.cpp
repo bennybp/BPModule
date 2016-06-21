@@ -18,15 +18,15 @@ void export_symmetry(pybind11::module & m)
 {
     pybind11::class_<Symmetrizer>(m, "Symmetrizer")
     .def(pybind11::init<>())
-    .def("GetSymmetry",&Symmetrizer::GetSymmetry);
+    .def("get_symmetry",&Symmetrizer::get_symmetry);
     
     pybind11::class_<SymmetryElement>(m,"SymmetryElement")
     .def(pybind11::init<const std::array<double,9>&,
                         const std::string&,const std::string&>())
     .def(pybind11::init<const SymmetryElement&>())
-    .def_readonly("Elem",&SymmetryElement::Elem)
-    .def_readonly("SSymbol",&SymmetryElement::SSymbol)
-    .def_readonly("HMSymbol",&SymmetryElement::HMSymbol)
+    .def_readonly("element_matrix",&SymmetryElement::element_matrix)
+    .def_readonly("schoenflies_symbol",&SymmetryElement::schoenflies_symbol)
+    .def_readonly("hm_symbol",&SymmetryElement::hm_symbol)
     ;
     
     pybind11::class_<MirrorPlane>
@@ -51,11 +51,11 @@ void export_symmetry(pybind11::module & m)
     .def(pybind11::init<const std::unordered_set<SymmetryElement>&,
                         const std::string&,const std::string&>())
     .def(pybind11::init<const SymmetryGroup&>())
-    .def_readonly("Elems",&SymmetryGroup::Elems)
-    .def_readonly("SSymbol",&SymmetryGroup::SSymbol)
-    .def_readonly("HMSymbol",&SymmetryGroup::HMSymbol)
-    .def("Order",&SymmetryGroup::Order)
-    .def("Finite",&SymmetryGroup::Finite)
+    .def_readonly("symmetry_elements",&SymmetryGroup::symmetry_elements)
+    .def_readonly("schoenflies_symbol",&SymmetryGroup::schoenflies_symbol)
+    .def_readonly("hm_symbol",&SymmetryGroup::hm_symbol)
+    .def("order",&SymmetryGroup::order)
+    .def("finite",&SymmetryGroup::finite)
     ;
 //For PGs w/o an n
 #define ExportPG(name)\

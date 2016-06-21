@@ -6,43 +6,43 @@
 
 #include "pulsar/python/Call.hpp"
 
-using pulsar::exception::Assert;
+using pulsar::exception::psr_assert;
 using pulsar::exception::GeneralException;
 
 namespace pulsar{
 namespace python {
 
 
-std::string GetPyClass(const pybind11::object & obj)
+std::string get_py_class(const pybind11::object & obj)
 {
-    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
 
     pybind11::object cls = obj.attr("__class__");
     pybind11::object name = cls.attr("__name__");
     return name.cast<std::string>();
 }
 
-bool IsNone(const pybind11::object & obj)
+bool is_none(const pybind11::object & obj)
 {
-    return GetPyClass(obj) == "NoneType";
+    return get_py_class(obj) == "NoneType";
 }
 
-bool HasAttr(const pybind11::object & obj, const std::string & attr)
+bool has_attr(const pybind11::object & obj, const std::string & attr)
 {
-    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
     return PyObject_HasAttrString(obj.ptr(), attr.c_str());
 }
 
-bool IsCallable(const pybind11::object & obj)
+bool is_callable(const pybind11::object & obj)
 {
-    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
     return PyCallable_Check(obj.ptr());
 }
 
-bool HasCallableAttr(const pybind11::object & obj, const std::string & attr)
+bool has_callable_attr(const pybind11::object & obj, const std::string & attr)
 {
-    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
-    return HasAttr(obj, attr) && IsCallable(obj.attr(attr.c_str()));
+    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    return has_attr(obj, attr) && is_callable(obj.attr(attr.c_str()));
 }
 
 

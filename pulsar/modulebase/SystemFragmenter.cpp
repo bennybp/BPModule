@@ -33,10 +33,10 @@ void GetCoef(bool Even,const SNType& SN,NMerSetType& NMers){
     }
 }
 
-NMerSetType SystemFragmenter::MakeNMers(const NMerSetType& Frags){
+NMerSetType SystemFragmenter::make_nmers(const NMerSetType& Frags){
     const size_t NEnd=
-        std::min(Options().Get<size_t>("TRUNCATION_ORDER"),Frags.size());
-    Thresh_t Dists=Options().Get<Thresh_t>("DISTANCE_THRESHOLDS");
+        std::min(options().get<size_t>("TRUNCATION_ORDER"),Frags.size());
+    Thresh_t Dists=options().get<Thresh_t>("DISTANCE_THRESHOLDS");
     NMerSetType NMers;
     const double DaMax=std::numeric_limits<double>::max();
 
@@ -59,9 +59,9 @@ NMerSetType SystemFragmenter::MakeNMers(const NMerSetType& Frags){
             DaNMer.Weight=0.0;
         }
         double RHS=0.0;
-        const Point CoM=DaNMer.NMer.CenterOfMass();
+        const Point CoM=DaNMer.NMer.center_of_mass();
         for(const auto& Frag: *Comb){//We needed the CoM, hence the two loops
-            const double Dist=Frag.second.NMer.CenterOfMass().Distance(CoM);
+            const double Dist=Frag.second.NMer.center_of_mass().distance(CoM);
             RHS+=Dist*Dist;
         }
         if(Thresh>=RHS)NMers.insert({DaNMer.SN,DaNMer});
@@ -73,8 +73,8 @@ NMerSetType SystemFragmenter::MakeNMers(const NMerSetType& Frags){
 }
 
 std::map<std::string,NMerInfo> SystemFragmenter_Py::
-    Py_Fragmentize(const system::System& mol){
-            NMerSetType Temp=Fragmentize(mol);
+    fragmentize_py(const system::System& mol){
+            NMerSetType Temp=fragmentize(mol);
             std::map<std::string,NMerInfo> RV;
             for(const auto& NMerI: Temp){
                 std::string key;

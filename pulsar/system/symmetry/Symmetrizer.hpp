@@ -64,7 +64,7 @@ class Symmetrizer{
          * for planes parallel to and perpendicular to a principle axis.
          *  
          */
-        SymmetryGroup GetSymmetry(const System& Mol)const;
+        SymmetryGroup get_symmetry(const System& Mol)const;
 };
 
 }}//End namespaces

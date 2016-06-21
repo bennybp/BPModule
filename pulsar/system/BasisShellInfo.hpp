@@ -50,15 +50,15 @@ class BasisShellInfo : public BasisShellBase
         {
             using namespace exception;
 
-            if(alphas_.size() != NPrim())
-                throw BasisSetException("Incompatible dimensions for alphas", "nprim", NPrim(),
+            if(alphas_.size() != n_primitives())
+                throw BasisSetException("Incompatible dimensions for alphas", "nprim", n_primitives(),
                                         "given", alphas_.size());
 
-            if(coefs_.size() != NCoef())
+            if(coefs_.size() != n_coefficients())
                 throw BasisSetException("Incompatible dimensions for coefficients",
-                                         "nprim", NPrim(), "ngen", NGeneral(), "given", coefs_.size());
+                                         "nprim", n_primitives(), "ngen", n_general_contractions(), "given", coefs_.size());
 
-            BasisShellBase::SetPtrs_(alphas_.data(), coefs_.data());
+            BasisShellBase::set_ptrs_(alphas_.data(), coefs_.data());
         }
 
 
@@ -71,9 +71,9 @@ class BasisShellInfo : public BasisShellBase
 
 
         BasisShellInfo(const BasisShellBase & rhs)
-            : BasisShellInfo(rhs.GetType(), rhs.AM(),
-                            rhs.NPrim(), rhs.NGeneral(),
-                            rhs.GetAlphas(), rhs.GetAllCoefs())
+            : BasisShellInfo(rhs.get_type(), rhs.am(),
+                            rhs.n_primitives(), rhs.n_general_contractions(),
+                            rhs.get_alphas(), rhs.get_all_coefs())
         { }
 
         BasisShellInfo(const BasisShellInfo & rhs)
@@ -100,7 +100,7 @@ class BasisShellInfo : public BasisShellBase
         bool operator==(const BasisShellInfo & rhs) const
         {
             // prevent implicit comparison between one type and another
-            return BasisShellBase::BaseCompare_(rhs);
+            return BasisShellBase::base_compare_(rhs);
         }
 
         bool operator!=(const BasisShellInfo & rhs) const
@@ -128,17 +128,13 @@ class BasisShellInfo : public BasisShellBase
             ar(cereal::base_class<BasisShellBase>(this), alphas_, coefs_);
 
             // if we are unserializing
-            BasisShellBase::SetPtrs_(alphas_.data(), coefs_.data());
+            BasisShellBase::set_ptrs_(alphas_.data(), coefs_.data());
         }
 
         // No need to hash anything here. Will be hashed by the base class 
 
         ///@}
 };
-
-
-/// A vector of shell information
-typedef std::vector<BasisShellInfo> BasisShellInfoVector;
 
 
 } // close namespace system

@@ -27,15 +27,15 @@ class PropertyCalculator : public ModuleBase
         { }
 
 
-        /*! \brief Calculate a property
+        /*! \brief calculate a property
          *
          */
-        std::vector<double> Calculate(unsigned int deriv,
+        std::vector<double> calculate(unsigned int deriv,
                                       const datastore::Wavefunction & wfn,
                                       const system::BasisSet & bs1,
                                       const system::BasisSet & bs2)
         {
-            return ModuleBase::FastCallFunction(&PropertyCalculator::Calculate_,
+            return ModuleBase::fast_call_function(&PropertyCalculator::calculate_,
                                                 deriv, wfn, bs1, bs2);
         }
 
@@ -43,8 +43,8 @@ class PropertyCalculator : public ModuleBase
         /////////////////////////////////////////
         // To be implemented by derived classes
         /////////////////////////////////////////
-        //! \copydoc Calculate
-        virtual std::vector<double> Calculate_(unsigned int deriv,
+        //! \copydoc calculate
+        virtual std::vector<double> calculate_(unsigned int deriv,
                                                const datastore::Wavefunction & wfn,
                                                const system::BasisSet & bs1,
                                                const system::BasisSet & bs2) = 0;
@@ -58,12 +58,12 @@ class PropertyCalculator_Py : public PropertyCalculator
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
-        virtual std::vector<double> Calculate_(unsigned int deriv,
+        virtual std::vector<double> calculate_(unsigned int deriv,
                                                const datastore::Wavefunction & wfn,
                                                const system::BasisSet & bs1,
                                                const system::BasisSet & bs2)
         {
-            return CallPyOverride<std::vector<double>>("Calculate_", wfn, deriv, bs1, bs2);
+            return call_py_override<std::vector<double>>("calculate_", wfn, deriv, bs1, bs2);
         }
 };
 

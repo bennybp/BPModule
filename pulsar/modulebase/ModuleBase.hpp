@@ -68,66 +68,66 @@ class ModuleBase
          *
          * \exnothrow
          */
-        ID_t ID(void) const noexcept;
+        ID_t id(void) const noexcept;
 
 
         /*! \brief Get the key of this module
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        std::string Key(void) const;
+        std::string key(void) const;
 
 
         /*! \brief Get the descriptive name of this module
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        std::string Name(void) const;
+        std::string name(void) const;
 
 
         /*! \brief Get the version of this module
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        std::string Version(void) const;
+        std::string version(void) const;
 
 
         /*! \brief Get the module type
          *
          * ie, Test_Base, TwoElectronIntegral, etc
          */
-        std::string ModuleType(void) const;
+        std::string module_type(void) const;
 
 
         /*! \brief Get the OptionMap object for this module
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        const datastore::OptionMap & Options(void) const;
+        const datastore::OptionMap & options(void) const;
 
 
         /*! \brief Get the OptionMap object for this module
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        datastore::OptionMap & Options(void);
+        datastore::OptionMap & options(void);
 
 
         /*! \brief Print the information for this module
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        void Print(std::ostream & os) const;
+        void print(std::ostream & os) const;
 
 
         /*! \brief Enable debug output for this module
          */
-        void EnableDebug(bool debug) noexcept;
+        void enable_debug(bool debug) noexcept;
 
 
         /*! \brief Is debug output enabled for this module
          */
-        bool DebugEnabled(void) const noexcept;
+        bool debug_enabled(void) const noexcept;
 
 
 
@@ -135,20 +135,20 @@ class ModuleBase
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        const modulemanager::ModuleTreeNode & MyNode(void) const;
+        const modulemanager::ModuleTreeNode & my_node(void) const;
 
 
         /*! \brief Get the output from this module's tree node
          */
-        std::string GetOutput(void) const;
+        std::string get_output(void) const;
 
 
         /*! \brief Create a module that is a child of this one
          */
         template<typename T>
-        modulemanager::ModulePtr<T> CreateChild(const std::string & key) const
+        modulemanager::ModulePtr<T> create_child(const std::string & key) const
         {
-            return mlocator_->GetModule<T>(key, id_);
+            return mlocator_->get_module<T>(key, id_);
         }
 
 
@@ -156,10 +156,10 @@ class ModuleBase
          *         obtaining the modulekey from an option
          */
         template<typename T>
-        modulemanager::ModulePtr<T> CreateChildFromOption(const std::string & optionkey) const
+        modulemanager::ModulePtr<T> create_child_from_option(const std::string & optionkey) const
         {
-            std::string modulekey = Options().Get<std::string>(optionkey);
-            return mlocator_->GetModule<T>(modulekey, id_);
+            std::string modulekey = options().get<std::string>(optionkey);
+            return mlocator_->get_module<T>(modulekey, id_);
         }
 
 
@@ -168,14 +168,14 @@ class ModuleBase
          *
          * Python version
          */
-        pybind11::object CreateChildPy(const std::string & key) const;
+        pybind11::object create_child_py(const std::string & key) const;
 
         /*! \brief Create a module that is a child of this one
          *         obtaining the modulekey from an option
          *
          * Python version
          */
-        pybind11::object CreateChildFromOptionPy(const std::string & optionkey) const;
+        pybind11::object create_child_from_option_py(const std::string & optionkey) const;
 
 
     protected:
@@ -192,14 +192,14 @@ class ModuleBase
          *
          * \throw std::logic_error if it hasn't been set
          */
-        modulemanager::ModuleManager & MManager(void) const;
+        modulemanager::ModuleManager & module_manager(void) const;
 
 
         /*! \brief Get the cache object for this module
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        datastore::CacheData & Cache(void) const noexcept;
+        datastore::CacheData & cache(void) const noexcept;
 
 
 
@@ -207,9 +207,9 @@ class ModuleBase
         // WRAPPERS FOR DERIVED CLASS FUNCTION CALLS
         ////////////////////////////////////////////////////
 
-        std::string ExceptionDescString(void) const
+        std::string exception_desc(void) const
         {
-            return util::FormatString("[%?] (%?) %? v%?", ID(), Key(), Name(), Version());
+            return util::format_string("[%?] (%?) %? v%?", id(), key(), name(), version());
         }
 
         /*! \brief Quickly call a function, catching exceptions
@@ -229,7 +229,7 @@ class ModuleBase
          * \param [in] args Arguments to forward
          */
         template<typename R, typename P, typename ... Targs1, typename ... Targs2>
-        R FastCallFunction( R(P::*func)(Targs1...), Targs2 &&... args)
+        R fast_call_function( R(P::*func)(Targs1...), Targs2 &&... args)
         {
             //////////////////////////////////////////////////////////////////
             // So you think you like pointers and templates?
@@ -244,24 +244,24 @@ class ModuleBase
             }
             catch(GeneralException & ex)
             {
-                ex.AppendInfo("from", ExceptionDescString());
+                ex.append_info("from", exception_desc());
                 throw;
             }
             catch(std::exception & ex)
             {
                 throw GeneralException(ex, "what", ex.what(),
-                                       "from", ExceptionDescString());
+                                       "from", exception_desc());
             }
             catch(...)
             {
                 throw GeneralException("Caught unknown exception. Get your debugger warmed up.",
-                                       "from", ExceptionDescString());
+                                       "from", exception_desc());
             }
         }
 
-        /*! \copydocs FastCallFunction */
+        /*! \copydocs fast_call_function */
         template<typename R, typename P, typename ... Targs1, typename ... Targs2>
-        R FastCallFunction( R(P::*func)(Targs1...) const, Targs2 &&... args) const
+        R fast_call_function( R(P::*func)(Targs1...) const, Targs2 &&... args) const
         {
             using exception::GeneralException;
 
@@ -273,18 +273,18 @@ class ModuleBase
             }
             catch(GeneralException & ex)
             {
-                ex.AppendInfo("from", ExceptionDescString());
+                ex.append_info("from", exception_desc());
                 throw;
             }
             catch(std::exception & ex)
             {
                 throw GeneralException(ex, "what", ex.what(),
-                                       "from", ExceptionDescString());
+                                       "from", exception_desc());
             }
             catch(...)
             {
                 throw GeneralException("Caught unknown exception. Get your debugger warmed up.",
-                                       "from", ExceptionDescString());
+                                       "from", exception_desc());
             }
         }
 
@@ -304,49 +304,49 @@ class ModuleBase
          * \param [in] args Arguments to forward
          */
         template<typename R, typename P, typename ... Targs1, typename ... Targs2>
-        R CallFunction( R(P::*func)(Targs1...), Targs2 &&... args)
+        R call_function( R(P::*func)(Targs1...), Targs2 &&... args)
         {
-            return FastCallFunction<R>(func, std::forward<Targs1>(args)...);
+            return fast_call_function<R>(func, std::forward<Targs1>(args)...);
         }
 
-        /*! \copydocs CallFunction */
+        /*! \copydocs call_function */
         template<typename R, typename P, typename ... Targs1, typename ... Targs2>
-        R CallFunction( R(P::*func)(Targs1...) const, Targs2 &&... args) const
+        R call_function( R(P::*func)(Targs1...) const, Targs2 &&... args) const
         {
-            return FastCallFunction<R>(func, std::forward<Targs1>(args)...);
+            return fast_call_function<R>(func, std::forward<Targs1>(args)...);
         }
 
         /*! \brief Calls a python function that overrides a virtual function */
         template<typename R, typename ... Targs>
-        R CallPyOverride(const char * name, Targs &&... args)
+        R call_py_override(const char * name, Targs &&... args)
         {
             // Module information is not appended to the exception since
             // this should always be called from the derived class
             pybind11::gil_scoped_acquire gil;
             pybind11::function overload = pybind11::get_overload(this, name);
             if(overload)
-                return python::CallPyFunc<R>(overload, std::forward<Targs>(args)...);
+                return python::call_py_func<R>(overload, std::forward<Targs>(args)...);
             else
                 throw exception::GeneralException("Cannot find overridden function", "vfunc", name);
         }
 
         /*! \brief Calls a python function that overrides a virtual function */
         template<typename R, typename ... Targs>
-        R CallPyOverride(const char * name, Targs &&... args) const
+        R call_py_override(const char * name, Targs &&... args) const
         {
             // Module information is not appended to the exception since
             // this should always be called from the derived class
             pybind11::gil_scoped_acquire gil;
             pybind11::function overload = pybind11::get_overload(this, name);
             if(overload)
-                return python::CallPyFunc<R>(overload, std::forward<Targs>(args)...);
+                return python::call_py_func<R>(overload, std::forward<Targs>(args)...);
             else
                 throw exception::GeneralException("Cannot find overridden function", "vfunc", name);
         }
 
 
         /*! \brief See if this class has a member implemented in python */
-        bool HasPyOverride(const char * name) const
+        bool has_py_override(const char * name) const
         {
             pybind11::function overload = pybind11::get_overload(this, name);
             return (bool)overload;
@@ -370,7 +370,7 @@ class ModuleBase
          */
         template<typename T>
         std::pair<T *, std::vector<size_t>>
-        PythonBufferToPtr(pybind11::buffer & buf, int ndim)
+        python_buffer_to_ptr(pybind11::buffer & buf, int ndim)
         {
             using exception::GeneralException;
 
@@ -379,14 +379,14 @@ class ModuleBase
                 throw GeneralException("Bad format of python buffer",
                                        "format", info.format,
                                        "desired format", pybind11::format_descriptor<T>::value,
-                                       "from", ExceptionDescString());
+                                       "from", exception_desc());
 
 
             if (info.ndim != ndim)
                 throw GeneralException("Bad number of dimensions for python buffer",
                                        "ndim", info.ndim,
                                        "desired ndim", ndim,
-                                       "from", ExceptionDescString());
+                                       "from", exception_desc());
 
             return { reinterpret_cast<T *>(info.ptr), info.shape };
         }
@@ -418,24 +418,24 @@ class ModuleBase
 
         /*! \brief Set the mlocator_ pointer
          */
-        void SetMManager_(modulemanager::ModuleManager * mloc) noexcept;
+        void set_module_manager_(modulemanager::ModuleManager * mloc) noexcept;
 
 
         /*! \brief Set the tree node pointer
          */
-        void SetTreeNode_(modulemanager::ModuleTreeNode * node) noexcept;
+        void set_tree_node_(modulemanager::ModuleTreeNode * node) noexcept;
 
 
         /*! \brief Get the tree node pointer
          *
          * non-const version is private
          */
-        modulemanager::ModuleTreeNode & MyNode(void);
+        modulemanager::ModuleTreeNode & my_node(void);
 
 
         /*! \brief Set the cache object to use
          */
-        void SetCache_(datastore::CacheData * cache) noexcept;
+        void set_cache_(datastore::CacheData * cache) noexcept;
 };
 
 
@@ -443,8 +443,8 @@ class ModuleBase
  *         can access them
  */
 #define MODULEBASE_FORWARD_PROTECTED_TO_PY \
-    using ModuleBase::Cache; \
-    using ModuleBase::MManager; \
+    using ModuleBase::cache; \
+    using ModuleBase::module_manager; \
     using ModuleBase::out;
 
 

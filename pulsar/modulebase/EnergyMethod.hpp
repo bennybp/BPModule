@@ -43,16 +43,16 @@ class EnergyMethod : public ModuleBase
         EnergyMethod(ID_t id): ModuleBase(id,"EnergyMethod"){ }
 
         ///The call users use, tries to use available analytic derivatives
-        DerivReturnType Deriv(size_t Order, const datastore::Wavefunction & wfn)
+        DerivReturnType deriv(size_t Order, const datastore::Wavefunction & wfn)
         {
-            return ModuleBase::CallFunction(&EnergyMethod::SplitDeriv_, Order, wfn);
+            return ModuleBase::call_function(&EnergyMethod::split_deriv_, Order, wfn);
         }
 
         ///Returns the maximum Order for which analytic derivative are coded
         ///reads it from option MAX_DERIV
-        size_t MaxDeriv() const
+        size_t max_deriv() const
         {
-            return ModuleBase::CallFunction(&EnergyMethod::MaxDeriv_);
+            return ModuleBase::call_function(&EnergyMethod::max_deriv_);
         }
 
 
@@ -65,46 +65,46 @@ class EnergyMethod : public ModuleBase
          *   calling Deriv until analytic derivatives are available.  Hence,
          *   setting MAX_DERIV controls the level of nesting
          */
-        DerivReturnType FiniteDifference(size_t Order, const datastore::Wavefunction & wfn)
+        DerivReturnType finite_difference(size_t Order, const datastore::Wavefunction & wfn)
         {
-            return ModuleBase::CallFunction(&EnergyMethod::FiniteDifference_, Order, wfn);
+            return ModuleBase::call_function(&EnergyMethod::finite_difference_, Order, wfn);
         }
 
         ///@{
         ///Convenience functions
         ///Returns the energy of this method
-        EnergyReturnType Energy(const datastore::Wavefunction & wfn){
-            DerivReturnType ret = Deriv(0,wfn);
+        EnergyReturnType energy(const datastore::Wavefunction & wfn){
+            DerivReturnType ret = deriv(0,wfn);
             return {ret.first, ret.second[0]};
         }
 
         ///Returns the nuclear gradient of this method
-        DerivReturnType Gradient(const datastore::Wavefunction & wfn){return Deriv(1,wfn);}
+        DerivReturnType gradient(const datastore::Wavefunction & wfn){return deriv(1,wfn);}
 
         ///Returns the nuclear Hessian of this method
-        DerivReturnType Hessian(const datastore::Wavefunction & wfn){return Deriv(2,wfn);}
+        DerivReturnType hessian(const datastore::Wavefunction & wfn){return deriv(2,wfn);}
         ///@}
 
 
         //////////////////////////////////////////////////
         // To be implemented by derived classes
         //////////////////////////////////////////////////
-        virtual DerivReturnType Deriv_(size_t Order, const datastore::Wavefunction & wfn) = 0;
+        virtual DerivReturnType deriv_(size_t Order, const datastore::Wavefunction & wfn) = 0;
 
 
 
     private:
-        DerivReturnType SplitDeriv_(size_t Order, const datastore::Wavefunction & wfn)
+        DerivReturnType split_deriv_(size_t Order, const datastore::Wavefunction & wfn)
         {
-            if(Order > MaxDeriv())
-                return FiniteDifference(Order, wfn);
+            if(Order > max_deriv())
+                return finite_difference(Order, wfn);
             else
-               return ModuleBase::CallFunction(&EnergyMethod::Deriv_,Order, wfn);
+               return ModuleBase::call_function(&EnergyMethod::deriv_,Order, wfn);
         }
 
-        size_t MaxDeriv_(void) const;
+        size_t max_deriv_(void) const;
 
-        DerivReturnType FiniteDifference_(size_t Order, const datastore::Wavefunction & wfn);
+        DerivReturnType finite_difference_(size_t Order, const datastore::Wavefunction & wfn);
 };
 
 ///Specialization so that Python calls the right virtual function
@@ -113,8 +113,8 @@ class EnergyMethod_Py : public EnergyMethod{
         using EnergyMethod::EnergyMethod;
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
-        virtual DerivReturnType Deriv_(size_t Order,const datastore::Wavefunction & wfn){
-            return CallPyOverride<DerivReturnType>("Deriv_",Order,wfn);
+        virtual DerivReturnType deriv_(size_t Order,const datastore::Wavefunction & wfn){
+            return call_py_override<DerivReturnType>("deriv_",Order,wfn);
         }
 };
 

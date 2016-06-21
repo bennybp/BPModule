@@ -23,7 +23,7 @@ namespace pulsar{
 namespace util {
 
 
-int * GetArgc(void)
+int * get_argc(void)
 {
     if(!set_)
         throw exception::GeneralException("Command line has not been set! Definite developer error");
@@ -31,7 +31,7 @@ int * GetArgc(void)
     return &argc_;
 }
 
-char *** GetArgv(void)
+char *** get_argv(void)
 {
     if(!set_)
         throw exception::GeneralException("Command line has not been set! Definite developer error");
@@ -39,15 +39,15 @@ char *** GetArgv(void)
     return &argv_;
 }
 
-void SetCmdline(const std::vector<std::string> & argv)
+void set_cmdline(const std::vector<std::string> & argv)
 {
     if(set_)
-        ClearCmdline();
+        clear_cmdline();
 
     argc_ = static_cast<int>(argv.size());
-    GlobalDebug("Command line has %? args\n", argc_);
+    print_global_debug("Command line has %? args\n", argc_);
     for(const auto & it : argv)
-        GlobalDebug("   %?\n", it);
+        print_global_debug("   %?\n", it);
 
     // copy argv
     // argv[argc] should always be NULL
@@ -68,7 +68,7 @@ void SetCmdline(const std::vector<std::string> & argv)
 }
 
 
-void ClearCmdline(void)
+void clear_cmdline(void)
 {
     if(set_)
     {

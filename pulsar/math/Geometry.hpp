@@ -23,7 +23,7 @@ namespace math{
 
 ///Given three points returns the norm of the plane they lie in
 template<typename T>
-std::array<double,3> GetPlane(const T& p1,const T& p2, const T& p3){
+std::array<double,3> get_plane(const T& p1,const T& p2, const T& p3){
     typedef std::array<double,3> V_t;
     return Cross(V_t({p2[0]-p1[0],p2[1]-p1[1],p2[2]-p1[2]}),
                  V_t({p3[0]-p1[0],p3[1]-p1[1],p3[2]-p1[2]}));
@@ -32,7 +32,7 @@ std::array<double,3> GetPlane(const T& p1,const T& p2, const T& p3){
 
 ///Returns rotation matrix about the unit vector by \p n degrees
 template<typename T>
-std::array<double,9> Rotation(const T& Axis, double ndegrees){
+std::array<double,9> rotation(const T& Axis, double ndegrees){
     const double angle=ndegrees*PI/180.0,x=Axis[0],y=Axis[1],z=Axis[2];
     const double c=cos(angle),s=sin(angle);
     double c1=1-c;
@@ -43,7 +43,7 @@ std::array<double,9> Rotation(const T& Axis, double ndegrees){
 
 ///Reflection through plane normal to unit vector \p Norm
 template<typename T>
-std::array<double,9> Reflection(const T& Norm){
+std::array<double,9> reflection(const T& Norm){
         const double x=Norm[0],y=Norm[1],z=Norm[2];
         return {1-2*x*x, -2*x*y, -2*x*z,
                  -2*x*y,1-2*y*y, -2*y*z,
@@ -53,8 +53,8 @@ std::array<double,9> Reflection(const T& Norm){
 ///Rotation about \p Axis by \p n degrees followed by reflection
 ///perpendicular to it
 template<typename T>
-std::array<double,9> RotoReflection(const T& P,double n){
-        std::array<double,9> Rot=Rotation(P,n),Ref=Reflection(P),Result={};
+std::array<double,9> roto_reflection(const T& P,double n){
+        std::array<double,9> Rot=rotation(P,n),Ref=reflection(P),Result={};
         for(size_t i=0;i<3;++i)
             for(size_t j=0;j<3;++j)
                 for(size_t k=0;k<3;++k)

@@ -13,14 +13,14 @@ namespace output {
 
 
 // global function
-bool ColorEnabled(void) noexcept;
+bool color_enabled(void) noexcept;
 
 
 namespace detail {
 
-void Output_(std::ostream & out, OutputType type, const std::string & str)
+void print_output_(std::ostream & out, OutputType type, const std::string & str)
 {
-    if(ColorEnabled())
+    if(color_enabled())
     {
         std::string st = str;
         if(st.size() == 0)

@@ -36,7 +36,7 @@ class StdStreamArchive
          * \throw pulsar::exception::SerializationException if the object is
          *        already serializing or unserializing
          */
-        void BeginSerialization(void)
+        void begin_serialization(void)
         {
             if(serializing_ == true)
                 throw exception::SerializationException("Can't start serializing - Already serializing");
@@ -61,16 +61,16 @@ class StdStreamArchive
          *        are unserializing.
          */
         template<typename... Targs>
-        void Serialize(const Targs &... args)
+        void serialize(const Targs &... args)
         {
             if(!serializing_)
-                throw exception::SerializationException("Serialize called when we aren't serializing");
+                throw exception::SerializationException("serialize called when we aren't serializing");
             if(unserializing_)
                 throw std::logic_error("Serializing and unserializing at the same time");
             if(!oarchive_)
                 throw std::logic_error("OArchive is not valid, but we are serializing");
 
-            Serialize_(args...);
+            serialize_(args...);
         }
 
 
@@ -81,7 +81,7 @@ class StdStreamArchive
          * \throw pulsar::exception::SerializationException if the object is
          *        unserializing or if it is not serializing to begin with.
          */
-        void EndSerialization(void)
+        void end_serialization(void)
         {
             if(serializing_ == false)
                 throw exception::SerializationException("Can't stop serializing - Not serializing");
@@ -102,7 +102,7 @@ class StdStreamArchive
          * \throw pulsar::exception::SerializationException if the object is
          *        already serializing or unserializing
          */
-        void BeginUnserialization(void)
+        void begin_unserialization(void)
         {
             if(serializing_ == true)
                 throw exception::SerializationException("Can't start unserializing - Currently serializing");
@@ -127,16 +127,16 @@ class StdStreamArchive
          *        are not unserializing.
          */
         template<typename... Targs>
-        void Unserialize(Targs &... args)
+        void unserialize(Targs &... args)
         {
             if(!unserializing_)
-                throw exception::SerializationException("Unserialize called when we aren't unserializing");
+                throw exception::SerializationException("unserialize called when we aren't unserializing");
             if(serializing_)
                 throw std::logic_error("Serializing and unserializing at the same time");
             if(!iarchive_)
                 throw std::logic_error("IArchive is not valid, but we are unserializing");
 
-            Unserialize_(args...);
+            unserialize_(args...);
         }
 
 
@@ -149,10 +149,10 @@ class StdStreamArchive
          *        are not unserializing.
          */
         template<typename T>
-        T UnserializeSingle(void)
+        T unserialize_single(void)
         {
             T ret;
-            Unserialize(ret);
+            unserialize(ret);
             return ret;
         }
 
@@ -163,7 +163,7 @@ class StdStreamArchive
          * \throw pulsar::exception::SerializationException if the object is
          *        serializing or if it is not unserializing to begin with.
          */
-        void EndUnserialization(void)
+        void end_unserialization(void)
         {
             if(serializing_ == true)
                 throw exception::SerializationException("Can't stop unserializing - Currently serializing");
@@ -180,7 +180,7 @@ class StdStreamArchive
 
         /*! \brief Obtain the current size of stored data (in bytes)
          */ 
-        size_t Size(void)
+        size_t size(void)
         {
             // save the original output position
             std::streampos orig = stream_.tellp();
@@ -194,23 +194,23 @@ class StdStreamArchive
 
 
         /*! \brief Get the contents of this archive as a byte array */
-        std::vector<char> ToByteArray(void)
+        std::vector<char> to_byte_array(void)
         {
-            BeginUnserialization(); // perform checks and reset positions
+            begin_unserialization(); // perform checks and reset positions
             std::vector<char> ret;
-            size_t size = Size();
-            ret.resize(size);
-            stream_.read(ret.data(), size);
-            EndUnserialization();
+            size_t s = size();
+            ret.resize(s);
+            stream_.read(ret.data(), s);
+            end_unserialization();
             return ret;
         }
 
         /*! \brief Create this archive from a byte array */
-        void FromByteArray(const std::vector<char> & arr)
+        void from_byte_array(const std::vector<char> & arr)
         {
-            BeginSerialization(); // perform checks and reset positions
+            begin_serialization(); // perform checks and reset positions
             stream_.write(arr.data(), arr.size());
-            EndSerialization();
+            end_serialization();
         }
 
 
@@ -232,37 +232,37 @@ class StdStreamArchive
             stream_.seekp(0, stream_.beg);
         }
 
-        void Serialize_(void) { }
+        void serialize_(void) { }
 
         template<typename T>
-        void Serialize_(const T & obj)
+        void serialize_(const T & obj)
         {
             (*oarchive_)(obj);
         }
 
 
         template<typename T, typename... Targs>
-        void Serialize_(T & obj, Targs &... args)
+        void serialize_(T & obj, Targs &... args)
         {
-            Serialize_(obj);
-            Serialize_(args...);
+            serialize_(obj);
+            serialize_(args...);
         }
 
 
-        void Unserialize_(void) { }
+        void unserialize_(void) { }
 
         template<typename T>
-        void Unserialize_(T & obj)
+        void unserialize_(T & obj)
         {
             (*iarchive_)(obj);
         }
 
 
         template<typename T, typename... Targs>
-        void Unserialize_(T & obj, Targs &... args)
+        void unserialize_(T & obj, Targs &... args)
         {
-            Unserialize_(obj);
-            Unserialize_(args...);
+            unserialize_(obj);
+            unserialize_(args...);
         }
 
 };

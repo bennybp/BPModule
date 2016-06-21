@@ -24,19 +24,19 @@ void ToRadian(double& angle){
 }
 
 AtomSetUniverse Frac2Cart(const AtomSetUniverse& DaU,const Space& DaSpace){
-    Vector_t CosA,Angles(DaSpace.LatticeAngles);
-    const Vector_t& Sides=DaSpace.LatticeSides;
+    Vector_t CosA,Angles(DaSpace.lattice_angles);
+    const Vector_t& Sides=DaSpace.lattice_sides;
     std::for_each(Angles.begin(),Angles.end(),ToRadian);                 
     std::transform(Angles.begin(),Angles.end(),CosA.begin(),cos);
     double CosBG=CosA[1]*CosA[2],SinG=sin(Angles[2]);
     double v=sqrt(1-CosA[0]*CosA[0]-CosA[1]*CosA[1]-CosA[2]*CosA[2]
                   -2*CosA[0]*CosBG);
     System DaSys(DaU,true);
-    System Temp=DaSys.Rotate(std::array<double,9>(
+    System Temp=DaSys.rotate(std::array<double,9>(
             {Sides[0],Sides[1]*CosA[2],Sides[2]*CosA[1],
                     0,Sides[1]*SinG   ,Sides[2]*(CosA[0]-CosBG)/SinG,
                     0,               0,Sides[2]*v/SinG}));
-    return Temp.AsUniverse()-DaU;
+    return Temp.as_universe()-DaU;
 }
 
 AtomSetUniverse MakeSuperCell(const AtomSetUniverse& DaU,
@@ -48,7 +48,7 @@ AtomSetUniverse MakeSuperCell(const AtomSetUniverse& DaU,
         for(size_t y=0;y<Dims[1];++y){
             const double ySide=y*Sides[1];
             for(size_t z=0;z<Dims[2];++z)
-                NewU+=UC.Translate(Vector_t({xSide,ySide,z*Sides[2]})).AsUniverse();
+                NewU+=UC.translate(Vector_t({xSide,ySide,z*Sides[2]})).as_universe();
         }
     }
     return NewU;
@@ -57,8 +57,8 @@ AtomSetUniverse MakeSuperCell(const AtomSetUniverse& DaU,
 //Gets all atoms attached to a given atom
 void Recursion(const Conn_t& Conns,const Atom& atomI,AtomSetUniverse& NewU){
     for(const Atom& atomJ: Conns.at(atomI))
-        if(!NewU.Contains(atomJ)){
-            NewU.Insert(atomJ);
+        if(!NewU.count(atomJ)){
+            NewU.insert(atomJ);
             Recursion(Conns,atomJ,NewU);
         }
 }
@@ -69,14 +69,14 @@ AtomSetUniverse CarveUC(const AtomSetUniverse& SC,
                         double MinScale,
                         double MaxScale){
     AtomSetUniverse NewU;
-    Conn_t Conns=GetConns(System(SC,true));
+    Conn_t Conns=get_connectivity(System(SC,true));
     std::array<double,3> Low,High;
     std::transform(Sides.begin(),Sides.end(),Low.begin(),
                    [MinScale](const double& a){return a*MinScale;});
     std::transform(Sides.begin(),Sides.end(),High.begin(),
                     [MaxScale](const double& a){return a*MaxScale;});
     for(auto& ConnI:Conns){
-        if(NewU.Contains(ConnI.first))continue;
+        if(NewU.count(ConnI.first))continue;
         bool InCell=true;
         for(size_t x: util::Range<0,3>())
             if(ConnI.first[x]<Low[x]||ConnI.first[x]>High[x]){
@@ -84,13 +84,13 @@ AtomSetUniverse CarveUC(const AtomSetUniverse& SC,
                 break;
             }
         if(!InCell) continue;
-        NewU.Insert(ConnI.first);
+        NewU.insert(ConnI.first);
         Recursion(Conns,ConnI.first,NewU);
     }            
     Vector_t Trans;
     std::transform(Sides.begin(),Sides.end(),Trans.begin(),
                    [](const double& a){return a*-1.0;});
-    return System(NewU,true).Translate(Trans).AsUniverse();              
+    return System(NewU,true).translate(Trans).as_universe();              
 }
 
 bool CleanUCRecurse(AtomSetUniverse& MolU,
@@ -98,7 +98,7 @@ bool CleanUCRecurse(AtomSetUniverse& MolU,
                     const Vector_t& Sides,
                     Vector_t& Idx, size_t depth){
     if(depth==3){
-        AtomSetUniverse NewMol=Mol.Translate(Idx).AsUniverse();
+        AtomSetUniverse NewMol=Mol.translate(Idx).as_universe();
         if(NewMol==MolU)return true;
         NewMol/=NewU;
         if(NewMol.size()!=0)return false;
@@ -116,9 +116,9 @@ AtomSetUniverse CleanUC(const AtomSetUniverse& UC,
                         const std::array<double,3>& Sides){
     AtomSetUniverse ActiveAtoms(UC),NewUC(UC);
     while(true){
-        size_t Size=NewUC.size();
+        size_t size=NewUC.size();
         System CurrentUC(NewUC,true);
-        Conn_t Conns=GetConns(CurrentUC);
+        Conn_t Conns=get_connectivity(CurrentUC);
         while(ActiveAtoms.size()!=0){
             const Atom& AtomI=*ActiveAtoms.begin();
             AtomSetUniverse MolU;
@@ -132,7 +132,7 @@ AtomSetUniverse CleanUC(const AtomSetUniverse& UC,
             }
             ActiveAtoms-=MolU;
         }
-        if(NewUC.size()==Size)break;
+        if(NewUC.size()==size)break;
     }
     return NewUC;
 }

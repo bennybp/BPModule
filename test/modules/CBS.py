@@ -9,7 +9,7 @@ from MiscFxns import *
 from StandardModules import *
 
 def ApplyBasis(syst,bsname,bslabel="primary"):
-    return psr.system.ApplySingleBasis(bslabel,bsname,syst)
+    return psr.system.apply_single_basis(bslabel,bsname,syst)
 
 def CompareEgy(EgyIn):
    return EgyIn+228.11521111389305<0.00001
@@ -35,17 +35,17 @@ def CompareGrad(GradIn):
 def Run(mm):
     try:
         tester = psr.testing.Tester("Testing CBS Extrapolations")
-        tester.PrintHeader()
+        tester.print_header()
        
         LoadDefaultModules(mm)
         mm.DuplicateKey("PSR_MP2","MP2_aTZ")
-        mm.ChangeOption("PSR_MP2","BASIS_SET","aug-cc-pVDZ")
-        mm.ChangeOption("MP2_aTZ","BASIS_SET","aug-cc-pVTZ")
-        mm.ChangeOption("PSR_HELGAKER_CBS","BASIS_CARDINAL_NUMS",[2,3])
-        mm.ChangeOption("PSR_MIM","METHODS",["PSR_MP2","MP2_aTZ"])
+        mm.change_option("PSR_MP2","BASIS_SET","aug-cc-pVDZ")
+        mm.change_option("MP2_aTZ","BASIS_SET","aug-cc-pVTZ")
+        mm.change_option("PSR_HELGAKER_CBS","BASIS_CARDINAL_NUMS",[2,3])
+        mm.change_option("PSR_MIM","METHODS",["PSR_MP2","MP2_aTZ"])
 
  
-        MyMod=mm.GetModule("PSR_HELGAKER_CBS",0)
+        MyMod=mm.get_module("PSR_HELGAKER_CBS",0)
         mol=psr.system.MakeSystem("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
@@ -65,13 +65,13 @@ def Run(mm):
         
 
         NewWfn,Egy=MyMod.Deriv(0,wfn)
-        tester.Test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
-        NewWfn,Egy=MyMod.Energy(wfn)
-        tester.Test("Testing Energy via Energy()", True, CompareEgy, Egy)
+        tester.test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
+        NewWfn,Egy=MyModenergy(wfn)
+        tester.test("Testing Energy via Energy()", True, CompareEgy, Egy)
         NewWfn,Egy=MyMod.Deriv(1,wfn)
-        tester.Test("Testing Gradient via Deriv(1)", True, CompareGrad, Egy)
+        tester.test("Testing Gradient via Deriv(1)", True, CompareGrad, Egy)
         NewWfn,Egy=MyMod.Gradient(wfn)
-        tester.Test("Testing Energy via Gradient()", True, CompareGrad, Egy)
+        tester.test("Testing Energy via Gradient()", True, CompareGrad, Egy)
         
      
     except Exception as e:
@@ -81,4 +81,4 @@ def Run(mm):
 with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-psr.Finalize()
+psr.finalize()

@@ -53,7 +53,7 @@ DECLARE_PFTYPE(void *,       void *,       "", "p")
 // Main handler function
 ////////////////////////////////
 template<typename T>
-void HandlePrintf_Internal_(std::string & fmt, T subst)
+void handle_printf_internal_(std::string & fmt, T subst)
 {
     static const int bufsize = 64;
 
@@ -91,7 +91,7 @@ void HandlePrintf_Internal_(std::string & fmt, T subst)
 // Helpers
 ////////////////////////////////
 template<typename T>
-void HandlePrintf_Internal_(std::string & fmt,
+void handle_printf_internal_(std::string & fmt,
                             const char * length,
                             char spec, T subst)
 {
@@ -120,35 +120,35 @@ void HandlePrintf_Internal_(std::string & fmt,
         fmt += spec;
     }
 
-    HandlePrintf_Internal_(fmt, static_cast<cast_type>(subst));
+    handle_printf_internal_(fmt, static_cast<cast_type>(subst));
 }
 
 //////////////////////////
 // Overloads
 //////////////////////////
 // const char * , since we don't always want it to be %s
-void HandlePrintf_Internal_(std::string & fmt, const char * length,
+void handle_printf_internal_(std::string & fmt, const char * length,
                             char spec, const char * ptr)
 {
     if(spec == 's' || spec == '?')
-        HandlePrintf_Internal_<const char *>(fmt, length, spec, ptr);
+        handle_printf_internal_<const char *>(fmt, length, spec, ptr);
     else
-        HandlePrintf_Internal_<void const *>(fmt, length, spec, ptr);
+        handle_printf_internal_<void const *>(fmt, length, spec, ptr);
 }
 
 // char * , since we don't always want it to be %s
-void HandlePrintf_Internal_(std::string & fmt, const char * length,
+void handle_printf_internal_(std::string & fmt, const char * length,
                             char spec, char * ptr)
 {
-    HandlePrintf_Internal_(fmt, length, spec, static_cast<const char *>(ptr));
+    handle_printf_internal_(fmt, length, spec, static_cast<const char *>(ptr));
 }
 
 
 // std::string - for convenience
-void HandlePrintf_Internal_(std::string & fmt, const char * length,
+void handle_printf_internal_(std::string & fmt, const char * length,
                             char spec, const std::string & subst)
 {
-    HandlePrintf_Internal_(fmt, length, spec, subst.c_str());
+    handle_printf_internal_(fmt, length, spec, subst.c_str());
 }
 
 
@@ -157,7 +157,7 @@ void HandlePrintf_Internal_(std::string & fmt, const char * length,
 // Explicitly instantiate the templates
 /////////////////////////////////////////
 #define DECLARE_TEMPLATE_HANDLEPRINTF(type) \
-       template void HandlePrintf_Internal_<type>(std::string &, const char *, char, type);
+       template void handle_printf_internal_<type>(std::string &, const char *, char, type);
 
 DECLARE_TEMPLATE_HANDLEPRINTF(bool)
 DECLARE_TEMPLATE_HANDLEPRINTF(char)

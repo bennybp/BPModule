@@ -111,7 +111,7 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
             if(!mod_)
               throw GeneralException("Null pointer in CppModuleIMPLHolder");
             T * ptr = mod_.get();
-            pybind11::object o = python::ConvertToPy(ptr, pybind11::return_value_policy::reference);
+            pybind11::object o = python::convert_to_py(ptr, pybind11::return_value_policy::reference);
 
             if(!o)
                 throw GeneralException("Null python object in CppModuleIMPLHolder");

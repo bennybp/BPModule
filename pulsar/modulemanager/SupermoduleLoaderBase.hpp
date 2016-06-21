@@ -51,7 +51,7 @@ class SupermoduleLoaderBase
          * \param [in] spath The path to the supermodule to be loaded
          * \return Functions that are used to create modules in that supermodule
          */
-        virtual const ModuleCreationFuncs & LoadSupermodule(const std::string & spath) = 0;
+        virtual const ModuleCreationFuncs & load_supermodule(const std::string & spath) = 0;
 };
 
 } // close namespace modulemanager

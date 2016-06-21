@@ -12,7 +12,7 @@ namespace pulsar{
 namespace util {
 
 
-std::string DemangleCpp(const char * typestr)
+std::string demangle_cpp(const char * typestr)
 {
     // taken from https://gcc.gnu.org/onlinedocs/libstdc++/manual/ext_demangling.html
 

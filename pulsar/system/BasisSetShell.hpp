@@ -48,9 +48,9 @@ class BasisSetShell : public BasisShellBase
          */
         BasisSetShell(const BasisShellBase & bshell,
                       double * alphaptr, double * coefptr, double * xyzptr) ASSERTIONS_ONLY
-            : BasisShellBase(bshell.GetType(), bshell.AM(), bshell.NPrim(), bshell.NGeneral())
+            : BasisShellBase(bshell.get_type(), bshell.am(), bshell.n_primitives(), bshell.n_general_contractions())
         {
-            SetPtrs_(alphaptr, coefptr, xyzptr);
+            set_ptrs_(alphaptr, coefptr, xyzptr);
         }
 
 
@@ -69,7 +69,7 @@ class BasisSetShell : public BasisShellBase
             // prevent implicit comparison between one type and another
             return (
                       std::equal(xyz_, xyz_+3, rhs.xyz_) &&
-                      BasisShellBase::BaseCompare_(rhs)
+                      BasisShellBase::base_compare_(rhs)
                    );
         }
 
@@ -82,14 +82,14 @@ class BasisSetShell : public BasisShellBase
         ///@{ Safe, slow access to data
 
         /// Get the coordinates of the shell
-        CoordType GetCoords(void) const ASSERTIONS_ONLY
+        CoordType get_coords(void) const ASSERTIONS_ONLY
         {
-            AssertXYZPtr_();
+            assert_xyz_ptr_();
             return CoordType{xyz_[0], xyz_[1], xyz_[2]};
         }
 
         /// Set the coordinates of the shell
-        void SetCoords(const CoordType coords) const
+        void set_coords(const CoordType coords) const
         {
             xyz_[0] = coords[0];
             xyz_[1] = coords[1];
@@ -97,18 +97,18 @@ class BasisSetShell : public BasisShellBase
         }
 
         /// Get a single coordinate of the shell
-        double GetCoord(unsigned int i) const
+        double get_coord(unsigned int i) const
         {
-            AssertXYZPtr_();
-            ValidateXYZIdx_(i);
+            assert_xyz_ptr_();
+            validate_xyz_idx_(i);
             return xyz_[i];
         }
 
         /// Set a single coordinate of the shell
-        void SetCoord(unsigned int i, double val)
+        void set_coord(unsigned int i, double val)
         {
-            AssertXYZPtr_();
-            ValidateXYZIdx_(i);
+            assert_xyz_ptr_();
+            validate_xyz_idx_(i);
             xyz_[i] = val;
         }
 
@@ -120,23 +120,23 @@ class BasisSetShell : public BasisShellBase
         ///@{ Raw, unsafe, fast
 
         /// Get a pointer to the coordinates of the shell
-        const double * CoordsPtr(void) const ASSERTIONS_ONLY
+        const double * coords_ptr(void) const ASSERTIONS_ONLY
         {
-            AssertXYZPtr_();
+            assert_xyz_ptr_();
             return xyz_;
         }
 
         /// Get a pointer to the coordinates of the shell
-        double * CoordsPtr(void) ASSERTIONS_ONLY
+        double * coords_ptr(void) ASSERTIONS_ONLY
         {
-            AssertXYZPtr_();
+            assert_xyz_ptr_();
             return xyz_;
         }
 
-        double Coord(unsigned int i) const ASSERTIONS_ONLY
+        double coord(unsigned int i) const ASSERTIONS_ONLY
         {
-            AssertXYZPtr_();
-            AssertXYZIdx_(i);
+            assert_xyz_ptr_();
+            assert_xyz_idx_(i);
             return xyz_[i];
         }
 
@@ -152,9 +152,9 @@ class BasisSetShell : public BasisShellBase
          */
         BasisSetShell() = default;
 
-        bphash::HashValue MyHash(void) const
+        bphash::HashValue my_hash(void) const
         {
-            return bphash::MakeHash(bphash::HashType::Hash128, *this);
+            return bphash::make_hash(bphash::HashType::Hash128, *this);
         } 
 
 
@@ -164,13 +164,13 @@ class BasisSetShell : public BasisShellBase
         double * xyz_;     //!< XYZ coordindates of this center
 
 
-        void AssertXYZPtr_(void) const
+        void assert_xyz_ptr_(void) const
         {
             using namespace exception;
-            Assert<BasisSetException>(xyz_ != nullptr, "Null pointers in BasisSetShell");
+            psr_assert<BasisSetException>(xyz_ != nullptr, "Null pointers in BasisSetShell");
         }
 
-        void ValidateXYZIdx_(unsigned int i) const
+        void validate_xyz_idx_(unsigned int i) const
         {
             using namespace exception;
             if(i > 2)
@@ -178,17 +178,17 @@ class BasisSetShell : public BasisShellBase
                                         "i", i);
         }
 
-        void AssertXYZIdx_(unsigned int i) const
+        void assert_xyz_idx_(unsigned int i) const
         {
             using namespace exception;
-            Assert<BasisSetException>(i < 3, "Attempt to access coordinate direction that does not exist",
+            psr_assert<BasisSetException>(i < 3, "Attempt to access coordinate direction that does not exist",
                                              "i", i);
         }
 
 
-        void SetPtrs_(double * alphaptr, double * coefptr, double * xyzptr)
+        void set_ptrs_(double * alphaptr, double * coefptr, double * xyzptr)
         {
-            BasisShellBase::SetPtrs_(alphaptr, coefptr); 
+            BasisShellBase::set_ptrs_(alphaptr, coefptr); 
             xyz_ = xyzptr;
         }
 

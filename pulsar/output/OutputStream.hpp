@@ -20,10 +20,10 @@ namespace output {
  *
  * This object derives from std::ostream, so it can be used as such.
  * In addition, it adds some functionality for semantic output
- * (ie, Error()).
+ * (ie, error()).
  *
  * If debug output is disabled for the stream, anything printed
- * via Debug() will not be printed.
+ * via debug() will not be printed.
  */
 class OutputStream : public std::ostream
 {
@@ -34,7 +34,7 @@ class OutputStream : public std::ostream
         
 
         ////////////////////////////////////////////////////////////////////////////
-        // We call Output_ directly to help reduce variadic template instantiations
+        // We call print_output_ directly to help reduce variadic template instantiations
         // and, hopefully, compile times
         ////////////////////////////////////////////////////////////////////////////
 
@@ -50,11 +50,11 @@ class OutputStream : public std::ostream
          * \param [in] Fargs The arguments to the format string
          */
         template<typename... Targs>
-        void GeneralOutput(const std::string & fmt, OutputType type, const Targs&... Fargs)
+        void general_output(const std::string & fmt, OutputType type, const Targs&... Fargs)
         {
             if(type == OutputType::Debug && !debug_)
                 return;
-            detail::Output_(*this, type, util::FormatString(fmt, Fargs...));
+            detail::print_output_(*this, type, util::format_string(fmt, Fargs...));
         }
 
 
@@ -69,63 +69,63 @@ class OutputStream : public std::ostream
          * \param [in] Fargs The arguments to the format string
          */
         template<typename... Targs>
-        void Output(const std::string & fmt, const Targs&... Fargs)
+        void output(const std::string & fmt, const Targs&... Fargs)
         {
-            detail::Output_(*this, OutputType::Output, util::FormatString(fmt, Fargs...));
+            detail::print_output_(*this, OutputType::Output, util::format_string(fmt, Fargs...));
         }
 
 
         /*! \brief Print formatted changed output to a stream
-         * \copydetails Output(std::ostream &, const std::string &, const Targs...)
+         * \copydetails output(std::ostream &, const std::string &, const Targs...)
          */
         template<typename... Targs>
-        void Changed(const std::string & fmt, const Targs&... Fargs)
+        void changed(const std::string & fmt, const Targs&... Fargs)
         {
-            detail::Output_(*this, OutputType::Changed, util::FormatString(fmt, Fargs...));
+            detail::print_output_(*this, OutputType::Changed, util::format_string(fmt, Fargs...));
         }
 
 
         /*! \brief Print formatted error output to a stream
-         * \copydetails Output(std::ostream &, const std::string &, const Targs...)
+         * \copydetails output(std::ostream &, const std::string &, const Targs...)
          */
         template<typename... Targs>
-        void Error(const std::string & fmt, const Targs&... Fargs)
+        void error(const std::string & fmt, const Targs&... Fargs)
         {
-            detail::Output_(*this, OutputType::Error, util::FormatString(fmt, Fargs...));
+            detail::print_output_(*this, OutputType::Error, util::format_string(fmt, Fargs...));
         }
 
 
         /*! \brief Print formatted warning output to a stream
-         * \copydetails Output(std::ostream &, const std::string &, const Targs...)
+         * \copydetails output(std::ostream &, const std::string &, const Targs...)
          */
         template<typename... Targs>
-        void Warning(const std::string & fmt, const Targs&... Fargs)
+        void warning(const std::string & fmt, const Targs&... Fargs)
         {
-            detail::Output_(*this, OutputType::Warning, util::FormatString(fmt, Fargs...));
+            detail::print_output_(*this, OutputType::Warning, util::format_string(fmt, Fargs...));
         }
 
 
         /*! \brief Print formatted success output to a stream
-         * \copydetails Output(std::ostream &, const std::string &, const Targs...)
+         * \copydetails output(std::ostream &, const std::string &, const Targs...)
          */
         template<typename... Targs>
-        void Success(const std::string & fmt, const Targs&... Fargs)
+        void success(const std::string & fmt, const Targs&... Fargs)
         {
-            detail::Output_(*this, OutputType::Success, util::FormatString(fmt, Fargs...));
+            detail::print_output_(*this, OutputType::Success, util::format_string(fmt, Fargs...));
         }
 
 
         /*! \brief Print formatted debug output to a stream
          * 
-         * Will only be printed if DebugEnabled()
+         * Will only be printed if debug_enabled()
          *
-         * \copydetails Output(std::ostream &, const std::string &, const Targs...)
+         * \copydetails output(std::ostream &, const std::string &, const Targs...)
          */
         template<typename... Targs>
-        void Debug(const std::string & fmt, const Targs&... Fargs)
+        void debug(const std::string & fmt, const Targs&... Fargs)
         {
             if(debug_)
-                detail::Output_(*this, OutputType::Debug, util::FormatString(fmt, Fargs...));
+                detail::print_output_(*this, OutputType::Debug, util::format_string(fmt, Fargs...));
         }
 
 
@@ -133,7 +133,7 @@ class OutputStream : public std::ostream
          * 
          * \return True if debugging is enabled for this stream, False if it's not
          */ 
-        bool DebugEnabled(void) const noexcept
+        bool debug_enabled(void) const noexcept
         {
             return debug_;
         }
@@ -142,7 +142,7 @@ class OutputStream : public std::ostream
          *
          * \param [in] debug True if you want debugging enabled for this stream, False to disable it 
          */ 
-        void EnableDebug(bool debug) noexcept
+        void enable_debug(bool debug) noexcept
         {
             debug_ = debug;
         }

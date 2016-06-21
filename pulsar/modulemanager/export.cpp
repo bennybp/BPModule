@@ -29,8 +29,8 @@ void export_pybind11(pybind11::module & mtop)
     //////////////////////
     pybind11::class_<ModuleInfo>(m, "ModuleInfo")
     .def(pybind11::init<>())
-    .def("Print", &ModuleInfo::Print)
-    .def("MyHash", &ModuleInfo::MyHash)
+    .def("print", &ModuleInfo::print)
+    .def("my_hash", &ModuleInfo::my_hash)
     .def_readwrite("name", &ModuleInfo::name)
     .def_readwrite("type", &ModuleInfo::type)
     .def_readwrite("base", &ModuleInfo::base)
@@ -60,15 +60,15 @@ void export_pybind11(pybind11::module & mtop)
     // Tree iterators
     //////////////////////////
     pybind11::class_<ConstModuleTreeIter>(m, "ConstModuleTreeIter")
-    .def("Advance", &ConstModuleTreeIter::Advance)
-    .def("GetRef", &ConstModuleTreeIter::GetRef, pybind11::return_value_policy::reference_internal)
+    .def("advance", &ConstModuleTreeIter::advance)
+    .def("get_ref", &ConstModuleTreeIter::get_ref, pybind11::return_value_policy::reference_internal)
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
     ;
 
     pybind11::class_<ConstModuleFlatTreeIter>(m, "ConstModuleFlatTreeIter")
-    .def("Advance", &ConstModuleFlatTreeIter::Advance)
-    .def("GetRef", &ConstModuleFlatTreeIter::GetRef, pybind11::return_value_policy::reference_internal)
+    .def("advance", &ConstModuleFlatTreeIter::advance)
+    .def("get_ref", &ConstModuleFlatTreeIter::get_ref, pybind11::return_value_policy::reference_internal)
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
     ;
@@ -79,23 +79,23 @@ void export_pybind11(pybind11::module & mtop)
     //////////////////////////
     pybind11::class_<ModuleManager>(m, "ModuleManager")
     .def(pybind11::init<>())
-    .def("Size", &ModuleManager::Size)
-    .def("ModuleKeyInfo", &ModuleManager::ModuleKeyInfo)
-    .def("Print", &ModuleManager::Print)
-    .def("HasKey", &ModuleManager::HasKey)
-    .def("DuplicateKey", &ModuleManager::DuplicateKey)
-    .def("GenerateUniqueKey",&ModuleManager::GenerateUniqueKey)
-    .def("TestAll", &ModuleManager::TestAll)
-    .def("GetModule", &ModuleManager::GetModulePy)
-    .def("ModuleInUse", &ModuleManager::ModuleInUse)
-    .def("ChangeOption", &ModuleManager::ChangeOptionPy)
-    .def("LoadModuleFromModuleInfo", &ModuleManager::LoadModuleFromModuleInfo)
-    .def("EnableDebug", &ModuleManager::EnableDebug)
-    .def("EnableDebugAll", &ModuleManager::EnableDebugAll)
-    .def("TreeBegin", &ModuleManager::TreeBegin)
-    .def("TreeEnd", &ModuleManager::TreeEnd)
-    .def("FlatTreeBegin", &ModuleManager::FlatTreeBegin)
-    .def("FlatTreeEnd", &ModuleManager::FlatTreeEnd)
+    .def("size", &ModuleManager::size)
+    .def("module_key_info", &ModuleManager::module_key_info)
+    .def("print", &ModuleManager::print)
+    .def("has_key", &ModuleManager::has_key)
+    .def("duplicate_key", &ModuleManager::duplicate_key)
+    .def("generate_unique_key",&ModuleManager::generate_unique_key)
+    .def("test_all", &ModuleManager::test_all)
+    .def("get_module", &ModuleManager::get_module_py)
+    .def("module_in_use", &ModuleManager::module_in_use)
+    .def("change_option", &ModuleManager::change_option_py)
+    .def("load_module_from_minfo", &ModuleManager::load_module_from_minfo)
+    .def("enable_debug", &ModuleManager::enable_debug)
+    .def("enable_debug_all", &ModuleManager::enable_debug_all)
+    .def("tree_begin", &ModuleManager::tree_begin)
+    .def("tree_end", &ModuleManager::tree_end)
+    .def("flat_tree_begin", &ModuleManager::flat_tree_begin)
+    .def("flat_tree_end", &ModuleManager::flat_tree_end)
     ;
 
 
@@ -103,7 +103,7 @@ void export_pybind11(pybind11::module & mtop)
     // Pointers, etc
     ////////////////////////////////
     pybind11::class_<PyModulePtr>(m, "ModulePtr")
-    .def("__getattr__", &PyModulePtr::Py__getattr__)
+    .def("__getattr__", &PyModulePtr::py__getattr__)
     ;
 
 
@@ -112,8 +112,8 @@ void export_pybind11(pybind11::module & mtop)
     ///////////////////////////////
     pybind11::class_<ModuleCreationFuncs>(m, "ModuleCreationFuncs")
     .def(pybind11::init<>())
-    .def("AddPyCreator", &ModuleCreationFuncs::AddPyCreator)
-    .def("HasCreator", &ModuleCreationFuncs::HasCreator)
+    .def("add_py_creator", &ModuleCreationFuncs::add_py_creator)
+    .def("has_creator", &ModuleCreationFuncs::has_creator)
     ;
 
     // Export the testing stuff

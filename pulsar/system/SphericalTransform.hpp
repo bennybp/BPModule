@@ -19,7 +19,7 @@ namespace system {
 
 
 
-//! Transformation coefficient of a cartesian gaussian
+//! transformation coefficient of a cartesian gaussian
 struct SphericalTransformCoefficient
 {
     int sphidx;
@@ -39,16 +39,16 @@ typedef std::map<int, SphericalTransformCoefs> SphericalTransformMap;
 
 
 /*! \brief Obtain the spherical transformations used by pulsar */
-const SphericalTransformMap & AllSphericalTransforms(void) noexcept;
+const SphericalTransformMap & all_spherical_transforms(void) noexcept;
 
 
 /*! \brief Obtain the spherical transformations used by pulsar for
  *         for a specific angular momentum
  */
-const std::vector<SphericalTransformCoefficient> & SphericalTransformForAM(int am);
+const std::vector<SphericalTransformCoefficient> & spherical_transform_for_am(int am);
 
 
-/*! \brief Transform a block of cartesian AO data to spherical harmonics
+/*! \brief transform a block of cartesian AO data to spherical harmonics
  *
  * \warning \p src and \p dest are expected to be the correct sizes. It is up
  *          to the caller to make sure. The size of \p src should be
@@ -60,13 +60,13 @@ const std::vector<SphericalTransformCoefficient> & SphericalTransformForAM(int a
  * \todo restrict keyword
  */
 template<typename T>
-inline void SphericalTransformBlock(const SphericalTransformCoefs & coefs,
+inline void spherical_transform_block(const SphericalTransformCoefs & coefs,
                                     T const * RESTRICT src,
                                     T * RESTRICT dest,
                                     size_t width, int am, size_t niter)
 {
-    const size_t ncart = NCartesianGaussian(am);
-    const size_t nsph = NSphericalGaussian(am);
+    const size_t ncart = n_cartesian_gaussian(am);
+    const size_t nsph = n_spherical_gaussian(am);
 
     std::fill(dest, dest + width*niter*nsph, 0.0);
 
@@ -88,7 +88,7 @@ inline void SphericalTransformBlock(const SphericalTransformCoefs & coefs,
 
 
 
-/*! \brief Transform data from cartesian to spherical gaussian functions
+/*! \brief transform data from cartesian to spherical gaussian functions
  *
  * It is expected that all of \p src is in cartesian form. If the corresponding
  * shells in the basis set are spherical gaussians, the block is converted
@@ -99,36 +99,36 @@ inline void SphericalTransformBlock(const SphericalTransformCoefs & coefs,
  * \warning \p src and \p dest must not point to the same location
  */
 template<typename T>
-void SphericalTransform(const BasisSet & bs,
+void spherical_transform(const BasisSet & bs,
                         const SphericalTransformMap & smap,
                         T const * const RESTRICT src,
                         T * const RESTRICT dest, size_t width)
 {
     size_t srcpos = 0;
     size_t destpos = 0;
-    std::fill(dest, dest + width * bs.NFunctions(), static_cast<T>(0));
+    std::fill(dest, dest + width * bs.n_functions(), static_cast<T>(0));
 
     for(const auto & shell : bs)
     {
-        const ShellType type = shell.GetType();
+        const ShellType type = shell.get_type();
 
         if(type == ShellType::SphericalGaussian)
         {
-            const int am = shell.AM();
-            const int ncart = NCartesianGaussian(am);
-            const int nsph = NSphericalGaussian(am);
+            const int am = shell.am();
+            const int ncart = n_cartesian_gaussian(am);
+            const int nsph = n_spherical_gaussian(am);
 
             if(!smap.count(am))
                 throw exception::BasisSetException("AM not available in the spherical transform map", "am", am);
 
-            SphericalTransformBlock(smap.at(am), src + srcpos, dest + destpos, width);
+            spherical_transform_block(smap.at(am), src + srcpos, dest + destpos, width);
 
             srcpos += ncart * width;
             destpos += nsph * width;
         }
         else
         {
-            const size_t len = width * shell.NFunctions();
+            const size_t len = width * shell.n_functions();
             std::copy(src + srcpos, src + srcpos + len, dest + destpos);
             srcpos += len;
             destpos += len;

@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Global output printing (header)
+ * \brief global_ output printing (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -20,7 +20,7 @@ namespace output {
 
 /*! \brief Sets the global output to stdout
  */
-void SetGlobalOut_Stdout(void);
+void set_global_out_to_stdout(void);
 
 
 //bool SetOut_File(const std::string & filepath);
@@ -29,7 +29,7 @@ void SetGlobalOut_Stdout(void);
 
 /*! \brief Get the current global output stream
  */
-OutputStream & GetGlobalOut(void);
+OutputStream & get_global_output(void);
 
 
 
@@ -37,7 +37,7 @@ OutputStream & GetGlobalOut(void);
  *
  * \return True if output can be colorized
  */
-bool ColorEnabled(void) noexcept;
+bool color_enabled(void) noexcept;
 
 
 
@@ -45,7 +45,7 @@ bool ColorEnabled(void) noexcept;
  *
  * \param [in] enabled True to enable color output, False to disable
  */
-void EnableColor(bool enabled) noexcept;
+void enable_color(bool enabled) noexcept;
 
 
 
@@ -61,9 +61,9 @@ void EnableColor(bool enabled) noexcept;
  * \param [in] Fargs The arguments to the format string
  */
 template<typename... Targs>
-void GlobalGeneralOutput(const std::string & fmt, OutputType type, const Targs&... Fargs)
+void print_global_general_output(const std::string & fmt, OutputType type, const Targs&... Fargs)
 {   
-    GetGlobalOut().GeneralOutput(fmt, type, Fargs...);
+    get_global_output().general_output(fmt, type, Fargs...);
 }
 
 
@@ -78,60 +78,60 @@ void GlobalGeneralOutput(const std::string & fmt, OutputType type, const Targs&.
  * \param [in] Fargs The arguments to the format string
  */
 template<typename... Targs>
-void GlobalOutput(const std::string & fmt, const Targs&... Fargs)
+void print_global_output(const std::string & fmt, const Targs&... Fargs)
 {   
-    GetGlobalOut().Output(fmt, Fargs...);
+    get_global_output().output(fmt, Fargs...);
 }
 
 
 
 /*! \brief Print formatted changed output to the global output stream
- * \copydetails GlobalOutput(const std::string & fmt, const Targs&... Fargs)
+ * \copydetails global_output(const std::string & fmt, const Targs&... Fargs)
  */
 template<typename... Targs> 
-void GlobalChanged(const std::string & fmt, const Targs&... Fargs)
+void print_global_changed(const std::string & fmt, const Targs&... Fargs)
 {   
-    GetGlobalOut().Changed(fmt, Fargs...);
+    get_global_output().changed(fmt, Fargs...);
 }
 
 
 /*! \brief Print formatted error output to the global output stream
- * \copydetails GlobalOutput(const std::string & fmt, const Targs&... Fargs)
+ * \copydetails global_output(const std::string & fmt, const Targs&... Fargs)
  */
 template<typename... Targs>
-void GlobalError(const std::string & fmt, const Targs&... Fargs)
+void print_global_error(const std::string & fmt, const Targs&... Fargs)
 {   
-    GetGlobalOut().Error(fmt, Fargs...);
+    get_global_output().error(fmt, Fargs...);
 }
 
 
 /*! \brief Print formatted warning output to the global output stream
- * \copydetails GlobalOutput(const std::string & fmt, const Targs&... Fargs)
+ * \copydetails global_output(const std::string & fmt, const Targs&... Fargs)
  */
 template<typename... Targs> 
-void GlobalWarning(const std::string & fmt, const Targs&... Fargs)
+void print_global_warning(const std::string & fmt, const Targs&... Fargs)
 {   
-    GetGlobalOut().Warning(fmt, Fargs...);
+    get_global_output().warning(fmt, Fargs...);
 }
 
 
 /*! \brief Print formatted success output to the global output stream
- * \copydetails GlobalOutput(const std::string & fmt, const Targs&... Fargs)
+ * \copydetails global_output(const std::string & fmt, const Targs&... Fargs)
  */
 template<typename... Targs> 
-void GlobalSuccess(const std::string & fmt, const Targs&... Fargs)
+void print_global_success(const std::string & fmt, const Targs&... Fargs)
 {   
-    GetGlobalOut().Success(fmt, Fargs...);
+    get_global_output().success(fmt, Fargs...);
 }
 
 
 /*! \brief Print formatted debug output to the global output stream
- * \copydetails GlobalOutput(const std::string & fmt, const Targs&... Fargs)
+ * \copydetails global_output(const std::string & fmt, const Targs&... Fargs)
  */
 template<typename... Targs>
-void GlobalDebug(const std::string & fmt, const Targs&... Fargs)
+void print_global_debug(const std::string & fmt, const Targs&... Fargs)
 {   
-    GetGlobalOut().Debug(fmt, Fargs...);
+    get_global_output().debug(fmt, Fargs...);
 }
 
 

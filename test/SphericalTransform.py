@@ -34,7 +34,7 @@ def CompareList(lst1, lst2, tol):
 def Run():
     try:
         tester = Tester("Testing System - Spherical Transformation")
-        tester.PrintHeader()
+        tester.print_header()
 
         test_dsds = [ 3.90267020822592436e-03, 0.00000000000000000e+00, 4.10345422739425092e-68,
                       3.48462765316867248e-03, 0.00000000000000000e+00, 3.48462765316867248e-03,
@@ -130,10 +130,10 @@ def Run():
 
 
         # Load the sph transform data from pulsar
-        spt = AllSphericalTransforms()
+        spt = all_spherical_transforms()
 
         # Load the ordering
-        psrorder = AllAOOrderings()
+        psrorder = all_ao_orderings()
 
         # Put in psi4 spherical ordering
         psi4_sphorder = {}
@@ -147,81 +147,81 @@ def Run():
 
         # Transform the 4 indices, starting with the left
         # and then reorder. Explicitly does s orbitals to test
-        bsreorder = MakeBSReorderMap(psrorder, psi4order)
+        bsreorder = make_basis_reorder_map(psrorder, psi4order)
 
         #########
         # ssds
         #########
-        res = Test_SphericalTransformBlock(spt[0], test_ssds, 6, 0, 1)
-        res = Test_SphericalTransformBlock(spt[0], res, 6, 0, 1)
-        res = Test_SphericalTransformBlock(spt[2], res, 1, 2, 1)
-        res = Test_SphericalTransformBlock(spt[0], res, 1, 0, 5)
+        res = Test_spherical_transform_block(spt[0], test_ssds, 6, 0, 1)
+        res = Test_spherical_transform_block(spt[0], res, 6, 0, 1)
+        res = Test_spherical_transform_block(spt[2], res, 1, 2, 1)
+        res = Test_spherical_transform_block(spt[0], res, 1, 0, 5)
 
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][0], res, 5, 1)
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][2], res, 1, 1)
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][0], res, 1, 5)
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][0], res, 1, 5)
 
-        tester.TestValue("Testing ssds", True, CompareList(res, ref_ssds, 1e-18))
+        tester.test_value("Testing ssds", True, CompareList(res, ref_ssds, 1e-18))
 
         #########
         # ssfs
         #########
-        res = Test_SphericalTransformBlock(spt[0], test_ssfs, 10, 0, 1)
-        res = Test_SphericalTransformBlock(spt[0], res, 10, 0, 1)
-        res = Test_SphericalTransformBlock(spt[3], res, 1, 3, 1)
-        res = Test_SphericalTransformBlock(spt[0], res, 1, 0, 7)
+        res = Test_spherical_transform_block(spt[0], test_ssfs, 10, 0, 1)
+        res = Test_spherical_transform_block(spt[0], res, 10, 0, 1)
+        res = Test_spherical_transform_block(spt[3], res, 1, 3, 1)
+        res = Test_spherical_transform_block(spt[0], res, 1, 0, 7)
 
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][0], res, 7, 1)
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][0], res, 7, 1)
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][3], res, 1, 1)
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][0], res, 1, 7)
 
-        tester.TestValue("Testing ssfs", True, CompareList(res, ref_ssfs, 1e-18))
+        tester.test_value("Testing ssfs", True, CompareList(res, ref_ssfs, 1e-18))
 
         #########
         # dsds
         #########
-        res = Test_SphericalTransformBlock(spt[2], test_dsds, 6, 2, 1) 
-        res = Test_SphericalTransformBlock(spt[0], res, 6, 0, 5) 
-        res = Test_SphericalTransformBlock(spt[2], res, 1, 2, 5)
-        res = Test_SphericalTransformBlock(spt[0], res, 1, 0, 25) 
+        res = Test_spherical_transform_block(spt[2], test_dsds, 6, 2, 1) 
+        res = Test_spherical_transform_block(spt[0], res, 6, 0, 5) 
+        res = Test_spherical_transform_block(spt[2], res, 1, 2, 5)
+        res = Test_spherical_transform_block(spt[0], res, 1, 0, 25) 
 
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][2], res, 5, 1)
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][0], res, 5, 5)
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][2], res, 1, 5)
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][0], res, 1, 25)
-        tester.TestValue("Testing dsds", True, CompareList(res, ref_dsds, 1e-18))
+        tester.test_value("Testing dsds", True, CompareList(res, ref_dsds, 1e-18))
 
         #########
         # ppfs
         #########
-        res = Test_SphericalTransformBlock(spt[1], test_ppfs, 30, 1, 1) 
-        res = Test_SphericalTransformBlock(spt[1], res, 10, 1, 3)
-        res = Test_SphericalTransformBlock(spt[3], res, 1, 3, 9)
-        res = Test_SphericalTransformBlock(spt[0], res, 1, 0, 63)
+        res = Test_spherical_transform_block(spt[1], test_ppfs, 30, 1, 1) 
+        res = Test_spherical_transform_block(spt[1], res, 10, 1, 3)
+        res = Test_spherical_transform_block(spt[3], res, 1, 3, 9)
+        res = Test_spherical_transform_block(spt[0], res, 1, 0, 63)
 
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][1], res, 21, 1)
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][1], res, 7,  3)
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][3], res, 1,  9)
         res = Test_Reorder(bsreorder[ShellType.SphericalGaussian][0], res, 1,  63)
-        tester.TestValue("Testing ppfs", True, CompareList(res, ref_ppfs, 1e-18))
+        tester.test_value("Testing ppfs", True, CompareList(res, ref_ppfs, 1e-18))
 
 
 
-        tester.PrintResults() 
+        tester.print_results() 
 
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      print_global_output("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      GlobalError("\n")
-      GlobalError(str(e))
-      GlobalError("\n")
+      print_global_error("\n")
+      print_global_error(str(e))
+      print_global_error("\n")
 
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-psr.Finalize()
+psr.finalize()

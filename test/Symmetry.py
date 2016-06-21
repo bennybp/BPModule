@@ -9,7 +9,6 @@ thispath = os.path.dirname(os.path.realpath(__file__))
 psrpath = os.path.join(os.path.dirname(thispath), "modules")
 sys.path.insert(0, psrpath)
 
-from StandardModules import *
 from helper.Molecules import *
 
 def RightEs(PG,Elems):
@@ -40,17 +39,17 @@ def TestPG(tester,IPG,PG,Elems):
     SS=IPG.SSymbol
     RightEs(IPG,Elems)
     Name="Idealized "+SS
-    tester.Test(Name+" has correct elements",True,RightEs,IPG,Elems)
-    tester.Test(Name+" has correct order",True,RightOrder,IPG,Elems)
+    tester.test(Name+" has correct elements",True,RightEs,IPG,Elems)
+    tester.test(Name+" has correct order",True,RightOrder,IPG,Elems)
     Name="Computed "+SS
-    tester.Test(Name+" has correct elements",True,RightEs,PG,Elems)
-    tester.Test(Name+" has correct order",True,RightOrder,PG,Elems)
+    tester.test(Name+" has correct elements",True,RightEs,PG,Elems)
+    tester.test(Name+" has correct order",True,RightOrder,PG,Elems)
     
 
 def Run(mm):
     try:
         tester = psr.testing.Tester("Testing Symmetry")
-        tester.PrintHeader()
+        tester.print_header()
         
         Cs=psr.system.Cs()
         Ci=psr.system.Ci()
@@ -136,19 +135,18 @@ def Run(mm):
               Methane,SF6,C60,
         ]
        
-        LoadDefaultModules(mm)
         Symmer=psr.system.Symmetrizer()
         for i in range(0,24):
-            TestPG(tester,Syms[i],Symmer.GetSymmetry(Mols[i]),Elems)
-        tester.PrintResults()
+            TestPG(tester,Syms[i],Symmer.get_symmetry(Mols[i]),Elems)
+        tester.print_results()
         
      
     except Exception as e:
-      psr.output.Output("Caught exception in main handler\n")
+      psr.output.print_global_output("Caught exception in main handler\n")
       traceback.print_exc()
 
 with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-psr.Finalize()
+psr.finalize()
 

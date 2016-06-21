@@ -22,58 +22,58 @@ from helper.TestOptions import opttypemap, allvals
 def Run():
     try:
         tester = Tester("Testing ModuleInfo - serialization")
-        tester.PrintHeader()
+        tester.print_header()
 
         mi = ModuleInfo()
-        tester.Test("Serialization of empty ModuleInfo", True,
+        tester.test("Serialization of empty ModuleInfo", True,
                     TestSerialization_ModuleInfo, mi)
 
         mi.name = "Some name"
-        tester.Test("Serialization of ModuleInfo - name", True, TestSerialization_ModuleInfo, mi)
+        tester.test("Serialization of ModuleInfo - name", True, TestSerialization_ModuleInfo, mi)
 
         mi.type = "Some type"
-        tester.Test("Serialization of ModuleInfo - type", True, TestSerialization_ModuleInfo, mi)
+        tester.test("Serialization of ModuleInfo - type", True, TestSerialization_ModuleInfo, mi)
 
         mi.base = "Some base"
-        tester.Test("Serialization of ModuleInfo - base", True, TestSerialization_ModuleInfo, mi)
+        tester.test("Serialization of ModuleInfo - base", True, TestSerialization_ModuleInfo, mi)
 
         mi.path = "Some path"
-        tester.Test("Serialization of ModuleInfo - path", True, TestSerialization_ModuleInfo, mi)
+        tester.test("Serialization of ModuleInfo - path", True, TestSerialization_ModuleInfo, mi)
 
         mi.version = "Some version"
-        tester.Test("Serialization of ModuleInfo - version", True, TestSerialization_ModuleInfo, mi)
+        tester.test("Serialization of ModuleInfo - version", True, TestSerialization_ModuleInfo, mi)
 
         mi.description = "Some description"
-        tester.Test("Serialization of ModuleInfo - description", True, TestSerialization_ModuleInfo, mi)
+        tester.test("Serialization of ModuleInfo - description", True, TestSerialization_ModuleInfo, mi)
 
         mi.authors = ["Author 1", "Author 2"]
-        tester.Test("Serialization of ModuleInfo - authors", True, TestSerialization_ModuleInfo, mi)
+        tester.test("Serialization of ModuleInfo - authors", True, TestSerialization_ModuleInfo, mi)
 
         mi.authors = ["Ref 1", "Ref 2"]
-        tester.Test("Serialization of ModuleInfo - refs", True, TestSerialization_ModuleInfo, mi)
+        tester.test("Serialization of ModuleInfo - refs", True, TestSerialization_ModuleInfo, mi)
         
 
         for k,v in allvals:
             opttype = opttypemap[k]
-            if not mi.options.HasKey(k): # Can't add duplicate keys
-                mi.options.AddOption(k, opttype, True, None, "No help", None)
+            if not mi.options.has_key(k): # Can't add duplicate keys
+                mi.options.add_option(k, opttype, True, None, "No help", None)
 
-        tester.Test("Serialization of ModuleInfo - options", True, TestSerialization_ModuleInfo, mi)
+        tester.test("Serialization of ModuleInfo - options", True, TestSerialization_ModuleInfo, mi)
 
 
-        tester.PrintResults() 
+        tester.print_results() 
 
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      print_global_output("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      GlobalError("\n")
-      GlobalError(str(e))
-      GlobalError("\n")
+      print_global_error("\n")
+      print_global_error(str(e))
+      print_global_error("\n")
 
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-psr.Finalize()
+psr.finalize()

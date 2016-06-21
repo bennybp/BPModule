@@ -26,8 +26,8 @@ namespace math{
 
 ///Computes and returns all factors of \p Num (including 1 and Num)
 template<typename T>
-std::set<T> Factors(T Num){
-    if(!IsInteger(Num))
+std::set<T> factors(T Num){
+    if(!is_integer(Num))
         throw pulsar::exception::GeneralException("Integer required");
     std::set<T> f;
     T max=(T)floor(sqrt(numeric_cast<double>(Num)));
@@ -41,8 +41,8 @@ std::set<T> Factors(T Num){
 
 ///Returns true if \p Num is prime
 template<typename T>
-bool IsPrime(T Num){
-    std::set<T> facs=Factors(Num);
+bool is_prime(T Num){
+    std::set<T> facs=factors(Num);
     return facs.size()==2;
 }
 
@@ -50,14 +50,14 @@ bool IsPrime(T Num){
 
 ///Variadic template recursion endpoint
 template<typename T>
-std::set<T> CommonFactors(T N){return Factors(N);}
+std::set<T> common_factors(T N){return factors(N);}
 
 ///Returns a set of factors common to n numbers
 template<typename T,typename ...Args>
-std::set<T> CommonFactors(T N,Args ...args){
-    std::set<T> Int=CommonFactors(args...);
+std::set<T> common_factors(T N,Args ...args){
+    std::set<T> Int=common_factors(args...);
     if(Int.size()==0)return Int;
-    std::set<T> CommonFs,MyFs=Factors(N);
+    std::set<T> CommonFs,MyFs=factors(N);
     std::set_intersection(Int.begin(),Int.end(),MyFs.begin(),MyFs.end(),
                           std::inserter(CommonFs,CommonFs.begin()));
     return CommonFs;
@@ -65,21 +65,21 @@ std::set<T> CommonFactors(T N,Args ...args){
 
 ///Computes the largest common factor of a series of numbers
 template<typename T,typename ...Args>
-T LargestCommonFactor(T N1,Args ...args){
-    std::set<T> LCFs=CommonFactors(N1,args...);
+T largest_common_factor(T N1,Args ...args){
+    std::set<T> LCFs=common_factors(N1,args...);
     return *LCFs.rbegin();
 }
 
 ///Returns true if the numbers are relatively prime (no common factors)
 template<typename ...Args>
-bool RelativelyPrime(Args...args){
-    return CommonFactors(args...).size()==1;
+bool relatively_prime(Args...args){
+    return common_factors(args...).size()==1;
 }
 
 ///Reduces the fraction \p n over \p d, returns reduced pair (n,d)
 template<typename T>
-std::pair<T,T> Reduce(T n,T d){
-    T LF=LargestCommonFactor(n,d);
+std::pair<T,T> reduce(T n,T d){
+    T LF=largest_common_factor(n,d);
     if(LF==0)return std::make_pair(n,d);
     return std::make_pair(n/LF,d/LF);
 }

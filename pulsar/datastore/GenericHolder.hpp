@@ -69,7 +69,7 @@ class GenericHolder : public GenericBase
          *
          * \return A reference to the underlying data
          */ 
-        T & GetRef(void) noexcept
+        T & get_ref(void) noexcept
         {
             return obj;
         }
@@ -81,7 +81,7 @@ class GenericHolder : public GenericBase
          *
          * \return A const reference to the underlying data
          */ 
-        const T & GetRef(void) const noexcept
+        const T & get_ref(void) const noexcept
         {
             return obj;
         }
@@ -90,20 +90,20 @@ class GenericHolder : public GenericBase
         ////////////////////////////////////////
         // Virtual functions from GenericBase
         ////////////////////////////////////////
-        virtual const char * Type(void) const noexcept
+        virtual const char * type(void) const noexcept
         {
             return typeid(T).name();
         }
 
-        virtual const std::type_info & TypeInfo(void) const noexcept
+        virtual const std::type_info & type_info(void) const noexcept
         {
             return typeid(T);
         }
 
         
-        virtual std::string DemangledType(void) const
+        virtual std::string demangled_type(void) const
         {
-            return util::DemangleCppOrPyType(obj);
+            return util::demangle_cpp_or_py_type(obj);
         }
 
 

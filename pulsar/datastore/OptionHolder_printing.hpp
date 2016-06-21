@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Helpers for printing options
+ * \brief helpers for printing options
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
@@ -18,7 +18,7 @@ namespace detail {
 
 
 //////////////////
-// Printing Helpers
+// printing helpers
 //////////////////
 /*! \brief Converts an option value to a string
  */
@@ -26,9 +26,9 @@ template<typename T>
 std::vector<std::string> OptToString(const T & opt)
 {
     if(std::is_integral<T>::value)
-        return {util::FormatString("%-12?", opt)};
+        return {util::format_string("%-12?", opt)};
     else
-        return {util::FormatString("%-12.8?", opt)};
+        return {util::format_string("%-12.8?", opt)};
 }
 
 /*! \brief Converts an option value to a string

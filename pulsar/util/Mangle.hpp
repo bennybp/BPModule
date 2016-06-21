@@ -19,7 +19,7 @@ namespace util {
  *
  * ie, converts  3barI5emptyLi17EE to bar<empty, 17>
  */
-std::string DemangleCpp(const char * typestr);
+std::string demangle_cpp(const char * typestr);
 
 
 /*! \brief Demangle the type of an object
@@ -27,9 +27,9 @@ std::string DemangleCpp(const char * typestr);
  * \param [in] t The object whose type to demangle
  */
 template<typename T>
-std::string DemangleCppType(const T & t)
+std::string demangle_cpp_type(const T & t)
 {
-    return DemangleCpp(typeid(t).name());
+    return demangle_cpp(typeid(t).name());
 }
 
 
@@ -37,23 +37,23 @@ std::string DemangleCppType(const T & t)
  *
  * \tparam The type to demangle
  *
- * For a c++ type, same as DemangleCppType.
+ * For a c++ type, same as demangle_cpp_type.
  * For a python object, will return the class name
  */
 template<typename T>
 typename std::enable_if<!std::is_base_of<pybind11::object, T>::value, std::string>::type
-DemangleCppOrPyType(const T & t)
+demangle_cpp_or_py_type(const T & t)
 {
-    return DemangleCpp(typeid(t).name());
+    return demangle_cpp(typeid(t).name());
 }
 
 
 
 template<typename T>
 typename std::enable_if<std::is_base_of<pybind11::object, T>::value, std::string>::type
-DemangleCppOrPyType(const T & t)
+demangle_cpp_or_py_type(const T & t)
 {
-    return python::GetPyClass(t);
+    return python::get_py_class(t);
 }
 
 
@@ -62,9 +62,9 @@ DemangleCppOrPyType(const T & t)
  * \tparam The type to demangle
  */
 template<typename T>
-std::string DemangleCppType(void)
+std::string demangle_cpp_type(void)
 {
-    return DemangleCpp(typeid(T).name());
+    return demangle_cpp(typeid(T).name());
 }
 
 

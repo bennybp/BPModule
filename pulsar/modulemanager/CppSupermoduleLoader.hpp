@@ -44,7 +44,7 @@ class CppSupermoduleLoader : public SupermoduleLoaderBase
         CppSupermoduleLoader & operator=(CppSupermoduleLoader &&)      = default;
 
 
-        virtual const ModuleCreationFuncs & LoadSupermodule(const std::string & spath);
+        virtual const ModuleCreationFuncs & load_supermodule(const std::string & spath);
 
 
     private:

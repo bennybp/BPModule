@@ -31,41 +31,41 @@ class Test_Base : public ModuleBase
 
         /*! \brief Just test some functionality
          */
-        void RunTest(void)
+        void run_test(void)
         {
-            return ModuleBase::CallFunction(&Test_Base::RunTest_);
+            return ModuleBase::call_function(&Test_Base::run_test_);
         }
 
 
-        /*! \brief Call RunTest() of another module
+        /*! \brief Call run_test() of another module
          *
          * \param [in] other Key of the other module in the database
          */
-        void CallRunTest(const std::string & other)
+        void call_run_test(const std::string & other)
         {
-            return ModuleBase::CallFunction(&Test_Base::CallRunTest_, other);
+            return ModuleBase::call_function(&Test_Base::call_run_test_, other);
         }
 
 
-        /*! \brief Nested CallRunTest()
+        /*! \brief Nested call_run_test()
          *
-         * Loads the module under other1 and then runs CallRunTest(other2)
+         * Loads the module under other1 and then runs call_run_test(other2)
          * from that module.
          *
          * \param [in] other1 Key of the other module in the database
          * \param [in] other2 Key of the other module in the database
          */
-        void CallRunTest2(const std::string & other1, const std::string & other2)
+        void call_run_test2(const std::string & other1, const std::string & other2)
         {
-            return ModuleBase::CallFunction(&Test_Base::CallRunTest2_, other1, other2);
+            return ModuleBase::call_function(&Test_Base::call_run_test2_, other1, other2);
         }
 
 
         /*! \brief Throw an exception
          */
-        void TestThrow(void)
+        void test_throw(void)
         {
-            return ModuleBase::CallFunction(&Test_Base::TestThrow_);
+            return ModuleBase::call_function(&Test_Base::test_throw_);
         }
 
 
@@ -74,9 +74,9 @@ class Test_Base : public ModuleBase
          *
          * \param [in] other Key of the other module in the database
          */
-        void CallThrow(const std::string & other)
+        void call_throw(const std::string & other)
         {
-            return ModuleBase::CallFunction(&Test_Base::CallThrow_, other);
+            return ModuleBase::call_function(&Test_Base::call_throw_, other);
         }
 
 
@@ -85,39 +85,39 @@ class Test_Base : public ModuleBase
         /////////////////////////////////////////
         // To be implemented by derived classes
         /////////////////////////////////////////
-        /*! \copydoc RunTest
+        /*! \copydoc run_test
          *
          * \note To be implemented by derived classes
          */
-        virtual void RunTest_(void) = 0;
+        virtual void run_test_(void) = 0;
 
 
-        /*! \copydoc CallRunTest
+        /*! \copydoc call_run_test
          *
          * \note To be implemented by derived classes
          */
-        virtual void CallRunTest_(const std::string & other) = 0;
+        virtual void call_run_test_(const std::string & other) = 0;
 
 
-        /*! \copydoc CallRunTest2
+        /*! \copydoc call_run_test2
          *
          * \note To be implemented by derived classes
          */
-        virtual void CallRunTest2_(const std::string & other1, const std::string & other2) = 0;
+        virtual void call_run_test2_(const std::string & other1, const std::string & other2) = 0;
 
 
-        /*! \copydoc TestThrow
+        /*! \copydoc test_throw
          *
          * \note To be implemented by derived classes
          */
-        virtual void TestThrow_(void) = 0;
+        virtual void test_throw_(void) = 0;
 
 
-        /*! \copydoc CallThrow
+        /*! \copydoc call_throw
          *
          * \note To be implemented by derived classes
          */
-        virtual void CallThrow_(const std::string & other) = 0;
+        virtual void call_throw_(const std::string & other) = 0;
 
 
 };
@@ -133,29 +133,29 @@ class Test_Base_Py : public Test_Base
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
 
-        virtual void RunTest_(void)
+        virtual void run_test_(void)
         {
-            return CallPyOverride<void>("RunTest_");
+            return call_py_override<void>("run_test_");
         }
 
-        virtual void CallRunTest_(const std::string & other)
+        virtual void call_run_test_(const std::string & other)
         {
-            return CallPyOverride<void>("CallRunTest_", other);
+            return call_py_override<void>("call_run_test_", other);
         }
 
-        virtual void CallRunTest2_(const std::string & other1, const std::string & other2)
+        virtual void call_run_test2_(const std::string & other1, const std::string & other2)
         {
-            return CallPyOverride<void>("CallRunTest2_", other1, other2);
+            return call_py_override<void>("call_run_test2_", other1, other2);
         }
 
-        virtual void TestThrow_(void)
+        virtual void test_throw_(void)
         {
-            return CallPyOverride<void>("TestThrow_");
+            return call_py_override<void>("test_throw_");
         }
 
-        virtual void CallThrow_(const std::string & other)
+        virtual void call_throw_(const std::string & other)
         {
-            return CallPyOverride<void>("CallThrow_", other);
+            return call_py_override<void>("call_throw_", other);
         }
 
 };

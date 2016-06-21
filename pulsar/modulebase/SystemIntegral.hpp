@@ -27,33 +27,33 @@ class SystemIntegral : public ModuleBase
         { }
 
 
-        /*! \brief Initialize the integral computation
+        /*! \brief initialize the integral computation
          *
          * \param [in] deriv Derivative to calculate
          * \param [in] sys System for which we are calculating the integrals
          */
-        void Initialize(unsigned int deriv, const system::System & sys)
+        void initialize(unsigned int deriv, const system::System & sys)
         {
-            return ModuleBase::FastCallFunction(&SystemIntegral::Initialize_,
+            return ModuleBase::fast_call_function(&SystemIntegral::initialize_,
                                                 deriv, sys);
         }
 
 
-        /*! \brief Calculate an integral
+        /*! \brief calculate an integral
          *
          * \param [in] deriv Derivative to calculate
          * \param [in] outbuffer Where to place the completed integrals
          * \param [in] bufsize Size of \p outbuffer (as the number of doubles)
          * \return Number of integrals calculated
          */
-        uint64_t Calculate(double * outbuffer, size_t bufsize)
+        uint64_t calculate(double * outbuffer, size_t bufsize)
         {
-            return ModuleBase::FastCallFunction(&SystemIntegral::Calculate_,
+            return ModuleBase::fast_call_function(&SystemIntegral::calculate_,
                                                 outbuffer, bufsize);
         }
 
 
-        /*! \brief Calculate an integral (for use from python)
+        /*! \brief calculate an integral (for use from python)
          *
          * \param [in] deriv Derivative to calculate
          * \param [in] shell1 Shell index on the first center
@@ -61,11 +61,11 @@ class SystemIntegral : public ModuleBase
          * \param [in] outbuffer Where to place the completed integrals
          * \return Number of integrals calculated
          */
-        uint64_t CalculatePy(pybind11::buffer outbuffer)
+        uint64_t calculate_py(pybind11::buffer outbuffer)
         {
-            auto ptrinfo = PythonBufferToPtr<double>(outbuffer, 1);
+            auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
-            return ModuleBase::FastCallFunction(&SystemIntegral::Calculate_,
+            return ModuleBase::fast_call_function(&SystemIntegral::calculate_,
                                                 ptrinfo.first, ptrinfo.second[0]);
         }
 
@@ -74,11 +74,11 @@ class SystemIntegral : public ModuleBase
         // To be implemented by derived classes
         /////////////////////////////////////////
 
-        //! \copydoc Initialize
-        virtual void Initialize_(unsigned int deriv, const system::System & sys) = 0;
+        //! \copydoc initialize
+        virtual void initialize_(unsigned int deriv, const system::System & sys) = 0;
 
-        //! \copydoc Calculate
-        virtual uint64_t Calculate_(double * outbuffer, size_t bufsize) = 0;
+        //! \copydoc calculate
+        virtual uint64_t calculate_(double * outbuffer, size_t bufsize) = 0;
 };
 
 
@@ -89,12 +89,12 @@ class SystemIntegral_Py : public SystemIntegral
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
-        virtual void Initialize_(unsigned int deriv, const system::System & sys)
+        virtual void initialize_(unsigned int deriv, const system::System & sys)
         {
-            return CallPyOverride<void>("Initialize_", deriv, sys);
+            return call_py_override<void>("initialize_", deriv, sys);
         }
 
-        virtual uint64_t Calculate_(double * outbuffer, size_t bufsize)
+        virtual uint64_t calculate_(double * outbuffer, size_t bufsize)
         {
             //! \todo untested, won't work
             pybind11::buffer_info buf(outbuffer,
@@ -103,7 +103,7 @@ class SystemIntegral_Py : public SystemIntegral
                                       1, { bufsize },
                                       { sizeof(double) });
 
-            return CallPyOverride<uint64_t>("Calculate_", buf, bufsize);
+            return call_py_override<uint64_t>("calculate_", buf, bufsize);
         }
 };
 

@@ -22,12 +22,12 @@ namespace system {
 ///Class describing the space around a molecule
 struct Space{
     ///Sides (a.u.) of our lattice
-    std::array<double,3> LatticeSides;
+    std::array<double,3> lattice_sides;
     ///Angles (degrees) of our lattice
-    std::array<double,3> LatticeAngles;
+    std::array<double,3> lattice_angles;
     
     ///True if sides are not infinite
-    bool IsPeriodic()const;
+    bool is_periodic()const;
     
     ///Returns the volume of the cell
     //double Volume()const;
@@ -35,7 +35,7 @@ struct Space{
     
     ///Makes a space with custom lattice
     Space(const std::array<double,3>& A,const std::array<double,3>& S):
-        LatticeSides(S),LatticeAngles(A){}
+        lattice_sides(S),lattice_angles(A){}
     
     ///Makes default vacuous space
     Space();

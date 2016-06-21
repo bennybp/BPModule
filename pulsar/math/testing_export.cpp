@@ -25,7 +25,7 @@ struct MathSetCompare
 {
     bool operator()(const MathSet<T> & lhs, const MathSet<T> & rhs) const
     {
-        return (lhs.Size() == rhs.Size() &&
+        return (lhs.size() == rhs.size() &&
                 std::equal(lhs.begin(), lhs.end(), rhs.begin()));
     }
 };
@@ -36,7 +36,7 @@ std::vector<double> Test_Reorder(const std::vector<size_t> & neworder,
                                  size_t width, size_t niter)
 {
     std::vector<double> ret(src.size());
-    ReorderBlock(neworder, src.data(), ret.data(), width, niter);
+    reorder_block(neworder, src.data(), ret.data(), width, niter);
     return ret;
 }
                               
@@ -49,14 +49,14 @@ void export_testing(pybind11::module & m)
     /////////////////////////
     // MathSet and Universe
     /////////////////////////
-    RegisterUniverse<Universe<std::string>>(m, "StringSetUniverse"); 
-    RegisterMathSet<MathSet<std::string>>(m, "StringSet"); 
+    register_Universe<Universe<std::string>>(m, "StringSetUniverse"); 
+    register_MathSet<MathSet<std::string>>(m, "StringSet"); 
 
     /////////////////////////
     // Reordering
     /////////////////////////
     m.def("Test_Reorder", &Test_Reorder);
-    m.def("Test_MakeOrdering", &MakeOrdering<int>);
+    m.def("Test_MakeOrdering", &make_ordering<int>);
     
 
     /////////////////////////////////

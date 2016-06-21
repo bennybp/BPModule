@@ -13,13 +13,13 @@ import pulsar as psr
 #(modified appropriately) : Pulsar "doesn't care what you call the molecule"
 
 #Helium atom Kh
-He = psr.system.MakeSystem("""
+He = psr.system.make_system("""
 0 1
 He 0.0 0.0 0.0
 """)
 
 #Acetylene with D_inf_h symmetry
-C2H2 = psr.system.MakeSystem("""
+C2H2 = psr.system.make_system("""
      0 1
      C 0 0  0.65
      C 0 0 -0.65
@@ -28,7 +28,7 @@ C2H2 = psr.system.MakeSystem("""
      """)
      
 #Chlro-acetylene with C_inf_h symmetry
-C2HCl = psr.system.MakeSystem("""
+C2HCl = psr.system.make_system("""
     0 1
     H  0 0 -1.0
     C  0 0  0.0
@@ -36,7 +36,7 @@ C2HCl = psr.system.MakeSystem("""
     Cl 0 0  2.6
     """)
 #Boric acid with C3H symmetry
-BoricAcid = psr.system.MakeSystem("""
+BoricAcid = psr.system.make_system("""
 B	0.0000	0.0000	0.0000
 O	0.0000	1.3651	0.0000
 O	-1.1822	-0.6826	0.0000
@@ -48,7 +48,7 @@ H	1.9310	-0.0492	0.0000
 
 
 #Sulfur 8 in D4d symmetry
-S8 = psr.system.MakeSystem("""
+S8 = psr.system.make_system("""
 S 0.0238 2.3163 -0.5082
 S -1.6211 1.6547 0.5080
 S 1.6548 1.6209 0.5085
@@ -60,7 +60,7 @@ S -0.0241 -2.3162 -0.5083
 """)    
     
 #Corannulene C_5v symmetry
-Corannulene = psr.system.MakeSystem("""
+Corannulene = psr.system.make_system("""
 C        0.70622800     0.97211978     0.61694803
 C       -0.70622800     0.97211978     0.61694803
 C       -1.14280400    -0.37137722     0.61681203
@@ -94,7 +94,7 @@ H        3.49401500     2.40602178    -0.61367197
 """)
 
 #BromoChloromethane C_s symmetry
-CH2BrCl = psr.system.MakeSystem("""
+CH2BrCl = psr.system.make_system("""
     Cl        0.00000        0.00000        0.00000
     C        1.00000        0.00000        0.00000
     Br        1.25882        0.96593        0.00000
@@ -103,7 +103,7 @@ CH2BrCl = psr.system.MakeSystem("""
     """)
 
 #Hydrogen peroxide dimer in C_i symmetry
-PeroxideDimer = psr.system.MakeSystem("""
+PeroxideDimer = psr.system.make_system("""
     0 1
     H   0.9911262285  -1.7979226333   0.1465182515
     O   2.7691093095  -1.3485218649  -0.0071557684
@@ -116,7 +116,7 @@ PeroxideDimer = psr.system.MakeSystem("""
     """)
 
 #Hydrogen peroxide C_2 symmetry
-Peroxide = psr.system.MakeSystem("""
+Peroxide = psr.system.make_system("""
     H  -3.2883200453  -1.8308595095  -1.4757706825
     O  -2.5178030311  -1.3808374923   0.1154058014
     O  -2.7691093095   1.3485218649   0.0071557684
@@ -124,7 +124,7 @@ Peroxide = psr.system.MakeSystem("""
     """)
     
 #Trihydroxylnitrogen C_3 symmetry
-NO3H3 = psr.system.MakeSystem("""
+NO3H3 = psr.system.make_system("""
     N        1.00000        0.00000        0.00000
     O        1.26047        1.47721        0.00000
     O        1.26047       -0.73861        1.27930
@@ -135,7 +135,7 @@ NO3H3 = psr.system.MakeSystem("""
     """)
 
 #C_2v water
-Water = psr.system.MakeSystem("""
+Water = psr.system.make_system("""
       H        0.00000        0.00000        0.00000
       O        1.00000        0.00000        0.00000
       H        1.33381        0.94264        0.00000
@@ -143,7 +143,7 @@ Water = psr.system.MakeSystem("""
      
      
 #C_3v ammonia
-Ammonia = psr.system.MakeSystem("""
+Ammonia = psr.system.make_system("""
         N        1.00000        0.00000        0.00000
         H        1.40149        0.86099        0.00000
         H        1.40149       -0.43050        0.74564
@@ -151,7 +151,7 @@ Ammonia = psr.system.MakeSystem("""
         """)
         
 #Brominepentaflourine C_4v
-BrF5=psr.system.MakeSystem("""
+BrF5=psr.system.make_system("""
         F        0.00000        0.00000        0.00000
         Br        1.70000        0.00000        0.00000
         F        1.70000        1.70000        0.00000
@@ -161,7 +161,7 @@ BrF5=psr.system.MakeSystem("""
         """)
 
 #Diazene in C_2h symmetry
-Diazene=psr.system.MakeSystem("""
+Diazene=psr.system.make_system("""
     N        0.00000        0.00000        0.00000
     N        1.40000        0.00000        0.00000
     H       -0.76604        0.64279        0.00000
@@ -169,7 +169,7 @@ Diazene=psr.system.MakeSystem("""
     """)
 
 # 1,3,5,7-etrafluoracyclooctatetrane in S_4 symmetry
-C8F4H4 = psr.system.MakeSystem("""
+C8F4H4 = psr.system.make_system("""
     C       -1.618188     -0.437140     -0.409373
     C       -1.394411      0.896360     -0.429596
     C       -0.896360     -1.394411      0.429596
@@ -189,7 +189,7 @@ C8F4H4 = psr.system.MakeSystem("""
     """)
     
 #Staggered ethane in D_3d symmetry
-EthaneStag = psr.system.MakeSystem("""
+EthaneStag = psr.system.make_system("""
    C -0.7560    0.0000    0.0000 
    C  0.7560    0.0000    0.0000 
    H -1.1404    0.6586    0.7845 
@@ -201,7 +201,7 @@ EthaneStag = psr.system.MakeSystem("""
    """)
 
 #Eclipsed ethane in D_3h symmetry
-EthaneEclip = psr.system.MakeSystem("""
+EthaneEclip = psr.system.make_system("""
   H        0.00000        0.00000        0.00000
   C        1.00000        0.00000        0.00000
   C        1.51303        1.40954        0.00000
@@ -213,7 +213,7 @@ EthaneEclip = psr.system.MakeSystem("""
   """)
 
 #PtCl4 in D_4h
-PtCl4 = psr.system.MakeSystem("""
+PtCl4 = psr.system.make_system("""
 Pt 0.0 0.0 0.0
 Cl 0.0 0.0 2.3
 Cl 0.0 0.0 -2.3
@@ -223,7 +223,7 @@ cl 0.0 -2.3 0.0
 
     
 #Cyclopentadiene anion in D_5h
-C5H5Anion = psr.system.MakeSystem("""
+C5H5Anion = psr.system.make_system("""
   C        1.00000        1.19300        0.00000
   C        1.00000        0.36866        1.13461
   C        1.00000       -0.96516        0.70123
@@ -239,7 +239,7 @@ C5H5Anion = psr.system.MakeSystem("""
     
     
 #Allene in D_2d symmetry
-Allene = psr.system.MakeSystem("""
+Allene = psr.system.make_system("""
     H -2.0  0.0  1.0
     H -2.0  0.0 -1.0
     C -1.5  0.0  0.0
@@ -250,7 +250,7 @@ Allene = psr.system.MakeSystem("""
     """)
 
 #Napthalene D_2h symmetry
-Napthalene = psr.system.MakeSystem("""
+Napthalene = psr.system.make_system("""
     C  0.0000    0.7076    0.0000 
     C  0.0000   -0.7076    0.0000 
     C  1.2250    1.3944    0.0000 
@@ -272,7 +272,7 @@ Napthalene = psr.system.MakeSystem("""
     """)
 
 #Twistane D_2
-Twistane=psr.system.MakeSystem("""
+Twistane=psr.system.make_system("""
 C -0.62693 1.12897 0.473219
 C -1.57383 0.000 0.000
 C -0.626924 -1.12898 -0.473218
@@ -302,7 +302,7 @@ H -1.04301 0.921831 2.60376
 """)
 
 #Dinitrogen-tetraoxide D_2h
-N2O4=psr.system.MakeSystem("""
+N2O4=psr.system.make_system("""
 N 0.7005 0.0000 0.0015
 O 1.3095 -1.0548 0.0007
 O 1.3095 1.0548 -0.0018
@@ -312,7 +312,7 @@ O -1.3095 1.0548 0.001
 """)
 
 #Benzene D_6h
-Benzene=psr.system.MakeSystem("""
+Benzene=psr.system.make_system("""
 C -1.2131 -0.6884 0.0000
 C -1.2028 0.7064 0.0001
 C -0.0103 -1.3948 0.0000
@@ -328,7 +328,7 @@ H 2.1577 1.2245 0.0000
 """)
 
 #Ferrocene Staggard D5d
-FerroceneStag=psr.system.MakeSystem("""
+FerroceneStag=psr.system.make_system("""
 Fe	0.0000	0.0000	0.0000
 C	0.0000	1.1988	1.8359
 C	-1.1402	0.3705	1.8359
@@ -353,7 +353,7 @@ H	2.1595	-0.7017	-1.8288
 """)
 
 #Methane T_d symmetry
-Methane=psr.system.MakeSystem("""
+Methane=psr.system.make_system("""
   C        0.00000        0.00000        0.00000
   H        1.09000        0.00000        0.00000
   H       -0.36385        1.02748        0.00000
@@ -362,7 +362,7 @@ Methane=psr.system.MakeSystem("""
 """)
 
 #SF6 O_h symmetry
-SF6=psr.system.MakeSystem("""
+SF6=psr.system.make_system("""
   F        0.00000        0.00000        0.00000
   S        1.80000        0.00000        0.00000
   F        1.80000        1.80000        0.00000
@@ -373,7 +373,7 @@ SF6=psr.system.MakeSystem("""
 """)
 
 #C60 I_h symmetry
-C60=psr.system.MakeSystem("""
+C60=psr.system.make_system("""
 C 0.726656 -1.000157 3.300459
 C 1.175755 0.382026 3.300459
 C 1.410183 -1.940951 2.581756
@@ -437,7 +437,7 @@ C -0.683527 2.941108 -1.817704
 """)
 
 #The benzene crystal Pbca space group
-BzCrystal=psr.system.MakeSystem("""
+BzCrystal=psr.system.make_system("""
 C 0.9393000000 0.1393000000 0.9931000000
 C 0.5607000000 0.6393000000 0.9931000000
 C 0.9393000000 0.3607000000 0.4931000000

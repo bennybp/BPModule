@@ -11,7 +11,7 @@ namespace pulsar{
 namespace util {
 
 
-std::string AddTrailingSlash(const std::string & path)
+std::string add_trailing_slash(const std::string & path)
 {
     /*! \todo - This is woefully incomplete at the moment. It only
      *          works with linux and doesn't handle some edge cases
@@ -27,7 +27,7 @@ std::string AddTrailingSlash(const std::string & path)
         return path + "/";
 }
 
-std::string RemoveTrailingSlash(const std::string & path)
+std::string remove_trailing_slash(const std::string & path)
 {
     /*! \todo - This is woefully incomplete at the moment. It only
      *          works with linux and doesn't handle some edge cases
@@ -41,7 +41,7 @@ std::string RemoveTrailingSlash(const std::string & path)
 }
 
 
-std::pair<std::string, std::string> SplitPath(const std::string & path)
+std::pair<std::string, std::string> split_path(const std::string & path)
 {
     /*! \todo - This is woefully incomplete at the moment. It only
      *          works with linux and doesn't handle some edge cases
@@ -49,7 +49,7 @@ std::pair<std::string, std::string> SplitPath(const std::string & path)
      */
 
     // 
-    std::string tmp = RemoveTrailingSlash(path);
+    std::string tmp = remove_trailing_slash(path);
 
     size_t slashpos = tmp.find_last_of("/");
 

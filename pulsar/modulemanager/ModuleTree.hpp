@@ -114,18 +114,18 @@ class ModuleTree
         ~ModuleTree() = default;
 
 
-        /*! \brief Insert a node onto the tree
+        /*! \brief insert a node onto the tree
          *
          * \throw pulsar::exception::ModuleManagerException if the
          *        parent node doesn't exist or if the id is
          *        not unique
          */
-        void Insert(ModuleTreeNode && node, ID_t parent);
+        void insert(ModuleTreeNode && node, ID_t parent);
 
 
         /*! \brief Query to see if the tree has a node with an ID
          */
-        bool HasID(ID_t id) const;
+        bool has_id(ID_t id) const;
 
 
         /*! \brief Obtain a node by its ID
@@ -136,7 +136,7 @@ class ModuleTree
          * \throw pulsar::exception::ModuleManagerException if
          *        a node with that ID doesn't exist
          */
-        const ModuleTreeNode & GetByID(ID_t id) const;
+        const ModuleTreeNode & get_by_id(ID_t id) const;
 
 
         /*! \brief Obtain a node by its ID
@@ -147,11 +147,11 @@ class ModuleTree
          * \throw pulsar::exception::ModuleManagerException if
          *        a node with that ID doesn't exist
          */
-        ModuleTreeNode & GetByID(ID_t id);
+        ModuleTreeNode & get_by_id(ID_t id);
 
 
         /*! \brief Get the number of nodes in the tree */
-        size_t Size(void) const;
+        size_t size(void) const;
 
 
         /*! \brief Iterate (depth first) starting with a given ID
@@ -161,11 +161,11 @@ class ModuleTree
          *
          * \param [in] startid ID to use as the base of the tree
          */
-        const_iterator Begin(ID_t startid) const;
+        const_iterator begin(ID_t startid) const;
 
 
-        /*! \brief Ending point of depth-first iteration */
-        const_iterator End(void) const;
+        /*! \brief ending point of depth-first iteration */
+        const_iterator end(void) const;
 
 
         /*! \brief Iterate over all modules in the tree
@@ -173,14 +173,14 @@ class ModuleTree
          * The order is not specified, and should not be
          * assumed to be, for example, always increasing.
          */
-        const_flat_iterator FlatBegin(void) const;
+        const_flat_iterator flat_begin(void) const;
 
 
-        /*! \brief Ending point of iteration over all modules in the tree */
-        const_flat_iterator FlatEnd(void) const;
+        /*! \brief ending point of iteration over all modules in the tree */
+        const_flat_iterator flat_end(void) const;
 
         /*! \brief Clear the contents of the entire tree */
-        void Clear(void);
+        void clear(void);
 };
 
 

@@ -23,19 +23,19 @@ struct SystemCompare
     bool operator()(const System & lhs, const System & rhs) const
     {
         return (lhs.size() == rhs.size() &&
-                lhs.CompareInfo(rhs) &&
+                lhs.compare_info(rhs) &&
                 std::equal(lhs.begin(), lhs.end(), rhs.begin()));
     }
 };
 
 
-std::vector<double> Test_SphericalTransformBlock(const SphericalTransformCoefs & coefs,
+std::vector<double> Test_spherical_transform_block(const SphericalTransformCoefs & coefs,
                                                  const std::vector<double> & src,
                                                  size_t width, int am, size_t niter)
 {
-    size_t size = width * niter * NSphericalGaussian(am);
+    size_t size = width * niter * n_spherical_gaussian(am);
     std::vector<double> ret(size, 0.0);
-    SphericalTransformBlock(coefs, src.data(), ret.data(), width, am, niter);
+    spherical_transform_block(coefs, src.data(), ret.data(), width, am, niter);
     return ret;
 }
 
@@ -54,9 +54,9 @@ void export_testing(pybind11::module & m)
 
 
     /////////////////////////////////
-    // Ordering & Spherical Transformation
+    // Ordering & Spherical transformation
     /////////////////////////////////
-    m.def("Test_SphericalTransformBlock", &Test_SphericalTransformBlock);
+    m.def("Test_spherical_transform_block", &Test_spherical_transform_block);
 }
 
 

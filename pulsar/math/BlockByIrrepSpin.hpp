@@ -55,7 +55,7 @@ class BlockByIrrepSpin
         }
 
 
-        bool Has(Irrep irrep, int spin) const
+        bool has(Irrep irrep, int spin) const
         {
             if(data_.count(irrep))
                 return data_.at(irrep).count(spin);
@@ -63,7 +63,7 @@ class BlockByIrrepSpin
                 return 0;
         }
 
-        std::set<Irrep> GetIrreps(void) const
+        std::set<Irrep> get_irreps(void) const
         {
             std::set<Irrep> ret;
             for(const auto & it : data_)
@@ -71,7 +71,7 @@ class BlockByIrrepSpin
             return ret;
         }
 
-        std::set<int> GetSpins(Irrep irrep) const
+        std::set<int> get_spins(Irrep irrep) const
         {
             std::set<int> ret;
             if(data_.count(irrep))
@@ -83,7 +83,7 @@ class BlockByIrrepSpin
         }
 
 
-        T & Get(Irrep irrep, int spin)
+        T & get(Irrep irrep, int spin)
         {
             //! \todo need irrep to string
             //if(!HasMatrix(irrep, spin))
@@ -93,7 +93,7 @@ class BlockByIrrepSpin
             return data_.at(irrep).at(spin);
         }
 
-        const T & Get(Irrep irrep, int spin) const
+        const T & get(Irrep irrep, int spin) const
         {
             //! \todo need irrep to string
             //if(!HasMatrix(irrep, spin))
@@ -103,7 +103,7 @@ class BlockByIrrepSpin
             return data_.at(irrep).at(spin);
         }
 
-        void Set(Irrep irrep, int spin, const T & val)
+        void set(Irrep irrep, int spin, const T & val)
         {
             if(data_.count(irrep) == 0)
             {
@@ -119,7 +119,7 @@ class BlockByIrrepSpin
             }
         }
 
-        void Take(Irrep irrep, int spin, T && val)
+        void set(Irrep irrep, int spin, T && val)
         {
             if(data_.count(irrep) == 0)
             {
@@ -145,65 +145,21 @@ class BlockByIrrepSpin
         const_iterator end(void) const { return data_.end(); }
 
 
-        template<typename U>
-        BlockByIrrepSpin<U> TransformType(std::function<U (Irrep, int, const T &)> f) const
-        {
-            BlockByIrrepSpin<U> ret;
-            for(const auto & irrepit : *this)
-            for(const auto & spinit : irrepit.second)
-                ret.Take(irrepit.first, spinit.first, f(irrepit.first, spinit.first, spinit.second));
-            return ret;
-        }
-
-        template<typename U>
-        BlockByIrrepSpin<U> TransformType(std::function<U (const T &)> f) const
-        {
-            BlockByIrrepSpin<U> ret;
-            for(const auto & irrepit : *this)
-            for(const auto & spinit : irrepit.second)
-                ret.Take(irrepit.first, spinit.first, f(spinit.second));
-            return ret;
-        }
-
-        BlockByIrrepSpin Transform(std::function<T (Irrep, int, const T &)> f) const
-        {
-            return TransformType<T>(f);
-        }  
-
-        BlockByIrrepSpin Transform(std::function<T (const T &)> f) const
-        {
-            return TransformType<T>(f);
-        }  
-
-        void TransformInPlace(std::function<void(Irrep, int, T &)> f)
-        {
-            for(auto & irrepit : *this)
-            for(auto & spinit : irrepit.second)
-                f(irrepit.first, spinit.first, spinit.second);
-        }
-
-        void TransformInPlace(std::function<void(T &)> f)
-        {
-            for(auto & irrepit : *this)
-            for(auto & spinit : irrepit.second)
-                f(spinit.second);
-        }
-
         //! Does this object have same irrep/spin structure as another
         template<typename U>
-        bool SameStructure(const BlockByIrrepSpin<U> & rhs) const
+        bool same_structure(const BlockByIrrepSpin<U> & rhs) const
         {
             for(const auto & irrepit : *this)
             for(const auto & spinit : irrepit.second)
             {
-                if(!rhs.Has(irrepit.first, spinit.first))
+                if(!rhs.has(irrepit.first, spinit.first))
                     return false;
             }
 
             for(const auto & irrepit : rhs)
             for(const auto & spinit : irrepit.second)
             {
-                if(!Has(irrepit.first, spinit.first))
+                if(!has(irrepit.first, spinit.first))
                     return false;
             }
 
@@ -217,9 +173,9 @@ class BlockByIrrepSpin
          * See the hashing functions of the stored type
          * for details.
          */
-        bphash::HashValue MyHash(void) const
+        bphash::HashValue my_hash(void) const
         {
-            return bphash::MakeHash(bphash::HashType::Hash128, *this);
+            return bphash::make_hash(bphash::HashType::Hash128, *this);
         }
 
     private:

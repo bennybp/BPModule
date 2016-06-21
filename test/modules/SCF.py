@@ -30,12 +30,12 @@ def CompareGrad(GradIn):
 def Run(mm):
     try:
         tester = psr.testing.Tester("Testing SCF")
-        tester.PrintHeader()
+        tester.print_header()
 
         LoadDefaultModules(mm)
         
-        mm.ChangeOption("PSR_SCF","BASIS_SET","sto-3g")
-        MyMod=mm.GetModule("PSR_SCF",0)
+        mm.change_option("PSR_SCF","BASIS_SET","sto-3g")
+        MyMod=mm.get_module("PSR_SCF",0)
         mol=psr.system.MakeSystem("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
@@ -54,15 +54,15 @@ def Run(mm):
         
 
         NewWfn,Egy=MyMod.Deriv(0,wfn)
-        tester.Test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
-        NewWfn,Egy=MyMod.Energy(wfn)
-        tester.Test("Testing Energy via Energy()", True, CompareEgy, Egy)
+        tester.test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
+        NewWfn,Egy=MyModenergy(wfn)
+        tester.test("Testing Energy via Energy()", True, CompareEgy, Egy)
         NewWfn,Grad=MyMod.Deriv(1,wfn)
-        tester.Test("Testing Gradient via Deriv(1)", True, CompareGrad, Grad)
+        tester.test("Testing Gradient via Deriv(1)", True, CompareGrad, Grad)
         NewWfn,Grad=MyMod.Gradient(wfn)
-        tester.Test("Testing Gradient via Gradient()", True, CompareGrad, Grad)
+        tester.test("Testing Gradient via Gradient()", True, CompareGrad, Grad)
 
-        tester.PrintResults()
+        tester.print_results()
         
      
     except Exception as e:
@@ -72,4 +72,4 @@ def Run(mm):
 with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-psr.Finalize()
+psr.finalize()

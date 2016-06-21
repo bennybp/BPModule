@@ -20,7 +20,7 @@ from pulsar.math import *
 def Run():
     try:
         tester = Tester("Testing Other Math Functionality")
-        tester.PrintHeader()
+        tester.print_header()
 
         ####################
         # Test Reordering
@@ -30,20 +30,20 @@ def Run():
         order = [ alist.index(x) for x in blist ]
 
         frompsr = Test_MakeOrdering(alist, blist)
-        tester.TestValue("Test trivial ordering", True, frompsr == order)
+        tester.test_value("Test trivial ordering", True, frompsr == order)
 
         newlist = Test_Reorder(order, alist, 1, 1)
-        tester.TestValue("Test trivial reordering", True, newlist == blist)
+        tester.test_value("Test trivial reordering", True, newlist == blist)
 
         for i in range(0, 10):
             shuffle(blist)
             order = [ alist.index(x) for x in blist ]
             frompsr = Test_MakeOrdering(alist, blist)
-            tester.TestValue("Test shuffled order {}".format(i), True,
+            tester.test_value("Test shuffled order {}".format(i), True,
                              frompsr == order)
 
             newlist = Test_Reorder(order, alist, 1, 1)
-            tester.TestValue("Test shuffled reordering", True, newlist == blist)
+            tester.test_value("Test shuffled reordering", True, newlist == blist)
 
 
         alist = [ 10.0, 20.0, 30.0, 40.0, 50.0,
@@ -62,7 +62,7 @@ def Run():
 
         order = [ 3, 5, 2, 0, 1, 4 ]
         newlist = Test_Reorder(order, alist, 5, 1)
-        tester.TestValue("Test reorder with width", True, newlist == blist)
+        tester.test_value("Test reorder with width", True, newlist == blist)
 
 
         blist = [ 20.0, 10.0, 40.0, 30.0, 50.0, 
@@ -74,7 +74,7 @@ def Run():
 
         order = [ 1, 0, 3, 2, 4 ]
         newlist = Test_Reorder(order, alist, 1, 6)
-        tester.TestValue("Test reorder with niter", True, newlist == blist)
+        tester.test_value("Test reorder with niter", True, newlist == blist)
 
         alist = [ 10.0, 20.0, 30.0, 40.0, 50.0,
                   11.0, 21.0, 31.0, 41.0, 51.0,
@@ -83,19 +83,19 @@ def Run():
                   14.0, 24.0, 34.0, 44.0, 54.0,
                   15.0, 25.0, 35.0, 45.0, 55.0 ]
 
-        tester.PrintResults()
+        tester.print_results()
 
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      print_global_output("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      GlobalError("\n")
-      GlobalError(str(e))
-      GlobalError("\n")
+      print_global_error("\n")
+      print_global_error(str(e))
+      print_global_error("\n")
 
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-psr.Finalize()
+psr.finalize()

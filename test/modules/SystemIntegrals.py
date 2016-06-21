@@ -34,49 +34,49 @@ def CompareList(lst1, lst2, tol):
 def Run(mm):
     try:
 
-        out = GetGlobalOut()
+        out = get_global_output()
 
         # Load the python modules
         #             supermodule         module name           key
-        mm.LoadModule("SystemIntegrals",  "NuclearRepulsion",   "NUC_REP")
-        mm.Print(out)
-        mm.SanityCheck()
+        mm.load_module("Integrals",  "NuclearRepulsion",   "NUC_REP")
+        mm.print(out)
+        mm.sanity_check()
   
         atoms = list(water)
         u = AtomSetUniverse()
         for a in atoms:
-            u.Insert(a)
+            u.insert(a)
         s = System(u, True)
 
-        s = ApplySingleBasis("Primary","sto-3g",s)
+        s = apply_single_basis("Primary","sto-3g",s)
 
          
-        nr = mm.GetModule("NUC_REP", 0)
-        nr.EnableDebug(True)
+        nr = mm.get_module("NUC_REP", 0)
+        nr.enable_debug(True)
 
         tester = Tester("Testing basic System integrals")
-        tester.PrintHeader()
+        tester.print_header()
 
         ref_h2o = [ 8.80146556478736 ] 
 
         outbuf = array.array('d', [0]*64)
-        nr.Initialize(0, s)
-        n = nr.Calculate(outbuf) 
+        nr.initialize(0, s)
+        n = nr.calculate(outbuf) 
 
-        tester.TestValue("H2O Nuclear repulsion", True, CompareList(ref_h2o, list(outbuf[:n]), 1e-14))
+        tester.test_value("H2O Nuclear repulsion", True, CompareList(ref_h2o, list(outbuf[:n]), 1e-14))
 
-        tester.PrintResults() 
+        tester.print_results() 
 
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler\n")
+      print_global_output("Caught exception in main handler\n")
       traceback.print_exc()
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 
 with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-psr.Finalize()
+psr.finalize()

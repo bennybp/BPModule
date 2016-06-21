@@ -37,7 +37,7 @@ struct FormatInfo
  * \param [in] str The string to search
  * \return True if a format specification was found, otherwise false
  */
-bool GetNextFormat_(FormatInfo & fi, const std::string & str);
+bool get_next_format_(FormatInfo & fi, const std::string & str);
 
 
 
@@ -53,7 +53,7 @@ bool GetNextFormat_(FormatInfo & fi, const std::string & str);
  * \param [in] fi Format info to use as a workspace
  * \param [in] str String (possibly with format string specification)
  */ 
-void Format_(std::ostream & os, FormatInfo & fi, const std::string & str);
+void format_(std::ostream & os, FormatInfo & fi, const std::string & str);
 
 
 
@@ -72,19 +72,19 @@ void Format_(std::ostream & os, FormatInfo & fi, const std::string & str);
  * \param [in] args Additional arguments for later format specifications
  */ 
 template<typename T, typename... Targs>
-void Format_(std::ostream & os, FormatInfo & fi,
+void format_(std::ostream & os, FormatInfo & fi,
              const std::string & str, const T & arg, const Targs&... args)
 {
     static_assert(detail::ValidPrintfArg<typename std::decay<T>::type>::value == true,
                   "Invalid argument type passed to Format");
 
-    if(GetNextFormat_(fi, str)) 
+    if(get_next_format_(fi, str)) 
     {
         // after this, fi.format has been overwritten
-        HandlePrintf_(fi.format, fi.length, fi.spec, arg);
+        handle_printf_(fi.format, fi.length, fi.spec, arg);
 
         os << fi.prefix << fi.format;
-        Format_(os, fi, fi.suffix, args...);
+        format_(os, fi, fi.suffix, args...);
     }
     else
         throw std::runtime_error("Too many arguments to format string");
@@ -99,7 +99,7 @@ void Format_(std::ostream & os, FormatInfo & fi,
  *        if the format string is badly formed
  */
 template<typename... Targs>
-void FormatStream(std::ostream & os, const std::string & str, const Targs&... args)
+void format_stream(std::ostream & os, const std::string & str, const Targs&... args)
 {
     detail::FormatInfo fi;
 
@@ -108,7 +108,7 @@ void FormatStream(std::ostream & os, const std::string & str, const Targs&... ar
     fi.suffix.reserve(32);
     fi.format.reserve(16);
 
-    detail::Format_(os, fi, str, args...);
+    detail::format_(os, fi, str, args...);
 }
 
 
@@ -119,10 +119,10 @@ void FormatStream(std::ostream & os, const std::string & str, const Targs&... ar
  *        if the format string is badly formed
  */
 template<typename... Targs>
-std::string FormatString(const std::string & str, const Targs&... args)
+std::string format_string(const std::string & str, const Targs&... args)
 {
     std::stringstream ss;
-    FormatStream(ss, str, args...);
+    format_stream(ss, str, args...);
     return ss.str();
 }
 

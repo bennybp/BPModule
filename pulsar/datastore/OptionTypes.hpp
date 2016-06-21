@@ -230,7 +230,7 @@ template<typename Target, typename Source>
 struct OptionCast
 {
     // normally we just use numeric_cast
-    static Target Cast(const Source & s)   {  return math::numeric_cast<Target, Source>(s);  }
+    static Target cast(const Source & s)   {  return math::numeric_cast<Target, Source>(s);  }
 };
 
 
@@ -242,7 +242,7 @@ struct OptionCast
 template<>
 struct OptionCast<std::string, std::string>
 {
-    static std::string Cast(const std::string & s)   {  return s; }
+    static std::string cast(const std::string & s)   {  return s; }
 };
 
 /*! \brief Converts an option value to/from its stored type
@@ -252,7 +252,7 @@ struct OptionCast<std::string, std::string>
 template<size_t N>
 struct OptionCast<std::string, char [N]>
 {
-    static std::string Cast(const char* s)   {  return s; }
+    static std::string cast(const char* s)   {  return s; }
 };
 
 
@@ -260,11 +260,11 @@ struct OptionCast<std::string, char [N]>
 template<typename Target, typename Source>
 struct OptionCast<std::vector<Target>, std::vector<Source>>
 {
-    static std::vector<Target> Cast(const std::vector<Source> & s)
+    static std::vector<Target> cast(const std::vector<Source> & s)
     {
         std::vector<Target> t;
         std::transform(s.begin(), s.end(), std::back_inserter(t),
-                       OptionCast<Target, Source>::Cast);
+                       OptionCast<Target, Source>::cast);
         return t;
     }
 };
@@ -277,11 +277,11 @@ struct OptionCast<std::vector<Target>, std::vector<Source>>
 template<typename Target, typename Source>
 struct OptionCast<std::set<Target>, std::set<Source>>
 {
-    static std::set<Target> Cast(const std::set<Source> & s)
+    static std::set<Target> cast(const std::set<Source> & s)
     {
         std::set<Target> t;
         std::transform(s.begin(), s.end(), std::inserter(t),
-                       OptionCast<Target, Source>::Cast);
+                       OptionCast<Target, Source>::cast);
         return t;
     }
 };
@@ -294,11 +294,11 @@ struct OptionCast<std::set<Target>, std::set<Source>>
 template<typename K1, typename M1, typename K2, typename M2>
 struct OptionCast<std::map<K1, M1>, std::map<K2, M2>>
 {
-    static std::map<K1, M1> Cast(const std::map<K2, M2> & s)
+    static std::map<K1, M1> cast(const std::map<K2, M2> & s)
     {
         std::map<K1, M1> target;
         for(const auto & it : s)
-            target.emplace(OptionCast<K1, K2>::Cast(it.first), OptionCast<M1, M2>::Cast(it.second));
+            target.emplace(OptionCast<K1, K2>::cast(it.first), OptionCast<M1, M2>::cast(it.second));
         return target;
     }
 };

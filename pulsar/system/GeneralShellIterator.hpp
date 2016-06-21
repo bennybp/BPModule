@@ -43,19 +43,19 @@ class GeneralShellIterator
             for(int i = 0; i < N; i++)
             {
                 const BasisShellBase & sh = shells[i].get();
-                if(splitcombined && sh.IsCombinedAM())
+                if(splitcombined && sh.is_combined_am())
                 {
                     ngen_[i] = 1;  // aren't splitting the combined am
-                    am_[i].push_back(sh.AM());
+                    am_[i].push_back(sh.am());
                 }
                 else
                 {
-                    ngen_[i] = sh.NGeneral();
+                    ngen_[i] = sh.n_general_contractions();
                     for(size_t j = 0; j < ngen_[i]; j++)
-                        am_[i].push_back(sh.GeneralAM(j));
+                        am_[i].push_back(sh.general_am(j));
                 }
 
-                Assert<GeneralException>(am_[i].size() > 0, "Zero angular momentum entries");
+                psr_assert<GeneralException>(am_[i].size() > 0, "Zero angular momentum entries");
                 curam_[i] = am_[i][0];
 
                 totalnshell_ *= ngen_[i];
@@ -74,15 +74,15 @@ class GeneralShellIterator
         GeneralShellIterator & operator=(GeneralShellIterator &&) = default;
 
         template<int N>
-        size_t NGeneralShells(void) const noexcept
+        size_t n_general_contractionsShells(void) const noexcept
         {
             return std::get<N>(ngen_);
         }
 
-        size_t NGeneralShells(int n) const ASSERTIONS_ONLY
+        size_t n_general_contractionsShells(int n) const ASSERTIONS_ONLY
         {
             using namespace pulsar::exception;
-            Assert<GeneralException>(n < N, "Given index is beyond the number of shells I have"); 
+            psr_assert<GeneralException>(n < N, "Given index is beyond the number of shells I have"); 
             return ngen_[n];
         }
 
@@ -111,7 +111,7 @@ class GeneralShellIterator
         size_t GeneralIdx(int n) const ASSERTIONS_ONLY
         {
             using namespace pulsar::exception;
-            Assert<GeneralException>(n < N, "Given index is beyond the number of shells I have"); 
+            psr_assert<GeneralException>(n < N, "Given index is beyond the number of shells I have"); 
             return genidx_[n];
         }
 
@@ -124,7 +124,7 @@ class GeneralShellIterator
         int AM(int n) const ASSERTIONS_ONLY
         {
             using namespace pulsar::exception;
-            Assert<GeneralException>(n < N, "Given index is beyond the number of shells I have");
+            psr_assert<GeneralException>(n < N, "Given index is beyond the number of shells I have");
             return curam_[n];
         }
 
@@ -143,7 +143,7 @@ class GeneralShellIterator
                 genidx_[i]++;
                 if(genidx_[i] < ngen_[i])
                 {
-                    Assert<GeneralException>(genidx_[i] < am_[i].size(), "Inconsistency in GeneralShellIterator");
+                    psr_assert<GeneralException>(genidx_[i] < am_[i].size(), "Inconsistency in GeneralShellIterator");
                     curam_[i] = am_[i][genidx_[i]];
                     return true;
                 }
@@ -151,13 +151,13 @@ class GeneralShellIterator
                 {
                     genidx_[i] = 0; // and continue through the other shells
 
-                    Assert<GeneralException>(genidx_[i] < am_[i].size(), "Inconsistency in GeneralShellIterator");
+                    psr_assert<GeneralException>(genidx_[i] < am_[i].size(), "Inconsistency in GeneralShellIterator");
                     curam_[i] = am_[i][0];
                 }
             }
 
             // if we get here, we've turned everything back to zero
-            Assert<GeneralException>(totalidx_ == totalnshell_, "Inconsistency in GeneralShellIterator");
+            psr_assert<GeneralException>(totalidx_ == totalnshell_, "Inconsistency in GeneralShellIterator");
 
             valid_ = false;
             totalidx_ = 0;

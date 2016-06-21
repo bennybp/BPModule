@@ -15,7 +15,7 @@
 namespace pulsar{
 namespace system {
 
-/* Transformation of a generic batch of integrals
+/* transformation of a generic batch of integrals
  *
  * The integrals should all be in cartesian form.
  * Whether each is transformed depends on the type
@@ -44,10 +44,10 @@ void CartesianToSpherical(std::array<std::reference_wrapper<const system::BasisS
     for(int i = 0; i < N; i++)
     {
         const system::BasisShellBase & sh = shells[i].get();
-        const bool issph = isspherical[i] = (sh.GetType() == ShellType::SphericalGaussian);
+        const bool issph = isspherical[i] = (sh.get_type() == ShellType::SphericalGaussian);
 
         isspherical[i] = issph;
-        allncart *= NCartesianGaussianInShell(shells[i]);
+        allncart *= n_cartesian_gaussian_in_shell(shells[i]);
 
         if(issph)
             nsphshells++;
@@ -87,8 +87,8 @@ void CartesianToSpherical(std::array<std::reference_wrapper<const system::BasisS
             {
                 const size_t genidx = gsi.GeneralIdx(i);
                 gam[i] = gsi.AM(i);
-                gncart[i] = NCartesianGaussian(gam[i]);
-                gnfunc[i] = shells[i].get().GeneralNFunctions(genidx);
+                gncart[i] = n_cartesian_gaussian(gam[i]);
+                gnfunc[i] = shells[i].get().general_n_functions(genidx);
 
                 source_adv *= gncart[i]; // source holds only cartesian
                 dest_adv *= gnfunc[i];
@@ -111,9 +111,9 @@ void CartesianToSpherical(std::array<std::reference_wrapper<const system::BasisS
 
                 if(isspherical[i])
                 {
-                    const auto & coef = SphericalTransformForAM(gam[i]);
+                    const auto & coef = spherical_transform_for_am(gam[i]);
 
-                    SphericalTransformBlock(coef, buf1, buf2, width, gam[i], niter);
+                    spherical_transform_block(coef, buf1, buf2, width, gam[i], niter);
 
                     // swap the source and destination
                     std::swap(buf1, buf2);
@@ -141,7 +141,7 @@ void CartesianToSpherical(std::array<std::reference_wrapper<const system::BasisS
 }
 
 
-/*! \brief Transforms two-center integrals over gaussian basis functions
+/*! \brief transforms two-center integrals over gaussian basis functions
  *
  * The integrals should all be in cartesian and correspond to the integrals
  * for sh1 and sh2. Whether each is transformed depends on the type

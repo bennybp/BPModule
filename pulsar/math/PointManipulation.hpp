@@ -22,7 +22,7 @@ namespace math {
 /*! \brief Translates a Point
  */
 template<typename Point, typename Vector>
-void TranslatePoint(Point & point, const Vector & vec)
+void translate_point(Point & point, const Vector & vec)
 {
     point[0] += vec[0];
     point[1] += vec[1];
@@ -34,10 +34,10 @@ void TranslatePoint(Point & point, const Vector & vec)
 /*! \brief Translates a Point, returning a new Point
  */
 template<typename Point, typename Vector3>
-Point TranslatePoint_Copy(const Point & point, const Vector3 & vec)
+Point translate_point_copy(const Point & point, const Vector3 & vec)
 {
     Point ret(point);
-    TranslatePoint(ret, vec);
+    translate_point(ret, vec);
     return ret;
 }
 
@@ -46,10 +46,10 @@ Point TranslatePoint_Copy(const Point & point, const Vector3 & vec)
 /*! \brief Translates a container of Points
  */
 template<typename PointContainer, typename Vector3>
-void TranslatePointContainer(PointContainer & cont, const Vector3 & vec)
+void translate_point_container(PointContainer & cont, const Vector3 & vec)
 {
     for(auto & it : cont)
-        TranslatePoint<typename PointContainer::value_type, Vector3>(it, vec);
+        translate_point<typename PointContainer::value_type, Vector3>(it, vec);
 }
 
 
@@ -57,10 +57,10 @@ void TranslatePointContainer(PointContainer & cont, const Vector3 & vec)
 /*! \brief Translates a cotainer of Points, returning a new PointContainer
  */
 template<typename PointContainer, typename Vector3>
-PointContainer TranslatePointContainer_Copy(const PointContainer & cont, const Vector3 & vec)
+PointContainer translate_point_container_copy(const PointContainer & cont, const Vector3 & vec)
 {
     PointContainer ret(cont);
-    TranslatePointContainer<PointContainer, Vector3>(ret, vec);
+    translate_point_container<PointContainer, Vector3>(ret, vec);
     return ret;    
 }
 
@@ -74,7 +74,7 @@ PointContainer TranslatePointContainer_Copy(const PointContainer & cont, const V
 /*! \brief Rotates a Point via a FlatMatrix
  */
 template<typename Point, typename FlatMatrix9>
-void RotatePoint(Point & point, const FlatMatrix9 & mat)
+void rotate_point(Point & point, const FlatMatrix9 & mat)
 {
     auto tmp0 = point[0];
     auto tmp1 = point[1];
@@ -89,10 +89,10 @@ void RotatePoint(Point & point, const FlatMatrix9 & mat)
 /*! \brief Rotates a Point via a FlatMatrix, returning a new Point
  */
 template<typename Point, typename FlatMatrix9>
-Point RotatePoint_Copy(const Point & point, const FlatMatrix9 & mat)
+Point rotate_point_copy(const Point & point, const FlatMatrix9 & mat)
 {
     Point ret(point);
-    RotatePoint(ret, mat);
+    rotate_point(ret, mat);
     return ret;    
 }
 
@@ -101,10 +101,10 @@ Point RotatePoint_Copy(const Point & point, const FlatMatrix9 & mat)
 /*! \brief Rotates a container of Points via a FlatMatrix
  */
 template<typename PointContainer, typename FlatMatrix9>
-void RotatePointContainer(PointContainer & cont, const FlatMatrix9 & mat)
+void rotate_point_container(PointContainer & cont, const FlatMatrix9 & mat)
 {
     for(auto & it : cont)
-        RotatePoint(it, mat);
+        rotate_point(it, mat);
 }
 
 
@@ -112,10 +112,10 @@ void RotatePointContainer(PointContainer & cont, const FlatMatrix9 & mat)
 /*! \brief Rotates a container of Points via a FlatMatrix, returning a new PointContainer
  */
 template<typename PointContainer, typename FlatMatrix9>
-PointContainer RotatePointContainer_Copy(const PointContainer & cont, const FlatMatrix9 & vec)
+PointContainer rotate_point_container_copy(const PointContainer & cont, const FlatMatrix9 & vec)
 {
     PointContainer ret(cont);
-    RotatePointContainer(ret, vec);
+    rotate_point_container(ret, vec);
     return ret;
 }
 
@@ -186,7 +186,7 @@ void MomentGuts(std::vector<size_t> Index,const Pt& P,const size_t& Dim,
  * 
  */
 template<size_t M,typename PointContainer>
-std::vector<double> Moment(const PointContainer& cont,
+std::vector<double> moment(const PointContainer& cont,
   std::function<double (const typename PointContainer::value_type &)> fxn
   =[](const typename PointContainer::value_type &){return 1.0;}){
     if(M==0)return {1.0};//Handle 0-th normalized moment
@@ -207,16 +207,29 @@ std::vector<double> Moment(const PointContainer& cont,
 /*! \brief Find the weighted center of a container of points
  */
 template<typename Coord, typename PointContainer>
-Coord WeightedPointsCenter(const PointContainer & cont, std::function<double (const typename PointContainer::value_type &)> weighter)
+Coord weighted_points_center(const PointContainer & cont, std::function<double (const typename PointContainer::value_type &)> weighter)
 {
-     std::vector<double> coord=Moment<1>(cont,weighter);
+     std::vector<double> coord=moment<1>(cont,weighter);
      return Coord{coord[0],coord[1],coord[2]};
 }
 
+
+/*! \brief Find the weighted center of a container of points
+ */
 template<typename Coord, typename PointContainer>
-Coord PointsCenter(const PointContainer & cont)
+Coord weighted_points_center(const PointContainer & cont, double const PointContainer::value_type::*ptr)
 {
-    return WeightedPointsCenter<Coord>(cont,
+    //* \todo may be slow. Maybe make an equivalent Moment function
+    std::function<double (const typename PointContainer::value_type &)> weighter = 
+                      [ptr](const typename PointContainer::value_type & a) { return a.*ptr; };
+
+    return weighted_points_center<Coord, PointContainer>(cont, weighter);
+}
+
+template<typename Coord, typename PointContainer>
+Coord points_center(const PointContainer & cont)
+{
+    return weighted_points_center<Coord>(cont,
            [](const typename PointContainer::value_type&){return 1.0;});
 }
 

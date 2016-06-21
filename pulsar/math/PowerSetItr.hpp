@@ -86,7 +86,7 @@ namespace math{
     PowerSetItr<Set_t> MyItr(TestSet);
 
     ///Iterate until done
-    for(;!MyItr.Done();++MyItr){
+    for(;!MyItr.done();++MyItr){
       Set_t::const_iterator elem=MyItr->begin(),elemEnd=MyItr->end();
       for(;elem!=elemEnd;++elem)
          std::cout<<*elem<<" ";
@@ -151,7 +151,7 @@ class PowerSetItr{
       ///Have we iterated over the entire range yet?
       bool Done_;
       ///Implementation for getting the next element
-      void Next();
+      void next();
    public:
       /** \brief Given a set, iterates over all subsets containing Min
        *      number of elements to Max number of elements
@@ -168,10 +168,10 @@ class PowerSetItr{
        */
       PowerSetItr(const T& Set, int Min=-1, int Max=-1);
       ///Returns true if we have iterated over the whole range
-      bool Done()const{return Done_;}
+      bool done()const{return Done_;}
       operator bool()const{return !Done_;}
       ///Moves on to the next subset
-      PowerSetItr<T>& operator++(){Next();return *this;}
+      PowerSetItr<T>& operator++(){next();return *this;}
       ///Returns the current subset
       const T& operator*()const{return CurrentIt_->operator*();}
       ///Allows access of the subset's container's members
@@ -191,9 +191,9 @@ PowerSetItr<T>::PowerSetItr(const T& Set, int Min,int Max):
         Done_(MaxOrder_<MinOrder_){}
 
 template<typename T>
-void PowerSetItr<T>::Next(){
+void PowerSetItr<T>::next(){
    ++(*CurrentIt_);
-   if(!CurrentIt_->Done())return;
+   if(!CurrentIt_->done())return;
    else if(Order_<=MaxOrder_)
      CurrentIt_=SharedItr_t(new CombItr_t(Set_,Order_++));
    else Done_=true;

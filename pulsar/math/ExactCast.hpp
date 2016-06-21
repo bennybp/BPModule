@@ -23,7 +23,7 @@ namespace detail {
 template<typename Target, typename Source>
 struct ExactCast
 {
-    static Target Cast(const Source & s)
+    static Target cast(const Source & s)
     {
         static_assert(  ( std::is_integral<Source>::value || std::is_floating_point<Source>::value ) &&
                         ( std::is_integral<Target>::value || std::is_floating_point<Target>::value ),
@@ -67,13 +67,13 @@ struct ExactCast
                     if(s > tmax)
                         throw exception::MathException("Error in numeric_cast",
                                                        "desc", "source value overflows target type",
-                                                       "ifrom", util::DemangleCppType<Source>(),
-                                                       "ito", util::DemangleCppType<Target>());
+                                                       "ifrom", util::demangle_cpp_type<Source>(),
+                                                       "ito", util::demangle_cpp_type<Target>());
                     else if(s < tmin)
                         throw exception::MathException("Error in numeric_cast",
                                                        "desc", "source value underflows target type",
-                                                       "ifrom", util::DemangleCppType<Source>(),
-                                                       "ito", util::DemangleCppType<Target>());
+                                                       "ifrom", util::demangle_cpp_type<Source>(),
+                                                       "ito", util::demangle_cpp_type<Target>());
 
                     else // safe!
                         return static_cast<Target>(s);
@@ -85,8 +85,8 @@ struct ExactCast
                 if(s < 0)
                     throw exception::MathException("Error in numeric_cast",
                                                    "desc", "source value underflows target type",
-                                                   "ifrom", util::DemangleCppType<Source>(),
-                                                   "ito", util::DemangleCppType<Target>());
+                                                   "ifrom", util::demangle_cpp_type<Source>(),
+                                                   "ito", util::demangle_cpp_type<Target>());
 
                 
                 // going from smaller to larger type - ok (since s >= 0)
@@ -100,8 +100,8 @@ struct ExactCast
                     if(s > tmax)
                         throw exception::MathException("Error in numeric_cast",
                                                        "desc", "source value overflows target type",
-                                                       "ifrom", util::DemangleCppType<Source>(),
-                                                       "ito", util::DemangleCppType<Target>());
+                                                       "ifrom", util::demangle_cpp_type<Source>(),
+                                                       "ito", util::demangle_cpp_type<Target>());
 
                     else // safe!
                         return static_cast<Target>(s);
@@ -122,8 +122,8 @@ struct ExactCast
                     if(s > tmax)
                         throw exception::MathException("Error in numeric_cast",
                                                        "desc", "source value overflows target type",
-                                                       "ifrom", util::DemangleCppType<Source>(),
-                                                       "ito", util::DemangleCppType<Target>());
+                                                       "ifrom", util::demangle_cpp_type<Source>(),
+                                                       "ito", util::demangle_cpp_type<Target>());
 
                     else // safe!
                         return static_cast<Target>(s);
@@ -151,19 +151,19 @@ struct ExactCast
             else
                 throw exception::MathException("Error in numeric_cast",
                                                "desc", "Floating point conversion results in loss of precision",
-                                               "fpfrom", util::DemangleCppType<Source>(),
-                                               "fpto", util::DemangleCppType<Target>());
+                                               "fpfrom", util::demangle_cpp_type<Source>(),
+                                               "fpto", util::demangle_cpp_type<Target>());
             PRAGMA_WARNING_POP
         }
 
         else if(std::is_floating_point<Source>::value && std::is_integral<Target>::value)
         {
             // Check validity (ie does the FP source have exactly an integer?)
-            if(!IsInteger(s))
+            if(!is_integer(s))
                 throw exception::MathException("Error in numeric_cast",
                                                "desc", "Floating point conversion to integer results in loss of information",
-                                               "fpfrom", util::DemangleCppType<Source>(),
-                                               "ito", util::DemangleCppType<Target>());
+                                               "fpfrom", util::demangle_cpp_type<Source>(),
+                                               "ito", util::demangle_cpp_type<Target>());
             else
                 return static_cast<Target>(s);
         }
@@ -173,11 +173,11 @@ struct ExactCast
             // Can the floating point handle the integer?
             Target t = static_cast<Target>(s);
 
-            if(!IsInteger(s))
+            if(!is_integer(s))
                 throw exception::MathException("Error in numeric_cast",
                                                "desc", "Floating point type cannot exactly handle this integer",
-                                               "ifrom", util::DemangleCppType<Source>(),
-                                               "fpto", util::DemangleCppType<Target>());
+                                               "ifrom", util::demangle_cpp_type<Source>(),
+                                               "fpto", util::demangle_cpp_type<Target>());
 
             Source s2 = static_cast<Source>(s);
             PRAGMA_WARNING_PUSH
@@ -185,8 +185,8 @@ struct ExactCast
             if(s != s2)
                 throw exception::MathException("Error in numeric_cast",
                                                "desc", "Floating point type cannot exactly handle this integer",
-                                               "ifrom", util::DemangleCppType<Source>(),
-                                               "fpto", util::DemangleCppType<Target>());
+                                               "ifrom", util::demangle_cpp_type<Source>(),
+                                               "fpto", util::demangle_cpp_type<Target>());
             else
                 return t;
             PRAGMA_WARNING_POP
@@ -212,7 +212,7 @@ struct ExactCast
 template<typename Source>
 struct ExactCast<Source, Source>
 {
-    static Source Cast(const Source & s)
+    static Source cast(const Source & s)
     {
         return s;
     }

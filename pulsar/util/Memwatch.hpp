@@ -14,12 +14,12 @@ namespace util {
 
 /*! \brief See if memwatch is running (preloaded)
  */ 
-bool Memwatch_running(void) noexcept;
+bool memwatch_running(void) noexcept;
 
 
 /*! \brief Query how much memory is in use (has been allocated already) in bytes
  */ 
-size_t Memwatch_allocated(void) noexcept;
+size_t memwatch_allocated(void) noexcept;
 
 
 /*! \brief Set a limit as to how much memory to use (in bytes)
@@ -28,12 +28,12 @@ size_t Memwatch_allocated(void) noexcept;
  *
  * \return The previous limit
  */
-size_t Memwatch_setlimit(size_t limit) noexcept;
+size_t memwatch_setlimit(size_t limit) noexcept;
 
 
 /*! \brief Get the current memory limit (in bytes)
  */
-size_t Memwatch_getlimit(void) noexcept;
+size_t memwatch_getlimit(void) noexcept;
 
 
 

@@ -44,7 +44,7 @@ class TeeBufToString : public std::streambuf
         TeeBufToString(const TeeBufToString &)             = delete;
         TeeBufToString & operator=(const TeeBufToString &) = delete;
 
-        void SetString(std::string * str) noexcept
+        void set_string(std::string * str) noexcept
         {
             str_ = str;
         }

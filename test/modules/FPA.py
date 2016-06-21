@@ -31,7 +31,7 @@ def Run(mm):
     try:
         tester = psr.testing.Tester(
            "Testing FPA. MP2/a(TQ)Z+[2B-CCSD(T)/aDZ]-[2B-MP2/aDZ]")
-        tester.PrintHeader()
+        tester.print_header()
        
         LoadDefaultModules(mm)
         mm.DuplicateKey("PSR_MP2","MP2_aTZ")
@@ -41,25 +41,25 @@ def Run(mm):
         aDZ="aug-cc-pvdz"
         aTZ="aug-cc-pvtz"
         aQZ="aug-cc-pvqz"
-        mm.ChangeOption("PSR_MBE","METHOD","PSR_CCSD(T)")
-        mm.ChangeOption("PSR_MBE_MP2","METHOD","PSR_MP2")
-        mm.ChangeOption("PSR_BOND_FRAG","TRUNCATION_ORDER",2)
-        mm.ChangeOption("PSR_CCSD(T)","BASIS_SET",aDZ)
-        mm.ChangeOption("PSR_MP2","BASIS_SET",aDZ)
-        mm.ChangeOption("MP2_aTZ","BASIS_SET",aTZ)
-        mm.ChangeOption("MP2_aQZ","BASIS_SET",aQZ)
+        mm.change_option("PSR_MBE","METHOD","PSR_CCSD(T)")
+        mm.change_option("PSR_MBE_MP2","METHOD","PSR_MP2")
+        mm.change_option("PSR_BOND_FRAG","TRUNCATION_ORDER",2)
+        mm.change_option("PSR_CCSD(T)","BASIS_SET",aDZ)
+        mm.change_option("PSR_MP2","BASIS_SET",aDZ)
+        mm.change_option("MP2_aTZ","BASIS_SET",aTZ)
+        mm.change_option("MP2_aQZ","BASIS_SET",aQZ)
         
 
         mm.DuplicateKey("PSR_MIM","FPA_MP2_MIM")
-        mm.ChangeOption("FPA_MP2_MIM","METHODS",["MP2_aTZ","MP2_aQZ"])
-        mm.ChangeOption("PSR_HELGAKER_CBS","BASIS_CARDINAL_NUMS",[3,4])
-        mm.ChangeOption("PSR_HELGAKER_CBS","MIM_KEY","FPA_MP2_MIM")
-        mm.ChangeOption("PSR_MIM","METHODS",["PSR_HELGAKER_CBS",
+        mm.change_option("FPA_MP2_MIM","METHODS",["MP2_aTZ","MP2_aQZ"])
+        mm.change_option("PSR_HELGAKER_CBS","BASIS_CARDINAL_NUMS",[3,4])
+        mm.change_option("PSR_HELGAKER_CBS","MIM_KEY","FPA_MP2_MIM")
+        mm.change_option("PSR_MIM","METHODS",["PSR_HELGAKER_CBS",
                                             "PSR_MBE",
                                             "PSR_MBE_MP2"
                                             ])
-        mm.ChangeOption("PSR_MIM","WEIGHTS",[1.0,1.0,-1.0])
-        MyMod=mm.GetModule("PSR_MIM",0)
+        mm.change_option("PSR_MIM","WEIGHTS",[1.0,1.0,-1.0])
+        MyMod=mm.get_module("PSR_MIM",0)
         mol=psr.system.MakeSystem("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
@@ -79,13 +79,13 @@ def Run(mm):
         wfn.system=mol
 
         NewWfn,Egy=MyMod.Deriv(0,wfn)
-        tester.Test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
-        NewWfn,Egy=MyMod.Energy(wfn)
-        tester.Test("Testing Energy via Energy()", True, CompareEgy, Egy)
+        tester.test("Testing Energy via Deriv(0)", True, CompareEgy, Egy[0])
+        NewWfn,Egy=MyModenergy(wfn)
+        tester.test("Testing Energy via Energy()", True, CompareEgy, Egy)
         NewWfn,Egy=MyMod.Deriv(1,wfn)
-        tester.Test("Testing Gradient via Deriv(1)", True, CompareGrad, Egy)
+        tester.test("Testing Gradient via Deriv(1)", True, CompareGrad, Egy)
         NewWfn,Egy=MyMod.Gradient(wfn)
-        tester.Test("Testing Energy via Gradient()", True, CompareGrad, Egy)
+        tester.test("Testing Energy via Gradient()", True, CompareGrad, Egy)
         
      
     except Exception as e:
@@ -95,5 +95,5 @@ def Run(mm):
 with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-psr.Finalize()
+psr.finalize()
 

@@ -113,20 +113,20 @@ protected:
      *   distance threholds are read in from option "DISTANCE_THRESHOLDS"
      *   \param[in] Dist The maximum distance
      */
-    NMerSetType MakeNMers(const NMerSetType& Frags);
+    NMerSetType make_nmers(const NMerSetType& Frags);
 
     /////////////////////////////////////////
     // To be implemented by derived classes
     /////////////////////////////////////////
-    /*! \copydoc Fragmentize
+    /*! \copydoc fragmentize
      *
      *   This function should produce the fundamental fragments.
      *   Creation of the n-mers (unions of fragments taken n at a time)
-     *   will be handled automatically by the Fragmentize function
+     *   will be handled automatically by the fragmentize function
      *    if requested)
      * \note To be implemented by derived classes
      */
-    virtual NMerSetType Fragmentize_(const system::System & mol) = 0;
+    virtual NMerSetType fragmentize_(const system::System & mol) = 0;
 
 
 public:
@@ -142,9 +142,9 @@ public:
      *
      *   The main call users of this class should call
      */
-    NMerSetType Fragmentize(const system::System & mol)
+    NMerSetType fragmentize(const system::System & mol)
     {
-        return ModuleBase::CallFunction(&SystemFragmenter::Fragmentize_, mol);
+        return ModuleBase::call_function(&SystemFragmenter::fragmentize_, mol);
     }
 };
 
@@ -155,13 +155,13 @@ public:
     MODULEBASE_FORWARD_PROTECTED_TO_PY
 
 
-    virtual NMerSetType Fragmentize_(const system::System & mol)
+    virtual NMerSetType fragmentize_(const system::System & mol)
     {
-        return CallPyOverride<NMerSetType>("Fragmentize_", mol);
+        return call_py_override<NMerSetType>("fragmentize_", mol);
     }
 
     ///Python's dictionaries are stupid, this rolls the STL set into a string
-    std::map<std::string, NMerInfo> Py_Fragmentize(const system::System& mol);
+    std::map<std::string, NMerInfo> fragmentize_py(const system::System& mol);
 
 
 

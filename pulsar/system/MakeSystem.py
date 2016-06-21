@@ -4,7 +4,7 @@ import pulsar as psr
 from pulsar.exception import GeneralException
 from copy import deepcopy
 
-def MakeSystem(SomeString):
+def make_system(SomeString):
     """This function turns a string into a system object, which it then returns
 
     Special thanks to Lori A. Burns for the original version of this function
@@ -102,11 +102,11 @@ def MakeSystem(SomeString):
                 if len(entries) == 4:
                     for i in range(1,4):
                         Carts.append(float(entries[i]))
-                Zs.append(psr.system.AtomicZNumberFromSym(atomSym))
+                Zs.append(psr.system.atomic_z_from_symbol(atomSym))
                 Systems[NFrags()]+=1
                 
         else:
-            raise GeneralException('MakeSystem: Unidentifiable line in geometry specification: %s' % (line))
+            raise GeneralException('make_system: Unidentifiable line in geometry specification: %s' % (line))
 
     DaSpace=psr.system.Space()
     Periodic=(len(Sides)==3 and len(Angles)==3)
@@ -117,7 +117,7 @@ def MakeSystem(SomeString):
     molu=psr.system.AtomSetUniverse()
     for i in range(0,len(Zs)):
         TempCarts=[ToAU*Carts[3*i+j] for j in range(0,3)]
-        molu.Insert(psr.system.CreateAtom(TempCarts,Zs[i]))
+        molu.insert(psr.system.create_atom(TempCarts,Zs[i]))
     DaSys=psr.system.System(molu,True)
     if Periodic:
         Newu=psr.system.Frac2Cart(molu,DaSpace)
@@ -126,9 +126,9 @@ def MakeSystem(SomeString):
             DaSpace.LatticeSides)
         molu=psr.system.CleanUC(UC,DaSpace.LatticeSides)
     DaSys=psr.system.System(molu,True)
-    DaSys.SetSpace(DaSpace)
-    DaSys.SetCharge(Charge[0])
-    DaSys.SetMultiplicity(Mult[0])
+    DaSys.set_space(DaSpace)
+    DaSys.set_charge(Charge[0])
+    DaSys.set_multiplicity(Mult[0])
     return DaSys
 
 

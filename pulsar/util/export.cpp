@@ -21,16 +21,16 @@ void export_pybind11(pybind11::module & mtop)
     pybind11::module m = mtop.def_submodule("util", "Miscellaneous utilities");
 
     // command line
-    m.def("SetCmdline", SetCmdline);
-    m.def("ClearCmdline", ClearCmdline);
+    m.def("set_cmdline", set_cmdline);
+    m.def("clear_cmdline", clear_cmdline);
 
     //////////////////////////
     // Memwatch
     //////////////////////////
-    m.def("Memwatch_running", Memwatch_running);
-    m.def("Memwatch_allocated", Memwatch_allocated);
-    m.def("Memwatch_setlimit", Memwatch_setlimit);
-    m.def("Memwatch_getlimit", Memwatch_getlimit);
+    m.def("memwatch_running", memwatch_running);
+    m.def("memwatch_allocated", memwatch_allocated);
+    m.def("memwatch_setlimit", memwatch_setlimit);
+    m.def("memwatch_getlimit", memwatch_getlimit);
 }
 
 

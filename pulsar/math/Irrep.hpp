@@ -12,7 +12,7 @@ namespace pulsar{
 namespace math{
 
 //! \todo Add the rest
-//! \todo ToString, etc
+//! \todo to_string, etc
 enum class Irrep {
   A,
   A1, A1g, A1u,

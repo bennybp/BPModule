@@ -15,7 +15,7 @@ from pulsar.output import *
 from pulsar.testing import *
 from pulsar.math import *
 
-from helper.SetOperations import TestSetOperations
+from helper.SetOperations import test_set_operations
 
 
 def SetElement(s, i, e):
@@ -28,16 +28,16 @@ def Run():
         BadAlphabet = "ABCDE"
 
         tester = Tester("Testing Universe and MathSet")
-        tester.PrintHeader()
+        tester.print_header()
 
         u1 = StringSetUniverse()
 
         # Make a universe of the alphabet
         for i in list(Alphabet):
-           u1.Insert(i)
+           u1.insert(i)
 
 
-        # Insert all
+        # insert all
         s0 = StringSet(u1, False)
         s1 = StringSet(u1, False)
         s2 = StringSet(u1, True)
@@ -45,29 +45,29 @@ def Run():
         s9 = StringSet(u1, False)
 
         for it in Alphabet[:7]:
-            s1.Insert(it)
+            s1.insert(it)
 
         for it in reversed(Alphabet):
-            s3.Insert(it)
+            s3.insert(it)
 
         for it in Alphabet[7:]:
-            s9.Insert(it)
+            s9.insert(it)
 
 
         ################################
         # Do basic testing of set stuff
         ################################
-        TestSetOperations(tester, StringSet, Alphabet, BadAlphabet,
+        test_set_operations(tester, StringSet, Alphabet, BadAlphabet,
                           True, s0, s1, s2, s3, s9)
  
         ################################
         # Serialization
         ################################
-        tester.Test("MathSet serialization - s0", True, TestSerialization_StringSet, s0)
-        tester.Test("MathSet serialization - s1", True, TestSerialization_StringSet, s1)
-        tester.Test("MathSet serialization - s2", True, TestSerialization_StringSet, s2)
-        tester.Test("MathSet serialization - s3", True, TestSerialization_StringSet, s3)
-        tester.Test("MathSet serialization - s9", True, TestSerialization_StringSet, s9)
+        tester.test("MathSet serialization - s0", True, TestSerialization_StringSet, s0)
+        tester.test("MathSet serialization - s1", True, TestSerialization_StringSet, s1)
+        tester.test("MathSet serialization - s2", True, TestSerialization_StringSet, s2)
+        tester.test("MathSet serialization - s3", True, TestSerialization_StringSet, s3)
+        tester.test("MathSet serialization - s9", True, TestSerialization_StringSet, s9)
 
 
         ############################################################
@@ -77,40 +77,40 @@ def Run():
         s1 = StringSet(u1, True) # Whole alphabet
         s2 = StringSet(u2, True) # Whole alphabet
 
-        tester.Test("Union, different universe", False, s1.Union, s2)
-        tester.Test("Union, different universe - operator +", False, operator.add, s1, s2)
-        tester.Test("Difference, different universe", False, s1.Difference, s2)
-        tester.Test("Difference, differenet universe - operator -", False, operator.sub, s1, s2)
-        tester.Test("Intersection, different universe", False, s1.Intersection, s2)
-        tester.Test("Intersection, different universe - operator /", False, operator.truediv, s1, s2)
+        tester.test("Union, different universe", False, s1.set_union, s2)
+        tester.test("Union, different universe - operator +", False, operator.add, s1, s2)
+        tester.test("Difference, different universe", False, s1.difference, s2)
+        tester.test("Difference, differenet universe - operator -", False, operator.sub, s1, s2)
+        tester.test("intersection, different universe", False, s1.intersection, s2)
+        tester.test("intersection, different universe - operator /", False, operator.truediv, s1, s2)
 
-        tester.Test("Union assign, different universe", False, s1.UnionAssign, s2)
-        tester.Test("Union assign, different universe - operator +=", False, operator.iadd, s1, s2)
-        tester.Test("Difference assign, different universe", False, s1.DifferenceAssign, s2)
-        tester.Test("Difference assign, differenet universe - operator -=", False, operator.isub, s1, s2)
-        tester.Test("Intersection assign, different universe", False, s1.IntersectionAssign, s2)
-        tester.Test("Intersection assign, different universe - operator /=", False, operator.itruediv, s1, s2)
+        tester.test("Union assign, different universe", False, s1.union_assign, s2)
+        tester.test("Union assign, different universe - operator +=", False, operator.iadd, s1, s2)
+        tester.test("Difference assign, different universe", False, s1.difference_assign, s2)
+        tester.test("Difference assign, differenet universe - operator -=", False, operator.isub, s1, s2)
+        tester.test("intersection assign, different universe", False, s1.intersection_assign, s2)
+        tester.test("intersection assign, different universe - operator /=", False, operator.itruediv, s1, s2)
 
 
         # Lastly, use empty universes
         u3 = StringSetUniverse()
         s3 = StringSet(u3, True)
-        s4 = s3.Complement()
-        tester.TestValue("Complement without universe", s3 == s4, True)
+        s4 = s3.complement()
+        tester.test_value("Complement without universe", s3 == s4, True)
 
-        tester.PrintResults()
+        tester.print_results()
 
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      print_global_output("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      GlobalError("\n")
-      GlobalError(str(e))
-      GlobalError("\n")
+      print_global_error("\n")
+      print_global_error(str(e))
+      print_global_error("\n")
 
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-psr.Finalize()
+psr.finalize()

@@ -9,7 +9,7 @@ from MiscFxns import *
 from StandardModules import *
 
 def ApplyBasis(syst,bsname,bslabel="primary"):
-    return psr.system.ApplySingleBasis(bslabel,bsname,syst)
+    return psr.system.apply_single_basis(bslabel,bsname,syst)
 
 def CompareEgy(EgyIn):
    return abs(EgyIn+224.89287653924677)<0.00001
@@ -34,12 +34,12 @@ def CompareGrad(GradIn):
 def Run(mm):
     try:
         tester = psr.testing.Tester("Testing Boys and Bernardi CP")
-        tester.PrintHeader()
+        tester.print_header()
        
         LoadDefaultModules(mm)
-        mm.ChangeOption("PSR_SCF","BASIS_SET","sto-3g")
-        mm.ChangeOption("PSR_CP","METHOD","PSR_SCF")
-        mm.ChangeOption("PSR_MBE","METHOD","PSR_SCF")
+        mm.change_option("PSR_SCF","BASIS_SET","sto-3g")
+        mm.change_option("PSR_CP","METHOD","PSR_SCF")
+        mm.change_option("PSR_MBE","METHOD","PSR_SCF")
 
         mol=psr.system.MakeSystem("""
         0 1
@@ -57,18 +57,18 @@ def Run(mm):
         wfn=psr.datastore.Wavefunction()
         wfn.system=mol
 
-        MyMod=mm.GetModule("PSR_CP",0)
+        MyMod=mm.get_module("PSR_CP",0)
 
         NewWfn,Egy=MyMod.Deriv(0,wfn)
-        tester.Test("Testing CP Energy via Deriv(0)", True, CompareEgy, Egy[0])
-        NewWfn,Egy=MyMod.Energy(wfn)
-        tester.Test("Testing CP Energy via Energy()", True, CompareEgy, Egy)
+        tester.test("Testing CP Energy via Deriv(0)", True, CompareEgy, Egy[0])
+        NewWfn,Egy=MyModenergy(wfn)
+        tester.test("Testing CP Energy via Energy()", True, CompareEgy, Egy)
         NewWfn,Egy=MyMod.Deriv(1,wfn)
-        tester.Test("Testing CP Gradient via Deriv(1)", True, CompareGrad, Egy)
+        tester.test("Testing CP Gradient via Deriv(1)", True, CompareGrad, Egy)
         NewWfn,Egy=MyMod.Gradient(wfn)
-        tester.Test("Testing CP Gradient via Gradient()", True, CompareGrad, Egy)
+        tester.test("Testing CP Gradient via Gradient()", True, CompareGrad, Egy)
         
-        tester.PrintResults()
+        tester.print_results()
      
     except Exception as e:
       psr.output.Output("Caught exception in main handler\n")
@@ -77,4 +77,4 @@ def Run(mm):
 with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-psr.Finalize()
+psr.finalize()

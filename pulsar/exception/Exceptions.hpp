@@ -26,7 +26,7 @@ namespace exception {
  * via the what() member.
  *
  * Pairs of information can be appended to the string via
- * AppendInfo().
+ * append_info().
  *
  * When constructed from another std::exception, the what() string
  * of that is copied first.
@@ -45,7 +45,7 @@ class GeneralException : public std::exception
         {
             static_assert( (sizeof...(exinfo) % 2) == 0,
                            "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
-            AppendInfo(exinfo...);
+            append_info(exinfo...);
         }
 
 
@@ -74,7 +74,7 @@ class GeneralException : public std::exception
 
         /*! \brief Add information to this exception object
          */
-        void AppendInfo(const std::string & key, const std::string & value);
+        void append_info(const std::string & key, const std::string & value);
 
 
         /*! \brief Add information to this exception object
@@ -82,11 +82,11 @@ class GeneralException : public std::exception
          * \p value is converted via stringstreams
          */
         template<typename T>
-        void AppendInfo(const std::string & key, const T & value)
+        void append_info(const std::string & key, const T & value)
         {
             std::stringstream ss;
             ss << value;
-            AppendInfo(key, ss.str());
+            append_info(key, ss.str());
         }
 
 
@@ -95,7 +95,7 @@ class GeneralException : public std::exception
          * 
          * Used to terminate the parameter pack expansion (in some instances)
          */
-        void AppendInfo(void);
+        void append_info(void);
 
 
 
@@ -104,13 +104,13 @@ class GeneralException : public std::exception
          * There must be an even number of arguments.
          */
         template<typename... Targs>
-        void AppendInfo(const std::string & key, const std::string & value,
+        void append_info(const std::string & key, const std::string & value,
                         const Targs&... exinfo)
         {
             static_assert( (sizeof...(exinfo) % 2) == 0,
                            "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
-            AppendInfo(key, value);
-            AppendInfo(exinfo...);
+            append_info(key, value);
+            append_info(exinfo...);
         }
 
 
@@ -119,13 +119,13 @@ class GeneralException : public std::exception
          * There must be an even number of arguments.
          */
         template<typename T, typename... Targs>
-        void AppendInfo(const std::string & key, const T & value,
+        void append_info(const std::string & key, const T & value,
                         const Targs&... exinfo)
         {
             static_assert( (sizeof...(exinfo) % 2) == 0,
                            "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
-            AppendInfo(key, value);
-            AppendInfo(exinfo...);
+            append_info(key, value);
+            append_info(exinfo...);
         }
 
 
@@ -137,7 +137,7 @@ class GeneralException : public std::exception
          * There must be an even number of arguments.
          */
         template<typename T, typename... Targs>
-        void AppendInfo(const std::string & key,
+        void append_info(const std::string & key,
                         const std::vector<T> & value,
                         const Targs&... exinfo)
         {
@@ -153,8 +153,8 @@ class GeneralException : public std::exception
             for(size_t i = 1; i < value.size(); i++)
                 ss << "\n" << value[i];
 
-            AppendInfo(key, ss.str());
-            AppendInfo(exinfo...);
+            append_info(key, ss.str());
+            append_info(exinfo...);
         }
 
 

@@ -54,33 +54,33 @@ thispath = os.path.dirname(os.path.realpath(__file__))
 toppath = os.path.realpath(os.path.join(thispath, "../../"))
 
 pulsar_paths = { "base": thispath,
-                   "basis": [ os.path.join(toppath, "basis") ]
-                 }
+                 "basis": [ os.path.join(toppath, "basis") ]
+               }
 
 
-def Init(argv, out = "stdout", color = True, debug = False,nthreads=1):
+def initialize(argv, out = "stdout", color = True, debug = False,nthreads=1):
   """Initializes the Pulsar core
 
   Initializes MPI, libraries, etc, as well as the
   output streams.
   """
 
-  output.SetGlobalOut_Stdout()
-  output.EnableColor(color)
+  output.set_global_out_to_stdout()
+  output.enable_color(color)
 
-  gout = output.GetGlobalOut()
-  gout.EnableDebug(debug)
+  gout = output.get_global_output()
+  gout.enable_debug(debug)
 
   # Set the command line
-  util.SetCmdline(argv)
+  util.set_cmdline(argv)
 
   # Initialize Parallel
-  parallel.Init(nthreads)
+  parallel.initialize(nthreads)
 
 
-def Finalize():
-  output.GlobalOutput("Finalizing parallelization\n")
-  parallel.Finalize()
+def finalize():
+  output.print_global_output("Finalizing parallelization\n")
+  parallel.finalize()
 
-  util.ClearCmdline()
+  util.clear_cmdline()
 

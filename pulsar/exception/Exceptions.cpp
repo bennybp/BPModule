@@ -14,12 +14,12 @@ namespace pulsar{
 namespace exception {
 
 
-void GeneralException::AppendInfo(void)
+void GeneralException::append_info(void)
 {
 }
 
 
-void GeneralException::AppendInfo(const std::string & key, const std::string & value)
+void GeneralException::append_info(const std::string & key, const std::string & value)
 {
     // done manully rather than through util::FormatString
     // so that there is no dependence on that module

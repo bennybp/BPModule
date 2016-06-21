@@ -21,18 +21,18 @@ from helper.TestOptions import opttypemap, validvals
 def Run():
     try:
         tester = Tester("Testing Datastore - serialization")
-        tester.PrintHeader()
+        tester.print_header()
 
         opt = OptionMap()
-        tester.Test("Serialization of empty OptionMap", True,
+        tester.test("Serialization of empty OptionMap", True,
                     TestSerialization_OptionMap, opt)
 
         for k,v in validvals:
             # with default, not required
             opttype = opttypemap[k]
-            opt.AddOption(k, opttype, False, None, "No Help", v)
+            opt.add_option(k, opttype, False, None, "No Help", v)
 
-        tester.Test("Serialization of full OptionMap", True,
+        tester.test("Serialization of full OptionMap", True,
                     TestSerialization_OptionMap, opt)
 
 
@@ -40,32 +40,32 @@ def Run():
         for k,v in validvals:
             # no default, required
             opttype = opttypemap[k]
-            opt.AddOption(k, opttype, True, None, "No Help", None)
+            opt.add_option(k, opttype, True, None, "No Help", None)
 
-        tester.Test("Serialization of full OptionMap", True,
+        tester.test("Serialization of full OptionMap", True,
                     TestSerialization_OptionMap, opt)
 
         opt = OptionMap()
         for k,v in validvals:
             # no default, not required
             opttype = opttypemap[k]
-            opt.AddOption(k, opttype, False, None, "No Help", None)
-        tester.Test("Serialization of full OptionMap", True,
+            opt.add_option(k, opttype, False, None, "No Help", None)
+        tester.test("Serialization of full OptionMap", True,
                     TestSerialization_OptionMap, opt)
 
-        tester.PrintResults() 
+        tester.print_results() 
 
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      print_global_output("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      GlobalError("\n")
-      GlobalError(str(e))
-      GlobalError("\n")
+      print_global_error("\n")
+      print_global_error(str(e))
+      print_global_error("\n")
 
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-psr.Finalize()
+psr.finalize()

@@ -20,7 +20,7 @@ void export_pybind11(pybind11::module & mtop)
 
     pybind11::class_<GeneralException>(m, "GeneralException")
     .def(pybind11::init<const std::string &>())
-    .def("AppendInfo", static_cast<void(GeneralException::*)(const std::string &, const std::string &)>(&GeneralException::AppendInfo))
+    .def("append_info", static_cast<void(GeneralException::*)(const std::string &, const std::string &)>(&GeneralException::append_info))
     .def("what", &GeneralException::what)
     ;
 }

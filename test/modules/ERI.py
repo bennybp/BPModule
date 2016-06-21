@@ -34,25 +34,25 @@ def CompareList(lst1, lst2, tol):
 def Run(mm):
     try:
 
-        out = GetGlobalOut()
+        out = get_global_output()
 
         # Load the python modules
         #             supermodule      module name      key
-        mm.LoadModule("LibERD",        "LibERD_ERI",   "ERI")
-        mm.Print(out)
-        mm.SanityCheck()
+        mm.load_module("LibERD",        "LibERD_ERI",   "ERI")
+        mm.print(out)
+        mm.sanity_check()
   
         atoms = list(water)
         u = AtomSetUniverse()
         for a in atoms:
-            u.Insert(a)
+            u.insert(a)
         s = System(u, True)
 
-        s = ApplySingleBasis("Primary","sto-3g",s)
+        s = apply_single_basis("Primary","sto-3g",s)
 
          
-        eri = mm.GetModule("ERI", 0)
-        eri.EnableDebug(True)
+        eri = mm.get_module("ERI", 0)
+        eri.enable_debug(True)
         iwfn = Wavefunction()
         iwfn.system = s
         eri.SetInitialWfn(iwfn)
@@ -60,7 +60,7 @@ def Run(mm):
 
 
         tester = Tester("Testing basic ERI")
-        tester.PrintHeader()
+        tester.print_header()
 
         ref_0000 = [ 4.78506540470550323e+00 ] 
  
@@ -93,34 +93,34 @@ def Run(mm):
 
         outbuf = array.array('d', [0]*1024)
 
-        n = eri.Calculate(0, 0, 0, 0, 0, outbuf)
-        tester.TestValue("Number of integrals for 0000", 1, n)
-        tester.TestValue("Values for 0000 integrals", True, CompareList(list(outbuf[:n]), ref_0000, 1e-15))
+        n = eri.calculate(0, 0, 0, 0, 0, outbuf)
+        tester.test_value("Number of integrals for 0000", 1, n)
+        tester.test_value("Values for 0000 integrals", True, CompareList(list(outbuf[:n]), ref_0000, 1e-15))
 
-        n = eri.Calculate(0, 1, 0, 0, 0, outbuf)
-        tester.TestValue("Number of integrals for 1000", 4, n)
-        tester.TestValue("Values for 1000 integrals", True, CompareList(list(outbuf[:n]), ref_1000, 1e-15))
+        n = eri.calculate(0, 1, 0, 0, 0, outbuf)
+        tester.test_value("Number of integrals for 1000", 4, n)
+        tester.test_value("Values for 1000 integrals", True, CompareList(list(outbuf[:n]), ref_1000, 1e-15))
 
-        n = eri.Calculate(0, 1, 0, 1, 0, outbuf)
-        tester.TestValue("Number of integrals for 1010", 16, n)
-        tester.TestValue("Values for 1010 integrals", True, CompareList(list(outbuf[:n]), ref_1010, 1e-15))
+        n = eri.calculate(0, 1, 0, 1, 0, outbuf)
+        tester.test_value("Number of integrals for 1010", 16, n)
+        tester.test_value("Values for 1010 integrals", True, CompareList(list(outbuf[:n]), ref_1010, 1e-15))
 
-        n = eri.CalculateMulti(0, [0, 1], [ 0 ], [0, 1], [ 0 ], outbuf)
-        tester.TestValue("Number of integrals for calculate multi", 25, n)
-        tester.TestValue("Values from CalculateMulti", True, CompareList(list(outbuf[:n]), ref_multi, 1e-15))
+        n = eri.calculateMulti(0, [0, 1], [ 0 ], [0, 1], [ 0 ], outbuf)
+        tester.test_value("Number of integrals for calculate multi", 25, n)
+        tester.test_value("Values from calculateMulti", True, CompareList(list(outbuf[:n]), ref_multi, 1e-15))
 
-        tester.PrintResults() 
+        tester.print_results() 
 
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler\n")
+      print_global_output("Caught exception in main handler\n")
       traceback.print_exc()
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 
 with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-psr.Finalize()
+psr.finalize()

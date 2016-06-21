@@ -66,19 +66,19 @@ class BasisSet
 
 
         /// Return a set of the stored types
-        std::set<ShellType> GetTypes(void) const;
+        std::set<ShellType> get_types(void) const;
 
         /// Return the number of shells currently stored
-        size_t NShell(void) const noexcept;
+        size_t n_shell(void) const noexcept;
 
         /// Return the number of unique shells stored
-        size_t NUniqueShell(void) const noexcept;
+        size_t n_unique_shell(void) const noexcept;
 
         /// Return the number of primitives stored
-        size_t NPrim(void) const;
+        size_t n_primitives(void) const;
 
         /// Return the number of coefficients stored
-        size_t NCoef(void) const;
+        size_t n_coefficients(void) const;
 
         /*! \brief Return the number of basis functions
          *         represented by the basis set
@@ -88,34 +88,34 @@ class BasisSet
          * marked as spherical or cartesian. This takes into account general
          * contractions.
          */
-        size_t NFunctions(void) const;
+        size_t n_functions(void) const;
 
         /*! \brief Return the maximum number of primitives contained in a shell
          */
-        size_t MaxNPrim(void) const;
+        size_t max_n_primitives(void) const;
 
         /*! \brief Return the maximum angular momentum stored in this basis set
          * 
          * This takes combined shells into account (ie, spd will count only as d).
          */
-        int MaxAM(void) const;
+        int max_am(void) const;
 
         /*! \brief Return a set of all angular momentum used in this basis set
          * 
          * This takes combined shells into account (ie, spd will count only as d).
          */
-        std::set<int> AllAM(void) const;
+        std::set<int> all_am(void) const;
 
         /*! \brief Return the maximum number of basis functions stored in a shell
          * 
          * This takes into account combined shells (ie, spd = 10 cartesian or 9 spherical)
          */
-        size_t MaxNFunctions(void) const;
+        size_t max_n_functions(void) const;
 
 
         /*! \brief Find some maximum property (ncartesian, etc)
          */
-        size_t MaxProperty(std::function<size_t(const BasisSetShell &)> func) const;
+        size_t max_property(std::function<size_t(const BasisSetShell &)> func) const;
 
         ///@}
 
@@ -129,7 +129,7 @@ class BasisSet
          *
          * \param [in] i Index of the shell to obtain
          */
-        const BasisSetShell & Shell(size_t i) const;
+        const BasisSetShell & shell(size_t i) const;
 
         /* \brief Obtain information about a unique shell
          * 
@@ -144,18 +144,18 @@ class BasisSet
          *
          * \param [in] i Index of the shell to obtain
          */
-        const BasisSetShell & UniqueShell(size_t i) const;
+        const BasisSetShell & unique_shell(size_t i) const;
 
 
         /*! \brief Obtain the index of where a shell's functions start
           * in the overall basis set
           */
-        size_t ShellStart(size_t i) const;
+        size_t shell_start(size_t i) const;
 
 
-        /* \brief Obtain information about a shell as a ShellInfo object
+        /* \brief Obtain information about a shell as a shell_info object
          * 
-         * The ShellInfo will not contain information about the center or
+         * The shell_info will not contain information about the center or
          * the unique ID of the shell.
          *
          * \throw pulsar::exception::BasisSetException if the
@@ -163,7 +163,7 @@ class BasisSet
          *
          * \param [in] i Index of the shell to obtain
          */
-        BasisShellInfo ShellInfo(size_t i) const;
+        BasisShellInfo shell_info(size_t i) const;
 
 
         /*! \brief Add a shell to this basis set
@@ -180,19 +180,19 @@ class BasisSet
          *                    correspond to an entry in a System.
          * \param [in] xyz Coordinates for this shell
          */
-        void AddShell(const BasisShellInfo & bshell,
+        void add_shell(const BasisShellInfo & bshell,
                       const CoordType & xyz);
 
         ///@}
 
 
         //! \todo make a printer class?
-        void Print(std::ostream & os) const;
+        void print(std::ostream & os) const;
 
         /*! \brief Reduce memory useage by removing empty space due to
          *         common information
          *
-         * AddShell will link information for common shell information,
+         * add_shell will link information for common shell information,
          * however if more space was allocated in the contructor than is
          * necessary, this results in empty space. This function removes that
          * space.
@@ -201,13 +201,13 @@ class BasisSet
          *
          * \return A BasisSet matching this, but with more efficient storage.
          */
-        BasisSet ShrinkFit(void) const;
+        BasisSet shrink_fit(void) const;
 
         /*! \brief General transformation function
          * 
          * This will loop over all shells.
          */
-        BasisSet Transform(TransformerFunc transformer) const;
+        BasisSet transform(TransformerFunc Transformer) const;
 
 
         // iterate over shells
@@ -215,7 +215,7 @@ class BasisSet
         const_iterator end(void) const;
 
         /*! \brief Obtain a hash of this BasisSet */
-        bphash::HashValue MyHash(void) const;
+        bphash::HashValue my_hash(void) const;
 
 
         /*! \brief For serialization only
@@ -247,10 +247,10 @@ class BasisSet
 
 
         /// Adds a shell, copying the information from bshell
-        void AddShell_(const BasisShellBase & bshell, const CoordType & xyz);
+        void add_shell_(const BasisShellBase & bshell, const CoordType & xyz);
 
         /// Adds a shell, copying the information from bshell
-        void AddShell_(const BasisSetShell & bshell);
+        void add_shell_(const BasisSetShell & bshell);
 
 
         /*! \brief Set the internal pointers to the proper locations */
@@ -261,7 +261,7 @@ class BasisSet
          *
          * Also set up some pointers
          */
-        void Allocate_(size_t nshells, size_t nprim, size_t ncoef, size_t nxyz);
+        void allocate_(size_t nshells, size_t nprim, size_t ncoef, size_t nxyz);
 
 
         //! \name Serialization and Hashing
@@ -287,9 +287,9 @@ class BasisSet
             const uintptr_t base = reinterpret_cast<uintptr_t>(storage_.data());
             for(const auto & it : shells_)
             {
-                offsets.push_back(reinterpret_cast<uintptr_t>(it.AlphaPtr())-base);
-                offsets.push_back(reinterpret_cast<uintptr_t>(it.AllCoefsPtr())-base);
-                offsets.push_back(reinterpret_cast<uintptr_t>(it.CoordsPtr())-base);
+                offsets.push_back(reinterpret_cast<uintptr_t>(it.alpha_ptr())-base);
+                offsets.push_back(reinterpret_cast<uintptr_t>(it.all_coefs_ptr())-base);
+                offsets.push_back(reinterpret_cast<uintptr_t>(it.coords_ptr())-base);
             }
 
             ar(offsets);
@@ -315,7 +315,7 @@ class BasisSet
             size_t offsetidx = 0;
             for(auto & it : shells_)
             {
-                it.SetPtrs_(reinterpret_cast<double *>(base + offsets.at(offsetidx)),
+                it.set_ptrs_(reinterpret_cast<double *>(base + offsets.at(offsetidx)),
                             reinterpret_cast<double *>(base + offsets.at(offsetidx+1)),
                             reinterpret_cast<double *>(base + offsets.at(offsetidx+2)));
                 offsetidx += 3;

@@ -27,19 +27,19 @@ class OneElectronIntegral : public ModuleBase
         { }
 
 
-        /*! \brief Initialize the integral computation
+        /*! \brief initialize the integral computation
          *
          * \param [in] deriv Derivative to calculate
          * \param [in] wfn Wavefunction to use to calculate integrals
          * \param [in] bs1 Basis set tag to use on the first center
          * \param [in] bs2 Basis set tag to use on the second center
          */
-        void Initialize(unsigned int deriv,
+        void initialize(unsigned int deriv,
                         const datastore::Wavefunction & wfn,
                         const system::BasisSet & bs1,
                         const system::BasisSet & bs2)
         {
-            return ModuleBase::CallFunction(&OneElectronIntegral::Initialize_, deriv, wfn, bs1, bs2);
+            return ModuleBase::call_function(&OneElectronIntegral::initialize_, deriv, wfn, bs1, bs2);
         }
 
 
@@ -48,13 +48,13 @@ class OneElectronIntegral : public ModuleBase
          *
          * For example, something that calculates x,y,z component would return 3
          */
-        unsigned int NComponents(void) const
+        unsigned int n_components(void) const
         {
-            return ModuleBase::CallFunction(&OneElectronIntegral::NComponents_);
+            return ModuleBase::call_function(&OneElectronIntegral::n_components_);
         }
 
 
-        /*! \brief Calculate an integral
+        /*! \brief calculate an integral
          *
          * \param [in] shell1 Shell index on the first center
          * \param [in] shell2 Shell index on the second center
@@ -62,32 +62,32 @@ class OneElectronIntegral : public ModuleBase
          * \param [in] bufsize Size of \p outbuffer (as the number of doubles)
          * \return Number of integrals calculated
          */
-        uint64_t Calculate(uint64_t shell1, uint64_t shell2,
+        uint64_t calculate(uint64_t shell1, uint64_t shell2,
                            double * outbuffer, size_t bufsize)
         {
-            return ModuleBase::FastCallFunction(&OneElectronIntegral::Calculate_,
+            return ModuleBase::fast_call_function(&OneElectronIntegral::calculate_,
                                                 shell1, shell2, outbuffer, bufsize);
         }
 
 
-        /*! \brief Calculate an integral (for use from python)
+        /*! \brief calculate an integral (for use from python)
          *
          * \param [in] shell1 Shell index on the first center
          * \param [in] shell2 Shell index on the second center
          * \param [in] outbuffer Where to place the completed integrals
          * \return Number of integrals calculated
          */
-        uint64_t CalculatePy(uint64_t shell1, uint64_t shell2,
+        uint64_t calculate_py(uint64_t shell1, uint64_t shell2,
                              pybind11::buffer outbuffer)
         {
-            auto ptrinfo = PythonBufferToPtr<double>(outbuffer, 1);
+            auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
-            return ModuleBase::FastCallFunction(&OneElectronIntegral::Calculate_,
+            return ModuleBase::fast_call_function(&OneElectronIntegral::calculate_,
                                                 shell1, shell2,
                                                 ptrinfo.first, ptrinfo.second[0]);
         }
 
-        /*! \brief Calculate multiple integrals
+        /*! \brief calculate multiple integrals
          *
          * \param [in] shells1 Shell indices on the first center
          * \param [in] shells2 Shell indices on the second center
@@ -95,29 +95,29 @@ class OneElectronIntegral : public ModuleBase
          * \param [in] bufsize Size of \p outbuffer (as the number of doubles)
          * \return Number of integrals calculated
          */
-        uint64_t CalculateMulti(const std::vector<uint64_t> & shells1,
+        uint64_t calculate_multi(const std::vector<uint64_t> & shells1,
                                 const std::vector<uint64_t> & shells2,
                                 double * outbuffer, size_t bufsize)
         {
-            return ModuleBase::FastCallFunction(&OneElectronIntegral::CalculateMulti_,
+            return ModuleBase::fast_call_function(&OneElectronIntegral::calculate_multi_,
                                                 shells1, shells2, outbuffer, bufsize);
         }
 
 
-        /*! \brief Calculate multiple integrals (for use from python)
+        /*! \brief calculate multiple integrals (for use from python)
          *
          * \param [in] shells1 Shell indicies on the first center
          * \param [in] shells2 Shell indicies on the second center
          * \param [in] outbuffer Where to place the completed integrals
          * \return Number of integrals calculated
          */
-        uint64_t CalculateMultiPy(const std::vector<uint64_t> & shells1,
+        uint64_t calculate_multi_py(const std::vector<uint64_t> & shells1,
                                   const std::vector<uint64_t> & shells2,
                                   pybind11::buffer outbuffer)
         {
-            auto ptrinfo = PythonBufferToPtr<double>(outbuffer, 1);
+            auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
-            return ModuleBase::FastCallFunction(&OneElectronIntegral::CalculateMulti_,
+            return ModuleBase::fast_call_function(&OneElectronIntegral::calculate_multi_,
                                                 shells1, shells2,
                                                 ptrinfo.first, ptrinfo.second[0]);
         }
@@ -127,25 +127,25 @@ class OneElectronIntegral : public ModuleBase
         /////////////////////////////////////////
         // To be implemented by derived classes
         /////////////////////////////////////////
-        //! \copydoc Initialize
-        virtual void Initialize_(unsigned int deriv,
+        //! \copydoc initialize
+        virtual void initialize_(unsigned int deriv,
                                  const datastore::Wavefunction & wfn,
                                  const system::BasisSet & bs1,
                                  const system::BasisSet & bs2) = 0;
 
 
-        //! \copydoc NComponents
-        virtual unsigned int NComponents_(void) const
+        //! \copydoc n_components
+        virtual unsigned int n_components_(void) const
         {
             return 1;
         }
 
-        //! \copydoc Calculate
-        virtual uint64_t Calculate_(uint64_t shell1, uint64_t shell2,
+        //! \copydoc calculate
+        virtual uint64_t calculate_(uint64_t shell1, uint64_t shell2,
                                     double * outbuffer, size_t bufsize) = 0;
 
-        //! \copydoc CalculateMulti
-        virtual uint64_t CalculateMulti_(const std::vector<uint64_t> & shells1,
+        //! \copydoc calculate_multi
+        virtual uint64_t calculate_multi_(const std::vector<uint64_t> & shells1,
                                          const std::vector<uint64_t> & shells2,
                                          double * outbuffer, size_t bufsize)
         {
@@ -158,7 +158,7 @@ class OneElectronIntegral : public ModuleBase
             for(uint64_t s1 : shells1)
             for(uint64_t s2 : shells2)
             {
-                uint64_t nbatch = Calculate_(s1, s2, outbuffer, bufsize);
+                uint64_t nbatch = calculate_(s1, s2, outbuffer, bufsize);
                 ntotal += nbatch;
                 outbuffer += nbatch;
 
@@ -178,26 +178,26 @@ class OneElectronIntegral_Py : public OneElectronIntegral
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
-        virtual void Initialize_(unsigned int deriv,
+        virtual void initialize_(unsigned int deriv,
                                  const datastore::Wavefunction & wfn,
                                  const system::BasisSet & bs1,
                                  const system::BasisSet & bs2)
 
         {
-            return CallPyOverride<void>("Initialize_", deriv, wfn, bs1, bs2);
+            return call_py_override<void>("initialize_", deriv, wfn, bs1, bs2);
         }
 
 
-        virtual unsigned int NComponents_(void) const
+        virtual unsigned int n_components_(void) const
         {
-            if(HasPyOverride("NComponents_"))
-                return CallPyOverride<unsigned int>("NComponents_");
+            if(has_py_override("n_components_"))
+                return call_py_override<unsigned int>("n_components_");
             else
-                return OneElectronIntegral::NComponents_();
+                return OneElectronIntegral::n_components_();
         }
 
 
-        virtual uint64_t Calculate_(uint64_t shell1, uint64_t shell2,
+        virtual uint64_t calculate_(uint64_t shell1, uint64_t shell2,
                                     double * outbuffer, size_t bufsize)
         {
             //! \todo untested
@@ -208,15 +208,15 @@ class OneElectronIntegral_Py : public OneElectronIntegral
                                       1, { bufsize },
                                       { sizeof(double) });
 
-            return CallPyOverride<uint64_t>("Calculate_", shell1, shell2, buf, bufsize);
+            return call_py_override<uint64_t>("calculate_", shell1, shell2, buf, bufsize);
         }
 
 
-        virtual uint64_t CalculateMulti_(const std::vector<uint64_t> & shells1,
+        virtual uint64_t calculate_multi_(const std::vector<uint64_t> & shells1,
                                          const std::vector<uint64_t> & shells2,
                                          double * outbuffer, size_t bufsize)
         {
-            if(HasPyOverride("CalculateMulti_"))
+            if(has_py_override("calculate_multi_"))
             {
                 //! \todo untested
 
@@ -226,11 +226,11 @@ class OneElectronIntegral_Py : public OneElectronIntegral
                                             1, { bufsize },
                                             { sizeof(double) });
 
-                return CallPyOverride<uint64_t>("CalculateMulti_",
+                return call_py_override<uint64_t>("calculate_multi_",
                                                 shells1, shells2, pybuf, bufsize);
             }
             else
-                return OneElectronIntegral::CalculateMulti_(shells1, shells2,
+                return OneElectronIntegral::calculate_multi_(shells1, shells2,
                                                             outbuffer, bufsize);
         }
 };

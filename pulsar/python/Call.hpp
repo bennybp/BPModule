@@ -23,20 +23,20 @@ namespace python {
  * \param [in] Fargs Arguments to call the function with
  */
 template<typename Ret, typename... Targs>
-Ret CallPyFunc(const pybind11::object & obj, Targs &&... Fargs)
+Ret call_py_func(const pybind11::object & obj, Targs &&... Fargs)
 {
     using pulsar::exception::PythonCallException;
     using pulsar::exception::PythonConvertException;
     using pulsar::exception::GeneralException;
-    using pulsar::exception::Assert;
+    using pulsar::exception::psr_assert;
 
-    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
 
     int nargs = static_cast<int>(sizeof...(Fargs));
 
     // don't check for nargs, since this may be a class method
     // and Fargs... doesn't include self
-    if(!IsCallable(obj))  
+    if(!is_callable(obj))  
         throw PythonCallException("Object is not callable!", "nargs", nargs);
 
     pybind11::object ret;
@@ -47,7 +47,7 @@ Ret CallPyFunc(const pybind11::object & obj, Targs &&... Fargs)
     }
     catch(const std::exception &)
     {
-        std::string what = detail::GetPyException();
+        std::string what = detail::get_py_exception();
         throw PythonCallException(what, "from", "within a python function");
     }
     catch(...)
@@ -58,7 +58,7 @@ Ret CallPyFunc(const pybind11::object & obj, Targs &&... Fargs)
 
 
     try {
-        return ConvertToCpp<Ret>(ret);
+        return convert_to_cpp<Ret>(ret);
     }
     catch(const std::exception & ex)
     {
@@ -82,23 +82,23 @@ Ret CallPyFunc(const pybind11::object & obj, Targs &&... Fargs)
  * \param [in] Fargs Arguments to call the function with
  */
 template<typename Ret, typename... Targs>
-Ret CallPyFuncAttr(const pybind11::object & obj, const char * attribute, Targs &&... Fargs)
+Ret call_py_func_attr(const pybind11::object & obj, const char * attribute, Targs &&... Fargs)
 {
     using pulsar::exception::PythonCallException;
     using pulsar::exception::GeneralException;
-    using pulsar::exception::Assert;
+    using pulsar::exception::psr_assert;
 
-    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
 
     int nargs = static_cast<int>(sizeof...(Fargs));
 
-    if(!HasCallableAttr(obj, attribute))
+    if(!has_callable_attr(obj, attribute))
         throw PythonCallException("Python object does not have callable attribute!",
                                   "function", attribute,
                                   "nargs", nargs);
     
     pybind11::object objattr = obj.attr(attribute);
-    return CallPyFunc<Ret>(objattr, std::forward<Targs>(Fargs)...); 
+    return call_py_func<Ret>(objattr, std::forward<Targs>(Fargs)...); 
 }
 
 

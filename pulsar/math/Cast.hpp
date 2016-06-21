@@ -23,7 +23,7 @@ namespace math {
 template<typename Target, typename Source>
 Target numeric_cast(const Source & s)
 {
-    return detail::ExactCast<Target, Source>::Cast(s);
+    return detail::ExactCast<Target, Source>::cast(s);
 }
 
 

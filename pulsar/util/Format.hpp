@@ -28,11 +28,11 @@ namespace util {
  * \param [in] Fargs The arguments to the format string
  */
 template<typename... Targs>
-void FormatStream(std::ostream & os, const std::string & fmt,
+void format_stream(std::ostream & os, const std::string & fmt,
                   const Targs&... Fargs)
 {
     try {
-      vprintfcpp::FormatStream(os, fmt, Fargs...);
+      vprintfcpp::format_stream(os, fmt, Fargs...);
     }
     catch(std::exception & ex)
     {
@@ -55,10 +55,10 @@ void FormatStream(std::ostream & os, const std::string & fmt,
  * \return a Formatted string
  */
 template<typename... Targs>
-std::string FormatString(const std::string & fmt, const Targs&... Fargs)
+std::string format_string(const std::string & fmt, const Targs&... Fargs)
 {
     try {
-      return vprintfcpp::FormatString(fmt, Fargs...);
+      return vprintfcpp::format_string(fmt, Fargs...);
     }
     catch(std::exception & ex)
     {
@@ -74,18 +74,18 @@ std::string FormatString(const std::string & fmt, const Targs&... Fargs)
 
 // Instantiate some commonly-used templates
 // Zero arguments
-extern template void FormatStream<>(std::ostream &, const std::string &);
-extern template std::string FormatString<>(const std::string &);
+extern template void format_stream<>(std::ostream &, const std::string &);
+extern template std::string format_string<>(const std::string &);
 
 // One argument
 #define DECLARE_EXTERN_TEMPLATE_FORMAT_1(type1) \
-        extern template void FormatStream<type1>(std::ostream &, const std::string &, const type1 &); \
-        extern template std::string FormatString<type1>(const std::string &, const type1 &);
+        extern template void format_stream<type1>(std::ostream &, const std::string &, const type1 &); \
+        extern template std::string format_string<type1>(const std::string &, const type1 &);
 
 // Two arguments
 #define DECLARE_EXTERN_TEMPLATE_FORMAT_2(type1, type2) \
-        extern template void FormatStream<type1, type2>(std::ostream &, const std::string &, const type1 &, const type2 &); \
-        extern template std::string FormatString<type1, type2>(const std::string &, const type1 &, const type2 &);
+        extern template void format_stream<type1, type2>(std::ostream &, const std::string &, const type1 &, const type2 &); \
+        extern template std::string format_string<type1, type2>(const std::string &, const type1 &, const type2 &);
 
 DECLARE_EXTERN_TEMPLATE_FORMAT_1(std::string)
 DECLARE_EXTERN_TEMPLATE_FORMAT_1(int)

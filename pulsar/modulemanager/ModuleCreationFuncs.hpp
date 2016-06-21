@@ -23,7 +23,7 @@ namespace modulemanager {
  *
  * This object contains a map of module names to functions that create
  * an object by that name. When a module is loaded, a
- * ModuleCreationFuncs object gets returned from the InsertSupermodule
+ * ModuleCreationFuncs object gets returned from the insert_supermodule
  * function. The ModuleManager then uses the information stored within
  * to populate its module creation map.
  */
@@ -47,9 +47,9 @@ class ModuleCreationFuncs
          * \param [in] modulename The name of the module
          */
         template<typename T>
-        void AddCppCreator(const std::string & modulename)
+        void add_cpp_creator(const std::string & modulename)
         {
-            Func cc = std::bind(&ModuleCreationFuncs::CppConstructorWrapper_<T>, std::placeholders::_1);
+            Func cc = std::bind(&ModuleCreationFuncs::cpp_constructor_wrapper_<T>, std::placeholders::_1);
             creators_.emplace(modulename, cc);
         }
 
@@ -59,10 +59,10 @@ class ModuleCreationFuncs
          * \param [in] modulename The name of the module
          * \param [in] cls The module to add. This should be a python class.
          */
-        void AddPyCreator(const std::string & modulename, const pybind11::object & cls)
+        void add_py_creator(const std::string & modulename, const pybind11::object & cls)
         {
             //! \todo check if it is a class?
-            Func m = std::bind(&ModuleCreationFuncs::PyConstructorWrapper_, cls, std::placeholders::_1);
+            Func m = std::bind(&ModuleCreationFuncs::py_constructor_wrapper_, cls, std::placeholders::_1);
             creators_.emplace(modulename, m);
         }
 
@@ -72,7 +72,7 @@ class ModuleCreationFuncs
          * \param [in] modulename The name of the module to query
          * \return True if this object can create a module with name \p modulename
          */
-        bool HasCreator(const std::string & modulename) const
+        bool has_creator(const std::string & modulename) const
         {
             return creators_.count(modulename);
         }
@@ -86,9 +86,9 @@ class ModuleCreationFuncs
          * \param [in] modulename The name of the module
          * \return A function that can create a module with the name \p modulename
          */
-        const Func & GetCreator(const std::string & modulename) const
+        const Func & get_creator(const std::string & modulename) const
         {
-            if(!HasCreator(modulename))
+            if(!has_creator(modulename))
                 throw exception::GeneralException("I don't have a creator for this module",
                                        "modulename", modulename);
 
@@ -98,7 +98,7 @@ class ModuleCreationFuncs
 
         /*! \brief Delete all the stored creators
          */
-        void Clear(void)
+        void clear(void)
         {
             creators_.clear();
         }
@@ -118,7 +118,7 @@ class ModuleCreationFuncs
         template<typename T>
         static
         detail::ModuleIMPLHolder *
-        CppConstructorWrapper_(ID_t id)
+        cpp_constructor_wrapper_(ID_t id)
         {
             // T::BaseType is the module base type (ie, TwoElectronIntegral, etc)
             // defined in the base type class.
@@ -134,9 +134,9 @@ class ModuleCreationFuncs
          */
         static
         detail::ModuleIMPLHolder *
-        PyConstructorWrapper_(const pybind11::object & cls, ID_t id)
+        py_constructor_wrapper_(const pybind11::object & cls, ID_t id)
         {
-            pybind11::object o = python::CallPyFunc<pybind11::object>(cls, id);
+            pybind11::object o = python::call_py_func<pybind11::object>(cls, id);
             return new detail::PyModuleIMPLHolder(std::move(o));
         }
 };

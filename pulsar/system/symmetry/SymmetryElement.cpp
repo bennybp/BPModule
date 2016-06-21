@@ -20,16 +20,16 @@ namespace system{
     
 bool SymmetryElement::operator==(const SymmetryElement& Other)const{
     double MaxVal=0.0;
-    for(size_t i=0;i<9;++i)MaxVal=math::MaxAbs(MaxVal,Other.Elem[i]);
+    for(size_t i=0;i<9;++i)MaxVal=math::max_abs(MaxVal,Other.element_matrix[i]);
     double Tol=0.1*MaxVal;
     bool MatSame=true;
     for(size_t i=0;i<9&&MatSame;++i)
-        MatSame=(fabs(Elem[i]-Other.Elem[i])<Tol);
-    return MatSame && SSymbol==Other.SSymbol && HMSymbol==Other.HMSymbol;
+        MatSame=(fabs(element_matrix[i]-Other.element_matrix[i])<Tol);
+    return MatSame && schoenflies_symbol==Other.schoenflies_symbol && hm_symbol==Other.hm_symbol;
 }
     
 std::ostream& SymmetryElement::Print(std::ostream& os)const{
-        os<<SSymbol;
+        os<<schoenflies_symbol;
         //for(size_t i=0;i<3;++i){for(size_t j=0;j<3;++j)os<<" "<<Elem[i*3+j];os<<std::endl;}
         return os;
 }
@@ -54,14 +54,14 @@ inline std::string SSym(size_t n,size_t m){
 }
 
 Rotation::Rotation(const Vector_t& Axis,size_t n,size_t m):
-    SymmetryElement(math::Rotation(Axis,ToDegrees(n,m)),"C_"+SSym(n,m),
+    SymmetryElement(math::rotation(Axis,ToDegrees(n,m)),"C_"+SSym(n,m),
                     to_string(n)){}                            
 
 MirrorPlane::MirrorPlane(const Vector_t& Norm):
-    SymmetryElement(math::Reflection(Norm),"s","m"){}
+    SymmetryElement(math::reflection(Norm),"s","m"){}
 
 ImproperRotation::ImproperRotation(const Vector_t& Axis,size_t n,size_t m):
-    SymmetryElement(math::RotoReflection(Axis,ToDegrees(n,m)),"S_"+SSym(n,m),
+    SymmetryElement(math::roto_reflection(Axis,ToDegrees(n,m)),"S_"+SSym(n,m),
                     "["+to_string(n%2==1?n*2:(n%4==0?n:n/2))+"]"){}
     
 }}//End namespaces

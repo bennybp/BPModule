@@ -22,12 +22,12 @@ ConstModuleTreeIter::ConstModuleTreeIter(const ModuleTree * mtree,
 {
     if(mtree == nullptr)
         throw ModuleManagerException("Nullptr given to ConstModuleTreeIter");
-    if(!mtree->HasID(startid))
+    if(!mtree->has_id(startid))
         throw ModuleManagerException("Starting ID given to ConstModuleTreeIter does not exist in the tree");
 
     // don't do the lookup if this is being constructed for "end"
     if(curid_ != MAXVAL)
-        curnode_ = &mtree_->GetByID(curid_);
+        curnode_ = &mtree_->get_by_id(curid_);
 }
 
 
@@ -43,7 +43,7 @@ ConstModuleTreeIter & ConstModuleTreeIter::operator++()
     if(curnode_->children.size() > 0)
     {
         curid_ = *(curnode_->children.begin());
-        curnode_ = &mtree_->GetByID(curid_);
+        curnode_ = &mtree_->get_by_id(curid_);
         return *this;
     }
     else
@@ -54,7 +54,7 @@ ConstModuleTreeIter & ConstModuleTreeIter::operator++()
 
         while(parentid != 0 && curid_ != startid_)
         {
-            const ModuleTreeNode * parent = &mtree_->GetByID(parentid);
+            const ModuleTreeNode * parent = &mtree_->get_by_id(parentid);
 
             ID_t id = curid_; // for lambda
 
@@ -74,7 +74,7 @@ ConstModuleTreeIter & ConstModuleTreeIter::operator++()
             {
                 // we have a sibling!
                 curid_ = *nextit;
-                curnode_ = &mtree_->GetByID(curid_);
+                curnode_ = &mtree_->get_by_id(curid_);
                 return *this;
             }
         }
@@ -99,15 +99,15 @@ ConstModuleTreeIter ConstModuleTreeIter::operator++(int)
 
 const ModuleTreeNode & ConstModuleTreeIter::operator*()const
 {
-    return GetRef();
+    return get_ref();
 }
 
 const ModuleTreeNode * ConstModuleTreeIter::operator->()const
 {
-    return &(GetRef());
+    return &(get_ref());
 }
 
-const ModuleTreeNode & ConstModuleTreeIter::GetRef()const
+const ModuleTreeNode & ConstModuleTreeIter::get_ref()const
 {
     if(curnode_ == nullptr)
         throw ModuleManagerException("Nullptr dereference in ConstModuleTreeIter");
@@ -128,7 +128,7 @@ bool ConstModuleTreeIter::operator!=(const ConstModuleTreeIter & rhs) const
     return !( (*this) == rhs);
 }
 
-void ConstModuleTreeIter::Advance(void)
+void ConstModuleTreeIter::advance(void)
 {
     ++(*this);
 }
@@ -145,12 +145,12 @@ ConstModuleFlatTreeIter::ConstModuleFlatTreeIter(const MapType *  m,
 
 const ModuleTreeNode & ConstModuleFlatTreeIter::operator*()const
 {
-    return GetRef();
+    return get_ref();
 }
 
 const ModuleTreeNode * ConstModuleFlatTreeIter::operator->()const
 {
-    return &(GetRef());
+    return &(get_ref());
 }
 
 ConstModuleFlatTreeIter & ConstModuleFlatTreeIter::operator++()
@@ -166,7 +166,7 @@ ConstModuleFlatTreeIter ConstModuleFlatTreeIter::operator++(int)
     return ret;
 }
 
-const ModuleTreeNode & ConstModuleFlatTreeIter::GetRef()const
+const ModuleTreeNode & ConstModuleFlatTreeIter::get_ref()const
 {
     if(curit_ == map_->end())
         throw ModuleManagerException("Attempting to dereference invalid iterator in ConstModuleFlatTreeIter");
@@ -185,7 +185,7 @@ bool ConstModuleFlatTreeIter::operator!=(const ConstModuleFlatTreeIter & rhs) co
     return !( (*this) == rhs);
 }
 
-void ConstModuleFlatTreeIter::Advance(void)
+void ConstModuleFlatTreeIter::advance(void)
 {
     ++(*this);
 }

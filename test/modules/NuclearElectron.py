@@ -34,53 +34,53 @@ def CompareList(lst1, lst2, tol):
 def Run(mm):
     try:
 
-        out = GetGlobalOut()
+        out = get_global_output()
 
         # Load the python modules
         #             supermodule              module name    key
-        mm.LoadModule("OneElectronIntegrals",  "OneElectronPotential",     "AO_NUCEL")
-        mm.ChangeOption("AO_NUCEL", "grid", "ATOMS")
-        mm.Print(out)
-        mm.SanityCheck()
+        mm.load_module("Integrals",  "OneElectronPotential",     "AO_NUCEL")
+        mm.change_option("AO_NUCEL", "grid", "ATOMS")
+        mm.print(out)
+        mm.sanity_check()
   
         atoms = list(water2)
         u = AtomSetUniverse()
         for a in atoms:
-            u.Insert(a)
+            u.insert(a)
         s = System(u, True)
 
-        s = ApplySingleBasis("Primary","sto-3g",s)
+        s = apply_single_basis("Primary","sto-3g",s)
         wfn = Wavefunction()
         wfn.system = s
-        bs = s.GetBasisSet("Primary")
+        bs = s.get_basis_set("Primary")
 
          
-        nr = mm.GetModule("AO_NUCEL", 0)
-        nr.EnableDebug(True)
-        nr.Initialize(0, wfn, bs, bs)
+        nr = mm.get_module("AO_NUCEL", 0)
+        nr.enable_debug(True)
+        nr.initialize(0, wfn, bs, bs)
 
         tester = Tester("Testing Nuclear Electron Attraction integrals")
-        tester.PrintHeader()
+        tester.print_header()
 
         outbuf = array.array('d', [0]*64)
-        n = nr.Calculate(0, 0, outbuf) 
-        print("Calculated {} integrals".format(n))
+        n = nr.calculate(0, 0, outbuf) 
+        print("calculated {} integrals".format(n))
         print(outbuf[:n])
 
-        #tester.TestValue("H2O Nuclear repulsion", True, CompareList(ref_h2o, list(outbuf[:n]), 1e-14))
+        #tester.test_value("H2O Nuclear repulsion", True, CompareList(ref_h2o, list(outbuf[:n]), 1e-14))
 
-        tester.PrintResults() 
+        tester.print_results() 
 
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler\n")
+      print_global_output("Caught exception in main handler\n")
       traceback.print_exc()
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 
 with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-psr.Finalize()
+psr.finalize()

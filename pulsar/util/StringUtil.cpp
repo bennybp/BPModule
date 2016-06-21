@@ -12,66 +12,66 @@ namespace pulsar{
 namespace util {
 
 
-void ToLower(std::string & str)
+void to_lower(std::string & str)
 {
     std::transform(str.begin(), str.end(), str.begin(), ::tolower);
 }
 
 
-std::string ToLower_Copy(std::string str)
+std::string to_lower_copy(std::string str)
 {
-    ToLower(str);
+    to_lower(str);
     return str;
 }
 
-void LeftTrim(std::string & s)
+void left_trim(std::string & s)
 {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
 }
 
-void RightTrim(std::string & s)
+void right_trim(std::string & s)
 {
     s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
 }
 
-void Trim(std::string & s)
+void trim(std::string & s)
 {
-    RightTrim(s);
-    LeftTrim(s);
+    right_trim(s);
+    left_trim(s);
 }
 
-std::string LeftTrim_Copy(std::string s)
+std::string left_trim_copy(std::string s)
 {
-    LeftTrim(s);
+    left_trim(s);
     return s;
 }
 
-std::string RightTrim_Copy(std::string s)
+std::string right_trim_copy(std::string s)
 {
-    RightTrim(s);
+    right_trim(s);
     return s;
 }
 
-std::string Trim_Copy(std::string s)
+std::string trim_copy(std::string s)
 {
-    Trim(s);
+    trim(s);
     return s;
 }
 
 
 bool CaseInsensitiveLess::operator()(std::string lhs, std::string rhs) const
 {
-    ToLower(lhs);
-    ToLower(rhs);
+    to_lower(lhs);
+    to_lower(rhs);
     std::less<std::string> comp;
     return comp(lhs, rhs);
 }
 
 
-bool CaseInsensitiveTrimLess::operator()(std::string lhs, std::string rhs) const
+bool CaseInsensitivetrimLess::operator()(std::string lhs, std::string rhs) const
 {
-    Trim(lhs);    Trim(rhs);
-    ToLower(lhs); ToLower(rhs);
+    trim(lhs);    trim(rhs);
+    to_lower(lhs); to_lower(rhs);
     std::less<std::string> comp;
     return comp(lhs, rhs);
 }
@@ -79,24 +79,24 @@ bool CaseInsensitiveTrimLess::operator()(std::string lhs, std::string rhs) const
 
 bool CaseInsensitiveEquality::operator()(std::string lhs, std::string rhs) const
 {
-    ToLower(lhs);
-    ToLower(rhs);
+    to_lower(lhs);
+    to_lower(rhs);
     std::equal_to<std::string> comp;
     return comp(lhs, rhs);
 }
 
 
-bool CaseInsensitiveTrimEquality::operator()(std::string lhs, std::string rhs) const
+bool CaseInsensitivetrimEquality::operator()(std::string lhs, std::string rhs) const
 {
-    Trim(lhs);    Trim(rhs);
-    ToLower(lhs); ToLower(rhs);
+    trim(lhs);    trim(rhs);
+    to_lower(lhs); to_lower(rhs);
     std::equal_to<std::string> comp;
     return comp(lhs, rhs);
 }
 
 
 
-std::string Line(char c, int n)
+std::string line(char c, int n)
 {
     return std::string(n, c) + "\n";
 }

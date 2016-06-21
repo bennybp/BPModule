@@ -54,9 +54,9 @@ void Wavefunction::hash(bphash::Hasher & h) const
 }
 
 
-bphash::HashValue Wavefunction::MyHash(void) const
+bphash::HashValue Wavefunction::my_hash(void) const
 {
-    return bphash::MakeHash(bphash::HashType::Hash128, *this);
+    return bphash::make_hash(bphash::HashType::Hash128, *this);
 }
 
 

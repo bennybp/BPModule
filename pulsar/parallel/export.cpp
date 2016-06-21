@@ -17,8 +17,8 @@ void export_pybind11(pybind11::module & mtop)
     pybind11::module m = mtop.def_submodule("parallel", "Parallelization stuff");
 
     // Parallelization
-    m.def("Init", Init);
-    m.def("Finalize", Finalize);
+    m.def("initialize", initialize);
+    m.def("finalize", finalize);
 }
 
 

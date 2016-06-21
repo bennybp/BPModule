@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief Global output printing (source)
+ * \brief global_ output printing (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -24,7 +24,7 @@ bool usecolor_ = false;
 std::unique_ptr<OutputStream> globalout_;
 
 
-void CreateGlobalOut_(void)
+void create_global_out_(void)
 {
     globalout_ = std::unique_ptr<OutputStream>(new OutputStream(std::cout.rdbuf()));
 }
@@ -37,14 +37,14 @@ namespace pulsar{
 namespace output {
 
 
-OutputStream & GetGlobalOut(void)
+OutputStream & get_global_output(void)
 {
     if(!globalout_)
-        CreateGlobalOut_();
+        create_global_out_();
     return *globalout_;
 }
 
-void SetGlobalOut_Stdout(void)
+void set_global_out_to_stdout(void)
 {
     if(globalout_)
     {
@@ -52,16 +52,16 @@ void SetGlobalOut_Stdout(void)
         globalout_.reset();
     }
 
-    CreateGlobalOut_();
+    create_global_out_();
 }
 
 
-bool ColorEnabled(void) noexcept
+bool color_enabled(void) noexcept
 {
     return usecolor_;
 }
 
-void EnableColor(bool enabled) noexcept
+void enable_color(bool enabled) noexcept
 {
     usecolor_ = enabled;
 }

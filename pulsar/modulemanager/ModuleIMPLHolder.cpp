@@ -25,7 +25,7 @@ PyModuleIMPLHolder::PyModuleIMPLHolder(const pybind11::object & mod)
 
 modulebase::ModuleBase * PyModuleIMPLHolder::CppPtr(void) const
 {
-    return python::ConvertToCpp<modulebase::ModuleBase *>(mod_);
+    return python::convert_to_cpp<modulebase::ModuleBase *>(mod_);
 }
 
 pybind11::object PyModuleIMPLHolder::PythonObject(void) const

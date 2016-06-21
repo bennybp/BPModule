@@ -29,21 +29,21 @@ class AOIterator
                 const BasisShellBase & sh = shells[i].get();
 
                 // store the total number of functions
-                totalnfunc_ *= sh.NFunctions();
+                totalnfunc_ *= sh.n_functions();
 
                 genidx_[i] = funcidx_[i] = shellfuncidx_[i] = 0;
 
-                if(splitcombined && sh.IsCombinedAM())
+                if(splitcombined && sh.is_combined_am())
                 {
                     ngen_[i] = 1;
-                    nfunc_[i].push_back(sh.NFunctions());
+                    nfunc_[i].push_back(sh.n_functions());
                 }
                 else
                 {
-                    ngen_[i] = sh.NGeneral();
+                    ngen_[i] = sh.n_general_contractions();
                     nfunc_[i].resize(ngen_[i]);
                     for(size_t j = 0; j < ngen_[i]; j++)
-                        nfunc_[i][j] = sh.GeneralNFunctions(j);
+                        nfunc_[i][j] = sh.general_n_functions(j);
                 }
             }
 
@@ -57,32 +57,32 @@ class AOIterator
         AOIterator(AOIterator &&) = default;
         AOIterator & operator=(AOIterator &&) = default;
 
-        size_t NFunctions(void) const noexcept
+        size_t n_functions(void) const noexcept
         {
             return totalnfunc_;
         } 
 
-        bool Valid(void) const noexcept
+        bool valid(void) const noexcept
         {
             return valid_;
         }
 
-        size_t TotalIdx(void) const noexcept
+        size_t total_idx(void) const noexcept
         {
             return totalidx_;
         }
 
         template<int N>
-        size_t GeneralIdx(void) const noexcept
+        size_t general_idx(void) const noexcept
         {
             return std::get<N>(genidx_);
         }
 
 
-        size_t GeneralIdx(int n) const ASSERTIONS_ONLY
+        size_t general_idx(int n) const ASSERTIONS_ONLY
         {
             using namespace pulsar::exception;
-            Assert<GeneralException>(n < N, "Given index is beyond the number of shells I have"); 
+            psr_assert<GeneralException>(n < N, "Given index is beyond the number of shells I have"); 
             return genidx_[n];
         }
 
@@ -90,39 +90,39 @@ class AOIterator
         /*! \brief Return the index of the current function in current general contraction
          */
         template<int N>
-        size_t FunctionIdx(void) const noexcept
+        size_t function_idx(void) const noexcept
         {
             return std::get<N>(funcidx_);
         }
 
 
-        size_t FunctionIdx(int n) const ASSERTIONS_ONLY
+        size_t function_idx(int n) const ASSERTIONS_ONLY
         {
             using namespace pulsar::exception;
-            Assert<GeneralException>(n >= 0 && n < N, "Given index is beyond the number of shells I have");
+            psr_assert<GeneralException>(n >= 0 && n < N, "Given index is beyond the number of shells I have");
             return funcidx_[n];
         }
 
         /*! \brief Return the index of the current function with respect to the beginning of the shell
          */ 
         template<int N>
-        size_t ShellFunctionIdx(void) const noexcept
+        size_t shell_function_idx(void) const noexcept
         {
             return std::get<N>(shellfuncidx_);
         }
 
 
-        size_t ShellFunctionIdx(int n) const ASSERTIONS_ONLY
+        size_t shell_function_idx(int n) const ASSERTIONS_ONLY
         {
             using namespace pulsar::exception;
-            Assert<GeneralException>(n >= 0 && n < N, "Given index is beyond the number of shells I have");
+            psr_assert<GeneralException>(n >= 0 && n < N, "Given index is beyond the number of shells I have");
             return shellfuncidx_[n];
         }
 
 
-        bool Next(void) noexcept
+        bool next(void) noexcept
         {
-            if(!Valid())
+            if(!valid())
                 return false;
 
             totalidx_++;

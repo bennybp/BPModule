@@ -47,7 +47,7 @@ typedef math::Universe<Atom> AtomSetUniverse;
  * cannot be changed in any way. This allows for consistency when
  * atoms are shared among may System objects (via the universe).
  * Changing the Atoms themselves require making copies of the Atom.
- * This can be accomplished easily through the System::Transform function,
+ * This can be accomplished easily through the System::transform function,
  * which returns a new System containing a new universe. This new system
  * is completely divorced from the original and does not share any resources
  * with it.
@@ -160,57 +160,57 @@ public:
     size_t size(void) const;
 
     /*! \brief Get the charge of the system */
-    double GetCharge(void) const;
+    double get_charge(void) const;
     
     /*! \brief Set the charge of the system */
-    void SetCharge(double charge);
+    void set_charge(double charge);
 
     /*! \brief Get the charge of the system as determined by summing
      *         the charges on all atoms */
-    double GetSumCharge(void) const;
+    double get_sum_charge(void) const;
 
     /*! \brief Get the number of electrons in the system */
-    double GetNElectrons(void) const;
+    double get_n_electrons(void) const;
     
     /*! \brief Set the number of electrons in the system */
-    void SetNElectrons(double nelectrons);
+    void set_n_electrons(double nelectrons);
 
     /*! \brief Get the number of electrons in the system as
      *         determined by summing the number of electrons for all atoms*/
-    double GetSumNElectrons(void) const;
+    double get_sum_n_electrons(void) const;
 
     /*! \brief Get the multiplicity of the System */
-    double GetMultiplicity(void) const;
+    double get_multiplicity(void) const;
 
     /*! \brief Set the multiplicity of the System */
-    void SetMultiplicity(double m);
+    void set_multiplicity(double m);
     
     /*! \brief Returns the space associated with the system*/
-    Space GetSpace(void) const;
+    Space get_space(void) const;
     
     /*! \brief Sets the space associated with the system*/
-    void SetSpace(const Space& space);
+    void set_space(const Space& space);
 
     ///Returns true if the system contains the atom
-    bool Contains(const Atom& AnAtom)const;
+    bool count(const Atom& AnAtom)const;
 
     ///Compares the general information for the system (charge, etc)
-    bool CompareInfo(const System & RHS)const;
+    bool compare_info(const System & RHS)const;
 
 
     /*! \brief Obtain a hash of this system */
-    bphash::HashValue MyHash(void) const;
+    bphash::HashValue my_hash(void) const;
 
     ///@}
 
 
-    /* Printing
+    /* printing
      * \todo What to do about printing
      */
-    std::string ToString(void) const;
+    std::string to_string(void) const;
 
 
-    void Print(std::ostream & os) const;
+    void print(std::ostream & os) const;
 
 
     /*! \name Iteration over atoms
@@ -243,10 +243,10 @@ public:
      * 
      * Uses atomic masses (abundance-weighted isotope masses)
      */
-    math::Point CenterOfMass(void) const;
+    math::Point center_of_mass(void) const;
 
     /*! \brief Find the center of nuclear charge */
-    math::Point CenterOfNuclearCharge(void) const;
+    math::Point center_of_nuclear_charge(void) const;
 
     ///@}
 
@@ -261,19 +261,19 @@ public:
      *
      * \todo Exceptions from MathSet
      */
-    System & Insert(const Atom & atom);
+    System & insert(const Atom & atom);
     
     ///For compatability with STL algorithms
     template<typename T>
     System & insert(const T&,const Atom& atom){
-        return this->Insert(atom);
+        return this->insert(atom);
     }
     
     ///Range based insertion
     template<typename Begin_t,typename End_t>
     System & insert(Begin_t begin,End_t end){
         while(begin!=end){
-            this->Insert(*begin);
+            this->insert(*begin);
             ++begin;
         }
         return *this;
@@ -285,24 +285,24 @@ public:
      *
      * \todo Exceptions from MathSet
      */
-    System & Insert(Atom && atom);
+    System & insert(Atom && atom);
     
     ///For compatability with STL algorithms
     template<typename T>
     System & insert(const T&,Atom&& atom){
-        return this->Insert(atom);
+        return this->insert(atom);
     }
     
 
-    System & UnionAssign(const System& RHS);
-    System Union(const System& RHS) const;
-    System & IntersectionAssign(const System& RHS);
-    System Intersection(const System& RHS) const;
-    System & DifferenceAssign(const System& RHS);
-    System Difference(const System& RHS) const;
+    System & union_assign(const System& RHS);
+    System set_union(const System& RHS) const;
+    System & intersection_assign(const System& RHS);
+    System intersection(const System& RHS) const;
+    System & difference_assign(const System& RHS);
+    System difference(const System& RHS) const;
     
     /*! \brief Return all atoms that are in the universe but not in this system */
-    System Complement(void) const;
+    System complement(void) const;
 
     /** \brief Returns true if this is a proper subset of other
      * 
@@ -314,7 +314,7 @@ public:
      *   \return True if this is a proper subset of other
      *
      */
-    bool IsProperSubsetOf(const System& RHS) const;
+    bool is_proper_subset_of(const System& RHS) const;
 
 
     /** \brief Returns true if this is a subset of other
@@ -327,7 +327,7 @@ public:
      *   \return True if this is a subset of other
      *
      */
-    bool IsSubsetOf(const System& RHS) const;
+    bool is_subset_of(const System& RHS) const;
 
 
     /** \brief Returns true if this is a proper superset of other
@@ -339,7 +339,7 @@ public:
      *  \return True if this is a proper superset of other
      *
      */
-    bool IsProperSupersetOf(const System& RHS) const;
+    bool is_proper_superset_of(const System& RHS) const;
 
 
     /** \brief Returns true if this is a superset of other
@@ -350,10 +350,10 @@ public:
      *  \return true if this is a superset of other
      *  
      */
-    bool IsSupersetOf(const System& RHS) const;
+    bool is_superset_of(const System& RHS) const;
 
     /*! \brief Return a subset of atoms in the system */
-    System Partition(SelectorFunc selector) const;
+    System partition(SelectorFunc selector) const;
 
     
     ///@}
@@ -417,12 +417,12 @@ public:
      * 
      * Returns false if no atoms have the basis set
      */
-    bool HasBasisSet(const std::string & basislabel) const;
+    bool has_basis_set(const std::string & basislabel) const;
 
 
     /*! \brief Obtain a basis set with the given label
      */
-    BasisSet GetBasisSet(const std::string & basislabel) const;
+    BasisSet get_basis_set(const std::string & basislabel) const;
 
     ///@}
 
@@ -434,19 +434,19 @@ public:
     ///@{
 
     /*! \brief Perform a generic transformation to atoms in the system */
-    System Transform(TransformerFunc transformer) const;
+    System transform(TransformerFunc Transformer) const;
 
-    /*! \brief Translate the system
+    /*! \brief translate the system
      * 
      * \tparam VectorType A type corresponding to a VectorConcept
      */
     template<typename VectorType>
-    System Translate(const VectorType & vec) const
+    System translate(const VectorType & vec) const
     {
-        return Transform(std::bind(math::TranslatePoint_Copy<Atom, VectorType>, std::placeholders::_1, vec));
+        return transform(std::bind(math::translate_point_copy<Atom, VectorType>, std::placeholders::_1, vec));
     }
 
-    /*! \brief Rotates the system point by point
+    /*! \brief rotates the system point by point
      * 
      *  Given a rotation matrix R, this function takes the point from the
      *  column space to the row space.
@@ -454,17 +454,17 @@ public:
      * \tparam VectorType A type corresponding to a MatrixConcept
      */
     template<typename MatrixType>
-    System Rotate(const MatrixType & mat) const
+    System rotate(const MatrixType & mat) const
     {
-        return Transform(std::bind(math::RotatePoint_Copy<Atom, MatrixType>, std::placeholders::_1, mat));
+        return transform(std::bind(math::rotate_point_copy<Atom, MatrixType>, std::placeholders::_1, mat));
     }
 
 
     /*! \brief Obtain the universe in use by this system
      */
-    std::shared_ptr<const AtomSetUniverse> GetUniverse(void) const
+    std::shared_ptr<const AtomSetUniverse> get_universe(void) const
     {
-        return atoms_.GetUniverse();
+        return atoms_.get_universe();
     }
 
     /*! \brief Obtain the atoms from this system as a new universe
@@ -472,9 +472,9 @@ public:
      * The universe is not linked to this system in any way. Other information
      * (such as symmetry, etc) is obviously not copied.
      */
-    AtomSetUniverse AsUniverse(void) const
+    AtomSetUniverse as_universe(void) const
     {
-        return atoms_.AsUniverse();
+        return atoms_.as_universe();
     }
 
     ///@}
@@ -483,13 +483,13 @@ public:
 typedef std::unordered_map<std::pair<Atom,Atom>,double> DistMat_t;
 
 ///Returns the distance between each pair of atoms in sys
-DistMat_t GetDistance(const System& sys);
+DistMat_t get_distance(const System& sys);
 
 
 typedef std::unordered_map<Atom, std::unordered_set<Atom>> Conn_t;
 ///Returns connectivity data of sys, using covalent radii.  Atoms are considered
 ///bonded if Tolerance*sum of covRaddii is greater than distance
-Conn_t GetConns(const System& sys, double Tolerance = 1.20);
+Conn_t get_connectivity(const System& sys, double Tolerance = 1.20);
 
 /** \brief Given a molecule that has been translated to the center of mass
  *         this function computes the inertia tensor for that system
@@ -575,19 +575,20 @@ Conn_t GetConns(const System& sys, double Tolerance = 1.20);
  *      I_{pq}=\sum_i^Nm_ir^2_{i}\delta_{pq}-m_ir_{ip}r_{iq}
  *   \f]
  */
-std::array<double,9> InertiaTensor(const System& Mol);
+std::array<double,9> inertia_tensor(const System& Mol);
 
 
 inline std::ostream& operator<<(std::ostream& os, const System& Mol)
 {
-    return os << Mol.ToString();
+    return os << Mol.to_string();
 }
 
 //! A map of systems (fragments, etc), MIM uses fact that this is ordered
 typedef std::map<std::string, System> SystemMap;
 
 ///Helper function that converts a system to Angstroms
-System ToAngstroms(const System& sys);
+//! \todo Unused?
+System system_to_angstroms(const System& sys);
 
 
 } // close namespace system

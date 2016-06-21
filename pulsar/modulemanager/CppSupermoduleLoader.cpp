@@ -28,30 +28,30 @@ CppSupermoduleLoader::~CppSupermoduleLoader()
 
     // delete creator functions
     for(auto & it : soinfo_)
-        it.second.creators.Clear();
+        it.second.creators.clear();
 
     // close all the handles
     for(auto & it : soinfo_)
     {
         void * handle = it.second.handle;
 
-        GlobalOutput("Looking to close C++ supermodule %?\n", it.first);
-        FinalizeFunc ffn = reinterpret_cast<FinalizeFunc>(dlsym(handle, "FinalizeSupermodule"));
+        print_global_output("Looking to close C++ supermodule %?\n", it.first);
+        FinalizeFunc ffn = reinterpret_cast<FinalizeFunc>(dlsym(handle, "finalize_supermodule"));
 
         // it's ok if it doesn't exist
         char const * error;
         if((error = dlerror()) != NULL)
-            GlobalDebug("Supermodule %? doesn't have finalization function. Skipping\n", it.first);
+            print_global_debug("Supermodule %? doesn't have finalization function. Skipping\n", it.first);
         else
         {
-            GlobalDebug("Running finalization function in %?\n", it.first);
+            print_global_debug("Running finalization function in %?\n", it.first);
             ffn();
         }
 
         // close the so
         dlclose(handle);
 
-        GlobalOutput("Closed supermodule %?\n", it.first);
+        print_global_output("Closed supermodule %?\n", it.first);
     }
 
     // soinfo_ is cleared via its destructor
@@ -60,7 +60,7 @@ CppSupermoduleLoader::~CppSupermoduleLoader()
 
 
 
-const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::string & spath)
+const ModuleCreationFuncs & CppSupermoduleLoader::load_supermodule(const std::string & spath)
 {
     // Initializing/Finalizing the so file
     typedef void (*InitializeFunc)(void);
@@ -71,7 +71,7 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
     if(spath.size() == 0)
         throw ModuleLoadException("Cannot open supermodule SO file - path not given");
 
-    GlobalDebug("Loading supermodule %?\n", spath);
+    print_global_debug("Loading supermodule %?\n", spath);
 
     if(soinfo_.count(spath) == 0)
     {
@@ -81,7 +81,7 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
         void * handle;
         char const * error; // for dlerror
 
-        GlobalDebug("Supermodule not yet loaded. Looking to open C++ supermodule SO file: %?\n", spath);
+        print_global_debug("Supermodule not yet loaded. Looking to open C++ supermodule SO file: %?\n", spath);
         handle = dlopen(spath.c_str(), RTLD_NOW | RTLD_LOCAL);
 
         // open the module
@@ -90,26 +90,26 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
                                       "path", spath,
                                       "dlerror", std::string(dlerror()));
 
-        GlobalSuccess("Successfully opened supermodule %?\n", spath);
+        print_global_success("Successfully opened supermodule %?\n", spath);
 
-        // Check for the InsertSupermodule function first (before initializing)
-        GeneratorFunc fn = reinterpret_cast<GeneratorFunc>(dlsym(handle, "InsertSupermodule"));
+        // Check for the insert_supermodule function first (before initializing)
+        GeneratorFunc fn = reinterpret_cast<GeneratorFunc>(dlsym(handle, "insert_supermodule"));
         if((error = dlerror()) != NULL)
         {
             dlclose(handle);
-            throw ModuleLoadException("Cannot find InsertSupermodule function in SO file",
+            throw ModuleLoadException("Cannot find insert_supermodule function in SO file",
                                       "path", spath, "dlerror", error);
         }
 
 
         // Now initialize the supermodule if the function exists
-        InitializeFunc ifn = reinterpret_cast<InitializeFunc>(dlsym(handle, "InitializeSupermodule"));
+        InitializeFunc ifn = reinterpret_cast<InitializeFunc>(dlsym(handle, "initialize_supermodule"));
 
         if((error = dlerror()) != NULL) // it's ok if it doesn't exist
-            GlobalDebug("SO file %? doesn't have initialization function. Skipping\n", spath);
+            print_global_debug("SO file %? doesn't have initialization function. Skipping\n", spath);
         else
         {
-            GlobalDebug("Running initialization function for supermodule %?\n", spath);
+            print_global_debug("Running initialization function for supermodule %?\n", spath);
             ifn();
         }
 
@@ -118,13 +118,13 @@ const ModuleCreationFuncs & CppSupermoduleLoader::LoadSupermodule(const std::str
         // and put them in the map, under the key for this supermodule
         soinfo_.emplace(spath, SOInfo{std::move(handle), fn()});  // only line that modifies the object
 
-        GlobalDebug("Finished loading supermodule %?\n", spath);
+        print_global_debug("Finished loading supermodule %?\n", spath);
     }
     else
-        GlobalDebug("Supermodule %? has already been loaded\n", spath);
+        print_global_debug("Supermodule %? has already been loaded\n", spath);
 
     // just to be safe
-    Assert<ModuleManagerException>(soinfo_.count(spath) == 1, "CppSupermoduleLoader SOInfo doesn't this information...");
+    psr_assert<ModuleManagerException>(soinfo_.count(spath) == 1, "CppSupermoduleLoader SOInfo doesn't this information...");
 
     return soinfo_.at(spath).creators;
 }

@@ -45,10 +45,10 @@ namespace math {
  *       \p dest is expected to be that size as well
  */
 template<typename T>
-void ReorderBlock(size_t const * neworder, size_t size,
-                  T const * RESTRICT src,
-                  T * RESTRICT dest,
-                  size_t width, size_t niter) noexcept
+void reorder_block(size_t const * neworder, size_t size,
+                   T const * RESTRICT src,
+                   T * RESTRICT dest,
+                   size_t width, size_t niter) noexcept
 {
     for(size_t n = 0; n < niter; n++)
     {
@@ -96,13 +96,13 @@ void ReorderBlock(size_t const * neworder, size_t size,
  *       elements. \p dest is expected to be that size as well
  */
 template<typename T>
-void ReorderBlock(const std::vector<size_t> & neworder,
-                  T const * RESTRICT src,
-                  T * RESTRICT dest,
-                  size_t width, size_t niter) noexcept
+void reorder_block(const std::vector<size_t> & neworder,
+                   T const * RESTRICT src,
+                   T * RESTRICT dest,
+                   size_t width, size_t niter) noexcept
 {
-    ReorderBlock(neworder.data(), neworder.size(),
-                 src, dest, width, niter);
+    reorder_block(neworder.data(), neworder.size(),
+                  src, dest, width, niter);
 }
 
 
@@ -115,14 +115,14 @@ void ReorderBlock(const std::vector<size_t> & neworder,
  * 
  * For example, src = ABCDEFG, dest = DFBCEGA, will
  * return a vector 3512460. Passing this vector
- * to ReorderBlock will transform \p src into \p dest 
+ * to reorder_block will transform \p src into \p dest 
  *
  * \throw pulsar::exception::MathException if the element of \p dest
  *        is not found in \p src
  */
 template<typename T>
-std::vector<size_t> MakeOrdering(const std::vector<T> & src,
-                                 const std::vector<T> & dest)
+std::vector<size_t> make_ordering(const std::vector<T> & src,
+                                  const std::vector<T> & dest)
 {
     using exception::MathException;
 

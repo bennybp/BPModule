@@ -22,7 +22,7 @@ namespace util {
  * \return A string with each element of \p container joined with \p j in between
  */
 template<typename T>
-std::string Join(const T & container, const std::string & j)
+std::string join(const T & container, const std::string & j)
 {
     if(container.size() == 0)
         return std::string();
@@ -46,7 +46,7 @@ std::string Join(const T & container, const std::string & j)
  *
  * \param [inout] str String to convert to lowercase
  */
-void ToLower(std::string & str);
+void to_lower(std::string & str);
 
 
 /*! \brief Transform a string to lower case, copying to a new string
@@ -54,52 +54,52 @@ void ToLower(std::string & str);
  * \param [in] str String to convert to lowercase
  * \return The string converted to lowercase
  */
-std::string ToLower_Copy(std::string str);
+std::string to_lower_copy(std::string str);
 
 
-/*! \brief Trim a string (beginning)
+/*! \brief trim a string (beginning)
  * 
  * \param [in] s String to trim
  */
-void LeftTrim(std::string & s);
+void left_trim(std::string & s);
 
 
-/*! \brief Trim a string (ending)
+/*! \brief trim a string (ending)
  * 
  * \param [in] s String to trim
  */
-void RightTrim(std::string & s);
+void right_trim(std::string & s);
 
 
-/*! \brief Trim a string (beginning and ending)
+/*! \brief trim a string (beginning and ending)
  * 
  * \param [in] s String to trim
  */
-void Trim(std::string & s);
+void trim(std::string & s);
 
 
-/*! \brief Trim a string (beginning)
+/*! \brief trim a string (beginning)
  * 
  * \param [in] s String to trim
  * \return Copy of s with leading whitespace removed
  */
-std::string LeftTrim_Copy(std::string s);
+std::string left_trim_copy(std::string s);
 
 
-/*! \brief Trim a string _Copy(ending)
+/*! \brief trim a string _copy(ending)
  * 
  * \param [in] s String to trim
  * \return Copy of s with trailing whitespace removed
  */
-std::string RightTrim_Copy(std::string s);
+std::string right_trim_copy(std::string s);
 
 
-/*! \brief Trim a string _Copy(beginning and ending)
+/*! \brief trim a string _copy(beginning and ending)
  * 
  * \param [in] s String to trim
  * \return Copy of s with leading and trailing whitespace removed
  */
-std::string Trim_Copy(std::string s);
+std::string trim_copy(std::string s);
 
 
 
@@ -119,7 +119,7 @@ struct CaseInsensitiveLess
  * Useful for containers (maps) where the key is
  * case insensitive
  */
-struct CaseInsensitiveTrimLess
+struct CaseInsensitivetrimLess
 {
     bool operator()(std::string lhs, std::string rhs) const;
 }; 
@@ -138,7 +138,7 @@ struct CaseInsensitiveEquality
 
 /*! \brief Equality comparison of a case-insensitive string, trimming leading and trailing whitespace
  */
-struct CaseInsensitiveTrimEquality
+struct CaseInsensitivetrimEquality
 {
     bool operator()(std::string lhs, std::string rhs) const;
 }; 
@@ -151,9 +151,7 @@ struct CaseInsensitiveTrimEquality
  * \param [in] c The character to use
  * \param [in] n The number of times to repeat the character
  */
-std::string Line(char c, int n = 80);
-
-
+std::string line(char c, int n = 80);
 
 
 } // close namespace util

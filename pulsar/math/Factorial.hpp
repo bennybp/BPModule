@@ -25,7 +25,7 @@ namespace math {
  *
  * \throw exception::MathException if there is a problem (negative number, overflow/underflow, etc)
  */
-inline uint64_t Factorial(int n)
+inline uint64_t factorial(int n)
 {
     if(n < 0)
         throw exception::MathException("Factorial is not defined for negative integers", "n", n); 
@@ -42,7 +42,7 @@ inline uint64_t Factorial(int n)
  *
  * \throw exception::MathException if there is a problem (negative number, overflow/underflow, etc)
  */
-inline float FactorialF(int n)
+inline float factorial_f(int n)
 {
     if(n < 0)
         throw exception::MathException("Factorial is not defined for negative integers", "n", n); 
@@ -60,12 +60,12 @@ inline float FactorialF(int n)
  *
  * \throw exception::MathException if there is a problem (negative number, overflow/underflow, etc)
  */
-inline double FactorialD(int n)
+inline double factorial_d(int n)
 {
     if(n < 0)
         throw exception::MathException("Factorial is not defined for negative integers", "n", n); 
     if(n > lut::FAC_DOUBLE_LUT_MAX_) 
-        throw exception::MathException("Double type cannot hold factorials this big", "n", n); 
+        throw exception::MathException("double_ type cannot hold factorials this big", "n", n); 
 
     return lut::fac_double_lut_[n];
 }
@@ -73,7 +73,7 @@ inline double FactorialD(int n)
 
 
 /////////////////////////////////////////
-// Double factorial
+// double_ factorial
 /////////////////////////////////////////
 /*! \brief Compute the double factorial of an integer (and return lut::as an integer)
  *
@@ -81,10 +81,10 @@ inline double FactorialD(int n)
  *
  * \throw exception::MathException if there is a problem (negative number, overflow/underflow, etc)
  */
-inline uint64_t DoubleFactorial(int n)
+inline uint64_t double_factorial(int n)
 {
     if(n < -1)
-        throw exception::MathException("Double factorial is not defined for integers < -1", "n", n); 
+        throw exception::MathException("double_ factorial is not defined for integers < -1", "n", n); 
     if(n > lut::DFAC_INT_LUT_MAX_) 
         throw exception::MathException("Integer type cannot hold double factorials this big", "n", n); 
 
@@ -99,10 +99,10 @@ inline uint64_t DoubleFactorial(int n)
  *
  * \throw exception::MathException if there is a problem (negative number, overflow/underflow, etc)
  */
-inline float DoubleFactorialF(int n)
+inline float double_factorial_f(int n)
 {
     if(n < -1)
-        throw exception::MathException("Double factorial is not defined for integers < -1", "n", n); 
+        throw exception::MathException("double_ factorial is not defined for integers < -1", "n", n); 
     if(n > lut::DFAC_FLOAT_LUT_MAX_) 
         throw exception::MathException("Float type cannot hold double factorials this big", "n", n); 
 
@@ -118,12 +118,12 @@ inline float DoubleFactorialF(int n)
  *
  * \throw exception::MathException if there is a problem (negative number, overflow/underflow, etc)
  */
-inline double DoubleFactorialD(int n)
+inline double double_factorial_d(int n)
 {
     if(n < -1)
-        throw exception::MathException("Double factorial is not defined for integers < -1", "n", n); 
+        throw exception::MathException("double_ factorial is not defined for integers < -1", "n", n); 
     if(n > lut::DFAC_DOUBLE_LUT_MAX_) 
-        throw exception::MathException("Double type cannot hold double factorials this big", "n", n); 
+        throw exception::MathException("double_ type cannot hold double factorials this big", "n", n); 
 
     // remember that the array indices are shifted
     return lut::dfac_double_lut_[n+1];
@@ -141,7 +141,7 @@ inline double DoubleFactorialD(int n)
  *
  * \throw exception::MathException if there is a problem (negative number, overflow/underflow, etc)
  */
-inline uint64_t Double2nm1Factorial(int n)
+inline uint64_t double_2nm1_factorial(int n)
 {
     if(n < 0)
         throw exception::MathException("(2n-1)!! is not defined for integers n < 0", "n", n); 
@@ -159,7 +159,7 @@ inline uint64_t Double2nm1Factorial(int n)
  *
  * \throw exception::MathException if there is a problem (negative number, overflow/underflow, etc)
  */
-inline float Double2nm1FactorialF(int n)
+inline float double_2nm1_factorial_f(int n)
 {
     if(n < 0)
         throw exception::MathException("(2n-1)!! is not defined for integers n < 0", "n", n); 
@@ -177,12 +177,12 @@ inline float Double2nm1FactorialF(int n)
  *
  * \throw exception::MathException if there is a problem (negative number, overflow/underflow, etc)
  */
-inline double Double2nm1FactorialD(int n)
+inline double double_2nm1_factorial_d(int n)
 {
     if(n < 0)
         throw exception::MathException("(2n-1)!! is not defined for integers n < 0", "n", n); 
     if(n > lut::DFAC_2NM1_DOUBLE_LUT_MAX_) 
-        throw exception::MathException("Double type cannot hold (2n-1)!! this big", "n", n); 
+        throw exception::MathException("double_ type cannot hold (2n-1)!! this big", "n", n); 
 
     // remember that the array indices are shifted
     return lut::dfac_2nm1_double_lut_[n];

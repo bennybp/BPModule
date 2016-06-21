@@ -16,47 +16,47 @@ import pulsar as psr
 
 def Run(mm):
     try:
-      out = psr.output.GetGlobalOut()
+      out = psr.output.get_global_output()
 
       # Load the python modules
       #             supermodule      module name      key
-      mm.LoadModule("TestModules",   "TestModule1",   "TESTMOD1")
-      mm.LoadModule("TestModules",   "TestPyModule1", "TESTPYMOD1")
+      mm.load_module("TestModules",   "TestModule1",   "TESTMOD1")
+      mm.load_module("TestModules",   "TestPyModule1", "TESTPYMOD1")
 
-      mm.ChangeOption("TESTMOD1", "double_opt_def", 1.111)
-      mm.ChangeOption("TESTMOD1", "int_opt_def", 55 )
-      mm.Print(out)
-      mm.SanityCheck()
+      mm.change_option("TESTMOD1", "double_opt_def", 1.111)
+      mm.change_option("TESTMOD1", "int_opt_def", 55 )
+      mm.print(out)
+      mm.sanity_check()
 
 
-      b1 = mm.GetModule("TESTMOD1", 0)
-      b2 = mm.GetModule("TESTPYMOD1", 0)
+      b1 = mm.get_module("TESTMOD1", 0)
+      b2 = mm.get_module("TESTPYMOD1", 0)
 
-      b1.CallRunTest("TESTMOD1")
-      psr.output.GlobalOutput("\n")
-      b1.CallRunTest("TESTPYMOD1")
-      psr.output.GlobalOutput("\n")
-      b2.CallRunTest("TESTMOD1")
-      psr.output.GlobalOutput("\n")
-      b2.CallRunTest("TESTPYMOD1")
-      psr.output.GlobalOutput("\n")
+      b1.call_run_test("TESTMOD1")
+      psr.output.print_global_output("\n")
+      b1.call_run_test("TESTPYMOD1")
+      psr.output.print_global_output("\n")
+      b2.call_run_test("TESTMOD1")
+      psr.output.print_global_output("\n")
+      b2.call_run_test("TESTPYMOD1")
+      psr.output.print_global_output("\n")
     
     
-      psr.output.GlobalOutput("\nDone testing\n")
+      psr.output.print_global_output("\nDone testing\n")
 
 
     except Exception as e:
-      psr.output.GlobalOutput("Caught exception in main handler\n")
+      psr.output.print_global_output("Caught exception in main handler\n")
       traceback.print_exc()
-      psr.output.GlobalError("\n")
-      psr.output.GlobalError(str(e))
-      psr.output.GlobalError("\n")
+      psr.output.print_global_error("\n")
+      psr.output.print_global_error(str(e))
+      psr.output.print_global_error("\n")
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 
 with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-psr.Finalize()
+psr.finalize()

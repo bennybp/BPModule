@@ -24,39 +24,39 @@ PySupermoduleLoader::~PySupermoduleLoader()
 {
     // delete creator functions
     for(auto & it : objmap_)
-        it.second.creators.Clear();
+        it.second.creators.clear();
 
     // close all the handles
     for(auto & it : objmap_)
     {
-        GlobalOutput("Looking to close python supermodule %?\n", it.first);
+        print_global_output("Looking to close python supermodule %?\n", it.first);
 
-        if(python::HasCallableAttr(it.second.mod, "FinalizeSupermodule"))
+        if(python::has_callable_attr(it.second.mod, "finalize_supermodule"))
         {
-            GlobalDebug("Running finalization function in %?\n", it.first);
-            python::CallPyFuncAttr<void>(it.second.mod, "FinalizeSupermodule");
+            print_global_debug("Running finalization function in %?\n", it.first);
+            python::call_py_func_attr<void>(it.second.mod, "finalize_supermodule");
         }
         else
-            GlobalDebug("Supermodule %? doesn't have finalization function. Skipping\n", it.first);
+            print_global_debug("Supermodule %? doesn't have finalization function. Skipping\n", it.first);
 
-        GlobalOutput("Closed supermodule %?\n", it.first);
+        print_global_output("Closed supermodule %?\n", it.first);
     }
 
     // objmap_ is cleared via its destructor
 }
 
 
-const ModuleCreationFuncs & PySupermoduleLoader::LoadSupermodule(const std::string & spath)
+const ModuleCreationFuncs & PySupermoduleLoader::load_supermodule(const std::string & spath)
 {
     if(spath.size() == 0)
         throw ModuleLoadException("Cannot open python supermodule - path not given");
 
-    GlobalDebug("Loading python supermodule %?\n", spath);
+    print_global_debug("Loading python supermodule %?\n", spath);
 
 
     if(!objmap_.count(spath))
     {
-        GlobalDebug("Supermodule not yet loaded. Looking to import python supermodule: %?\n", spath);
+        print_global_debug("Supermodule not yet loaded. Looking to import python supermodule: %?\n", spath);
 
         // Need a few packages
         pybind11::module mod_sys = pybind11::module::import("sys");
@@ -64,48 +64,48 @@ const ModuleCreationFuncs & PySupermoduleLoader::LoadSupermodule(const std::stri
 
         // spath = full path to module
         // we need the directory above that
-        std::pair<std::string, std::string> splitpath = util::SplitPath(spath);
+        std::pair<std::string, std::string> splitpath = util::split_path(spath);
 
-        GlobalDebug("Importing %?  from  %?\n", splitpath.first, splitpath.second);
+        print_global_debug("Importing %?  from  %?\n", splitpath.first, splitpath.second);
 
         // update the python search paths
         pybind11::object oldpaths = mod_sys.attr("path");
-        mod_sys.attr("path") = python::ConvertToPy(splitpath.first);
+        mod_sys.attr("path") = python::convert_to_py(splitpath.first);
 
-        pybind11::module mod = python::CallPyFuncAttr<pybind11::module>(mod_importlib, "import_module", splitpath.second);
+        pybind11::module mod = python::call_py_func_attr<pybind11::module>(mod_importlib, "import_module", splitpath.second);
 
         // reset the python search paths
         mod_sys.attr("path") = oldpaths;
 
 
-        GlobalSuccess("Successfully imported supermodule %?\n", spath);
+        print_global_success("Successfully imported supermodule %?\n", spath);
 
 
-        // Check for the InsertSupermodule function first (before initializing)
-        if(!python::HasCallableAttr(mod, "InsertSupermodule"))
-            throw ModuleLoadException("Cannot find InsertSupermodule function in python module",
+        // Check for the insert_supermodule function first (before initializing)
+        if(!python::has_callable_attr(mod, "insert_supermodule"))
+            throw ModuleLoadException("Cannot find insert_supermodule function in python module",
                                       "path", spath);
 
 
         // Now initialize if the function exists
-        if(python::HasCallableAttr(mod, "InitializeSupermodule"))
+        if(python::has_callable_attr(mod, "initialize_supermodule"))
         {
-            GlobalDebug("Running initialization function for supermodule %?\n", spath);
-            python::CallPyFuncAttr<void>(mod, "InitializeSupermodule");
+            print_global_debug("Running initialization function for supermodule %?\n", spath);
+            python::call_py_func_attr<void>(mod, "initialize_supermodule");
         }
         else
-            GlobalDebug("Supermodule %? doesn't have initialization function. Skipping\n", spath);
+            print_global_debug("Supermodule %? doesn't have initialization function. Skipping\n", spath);
 
 
         // get the module creation functions
         // and put them right in the map
-        ModuleCreationFuncs creators = python::CallPyFuncAttr<ModuleCreationFuncs>(mod, "InsertSupermodule");
+        ModuleCreationFuncs creators = python::call_py_func_attr<ModuleCreationFuncs>(mod, "insert_supermodule");
 
         objmap_.emplace(spath, PyModInfo{std::move(mod), std::move(creators)});
     }
 
     // just to be safe
-    Assert<ModuleLoadException>(objmap_.count(spath) == 1, "PySupermoduleLoader PyModInfo doesn't have this information...");
+    psr_assert<ModuleLoadException>(objmap_.count(spath) == 1, "PySupermoduleLoader PyModInfo doesn't have this information...");
 
     return objmap_.at(spath).creators;
 }

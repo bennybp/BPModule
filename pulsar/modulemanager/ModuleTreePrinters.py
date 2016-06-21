@@ -1,20 +1,20 @@
-def IterateModuleTree(mm):
-    iterator = mm.FlatTreeBegin()
+def iterate_module_tree(mm):
+    iterator = mm.flat_tree_begin()
 
-    while iterator != mm.FlatTreeEnd():
-        yield iterator.GetRef()
-        iterator.Advance()
-
-
+    while iterator != mm.flat_tree_end():
+        yield iterator.get_ref()
+        iterator.advance()
 
 
 
-def PrintDotTree(mm):
+
+
+def print_dot_tree(mm):
     s = " digraph graphname {\n"
 
     s += "   nodeMaster[shape=box, label=\"INPUT\"]\n"
 
-    for node in IterateModuleTree(mm):
+    for node in iterate_module_tree(mm):
         s += "  node{}[shape=box, label=\"{} [{}]\\n{} v{}\"]\n".format(node.id,
                                                                         node.id,
                                                                         node.modulekey,

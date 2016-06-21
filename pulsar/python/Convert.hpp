@@ -28,13 +28,13 @@ namespace python {
  * \param [in] obj The python object to convert
  */
 template<typename T>
-T ConvertToCpp(const pybind11::object & obj)
+T convert_to_cpp(const pybind11::object & obj)
 {
     using pulsar::exception::PythonConvertException;
     using pulsar::exception::GeneralException;
-    using pulsar::exception::Assert;
+    using pulsar::exception::psr_assert;
 
-    Assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
 
     try {
         return obj.cast<T>();
@@ -42,13 +42,13 @@ T ConvertToCpp(const pybind11::object & obj)
     catch(const std::exception & ex)
     {
         throw PythonConvertException("Cannot convert from python to C++: Conversion failed",
-                                     "fromtype", GetPyClass(obj), "totype", util::DemangleCppType<T>(),
+                                     "fromtype", get_py_class(obj), "totype", util::demangle_cpp_type<T>(),
                                      "what", ex.what());
     }
     catch(...)
     {
         throw PythonConvertException("Cannot convert from python to C++: Conversion failed",
-                                     "fromtype", GetPyClass(obj), "totype", util::DemangleCppType<T>(),
+                                     "fromtype", get_py_class(obj), "totype", util::demangle_cpp_type<T>(),
                                      "what", "unknown exception type");
     }
 }
@@ -64,7 +64,7 @@ T ConvertToCpp(const pybind11::object & obj)
  * \param [in] pol The policy to use for the resulting cast
  */
 template<typename T>
-pybind11::object ConvertToPy(const T & obj,
+pybind11::object convert_to_py(const T & obj,
                              pybind11::return_value_policy pol = pybind11::return_value_policy::copy)
 {
     using pulsar::exception::PythonConvertException;
@@ -77,9 +77,9 @@ pybind11::object ConvertToPy(const T & obj,
         //! \todo fix if this pybind11 is changed to throw an exception
         if(!pyobj)
         {
-            throw PythonConvertException(detail::GetPyException(),
+            throw PythonConvertException(detail::get_py_exception(),
                                          "when", "in converting from C++ to python",
-                                         "fromtype", util::DemangleCppType<T>(),
+                                         "fromtype", util::demangle_cpp_type<T>(),
                                          "info", "Resulting object pointer is null");
         }
         else
@@ -89,13 +89,13 @@ pybind11::object ConvertToPy(const T & obj,
     catch (const std::exception & ex)
     {
         throw PythonConvertException(ex.what(), 
-                                     "fromtype", util::DemangleCppType<T>(),
+                                     "fromtype", util::demangle_cpp_type<T>(),
                                      "when", "in converting from C++ to python");
     }
     catch(...)
     {
         throw PythonConvertException("Caught unknown exception in converting from C++ to python object", 
-                                     "from type", util::DemangleCppType<T>());
+                                     "from type", util::demangle_cpp_type<T>());
     }
 }
 
@@ -113,11 +113,11 @@ pybind11::object ConvertToPy(const T & obj,
  * \return Converted data as a python object
  */
 template<typename T>
-pybind11::object ConvertToPy(const T * const obj, size_t n)
+pybind11::object convert_to_py(const T * const obj, size_t n)
 {
     std::vector<T> v(obj, obj+n);
 
-    return ConvertToPy(v);
+    return convert_to_py(v);
 }
 
 

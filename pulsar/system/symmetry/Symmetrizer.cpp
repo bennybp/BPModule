@@ -28,7 +28,7 @@ namespace system{
 
 using std::make_pair;
 using pulsar::math::Point;
-using pulsar::math::AreEqual;
+using pulsar::math::are_equal;
 using pulsar::math::Dot;
 using pulsar::math::Cross;
 using pulsar::exception::GeneralException;
@@ -42,27 +42,27 @@ typedef std::tuple<System,Vector_t,Matrix_t> MoISys_t;
 
 //The condition for two atoms being equal
 
-inline bool AtomsAreEqual(const Atom& AI,const Atom& BI){
-    return AI.GetZ()==BI.GetZ();
+inline bool atoms_are_equal(const Atom& AI,const Atom& BI){
+    return AI.Z==BI.Z;
 }
 
 //True if manipulated system is symmetrically equivalent to within tol
 
 bool IsGood(const System& Mol,const SymmEl_t& E,const Vector_t& Ax,double Tol){
-    System New=Mol.Rotate(E.Elem);
+    System New=Mol.rotate(E.element_matrix);
     double MaxDist=-1.0;//The furthest any atom is from its closest partner
     Atom AJ;//Which atom MaxDist goes with
     for(const Atom& AI:Mol){
         double MinDist=1E10;//Closest atom should be closer than a few meters...
         for(const Atom& BI:New)
-            MinDist=std::min(AI.Distance(BI),MinDist);
+            MinDist=std::min(AI.distance(BI),MinDist);
         if(MinDist<MaxDist)continue;
         MaxDist=MinDist;
         AJ=AI;
     }
     double a0=1.0/BOHR_RADIUS_ANGSTROMS,Denom=0.0;
-    if(E.SSymbol=="i")Denom=AJ.Magnitude();
-    else if(E.HMSymbol=="m")Denom=fabs(Dot(AJ,Ax));
+    if(E.schoenflies_symbol=="i")Denom=AJ.magnitude();
+    else if(E.hm_symbol=="m")Denom=fabs(Dot(AJ,Ax));
     else{//Use perpindicular distance
         Vector_t Temp=Cross(AJ,Ax);
         Denom=sqrt(Dot(Temp,Temp));
@@ -97,7 +97,7 @@ Vector_t Orient(const T& Axis){
 ///Finds all symmetry equivalent atoms
 
 SEASet_t FindSEAs(const System& Mol,double Tol){
-    DistMat_t DistMat=pulsar::system::GetDistance(Mol);
+    DistMat_t DistMat=pulsar::system::get_distance(Mol);
     SEASet_t SEAs;
     //Little class to enforce equality to within a tolerance
 
@@ -105,7 +105,7 @@ SEASet_t FindSEAs(const System& Mol,double Tol){
         double Tol;
 
         bool operator()(double LHS,double RHS)const{
-            return LHS<RHS && !AreEqual(LHS,RHS,Tol);
+            return LHS<RHS && !are_equal(LHS,RHS,Tol);
         }
     } Comparer;
 
@@ -126,7 +126,7 @@ SEASet_t FindSEAs(const System& Mol,double Tol){
         }
         atomK=atomI;
         for(++atomK;atomK!=Mol.end();++atomK){
-            if(!IsGood.at(*atomK)||!AtomsAreEqual(*atomI,*atomK))continue;
+            if(!IsGood.at(*atomK)||!atoms_are_equal(*atomI,*atomK))continue;
             std::multiset<double,AreLess> CopyColI(ColI);
             for(const Atom atomJ:Mol){
                 if(*atomK==atomJ)continue;
@@ -150,34 +150,34 @@ SEASet_t FindSEAs(const System& Mol,double Tol){
 //}
 
 MoISys_t MoIOrient(const System& Mol){
-    Point CoM=Mol.CenterOfMass();
-    System CenteredMol=Mol.Translate(-1.0*CoM);
-    Matrix_t I=InertiaTensor(CenteredMol);
+    Point CoM=Mol.center_of_mass();
+    System CenteredMol=Mol.translate(-1.0*CoM);
+    Matrix_t I=inertia_tensor(CenteredMol);
     Vector_t Moments{0.0,0.0,0.0};
     math::SymmetricDiagonalize(I,Moments);
     //Our molecule aligned with the principal moments of inertia
-    //System PrinMol=CenteredMol.Rotate(I);
+    //System PrinMol=CenteredMol.rotate(I);
     return std::make_tuple(CenteredMol,Moments,I);
 }
 
 size_t NDegen(const Vector_t& Moments){
     //Taking Trent's percentage based check idea, we'll go with 5% of largest
     double DegenTol=0.05*Moments[2];
-    return AreEqual(Moments[1],Moments[0],DegenTol)+
-            AreEqual(Moments[2],Moments[1],DegenTol)+
-            AreEqual(Moments[2],Moments[0],DegenTol);
+    return are_equal(Moments[1],Moments[0],DegenTol)+
+            are_equal(Moments[2],Moments[1],DegenTol)+
+            are_equal(Moments[2],Moments[0],DegenTol);
 }
 
 Vector_t Transform(const Vector_t& Old,
                    const System& OldSys,const System& NewSys){
-    Point Shift=NewSys.CenterOfMass()-OldSys.CenterOfMass();
+    Point Shift=NewSys.center_of_mass()-OldSys.center_of_mass();
     return {Old[0]+Shift[0],Old[1]+Shift[1],Old[2]+Shift[2]};
 }
 
 typedef std::pair<Vector_t,size_t> Axis_t;
 
 inline bool IsPlanar(const Vector_t& Moments){
-    return math::AreEqual(Moments[0]+Moments[1],Moments[2],0.05*Moments[2]);
+    return math::are_equal(Moments[0]+Moments[1],Moments[2],0.05*Moments[2]);
 }
 
 std::set<Axis_t> NewGetCns(const System& PrinMol,const SEASet_t& SEAs,double Tol){
@@ -190,7 +190,7 @@ std::set<Axis_t> NewGetCns(const System& PrinMol,const SEASet_t& SEAs,double Tol
         while(AtomPair){
             //Condition A for finding C2s
             Point BiSec=(*AtomPair)[0]+(*AtomPair)[1];
-            if(!AreEqual(BiSec,0.0,Tol))
+            if(!are_equal(BiSec,0.0,Tol))
                 Axes.insert(make_pair(Orient(BiSec),2));
             ++AtomPair;
             if(SEA.size()!=2)continue;
@@ -206,25 +206,25 @@ std::set<Axis_t> NewGetCns(const System& PrinMol,const SEASet_t& SEAs,double Tol
         if(SEA.size()==2)continue;
 
 
-        System NSEA(PrinMol.AsUniverse(),false);
+        System NSEA(PrinMol.as_universe(),false);
         for(const Atom atomI:SEA){
             //Condition B for finding C2s
             Axes.insert(std::make_pair(Orient(atomI),2));
-            NSEA.Insert(atomI);
+            NSEA.insert(atomI);
         }
         MoISys_t PrinSEA=MoIOrient(NSEA);
         System NewSEA=std::get<0>(PrinSEA);
         Vector_t SEAMoms=std::get<1>(PrinSEA);
         if(IsPlanar(SEAMoms)){
-            Vector_t PlaneNorm=Orient(math::GetPlane(SEA[0],SEA[1],SEA[2]));
+            Vector_t PlaneNorm=Orient(math::get_plane(SEA[0],SEA[1],SEA[2]));
             Axes.insert(make_pair(PlaneNorm,SEA.size()));
         }
         else{
             Matrix_t Is=std::get<2>(PrinSEA);
             size_t max=3,min=0,k=SEA.size()/2;
             double MomTol=0.05*SEAMoms[2];
-            if(AreEqual(SEAMoms[0],SEAMoms[1],MomTol))min=2;
-            else if(AreEqual(SEAMoms[1],SEAMoms[2],MomTol))max=1;
+            if(are_equal(SEAMoms[0],SEAMoms[1],MomTol))min=2;
+            else if(are_equal(SEAMoms[1],SEAMoms[2],MomTol))max=1;
             else k=2;
             for(size_t i=min;i<max;++i){
                 Vector_t Temp={Is[i*3],Is[i*3+1],Is[i*3+2]};
@@ -245,7 +245,7 @@ inline void FindCoI(const System& Mol,Elems_t& Elems,double Tol){
 
 inline bool IsLinear(const Vector_t& Moments){
     size_t NumDegen=NDegen(Moments);
-    return(NumDegen==1&&AreEqual(Moments[0],0.0,1.0E-3));
+    return(NumDegen==1&&are_equal(Moments[0],0.0,1.0E-3));
 }
 
 //Looks for Cn and if found repeatedly applies it
@@ -256,7 +256,7 @@ void CheckCn(int n,const System& Mol,const Vector_t& Axis,
     if(!IsGood(Mol,Cm,Axis,Tol))return;
     Elems.insert(Cm);
     for(int i=2;i<n;++i)
-        if(math::RelativelyPrime(n,i))
+        if(math::relatively_prime(n,i))
             Elems.insert(Rotation(Axis,n,i));
 }
 
@@ -271,14 +271,14 @@ void CheckSn(size_t n,const System& Mol,const Vector_t& Axis,
     const bool Odd=n%2==1;
     const size_t Max=(Odd?2*n:n);
     for(size_t i=3;i<Max;i+=2){
-        std::pair<size_t,size_t> Frac=math::Reduce(i,n);
+        std::pair<size_t,size_t> Frac=math::reduce(i,n);
         if(Frac==std::make_pair<size_t,size_t>(1,1))continue;//Sn^n
         if(Frac==std::make_pair<size_t,size_t>(1,2))continue;//S2
         Elems.insert(ImproperRotation(Axis,Frac.second,Frac.first));
     }
 }
 
-SymmetryGroup Symmetrizer::GetSymmetry(const System& Mol)const{
+SymmetryGroup Symmetrizer::get_symmetry(const System& Mol)const{
     if(Mol.size()==1)
         return PointGroup::Kh({});
     const double SymTol=0.1;
@@ -294,23 +294,23 @@ SymmetryGroup Symmetrizer::GetSymmetry(const System& Mol)const{
 
     if(IsLinear(Moments)){//Linear molecule
         Elems.insert(Coo);
-        return AssignGroup(Elems);
+        return assign_group(Elems);
     }
 
     //If it's planar that plane is a symmetry element
     if(IsPlanar(Moments)){
         Atom atomI;
         for(const Atom& atomJ: PrinMol)//Can't be at origin
-            if(!AreEqual(atomJ,0.0,SymTol)){
+            if(!are_equal(atomJ,0.0,SymTol)){
                 atomI=atomJ;
                 break;
             }
         Vector_t NatomI=math::Normalize(atomI);
         for(const Atom atomJ:PrinMol){
             if(atomI==atomJ)continue;
-            if(AreEqual(atomJ,0.0,SymTol))continue;
+            if(are_equal(atomJ,0.0,SymTol))continue;
             Vector_t NatomJ=math::Normalize(atomJ);
-            if(!AreEqual(fabs(Dot(NatomI,NatomJ)),1.0,0.001)){//Not linear
+            if(!are_equal(fabs(Dot(NatomI,NatomJ)),1.0,0.001)){//Not linear
                 Vector_t Norm=Orient(Cross(NatomI,NatomJ));
                 MirrorPlane Sigma(Norm);
                 if(IsGood(PrinMol,Sigma,Norm,SymTol))
@@ -324,12 +324,12 @@ SymmetryGroup Symmetrizer::GetSymmetry(const System& Mol)const{
     SEASet_t SEAs=FindSEAs(PrinMol,SymTol);
 
     if(SEAs.size()==PrinMol.size())
-        return AssignGroup(Elems);
+        return assign_group(Elems);
 
     std::set<Axis_t> Axes=NewGetCns(PrinMol,SEAs,SymTol);
 
     for(const Axis_t& axis:Axes){
-        for(int k:math::Factors(axis.second)){
+        for(int k:math::factors(axis.second)){
             if(k==1)continue;
             Rotation Cm(axis.first,k,1);
             size_t Old=Elems.size();
@@ -359,9 +359,9 @@ SymmetryGroup Symmetrizer::GetSymmetry(const System& Mol)const{
 
     //for(const auto& i:Elems)std::cout<<i<<" ";
     //std::cout<<std::endl;
-    std::cout<<AssignGroup(Elems)<<std::endl;
+    std::cout<<assign_group(Elems)<<std::endl;
 
-    return AssignGroup(Elems);
+    return assign_group(Elems);
 }
 
 

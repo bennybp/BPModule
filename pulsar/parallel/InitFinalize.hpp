@@ -31,24 +31,24 @@ const LibTaskForce::Environment& GetEnv();
  * 
  * \todo Make an overload that takes an MPI_COMM instance
  */
-void Init(size_t NThreads);
+void initialize(size_t NThreads);
 
 
 /*! \brief Finalize parallelization functionality
  *
  * This is meant to be called from python
  */
-void Finalize(void);
+void finalize(void);
 
 
 /*! \brief Return the ID (rank) associated with this process
  */
-long GetProcID(void);
+long get_proc_id(void);
 
 
 /*! \brief Return the total number of processes
  */
-long GetNProc(void);
+long get_nproc(void);
 
 
 } // close namespace parallel

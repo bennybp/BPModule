@@ -27,7 +27,7 @@ namespace system {
  * all of the functionality for getting / setting information  about the shell.
  *
  * This class provides two different accesses. The first is a safe, although
- * slower, access via GetAlpha(), etc. These functions check bounds access
+ * slower, access via get_alpha(), etc. These functions check bounds access
  * and return copies of the underlying data.
  *
  * For fast, unsafe access, raw pointers and references to the underlying
@@ -52,35 +52,35 @@ class BasisShellBase
         ///@{ 
 
         /// Get the type of shell
-        ShellType GetType(void) const noexcept { return type_; }
+        ShellType get_type(void) const noexcept { return type_; }
 
         /// Get this shells angular momentum
-        int AM(void) const noexcept { return am_; }
+        int am(void) const noexcept { return am_; }
 
         /*! Get the AM of a specific general contraction
          *
          * \throw pulsar::exception::BasisSetException on out-of-bounds access
          */
-        int GeneralAM(size_t n) const
+        int general_am(size_t n) const
         {
-            ValidateGenIdx_(n);
+            validate_gen_idx_(n);
 
-            // if IsCombinedAM(), first is s, second is p, ...
-            return (IsCombinedAM()) ? n : am_;
+            // if is_combined_am(), first is s, second is p, ...
+            return (is_combined_am()) ? n : am_;
         }
 
         /// Get the number of primitives in this shell
-        size_t NPrim(void) const noexcept { return nprim_; }
+        size_t n_primitives(void) const noexcept { return nprim_; }
 
         /*! \brief Get the number of coefficients in this shell
          * 
          * This takes into account general contractions and combined shells,
          * so it is not necessarily equal to the number of primitives
          */
-        size_t NCoef(void) const noexcept { return nprim_ * ngen_; }
+        size_t n_coefficients(void) const noexcept { return nprim_ * ngen_; }
 
         /// Get the level of general contraction of this shell
-        size_t NGeneral(void) const noexcept { return ngen_; }
+        size_t n_general_contractions(void) const noexcept { return ngen_; }
 
 
         /*! \brief Get the number of functions represented by this shell
@@ -90,14 +90,14 @@ class BasisShellBase
          * This takes into account general contractions and combined shells, so it
          * is not simply based on the AM alone
          */
-        size_t NFunctions(void) const noexcept { return nfunc_; }
+        size_t n_functions(void) const noexcept { return nfunc_; }
 
 
         /*! Get the number of functions for a given general contraction
          *
          * \throw pulsar::exception::BasisSetException on out-of-bounds access
          */
-        size_t GeneralNFunctions(size_t n) const { return system::NFunctions(type_, GeneralAM(n)); }
+        size_t general_n_functions(size_t n) const { return system::n_functions(type_, general_am(n)); }
 
 
         /*! \brief Is this shell a combined AM shell
@@ -106,7 +106,7 @@ class BasisShellBase
          * the general contractions represent different angular momentum.
          * For example, sp and spd shells.
          */
-        bool IsCombinedAM(void) const noexcept { return am_ < 0; }
+        bool is_combined_am(void) const noexcept { return am_ < 0; }
 
         ///@}
 
@@ -119,10 +119,10 @@ class BasisShellBase
          *
          * \param [in] i Index of the primitive to get
          */
-        double Alpha(size_t i) const ASSERTIONS_ONLY
+        double alpha(size_t i) const ASSERTIONS_ONLY
         {
-            AssertPtrs_();
-            AssertPrimIdx_(i);
+            assert_ptrs_();
+            assert_prim_idx_(i);
             return alphas_[i]; 
         }
 
@@ -132,27 +132,27 @@ class BasisShellBase
          * \param [in] n Index of the general contraction
          * \param [in] i Index in the segmented contraction
          */
-        double Coef(size_t n, size_t i) const ASSERTIONS_ONLY
+        double coef(size_t n, size_t i) const ASSERTIONS_ONLY
         {
-            AssertPtrs_();
-            AssertPrimIdx_(i);
-            AssertGenIdx_(n);
+            assert_ptrs_();
+            assert_prim_idx_(i);
+            assert_gen_idx_(n);
             return coefs_[n*nprim_+i]; 
         }
 
 
         /*! \brief Get the pointer to the exponents
          */
-        double const * AlphaPtr(void) const ASSERTIONS_ONLY
+        double const * alpha_ptr(void) const ASSERTIONS_ONLY
         {
-            AssertPtrs_();
+            assert_ptrs_();
             return alphas_;
         }
 
-        /// \copydocs AlphaPtr(void) const
-        double * AlphaPtr(void) ASSERTIONS_ONLY
+        /// \copydocs alpha_ptr(void) const
+        double * alpha_ptr(void) ASSERTIONS_ONLY
         {
-            AssertPtrs_();
+            assert_ptrs_();
             return alphas_;
         }
 
@@ -164,18 +164,18 @@ class BasisShellBase
          *
          * \param [in] n Index of the general contraction
          */
-        double const * CoefPtr(size_t n) const ASSERTIONS_ONLY
+        double const * coef_ptr(size_t n) const ASSERTIONS_ONLY
         {
-            AssertPtrs_();
-            AssertGenIdx_(n);
+            assert_ptrs_();
+            assert_gen_idx_(n);
             return coefs_ + n*nprim_;
         }
 
-        /// \copydocs CoefPtr(size_t n) const
-        double * CoefPtr(size_t n) ASSERTIONS_ONLY
+        /// \copydocs coef_ptr(size_t n) const
+        double * coef_ptr(size_t n) ASSERTIONS_ONLY
         {
-            AssertPtrs_();
-            AssertGenIdx_(n);
+            assert_ptrs_();
+            assert_gen_idx_(n);
             return coefs_ + n*nprim_;
         }
 
@@ -186,16 +186,16 @@ class BasisShellBase
          * The coefficients are assumed to be contiguous, with the
          * general contraction index being the slowest index.
          */
-        double const * AllCoefsPtr(void) const ASSERTIONS_ONLY
+        double const * all_coefs_ptr(void) const ASSERTIONS_ONLY
         {
-            AssertPtrs_();
+            assert_ptrs_();
             return coefs_;
         }
 
-        /// \copydocs AllCoefsPtr(void) const
-        double * AllCoefsPtr(void) ASSERTIONS_ONLY
+        /// \copydocs all_coefs_ptr(void) const
+        double * all_coefs_ptr(void) ASSERTIONS_ONLY
         {
-            AssertPtrs_();
+            assert_ptrs_();
             return coefs_;
         }
 
@@ -214,11 +214,11 @@ class BasisShellBase
          *
          * \param [in] i Index of the primitive to get
          */
-        double GetAlpha(size_t i) const
+        double get_alpha(size_t i) const
         {
-            AssertPtrs_();
-            ValidatePrimIdx_(i);
-            return Alpha(i);
+            assert_ptrs_();
+            validate_prim_idx_(i);
+            return alpha(i);
         }
 
 
@@ -230,10 +230,10 @@ class BasisShellBase
          * \param [in] i Index of the primitive to set
          * \param [in] alpha The value to set the exponent to
          */
-        void SetAlpha(size_t i, double alpha)
+        void set_alpha(size_t i, double alpha)
         {
-            AssertPtrs_();
-            ValidatePrimIdx_(i);
+            assert_ptrs_();
+            validate_prim_idx_(i);
             alphas_[i] = alpha;
         }
 
@@ -246,12 +246,12 @@ class BasisShellBase
          * \param [in] n Index of the general contraction
          * \param [in] i Index in the segmented contraction
          */
-        double GetCoef(size_t n, size_t i) const
+        double get_coef(size_t n, size_t i) const
         {
-            AssertPtrs_();
-            ValidatePrimIdx_(i);
-            ValidateGenIdx_(n);
-            return Coef(n, i);
+            assert_ptrs_();
+            validate_prim_idx_(i);
+            validate_gen_idx_(n);
+            return coef(n, i);
         }
 
 
@@ -264,19 +264,19 @@ class BasisShellBase
          * \param [in] i Index in the segmented contraction
          * \param [in] coef The value to set the coefficient to
          */
-        void SetCoef(size_t n, size_t i, double coef)
+        void set_coef(size_t n, size_t i, double coef)
         {
-            AssertPtrs_();
-            ValidatePrimIdx_(i);
-            ValidateGenIdx_(n);
+            assert_ptrs_();
+            validate_prim_idx_(i);
+            validate_gen_idx_(n);
             coefs_[n*nprim_+i] = coef;
         }
 
 
         /// Get all exponents as a vector
-        std::vector<double> GetAlphas(void) const
+        std::vector<double> get_alphas(void) const
         {
-            AssertPtrs_();
+            assert_ptrs_();
             return std::vector<double>(alphas_, alphas_+nprim_);
         }
 
@@ -285,10 +285,10 @@ class BasisShellBase
          *
          * \throw pulsar::exception::BasisSetException if the vector is not of the right length
          */ 
-        void SetAlphas(const std::vector<double> & alphas)
+        void set_alphas(const std::vector<double> & alphas)
         {
             using namespace exception;
-            AssertPtrs_();
+            assert_ptrs_();
 
             if(alphas.size() != nprim_)
                 throw BasisSetException("Incompatible dimensions for alphas", "nprim", nprim_, "given", alphas.size());
@@ -301,10 +301,10 @@ class BasisShellBase
          * 
          * \param [in] n Index of the general contraction
          */
-        std::vector<double> GetCoefs(size_t n) const
+        std::vector<double> get_coefs(size_t n) const
         {
-            AssertPtrs_();
-            ValidateGenIdx_(n);
+            assert_ptrs_();
+            validate_gen_idx_(n);
 
             return std::vector<double>(coefs_+n*nprim_,
                                        coefs_+(n+1)*nprim_);
@@ -315,11 +315,11 @@ class BasisShellBase
          * 
          * \throw pulsar::exception::BasisSetException if the vector is not of the right length
          */
-        void SetCoefs(size_t n, const std::vector<double> & coefs)
+        void set_coefs(size_t n, const std::vector<double> & coefs)
         {
             using namespace exception;
-            AssertPtrs_();
-            ValidateGenIdx_(n);
+            assert_ptrs_();
+            validate_gen_idx_(n);
 
             if(coefs.size() != nprim_)
                 throw BasisSetException("Incompatible dimensions for coefficients",
@@ -329,10 +329,10 @@ class BasisShellBase
         }
 
         /// Get all coefficints for all general contractions as a vector
-        std::vector<double> GetAllCoefs(void) const
+        std::vector<double> get_all_coefs(void) const
         {
-            AssertPtrs_();
-            return std::vector<double>(coefs_, coefs_ + NCoef());
+            assert_ptrs_();
+            return std::vector<double>(coefs_, coefs_ + n_coefficients());
         }
 
 
@@ -340,11 +340,11 @@ class BasisShellBase
          * 
          * \throw pulsar::exception::BasisSetException if the vector is not of the right length
          */
-        void SetAllCoefs(const std::vector<double> & coefs)
+        void set_all_coefs(const std::vector<double> & coefs)
         {
             using namespace exception;
-            AssertPtrs_();
-            if(coefs.size() != NCoef())
+            assert_ptrs_();
+            if(coefs.size() != n_coefficients())
                 throw BasisSetException("Incompatible dimensions for coefficients",
                                         "nprim", nprim_, "ngen", ngen_, "given", coefs.size());
 
@@ -361,9 +361,9 @@ class BasisShellBase
          * \param [in] alpha The exponent of the primitive
          * \param [in] coef The coefficient of the single general contraction
          */ 
-        void SetPrimitive(size_t i, double alpha, double coef)
+        void set_primitive(size_t i, double alpha, double coef)
         {
-            SetPrimitive(i, alpha, std::vector<double>{coef});
+            set_primitive(i, alpha, std::vector<double>{coef});
         }
 
 
@@ -376,11 +376,11 @@ class BasisShellBase
          * \param [in] alpha The exponent of the primitive
          * \param [in] coefs Coefficients for the general contractions of this primitive
          */
-        void SetPrimitive(size_t i, double alpha, const std::vector<double> & coefs)
+        void set_primitive(size_t i, double alpha, const std::vector<double> & coefs)
         {
             using namespace exception;
-            AssertPtrs_();
-            ValidatePrimIdx_(i);
+            assert_ptrs_();
+            validate_prim_idx_(i);
 
             const size_t ncoefs = coefs.size();
 
@@ -391,14 +391,14 @@ class BasisShellBase
             alphas_[i] = alpha;
 
             for(size_t n = 0; n < ngen_; n++)
-                SetCoef(n, i, coefs[n]);
+                set_coef(n, i, coefs[n]);
         }
         ///@}
 
 
-        bphash::HashValue MyHash(void) const
+        bphash::HashValue my_hash(void) const
         {
-            return bphash::MakeHash(bphash::HashType::Hash128, *this);
+            return bphash::make_hash(bphash::HashType::Hash128, *this);
         } 
 
 
@@ -425,7 +425,7 @@ class BasisShellBase
 
             // calculate the number of functions
             for(size_t i = 0; i < ngen_; i++)
-                nfunc_ += GeneralNFunctions(i);   
+                nfunc_ += general_n_functions(i);   
         }
 
 
@@ -437,11 +437,11 @@ class BasisShellBase
 
 
         /// Set the pointers for the exponents and coefficients
-        void SetPtrs_(double * alphaptr, double * coefptr) ASSERTIONS_ONLY
+        void set_ptrs_(double * alphaptr, double * coefptr) ASSERTIONS_ONLY
         {
             alphas_ = alphaptr;
             coefs_ = coefptr;
-            AssertPtrs_();
+            assert_ptrs_();
         }
 
         // For serialization only (needed by derived classes)
@@ -454,7 +454,7 @@ class BasisShellBase
          *
          * This compares all properties and values, looking for an exact match.
          */
-        bool BaseCompare_(const BasisShellBase & rhs) const
+        bool base_compare_(const BasisShellBase & rhs) const
         {
             if(this == &rhs)
                 return true;
@@ -472,7 +472,7 @@ class BasisShellBase
                        nprim_ == rhs.nprim_ &&
                        type_ == rhs.type_ &&
                        ( (alphas_ == rhs.alphas_) || std::equal(alphas_, alphas_+nprim_, rhs.alphas_) ) &&
-                       ( (coefs_ == rhs.coefs_) || std::equal(coefs_, coefs_ + NCoef(), rhs.coefs_) )
+                       ( (coefs_ == rhs.coefs_) || std::equal(coefs_, coefs_ + n_coefficients(), rhs.coefs_) )
                    );
 
             PRAGMA_WARNING_POP
@@ -489,7 +489,7 @@ class BasisShellBase
 
 
         // Assertions and sanity checks
-        void ValidatePrimIdx_(size_t i) const
+        void validate_prim_idx_(size_t i) const
         {
             using namespace exception;
             if(i >= nprim_)
@@ -497,7 +497,7 @@ class BasisShellBase
                                         "iprim", i, "nprim", nprim_);
         }
 
-        void ValidateGenIdx_(size_t n) const
+        void validate_gen_idx_(size_t n) const
         {
             using namespace exception;
             if(n >= ngen_)
@@ -505,24 +505,24 @@ class BasisShellBase
                                         "igen", n, "ngen", ngen_);
         }
 
-        void AssertPrimIdx_(size_t i) const
+        void assert_prim_idx_(size_t i) const
         {
             using namespace exception;
-            Assert<BasisSetException>(i < nprim_, "Attempt to access primitive that does not exist",
+            psr_assert<BasisSetException>(i < nprim_, "Attempt to access primitive that does not exist",
                                                   "iprim", i, "nprim", nprim_);
         }
 
-        void AssertGenIdx_(size_t n) const
+        void assert_gen_idx_(size_t n) const
         {
             using namespace exception;
-            Assert<BasisSetException>(n < ngen_, "Attempt to access general contraction that does not exist",
+            psr_assert<BasisSetException>(n < ngen_, "Attempt to access general contraction that does not exist",
                                                  "igen", n, "ngen", ngen_);
         }
 
-        void AssertPtrs_(void) const
+        void assert_ptrs_(void) const
         {
             using namespace exception;
-            Assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
+            psr_assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
         }
 
 
@@ -544,8 +544,8 @@ class BasisShellBase
         void hash(bphash::Hasher & h) const
         {
             h(type_, am_, nprim_, ngen_, nfunc_,
-                   bphash::HashPointer(alphas_, NPrim()),
-                   bphash::HashPointer(coefs_, NCoef()));
+                   bphash::HashPointer(alphas_, n_primitives()),
+                   bphash::HashPointer(coefs_, n_coefficients()));
         }
 
 

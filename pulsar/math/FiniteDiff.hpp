@@ -93,7 +93,7 @@ struct FDiffVisitor{
  *  \f$\lbrace 0.08333,-0.666666,0.66666,-0.08333\rbrace\f$ respectively.
  *  Note that these coefficients include the denominator already.
  */
- std::vector<double> Coefs(const std::vector<double>& Stencil,size_t Deriv=1);
+ std::vector<double> coefs(const std::vector<double>& Stencil,size_t Deriv=1);
 
  /** \brief Base class for computing a derivative by finite difference
  *
@@ -121,10 +121,10 @@ class FiniteDiff{
       typedef FiniteDiff<VarType,ResultType> My_t;
    protected:
       ///Function to generate the coefs, minor tweaks for backwards and central
-      virtual std::vector<double> GetCoefs(size_t NPoints)const{
+      virtual std::vector<double> get_coefs(size_t NPoints)const{
         std::vector<double> x(NPoints);
         for(size_t i=0;i<NPoints;i++)x[i]=Shift(i,NPoints);
-        return Coefs(x);
+        return coefs(x);
       }
 
       ///Returns the number of calculations per variable when user requests
@@ -212,8 +212,8 @@ class BackwardDiff: public FiniteDiff<VarType,ReturnType>{
       double Shift(size_t I,size_t)const{return -1.0*static_cast<double>(I);}
       
       ///Negates the normal coeffs
-      std::vector<double> GetCoefs(size_t NPoints)const{
-          std::vector<double> temp=Base_t::GetCoefs(NPoints);
+      std::vector<double> get_coefs(size_t NPoints)const{
+          std::vector<double> temp=Base_t::get_coefs(NPoints);
           for(size_t i=0;i<temp.size();++i)temp[i]*=-1.0;
           return temp;
       }
@@ -268,7 +268,7 @@ std::vector<ResultType> FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
                                         size_t NVars,
                                        const VarType& H,
                                        size_t NPoints){
-    std::vector<double> Coefs=GetCoefs(NPoints);
+    std::vector<double> Coefs=get_coefs(NPoints);
     
     //Little wrapper to pass to task scheduler
     class FDWrapper{

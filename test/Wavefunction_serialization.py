@@ -24,57 +24,57 @@ from helper.TestAtoms import nonane
 def Run():
     try:
         tester = Tester("Testing Wavefunction - serialization")
-        tester.PrintHeader()
+        tester.print_header()
 
         w = Wavefunction()
-        tester.Test("Serialization of empty wavefunction", True,
+        tester.test("Serialization of empty wavefunction", True,
                     TestSerialization_Wavefunction, w)
 
         atoms = list(nonane)
         u = AtomSetUniverse()
         for a in atoms:
-            u.Insert(a)
+            u.insert(a)
 
         s = System(u, True)
-        s = ApplySingleBasis("primary", "sto-3g", s)
+        s = apply_single_basis("primary", "sto-3g", s)
 
 
         w.system = s
-        tester.Test("Serialization with system", True,
+        tester.test("Serialization with system", True,
                     TestSerialization_Wavefunction, w)
 
         cmat = IrrepSpinMatrixD()
         cmat.Set(Irrep.A1, 0, SimpleMatrixD(2, 2, [1, 2, 3, 4]))
         w.cmat = cmat
-        tester.Test("Serialization with cmat", True,
+        tester.test("Serialization with cmat", True,
                     TestSerialization_Wavefunction, w)
 
         epsilon = IrrepSpinVectorD()
         epsilon.Set(Irrep.E2, 0, SimpleVectorD(2, [1, 2]))
         w.epsilon = epsilon
-        tester.Test("Serialization with epsilon", True,
+        tester.test("Serialization with epsilon", True,
                     TestSerialization_Wavefunction, w)
 
         occupations = IrrepSpinVectorD()
         occupations.Set(Irrep.A2, 0, SimpleVectorD(2, [1, 2]))
         w.occupations = occupations
-        tester.Test("Serialization with occupations", True,
+        tester.test("Serialization with occupations", True,
                     TestSerialization_Wavefunction, w)
  
 
-        tester.PrintResults() 
+        tester.print_results() 
 
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      print_global_output("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      GlobalError("\n")
-      GlobalError(str(e))
-      GlobalError("\n")
+      print_global_error("\n")
+      print_global_error(str(e))
+      print_global_error("\n")
 
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-psr.Finalize()
+psr.finalize()

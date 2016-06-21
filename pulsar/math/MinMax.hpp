@@ -8,55 +8,55 @@ namespace math {
 
 
 template<typename T>
-T Min(T v)
+T min(T v)
 {
     return v;
 }
 
 template<typename T>
-T Max(T v)
+T max(T v)
 {
     return v;
 }
 
 template<typename T>
-T MinAbs(T v)
+T min_abs(T v)
 {
     return std::abs(v);
 }
 
 template<typename T>
-T MaxAbs(T v)
+T max_abs(T v)
 {
     return std::abs(v);
 }
 
 
 template<typename T, typename ... Targs>
-T Min(T v, Targs && ... args)
+T min(T v, Targs && ... args)
 {
-    return std::min(v, Min(std::forward<Targs>(args)...));
+    return std::min(v, min(std::forward<Targs>(args)...));
 }
 
 
 template<typename T, typename ... Targs>
-T Max(T v, Targs && ... args)
+T max(T v, Targs && ... args)
 {
-    return std::max(v, Max(std::forward<Targs>(args)...));
+    return std::max(v, max(std::forward<Targs>(args)...));
 }
 
 
 template<typename T, typename ... Targs>
-T MinAbs(T v, Targs && ... args)
+T min_abs(T v, Targs && ... args)
 {
-    return std::min(std::abs(v), MinAbs(std::forward<Targs>(args)...));
+    return std::min(std::abs(v), min_abs(std::forward<Targs>(args)...));
 }
 
 
 template<typename T, typename ... Targs>
-T MaxAbs(T v, Targs && ... args)
+T max_abs(T v, Targs && ... args)
 {
-    return std::max(std::abs(v), MaxAbs(std::forward<Targs>(args)...));
+    return std::max(std::abs(v), max_abs(std::forward<Targs>(args)...));
 }
 
 

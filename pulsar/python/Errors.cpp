@@ -17,7 +17,7 @@ namespace python {
 namespace detail {
 
 
-std::string GetPyException(void)
+std::string get_py_exception(void)
 {
     try {
         //! \todo Get traceback info?
@@ -32,7 +32,7 @@ std::string GetPyException(void)
             pybind11::object traceback_obj(traceback, false);
 
             // the type of the exception
-            std::string extype = GetPyClass(value_obj);
+            std::string extype = get_py_class(value_obj);
 
             //! \todo runtime error
             //! \todo check for stuff deriving from std::exception
@@ -42,7 +42,7 @@ std::string GetPyException(void)
             else if(extype == "GeneralException") // python version of GeneralException
                 return static_cast<pybind11::object>(value_obj.attr("gex")).cast<GeneralException>().what();
             else
-                return std::string("Unknown python exception type: ") + GetPyClass(value_obj);
+                return std::string("Unknown python exception type: ") + get_py_class(value_obj);
         }
         else
             return "(no python error)";

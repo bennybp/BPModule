@@ -78,7 +78,7 @@ class OptionBase
 
         /*! \brief Create a clone of this object
          */
-        virtual OptionBasePtr Clone(void) const = 0;
+        virtual OptionBasePtr clone(void) const = 0;
 
 
 
@@ -88,7 +88,7 @@ class OptionBase
          *
          * \return True if this option has a set value or a default value, false otherwise
          */
-        virtual bool HasValue(void) const noexcept = 0;
+        virtual bool has_value(void) const noexcept = 0;
 
 
 
@@ -106,7 +106,7 @@ class OptionBase
          * This is true, even if the option is set explicitly to
          * the default.
          */
-        virtual bool IsSet(void) const noexcept = 0;
+        virtual bool is_set(void) const noexcept = 0;
 
 
         /*! \brief Check if this option is set to the default
@@ -115,14 +115,14 @@ class OptionBase
          *
          * \note May be tricky with floating point types.
          */
-        virtual bool IsDefault(void) const = 0;
+        virtual bool is_default(void) const = 0;
 
 
         /*! \brief Set the option to its default
          *
          * \exnothrow
          */
-        virtual void ResetToDefault(void) noexcept = 0;
+        virtual void reset_to_default(void) noexcept = 0;
 
 
 
@@ -137,40 +137,40 @@ class OptionBase
          *
          * \return Any problems / issues with this option
          */
-        virtual OptionIssues GetIssues(void) const = 0;
+        virtual OptionIssues get_issues(void) const = 0;
 
 
 
         /*! \brief Compare with another OptionBase object
          */
-        virtual bool Compare(const OptionBase & rhs) const = 0; 
+        virtual bool compare(const OptionBase & rhs) const = 0; 
 
 
         /*! \brief Get the type of this option as a string
          *
          * \exnothrow
          */
-        virtual const char * TypeString(void) const noexcept = 0;
+        virtual const char * type_string(void) const noexcept = 0;
 
 
         /*! \brief Get the type of this
          *
          * \exnothrow
          */
-        virtual OptionType Type(void) const noexcept = 0;
+        virtual OptionType type(void) const noexcept = 0;
 
 
-        /*! \brief Print out information about this option
+        /*! \brief print out information about this option
          *
          * Will print its key, type, etc. If there is a problem
          * with the option, the Error() output is used. If the
          * option is not the default, the Changed() output is used.
          */
-        virtual void Print(std::ostream & os) const = 0;
+        virtual void print(std::ostream & os) const = 0;
 
 
         /*! \brief Serialize the option to a byte array */
-        virtual ByteArray ToByteArray(void) const = 0;
+        virtual ByteArray to_byte_array(void) const = 0;
 
 
 
@@ -183,7 +183,7 @@ class OptionBase
          *        If the value does not exist or cannot
          *        be converted to a python object
          */
-        virtual pybind11::object GetPy(void) const = 0;
+        virtual pybind11::object get_py(void) const = 0;
 
 
 
@@ -194,7 +194,7 @@ class OptionBase
          *
          *  \exstrong
          */
-        virtual void ChangePy(const pybind11::object & obj) = 0;
+        virtual void change_py(const pybind11::object & obj) = 0;
 
 
 
@@ -207,7 +207,7 @@ class OptionBase
          *
          * \exnothrow
          */
-        const std::string & Key(void) const noexcept
+        const std::string & key(void) const noexcept
         {
             return key_;
         }
@@ -218,7 +218,7 @@ class OptionBase
          *
          * \exnothrow
          */
-        bool IsRequired(void) const noexcept
+        bool is_required(void) const noexcept
         {
             return required_;
         }
@@ -232,9 +232,9 @@ class OptionBase
          * \return True if there is a value or a default, or if this
          *         option is not required
          */
-        bool IsSetIfRequired(void) const noexcept
+        bool is_set_if_required(void) const noexcept
         {
-            return HasValue() || HasDefault() || !IsRequired();
+            return has_value() || HasDefault() || !is_required();
         }
 
 
@@ -244,7 +244,7 @@ class OptionBase
          *
          * \exnothrow
          */
-        const std::string & Help(void) const noexcept
+        const std::string & help(void) const noexcept
         {
             return help_;
         }
@@ -256,15 +256,15 @@ class OptionBase
          * \throw pulsar::exception::PythonCallException if there is a problem
          *        with the validation function
          */
-        bool HasIssues(void) const
+        bool has_issues(void) const
         {
-            return (GetIssues().size());
+            return (get_issues().size());
         }
 
 
         /*! \brief Add the key and value of this option to a hash
          */
-        void HashValue(bphash::Hasher & h) const
+        void hash_value(bphash::Hasher & h) const
         {
             hash_value(h);
         }
@@ -279,7 +279,7 @@ class OptionBase
 
         /*! \brief Copy constructor
          *
-         * Should only be called from Clone(), hence it is kept protected
+         * Should only be called from clone(), hence it is kept protected
          */
         OptionBase(const OptionBase &) = default;
 
@@ -296,7 +296,7 @@ class OptionBase
         }
 
         /*! \brief Hash the contents of this option */
-        virtual void hash_value(bphash::Hasher & h) const = 0;
+        virtual void hash_value_(bphash::Hasher & h) const = 0;
 
         ///@}
 

@@ -61,9 +61,9 @@ static OptionIssues ValidatorWrapper_(pybind11::object & valobj,
                                       const OptionHolder<OPTTYPE> & value)
 {
     try {
-        if(!valobj || python::IsNone(valobj))
+        if(!valobj || python::is_none(valobj))
             return {};
-        return python::CallPyFuncAttr<OptionIssues>(valobj, "Validate", value.GetPy());
+        return python::call_py_func_attr<OptionIssues>(valobj, "validate", value.get_py());
     }
     catch(const std::exception & ex)
     {
@@ -128,13 +128,13 @@ class OptionHolder : public OptionBase
 
             if(required)
                 throw OptionException("Default value supplied for required option",
-                                      "optionkey", Key());
+                                      "optionkey", key);
 
             // check the default using the validator
-            OptionIssues iss = GetIssues();
+            OptionIssues iss = get_issues();
             if(iss.size())
                 throw OptionException("Default value for this option does not pass validation",
-                                      "optionkey", Key(), "issues", iss);
+                                      "optionkey", key, "issues", iss);
 
         }
 
@@ -142,7 +142,7 @@ class OptionHolder : public OptionBase
                      bool required, const pybind11::object & validator,
                      const std::string & help, const pybind11::object & def)
             : OptionHolder(key, required, validator, help,
-                           python::ConvertToCpp<stored_type>(def))
+                           python::convert_to_cpp<stored_type>(def))
         {
         }
 
@@ -200,7 +200,7 @@ class OptionHolder : public OptionBase
                 return *default_;
             else
                 throw exception::OptionException("Option does not have a value",
-                                                 "optionkey", Key());
+                                                 "optionkey", key());
         }
 
 
@@ -216,7 +216,7 @@ class OptionHolder : public OptionBase
                 return *default_;
             else
                 throw exception::OptionException("Option does not have a default",
-                                                 "optionkey", Key());
+                                                 "optionkey", key());
         }
 
 
@@ -225,22 +225,22 @@ class OptionHolder : public OptionBase
         // Virtual functions from OptionBase
         ////////////////////////////////////////
 
-        virtual OptionBasePtr Clone(void) const
+        virtual OptionBasePtr clone(void) const
         {
             return OptionBasePtr(new OptionHolder<OPTTYPE>(*this));
         }
 
-        virtual const char * TypeString(void) const noexcept
+        virtual const char * type_string(void) const noexcept
         {
             return OptionTypeToString(OPTTYPE);
         }
 
-        virtual OptionType Type(void) const noexcept
+        virtual OptionType type(void) const noexcept
         {
             return OPTTYPE;
         }
 
-        virtual bool HasValue(void) const noexcept
+        virtual bool has_value(void) const noexcept
         {
             return bool(value_) || bool(default_);
         }
@@ -250,12 +250,12 @@ class OptionHolder : public OptionBase
             return bool(default_);
         }
 
-        virtual bool IsSet(void) const noexcept
+        virtual bool is_set(void) const noexcept
         {
             return bool(value_);
         }
 
-        virtual bool IsDefault(void) const
+        virtual bool is_default(void) const
         {
             if(!value_ && default_)
                 return true;
@@ -271,13 +271,13 @@ class OptionHolder : public OptionBase
             }
         }
 
-        virtual void ResetToDefault(void) noexcept
+        virtual void reset_to_default(void) noexcept
         {
             value_.reset();
         }
 
 
-        virtual void Print(std::ostream & os) const
+        virtual void print(std::ostream & os) const
         {
             using namespace pulsar::output;
             using namespace pulsar::util;
@@ -298,20 +298,20 @@ class OptionHolder : public OptionBase
             val.resize(m);
             def.resize(m);
 
-            std::string req = (IsRequired() ? "True" : "False");
-            std::string isset = (IsSet() ? "True" : "False");
+            std::string req = (is_required() ? "True" : "False");
+            std::string isset = (is_set() ? "True" : "False");
 
             // print the first line
             std::vector<std::string> optlines;
-            optlines.push_back(FormatString("    %-20?   %-20?   %-8?   %-20?   %-20?   %-8?   %?\n",
-                                            Key(), TypeString(), isset, val[0], def[0], req,  Help()));
+            optlines.push_back(format_string("    %-20?   %-20?   %-8?   %-20?   %-20?   %-8?   %?\n",
+                                             key(), type_string(), isset, val[0], def[0], req,  help()));
 
 
             // now other lines
             for(size_t i = 1; i < m; i++)
             {
-                optlines.push_back(FormatString("    %-20?   %-20?   %-8?   %-20?   %-20?   %-8?   %?\n",
-                                                "", "", "", val[i], def[i], "", ""));
+                optlines.push_back(format_string("    %-20?   %-20?   %-8?   %-20?   %-20?   %-8?   %?\n",
+                                                 "", "", "", val[i], def[i], "", ""));
             }
            
             // now actually print 
@@ -319,19 +319,19 @@ class OptionHolder : public OptionBase
             {
                 OutputType type = OutputType::Output;
 
-                if(!IsSetIfRequired())
+                if(!is_set_if_required())
                     type = OutputType::Error;
-                else if(!IsDefault())
+                else if(!is_default())
                     type = OutputType::Changed;
 
-                GeneralOutput(os, type, it);
+                print_general_output(os, type, it);
             }
         }
 
 
-        virtual OptionIssues GetIssues(void) const
+        virtual OptionIssues get_issues(void) const
         {
-            if(!IsSetIfRequired())
+            if(!is_set_if_required())
                 return OptionIssues{"Option is not set, but is required"};
             else if(validator_)
                 return validator_(*this);
@@ -339,7 +339,7 @@ class OptionHolder : public OptionBase
                 return OptionIssues();
         }
 
-        virtual bool Compare(const OptionBase & rhs) const
+        virtual bool compare(const OptionBase & rhs) const
         {
             const OptionHolder<OPTTYPE> * op = dynamic_cast<const OptionHolder<OPTTYPE> *>(&rhs);
 
@@ -349,12 +349,12 @@ class OptionHolder : public OptionBase
             PRAGMA_WARNING_PUSH
             PRAGMA_WARNING_IGNORE_FP_EQUALITY
 
-            if(! (this->IsSet() == op->IsSet() &&
+            if(! (this->is_set() == op->is_set() &&
                   this->HasDefault() == op->HasDefault()) )
                 return false;
 
             // we checked above that they are both set and unset
-            if(this->IsSet() && *value_ != *(op->value_))
+            if(this->is_set() && *value_ != *(op->value_))
                 return false;
 
             if(this->HasDefault() && *default_ != *(op->default_))
@@ -364,41 +364,41 @@ class OptionHolder : public OptionBase
             PRAGMA_WARNING_POP
         }
 
-        virtual ByteArray ToByteArray(void) const
+        virtual ByteArray to_byte_array(void) const
         {
             util::MemoryArchive mar;
-            mar.BeginSerialization();
-            mar.Serialize(Key(), IsRequired(), Help(), value_, default_);
-            mar.EndSerialization();
-            return mar.ToByteArray();
+            mar.begin_serialization();
+            mar.serialize(key(), is_required(), help(), value_, default_);
+            mar.end_serialization();
+            return mar.to_byte_array();
         }
 
 
         /////////////////////////////////////////
         // Python-related functions
         /////////////////////////////////////////
-        virtual pybind11::object GetPy(void) const
+        virtual pybind11::object get_py(void) const
         {
             try {                                                     
-                return python::ConvertToPy(Get());                            
+                return python::convert_to_py(Get());                            
             }                                                         
             catch(std::exception & ex)                                
             {                                                         
-                throw exception::OptionException(ex, "optionkey", Key());        
+                throw exception::OptionException(ex, "optionkey", key());        
             }                                                         
 
         }
 
-        virtual void ChangePy(const pybind11::object & obj)
+        virtual void change_py(const pybind11::object & obj)
         {
             stored_type val;
 
             try {
-                val = python::ConvertToCpp<stored_type>(obj);
+                val = python::convert_to_cpp<stored_type>(obj);
             }
             catch(std::exception & ex)
             {
-                throw exception::OptionException(ex, "optionkey", Key());
+                throw exception::OptionException(ex, "optionkey", key());
             }
 
             Change(val);
@@ -414,7 +414,7 @@ class OptionHolder : public OptionBase
                      const std::string & help, stored_type * def)
             : OptionBase(key, required, help), default_(def)
         {
-            validator_ = std::bind(ValidatorWrapper_<OPTTYPE>, validator, Key(),
+            validator_ = std::bind(ValidatorWrapper_<OPTTYPE>, validator, key,
                                    std::placeholders::_1);
         }
 
@@ -450,11 +450,11 @@ class OptionHolder : public OptionBase
         }
 
 
-        void hash_value(bphash::Hasher & h) const
+        void hash_value_(bphash::Hasher & h) const
         {
             h(static_cast<const OptionBase &>(*this));
 
-            if(HasValue())
+            if(has_value())
                 h(Get());
             else
                 h(std::string("__!%_NOVALUE_%!__"));

@@ -21,13 +21,13 @@ namespace lut {
 }
 
 
-const SphericalTransformMap & AllSphericalTransforms(void) noexcept
+const SphericalTransformMap & all_spherical_transforms(void) noexcept
 {
     return lut::spherical_transform_map_;
 }
 
 
-const std::vector<SphericalTransformCoefficient> & SphericalTransformForAM(int am)
+const std::vector<SphericalTransformCoefficient> & spherical_transform_for_am(int am)
 {
     using exception::GeneralException;
 

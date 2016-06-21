@@ -26,24 +26,20 @@ ModuleBase::ModuleBase(ID_t id, const char * modtype)
       out(&tbts_),
       id_(id), modtype_(modtype), mlocator_(nullptr), treenode_(nullptr)
 {
-    out.Debug("Constructed %? module [%?]\n", modtype, id);
+    out.debug("Constructed %? module [%?]\n", modtype, id);
 }
 
 
 ModuleBase::~ModuleBase()
 {
     if(treenode_ == nullptr)
-        out.Debug("Destroying a module that doesn't have a tree node...");
+        out.debug("Destroying a module that doesn't have a tree node...");
     else
     {
-        out.Debug("Module [%?] : Output size: %?\n", ID(), GetOutput().size());
-        out.Debug("Destructed module [%?] : %? v%?\n", ID(), Name(), Version());
+        out.debug("Module [%?] : Output size: %?\n", id(), get_output().size());
+        out.debug("Destructed module [%?] : %? v%?\n", id(), name(), version());
         treenode_->inuse = false;
     }
-
-    //out.Debug("*****\n");
-    //out.Warning(GetOutput());
-    //out.Debug("*****\n");
 }
 
 
@@ -51,71 +47,71 @@ ModuleBase::~ModuleBase()
 /////////////////////////////
 // Basic Info
 /////////////////////////////
-ID_t ModuleBase::ID(void) const noexcept
+ID_t ModuleBase::id(void) const noexcept
 {
     return id_;
 }
 
 
-std::string ModuleBase::Key(void) const
+std::string ModuleBase::key(void) const
 {
-    return MyNode().modulekey;
+    return my_node().modulekey;
 }
 
 
-std::string ModuleBase::Name(void) const
+std::string ModuleBase::name(void) const
 {
-    return MyNode().minfo.name;
+    return my_node().minfo.name;
 }
 
 
-std::string ModuleBase::Version(void) const
+std::string ModuleBase::version(void) const
 {
-    return MyNode().minfo.version;
+    return my_node().minfo.version;
 }
 
 
-std::string ModuleBase::ModuleType(void) const
+std::string ModuleBase::module_type(void) const
 {
     return modtype_;
 }
 
-const OptionMap & ModuleBase::Options(void) const
+const OptionMap & ModuleBase::options(void) const
 {
-    return MyNode().minfo.options;
+    return my_node().minfo.options;
 }
 
-OptionMap & ModuleBase::Options(void)
+OptionMap & ModuleBase::options(void)
 {
-    return MyNode().minfo.options;
+    return my_node().minfo.options;
 }
 
-void ModuleBase::Print(std::ostream & os) const
+void ModuleBase::print(std::ostream & os) const
 {
-    MyNode().minfo.Print(os);
+    my_node().minfo.print(os);
 }
 
 
-void ModuleBase::EnableDebug(bool debug) noexcept
+void ModuleBase::enable_debug(bool debug) noexcept
 {
-    out.EnableDebug(debug);
+    out.enable_debug(debug);
 }
 
-bool ModuleBase::DebugEnabled(void) const noexcept
+bool ModuleBase::debug_enabled(void) const noexcept
 {
-    return out.DebugEnabled();
+    return out.debug_enabled();
 }
 
-const ModuleTreeNode & ModuleBase::MyNode(void) const
+const ModuleTreeNode & ModuleBase::my_node(void) const
 {
     if(treenode_ == nullptr)
         throw std::logic_error("Developer error - tree node is null for a module!");
     return *treenode_;
 }
 
-std::string ModuleBase::GetOutput(void) const
+std::string ModuleBase::get_output(void) const
 {
-    return MyNode().output;
+    return my_node().output;
 }
 
 
@@ -123,7 +119,7 @@ std::string ModuleBase::GetOutput(void) const
 ////////////////////////////////
 // Protected functions
 ////////////////////////////////
-ModuleManager & ModuleBase::MManager(void) const
+ModuleManager & ModuleBase::module_manager(void) const
 {
     if(mlocator_ == nullptr)
         throw std::logic_error("Developer error - mlocator is null for a module!");
@@ -131,18 +127,18 @@ ModuleManager & ModuleBase::MManager(void) const
     return *mlocator_;
 }
 
-pybind11::object ModuleBase::CreateChildPy(const std::string & key) const
+pybind11::object ModuleBase::create_child_py(const std::string & key) const
 {
-    return mlocator_->GetModulePy(key, id_);
+    return mlocator_->get_module_py(key, id_);
 }
 
-pybind11::object ModuleBase::CreateChildFromOptionPy(const std::string & optionkey) const
+pybind11::object ModuleBase::create_child_from_option_py(const std::string & optionkey) const
 {
-    std::string modulekey = Options().Get<std::string>(optionkey);
-    return mlocator_->GetModulePy(modulekey, id_);
+    std::string modulekey = options().get<std::string>(optionkey);
+    return mlocator_->get_module_py(modulekey, id_);
 }
 
-CacheData & ModuleBase::Cache(void) const noexcept
+CacheData & ModuleBase::cache(void) const noexcept
 {
     if(cache_ == nullptr)
         throw std::logic_error("Developer error - cache_ is null for a module!");
@@ -155,12 +151,12 @@ CacheData & ModuleBase::Cache(void) const noexcept
 // Private functions
 ////////////////////////////////
 
-void ModuleBase::SetMManager_(ModuleManager * mloc) noexcept
+void ModuleBase::set_module_manager_(ModuleManager * mloc) noexcept
 {
     mlocator_ = mloc;
 }
 
-void ModuleBase::SetTreeNode_(ModuleTreeNode * node) noexcept
+void ModuleBase::set_tree_node_(ModuleTreeNode * node) noexcept
 {
     if(node == nullptr)
         throw std::logic_error("Developer error - module given a nullptr for tree node!");
@@ -168,17 +164,17 @@ void ModuleBase::SetTreeNode_(ModuleTreeNode * node) noexcept
     treenode_ = node;
 
     // tee the output to the tree
-    tbts_.SetString(&(MyNode().output));
+    tbts_.set_string(&(my_node().output));
 }
 
-ModuleTreeNode & ModuleBase::MyNode(void)
+ModuleTreeNode & ModuleBase::my_node(void)
 {
     if(treenode_ == nullptr)
         throw std::logic_error("Developer error - tree node is null for a module!");
     return *treenode_;
 }
 
-void ModuleBase::SetCache_(CacheData * cache) noexcept
+void ModuleBase::set_cache_(CacheData * cache) noexcept
 {
     cache_ = cache;
 }

@@ -22,12 +22,12 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         pass
         
 
-    def AddPath(self, path):
+    def add_path(self, path):
         self.paths.append(path)
 
 
-    def LoadModule(self, supermodule, modulename, modulekey):
-        output.GlobalOutput("Importing {} module from supermodule {} under key {}\n".format(modulename, supermodule, modulekey))
+    def load_module(self, supermodule, modulename, modulekey):
+        output.print_global_output("Importing {} module from supermodule {} under key {}\n".format(modulename, supermodule, modulekey))
 
         if supermodule == "" or supermodule == None:
             raise exception.GeneralException("Empty supermodule given to LoadModule") 
@@ -57,7 +57,7 @@ class ModuleAdministrator(modulemanager.ModuleManager):
             spath = os.path.dirname(m.__file__)
 
             # check options, etc
-            CheckSupermodule(spath)
+            check_supermodule(spath)
 
         except exception.GeneralException as e:
             raise e
@@ -78,8 +78,8 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         # Extract the module info for the desired module
         minfo = m.minfo[modulename]
 
-        output.GlobalOutput("\n")
-        output.GlobalOutput("Loading module {} v{}\n".format(modulename, minfo["version"]))
+        output.print_global_output("\n")
+        output.print_global_output("Loading module {} v{}\n".format(modulename, minfo["version"]))
 
         # Create a c++ moduleinfo structure
         # And fill it
@@ -116,16 +116,16 @@ class ModuleAdministrator(modulemanager.ModuleManager):
 
         # Create the options object
         for optkey,opt in minfo["options"].items():
-            cppminfo.options.AddOption(optkey, opt[0], opt[2], opt[3], opt[4], opt[1])
+            cppminfo.options.add_option(optkey, opt[0], opt[2], opt[3], opt[4], opt[1])
         
 
         # Now we can actually load it
-        super(ModuleAdministrator, self).LoadModuleFromModuleInfo(cppminfo, modulekey)
+        super(ModuleAdministrator, self).load_module_from_minfo(cppminfo, modulekey)
 
-        output.GlobalDebug("Imported module name {} from {} and associated key {}\n".format(modulename, supermodule, modulekey))
-        output.GlobalOutput("\n")
+        output.print_global_debug("Imported module name {} from {} and associated key {}\n".format(modulename, supermodule, modulekey))
+        output.print_global_output("\n")
 
 
-    def SanityCheck(self):
+    def sanity_check(self):
         # TODO May add more here
-        super(ModuleAdministrator, self).TestAll() 
+        super(ModuleAdministrator, self).test_all() 

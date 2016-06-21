@@ -13,9 +13,9 @@
 #include "pulsar/output/GlobalOutput.hpp"
 
 
-using pulsar::output::GlobalOutput;
-using pulsar::output::GlobalError;
-using pulsar::output::GlobalDebug;
+using pulsar::output::print_global_output;
+using pulsar::output::print_global_error;
+using pulsar::output::print_global_debug;
 
 namespace pulsar{
 namespace testing {
@@ -39,13 +39,13 @@ bool TestFunc(T func, Targs... Fargs)
     }
     catch(std::exception & ex)
     {
-        GlobalDebug(ex.what());
-        GlobalDebug("\n");
+        print_global_debug(ex.what());
+        print_global_debug("\n");
         return false;
     }   
     catch(...)
     {
-        GlobalDebug("Caught unknown exception\n");
+        print_global_debug("Caught unknown exception\n");
         return false;
     }   
 
@@ -73,13 +73,13 @@ bool TestBoolFunc(T func, Targs... Fargs)
     }
     catch(std::exception & ex)
     {
-        GlobalDebug(ex.what());
-        GlobalDebug("\n");
+        print_global_debug(ex.what());
+        print_global_debug("\n");
         return false;
     }   
     catch(...)
     {
-        GlobalDebug("Caught unknown exception\n");
+        print_global_debug("Caught unknown exception\n");
         return false;
     }   
 }
@@ -104,13 +104,13 @@ bool TestConstruct(Targs... Fargs)
     }
     catch(std::exception & ex)
     {
-        GlobalDebug(ex.what());
-        GlobalDebug("\n");
+        print_global_debug(ex.what());
+        print_global_debug("\n");
         return false;
     }   
     catch(...)
     {
-        GlobalDebug("Caught unknown exception\n");
+        print_global_debug("Caught unknown exception\n");
         return false;
     }   
 

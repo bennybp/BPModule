@@ -33,7 +33,7 @@ class Wavefunction
         std::shared_ptr<const math::IrrepSpinVectorD> epsilon;     //!< Orbital energies
         std::shared_ptr<const math::IrrepSpinVectorD> occupations; //!< Occupation of MOs
 
-        void ValidCheck(void) const
+        void valid_check(void) const
         {
             using exception::GeneralException;
 
@@ -42,25 +42,25 @@ class Wavefunction
             //! \todo compare with system?
             if(cmat)
             {
-                if(opdm && !cmat->SameStructure(*opdm))
+                if(opdm && !cmat->same_structure(*opdm))
                     throw GeneralException("Inconsistent shape: opdm and cmat");
-                if(epsilon && !cmat->SameStructure(*epsilon))
+                if(epsilon && !cmat->same_structure(*epsilon))
                     throw GeneralException("Inconsistent shape: epsilon and cmat");
-                if(occupations && !cmat->SameStructure(*occupations))
+                if(occupations && !cmat->same_structure(*occupations))
                     throw GeneralException("Inconsistent shape: occupations and cmat");
             }
 
             if(opdm)
             {
-                if(epsilon && !opdm->SameStructure(*epsilon))
+                if(epsilon && !opdm->same_structure(*epsilon))
                     throw GeneralException("Inconsistent shape: epsilon and opdm");
-                if(occupations && !opdm->SameStructure(*occupations))
+                if(occupations && !opdm->same_structure(*occupations))
                     throw GeneralException("Inconsistent shape: occupations and opdm");
             }
 
             if(epsilon)
             {
-                if(occupations && !epsilon->SameStructure(*occupations))
+                if(occupations && !epsilon->same_structure(*occupations))
                     throw GeneralException("Inconsistent shape: occupations and epsilon");
             }
         }
@@ -70,7 +70,7 @@ class Wavefunction
 
         bool operator!=(const Wavefunction & rhs) const;
 
-        bphash::HashValue MyHash(void) const;
+        bphash::HashValue my_hash(void) const;
 
     private:
 

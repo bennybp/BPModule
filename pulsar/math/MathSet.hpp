@@ -72,15 +72,15 @@ private:
 
     std::shared_ptr<const Base_t> Universe_;
 
-    void UniverseContains(const T& Elem)const
+    void universe_contains(const T& Elem)const
     {
-        if (!Universe_->Contains(Elem))
+        if (!Universe_->count(Elem))
             throw exception::ValueOutOfRange("Requested element is not in the universe for this set");
     }
 
-    void UniverseContainsIdx(size_t Idx)const
+    void universe_contains_idx(size_t Idx)const
     {
-        if (!Universe_->ContainsIdx(Idx))
+        if (!Universe_->count_idx(Idx))
             throw exception::ValueOutOfRange("Requested element is not in the universe for this set");
     }
 
@@ -178,7 +178,7 @@ public:
     MathSet(My_t&&) = default;
 
     ///Returns a deep copy of everything
-    My_t Clone()const
+    My_t clone()const
     {
         return My_t(std::shared_ptr<Base_t>(new Base_t(*Universe_)), this->Elems_);
         //                                      ^^ Deep copy universe, copy elements
@@ -186,7 +186,7 @@ public:
 
 
     /// Obtain the universe used by this set
-    std::shared_ptr<const Base_t> GetUniverse(void) const
+    std::shared_ptr<const Base_t> get_universe(void) const
     {
         return Universe_;
     } 
@@ -196,11 +196,11 @@ public:
      *
      * The new universe is not linked to this object in any way
      */
-    Base_t AsUniverse(void) const
+    Base_t as_universe(void) const
     {
         Base_t newuniverse;
         for(const auto & it : *this)
-            newuniverse.Insert(it);
+            newuniverse.insert(it);
         return newuniverse;
     }   
 
@@ -211,11 +211,6 @@ public:
     ///Basic accessors
 
     ///Returns the number of elements in this set
-    size_t Size(void)const noexcept
-    {
-        return this->Elems_.size();
-    }
-    
     size_t size(void)const noexcept
     {
         return this->Elems_.size();
@@ -233,17 +228,17 @@ public:
 
 
     ///Returns true if this set has the element
-    bool Contains(const T& Elem)const{
-        return (Universe_->Contains(Elem) &&
-                ContainsIdx(Idx(Elem)) > 0);
+    bool count(const T& Elem)const{
+        return (Universe_->count(Elem) &&
+                count_idx(idx(Elem)) > 0);
     }
 
-    bool ContainsIdx(size_t Idx)const { return this->Elems_.count(Idx); }
+    bool count_idx(size_t Idx)const { return this->Elems_.count(Idx); }
 
-    size_t Idx(const T& Elem)const
+    size_t idx(const T& Elem)const
     {
         // will throw if Elem is not part of our universe
-        return Universe_->Idx(Elem);
+        return Universe_->idx(Elem);
     }
 
     ///@}
@@ -252,39 +247,34 @@ public:
     /// \name Set operations
     ///@{
 
-    My_t& Insert(const T & Elem)
+    My_t& insert(const T & Elem)
     {
-        UniverseContains(Elem);
-        this->Elems_.insert(Idx(Elem));
+        universe_contains(Elem);
+        this->Elems_.insert(idx(Elem));
         return *this;
     }
     
-    template<typename itr>
-    My_t& insert(const itr&,const T& Elem){
-        return Insert(Elem);
-    }
-
-    My_t& InsertIdx(size_t Idx)
+    My_t& insert_idx(size_t Idx)
     {
-        UniverseContainsIdx(Idx);
+        universe_contains_idx(Idx);
         this->Elems_.insert(Idx);
         return *this;
     }
 
-    My_t& UnionAssign(const My_t & RHS)
+    My_t& union_assign(const My_t & RHS)
     {
         SameUniverse(RHS);
         this->Elems_.insert(RHS.Elems_.begin(), RHS.Elems_.end());
         return *this;
     }
 
-    My_t Union(const My_t& RHS)const
+    My_t set_union(const My_t& RHS)const
     {
-        return My_t(*this).UnionAssign(RHS);
+        return My_t(*this).union_assign(RHS);
     }
 
 
-    My_t& IntersectionAssign(const My_t& RHS)
+    My_t& intersection_assign(const My_t& RHS)
     {
         SameUniverse(RHS);
         // careful, RHS may be the same object as this
@@ -297,12 +287,12 @@ public:
         return *this;
     }
 
-    My_t Intersection(const My_t & RHS) const
+    My_t intersection(const My_t & RHS) const
     {
-        return My_t(*this).IntersectionAssign(RHS);
+        return My_t(*this).intersection_assign(RHS);
     }
 
-    My_t& DifferenceAssign(const My_t& RHS)
+    My_t& difference_assign(const My_t& RHS)
     {
         SameUniverse(RHS);
         // careful, RHS may be the same object as this
@@ -315,17 +305,17 @@ public:
         return *this;
     }
 
-    My_t Difference(const My_t& RHS) const
+    My_t difference(const My_t& RHS) const
     {
-        return My_t(*this).DifferenceAssign(RHS);
+        return My_t(*this).difference_assign(RHS);
     }
 
 
-    My_t Complement()const
+    My_t complement()const
     {
         My_t Temp(Universe_,{});
         for (const T& EI : *Universe_) {
-            if(!this->Contains(EI))Temp.Insert(EI);
+            if(!this->count(EI))Temp.insert(EI);
         }
         return Temp;
     }
@@ -342,9 +332,9 @@ public:
      *   \return True if this is a proper subset of other
      *
      */
-    bool IsProperSubsetOf(const My_t& RHS)const
+    bool is_proper_subset_of(const My_t& RHS)const
     {
-        return IsSubsetOf(RHS) && RHS.Size() > this->Size();
+        return is_subset_of(RHS) && RHS.size() > this->size();
     }
 
 
@@ -359,11 +349,11 @@ public:
      *   \return True if this is a subset of other
      *
      */
-    bool IsSubsetOf(const My_t& RHS)const
+    bool is_subset_of(const My_t& RHS)const
     {
         if(Universe_ != RHS.Universe_) return false;
         for(const auto & it : *this)
-            if(!RHS.Contains(it))
+            if(!RHS.count(it))
                 return false;
         return true;
     }
@@ -379,9 +369,9 @@ public:
      *  \return True if this is a proper superset of other
      *
      */
-    bool IsProperSupersetOf(const My_t& RHS)const
+    bool is_proper_superset_of(const My_t& RHS)const
     {
-        return RHS.IsProperSubsetOf(*this);
+        return RHS.is_proper_subset_of(*this);
     }
 
 
@@ -393,9 +383,9 @@ public:
      *  \return true if this is a superset of other
      *
      */
-    bool IsSupersetOf(const My_t& RHS)const
+    bool is_superset_of(const My_t& RHS)const
     {
-        return RHS.IsSubsetOf(*this);
+        return RHS.is_subset_of(*this);
     }
 
     ///@}
@@ -404,47 +394,47 @@ public:
     /// \name Operator overloads
     ///@{
 
-    /// \copydoc Insert(const T& Elem)
-    My_t & operator<<(const T& elem) { return Insert(elem); }
+    /// \copydoc insert(const T& Elem)
+    My_t & operator<<(const T& elem) { return insert(elem); }
 
-    /// \copydoc Insert(const T&& Elem)
-    My_t & operator<<(T&& elem) { return Insert(std::move(elem)); }
+    /// \copydoc insert(const T&& Elem)
+    My_t & operator<<(T&& elem) { return insert(std::move(elem)); }
 
-    /// \copydoc UnionAssign(const My_t & RHS)
-    My_t& operator+=(const My_t& RHS) { return UnionAssign(RHS); }
+    /// \copydoc union_assign(const My_t & RHS)
+    My_t& operator+=(const My_t& RHS) { return union_assign(RHS); }
 
-    /// \copydoc UnionAssign(My_t&& RHS)
-    My_t& operator+=(My_t&& RHS) { return UnionAssign(std::move(RHS)); }
+    /// \copydoc union_assign(My_t&& RHS)
+    My_t& operator+=(My_t&& RHS) { return union_assign(std::move(RHS)); }
 
-    /// \copydoc Union(My_t& RHS)
-    My_t operator+(const My_t& RHS)const { return Union(RHS); }
+    /// \copydoc set_union(My_t& RHS)
+    My_t operator+(const My_t& RHS)const { return set_union(RHS); }
 
-    /// \copydoc Union(My_t&& RHS)
-    My_t operator+(My_t&& RHS)const { return Union(std::move(RHS)); }
+    /// \copydoc set_union(My_t&& RHS)
+    My_t operator+(My_t&& RHS)const { return set_union(std::move(RHS)); }
 
-    /// \copydoc IntersectionAssign(const My_t & rhs)
-    My_t & operator/=(const My_t& RHS) { return IntersectionAssign(RHS); }
+    /// \copydoc intersection_assign(const My_t & rhs)
+    My_t & operator/=(const My_t& RHS) { return intersection_assign(RHS); }
 
-    /// \copydoc Intersection(const My_t & rhs)
-    My_t operator/(const My_t& RHS)const { return Intersection(RHS); }
+    /// \copydoc intersection(const My_t & rhs)
+    My_t operator/(const My_t& RHS)const { return intersection(RHS); }
 
-    /// \copydoc DifferenceAssign(const My_t &)
-    My_t & operator-=(const My_t& RHS) { return DifferenceAssign(RHS); }
+    /// \copydoc difference_assign(const My_t &)
+    My_t & operator-=(const My_t& RHS) { return difference_assign(RHS); }
 
-    /// \copydoc Difference(const My_t &)
-    My_t operator-(const My_t& RHS)const { return Difference(RHS); }
+    /// \copydoc difference(const My_t &)
+    My_t operator-(const My_t& RHS)const { return difference(RHS); }
 
-    /// \copydoc IsProperSubsetOf
-    bool operator<(const My_t& RHS)const { return IsProperSubsetOf(RHS); }
+    /// \copydoc is_proper_subset_of
+    bool operator<(const My_t& RHS)const { return is_proper_subset_of(RHS); }
 
-    /// \copydoc IsSubsetOf
-    bool operator<=(const My_t& RHS)const { return IsSubsetOf(RHS); }
+    /// \copydoc is_subset_of
+    bool operator<=(const My_t& RHS)const { return is_subset_of(RHS); }
 
-    /// \copydoc IsProperSupersetOf
-    bool operator>(const My_t& RHS)const { return IsProperSupersetOf(RHS); }
+    /// \copydoc is_proper_superset_of
+    bool operator>(const My_t& RHS)const { return is_proper_superset_of(RHS); }
 
-    /// \copydoc IsSupersetOf
-    bool operator>=(const My_t& RHS)const { return IsSupersetOf(RHS); }
+    /// \copydoc is_superset_of
+    bool operator>=(const My_t& RHS)const { return is_superset_of(RHS); }
 
 
     ///@}
@@ -486,24 +476,24 @@ public:
 
 
 
-    My_t Transform(TransformerFunc transformer)const
+    My_t transform(TransformerFunc transformer)const
     {
         //! \todo better way to do this function?
         //  This makes some assumptions about the ordering of elements
         std::shared_ptr<Base_t> newuniverse(new Base_t);
 
-        for(size_t i = 0; i < Universe_->Size(); ++i) {
-            const auto & it = (*Universe_).At(i);
+        for(size_t i = 0; i < Universe_->size(); ++i) {
+            const auto & it = (*Universe_).at(i);
 
             if (this->Elems_.count(i) > 0)
-                newuniverse->Insert(transformer(it));
+                newuniverse->insert(transformer(it));
             else
-                newuniverse->Insert(it);
+                newuniverse->insert(it);
         }
         return My_t(newuniverse, this->Elems_);
     }
 
-    My_t Partition(SelectorFunc selector) const
+    My_t partition(SelectorFunc selector) const
     {
         std::set<size_t> newelems;
         for(const auto & idx : this->Elems_) {
@@ -515,7 +505,7 @@ public:
     }
 
 
-    virtual std::string ToString()const
+    virtual std::string to_string()const
     {
         std::stringstream ss;
         for (const size_t& EI : this->Elems_)
@@ -530,9 +520,9 @@ public:
      * be the same even if the two MathSets have different
      * Universes.
      */
-    bphash::HashValue MyHash(void) const
+    bphash::HashValue my_hash(void) const
     {
-        return bphash::MakeHash(bphash::HashType::Hash128, *this);
+        return bphash::make_hash(bphash::HashType::Hash128, *this);
     }
 
 };

@@ -15,9 +15,9 @@ struct GridPointT
 
 
     /// Return a unique has of the point
-    bphash::HashValue MyHash(void) const
+    bphash::HashValue my_hash(void) const
     {
-        return bphash::MakeHash(bphash::HashType::Hash128, *this);
+        return bphash::make_hash(bphash::HashType::Hash128, *this);
     }
 
     bool operator==(const GridPointT & rhs) const
@@ -36,7 +36,7 @@ struct GridPointT
         return ((*this) != rhs);
     }
 
-    void Print(std::ostream& os) const
+    void print(std::ostream& os) const
     {
         os << coords << " " << value;
     }
@@ -82,7 +82,7 @@ typedef GridT<double> Grid;
 template<typename T>
 std::ostream& operator<<(std::ostream& os, const GridPointT<T>& P)
 {
-    P.Print(os);
+    P.print(os);
     return os;
 }
 

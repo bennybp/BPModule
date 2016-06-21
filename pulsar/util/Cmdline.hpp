@@ -17,21 +17,21 @@ namespace util {
 
 /*! Retrieves the number of arguments on the command line
  */
-int * GetArgc(void);
+int * get_argc(void);
 
 
 /*! Retrieves the command line
  */
-char *** GetArgv(void);
+char *** get_argv(void);
 
 /*! Stores the command line (from python) for later use
  */
-void SetCmdline(const std::vector<std::string> & argv);
+void set_cmdline(const std::vector<std::string> & argv);
 
 
 /*! Frees memory associated with the stored command line
  */
-void ClearCmdline(void);
+void clear_cmdline(void);
 
 
 } // close namespace util

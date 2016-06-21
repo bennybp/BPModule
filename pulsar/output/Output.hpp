@@ -24,7 +24,7 @@ namespace detail {
      * \param [in] type The type of output (debug, warning, etc)
      * \param [in] str The string to print
      */
-    void Output_(std::ostream & os, OutputType type, const std::string & str);
+    void print_output_(std::ostream & os, OutputType type, const std::string & str);
 }
 
 
@@ -41,9 +41,9 @@ namespace detail {
  * \param [in] Fargs The arguments to the format string
  */
 template<typename ... Targs>
-void GeneralOutput(std::ostream & os, OutputType type, const std::string & fmt, const Targs&... Fargs)
+void print_general_output(std::ostream & os, OutputType type, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(os, type, util::FormatString(fmt, Fargs...));
+    detail::print_output_(os, type, util::format_string(fmt, Fargs...));
 }
 
 
@@ -59,59 +59,59 @@ void GeneralOutput(std::ostream & os, OutputType type, const std::string & fmt, 
  * \param [in] Fargs The arguments to the format string
  */
 template<typename ... Targs>
-void Output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
+void print_output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(os, OutputType::Output, util::FormatString(fmt, Fargs...));
+    detail::print_output_(os, OutputType::Output, util::format_string(fmt, Fargs...));
 }
 
 
 /*! \brief Print formatted changed output to a stream
- * \copydetails Output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
+ * \copydetails print_output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
  */
 template<typename ... Targs>
-void Changed(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
+void print_changed(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(os, OutputType::Changed, util::FormatString(fmt, Fargs...));
+    detail::print_output_(os, OutputType::Changed, util::format_string(fmt, Fargs...));
 }
 
 
 /*! \brief Print formatted error output to a stream
- * \copydetails Output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
+ * \copydetails print_output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
  */
 template<typename ... Targs>
-void Error(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
+void print_error(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(os, OutputType::Error, util::FormatString(fmt, Fargs...));
+    detail::print_output_(os, OutputType::Error, util::format_string(fmt, Fargs...));
 }
 
 
 /*! \brief Print formatted warning output to a stream
- * \copydetails Output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
+ * \copydetails print_output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
  */
 template<typename ... Targs>
-void Warning(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
+void print_warning(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(os, OutputType::Warning, util::FormatString(fmt, Fargs...));
+    detail::print_output_(os, OutputType::Warning, util::format_string(fmt, Fargs...));
 }
 
 
 /*! \brief Print formatted success output to a stream
- * \copydetails Output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
+ * \copydetails print_output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
  */
 template<typename ... Targs>
-void Success(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
+void print_success(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(os, OutputType::Success, util::FormatString(fmt, Fargs...));
+    detail::print_output_(os, OutputType::Success, util::format_string(fmt, Fargs...));
 }
 
 
 /*! \brief Print formatted debug output to a stream
- * \copydetails Output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
+ * \copydetails print_output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
  */
 template<typename ... Targs>
-void Debug(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
+void print_debug(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::Output_(os, OutputType::Debug, util::FormatString(fmt, Fargs...));
+    detail::print_output_(os, OutputType::Debug, util::format_string(fmt, Fargs...));
 }
 
 

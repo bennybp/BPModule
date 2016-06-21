@@ -19,7 +19,7 @@ namespace detail {
  *
  * Can handle some pulsar-derived exception classes
  */
-std::string GetPyException(void);
+std::string get_py_exception(void);
 
 
 

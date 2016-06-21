@@ -25,7 +25,7 @@ PRAGMA_WARNING_IGNORE_UNUSED_PARAMETERS
  * of the exception.
  */
 template<typename EX, typename ... Targs>
-void Assert(bool condition, const std::string & description, Targs &&... args) ASSERTIONS_ONLY
+void psr_assert(bool condition, const std::string & description, Targs &&... args) ASSERTIONS_ONLY
 {
     #ifndef NDEBUG
     if(!condition)

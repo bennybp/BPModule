@@ -156,7 +156,7 @@ class PyModulePtr
          *
          * \param [in] name The attribute to get from the module
          */
-        pybind11::object Py__getattr__(const std::string & name)
+        pybind11::object py__getattr__(const std::string & name)
         {
             using namespace pulsar::exception;
 

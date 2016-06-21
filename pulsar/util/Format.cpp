@@ -12,18 +12,18 @@ namespace util {
 
 // Instantiate some commonly-used templates
 // Zero arguments
-template void FormatStream<>(std::ostream &, const std::string &);
-template std::string FormatString<>(const std::string &);
+template void format_stream<>(std::ostream &, const std::string &);
+template std::string format_string<>(const std::string &);
 
 // One argument
 #define DECLARE_TEMPLATE_FORMAT_1(type1) \
-        template void FormatStream<type1>(std::ostream &, const std::string &, const type1 &); \
-        template std::string FormatString<type1>(const std::string &, const type1 &);
+        template void format_stream<type1>(std::ostream &, const std::string &, const type1 &); \
+        template std::string format_string<type1>(const std::string &, const type1 &);
 
 // Two arguments
 #define DECLARE_TEMPLATE_FORMAT_2(type1, type2) \
-        template void FormatStream<type1, type2>(std::ostream &, const std::string &, const type1 &, const type2 &); \
-        template std::string FormatString<type1, type2>(const std::string &, const type1 &, const type2 &);
+        template void format_stream<type1, type2>(std::ostream &, const std::string &, const type1 &, const type2 &); \
+        template std::string format_string<type1, type2>(const std::string &, const type1 &, const type2 &);
 
 DECLARE_TEMPLATE_FORMAT_1(std::string)
 DECLARE_TEMPLATE_FORMAT_1(int)

@@ -18,7 +18,7 @@ set(PULSAR_SYSTEM_FILES
     symmetry/Symmetrizer.cpp
     symmetry/SymmetryElement.cpp
     symmetry/SymmetryGroup.cpp
-    symmetry/ExportSymmetry.cpp
+    symmetry/export_symmetry.cpp
 
     PARENT_SCOPE
    )

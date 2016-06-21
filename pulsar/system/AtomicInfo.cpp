@@ -24,7 +24,7 @@ using lut::atomic_sym_Z_;
 using lut::atomic_Z_data_;
 
 
-int AtomicZNumberFromSym(const std::string & sym)
+int atomic_z_from_symbol(const std::string & sym)
 {
     if(atomic_sym_Z_.count(sym))
         return atomic_sym_Z_.at(sym);
@@ -35,7 +35,7 @@ int AtomicZNumberFromSym(const std::string & sym)
 
 
 
-std::string AtomicSymFromZ(int Z)
+std::string atomic_symbol_from_z(int Z)
 {
     if(atomic_Z_sym_.count(Z))
         return atomic_Z_sym_.at(Z);
@@ -46,7 +46,7 @@ std::string AtomicSymFromZ(int Z)
 
 
 
-const AtomicData & AtomicInfoFromZ(int Z)
+const AtomicData & atomic_info_from_z(int Z)
 {
     if(atomic_Z_data_.count(Z))
         return atomic_Z_data_.at(Z);
@@ -57,16 +57,16 @@ const AtomicData & AtomicInfoFromZ(int Z)
 
 
 
-const AtomicData & AtomicInfoFromSym(const std::string & sym)
+const AtomicData & atomic_info_from_symbol(const std::string & sym)
 {
-    return AtomicInfoFromZ(AtomicZNumberFromSym(sym));
+    return atomic_info_from_z(atomic_z_from_symbol(sym));
 }
 
 
 
-const IsotopeData & IsotopeInfoFromZ(int Z, int isonum)
+const IsotopeData & isotope_info_from_z(int Z, int isonum)
 {
-    const AtomicData & ad = AtomicInfoFromZ(Z);
+    const AtomicData & ad = atomic_info_from_z(Z);
     
     for(const auto & it : ad.isotopes)
         if(it.isonum == isonum)
@@ -79,15 +79,15 @@ const IsotopeData & IsotopeInfoFromZ(int Z, int isonum)
 
 
 
-const IsotopeData & IsotopeInfoFromSym(const std::string & sym, int isonum)
+const IsotopeData & isotope_info_from_symbol(const std::string & sym, int isonum)
 {
-    return IsotopeInfoFromZ(AtomicZNumberFromSym(sym), isonum); 
+    return isotope_info_from_z(atomic_z_from_symbol(sym), isonum); 
 }
 
 
-int MostCommonIsotopeFromZ(int Z)
+int most_common_isotope_from_z(int Z)
 {
-    const AtomicData & ad = AtomicInfoFromZ(Z);
+    const AtomicData & ad = atomic_info_from_z(Z);
     if(ad.isotopes.size() == 0)
         throw exception::SystemException("Developer error: No isotopes for this Z number?",
                                            "Z", Z);
@@ -100,84 +100,84 @@ int MostCommonIsotopeFromZ(int Z)
     return maxit->isonum;
 }
 
-int MostCommonIsotopeFromSym(const std::string & sym)
+int most_common_isotope_from_symbol(const std::string & sym)
 {
-    return MostCommonIsotopeFromZ(AtomicZNumberFromSym(sym));
+    return most_common_isotope_from_z(atomic_z_from_symbol(sym));
 }
  
 
-double AtomicMassFromZ(int Z)
+double atomic_mass_from_z(int Z)
 {
-    return AtomicInfoFromZ(Z).mass;
+    return atomic_info_from_z(Z).mass;
 }
 
 
 
-double AtomicMassFromSym(const std::string & sym)
+double atomic_mass_from_symbol(const std::string & sym)
 {
-    return AtomicInfoFromSym(sym).mass;
+    return atomic_info_from_symbol(sym).mass;
 }
 
 
 
-double IsotopeMassFromZ(int Z, int isonum)
+double isotope_mass_from_z(int Z, int isonum)
 {
-    return IsotopeInfoFromZ(Z, isonum).mass;
+    return isotope_info_from_z(Z, isonum).mass;
 }
 
 
 
-double IsotopeMassFromSym(const std::string & sym, int isonum)
+double isotope_mass_from_symbol(const std::string & sym, int isonum)
 {
-    return IsotopeInfoFromSym(sym, isonum).mass;
+    return isotope_info_from_symbol(sym, isonum).mass;
 }
 
 
 
-std::string AtomicNameFromZ(int Z)
+std::string atomic_name_from_z(int Z)
 {
-    return AtomicInfoFromZ(Z).name;
+    return atomic_info_from_z(Z).name;
 }
 
 
 
-std::string AtomicNameFromSym(const std::string & sym)
+std::string atomic_name_from_symbol(const std::string & sym)
 {
-    return AtomicInfoFromSym(sym).name;
+    return atomic_info_from_symbol(sym).name;
 }
 
 
 
-int AtomicMultiplicityFromZ(int Z)
+int atomic_multiplicity_from_z(int Z)
 {
-    return AtomicInfoFromZ(Z).multiplicity;
+    return atomic_info_from_z(Z).multiplicity;
 }
 
 
 
-int AtomicMultiplicityFromSym(const std::string & sym)
+int atomic_multiplicity_from_symbol(const std::string & sym)
 {
-    return AtomicInfoFromSym(sym).multiplicity;
+    return atomic_info_from_symbol(sym).multiplicity;
 }
 
-double CovRadiusFromZ(int Z)
+double covalent_radius_from_z(int Z)
 {
-    return AtomicInfoFromZ(Z).covradius;
+    return atomic_info_from_z(Z).covradius;
 }
 
-double CovRadiusFroSym(const std::string & sym)
+double covalent_radius_from_symbol(const std::string & sym)
 {
-    return AtomicInfoFromSym(sym).covradius;
+    return atomic_info_from_symbol(sym).covradius;
 }
 
-double VDWRadiusFromZ(int Z)
+double vdw_radius_from_z(int Z)
 {
-    return AtomicInfoFromZ(Z).vdwradius;
+    return atomic_info_from_z(Z).vdwradius;
 }
 
-double VDWRadiusFroSym(const std::string & sym)
+double vdw_radius_from_symbol(const std::string & sym)
 {
-    return AtomicInfoFromSym(sym).vdwradius;
+    return atomic_info_from_symbol(sym).vdwradius;
 }
 
 } // closing namespace system

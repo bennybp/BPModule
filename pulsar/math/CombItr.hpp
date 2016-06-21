@@ -16,7 +16,6 @@
 
 #include <vector>
 #include "pulsar/exception/Exceptions.hpp"
-#include "pulsar/system/System.hpp"
 
 namespace pulsar{
 namespace math{
@@ -114,13 +113,13 @@ class CombItr {
       bool Done_;
       
       ///Constructor code factorization
-      void Initialize();
+      void initialize();
       
       ///Sets Comb_ to the next combination
-      void Next();
+      void next();
       
       ///Function that resets Comb_
-      void ResetComb();
+      void reset_comb();
    public:
       ///Makes a new iterator that will run through Set, K at a time
       CombItr(const T& Set, size_t K);
@@ -129,31 +128,34 @@ class CombItr {
       ///Returns the combination this iterator points to
       const T& operator*()const{return Comb_;}
       ///Returns true if we have run through all combinations
-      bool Done()const{return Done_;}
+      bool done()const{return Done_;}
       ///True while the iterator still has combinations left
-      operator bool()const{return !Done();}
+      operator bool()const{return !done();}
       ///Allows access to the member functions of your container
       const T* operator->()const{return &Comb_;}
       ///Increments the iterator before returning it
-      CombItr<T>& operator++(){Next();return *this;}
+      CombItr<T>& operator++(){next();return *this;}
       ///Increments the iterator after returning it
-      CombItr<T> operator++(int){CombItr<T> Temp(*this);Next();return Temp;}
+      CombItr<T> operator++(int){CombItr<T> Temp(*this);next();return Temp;}
       
 };
 
+
+//! \todo ??? Don't think you can specialize single function of a templated class? And
+//            these are declared, but not defined...
 ///Specializations of CombItr for system
-template<> void math::CombItr<system::System>::ResetComb();
-template<> math::CombItr<system::System>::CombItr(const system::System& Set,size_t K);
+//template<> void math::CombItr<system::System>::reset_comb();
+//template<> math::CombItr<system::System>::CombItr(const system::System& Set,size_t K);
 
 /*********** Implementations ***************/
 template <typename T>
 CombItr<T>::CombItr(const T& Set, size_t K) :
       K_(K),Indices_(K),Set_(Set), Done_(false) {
-    Initialize();
+    initialize();
 }
 
 template<typename T>
-void CombItr<T>::Initialize(){
+void CombItr<T>::initialize(){
     if (Set_.size()<K_)
     throw pulsar::exception::GeneralException(
            "I don't know how to generate combinations with"
@@ -169,7 +171,7 @@ void CombItr<T>::Initialize(){
 }
 
 template <typename T>
-void CombItr<T>::Next() {
+void CombItr<T>::next() {
     if(K_==0){
         Done_=true;
         return;
@@ -192,13 +194,13 @@ void CombItr<T>::Next() {
             return;
         }
     }
-    ResetComb();
+    reset_comb();
     for(const TItr_t Idx: Indices_)
         Comb_.insert(Comb_.end(), *Idx);
 }
 
 template<typename T>
-void CombItr<T>::ResetComb() {
+void CombItr<T>::reset_comb() {
     //Fill in combination
     T NewComb;
     Comb_=NewComb;    

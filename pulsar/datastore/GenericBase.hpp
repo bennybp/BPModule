@@ -41,7 +41,7 @@ class GenericBase
          *
          * \return A string representing the type (obtained via typeid().name())
          */
-        virtual const char * Type(void) const noexcept = 0;
+        virtual const char * type(void) const noexcept = 0;
 
 
 
@@ -51,7 +51,7 @@ class GenericBase
          *
          * \return A std::type_info structure representing the stored type
          */
-        virtual const std::type_info & TypeInfo(void) const noexcept = 0;
+        virtual const std::type_info & type_info(void) const noexcept = 0;
 
 
 
@@ -62,7 +62,7 @@ class GenericBase
          *
          * \return A string representing the type
          */
-        virtual std::string DemangledType(void) const = 0;
+        virtual std::string demangled_type(void) const = 0;
 
 
 
@@ -78,9 +78,9 @@ class GenericBase
          * \return True if the contained object is of type U, false otherwise
          */ 
         template<typename U>
-        bool IsType(void) const noexcept
+        bool is_type(void) const noexcept
         {
-            return typeid(U) == TypeInfo();
+            return typeid(U) == type_info();
         }
 
 };

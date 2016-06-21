@@ -1,12 +1,12 @@
 import re
-from pulsar.system import BasisShellInfo, ShellType, StringToAM, AtomicZNumberFromSym
+from pulsar.system import BasisShellInfo, ShellType, string_to_am, atomic_z_from_symbol
 from pulsar.exception import GeneralException
 
 
 # Break apart a list into blocks, where the original list
 # was separated by separator (regex). The first separator is included
 # if includesep is True
-def BlockList(lst, separator, includesep = False):
+def block_list(lst, separator, includesep = False):
     curline = 0
     ret = []
 
@@ -29,7 +29,7 @@ def BlockList(lst, separator, includesep = False):
 
 
 
-def ReadBasisFile(path):
+def read_basis_file(path):
     validcart = ["spherical", "cartesian"]
 
     basismap = {}
@@ -48,12 +48,12 @@ def ReadBasisFile(path):
     iscart = (cart == "cartesian")
     bstype = ShellType.CartesianGaussian if iscart else ShellType.SphericalGaussian
 
-    atomblocks = BlockList(lines[1:], r"\*\*\*\*", True) 
+    atomblocks = block_list(lines[1:], r"\*\*\*\*", True) 
 
     for atomlines in atomblocks:
         shellvec = []
         element, num = atomlines[0].split()
-        shellblocks = BlockList(atomlines[1:], r"\D+ *\d+ *\d+(\.\d+)?")
+        shellblocks = block_list(atomlines[1:], r"\D+ *\d+ *\d+(\.\d+)?")
 
         for shelllines in shellblocks:
             am, nprim, num = shelllines[0].split()
@@ -75,15 +75,15 @@ def ReadBasisFile(path):
                                            "expected", ngen, "actual", len(p[1]))
 
             # We have all the information to create a shell now
-            amint = StringToAM(am)
+            amint = string_to_am(am)
             bsi = BasisShellInfo(bstype, amint, nprim, ngen) 
             for i in range(0, len(prims)):
-                bsi.SetPrimitive(i, float(prims[i][0]),
+                bsi.set_primitive(i, float(prims[i][0]),
                                     [ float(d) for d in prims[i][1] ])
 
             shellvec.append(bsi)
 
-        element_Z = AtomicZNumberFromSym(element)
+        element_Z = atomic_z_from_symbol(element)
         basismap[element_Z] = shellvec
                 
  

@@ -31,7 +31,7 @@ namespace math {
  * \tparam T The type being held within the math set
  */
 template<typename T>
-void RegisterMathSet(pybind11::module & m,
+void register_MathSet(pybind11::module & m,
                      const char * mathsetname)
 {
     typedef typename T::value_type value_type;
@@ -40,31 +40,31 @@ void RegisterMathSet(pybind11::module & m,
     pybind11::class_<T>(m, mathsetname)
     .def(pybind11::init<std::shared_ptr<typename T::Universe_t>, bool>())
     .def(pybind11::init<const T &>())
-    .def("MyHash", &T::MyHash)
-    .def("Size", &T::Size)
-    .def("Idx",  &T::Idx)
-    .def("AsUniverse", &T::AsUniverse)
-    .def("GetUniverse", &T::GetUniverse)
-    .def("Contains", &T::Contains)
-    .def("ContainsIdx", &T::ContainsIdx)
-    .def("InsertIdx", &T::InsertIdx)
-    .def("Insert", static_cast<T &(T::*)(const value_type &)>(&T::Insert))
-    .def("UnionAssign", static_cast<T &(T::*)(const T &)>(&T::UnionAssign),
+    .def("my_hash", &T::my_hash)
+    .def("size", &T::size)
+    .def("idx",  &T::idx)
+    .def("as_universe", &T::as_universe)
+    .def("get_universe", &T::get_universe)
+    .def("count", &T::count)
+    .def("count_idx", &T::count_idx)
+    .def("insert_idx", &T::insert_idx)
+    .def("insert", static_cast<T &(T::*)(const value_type &)>(&T::insert))
+    .def("union_assign", static_cast<T &(T::*)(const T &)>(&T::union_assign),
                         pybind11::return_value_policy::reference)
-    .def("Union", static_cast<T (T::*)(const T &) const>(&T::Union))
-    .def("IntersectionAssign", &T::IntersectionAssign,
+    .def("set_union", static_cast<T (T::*)(const T &) const>(&T::set_union))
+    .def("intersection_assign", &T::intersection_assign,
                                pybind11::return_value_policy::reference)
-    .def("Intersection", &T::Intersection)
-    .def("DifferenceAssign", &T::DifferenceAssign,
+    .def("intersection", &T::intersection)
+    .def("difference_assign", &T::difference_assign,
                              pybind11::return_value_policy::reference)
-    .def("Difference", &T::Difference)
-    .def("Complement",&T::Complement,"Returns the complement of this")
-    .def("IsProperSubsetOf", &T::IsProperSubsetOf)
-    .def("IsSubsetOf", &T::IsSubsetOf)
-    .def("IsProperSupersetOf", &T::IsProperSupersetOf)
-    .def("IsSupersetOf", &T::IsSupersetOf)
-    .def("Transform", &T::Transform)
-    .def("Partition", &T::Partition)
+    .def("difference", &T::difference)
+    .def("complement",&T::complement,"Returns the complement of this")
+    .def("is_proper_subset_of", &T::is_proper_subset_of)
+    .def("is_subset_of", &T::is_subset_of)
+    .def("is_proper_superset_of", &T::is_proper_superset_of)
+    .def("is_superset_of", &T::is_superset_of)
+    .def("transform", &T::transform)
+    .def("partition", &T::partition)
     .def(pybind11::self += pybind11::self, pybind11::return_value_policy::reference)
     .def(pybind11::self + pybind11::self)
     .def(pybind11::self -= pybind11::self, pybind11::return_value_policy::reference)
@@ -76,9 +76,9 @@ void RegisterMathSet(pybind11::module & m,
     .def(pybind11::self <= pybind11::self)
     .def(pybind11::self < pybind11::self)
     .def(pybind11::self == pybind11::self)
-    .def("__len__",         &T::Size)
-    .def("__contains__",    &T::Contains)
-    .def("__str__",&T::ToString)
+    .def("__len__",         &T::size)
+    .def("__contains__",    &T::count)
+    .def("__str__",&T::to_string)
     .def("__iter__", [](const T & t) { return pybind11::make_iterator(t.begin(), t.end()); },
                      pybind11::keep_alive<0, 1>() )
     ;
@@ -86,7 +86,7 @@ void RegisterMathSet(pybind11::module & m,
 
 
 template<typename T>
-void RegisterUniverse(pybind11::module & m,
+void register_Universe(pybind11::module & m,
                       const char * universename)
 {
     typedef typename T::value_type value_type;
@@ -96,26 +96,26 @@ void RegisterUniverse(pybind11::module & m,
     pybind11::class_<T,std::shared_ptr<T>>(m, universename)
     .def(pybind11::init<>())
     .def(pybind11::init<const T &>())
-    .def("Size", &T::Size)
-    .def("MyHash", &T::MyHash)
-    .def("Idx",  &T::Idx)
-    .def("At",   &T::At, pybind11::return_value_policy::copy)
-    .def("Contains", &T::Contains)
-    .def("ContainsIdx", &T::ContainsIdx)
-    .def("Insert", static_cast<T &(T::*)(const value_type &)>(&T::Insert))
-    .def("UnionAssign", static_cast<T &(T::*)(const T &)>(&T::UnionAssign),
+    .def("size", &T::size)
+    .def("my_hash", &T::my_hash)
+    .def("idx",  &T::idx)
+    .def("at",   &T::at, pybind11::return_value_policy::copy)
+    .def("count", &T::count)
+    .def("count_idx", &T::count_idx)
+    .def("insert", static_cast<T &(T::*)(const value_type &)>(&T::insert))
+    .def("union_assign", static_cast<T &(T::*)(const T &)>(&T::union_assign),
                         pybind11::return_value_policy::reference)
-    .def("Union", static_cast<T (T::*)(const T &) const>(&T::Union))
-    .def("IntersectionAssign", &T::IntersectionAssign,
+    .def("set_union", static_cast<T (T::*)(const T &) const>(&T::set_union))
+    .def("intersection_assign", &T::intersection_assign,
                                pybind11::return_value_policy::reference)
-    .def("Intersection", &T::Intersection)
-    .def("DifferenceAssign", &T::DifferenceAssign,
+    .def("intersection", &T::intersection)
+    .def("difference_assign", &T::difference_assign,
                              pybind11::return_value_policy::reference)
-    .def("Difference", &T::Difference)
-    .def("IsProperSubsetOf", &T::IsProperSubsetOf)
-    .def("IsSubsetOf", &T::IsSubsetOf)
-    .def("IsProperSupersetOf", &T::IsProperSupersetOf)
-    .def("IsSupersetOf", &T::IsSupersetOf)
+    .def("difference", &T::difference)
+    .def("is_proper_subset_of", &T::is_proper_subset_of)
+    .def("is_subset_of", &T::is_subset_of)
+    .def("is_proper_superset_of", &T::is_proper_superset_of)
+    .def("is_superset_of", &T::is_superset_of)
     .def(pybind11::self += pybind11::self, pybind11::return_value_policy::reference)
     .def(pybind11::self + pybind11::self)
     .def(pybind11::self -= pybind11::self, pybind11::return_value_policy::reference)
@@ -127,10 +127,10 @@ void RegisterUniverse(pybind11::module & m,
     .def(pybind11::self <= pybind11::self)
     .def(pybind11::self < pybind11::self)
     .def(pybind11::self == pybind11::self)
-    .def("__len__",         &T::Size)
-    .def("__contains__",    &T::Contains)
-    .def("__getitem__",     &T::At)
-    .def("__str__",&T::ToString)
+    .def("__len__",         &T::size)
+    .def("__contains__",    &T::count)
+    .def("__getitem__",     &T::at)
+    .def("__str__",&T::to_string)
     .def("__iter__", [](const T & t) { return pybind11::make_iterator(t.begin(), t.end()); },
                      pybind11::keep_alive<0, 1>() )
     ;

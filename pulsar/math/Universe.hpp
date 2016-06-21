@@ -262,11 +262,6 @@ public:
     ///Basic accessors
 
     ///Returns the cardinality of the universe (i.e. the number of elements)
-    size_t Size()const noexcept
-    {
-        return Elems_.size();
-    }
-    
     size_t size()const noexcept
     {
         return Elems_.size();
@@ -286,7 +281,7 @@ public:
 
     ///Returns true if this set contains Elem, comparison occurs via
     ///Elem's operator==
-    bool Contains(const T& Elem)const
+    bool count(const T& Elem)const
     {
         auto it = std::find(Storage_->begin(), Storage_->end(), Elem);
         if(it != Storage_->end())
@@ -296,14 +291,14 @@ public:
     }
 
     ///Returns true if this set contains an element with the given index
-    bool ContainsIdx(size_t EI)const
+    bool count_idx(size_t EI)const
     {
         return Elems_.count(EI) > 0;
     }
 
 
     ///Returns the index of an Elem in Storage_
-    size_t Idx(const T& Elem)const
+    size_t idx(const T& Elem)const
     {
         auto it = std::find(Storage_->begin(), Storage_->end(), Elem);
         if(it != Storage_->end())
@@ -316,7 +311,7 @@ public:
     const T& operator[](size_t EI)const { return (*Storage_)[EI]; }
 
 
-    const T& At(size_t EI) const
+    const T& at(size_t EI) const
     {
         if(EI >= Storage_->size())
             throw exception::ValueOutOfRange("Out of bounds access in universe", "index", EI);
@@ -342,9 +337,9 @@ public:
      * Note: calling this function invalidates all iterators that are
      * out
      */
-    My_t& Insert(const T& Elem)
+    My_t& insert(const T& Elem)
     {
-        if(!Contains(Elem))
+        if(!count(Elem))
         {
             Elems_.insert(Storage_->size()); // add the index
             Storage_->insert(Storage_->end(), Elem); // actually copy the data
@@ -352,11 +347,6 @@ public:
         return *this;
     }
 
-    template<typename Itr>
-    My_t& insert(const Itr&,const T& elem){
-        return Insert(elem);
-    }
-    
      /** \brief Moves an element to this universe
      * 
      * This function adds an element to the universe and allocates
@@ -369,9 +359,9 @@ public:
      * Note: calling this function invalidates all iterators that are
      * out
      */
-    My_t& Insert(T&& Elem)
+    My_t& insert(T&& Elem)
     {
-        if(!Contains(Elem))
+        if(!count(Elem))
         {
             Elems_.insert(Storage_->size()); // add the index
             Storage_->insert(Storage_->end(), std::move(Elem)); // actually move the data
@@ -389,34 +379,34 @@ public:
      *  in the order they appear in RHS.  If this isn't good enough you likely
      *  will have to merge the sets manually.
      */
-    My_t& UnionAssign(const My_t& RHS)
+    My_t& union_assign(const My_t& RHS)
     {
         for (const T & EI : RHS)
-            if (!this->Contains(EI))(*this) << EI;
+            if (!this->count(EI))(*this) << EI;
         return *this;
     }
 
 
-    My_t& UnionAssign(My_t&& RHS)
+    My_t& union_assign(My_t&& RHS)
     {
         for(T & EI : *RHS.Storage_)
-            if (!this->Contains(EI))(*this) << std::move(EI);
+            if (!this->count(EI))(*this) << std::move(EI);
         return *this;
     }
 
 
     ///Returns a new universe (not linked to this one) that is union of this and
     ///RHS
-    My_t Union(const My_t& RHS)const
+    My_t set_union(const My_t& RHS)const
     {
-        return My_t(*this).UnionAssign(RHS);
+        return My_t(*this).union_assign(RHS);
     }
 
     ///Returns a new universe (not linked to this one) that is union of this and
     ///RHS
-    My_t Union(My_t&& RHS)const
+    My_t set_union(My_t&& RHS)const
     {
-        return My_t(*this).UnionAssign(std::move(RHS));
+        return My_t(*this).union_assign(std::move(RHS));
     }
 
     /** \brief Makes this the intersection of this and RHS
@@ -425,13 +415,13 @@ public:
      *  The elements contained in this after the operation, will be in the same
      *  order they were  originally.
      */
-    My_t& IntersectionAssign(const My_t& RHS)
+    My_t& intersection_assign(const My_t& RHS)
     {
         std::shared_ptr<U> Temp(new U);
         std::set<size_t> TempElems;
         for (size_t EI : Elems_) {
             T & Element = Storage_->at(EI);
-            if (RHS.Contains(Element)) {
+            if (RHS.count(Element)) {
                 TempElems.insert(Temp->size());
                 Temp->insert(Temp->end(), std::move(Element));
             }
@@ -443,9 +433,9 @@ public:
 
 
     /*! \brief Returns the intersection of this and RHS */
-    My_t Intersection(const My_t& RHS) const
+    My_t intersection(const My_t& RHS) const
     {
-        return My_t(*this).IntersectionAssign(RHS);
+        return My_t(*this).intersection_assign(RHS);
     }
 
     /** \brief Makes this the set difference of this and RHS
@@ -453,13 +443,13 @@ public:
      *  Again, we can't sort Storage_, so we can't use std::set_difference. As
      *  with intersection, the final order is the same as it was orginally
      */
-    My_t& DifferenceAssign(const My_t& RHS)
+    My_t& difference_assign(const My_t& RHS)
     {
         std::shared_ptr<U> Temp(new U);
         std::set<size_t> TempElems;
         for (size_t EI : Elems_) {
             T & Element = Storage_->at(EI);
-            if (!RHS.Contains(Element)) {
+            if (!RHS.count(Element)) {
                 TempElems.insert(Temp->size());
                 Temp->insert(Temp->end(), std::move(Element));
             }
@@ -469,9 +459,9 @@ public:
         return *this;
     }
 
-    My_t Difference(const My_t& RHS) const
+    My_t difference(const My_t& RHS) const
     {
-        return My_t(*this).DifferenceAssign(RHS);
+        return My_t(*this).difference_assign(RHS);
     }
 
     /** \brief Returns true if this is a proper subset of other
@@ -486,11 +476,11 @@ public:
      *   \return True if this is a proper subset of other
      *
      */
-    bool IsProperSubsetOf(const My_t& RHS)const
+    bool is_proper_subset_of(const My_t& RHS)const
     {
         // Are we a subset, and does RHS have more elements than we do?
         //! \todo is this logic correct?
-        return IsSubsetOf(RHS) && RHS.Size() > this->Size();
+        return is_subset_of(RHS) && RHS.size() > this->size();
     }
 
     /** \brief Returns true if this is a subset of other
@@ -503,10 +493,10 @@ public:
      *   \return True if this is a subset of other
      *
      */
-    bool IsSubsetOf(const My_t& RHS)const
+    bool is_subset_of(const My_t& RHS)const
     {
         for(const auto & it : *this)
-            if(!RHS.Contains(it))
+            if(!RHS.count(it))
                 return false; // we have an element not in RHS
         return true; // All our elements are in RHS
     }
@@ -520,9 +510,9 @@ public:
      *  \return True if this is a proper superset of other
      *
      */
-    bool IsProperSupersetOf(const My_t& RHS)const
+    bool is_proper_superset_of(const My_t& RHS)const
     {
-        return RHS.IsProperSubsetOf(*this);
+        return RHS.is_proper_subset_of(*this);
     }
 
     /** \brief Returns true if this is a superset of other
@@ -533,9 +523,9 @@ public:
      *  \return true if this is a superset of other
      *  
      */
-    bool IsSupersetOf(const My_t& RHS)const
+    bool is_superset_of(const My_t& RHS)const
     {
-        return RHS.IsSubsetOf(*this);
+        return RHS.is_subset_of(*this);
     }
 
     ///@}
@@ -544,47 +534,47 @@ public:
     /// \name Operator overloads
     ///@{
 
-    /// \copydoc Insert(const T& Elem)
-    My_t & operator<<(const T& elem) { return Insert(elem); }
+    /// \copydoc insert(const T& Elem)
+    My_t & operator<<(const T& elem) { return insert(elem); }
 
-    /// \copydoc Insert(const T&& Elem)
-    My_t & operator<<(T&& elem) { return Insert(std::move(elem)); }
+    /// \copydoc insert(const T&& Elem)
+    My_t & operator<<(T&& elem) { return insert(std::move(elem)); }
 
-    /// \copydoc UnionAssign(const My_t & RHS)
-    My_t& operator+=(const My_t& RHS) { return UnionAssign(RHS); }
+    /// \copydoc union_assign(const My_t & RHS)
+    My_t& operator+=(const My_t& RHS) { return union_assign(RHS); }
 
-    /// \copydoc UnionAssign(My_t&& RHS)
-    My_t& operator+=(My_t&& RHS) { return UnionAssign(std::move(RHS)); }
+    /// \copydoc union_assign(My_t&& RHS)
+    My_t& operator+=(My_t&& RHS) { return union_assign(std::move(RHS)); }
 
-    /// \copydoc Union(My_t& RHS)
-    My_t operator+(const My_t& RHS)const { return Union(RHS); }
+    /// \copydoc union(My_t& RHS)
+    My_t operator+(const My_t& RHS)const { return set_union(RHS); }
 
-    /// \copydoc Union(My_t&& RHS)
-    My_t operator+(My_t&& RHS)const { return Union(std::move(RHS)); }
+    /// \copydoc union(My_t&& RHS)
+    My_t operator+(My_t&& RHS)const { return set_union(std::move(RHS)); }
 
-    /// \copydoc IntersectionAssign(const My_t & rhs)
-    My_t & operator/=(const My_t& RHS) { return IntersectionAssign(RHS); }
+    /// \copydoc intersection_assign(const My_t & rhs)
+    My_t & operator/=(const My_t& RHS) { return intersection_assign(RHS); }
 
-    /// \copydoc Intersection(const My_t & rhs)
-    My_t operator/(const My_t& RHS)const { return Intersection(RHS); }
+    /// \copydoc intersection(const My_t & rhs)
+    My_t operator/(const My_t& RHS)const { return intersection(RHS); }
 
-    /// \copydoc DifferenceAssign(const My_t &)
-    My_t & operator-=(const My_t& RHS) { return DifferenceAssign(RHS); }
+    /// \copydoc difference_assign(const My_t &)
+    My_t & operator-=(const My_t& RHS) { return difference_assign(RHS); }
 
-    /// \copydoc Difference(const My_t &)
-    My_t operator-(const My_t& RHS)const { return Difference(RHS); }
+    /// \copydoc difference(const My_t &)
+    My_t operator-(const My_t& RHS)const { return difference(RHS); }
 
-    /// \copydoc IsProperSubsetOf
-    bool operator<(const My_t& RHS)const { return IsProperSubsetOf(RHS); }
+    /// \copydoc is_proper_subset_of
+    bool operator<(const My_t& RHS)const { return is_proper_subset_of(RHS); }
 
-    /// \copydoc IsSubsetOf
-    bool operator<=(const My_t& RHS)const { return IsSubsetOf(RHS); }
+    /// \copydoc is_subset_of
+    bool operator<=(const My_t& RHS)const { return is_subset_of(RHS); }
 
-    /// \copydoc IsProperSupersetOf
-    bool operator>(const My_t& RHS)const { return IsProperSupersetOf(RHS); }
+    /// \copydoc is_proper_superset_of
+    bool operator>(const My_t& RHS)const { return is_proper_superset_of(RHS); }
 
-    /// \copydoc IsSupersetOf
-    bool operator>=(const My_t& RHS)const { return IsSupersetOf(RHS); }
+    /// \copydoc is_superset_of
+    bool operator>=(const My_t& RHS)const { return is_superset_of(RHS); }
 
     ///@}
 
@@ -605,16 +595,16 @@ public:
         if(Storage_ == RHS.Storage_)
             return true;
         // Check if we have the same number of elements
-        if(Size() != RHS.Size())
+        if(size() != RHS.size())
             return false;
         // Go element by element
         for(const auto & it : *this)
-            if(!RHS.Contains(it))
+            if(!RHS.count(it))
                 return false;
         // reverse (may not be needed if elements are guaranteed to be unique,
         // but to be safe
         for(const auto & it : RHS)
-            if(!Contains(it))
+            if(!count(it))
                 return false;
 
         return true;
@@ -636,7 +626,7 @@ public:
 
     ///Helpful printing function
     //! \todo is this needed? Using this requires the stored type to have << overloaded
-    std::string ToString()const
+    std::string to_string()const
     {
         std::stringstream ss;
         for (const T & EI : * this)ss << EI << " ";
@@ -650,16 +640,16 @@ public:
      * same values and same elements), and not necessarily
      * point to the same data.
      */
-    bphash::HashValue MyHash(void) const
+    bphash::HashValue my_hash(void) const
     {
-        return bphash::MakeHash(bphash::HashType::Hash128, *this);
+        return bphash::make_hash(bphash::HashType::Hash128, *this);
     }
 };
 
 template<typename T, typename U>
 std::ostream& operator<<(std::ostream& os, const Universe<T, U>& AUniv)
 {
-    return os << AUniv.ToString();
+    return os << AUniv.to_string();
 }
 
 }

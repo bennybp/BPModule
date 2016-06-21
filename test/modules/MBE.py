@@ -43,7 +43,7 @@ VMFCGrad=[-0.0017069898160000001, -0.001626469551000001, 0.050303614141000014,
            0.00445313611, -0.011904484072999997, 0.03358189302100002]
 
 def ApplyBasis(syst,bsname,bslabel="primary"):
-    return psr.system.ApplySingleBasis(bslabel,bsname,syst)
+    return psr.system.apply_single_basis(bslabel,bsname,syst)
 
 def CompareEgy(EgyIn,BenchMarkEgy):
    return abs(EgyIn+BenchMarkEgy)<0.00001
@@ -57,18 +57,18 @@ def CompareGrad(GradIn,CorrectGrad):
 def Run(mm):
     try:
         tester = psr.testing.Tester("Testing Various Flavors of MBE")
-        tester.PrintHeader()
+        tester.print_header()
 
         LoadDefaultModules(mm)
 
-        mm.ChangeOption("PSR_BOND_FRAG","TRUNCATION_ORDER",2)       
-        mm.ChangeOption("PSR_SCF","BASIS_SET","sto-3g")
+        mm.change_option("PSR_BOND_FRAG","TRUNCATION_ORDER",2)       
+        mm.change_option("PSR_SCF","BASIS_SET","sto-3g")
         
-        mm.ChangeOption("PSR_MBE","METHOD","PSR_SCF")
-        mm.ChangeOption("PSR_MBE","FRAGMENTIZER","PSR_BOND_FRAG")       
+        mm.change_option("PSR_MBE","METHOD","PSR_SCF")
+        mm.change_option("PSR_MBE","FRAGMENTIZER","PSR_BOND_FRAG")       
         mm.DuplicateKey("PSR_MBE","PSR_VMFC")
-        mm.ChangeOption("PSR_VMFC","METHOD","PSR_SCF")
-        mm.ChangeOption("PSR_VMFC","FRAGMENTIZER","PSR_VMFC_FRAG")
+        mm.change_option("PSR_VMFC","METHOD","PSR_SCF")
+        mm.change_option("PSR_VMFC","FRAGMENTIZER","PSR_VMFC_FRAG")
 
         
         mol=psr.system.MakeSystem("""
@@ -88,28 +88,28 @@ def Run(mm):
         wfn.system=mol
         
         
-        MyMod=mm.GetModule("PSR_MBE",0)
+        MyMod=mm.get_module("PSR_MBE",0)
         NewWfn,Egy=MyMod.Deriv(0,wfn)
-        tester.Test("Testing MBE(2) Energy via Deriv(0)",True,CompareEgy,Egy[0],UnCPEgy)
-        NewWfn,Egy=MyMod.Energy(wfn)
-        tester.Test("Testing MBE(2) Energy via Energy()",True,CompareEgy,Egy,UnCPEgy)
+        tester.test("Testing MBE(2) Energy via Deriv(0)",True,CompareEgy,Egy[0],UnCPEgy)
+        NewWfn,Egy=MyModenergy(wfn)
+        tester.test("Testing MBE(2) Energy via Energy()",True,CompareEgy,Egy,UnCPEgy)
         NewWfn,Grad=MyMod.Deriv(1,wfn)
-        tester.Test("Testing MBE(2) Gradient via Deriv(1)",True, CompareGrad,Grad,UnCPGrad)
+        tester.test("Testing MBE(2) Gradient via Deriv(1)",True, CompareGrad,Grad,UnCPGrad)
         NewWfn,Grad=MyMod.Gradient(wfn)
-        tester.Test("Testing MBE(2) Gradient via Gradient()",True,CompareGrad,Grad,UnCPGrad)
+        tester.test("Testing MBE(2) Gradient via Gradient()",True,CompareGrad,Grad,UnCPGrad)
 
 
-        MyMod=mm.GetModule("PSR_VMFC",0)
+        MyMod=mm.get_module("PSR_VMFC",0)
         NewWfn,Egy=MyMod.Deriv(0,wfn)
-        tester.Test("Testing VMFC(2) Energy via Deriv(0)",True,CompareEgy,Egy[0],VMFCEgy)
-        NewWfn,Egy=MyMod.Energy(wfn)
-        tester.Test("Testing VMFC(2) Energy via Energy()",True,CompareEgy,Egy,VMFCEgy)
+        tester.test("Testing VMFC(2) Energy via Deriv(0)",True,CompareEgy,Egy[0],VMFCEgy)
+        NewWfn,Egy=MyModenergy(wfn)
+        tester.test("Testing VMFC(2) Energy via Energy()",True,CompareEgy,Egy,VMFCEgy)
         NewWfn,Grad=MyMod.Deriv(1,wfn)
-        tester.Test("Testing VMFC(2) Gradient via Deriv(1)",True, CompareGrad,Grad,VMFCGrad)
+        tester.test("Testing VMFC(2) Gradient via Deriv(1)",True, CompareGrad,Grad,VMFCGrad)
         NewWfn,Grad=MyMod.Gradient(wfn)
-        tester.Test("Testing VMFC(2) Gradient via Gradient()",True,CompareGrad,Grad,VMFCGrad)       
+        tester.test("Testing VMFC(2) Gradient via Gradient()",True,CompareGrad,Grad,VMFCGrad)       
 
-        tester.PrintResults()
+        tester.print_results()
         
      
     except Exception as e:
@@ -119,4 +119,4 @@ def Run(mm):
 with psr.ModuleAdministrator() as mm:
     Run(mm)
 
-psr.Finalize()
+psr.finalize()

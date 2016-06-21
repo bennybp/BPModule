@@ -17,7 +17,7 @@
 namespace pulsar{
 namespace testing {
 
-/*! \brief Serialize an object, then unserialize
+/*! \brief serialize an object, then unserialize
  *
  * \tparam T C++ type to use
  *
@@ -29,46 +29,46 @@ bool RoundTripSerialization(pybind11::object obj)
     using namespace bphash;
     using namespace pulsar::util;
 
-    T & cppobj = pulsar::python::ConvertToCpp<T &>(obj);
+    T & cppobj = pulsar::python::convert_to_cpp<T &>(obj);
 
     // Initial hash
-    HashValue hash1 = MakeHash(HashType::Hash128, cppobj);
+    HashValue hash1 = make_hash(HashType::Hash128, cppobj);
 
     MemoryArchive mar;
-    mar.BeginSerialization();
-    mar.Serialize(cppobj);
-    mar.EndSerialization();
+    mar.begin_serialization();
+    mar.serialize(cppobj);
+    mar.end_serialization();
 
-    mar.BeginUnserialization();
-    T newobj(std::move(mar.UnserializeSingle<T>()));
-    mar.EndUnserialization();
+    mar.begin_unserialization();
+    T newobj(std::move(mar.unserialize_single<T>()));
+    mar.end_unserialization();
 
     // Hash after unserialization
-    HashValue hash2 = MakeHash(HashType::Hash128, newobj);
+    HashValue hash2 = make_hash(HashType::Hash128, newobj);
 
     // Round trip a byte array
-    ByteArray ba = ToByteArray(cppobj);
-    T newobj2 = FromByteArray<T>(ba);
-    HashValue hash3 = MakeHash(HashType::Hash128, newobj2);
+    ByteArray ba = to_byte_array(cppobj);
+    T newobj2 = from_byte_array<T>(ba);
+    HashValue hash3 = make_hash(HashType::Hash128, newobj2);
 
     // Round trip a byte array, but using pointers
-    std::unique_ptr<T> newobj3 = NewFromByteArray<T>(ba);
-    HashValue hash4 = MakeHash(HashType::Hash128, *newobj3);
+    std::unique_ptr<T> newobj3 = new_from_byte_array<T>(ba);
+    HashValue hash4 = make_hash(HashType::Hash128, *newobj3);
 
 
     Equality eq;
 
 
-    output::GlobalDebug("Hash1: %s \n", hash_to_string(hash1));
-    output::GlobalDebug("Hash2: %s \n", hash_to_string(hash2));
-    output::GlobalDebug("Hash3: %s \n", hash_to_string(hash3));
-    output::GlobalDebug("Hash4: %s \n", hash_to_string(hash4));
-    output::GlobalDebug("Hash Eq 1: %? \n", hash1 == hash2);
-    output::GlobalDebug("Hash Eq 2: %? \n", hash2 == hash3);
-    output::GlobalDebug("Hash Eq 3: %? \n", hash3 == hash4);
-    output::GlobalDebug("Equality 1: %s \n",  eq(cppobj, newobj) ? "True" : "False");
-    output::GlobalDebug("Equality 2: %s \n",  eq(cppobj, newobj2) ? "True" : "False");
-    output::GlobalDebug("Equality 3: %s \n",  eq(cppobj, *newobj3) ? "True" : "False");
+    output::print_global_debug("Hash1: %s \n", hash_to_string(hash1));
+    output::print_global_debug("Hash2: %s \n", hash_to_string(hash2));
+    output::print_global_debug("Hash3: %s \n", hash_to_string(hash3));
+    output::print_global_debug("Hash4: %s \n", hash_to_string(hash4));
+    output::print_global_debug("Hash Eq 1: %? \n", hash1 == hash2);
+    output::print_global_debug("Hash Eq 2: %? \n", hash2 == hash3);
+    output::print_global_debug("Hash Eq 3: %? \n", hash3 == hash4);
+    output::print_global_debug("Equality 1: %s \n",  eq(cppobj, newobj) ? "True" : "False");
+    output::print_global_debug("Equality 2: %s \n",  eq(cppobj, newobj2) ? "True" : "False");
+    output::print_global_debug("Equality 3: %s \n",  eq(cppobj, *newobj3) ? "True" : "False");
 
 
     // All hashes should match, and the two objects should

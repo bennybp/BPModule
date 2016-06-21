@@ -78,12 +78,12 @@ class PointT
         const T & at(size_t i) const { return coords_.at(i); }
         
 
-        CoordType GetCoords(void) const { return coords_; }
-        double GetCoord(int i) const { return coords_.at(i); }
-        void SetCoord(int i, double val) const { coords_.at(i) = val; }
+        CoordType get_coords(void) const { return coords_; }
+        double get_coord(int i) const { return coords_.at(i); }
+        void set_coord(int i, double val) const { coords_.at(i) = val; }
 
-        void SetCoords(const CoordType & coords) { coords_ = coords; }
-        void SetCoords(T x, T y, T z) { coords_ = CoordType{x,y,z}; }
+        void set_coords(const CoordType & coords) { coords_ = coords; }
+        void set_coords(T x, T y, T z) { coords_ = CoordType{x,y,z}; }
 
         
         /** \brief Makes this the element-wise difference between this and 
@@ -167,7 +167,7 @@ class PointT
         }
         
         ///Returns the magnitude of this point (sqrt of dot product)
-        double Magnitude()const{
+        double magnitude()const{
             PointT<T> Sq=(*this)*(*this);
             double sum=0.0;
             for(size_t i=0;i<coords_.size();++i)sum+=Sq[i];
@@ -175,12 +175,12 @@ class PointT
         }
 
         ///Returns the distance between this point and RHS
-        double Distance(const PointT<T>& RHS)const{
+        double distance(const PointT<T>& RHS)const{
             PointT<T> Diff=*this-RHS;
-            return Diff.Magnitude();
+            return Diff.magnitude();
         }
         
-        void Print(std::ostream& os)const{
+        void print(std::ostream& os)const{
             for(size_t i=0;i<coords_.size();++i){
                 os<<coords_[i];
                 if(i!=coords_.size()-1)os<<" ";
@@ -188,9 +188,9 @@ class PointT
         }
 
         /// Return a unique has of the point
-        bphash::HashValue MyHash(void) const
+        bphash::HashValue my_hash(void) const
         {
-            return bphash::MakeHash(bphash::HashType::Hash128, *this);
+            return bphash::make_hash(bphash::HashType::Hash128, *this);
         }
 
     private:
@@ -225,7 +225,7 @@ PointT<T> operator*(double c,const PointT<T>& P){
 
 template<typename T>
 std::ostream& operator<<(std::ostream& os,const PointT<T>& P){
-    P.Print(os);
+    P.print(os);
     return os;
 }
 

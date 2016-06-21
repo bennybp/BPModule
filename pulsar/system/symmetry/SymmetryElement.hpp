@@ -25,18 +25,18 @@ namespace system{
 ///Base class for all symmetry elements
 struct SymmetryElement{
     ///Matrix representation of this element
-    const std::array<double,9> Elem;
+    const std::array<double,9> element_matrix;
         
     ///Schoenflies symbol
-    const std::string SSymbol;
+    const std::string schoenflies_symbol;
     
     ///Hermann-Mauguin symbol
-    const std::string HMSymbol;
+    const std::string hm_symbol;
     
     ///Initializes all members of the group
     SymmetryElement(const std::array<double,9>& Op,
                     const std::string& SSym,const std::string& HMSym):
-                    Elem(Op),SSymbol(SSym),HMSymbol(HMSym){}
+                    element_matrix(Op),schoenflies_symbol(SSym),hm_symbol(HMSym){}
     
     ///Deep copy operators
     SymmetryElement(const SymmetryElement&)=default;
@@ -103,7 +103,7 @@ namespace std{
 template<> struct hash<pulsar::system::SymmetryElement>{
     size_t operator()(const pulsar::system::SymmetryElement& E)const{
         std::hash<std::string> h;
-        return h(E.SSymbol);
+        return h(E.schoenflies_symbol);
     }
 };
 }

@@ -37,13 +37,13 @@ namespace util {
  * The C++ object must be serializable
  */
 template<typename T>
-ByteArray ToByteArray(const T & obj)
+ByteArray to_byte_array(const T & obj)
 {
     MemoryArchive mar;
-    mar.BeginSerialization();
-    mar.Serialize(obj);
-    mar.EndSerialization();
-    return mar.ToByteArray(); 
+    mar.begin_serialization();
+    mar.serialize(obj);
+    mar.end_serialization();
+    return mar.to_byte_array(); 
 }
 
 
@@ -52,14 +52,14 @@ ByteArray ToByteArray(const T & obj)
  * The C++ object must be serializable
  */
 template<typename T>
-T FromByteArray(const ByteArray & arr)
+T from_byte_array(const ByteArray & arr)
 {
     MemoryArchive mar;
-    mar.FromByteArray(arr);
-    mar.BeginUnserialization();
+    mar.from_byte_array(arr);
+    mar.begin_unserialization();
     T obj;
-    mar.Unserialize(obj);
-    mar.EndUnserialization();
+    mar.unserialize(obj);
+    mar.end_unserialization();
     return obj; 
 }
 
@@ -69,14 +69,14 @@ T FromByteArray(const ByteArray & arr)
  * The C++ object must be serializable
  */
 template<typename T>
-std::unique_ptr<T> NewFromByteArray(const ByteArray & arr)
+std::unique_ptr<T> new_from_byte_array(const ByteArray & arr)
 {
     MemoryArchive mar;
-    mar.FromByteArray(arr);
-    mar.BeginUnserialization();
+    mar.from_byte_array(arr);
+    mar.begin_unserialization();
     std::unique_ptr<T> objptr(new T);
-    mar.Unserialize(*objptr);
-    mar.EndUnserialization();
+    mar.unserialize(*objptr);
+    mar.end_unserialization();
     return std::move(objptr);
 }
 

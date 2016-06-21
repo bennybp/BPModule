@@ -16,35 +16,35 @@ namespace pulsar{
 namespace modulemanager {
 
 
-void ModuleInfo::Print(std::ostream & os) const
+void ModuleInfo::print(std::ostream & os) const
 {
     using namespace output;
 
-    Output(os, "\n");
-    Output(os, "  ++ Module: %?\n", name);
-    Output(os, "         Version: %?\n", version);
-    Output(os, "            Type: %?\n", type);
-    Output(os, "            Base: %?\n", base);
-    Output(os, "            Path: %?\n", path);
+    print_output(os, "\n");
+    print_output(os, "  ++ Module: %?\n", name);
+    print_output(os, "         Version: %?\n", version);
+    print_output(os, "            Type: %?\n", type);
+    print_output(os, "            Base: %?\n", base);
+    print_output(os, "            Path: %?\n", path);
 
-    Output(os, "     Description: %?\n", description);
+    print_output(os, "     Description: %?\n", description);
 
-    Output(os, "         Authors: %?\n", (authors.size() ? authors[0] : ""));
+    print_output(os, "         Authors: %?\n", (authors.size() ? authors[0] : ""));
     for(size_t i = 1; i < authors.size(); i++)
-        Output(os, "                  %?\n", authors[i]);
+        print_output(os, "                  %?\n", authors[i]);
 
-    Output(os, "      References: %?\n", (refs.size() ? refs[0] : ""));
+    print_output(os, "      References: %?\n", (refs.size() ? refs[0] : ""));
     for(size_t i = 1; i < refs.size(); i++)
-        Output(os, "                  %?\n", refs[i]);
+        print_output(os, "                  %?\n", refs[i]);
 
-    Output(os, "         Options: %?\n", options.Size());
-    options.Print(os);
+    print_output(os, "         Options: %?\n", options.size());
+    options.print(os);
 }
 
 
-bphash::HashValue ModuleInfo::MyHash(void) const
+bphash::HashValue ModuleInfo::my_hash(void) const
 {
-    return bphash::MakeHash(bphash::HashType::Hash128, *this);
+    return bphash::make_hash(bphash::HashType::Hash128, *this);
 }
 
 

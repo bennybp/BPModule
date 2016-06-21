@@ -24,15 +24,15 @@ namespace lut {
 
 
 
-const AOOrderingMaps & AllAOOrderings(void) noexcept
+const AOOrderingMaps & all_ao_orderings(void) noexcept
 {
     return lut::ao_ordering_;
 }
 
 
-const std::vector<int8_t> & SphericalOrdering(int am)
+const std::vector<int8_t> & spherical_ordering(int am)
 {
-    const auto & order = AllAOOrderings().spherical_order;
+    const auto & order = all_ao_orderings().spherical_order;
 
     if(!order.count(am))
         throw GeneralException("Angular momentum out of range", "am", am);
@@ -42,9 +42,9 @@ const std::vector<int8_t> & SphericalOrdering(int am)
 
 
 
-const std::vector<IJK> & CartesianOrdering(int am)
+const std::vector<IJK> & cartesian_ordering(int am)
 {
-    const auto & order = AllAOOrderings().cartesian_order;
+    const auto & order = all_ao_orderings().cartesian_order;
 
     if(!order.count(am))
         throw GeneralException("Angular momentum out of range", "am", am);
@@ -53,9 +53,9 @@ const std::vector<IJK> & CartesianOrdering(int am)
 }
 
 
-size_t CartesianIndex(int am, IJK ijk)
+size_t cartesian_index(int am, IJK ijk)
 {
-    const auto & ijkvec = CartesianOrdering(am);
+    const auto & ijkvec = cartesian_ordering(am);
     const auto it = std::find(ijkvec.begin(), ijkvec.end(), ijk);
     if(it == ijkvec.end())
         throw GeneralException("Value of IJK not found for this am", "am", am,
@@ -65,34 +65,34 @@ size_t CartesianIndex(int am, IJK ijk)
 }
 
 
-size_t FullCartesianIndex(int am, IJK ijk)
+size_t full_cartesian_index(int am, IJK ijk)
 {
     // we could just use the ordering for negative am, but
     // that doesn't necessarily go to the highest AM
 
-    size_t idx = CartesianIndex(am, ijk);
+    size_t idx = cartesian_index(am, ijk);
     if(idx <= 0)  // "negative" am would already include the lower AM
         return idx;
     else
-        return idx + NCartesianGaussian(am-1);
+        return idx + n_cartesian_gaussian(am-1);
 }
 
-size_t FullSphericalIndex(int am, int m)
+size_t full_spherical_index(int am, int m)
 {
     // we could just use the ordering for negative am, but
     // that doesn't necessarily go to the highest AM
 
-    size_t idx = SphericalIndex(am, m);
+    size_t idx = spherical_index(am, m);
     if(idx <= 0)  // "negative" am would already include the lower AM
         return idx;
     else
-        return idx + NSphericalGaussian(am-1);
+        return idx + n_spherical_gaussian(am-1);
 }
 
 
-size_t SphericalIndex(int am, int m)
+size_t spherical_index(int am, int m)
 {
-    const auto & svec = SphericalOrdering(am);
+    const auto & svec = spherical_ordering(am);
     const auto it = std::find(svec.begin(), svec.end(), m);
     if(it == svec.end())
         throw GeneralException("Value of m not found for this am", "am", am,
@@ -103,8 +103,8 @@ size_t SphericalIndex(int am, int m)
 
 
 
-BSReorderMap MakeBSReorderMap(const AOOrderingMaps & src,
-                              const AOOrderingMaps & dest)
+BSReorderMap make_basis_reorder_map(const AOOrderingMaps & src,
+                                    const AOOrderingMaps & dest)
 {
     ///////////////////////////////////////
     // Consider refactoring into
@@ -121,7 +121,7 @@ BSReorderMap MakeBSReorderMap(const AOOrderingMaps & src,
         if(src.spherical_order.count(it.first)) // if src has this AM
         {
             const auto & srcord = src.spherical_order.at(it.first);
-            ret[ShellType::SphericalGaussian][it.first] = math::MakeOrdering(srcord, it.second);
+            ret[ShellType::SphericalGaussian][it.first] = math::make_ordering(srcord, it.second);
         }
     }
 
@@ -133,7 +133,7 @@ BSReorderMap MakeBSReorderMap(const AOOrderingMaps & src,
         if(src.cartesian_order.count(it.first)) // if src has this AM
         {
             const auto & srcord = src.cartesian_order.at(it.first);
-            ret[ShellType::CartesianGaussian][it.first] = math::MakeOrdering(srcord, it.second);
+            ret[ShellType::CartesianGaussian][it.first] = math::make_ordering(srcord, it.second);
         }
     }
 
@@ -142,21 +142,21 @@ BSReorderMap MakeBSReorderMap(const AOOrderingMaps & src,
 
 
 
-std::vector<size_t> MakeAOBasisOrdering(const BasisSet & bs, const BSReorderMap & bm)
+std::vector<size_t> make_ao_basis_ordering(const BasisSet & bs, const BSReorderMap & bm)
 {
     using exception::BasisSetException;
     
     // creat the full reorder vector
     std::vector<size_t> fullreorder;
-    fullreorder.reserve(bs.NFunctions());
+    fullreorder.reserve(bs.n_functions());
 
     size_t offset = 0;
     
     for(const auto & shell : bs)
     {   
         // get the reordering for this shell
-        ShellType type = shell.GetType();
-        int am = shell.AM();
+        ShellType type = shell.get_type();
+        int am = shell.am();
 
         if(bm.count(type) == 0)
             throw BasisSetException("Missing shell type in BSReorderMap",
@@ -179,9 +179,9 @@ std::vector<size_t> MakeAOBasisOrdering(const BasisSet & bs, const BSReorderMap 
     // full reorder should now contain the entire mapping of one
     // basis set ordering to another. So it should be of the same
     // number of functions...
-    if(fullreorder.size() != bs.NFunctions())
-        throw BasisSetException("Basis set reordering inconsistency. Size is incorrect",
-                                "nfunc", bs.NFunctions(), "fullreorder", fullreorder.size());
+    if(fullreorder.size() != bs.n_functions())
+        throw BasisSetException("Basis set reordering inconsistency. size is incorrect",
+                                "nfunc", bs.n_functions(), "fullreorder", fullreorder.size());
     
     return fullreorder;
 }

@@ -28,7 +28,7 @@ struct IntegerCheck
 template<typename T>
 struct IntegerCheck<T, true>
 {
-    static bool IsInteger(T /*dummy*/)
+    static bool is_integer(T /*dummy*/)
     {
         return true; 
     }
@@ -39,7 +39,7 @@ struct IntegerCheck<T, true>
 template<typename T>
 struct IntegerCheck<T, false>
 {
-    static bool IsInteger(T val)
+    static bool is_integer(T val)
     {
         PRAGMA_WARNING_PUSH
         PRAGMA_WARNING_IGNORE_FP_EQUALITY
@@ -53,22 +53,22 @@ struct IntegerCheck<T, false>
 
 
 template<typename T>
-bool IsInteger(T val)
+bool is_integer(T val)
 {
-    return detail::IntegerCheck<T>::IsInteger(val);
+    return detail::IntegerCheck<T>::is_integer(val);
 }
 
 ///Checks if \p lhs is equal to \p rhs to within \p Tol
 template<typename T>
-bool AreEqual(const T& lhs,const T& rhs,const T& Tol){
+bool are_equal(const T& lhs,const T& rhs,const T& Tol){
     return(fabs(lhs-rhs)<Tol);
 }
 
 ///Checks if all elements within an STL-like container have the same value
 template<typename T,typename U>
-bool AreEqual(const T& array,const U& value, const U& Tol){
+bool are_equal(const T& array,const U& value, const U& Tol){
     for(const U& elem: array)
-        if(!AreEqual(elem,value,Tol))return false;
+        if(!are_equal(elem,value,Tol))return false;
     return true;
 }
 

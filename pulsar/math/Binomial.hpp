@@ -43,7 +43,7 @@ namespace math{
  * 
  *\todo Write in terms of Lanczos approximations for better precision
  */
-double Beta(double a,double b);
+double beta(double a,double b);
 
 
 /** \brief Computes n choose k
@@ -54,7 +54,7 @@ double Beta(double a,double b);
  *  function, so for n up to about 10,000 we should be fine.  See note in
  *  beta function for going further.
  */ 
-double BinomialCoefficient(size_t n, size_t k);
+double binomial_coefficient(size_t n, size_t k);
 
 
 

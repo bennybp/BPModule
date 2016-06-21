@@ -9,7 +9,7 @@ class RangeCheck:
                                                                     self.min, self.max,
                                                                     "]" if self.includemax else ")")
 
-    def Validate(self, value):
+    def validate(self, value):
         if (value > self.min) and (value < self.max):
             return []
         elif (self.includemin == True) and (value == self.min):
@@ -30,7 +30,7 @@ class GreaterThan:
         eqstr = " or equal to" if self.includemin else ""
         self.errstr = "Value must be greater than{} {}".format(eqstr, self.min)
 
-    def Validate(self, value):
+    def validate(self, value):
         if (value > self.min):
             return []
         elif (self.includemin == True) and (value == self.min):
@@ -49,7 +49,7 @@ class LessThan:
         eqstr = " or equal to" if self.includemax else ""
         self.errstr = "Value must be less than{} {}".format(eqstr, self.max)
 
-    def Validate(self, value):
+    def validate(self, value):
         if (value < self.max):
             return []
         elif (self.includemax == True) and (value == self.max):
@@ -80,7 +80,7 @@ class InList:
 
 
 
-    def Validate(self, value):
+    def validate(self, value):
         v = value
         if type(value) == str:
             v = v.lower()

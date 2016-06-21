@@ -19,7 +19,7 @@ namespace system {
  *
  * \throw pulsar::exception::BasisSetException if the string is not found
  */
-int StringToAM(const std::string & s);
+int string_to_am(const std::string & s);
 
 
 
@@ -29,7 +29,7 @@ int StringToAM(const std::string & s);
  *
  * \throw pulsar::exception::BasisSetException if the integer is not found
  */
-std::string AMToString(int am);
+std::string am_to_string(int am);
 
 
 

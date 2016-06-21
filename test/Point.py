@@ -19,7 +19,7 @@ from pulsar.math import *
 def Run():
     try:
         tester = Tester("Testing Math class - serialization")
-        tester.PrintHeader()
+        tester.print_header()
 
         ####################################
         # Serialization of Points
@@ -30,23 +30,23 @@ def Run():
 
         for i in range(0, len(pts)):
             p = pts[i]
-            tester.Test("Point serialization - {}".format(i), True,
+            tester.test("Point serialization - {}".format(i), True,
                         TestSerialization_Point, p)
 
 
-        tester.PrintResults() 
+        tester.print_results() 
 
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      print_global_output("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      GlobalError("\n")
-      GlobalError(str(e))
-      GlobalError("\n")
+      print_global_error("\n")
+      print_global_error(str(e))
+      print_global_error("\n")
 
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-psr.Finalize()
+psr.finalize()

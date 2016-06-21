@@ -9,10 +9,9 @@
 #include "pulsar/system/AtomicInfo.hpp"
 #include "pulsar/constants.h"
 #include "pulsar/output/GlobalOutput.hpp"
-#include "pulsar/math/CombItr.hpp"
 #include "pulsar/math/PointManipulation.hpp"
 
-using pulsar::output::GlobalDebug;
+using pulsar::output::print_global_debug;
 using pulsar::exception::SystemException;
 
 
@@ -26,8 +25,8 @@ namespace system {
 
 void System::SetDefaults_(void)
 {
-    charge_=GetSumCharge();
-    nelectrons_=GetSumNElectrons();
+    charge_=get_sum_charge();
+    nelectrons_=get_sum_n_electrons();
 
     //! \todo default multiplicity
     multiplicity_=1.0;
@@ -53,140 +52,140 @@ System::System(const AtomSetUniverse& universe,bool fill):
 
 size_t System::size(void) const
 {
-    return atoms_.Size();
+    return atoms_.size();
 }
 
-double System::GetSumCharge(void) const
+double System::get_sum_charge(void) const
 {
     return std::accumulate(this->begin(),this->end(),static_cast<double>(0.0),
-                           [](double sum,const Atom&a)
-                           { return sum+a.GetCharge(); });
+                           [](double sum,const Atom & a)
+                           { return sum+a.charge; });
 }
 
-double System::GetSumNElectrons(void) const
+double System::get_sum_n_electrons(void) const
 {
     return std::accumulate(this->begin(),this->end(),static_cast<double>(0.0),
-                           [](double sum,const Atom&a)
-                           { return sum+a.GetNElectrons(); });
+                           [](double sum,const Atom & a)
+                           { return sum+a.nelectrons; });
 }
 
-double System::GetCharge(void) const
+double System::get_charge(void) const
 {
     return charge_;
 }
 
-void System::SetCharge(double charge)
+void System::set_charge(double charge)
 {
     charge_=charge;
 }
 
-double System::GetNElectrons(void) const
+double System::get_n_electrons(void) const
 {
     return nelectrons_;
 }
 
-void System::SetNElectrons(double nelectrons)
+void System::set_n_electrons(double nelectrons)
 {
     nelectrons_=nelectrons;
 }
 
-double System::GetMultiplicity(void) const
+double System::get_multiplicity(void) const
 {
     return multiplicity_;
 }
 
-void System::SetMultiplicity(double m)
+void System::set_multiplicity(double m)
 {
     multiplicity_=m;
 }
 
-Space System::GetSpace(void) const
+Space System::get_space(void) const
 {
     return Space_;
 }
 
-void System::SetSpace(const Space& S)
+void System::set_space(const Space& S)
 {
     Space_=S;
 }
 
 
-bool System::Contains(const Atom& AnAtom)const
+bool System::count(const Atom& AnAtom)const
 {
-    return atoms_.Contains(AnAtom);
+    return atoms_.count(AnAtom);
 }
 
-System& System::Insert(const Atom & atom)
+System& System::insert(const Atom & atom)
 {
-    atoms_.Insert(atom);
+    atoms_.insert(atom);
     SetDefaults_();
     return *this;
 }
 
-System& System::Insert(Atom && atom)
+System& System::insert(Atom && atom)
 {
-    atoms_.Insert(std::move(atom));
+    atoms_.insert(std::move(atom));
     SetDefaults_();
     return *this;
 }
 
-System & System::UnionAssign(const System& RHS)
+System & System::union_assign(const System& RHS)
 {
-    atoms_.UnionAssign(RHS.atoms_);
+    atoms_.union_assign(RHS.atoms_);
     SetDefaults_();
     return *this;
 }
 
-System System::Union(const System& RHS) const
+System System::set_union(const System& RHS) const
 {
-    return System(*this).UnionAssign(RHS);
+    return System(*this).union_assign(RHS);
 }
 
-System& System::IntersectionAssign(const System& RHS)
+System& System::intersection_assign(const System& RHS)
 {
-    atoms_.IntersectionAssign(RHS.atoms_);
+    atoms_.intersection_assign(RHS.atoms_);
     SetDefaults_();
     return *this;
 }
 
-System System::Intersection(const System& RHS) const
+System System::intersection(const System& RHS) const
 {
-    return System(*this).IntersectionAssign(RHS);
+    return System(*this).intersection_assign(RHS);
 }
 
-System& System::DifferenceAssign(const System& RHS)
+System& System::difference_assign(const System& RHS)
 {
-    atoms_.DifferenceAssign(RHS.atoms_);
+    atoms_.difference_assign(RHS.atoms_);
     SetDefaults_();
     return *this;
 }
 
-System System::Difference(const System& RHS) const
+System System::difference(const System& RHS) const
 {
-    return System(*this).DifferenceAssign(RHS);
+    return System(*this).difference_assign(RHS);
 }
 
-System System::Complement(void) const
+System System::complement(void) const
 {
-    return System(atoms_.Complement());
+    return System(atoms_.complement());
 }
 
-System System::Partition(System::SelectorFunc selector) const
+System System::partition(System::SelectorFunc selector) const
 {
-    return System(atoms_.Partition(selector));
+    return System(atoms_.partition(selector));
 }
-System System::Transform(System::TransformerFunc transformer) const
+System System::transform(System::TransformerFunc Transformer) const
 {
-    return System(atoms_.Transform(transformer));
+    return System(atoms_.transform(Transformer));
 }
 
 //! \todo will only be true if the universes are the same
 bool System::operator==(const System& RHS)const
 {
-    return(CompareInfo(RHS) && atoms_ == RHS.atoms_);
+    return(compare_info(RHS) && atoms_ == RHS.atoms_);
 }
 
-bool System::CompareInfo(const System & RHS)const
+bool System::compare_info(const System & RHS)const
 {
     PRAGMA_WARNING_PUSH
     PRAGMA_WARNING_IGNORE_FP_EQUALITY
@@ -196,64 +195,64 @@ bool System::CompareInfo(const System & RHS)const
     PRAGMA_WARNING_POP
 }
 
-bool System::IsProperSubsetOf(const System& RHS)const
+bool System::is_proper_subset_of(const System& RHS)const
 {
-    return atoms_.IsProperSubsetOf(RHS.atoms_);
+    return atoms_.is_proper_subset_of(RHS.atoms_);
 }
 
-bool System::IsSubsetOf(const System& RHS)const
+bool System::is_subset_of(const System& RHS)const
 {
-    return atoms_.IsSubsetOf(RHS.atoms_);
+    return atoms_.is_subset_of(RHS.atoms_);
 }
 
-bool System::IsProperSupersetOf(const System& RHS)const
+bool System::is_proper_superset_of(const System& RHS)const
 {
-    return atoms_.IsProperSupersetOf(RHS.atoms_);
+    return atoms_.is_proper_superset_of(RHS.atoms_);
 }
 
-bool System::IsSupersetOf(const System& RHS)const
+bool System::is_superset_of(const System& RHS)const
 {
-    return atoms_.IsSupersetOf(RHS.atoms_);
+    return atoms_.is_superset_of(RHS.atoms_);
 }
 
 
-System& System::operator+=(const System& rhs) { return UnionAssign(rhs); }
-System System::operator+(const System& rhs)const { return Union(rhs); }
-System& System::operator/=(const System& rhs) { return IntersectionAssign(rhs); }
-System System::operator/(const System& rhs)const { return Intersection(rhs); }
-System& System::operator-=(const System& rhs) { return DifferenceAssign(rhs); }
-System System::operator-(const System& rhs)const { return Difference(rhs); }
-bool System::operator<=(const System& rhs)const { return IsSubsetOf(rhs); }
-bool System::operator<(const System& rhs)const { return IsProperSubsetOf(rhs); }
-bool System::operator>=(const System& rhs)const { return IsSupersetOf(rhs); }
-bool System::operator>(const System& rhs)const { return IsProperSupersetOf(rhs); }
+System& System::operator+=(const System& rhs) { return union_assign(rhs); }
+System System::operator+(const System& rhs)const { return set_union(rhs); }
+System& System::operator/=(const System& rhs) { return intersection_assign(rhs); }
+System System::operator/(const System& rhs)const { return intersection(rhs); }
+System& System::operator-=(const System& rhs) { return difference_assign(rhs); }
+System System::operator-(const System& rhs)const { return difference(rhs); }
+bool System::operator<=(const System& rhs)const { return is_subset_of(rhs); }
+bool System::operator<(const System& rhs)const { return is_proper_subset_of(rhs); }
+bool System::operator>=(const System& rhs)const { return is_superset_of(rhs); }
+bool System::operator>(const System& rhs)const { return is_proper_superset_of(rhs); }
 
 
 
 
-math::Point System::CenterOfMass(void) const
+math::Point System::center_of_mass(void) const
 {
-    return math::WeightedPointsCenter<math::Point>(*this,&Atom::GetMass);
+    return math::weighted_points_center<math::Point>(*this, &Atom::mass);
 }
 
-math::Point System::CenterOfNuclearCharge(void) const
+math::Point System::center_of_nuclear_charge(void) const
 {
-    return math::WeightedPointsCenter<math::Point>(*this,&Atom::GetZ);
+    return math::weighted_points_center<math::Point>(*this, &Atom::Z);
 }
 
-bool System::HasBasisSet(const std::string & basislabel) const
+bool System::has_basis_set(const std::string & basislabel) const
 {
     for(const auto & atom:*this)
-        if(atom.HasShells(basislabel))
+        if(atom.basis_sets.count(basislabel))
             return true;
 
     return false;
 
 }
 
-BasisSet System::GetBasisSet(const std::string & basislabel) const
+BasisSet System::get_basis_set(const std::string & basislabel) const
 {
-    if(!HasBasisSet(basislabel))
+    if(!has_basis_set(basislabel))
         throw SystemException("Attempted to get missing basis label", "label", basislabel);
 
     // get the number of primitives and storage needed in basis set
@@ -263,43 +262,52 @@ BasisSet System::GetBasisSet(const std::string & basislabel) const
 
     for(const auto & atom:*this)
     {
-        nshell+=atom.NShell(basislabel);
-
-        for(const auto & bshell:atom.GetShells(basislabel))
+        if(atom.basis_sets.count(basislabel))
         {
-            nprim+=bshell.NPrim();
-            ncoef+=bshell.NCoef();
+            const BasisInfo & binfo = atom.basis_sets.at(basislabel);
+            nshell += binfo.shells.size();
+
+            for(const auto & shell : binfo.shells)
+            {
+                nprim += shell.n_primitives();
+                ncoef += shell.n_coefficients();
+            }
         }
     }
 
-    BasisSet bs(nshell,nprim,ncoef,3*nprim);
+    BasisSet bs(nshell, nprim, ncoef, 3*nprim);
 
     // now add them
     for(const auto & atom:*this)
-        for(const auto & bshell:atom.GetShells(basislabel))
-            bs.AddShell(bshell,atom.GetCoords());
+    {
+        if(atom.basis_sets.count(basislabel))
+        {
+            for(const auto & shell : atom.basis_sets.at(basislabel).shells)
+                bs.add_shell(shell, atom.get_coords());
+        }
+    }
 
     // shrink the basis set
-    return bs.ShrinkFit();
+    return bs.shrink_fit();
 }
 
-void System::Print(std::ostream & os) const
+void System::print(std::ostream & os) const
 {
     for(const auto & it:*this)
-        it.Print(os);
+        it.print(os);
 }
 
-std::string System::ToString()const
+std::string System::to_string()const
 {
     std::stringstream ss;
-    Print(ss);
+    print(ss);
     return ss.str();
 }
 
 
-bphash::HashValue System::MyHash(void) const
+bphash::HashValue System::my_hash(void) const
 {
-    return bphash::MakeHash(bphash::HashType::Hash128, *this);
+    return bphash::make_hash(bphash::HashType::Hash128, *this);
 }
 
 void System::hash(bphash::Hasher & h) const
@@ -308,7 +316,7 @@ void System::hash(bphash::Hasher & h) const
 }
 
 ///Returns the distance between each pair of atoms in sys
-DistMat_t GetDistance(const System& sys)
+DistMat_t get_distance(const System& sys)
 {
     DistMat_t DM;
     for(const Atom& atomI:sys)
@@ -316,7 +324,7 @@ DistMat_t GetDistance(const System& sys)
         for(const Atom& atomJ:sys)
         {
             if(atomJ==atomI)break;
-            double dist=atomI.Distance(atomJ);
+            double dist=atomI.distance(atomJ);
             DM.emplace(std::make_pair(atomI,atomJ),dist);
             DM.emplace(std::make_pair(atomJ,atomI),dist);
         }
@@ -324,7 +332,7 @@ DistMat_t GetDistance(const System& sys)
     return DM;
 }
 
-Conn_t GetConns(const System& sys,double Tolerance)
+Conn_t get_connectivity(const System& sys,double Tolerance)
 {
     Conn_t Conns;
     
@@ -332,11 +340,11 @@ Conn_t GetConns(const System& sys,double Tolerance)
 
     for(const Atom& atomI:sys)
     {
-        double radI=atomI.GetCovRadius();
+        double radI=atomI.cov_radius;
         for(const Atom& atomJ:sys)
         {
             if(atomI==atomJ)break;
-            if(atomI.Distance(atomJ)<Tolerance*(radI+atomJ.GetCovRadius()))
+            if(atomI.distance(atomJ)<Tolerance*(radI+atomJ.cov_radius))
             {
                 Conns[atomI].insert(atomJ);
                 Conns[atomJ].insert(atomI);
@@ -347,48 +355,33 @@ Conn_t GetConns(const System& sys,double Tolerance)
     return Conns;
 }
 
-std::array<double,9> InertiaTensor(const System& Mol){
+std::array<double,9> inertia_tensor(const System& Mol){
     std::array<double,9> I;
     double mass=0.0;
     for(const Atom& AtomI: Mol){
-        double massI=AtomI.GetMass();
+        double massI=AtomI.mass;
         mass+=massI;
         for(size_t j=0;j<3;++j)
             for(size_t i=0;i<3;++i)
                 I[j*3+j]+=massI*AtomI[i]*AtomI[i];
     }
-    std::vector<double> TempI=math::Moment<2>(Mol,&Atom::GetMass);
+    std::vector<double> TempI=math::moment<2>(Mol, &Atom::mass);
     for(size_t i=0;i<9;++i)I[i]-=mass*TempI[i];
     return I;
     
 }
 
-System ToAngstroms(const System& Sys){
-    return Sys.Transform([](const Atom& i)->Atom{
+System system_to_angstroms(const System& Sys){
+    return Sys.transform([](const Atom& i)->Atom{
         std::array<double,3> NewCoords;
         std::transform(i.begin(),i.end(),NewCoords.begin(),
                        [](const double& a){return a*BOHR_RADIUS_ANGSTROMS;});
         Atom Clone(i);
-        Clone.SetCoords(NewCoords);
+        Clone.set_coords(NewCoords);
         return Clone;
     });
 }
 
 } // close namespace system
-
-namespace math{
-using system::System;
-template<> CombItr<System>::CombItr(const System& Set, size_t K):
-Comb_(Set.AsUniverse(),false),K_(K),Indices_(K),Set_(Set),Done_(false)
-{
-    Initialize();
-}
-
-template<> void CombItr<System>::ResetComb(){
-    Comb_=System(Set_.AsUniverse(),false);
-}
-
-}
-
 } // close namespace pulsar
 

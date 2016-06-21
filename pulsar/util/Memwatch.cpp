@@ -12,25 +12,25 @@ namespace pulsar{
 namespace util {
 
 
-bool Memwatch_running(void) noexcept
+bool memwatch_running(void) noexcept
 {
-    return memwatch_running();
+    return ::memwatch_running();
 }
 
-size_t Memwatch_allocated(void) noexcept
+size_t memwatch_allocated(void) noexcept
 {
-    return memwatch_query_allocated_memory();
+    return ::memwatch_query_allocated_memory();
 }
 
 
-size_t Memwatch_setlimit(size_t limit) noexcept
+size_t memwatch_setlimit(size_t limit) noexcept
 {
-    return memwatch_set_max_memory(limit);
+    return ::memwatch_set_max_memory(limit);
 }
 
-size_t Memwatch_getlimit(void) noexcept
+size_t memwatch_getlimit(void) noexcept
 {
-    return memwatch_get_max_memory();
+    return ::memwatch_get_max_memory();
 }
 
 

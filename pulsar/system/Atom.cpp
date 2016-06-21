@@ -18,38 +18,25 @@ using namespace pulsar::output;
 
 namespace pulsar{
 
-//    typedef std::set<const util::Enumeration<AtomProperty>*> Set_t;
-//    Set_t util::Enumeration<AtomProperty>::Enums_=Set_t();
 namespace system {
 
 
-Atom::Atom(CoordType xyz, int Z, int isonum, double mass,
-           double isotopemass, double charge, double multiplicity,
-           double nelectrons,double covradius, double vdwradius)
-{
-    // we do it this way in case we change where the info is stored
-    SetCoords(xyz);
-    SetZ(Z);
-    SetIsonum(isonum);
-    SetMass(mass);
-    SetIsotopeMass(isotopemass);
-    SetCharge(charge);
-    SetMultiplicity(multiplicity);
-    SetNElectrons(nelectrons);
-    SetCovRadius(covradius);
-    SetVDWRadius(vdwradius);
-}
+/////////////////////////////////////////
+// BasisInfo
+/////////////////////////////////////////
 
-std::string Atom::GetName(void) const
-{
-    return AtomicNameFromZ(GetZ());
+PRAGMA_WARNING_PUSH
+PRAGMA_WARNING_IGNORE_SHADOW_MEMBER
 
-}
+Atom::Atom(CoordType xyz, int Z, int isotope, double mass,
+           double isotope_mass, double charge, double multiplicity,
+           double nelectrons,double cov_radius, double vdw_radius)
+    : math::Point(xyz), Z(Z), isotope(isotope), mass(mass),
+      isotope_mass(isotope_mass), charge(charge), multiplicity(multiplicity),
+      nelectrons(nelectrons), cov_radius(cov_radius), vdw_radius(vdw_radius)
+{ }
 
-std::string Atom::GetSymbol(void) const
-{
-    return AtomicSymFromZ(GetZ());
-}
+PRAGMA_WARNING_POP
 
 
 bool Atom::operator==(const Atom & rhs) const
@@ -59,17 +46,17 @@ bool Atom::operator==(const Atom & rhs) const
 
     // order by the parts that are most likely to be different, since
     //   this should short-circuit on the first false comparison
-    return GetZ() == rhs.GetZ() &&
+    return Z == rhs.Z &&
            static_cast<const math::Point>(*this) == static_cast<const math::Point>(rhs) &&
-           //bshells_ == rhs.bshells_ &&
-           GetIsonum() == rhs.GetIsonum() &&
-           GetMass() == rhs.GetMass() &&
-           GetIsotopeMass() == rhs.GetIsotopeMass() &&
-           GetCharge() == rhs.GetCharge() &&
-           GetMultiplicity() == rhs.GetMultiplicity() &&
-           GetNElectrons() == rhs.GetNElectrons() &&
-           GetCovRadius() == rhs.GetCovRadius() &&
-           GetVDWRadius() == rhs.GetVDWRadius()
+           basis_sets == rhs.basis_sets &&
+           isotope == rhs.isotope &&
+           mass == rhs.mass &&
+           isotope_mass == rhs.isotope_mass &&
+           charge == rhs.charge &&
+           multiplicity == rhs.multiplicity &&
+           nelectrons == rhs.nelectrons &&
+           cov_radius == rhs.cov_radius &&
+           vdw_radius == rhs.vdw_radius
            ;
              
     PRAGMA_WARNING_POP
@@ -81,46 +68,30 @@ bool Atom::operator!=(const Atom & rhs) const
 }
 
 
-void Atom::Print(std::ostream & os) const
+void Atom::print(std::ostream & os) const
 {
-    Output(os, "%-5?    %16.8?  %16.8?  %16.8?\n",
-           GetSymbol(), GetCoords()[0], GetCoords()[1], GetCoords()[2]);
+    print_output(os, "%-5?    %16.8?  %16.8?  %16.8?\n",
+           atomic_symbol_from_z(Z), get_coords()[0], get_coords()[1], get_coords()[2]);
 }
 
-bool Atom::BasisInfo_::operator==(const BasisInfo_ & rhs) const
+bphash::HashValue Atom::my_hash(void) const
 {
-    // note we have to check sizes first for std::equal 
-    return (
-            shells == rhs.shells &&
-            description.size() == rhs.description.size() &&
-            std::equal(description.begin(), description.end(), rhs.description.begin())
-           );
-}
-
-bphash::HashValue Atom::MyHash(void) const
-{
-    return bphash::MakeHash(bphash::HashType::Hash128, *this);
+    return bphash::make_hash(bphash::HashType::Hash128, *this);
 } 
 
 void Atom::hash(bphash::Hasher & h) const
 {
     h(static_cast<const math::Point &>(*this),
-           Z_, isonum_,
-           mass_, isotopemass_,
-           charge_, multiplicity_,
-           nelectrons_, covradius_,
-           vdwradius_, bshells_);
+           Z, isotope,
+           mass, isotope_mass,
+           charge, multiplicity,
+           nelectrons, cov_radius,
+           vdw_radius, basis_sets);
 }
-
-void Atom::BasisInfo_::hash(bphash::Hasher & h) const
-{
-    h(description, shells);
-}
-
 
 std::ostream& operator<<(std::ostream& os,const Atom& A)
 {
-    A.Print(os);
+    A.print(os);
     return os;
 }
 
@@ -129,73 +100,98 @@ std::ostream& operator<<(std::ostream& os,const Atom& A)
 // Free functions
 ////////////////////////////////
 
-Atom CreateAtom(CoordType xyz, int Z)
+Atom create_atom(CoordType xyz, int Z)
 {
-    int isonum = MostCommonIsotopeFromZ(Z);
-    return CreateAtom(xyz, Z, isonum);
+    int isotope = most_common_isotope_from_z(Z);
+    return create_atom(xyz, Z, isotope);
 
 }
 
-Atom CreateAtom(CoordType xyz, int Z, int isonum)
+Atom create_atom(CoordType xyz, int Z, int isotope)
 {
     return Atom(xyz,
                 Z,
-                isonum,
-                AtomicMassFromZ(Z),
-                IsotopeMassFromZ(Z, isonum),
-                0,  //! \todo default charge
-                math::numeric_cast<double>(AtomicMultiplicityFromZ(Z)),
-                math::numeric_cast<double>(Z),
-                CovRadiusFromZ(Z),
-                VDWRadiusFromZ(Z)
-                );  //! 0 charge, nelectrons = Z
+                isotope,
+                atomic_mass_from_z(Z),
+                isotope_mass_from_z(Z, isotope),
+                0,  //! \todo default charge?
+                math::numeric_cast<double>(atomic_multiplicity_from_z(Z)),
+                math::numeric_cast<double>(Z), // nelectrons = Z
+                covalent_radius_from_z(Z),
+                vdw_radius_from_z(Z)
+                );
 }
 
-Atom CreateAtom(double x, double y, double z, int Z)
+Atom create_atom(double x, double y, double z, int Z)
 {
-    return CreateAtom({x,y,z}, Z);
+    return create_atom({x,y,z}, Z);
 }
 
-Atom CreateAtom(double x, double y, double z, int Z, int isonum)
+Atom create_atom(double x, double y, double z, int Z, int isotope)
 {
-    return CreateAtom({x,y,z}, Z, isonum);
+    return create_atom({x,y,z}, Z, isotope);
 }
 
-Atom MakeGhost(const Atom& AtomI){
-  Atom AtomJ(AtomI);//copy basis
-  AtomJ.SetZ(0);
-  AtomJ.SetIsonum(0);
-  AtomJ.SetMass(0.0);
-  AtomJ.SetIsotopeMass(0.0);
-  AtomJ.SetCharge(0.0);
-  AtomJ.SetMultiplicity(0.0);
-  AtomJ.SetNElectrons(0.0);
-  AtomJ.SetCovRadius(0.0);
-  return AtomJ;
+
+Atom make_ghost_atom(const Atom & atom)
+{
+    Atom ghost = create_atom(atom.get_coords(), GHOST_ATOM_Z);
+    ghost.basis_sets = atom.basis_sets;
+    return ghost;
 }
 
-Atom MakeDummy(CoordType xyz){
-      return CreateAtom(xyz,-1);
+bool is_ghost_atom(const Atom & atom)
+{
+    //! \todo simple enough check?
+    return atom.Z == GHOST_ATOM_Z;
 }
 
-Atom MakeCharge(double charge,CoordType xyz){
-    return CreateAtom(xyz,-2);
+
+Atom make_dummy_atom(const CoordType & xyz)
+{
+    return create_atom(xyz, DUMMY_ATOM_Z);
 }
 
-bool IsGhost(const Atom& AtomI){
-    Atom AtomJ=MakeGhost(AtomI);
-    return AtomJ==AtomI;
+Atom make_dummy_atom(const Atom & atom)
+{
+    return create_atom(atom.get_coords(), DUMMY_ATOM_Z);
 }
 
-bool IsDummy(const Atom& AtomI){
-    Atom AtomJ=MakeDummy(AtomI);
-    return AtomJ==AtomI;
+Atom make_dummy_atom(double x, double y, double z)
+{
+    return create_atom({x, y, z}, DUMMY_ATOM_Z);
 }
 
-bool IsCharge(const Atom& AtomI){
-    Atom AtomJ=MakeCharge(AtomI);
-    return AtomJ==AtomI;
+bool is_dummy_atom(const Atom & atom)
+{
+    //! \todo simple enough check?
+    return atom.Z == DUMMY_ATOM_Z;
 }
+
+
+Atom make_point_charge(const CoordType & xyz, double charge)
+{
+    Atom atom = create_atom(xyz, POINTCHARGE_ATOM_Z);
+    atom.charge = charge;
+    return atom;
+}
+
+Atom make_point_charge(const Atom & atom)
+{
+    return make_point_charge(atom.get_coords(), atom.charge);
+}
+
+Atom make_point_charge(double x, double y, double z, double charge)
+{
+    return make_point_charge({x,y,z}, charge);
+}
+
+bool is_point_charge(const Atom & atom)
+{
+    //! \todo simple enough check?
+    return atom.Z == POINTCHARGE_ATOM_Z;
+}
+
 
 } // close namespace system
 } // close namespace pulsar

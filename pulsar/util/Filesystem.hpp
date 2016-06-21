@@ -18,12 +18,12 @@ namespace util {
 
 /*! \brief Adds a trailing slash to a path if it doesn't have one
  */
-std::string AddTrailingSlash(const std::string & path);
+std::string add_trailing_slash(const std::string & path);
 
 
 /*! \brief Removes all trailing slashes from a path if it has them
  */
-std::string RemoveTrailingSlash(const std::string & path);
+std::string remove_trailing_slash(const std::string & path);
 
 
 /*! \brief Split the last component off of a path
@@ -33,7 +33,7 @@ std::string RemoveTrailingSlash(const std::string & path);
  *
  * The paths returned won't have trailing slashes
  */
-std::pair<std::string, std::string> SplitPath(const std::string & path);
+std::pair<std::string, std::string> split_path(const std::string & path);
 
 
 } // close namespace util

@@ -44,7 +44,7 @@ def Run():
     try:
 
         tester = Tester("Testing construction of OptionMap objects")
-        tester.PrintHeader()
+        tester.print_header()
 
 
 
@@ -55,28 +55,28 @@ def Run():
             optmap = OptionMap()
             s = "Test adding {} - not required, with default".format(k)
             opttype = opttypemap[k]
-            tester.Test(s, True, PyTestFunc, optmap.AddOption, k, 
+            tester.test(s, True, py_test_function, optmap.add_option, k, 
                         opttype, False, None, "No help", v)
 
             # with default, required (should never work)
             optmap = OptionMap()
             s = "Test adding {} - required, with default".format(k)
             opttype = opttypemap[k]
-            tester.Test(s, False, PyTestFunc, optmap.AddOption, k, 
+            tester.test(s, False, py_test_function, optmap.add_option, k, 
                         opttype, True, None, "No help", v)
 
             # no default, not required
             optmap = OptionMap()
             s = "Test adding {} - not required, no default".format(k)
             opttype = opttypemap[k]
-            tester.Test(s, True, PyTestFunc, optmap.AddOption, k, 
+            tester.test(s, True, py_test_function, optmap.add_option, k, 
                         opttype, False, None, "No help", None)
 
             # no default, required
             optmap = OptionMap()
             s = "Test adding {} - required, no default".format(k)
             opttype = opttypemap[k]
-            tester.Test(s, True, PyTestFunc, optmap.AddOption, k, 
+            tester.test(s, True, py_test_function, optmap.add_option, k, 
                         opttype, True, None, "No help", None)
 
         # Adding multiple elements
@@ -84,8 +84,8 @@ def Run():
         for k, v in allvals: 
             s = "Test adding {}".format(k)
             opttype = opttypemap[k]
-            dup = optmap.HasKey(k) # Can't add duplicate keys
-            tester.Test(s, not dup, PyTestFunc, optmap.AddOption, k, 
+            dup = optmap.has_key(k) # Can't add duplicate keys
+            tester.test(s, not dup, py_test_function, optmap.add_option, k, 
                         opttype, False, None, "No help", v)
         
 
@@ -112,80 +112,80 @@ def Run():
 #                hasdefault = v[1] != None
 #
 #                s = "OptionMap {} : Testing validity".format(t1)
-#                tester.Test(s, isvalid, PyTestBoolFunc, opm.AllReqSet)
+#                tester.test(s, isvalid, py_test_bool_function, opm.AllReqSet)
 #
 #                s = "OptionMap {} : Has option?".format(t1)
-#                tester.Test(s, True, PyTestBoolFunc, opm.HasKey, "test_opt")
+#                tester.test(s, True, py_test_bool_function, opm.has_key, "test_opt")
 #
 #                s = "OptionMap {} : Has option value?".format(t1)
-#                tester.Test(s, hasdefault, PyTestBoolFunc, opm.Has, "test_opt")
+#                tester.test(s, hasdefault, py_test_bool_function, opm.Has, "test_opt")
 #
 #                # set the value
 #                for d1 in testelements:
 #                    s = "OptionMap {} : Resetting option".format(t1)
-#                    tester.Test(s, True, PyTestFunc, opm.ResetToDefault, "test_opt")
+#                    tester.test(s, True, py_test_function, opm.ResetToDefault, "test_opt")
 #
 #                    s = "OptionMap {} : Testing validity after resetting".format(t1)
-#                    tester.Test(s, isvalid, PyTestBoolFunc, opm.AllReqSet)
+#                    tester.test(s, isvalid, py_test_bool_function, opm.AllReqSet)
 #
 #                    s = "OptionMap {} : Setting option with {}".format(t1, d1[0])
 #                    expected = IsValid(t1, d1[0])
-#                    tester.Test(s, expected, PyTestFunc, opm.Change, "test_opt", d1[1])
+#                    tester.test(s, expected, py_test_function, opm.Change, "test_opt", d1[1])
 #
 #                    # should be valid if expected == True, since that means the value is now set
 #                    # (or if it was previously valid)
 #                    s = "OptionMap {} : Is valid now?".format(t1)
-#                    tester.Test(s, expected or isvalid, PyTestBoolFunc, opm.AllReqSet)
+#                    tester.test(s, expected or isvalid, py_test_bool_function, opm.AllReqSet)
 #
 #                    # should still have the option
 #                    s = "OptionMap {} : Has option?".format(t1)
-#                    tester.Test(s, True, PyTestBoolFunc, opm.HasKey, "test_opt")
+#                    tester.test(s, True, py_test_bool_function, opm.has_key, "test_opt")
 #
 #                    # value is set if expected == True
 #                    s = "OptionMap {} : Has option value?".format(t1)
-#                    tester.Test(s, expected or hasdefault, PyTestBoolFunc, opm.Has, "test_opt")
+#                    tester.test(s, expected or hasdefault, py_test_bool_function, opm.Has, "test_opt")
 #
 #
 #
 #                    # Reset again
 #                    s = "OptionMap {} : Resetting option".format(t1)
-#                    tester.Test(s, True, PyTestFunc, opm.ResetToDefault, "test_opt")
+#                    tester.test(s, True, py_test_function, opm.ResetToDefault, "test_opt")
 #
 #                    s = "OptionMap {} : Testing validity after resetting".format(t1)
-#                    tester.Test(s, isvalid, PyTestBoolFunc, opm.AllReqSet)
+#                    tester.test(s, isvalid, py_test_bool_function, opm.AllReqSet)
 #
 #                    s = "OptionMap {} : Setting option as dict with {}".format(t1, d1[0])
 #                    expected = IsValid(t1, d1[0])
-#                    tester.Test(s, expected, PyTestFunc, opm.ChangeDict, { "test_opt" :  d1[1] })
+#                    tester.test(s, expected, py_test_function, opm.ChangeDict, { "test_opt" :  d1[1] })
 #
 #                    # should be valid if expected == True, since that means the value is now set
 #                    # (or if it was previously valid)
 #                    s = "OptionMap {} : Is valid now?".format(t1)
-#                    tester.Test(s, expected or isvalid, PyTestBoolFunc, opm.AllReqSet)
+#                    tester.test(s, expected or isvalid, py_test_bool_function, opm.AllReqSet)
 #
 #                    # should still have the option
 #                    s = "OptionMap {} : Has option?".format(t1)
-#                    tester.Test(s, True, PyTestBoolFunc, opm.HasKey, "test_opt")
+#                    tester.test(s, True, py_test_bool_function, opm.has_key, "test_opt")
 #
 #                    # value is set if expected == True
 #                    s = "OptionMap {} : Has option value?".format(t1)
-#                    tester.Test(s, expected or hasdefault, PyTestBoolFunc, opm.Has, "test_opt")
+#                    tester.test(s, expected or hasdefault, py_test_bool_function, opm.Has, "test_opt")
 
 
 
-        tester.PrintResults() 
+        tester.print_results() 
 
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      print_global_output("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      GlobalError("\n")
-      GlobalError(str(e))
-      GlobalError("\n")
+      print_global_error("\n")
+      print_global_error(str(e))
+      print_global_error("\n")
 
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-psr.Finalize()
+psr.finalize()

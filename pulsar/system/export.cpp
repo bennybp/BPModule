@@ -40,8 +40,8 @@ void export_pybind11(pybind11::module & mtop)
     ///////////////
     // Angular momentum
     ///////////////
-    m.def("StringToAM", StringToAM);
-    m.def("AMToString", AMToString);
+    m.def("string_to_am", string_to_am);
+    m.def("am_to_string", am_to_string);
 
 
     ///////////////
@@ -54,16 +54,18 @@ void export_pybind11(pybind11::module & mtop)
     .def_readwrite("cartesian_order", &AOOrderingMaps::cartesian_order)
     ;
 
-    m.def("AllAOOrderings", AllAOOrderings, pybind11::return_value_policy::copy);
-    m.def("SphericalOrdering", SphericalOrdering);
-    m.def("CartesianOrdering", CartesianOrdering);
-    m.def("SphericalIndex", SphericalIndex);
-    m.def("CartesianIndex", CartesianIndex);
-    m.def("MakeBSReorderMap", MakeBSReorderMap);
-    m.def("MakeAOBasisOrdering", MakeAOBasisOrdering);
+    m.def("all_ao_orderings", all_ao_orderings, pybind11::return_value_policy::copy);
+    m.def("spherical_ordering", spherical_ordering);
+    m.def("cartesian_ordering", cartesian_ordering);
+    m.def("spherical_index", spherical_index);
+    m.def("cartesian_index", cartesian_index);
+    m.def("full_spherical_index", full_spherical_index);
+    m.def("full_cartesian_index", full_cartesian_index);
+    m.def("make_basis_reorder_map", make_basis_reorder_map);
+    m.def("make_ao_basis_ordering", make_ao_basis_ordering);
 
     ////////////////////////////
-    // Spherical Transformation
+    // Spherical transformation
     ////////////////////////////
     pybind11::class_<SphericalTransformCoefficient>(m, "SphericalTransformCoefficient")
     .def(pybind11::init<>())
@@ -73,7 +75,7 @@ void export_pybind11(pybind11::module & mtop)
     .def_readwrite("coef", &SphericalTransformCoefficient::coef)
     ;
 
-    m.def("AllSphericalTransforms", AllSphericalTransforms, pybind11::return_value_policy::copy);
+    m.def("all_spherical_transforms", all_spherical_transforms, pybind11::return_value_policy::copy);
 
     ///////////////
     // Basis set
@@ -89,30 +91,30 @@ void export_pybind11(pybind11::module & mtop)
 
     // BasisShellBase class
     pybind11::class_<BasisShellBase> bshellbase(m, "BasisShellBase");
-    bshellbase.def("GetType", &BasisShellBase::GetType)
-              .def("AM", &BasisShellBase::AM)
-              .def("GeneralAM", &BasisShellBase::GeneralAM)
-              .def("NPrim", &BasisShellBase::NPrim)
-              .def("NCoef", &BasisShellBase::NCoef)
-              .def("NGeneral", &BasisShellBase::NGeneral)
-              .def("NFunctions", &BasisShellBase::NFunctions)
-              .def("GeneralNFunctions", &BasisShellBase::GeneralNFunctions)
-              .def("IsCombiendAM", &BasisShellBase::IsCombinedAM)
-              .def("MyHash", &BasisShellBase::MyHash)
-              .def("Alpha", &BasisShellBase::Alpha)
-              .def("Coef", &BasisShellBase::Coef)
-              .def("GetAlpha", &BasisShellBase::GetAlpha)
-              .def("SetAlpha", &BasisShellBase::SetAlpha)
-              .def("GetCoef", &BasisShellBase::GetCoef)
-              .def("SetCoef", &BasisShellBase::SetCoef)
-              .def("GetAlphas", &BasisShellBase::GetAlphas)
-              .def("SetAlphas", &BasisShellBase::SetAlphas)
-              .def("GetCoefs", &BasisShellBase::GetCoefs)
-              .def("SetCoefs", &BasisShellBase::SetCoefs)
-              .def("GetAllCoefs", &BasisShellBase::GetAllCoefs)
-              .def("SetAllCoefs", &BasisShellBase::SetAllCoefs)
-              .def("SetPrimitive", static_cast<void (BasisShellBase::*)(size_t, double, double)>(&BasisShellBase::SetPrimitive))
-              .def("SetPrimitive", static_cast<void (BasisShellBase::*)(size_t, double, const std::vector<double> &)>(&BasisShellBase::SetPrimitive))
+    bshellbase.def("get_type", &BasisShellBase::get_type)
+              .def("am", &BasisShellBase::am)
+              .def("general_am", &BasisShellBase::general_am)
+              .def("n_primitives", &BasisShellBase::n_primitives)
+              .def("n_coefficients", &BasisShellBase::n_coefficients)
+              .def("n_general_contractions", &BasisShellBase::n_general_contractions)
+              .def("n_functions", &BasisShellBase::n_functions)
+              .def("general_n_functions", &BasisShellBase::general_n_functions)
+              .def("IsCombiendAM", &BasisShellBase::is_combined_am)
+              .def("my_hash", &BasisShellBase::my_hash)
+              .def("alpha", &BasisShellBase::alpha)
+              .def("coef", &BasisShellBase::coef)
+              .def("get_alpha", &BasisShellBase::get_alpha)
+              .def("set_alpha", &BasisShellBase::set_alpha)
+              .def("get_coef", &BasisShellBase::get_coef)
+              .def("set_coef", &BasisShellBase::set_coef)
+              .def("get_alphas", &BasisShellBase::get_alphas)
+              .def("set_alphas", &BasisShellBase::set_alphas)
+              .def("get_coefs", &BasisShellBase::get_coefs)
+              .def("set_coefs", &BasisShellBase::set_coefs)
+              .def("get_all_coefs", &BasisShellBase::get_all_coefs)
+              .def("set_all_coefs", &BasisShellBase::set_all_coefs)
+              .def("set_primitive", static_cast<void (BasisShellBase::*)(size_t, double, double)>(&BasisShellBase::set_primitive))
+              .def("set_primitive", static_cast<void (BasisShellBase::*)(size_t, double, const std::vector<double> &)>(&BasisShellBase::set_primitive))
     ;
 
 
@@ -127,11 +129,12 @@ void export_pybind11(pybind11::module & mtop)
 
     // BasisSetShell class
     pybind11::class_<BasisSetShell>(m, "BasisSetShell", bshell)
-    .def("GetCoords", &BasisSetShell::GetCoords)
-    .def("SetCoords", &BasisSetShell::GetCoords)
-    .def("GetCoord", &BasisSetShell::GetCoord)
-    .def("SetCoord", &BasisSetShell::GetCoord)
-    .def("MyHash", &BasisSetShell::MyHash)
+    .def("get_coords", &BasisSetShell::get_coords)
+    .def("set_coords", &BasisSetShell::get_coords)
+    .def("get_coord", &BasisSetShell::get_coord)
+    .def("set_coord", &BasisSetShell::get_coord)
+    .def("coord", &BasisSetShell::get_coord)
+    .def("my_hash", &BasisSetShell::my_hash)
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
     ;
@@ -140,30 +143,40 @@ void export_pybind11(pybind11::module & mtop)
 
     pybind11::class_<BasisSet>(m, "BasisSet")
     .def(pybind11::init<size_t, size_t, size_t, size_t>())
-    .def("Print", &BasisSet::Print)
-    .def("AddShell", &BasisSet::AddShell)
-    .def("GetTypes", &BasisSet::GetTypes)
-    .def("NShell", &BasisSet::NShell)
-    .def("Shell", &BasisSet::Shell, pybind11::return_value_policy::reference_internal)
-    .def("UniqueShell", &BasisSet::UniqueShell, pybind11::return_value_policy::reference_internal)
-    .def("ShellStart", &BasisSet::ShellStart)
-    .def("ShellInfo", &BasisSet::ShellInfo)
-    .def("NPrim", &BasisSet::NPrim)
-    .def("NCoef", &BasisSet::NCoef)
-    .def("NCoef", &BasisSet::NCoef)
-    .def("NFunctions", &BasisSet::NFunctions)
-    .def("MaxNPrim", &BasisSet::MaxNPrim)
-    .def("MaxProperty", &BasisSet::MaxProperty)
-    .def("MaxAM", &BasisSet::MaxAM)
-    .def("AllAM", &BasisSet::AllAM)
-    .def("MaxNFunctions", &BasisSet::MaxNFunctions)
-    .def("Transform", &BasisSet::Transform)
-    .def("ShrinkFit", &BasisSet::ShrinkFit)
-    .def("MyHash", &BasisSet::MyHash)
+    .def("print", &BasisSet::print)
+    .def("add_shell", &BasisSet::add_shell)
+    .def("get_types", &BasisSet::get_types)
+    .def("n_shell", &BasisSet::n_shell)
+    .def("shell", &BasisSet::shell, pybind11::return_value_policy::reference_internal)
+    .def("unique_shell", &BasisSet::unique_shell, pybind11::return_value_policy::reference_internal)
+    .def("shell_start", &BasisSet::shell_start)
+    .def("shell_info", &BasisSet::shell_info)
+    .def("n_primitives", &BasisSet::n_primitives)
+    .def("n_coefficients", &BasisSet::n_coefficients)
+    .def("n_coefficients", &BasisSet::n_coefficients)
+    .def("n_functions", &BasisSet::n_functions)
+    .def("max_n_primitives", &BasisSet::max_n_primitives)
+    .def("max_property", &BasisSet::max_property)
+    .def("max_am", &BasisSet::max_am)
+    .def("all_am", &BasisSet::all_am)
+    .def("max_n_functions", &BasisSet::max_n_functions)
+    .def("transform", &BasisSet::transform)
+    .def("shrink_fit", &BasisSet::shrink_fit)
+    .def("my_hash", &BasisSet::my_hash)
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
     .def("__iter__", [](const BasisSet & t) { return pybind11::make_iterator(t.begin(), t.end()); },
                      pybind11::keep_alive<0, 1>() )
+    ;
+
+    // BasisInfo
+    pybind11::class_<BasisInfo>(m, "BasisInfo")
+    .def(pybind11::init<>())
+    .def(pybind11::init<const BasisInfo &>())
+    .def_readwrite("description", &BasisInfo::description) 
+    .def_readwrite("shells", &BasisInfo::shells)
+    .def(pybind11::self == pybind11::self)
+    .def(pybind11::self != pybind11::self)
     ;
 
 
@@ -193,26 +206,29 @@ void export_pybind11(pybind11::module & mtop)
     ;
 
 
-    // Free functions
-    m.def("AtomicInfoFromZ", AtomicInfoFromZ, pybind11::return_value_policy::copy);
-    m.def("AtomicInfoFromSym", AtomicInfoFromSym, pybind11::return_value_policy::copy);
-    m.def("IsotopeInfoFromZ", IsotopeInfoFromZ, pybind11::return_value_policy::copy);
-    m.def("IsotopeInfoFromSym", IsotopeInfoFromSym, pybind11::return_value_policy::copy);
-    m.def("MostCommonIsotopeFromZ", MostCommonIsotopeFromZ);
-    m.def("MostCommonIsotopeFromSym", MostCommonIsotopeFromSym);
+    // Atomic info lookup
+    m.def("atomic_info_from_z", atomic_info_from_z, pybind11::return_value_policy::copy);
+    m.def("atomic_info_from_symbol", atomic_info_from_symbol, pybind11::return_value_policy::copy);
+    m.def("isotope_info_from_z", isotope_info_from_z, pybind11::return_value_policy::copy);
+    m.def("isotope_info_from_symbol", isotope_info_from_symbol, pybind11::return_value_policy::copy);
+    m.def("most_common_isotope_from_z", most_common_isotope_from_z);
+    m.def("most_common_isotope_from_symbol", most_common_isotope_from_symbol);
 
-    m.def("AtomicMassFromZ", AtomicMassFromZ);
-    m.def("AtomicMassFromSym", AtomicMassFromSym);
-    m.def("IsotopeMassFromZ", IsotopeMassFromZ);
-    m.def("IsotopeMassFromSym", IsotopeMassFromSym);
-    m.def("AtomicSymFromZ", AtomicSymFromZ);
-    m.def("AtomicZNumberFromSym", AtomicZNumberFromSym);
-    m.def("AtomicNameFromZ", AtomicNameFromZ);
-    m.def("AtomicNameFromSym", AtomicNameFromSym);
-    m.def("AtomicMultiplicityFromZ", AtomicMultiplicityFromZ);
-    m.def("AtomicMultiplicityFromSym", AtomicMultiplicityFromSym);
-    m.def("InertiaTensor",InertiaTensor);
-    m.def("GetConns",GetConns);
+    m.def("atomic_mass_from_z", atomic_mass_from_z);
+    m.def("atomic_mass_from_symbol", atomic_mass_from_symbol);
+    m.def("isotope_mass_from_z", isotope_mass_from_z);
+    m.def("isotope_mass_from_symbol", isotope_mass_from_symbol);
+    m.def("atomic_symbol_from_z", atomic_symbol_from_z);
+    m.def("atomic_z_from_symbol", atomic_z_from_symbol);
+    m.def("atomic_name_from_z", atomic_name_from_z);
+    m.def("atomic_name_from_symbol", atomic_name_from_symbol);
+    m.def("atomic_multiplicity_from_z", atomic_multiplicity_from_z);
+    m.def("atomic_multiplicity_from_symbol", atomic_multiplicity_from_symbol);
+
+
+    // Other free functions
+    m.def("inertia_tensor",inertia_tensor);
+    m.def("get_connectivity",get_connectivity);
     
     
     m.def("Frac2Cart",Frac2Cart);
@@ -222,97 +238,98 @@ void export_pybind11(pybind11::module & mtop)
                             pybind11::arg("MaxScale")=2.0);
     m.def("CleanUC",CleanUC);
 
+
     // Atom structure
     // Atom class
     pybind11::class_<Atom>(m, "Atom", pybind11::base<math::Point>())
     .def(pybind11::init<const Atom &>())
-    .def("MyHash", &Atom::MyHash)
-    .def("GetZ", &Atom::GetZ)
-    .def("SetZ", &Atom::SetZ)
-    .def("GetIsonum", &Atom::GetIsonum)
-    .def("SetIsonum", &Atom::SetIsonum)
-    .def("GetMass", &Atom::GetMass)
-    .def("SetMass", &Atom::SetMass)
-    .def("GetIsotopeMass", &Atom::GetIsotopeMass)
-    .def("SetIsotopeMass", &Atom::SetIsotopeMass)
-    .def("GetCharge", &Atom::GetCharge)
-    .def("SetCharge", &Atom::SetCharge)
-    .def("GetMultiplicity", &Atom::GetMultiplicity)
-    .def("SetMultiplicity", &Atom::SetMultiplicity)
-    .def("GetNElectrons", &Atom::GetNElectrons)
-    .def("SetNElectrons", &Atom::SetNElectrons)
-    .def("GetName", &Atom::GetName)
-    .def("GetSymbol", &Atom::GetSymbol)
-    .def("HasShells", &Atom::HasShells)
-    .def("NShell", &Atom::NShell)
-    .def("GetAllBasisLabels", &Atom::GetAllBasisLabels)
-    .def("GetBasisDescription", &Atom::GetBasisDescription)
-    .def("GetShells", &Atom::GetShells)
-    .def("SetShells", &Atom::SetShells)
-    .def("AddShell", &Atom::AddShell)
+    .def_readwrite("Z", &Atom::Z)
+    .def_readwrite("isotope", &Atom::isotope)
+    .def_readwrite("mass", &Atom::mass)
+    .def_readwrite("isotope_mass", &Atom::isotope_mass)
+    .def_readwrite("charge", &Atom::charge)
+    .def_readwrite("multiplicity", &Atom::multiplicity)
+    .def_readwrite("nelectrons", &Atom::nelectrons)
+    .def_readwrite("cov_radius", &Atom::cov_radius)
+    .def_readwrite("vdw_radius", &Atom::vdw_radius)
+    .def_readwrite("basis_sets", &Atom::basis_sets)
+    .def("my_hash", &Atom::my_hash)
+    .def("print", &Atom::print)
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
     ;
    
 
-    // Atom creators
-    m.def("CreateAtom", static_cast<Atom (*)(CoordType, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(CoordType, int, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int)>(CreateAtom));
-    m.def("CreateAtom", static_cast<Atom (*)(double, double, double, int, int)>(CreateAtom));
+    // Atom creators, ghost/dummy/point charge, etc
+    m.def("create_atom", static_cast<Atom (*)(CoordType, int)>(create_atom));
+    m.def("create_atom", static_cast<Atom (*)(CoordType, int, int)>(create_atom));
+    m.def("create_atom", static_cast<Atom (*)(double, double, double, int)>(create_atom));
+    m.def("create_atom", static_cast<Atom (*)(double, double, double, int, int)>(create_atom));
+    m.def("make_ghost_atom", make_ghost_atom);
+    m.def("make_point_charge", static_cast<Atom (*)(const CoordType & xyz, double charge)>(make_point_charge));
+    m.def("make_point_charge", static_cast<Atom (*)(const Atom & atom)>(make_point_charge));
+    m.def("make_point_charge", static_cast<Atom (*)(double x, double y, double z, double charge)>(make_point_charge));
+    m.def("make_dummy_atom", static_cast<Atom (*)(const Atom & atom)>(make_dummy_atom));
+    m.def("make_dummy_atom", static_cast<Atom (*)(const CoordType & xyz)>(make_dummy_atom));
+    m.def("make_dummy_atom", static_cast<Atom (*)(double x, double y, double z)>(make_dummy_atom));
+    m.def("is_ghost_atom", is_ghost_atom);
+    m.def("is_point_charge", is_point_charge);
+    m.def("is_dummy_atom", is_dummy_atom);
 
-    // Export AtomSetUniverse
-    // No need to export AtomSet (at the moment)
-    math::RegisterUniverse<AtomSetUniverse>(m, "AtomSetUniverse");
 
-    
+    // Space 
     pybind11::class_<Space>(m,"Space")
       .def(pybind11::init<>())
       .def(pybind11::init<const std::array<double,3>&,
                            const std::array<double,3>&>())
-      .def_readonly("LatticeSides",&Space::LatticeSides)
-      .def_readonly("LatticeAngles",&Space::LatticeAngles)
+      .def("is_periodic", &Space::is_periodic)
+      .def_readonly("lattice_sides",&Space::lattice_sides)
+      .def_readonly("lattice_angles",&Space::lattice_angles)
     ;
-    
+
+ 
+    // Export AtomSetUniverse
+    // No need to export AtomSet (at the moment)
+    math::register_Universe<AtomSetUniverse>(m, "AtomSetUniverse");
 
     pybind11::class_<System, std::shared_ptr<System>>(m,"System")
     .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
     .def(pybind11::init<const System &>())
-    .def("Size",&System::size)
-    .def("Contains", &System::Contains)
-    .def("Insert", static_cast<System &(System::*)(const Atom &)>(&System::Insert),
+    .def("size",&System::size)
+    .def("count", &System::count)
+    .def("insert", static_cast<System &(System::*)(const Atom &)>(&System::insert),
                    pybind11::return_value_policy::reference)
-    .def("GetUniverse", &System::GetUniverse)
-    .def("AsUniverse", &System::AsUniverse)
-    .def("GetCharge",&System::GetCharge)
-    .def("SetCharge",&System::SetCharge)
-    .def("GetMultiplicity",&System::GetMultiplicity)
-    .def("SetMultiplicity",&System::SetMultiplicity)
-    .def("GetNElectrons",&System::GetNElectrons)
-    .def("SetNElectrons",&System::SetNElectrons)
-    .def("GetSpace",&System::GetSpace)
-    .def("SetSpace",&System::SetSpace)
-    .def("GetBasisSet", &System::GetBasisSet)
-    .def("MyHash", &System::MyHash)
-    .def("Translate", &System::Translate<std::array<double, 3>>)
-    .def("Rotate", &System::Rotate<std::array<double, 9>>)
-    .def("CenterOfMass", &System::CenterOfMass)
-    .def("CenterOfNuclearCharge", &System::CenterOfNuclearCharge)
-    .def("Print", &System::Print)
-    .def("ToString", &System::ToString)
-    .def("UnionAssign", &System::UnionAssign, pybind11::return_value_policy::reference)
-    .def("Union", &System::Union)
-    .def("IntersectionAssign", &System::IntersectionAssign, pybind11::return_value_policy::reference)
-    .def("Intersection", &System::Intersection)
-    .def("DifferenceAssign", &System::DifferenceAssign, pybind11::return_value_policy::reference)
-    .def("Difference", &System::Difference)
-    .def("Complement", &System::Complement)
-    .def("IsProperSubsetOf", &System::IsProperSubsetOf)
-    .def("IsSubsetOf", &System::IsSubsetOf)
-    .def("IsProperSupersetOf", &System::IsProperSupersetOf)
-    .def("IsSupersetOf", &System::IsSupersetOf)
-    .def("Transform", &System::Transform)
-    .def("Partition", &System::Partition)
+    .def("get_universe", &System::get_universe)
+    .def("as_universe", &System::as_universe)
+    .def("get_charge",&System::get_charge)
+    .def("set_charge",&System::set_charge)
+    .def("get_multiplicity",&System::get_multiplicity)
+    .def("set_multiplicity",&System::set_multiplicity)
+    .def("get_n_electrons",&System::get_n_electrons)
+    .def("set_n_electrons",&System::set_n_electrons)
+    .def("get_space",&System::get_space)
+    .def("set_space",&System::set_space)
+    .def("get_basis_set", &System::get_basis_set)
+    .def("my_hash", &System::my_hash)
+    .def("translate", &System::translate<std::array<double, 3>>)
+    .def("rotate", &System::rotate<std::array<double, 9>>)
+    .def("center_of_mass", &System::center_of_mass)
+    .def("center_of_nuclear_charge", &System::center_of_nuclear_charge)
+    .def("print", &System::print)
+    .def("to_string", &System::to_string)
+    .def("union_assign", &System::union_assign, pybind11::return_value_policy::reference)
+    .def("set_union", &System::set_union)
+    .def("intersection_assign", &System::intersection_assign, pybind11::return_value_policy::reference)
+    .def("intersection", &System::intersection)
+    .def("difference_assign", &System::difference_assign, pybind11::return_value_policy::reference)
+    .def("difference", &System::difference)
+    .def("complement", &System::complement)
+    .def("is_proper_subset_of", &System::is_proper_subset_of)
+    .def("is_subset_of", &System::is_subset_of)
+    .def("is_proper_superset_of", &System::is_proper_superset_of)
+    .def("is_superset_of", &System::is_superset_of)
+    .def("transform", &System::transform)
+    .def("partition", &System::partition)
     .def(pybind11::self += pybind11::self, pybind11::return_value_policy::reference)
     .def(pybind11::self + pybind11::self)
     .def(pybind11::self -= pybind11::self, pybind11::return_value_policy::reference)
@@ -326,8 +343,8 @@ void export_pybind11(pybind11::module & mtop)
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
     .def("__len__",         &System::size)
-    .def("__contains__",    &System::Contains)
-    .def("__str__",&System::ToString)
+    .def("__contains__",    &System::count)
+    .def("__str__",&System::to_string)
     .def("__iter__", [](const System & t) { return pybind11::make_iterator(t.begin(), t.end()); },
                      pybind11::keep_alive<0, 1>() )
     ;

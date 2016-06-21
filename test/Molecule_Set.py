@@ -16,14 +16,14 @@ from pulsar.output import *
 from pulsar.testing import *
 from pulsar.system import *
 
-from helper.SetOperations import TestSetOperations
+from helper.SetOperations import test_set_operations
 from helper.TestAtoms import nonane
 
 
 def Run():
     try:
         tester = Tester("Testing System class - set operations")
-        tester.PrintHeader()
+        tester.print_header()
 
         atoms = list(nonane)
 
@@ -34,13 +34,13 @@ def Run():
         a1[0] += 1.0e-10 # Slightly different coords
         a2[1] += 1.0e-10
         a3[2] += 1.0e-10
-        a4.SetZ(10)    # Different Z
+        a4.Z = 10    # Different Z
         badatoms = [ a1, a2, a3, a4 ]
 
 
         u = AtomSetUniverse()
         for a in atoms:
-            u.Insert(a)
+            u.insert(a)
 
 
         s0 = System(u, False)
@@ -50,33 +50,33 @@ def Run():
         s9 = System(u, False)
 
         for it in atoms[:3]:
-            s1.Insert(it)
+            s1.insert(it)
 
         for it in reversed(atoms):
-            s3.Insert(it)
+            s3.insert(it)
 
         for it in atoms[3:]:
-            s9.Insert(it)
+            s9.insert(it)
 
         ################################
         # Do basic testing of set stuff
         ################################
-        TestSetOperations(tester, System, atoms, badatoms,
+        test_set_operations(tester, System, atoms, badatoms,
                           True, s0, s1, s2, s3, s9)
 
-        tester.PrintResults() 
+        tester.print_results() 
 
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      print_global_output("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      GlobalError("\n")
-      GlobalError(str(e))
-      GlobalError("\n")
+      print_global_error("\n")
+      print_global_error(str(e))
+      print_global_error("\n")
 
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-psr.Finalize()
+psr.finalize()

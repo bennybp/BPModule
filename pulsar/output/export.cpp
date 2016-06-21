@@ -34,32 +34,32 @@ void export_pybind11(pybind11::module & mtop)
     pybind11::class_<std::ostream> os(m, "OSTREAM_INTERNAL");
 
     pybind11::class_<OutputStream>(m, "OutputStream", os)
-    .def("GeneralOutput",  &OutputStream::Output<>)
-    .def("Output",         &OutputStream::Output<>)
-    .def("Changed",        &OutputStream::Changed<>)
-    .def("Error",          &OutputStream::Error<>)
-    .def("Warning",        &OutputStream::Warning<>)
-    .def("Success",        &OutputStream::Success<>)
-    .def("Debug",          &OutputStream::Debug<>)
-    .def("DebugEnabled",   &OutputStream::DebugEnabled)
-    .def("EnableDebug",    &OutputStream::EnableDebug)
+    .def("general_output", &OutputStream::output<>)
+    .def("output",         &OutputStream::output<>)
+    .def("changed",        &OutputStream::changed<>)
+    .def("error",          &OutputStream::error<>)
+    .def("warning",        &OutputStream::warning<>)
+    .def("success",        &OutputStream::success<>)
+    .def("debug",          &OutputStream::debug<>)
+    .def("debug_enabled",  &OutputStream::debug_enabled)
+    .def("enable_debug",   &OutputStream::enable_debug)
     ;
     
 
-    m.def("ColorEnabled", ColorEnabled);
-    m.def("EnableColor", EnableColor);
+    m.def("color_enabled", color_enabled);
+    m.def("enable_color", enable_color);
 
-    m.def("GetGlobalOut", GetGlobalOut, pybind11::return_value_policy::reference);
-    m.def("SetGlobalOut_Stdout", SetGlobalOut_Stdout);
+    m.def("get_global_output", get_global_output, pybind11::return_value_policy::reference);
+    m.def("set_global_out_to_stdout", set_global_out_to_stdout);
     //m.def("SetOut_File", SetOut_File);
 
-    m.def("GlobalGeneralOutput",  GlobalGeneralOutput<>);
-    m.def("GlobalOutput",  GlobalOutput<>);
-    m.def("GlobalChanged", GlobalChanged<>);
-    m.def("GlobalError",   GlobalError<>);
-    m.def("GlobalWarning", GlobalWarning<>);
-    m.def("GlobalSuccess", GlobalSuccess<>);
-    m.def("GlobalDebug",   GlobalDebug<>);
+    m.def("print_general_output",  print_general_output<>);
+    m.def("print_global_output",  print_global_output<>);
+    m.def("print_global_changed", print_global_changed<>);
+    m.def("print_global_error",   print_global_error<>);
+    m.def("print_global_warning", print_global_warning<>);
+    m.def("print_global_success", print_global_success<>);
+    m.def("print_global_debug",   print_global_debug<>);
 }
 
 

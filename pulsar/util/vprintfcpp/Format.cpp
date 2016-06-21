@@ -16,7 +16,7 @@ namespace vprintfcpp {
 namespace detail {
 
 
-bool GetNextFormat_(FormatInfo & fi, const std::string & str)
+bool get_next_format_(FormatInfo & fi, const std::string & str)
 {
     // Remember - str may be a reference to fi.suffix
     // Also remember - prefix will contain what to print out
@@ -135,11 +135,11 @@ bool GetNextFormat_(FormatInfo & fi, const std::string & str)
 
 
 
-void Format_(std::ostream & os, FormatInfo & fi, const std::string & str)
+void format_(std::ostream & os, FormatInfo & fi, const std::string & str)
 {
-    // if GetNextFormat_ returns false, fi.prefix contains the
+    // if get_next_format_ returns false, fi.prefix contains the
     // string with appropriate substitutions for %%, etc
-    if(GetNextFormat_(fi, str))
+    if(get_next_format_(fi, str))
         throw std::runtime_error("Not enough arguments given to format string");
     else
         os << fi.prefix;

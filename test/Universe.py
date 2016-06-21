@@ -15,7 +15,7 @@ from pulsar.output import *
 from pulsar.testing import *
 from pulsar.math import *
 
-from helper.SetOperations import TestSetOperations
+from helper.SetOperations import test_set_operations
 
 
 def SetComp(set1, set2):
@@ -43,7 +43,7 @@ def SetElement(s, i, e):
 def FillUniverse(values):
     u = StringSetUniverse()
     for v in values:
-        u.Insert(v)
+        u.insert(v)
     return u
 
 
@@ -53,7 +53,7 @@ def Run():
         BadAlphabet = "ABCDE"
 
         tester = Tester("Testing Universe and MathSet")
-        tester.PrintHeader()
+        tester.print_header()
 
 
         ################################
@@ -64,47 +64,47 @@ def Run():
         u2 = FillUniverse(Alphabet)
         u3 = FillUniverse(reversed(Alphabet))
         u9 = FillUniverse(Alphabet[7:])
-        TestSetOperations(tester, StringSetUniverse, Alphabet, BadAlphabet,
+        test_set_operations(tester, StringSetUniverse, Alphabet, BadAlphabet,
                           False, u0, u1, u2, u3, u9)
 
         ###############################
         # Serialization
         ###############################
-        tester.Test("Universe serialization - u0", True, TestSerialization_StringSetUniverse, u0)
-        tester.Test("Universe serialization - u1", True, TestSerialization_StringSetUniverse, u1)
-        tester.Test("Universe serialization - u2", True, TestSerialization_StringSetUniverse, u2)
-        tester.Test("Universe serialization - u3", True, TestSerialization_StringSetUniverse, u3)
-        tester.Test("Universe serialization - u9", True, TestSerialization_StringSetUniverse, u9)
+        tester.test("Universe serialization - u0", True, TestSerialization_StringSetUniverse, u0)
+        tester.test("Universe serialization - u1", True, TestSerialization_StringSetUniverse, u1)
+        tester.test("Universe serialization - u2", True, TestSerialization_StringSetUniverse, u2)
+        tester.test("Universe serialization - u3", True, TestSerialization_StringSetUniverse, u3)
+        tester.test("Universe serialization - u9", True, TestSerialization_StringSetUniverse, u9)
 
         ###############################
         # Universe-specific stuff
         ###############################
         for idx in range(0, len(u1)):
-            tester.TestValue("Element {} by idx - getitem".format(idx), u1[idx], Alphabet[idx])
-            tester.TestValue("Element {} by idx - At".format(idx), u1.At(idx), Alphabet[idx])
+            tester.test_value("Element {} by idx - getitem".format(idx), u1[idx], Alphabet[idx])
+            tester.test_value("Element {} by idx - At".format(idx), u1.at(idx), Alphabet[idx])
 
 
         # Try inserting bad values
-        tester.Test("Inserting 10", False, u1.Insert, 10)
-        tester.Test("Inserting None", False, u1.Insert, None)
+        tester.test("inserting 10", False, u1.insert, 10)
+        tester.test("inserting None", False, u1.insert, None)
 
 
         # Modification of an element in a universe -- shouldn't be possible
-        tester.Test("Modification of an element in universe", False, SetElement, u1, 0, "Z")
+        tester.test("Modification of an element in universe", False, SetElement, u1, 0, "Z")
 
 
-        tester.PrintResults()
+        tester.print_results()
 
     except Exception as e:
-      GlobalOutput("Caught exception in main handler. Contact the developers\n")
+      print_global_output("Caught exception in main handler. Contact the developers\n")
       traceback.print_exc()
-      GlobalError("\n")
-      GlobalError(str(e))
-      GlobalError("\n")
+      print_global_error("\n")
+      print_global_error(str(e))
+      print_global_error("\n")
 
 
 
 
-psr.Init(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 Run()
-psr.Finalize()
+psr.finalize()

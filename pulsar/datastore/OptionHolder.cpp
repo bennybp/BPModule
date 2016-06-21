@@ -58,7 +58,7 @@ template class OptionHolder<OptionType::DictStringString>;
 //! \todo make_unique in c++14
 #define CASE_RETURN_OPTIONHOLDER(TYPE) \
     case OptionType::TYPE: \
-         if(python::IsNone(def)) \
+         if(python::is_none(def)) \
              return OptionBasePtr(new OptionHolder<OptionType::TYPE>(key, required, validator, help));\
          else\
              return OptionBasePtr(new OptionHolder<OptionType::TYPE>(key, required, validator, help, def));
@@ -103,7 +103,7 @@ CreateOptionHolder(std::string key, OptionType opttype, bool required,
 #define CASE_UNSERIALIZE_OPTIONHOLDER(TYPE) \
     case OptionType::TYPE: {\
         std::unique_ptr<OptionHolder<OptionType::TYPE>::stored_type> value, def; \
-        mar.Unserialize(key, required, help, value, def); \
+        mar.unserialize(key, required, help, value, def); \
         return OptionBasePtr(new OptionHolder<OptionType::TYPE>\
                     (std::move(key), required, std::move(help), std::move(value), std::move(def)));\
     }
@@ -112,11 +112,11 @@ OptionBasePtr
 OptionHolderFromByteArray(OptionType opttype, const ByteArray & ba)
 {
     MemoryArchive mar;
-    mar.FromByteArray(ba);
+    mar.from_byte_array(ba);
     std::string key, help;
     bool required;
 
-    mar.BeginUnserialization();
+    mar.begin_unserialization();
 
     switch(opttype)
     {

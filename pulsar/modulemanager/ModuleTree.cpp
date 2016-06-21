@@ -17,15 +17,15 @@ namespace modulemanager {
 ///////////////////////////////////////
 // Module Tree
 ///////////////////////////////////////
-void ModuleTree::Insert(ModuleTreeNode && node, ID_t parentid)
+void ModuleTree::insert(ModuleTreeNode && node, ID_t parentid)
 {
     ID_t mid = node.id;
     bool hasparent = (parentid > 0);
 
-    if(HasID(mid))
+    if(has_id(mid))
         throw ModuleManagerException("Duplicate ID in the tree", "id", mid);
-    if(hasparent > 0 && !HasID(parentid))
-        throw ModuleManagerException("Inserting a node with a non-existing parent", "parentid", parentid);
+    if(hasparent > 0 && !has_id(parentid))
+        throw ModuleManagerException("inserting a node with a non-existing parent", "parentid", parentid);
 
     node.parentid = parentid;
     data_.emplace(mid, std::move(node));
@@ -36,55 +36,55 @@ void ModuleTree::Insert(ModuleTreeNode && node, ID_t parentid)
 }
 
 
-bool ModuleTree::HasID(ID_t id) const
+bool ModuleTree::has_id(ID_t id) const
 {
     return data_.count(id);
 }
 
 
-const ModuleTreeNode & ModuleTree::GetByID(ID_t id) const
+const ModuleTreeNode & ModuleTree::get_by_id(ID_t id) const
 {
-    if(!HasID(id))
+    if(!has_id(id))
         throw ModuleManagerException("Module with this ID doesn't exist", "id", id);
     return data_.at(id);
 }
 
-ModuleTreeNode & ModuleTree::GetByID(ID_t id)
+ModuleTreeNode & ModuleTree::get_by_id(ID_t id)
 {
-    if(!HasID(id))
+    if(!has_id(id))
         throw ModuleManagerException("Module with this ID doesn't exist", "id", id);
     return data_.at(id);
 }
 
 
-size_t ModuleTree::Size(void) const
+size_t ModuleTree::size(void) const
 {
     return data_.size();
 }
 
-ModuleTree::const_iterator ModuleTree::Begin(ID_t startid) const
+ModuleTree::const_iterator ModuleTree::begin(ID_t startid) const
 {
-    if(!HasID(startid))
+    if(!has_id(startid))
         throw ModuleManagerException("Module with this ID doesn't exist", "startid", startid);
     return const_iterator(this, startid);
 }
 
-ModuleTree::const_iterator ModuleTree::End(void) const
+ModuleTree::const_iterator ModuleTree::end(void) const
 {
     return const_iterator(this, const_iterator::MAXVAL);
 }
 
-ModuleTree::const_flat_iterator ModuleTree::FlatBegin(void) const
+ModuleTree::const_flat_iterator ModuleTree::flat_begin(void) const
 {
     return const_flat_iterator(&data_, data_.begin());
 }
 
-ModuleTree::const_flat_iterator ModuleTree::FlatEnd(void) const
+ModuleTree::const_flat_iterator ModuleTree::flat_end(void) const
 {
     return const_flat_iterator(&data_, data_.end());
 }
 
-void ModuleTree::Clear(void)
+void ModuleTree::clear(void)
 {
     data_.clear();
 }

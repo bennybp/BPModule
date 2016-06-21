@@ -9,31 +9,31 @@ namespace vprintfcpp {
 namespace detail {
 
 /////////////////////////////////////
-// Internal HandlePrintf_Internal_ functions
+// Internal handle_printf_internal_ functions
 /////////////////////////////////////
 template<typename T>
-void HandlePrintf_Internal_(std::string & fmt, const char * length,
+void handle_printf_internal_(std::string & fmt, const char * length,
                             char spec, T subst);
 
 // For pointer types - convert to void *
 template<typename T>
-void HandlePrintf_Internal_(std::string & fmt, const char * length,
+void handle_printf_internal_(std::string & fmt, const char * length,
                             char spec, T * ptr)
 {
-    return HandlePrintf_Internal_<void const *>(fmt, length, spec, ptr);
+    return handle_printf_internal_<void const *>(fmt, length, spec, ptr);
 }
 
 
 //////////////////
 // Overloads
 //////////////////
-void HandlePrintf_Internal_(std::string & fmt, const char * length,
+void handle_printf_internal_(std::string & fmt, const char * length,
                             char spec, const std::string & subst);
 
-void HandlePrintf_Internal_(std::string & fmt, const char * length, 
+void handle_printf_internal_(std::string & fmt, const char * length, 
                             char spec, char * subst);
 
-void HandlePrintf_Internal_(std::string & fmt, const char * length, 
+void handle_printf_internal_(std::string & fmt, const char * length, 
                             char spec, const char * subst);
 
 
@@ -46,7 +46,7 @@ void HandlePrintf_Internal_(std::string & fmt, const char * length,
 template<typename T> struct ValidPrintfArg : public std::false_type { };
 
 #define DECLARE_VALID_PRINTF(type) \
-    extern template void HandlePrintf_Internal_<type>(std::string &, const char *, char, type); \
+    extern template void handle_printf_internal_<type>(std::string &, const char *, char, type); \
     template<> struct ValidPrintfArg<type> : public std::true_type { };
 
 DECLARE_VALID_PRINTF(bool)
@@ -84,9 +84,9 @@ template<typename T> struct ValidPrintfArg<T *> : public std::true_type { };
 // To be used from the outside
 /////////////////////////////////////////
 template<typename T>
-void HandlePrintf_(std::string & fmt, const char * length, char spec, T subst)
+void handle_printf_(std::string & fmt, const char * length, char spec, T subst)
 {
-    return HandlePrintf_Internal_(fmt, length, spec, static_cast<typename std::decay<T>::type>(subst));
+    return handle_printf_internal_(fmt, length, spec, static_cast<typename std::decay<T>::type>(subst));
 }
 
 

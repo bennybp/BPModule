@@ -2,7 +2,7 @@
 namespace pulsar{
 namespace math {
 
-std::vector<double> Coefs(const std::vector<double>& Stencil, size_t Deriv) {
+std::vector<double> coefs(const std::vector<double>& Stencil, size_t Deriv) {
    size_t M=Deriv,M1=M+1,N=Stencil.size();
    std::vector<double> c(M1*N);
    c[0]=1.0;

@@ -5,24 +5,34 @@ import pulsar
 from pulsar.exception import GeneralException
 
 
-def TransformName(bsname):
+def transform_name(bsname):
     return bsname.replace("*", "s")
 
 
-def AddShellsToAtom(label, desc, bsmap, atom):
+def add_shells_to_atom(label, desc, bsmap, atom):
     atom2 = pulsar.system.Atom(atom)
-    atom2.SetShells(label, desc, bsmap[atom.GetZ()])
+
+    binfo = pulsar.system.BasisInfo()
+    binfo.description = desc
+    binfo.shells = bsmap[atom2.Z]
+    
+
+    # Note - remember that the map of basis sets is not opaque
+    bs = atom2.basis_sets;    # ^^ bs is a python dict not connected to atom2.basis_sets
+    bs[label] = binfo
+    atom2.basis_sets = bs
+
     return atom2
 
 
-def ApplySingleBasis(bslabel, bsname, syst):
+def apply_single_basis(bslabel, bsname, syst):
     # find the file
     # look through all the paths
 
     bspath = None
 
     for p in pulsar.pulsar_paths["basis"]:
-        testpath = os.path.join(p, TransformName(bsname)) + ".gbs"
+        testpath = os.path.join(p, transform_name(bsname)) + ".gbs"
         if os.path.isfile(testpath):
             bspath = testpath
             break
@@ -30,14 +40,14 @@ def ApplySingleBasis(bslabel, bsname, syst):
     if bspath == None:
         ge = GeneralException("File for basis set does not exist", "bsname", bsname)
         for p in pulsar.pulsar_paths["basis"]:
-            ge.AppendInfo("path", p)
+            ge.append_info("path", p)
         raise ge
 
     # read the map
-    bsmap = BasisSetParsers.ReadBasisFile(bspath)
+    bsmap = BasisSetParsers.read_basis_file(bspath)
 
     # Apply to all atoms
-    f = functools.partial(AddShellsToAtom, bslabel, bsname, bsmap)
-    return syst.Transform(f)
+    f = functools.partial(add_shells_to_atom, bslabel, bsname, bsmap)
+    return syst.transform(f)
  
 
