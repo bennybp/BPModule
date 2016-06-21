@@ -1,9 +1,6 @@
 [submodule "external/pybind11"]
 	path = external/pybind11/pybind11-source
 	url = https://github.com/bennybp/pybind11.git
-[submodule "external/tensor/tensor-source"]
-	path = external/tensor/tensor-source
-	url = https://github.com/ryanmrichard/Tensor.git
 [submodule "external/madness/madness-source"]
 	path = external/madness/madness-source
 	url = https://github.com/m-a-d-n-e-s-s/madness
