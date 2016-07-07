@@ -24,7 +24,7 @@ class TwoElectronIntegral : public ModuleBase
         typedef TwoElectronIntegral BaseType;
 
         TwoElectronIntegral(ID_t id)
-            : ModuleBase(id, "TwoElectronIntegral")
+            : ModuleBase(id, "TwoElectronIntegral"), initialized_(false)
         { }
 
 
@@ -44,7 +44,9 @@ class TwoElectronIntegral : public ModuleBase
                         const system::BasisSet & bs3,
                         const system::BasisSet & bs4)
         {
-            return ModuleBase::call_function(&TwoElectronIntegral::initialize_, deriv, wfn, bs1, bs2, bs3, bs4);
+            ModuleBase::fast_call_function(&TwoElectronIntegral::uninitialized_or_throw_);
+            ModuleBase::call_function(&TwoElectronIntegral::initialize_, deriv, wfn, bs1, bs2, bs3, bs4);
+            initialized_ = true;
         }
 
 
@@ -72,6 +74,7 @@ class TwoElectronIntegral : public ModuleBase
                            uint64_t shell3, uint64_t shell4,
                            double * outbuffer, size_t bufsize)
         {
+            ModuleBase::fast_call_function(&TwoElectronIntegral::initialized_or_throw_);
             return ModuleBase::fast_call_function(&TwoElectronIntegral::calculate_,
                                                 shell1, shell2, shell3, shell4,
                                                 outbuffer, bufsize);
@@ -87,8 +90,8 @@ class TwoElectronIntegral : public ModuleBase
          * \return Number of integrals calculated
          */
         uint64_t calculate_py(uint64_t shell1, uint64_t shell2,
-                             uint64_t shell3, uint64_t shell4,
-                             pybind11::buffer outbuffer)
+                              uint64_t shell3, uint64_t shell4,
+                              pybind11::buffer outbuffer)
         {
             auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
@@ -109,14 +112,15 @@ class TwoElectronIntegral : public ModuleBase
          * \return Number of integrals calculated
          */
         uint64_t calculate_multi(const std::vector<uint64_t> & shells1,
-                                const std::vector<uint64_t> & shells2,
-                                const std::vector<uint64_t> & shells3,
-                                const std::vector<uint64_t> & shells4,
-                                double * outbuffer, size_t bufsize)
+                                 const std::vector<uint64_t> & shells2,
+                                 const std::vector<uint64_t> & shells3,
+                                 const std::vector<uint64_t> & shells4,
+                                 double * outbuffer, size_t bufsize)
         {
+            ModuleBase::fast_call_function(&TwoElectronIntegral::initialized_or_throw_);
             return ModuleBase::fast_call_function(&TwoElectronIntegral::calculate_multi_,
-                                                shells1, shells2, shells3, shells4,
-                                                outbuffer, bufsize);
+                                                  shells1, shells2, shells3, shells4,
+                                                  outbuffer, bufsize);
         }
 
 
@@ -130,10 +134,10 @@ class TwoElectronIntegral : public ModuleBase
          * \return Number of integrals calculated
          */
         uint64_t calculate_multi_py(const std::vector<uint64_t> & shells1,
-                                  const std::vector<uint64_t> & shells2,
-                                  const std::vector<uint64_t> & shells3,
-                                  const std::vector<uint64_t> & shells4,
-                                  pybind11::buffer outbuffer)
+                                    const std::vector<uint64_t> & shells2,
+                                    const std::vector<uint64_t> & shells3,
+                                    const std::vector<uint64_t> & shells4,
+                                    pybind11::buffer outbuffer)
         {
             auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
@@ -169,10 +173,10 @@ class TwoElectronIntegral : public ModuleBase
 
         //! \copydoc calculate_multi
         virtual uint64_t calculate_multi_(const std::vector<uint64_t> & shells1,
-                                         const std::vector<uint64_t> & shells2,
-                                         const std::vector<uint64_t> & shells3,
-                                         const std::vector<uint64_t> & shells4,
-                                         double * outbuffer, size_t bufsize)
+                                          const std::vector<uint64_t> & shells2,
+                                          const std::vector<uint64_t> & shells3,
+                                          const std::vector<uint64_t> & shells4,
+                                          double * outbuffer, size_t bufsize)
         {
             //////////////////////////////////////////////////////////
             // default implementation - just loop over and do them all
@@ -194,6 +198,24 @@ class TwoElectronIntegral : public ModuleBase
             }
 
             return ntotal;
+        }
+
+
+
+    private:
+        bool initialized_; //!< Has initialize() been called
+
+
+        void initialized_or_throw_(void) const
+        {
+            if(!initialized_)
+                throw exception::GeneralException("Module is not yet initialized");
+        }
+
+        void uninitialized_or_throw_(void) const
+        {
+            if(initialized_)
+                throw exception::GeneralException("Module has already been initialized");
         }
 };
 
@@ -244,10 +266,10 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
 
 
         virtual uint64_t calculate_multi_(const std::vector<uint64_t> & shells1,
-                                         const std::vector<uint64_t> & shells2,
-                                         const std::vector<uint64_t> & shells3,
-                                         const std::vector<uint64_t> & shells4,
-                                         double * outbuffer, size_t bufsize)
+                                          const std::vector<uint64_t> & shells2,
+                                          const std::vector<uint64_t> & shells3,
+                                          const std::vector<uint64_t> & shells4,
+                                          double * outbuffer, size_t bufsize)
         {
 
             if(has_py_override("calculate_multi_"))
