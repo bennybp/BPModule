@@ -1,8 +1,9 @@
 #ifndef PULSAR_GUARD_MATH__FINITEDIFF_HPP_
 #define PULSAR_GUARD_MATH__FINITEDIFF_HPP_
 
-#include<vector>
-#include "LibTaskForce.hpp" 
+#include <vector>
+#include <cstdlib>
+//#include <LibTaskForce/LibTaskForce.hpp>
 
 namespace pulsar{
 namespace math{
@@ -117,7 +118,7 @@ template<typename VarType,typename ResultType=VarType>
 class FiniteDiff{
    private:
       //The communicator in charge of this FDiff
-      LibTaskForce::Communicator& Comm_;
+      //LibTaskForce::communicator& Comm_;
       typedef FiniteDiff<VarType,ResultType> My_t;
    protected:
       ///Function to generate the coefs, minor tweaks for backwards and central
@@ -138,7 +139,7 @@ class FiniteDiff{
       ///Default destructor is fine
       virtual ~FiniteDiff()=default;
       ///No default initialization b/c we want the communicator
-      FiniteDiff()=delete;
+      //FiniteDiff()=delete;
       ///Really don't see why you want to copy/move this, it's use as needed and
       ///comm's dont move/copy
       FiniteDiff(const My_t&)=delete;
@@ -146,7 +147,7 @@ class FiniteDiff{
       My_t operator=(const My_t&)=delete;
       
       ///Communicator on which to run the tasks
-      FiniteDiff(LibTaskForce::Communicator& Comm):Comm_(Comm){}
+      FiniteDiff(/*LibTaskForce::Communicator& Comm):Comm_(Comm*/){}
       
       /** \brief Computes the actual finite difference
        * 
@@ -185,7 +186,7 @@ class ForwardDiff: public FiniteDiff<VarType,ReturnType>{
       ///Just casts to double 
       double Shift(size_t I,size_t)const{return static_cast<double>(I);}
    public:
-       ForwardDiff(LibTaskForce::Communicator& Comm):Base_t(Comm){}
+       ForwardDiff(/*LibTaskForce::communicator& Comm):Base_t(Comm*/){}
 };
 
 /** \brief The backward difference
@@ -218,7 +219,7 @@ class BackwardDiff: public FiniteDiff<VarType,ReturnType>{
           return temp;
       }
    public:
-      BackwardDiff(LibTaskForce::Communicator& Comm):Base_t(Comm){}
+      BackwardDiff(/*LibTaskForce::communicator& Comm):Base_t(Comm*/){}
 
 };
 
@@ -256,7 +257,7 @@ class CentralDiff:public FiniteDiff<VarType,ReturnType>{
       }
 
    public:
-       CentralDiff(LibTaskForce::Communicator& Comm):Base_t(Comm){}
+       CentralDiff(/*LibTaskForce::communicator& Comm):Base_t(Comm*/){}
 };
 
 
@@ -286,23 +287,23 @@ std::vector<ResultType> FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
             }
     };
     //Will store our derivatives
-    LibTaskForce::TaskResults<ResultType> Deriv_(Comm_);
+    std::vector<ResultType> Deriv_;
     //Complete loop before assigning results
     for(size_t i=0;i<NVars;++i){//Loop over variables
         VarType Old=Fxn2Run(i);
         for(size_t j=0;j<NCalcs(NPoints);++j){//Loop over calcs per variable
             Deriv_.push_back(
-               Comm_.AddTask(
-                   FDWrapper(Fxn2Run,Coefs[j]),
-                   Fxn2Run(Old,H,Shift(j,NPoints)),
-                   i
-               )
+               //Comm_.AddTask(
+                   FDWrapper(Fxn2Run,Coefs[j])(
+                   Fxn2Run(Old,H,Shift(j,NPoints)),i
+                   )
+               //)
             );
         }
     }
     
     std::vector<ResultType> Result(NVars);
-    Deriv_.Synch();
+    //Deriv_.Synch();
     //Will deref the futures now, in order we added them
     for(size_t i=0;i<NVars;++i)
         for(size_t j=0;j<NCalcs(NPoints);++j)

@@ -20,7 +20,7 @@ namespace pulsar{
 namespace parallel {
 
 //Returns the current environment
-const LibTaskForce::Environment& GetEnv();    
+//const LibTaskForce::Environment& GetEnv();    
     
 /*! \brief Initialize the parallelization functionality
  *

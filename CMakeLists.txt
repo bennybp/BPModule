@@ -80,7 +80,7 @@ ExternalProject_Add(pulsar_core
                     CMAKE_CACHE_ARGS -DPULSAR_CORE_PYTHON_LIBRARIES:STRING=${PYTHON_LIBRARIES}
                                      -DPULSAR_CORE_PYTHON_INCLUDE_DIRS:STRING=${PYTHON_INCLUDE_DIRS}
                                      -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
-                    BUILD_COMMAND $(MAKE) --silent
+                    BUILD_COMMAND $(MAKE)
                     BUILD_ALWAYS 1
                     INSTALL_COMMAND $(MAKE) install DESTDIR=${CMAKE_BINARY_DIR}/stage
 )

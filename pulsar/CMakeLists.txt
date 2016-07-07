@@ -24,7 +24,6 @@ list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/cerea
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/memwatch")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/bphash")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/libtaskforce")
-list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/libtaskforce/external/madness")
 find_package(pybind11 REQUIRED)
 find_package(cereal REQUIRED)
 find_package(memwatch REQUIRED)
@@ -126,9 +125,8 @@ list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${PULSAR_CORE_PYTHON_INCLUDE_DIRS}
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${MPI_CXX_INCLUDE_PATH})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${PYBIND11_INCLUDE_DIR})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${LIBELEMENTAL_INCLUDE_DIR})
-list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${MADNESS_INCLUDE_DIRS})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${LIBTASKFORCE_INCLUDE_DIRS})
-
+list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/cereal/include)
 
 #############################################################
 # Libraries and link flags (including interface libraries)
@@ -148,7 +146,6 @@ list(APPEND PULSAR_CORE_LINK_FLAGS ${MPI_CXX_FLAGS})
 # Fiddle with some rpaths
 ###########################
 list(APPEND PULSAR_CORE_RPATH ${CMAKE_INSTALL_PREFIX}/external/libtaskforce/lib)
-list(APPEND PULSAR_CORE_RPATH ${CMAKE_INSTALL_PREFIX}/external/libtaskforce/external/madness/lib)
 list(APPEND PULSAR_CORE_RPATH ${CMAKE_INSTALL_PREFIX}/external/memwatch/lib)
 
 

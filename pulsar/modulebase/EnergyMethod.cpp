@@ -20,7 +20,7 @@ using pulsar::system::Atom;
 using pulsar::system::System;
 using pulsar::datastore::Wavefunction;
 using pulsar::system::AtomSetUniverse;
-using LibTaskForce::Communicator;
+//using LibTaskForce::Communicator;
 using pulsar::exception::GeneralException;
 
 typedef vector<Atom> AtomV_t;
@@ -87,10 +87,10 @@ EnergyMethod::finite_difference_(size_t Order, const datastore::Wavefunction & W
     //I don't know why the fill constructor is not working...
     for(const Atom& AnAtom: Mol)
           Atoms.push_back(AnAtom);
-    const Communicator& Comm=parallel::GetEnv().Comm();
-    Communicator NewComm=Comm.Split(Comm.NThreads(),1);
+    //const Communicator& Comm=parallel::GetEnv().Comm();
+    //Communicator NewComm=Comm.Split(Comm.NThreads(),1);
 
-    math::CentralDiff<double,Return_t> FD(NewComm);
+    math::CentralDiff<double,Return_t> FD/*(*NewComm)*/;
 
     FDFunctor Thing2Run=FDFunctor(Order,Atoms,module_manager(),Wfn,key(),id());
     TempDeriv=FD.Run(Thing2Run,3*Mol.size(),
