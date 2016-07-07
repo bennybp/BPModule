@@ -23,7 +23,7 @@ class SystemIntegral : public ModuleBase
         typedef SystemIntegral BaseType;
 
         SystemIntegral(ID_t id)
-            : ModuleBase(id, "SystemIntegral")
+            : ModuleBase(id, "SystemIntegral"), initialized_(false)
         { }
 
 
@@ -34,8 +34,9 @@ class SystemIntegral : public ModuleBase
          */
         void initialize(unsigned int deriv, const system::System & sys)
         {
-            return ModuleBase::fast_call_function(&SystemIntegral::initialize_,
-                                                deriv, sys);
+            ModuleBase::fast_call_function(&SystemIntegral::uninitialized_or_throw_);
+            ModuleBase::fast_call_function(&SystemIntegral::initialize_, deriv, sys);
+            initialized_ = true;
         }
 
 
@@ -48,6 +49,7 @@ class SystemIntegral : public ModuleBase
          */
         uint64_t calculate(double * outbuffer, size_t bufsize)
         {
+            ModuleBase::fast_call_function(&SystemIntegral::initialized_or_throw_);
             return ModuleBase::fast_call_function(&SystemIntegral::calculate_,
                                                 outbuffer, bufsize);
         }
@@ -66,7 +68,7 @@ class SystemIntegral : public ModuleBase
             auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
             return ModuleBase::fast_call_function(&SystemIntegral::calculate_,
-                                                ptrinfo.first, ptrinfo.second[0]);
+                                                  ptrinfo.first, ptrinfo.second[0]);
         }
 
 
@@ -79,6 +81,24 @@ class SystemIntegral : public ModuleBase
 
         //! \copydoc calculate
         virtual uint64_t calculate_(double * outbuffer, size_t bufsize) = 0;
+
+
+
+    private:
+        bool initialized_; //!< Has initialize() been called
+
+
+        void initialized_or_throw_(void) const
+        {
+            if(!initialized_)
+                throw exception::GeneralException("Module is not yet initialized");
+        }
+
+        void uninitialized_or_throw_(void) const
+        {
+            if(initialized_)
+                throw exception::GeneralException("Module has already been initialized");
+        }
 };
 
 

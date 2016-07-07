@@ -15,7 +15,6 @@ namespace pulsar{
 namespace modulebase {
 
 /*! \brief One-electron integral implementation
- *
  */
 class OneElectronIntegral : public ModuleBase
 {
@@ -23,7 +22,7 @@ class OneElectronIntegral : public ModuleBase
         typedef OneElectronIntegral BaseType;
 
         OneElectronIntegral(ID_t id)
-            : ModuleBase(id, "OneElectronIntegral")
+            : ModuleBase(id, "OneElectronIntegral"), initialized_(false)
         { }
 
 
@@ -39,7 +38,9 @@ class OneElectronIntegral : public ModuleBase
                         const system::BasisSet & bs1,
                         const system::BasisSet & bs2)
         {
-            return ModuleBase::call_function(&OneElectronIntegral::initialize_, deriv, wfn, bs1, bs2);
+            ModuleBase::fast_call_function(&OneElectronIntegral::uninitialized_or_throw_);
+            ModuleBase::call_function(&OneElectronIntegral::initialize_, deriv, wfn, bs1, bs2);
+            initialized_ = true; 
         }
 
 
@@ -65,8 +66,10 @@ class OneElectronIntegral : public ModuleBase
         uint64_t calculate(uint64_t shell1, uint64_t shell2,
                            double * outbuffer, size_t bufsize)
         {
+            ModuleBase::fast_call_function(&OneElectronIntegral::initialized_or_throw_);
+
             return ModuleBase::fast_call_function(&OneElectronIntegral::calculate_,
-                                                shell1, shell2, outbuffer, bufsize);
+                                                  shell1, shell2, outbuffer, bufsize);
         }
 
 
@@ -78,14 +81,15 @@ class OneElectronIntegral : public ModuleBase
          * \return Number of integrals calculated
          */
         uint64_t calculate_py(uint64_t shell1, uint64_t shell2,
-                             pybind11::buffer outbuffer)
+                              pybind11::buffer outbuffer)
         {
             auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
             return ModuleBase::fast_call_function(&OneElectronIntegral::calculate_,
-                                                shell1, shell2,
-                                                ptrinfo.first, ptrinfo.second[0]);
+                                                  shell1, shell2,
+                                                  ptrinfo.first, ptrinfo.second[0]);
         }
+
 
         /*! \brief calculate multiple integrals
          *
@@ -96,11 +100,13 @@ class OneElectronIntegral : public ModuleBase
          * \return Number of integrals calculated
          */
         uint64_t calculate_multi(const std::vector<uint64_t> & shells1,
-                                const std::vector<uint64_t> & shells2,
-                                double * outbuffer, size_t bufsize)
+                                 const std::vector<uint64_t> & shells2,
+                                 double * outbuffer, size_t bufsize)
         {
+            ModuleBase::fast_call_function(&OneElectronIntegral::initialized_or_throw_);
+
             return ModuleBase::fast_call_function(&OneElectronIntegral::calculate_multi_,
-                                                shells1, shells2, outbuffer, bufsize);
+                                                  shells1, shells2, outbuffer, bufsize);
         }
 
 
@@ -112,14 +118,14 @@ class OneElectronIntegral : public ModuleBase
          * \return Number of integrals calculated
          */
         uint64_t calculate_multi_py(const std::vector<uint64_t> & shells1,
-                                  const std::vector<uint64_t> & shells2,
-                                  pybind11::buffer outbuffer)
+                                    const std::vector<uint64_t> & shells2,
+                                    pybind11::buffer outbuffer)
         {
             auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
             return ModuleBase::fast_call_function(&OneElectronIntegral::calculate_multi_,
-                                                shells1, shells2,
-                                                ptrinfo.first, ptrinfo.second[0]);
+                                                  shells1, shells2,
+                                                  ptrinfo.first, ptrinfo.second[0]);
         }
 
 
@@ -146,8 +152,8 @@ class OneElectronIntegral : public ModuleBase
 
         //! \copydoc calculate_multi
         virtual uint64_t calculate_multi_(const std::vector<uint64_t> & shells1,
-                                         const std::vector<uint64_t> & shells2,
-                                         double * outbuffer, size_t bufsize)
+                                          const std::vector<uint64_t> & shells2,
+                                          double * outbuffer, size_t bufsize)
         {
             //////////////////////////////////////////////////////////
             // default implementation - just loop over and do them all
@@ -168,6 +174,24 @@ class OneElectronIntegral : public ModuleBase
 
             return ntotal;
         }
+
+
+    private:
+        bool initialized_; //!< Has initialize() been called
+
+
+        void initialized_or_throw_(void) const
+        {
+            if(!initialized_)
+                throw exception::GeneralException("Module is not yet initialized");
+        }
+
+        void uninitialized_or_throw_(void) const
+        {
+            if(initialized_)
+                throw exception::GeneralException("Module has already been initialized");
+        }
+
 };
 
 
@@ -213,8 +237,8 @@ class OneElectronIntegral_Py : public OneElectronIntegral
 
 
         virtual uint64_t calculate_multi_(const std::vector<uint64_t> & shells1,
-                                         const std::vector<uint64_t> & shells2,
-                                         double * outbuffer, size_t bufsize)
+                                          const std::vector<uint64_t> & shells2,
+                                          double * outbuffer, size_t bufsize)
         {
             if(has_py_override("calculate_multi_"))
             {
@@ -231,7 +255,7 @@ class OneElectronIntegral_Py : public OneElectronIntegral
             }
             else
                 return OneElectronIntegral::calculate_multi_(shells1, shells2,
-                                                            outbuffer, bufsize);
+                                                             outbuffer, bufsize);
         }
 };
 
