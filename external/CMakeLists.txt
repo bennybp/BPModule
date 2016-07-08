@@ -11,6 +11,7 @@ add_subdirectory(memwatch)
 add_subdirectory(bphash)
 add_subdirectory(pybind11)
 add_subdirectory(cereal)
+#add_subdirectory(eigen)
 add_subdirectory(libtaskforce)
 
 # Install the cmake macros

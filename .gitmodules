@@ -7,6 +7,3 @@
 [submodule "external/libtaskforce/libtaskforce-source"]
 	path = external/libtaskforce/libtaskforce-source
 	url = https://github.com/ryanmrichard/LibTaskForce.git
-[submodule "external/cereal/cereal-source"]
-	path = external/cereal/cereal-source
-	url = https://github.com/USCiLab/cereal.git
