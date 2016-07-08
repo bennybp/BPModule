@@ -12,7 +12,7 @@
 #include "pulsar/modulemanager/ModulePtr.hpp"
 #include "pulsar/modulemanager/ModuleManager.hpp"
 #include "pulsar/parallel/InitFinalize.hpp"
-#include "LibTaskForce.hpp"
+#include <LibTaskForce/LibTaskForce.hpp>
 
 using std::vector;
 

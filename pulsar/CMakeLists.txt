@@ -25,10 +25,10 @@ list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/memwa
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/bphash")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/libtaskforce")
 find_package(pybind11 REQUIRED)
-find_package(cereal REQUIRED)
 find_package(memwatch REQUIRED)
 find_package(bphash REQUIRED)
 find_package(libtaskforce REQUIRED)
+find_package(cereal REQUIRED) #Needs to be after LTF to use LTF's cereal
 
 # For some reason, this has a leading whitespace
 string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
@@ -126,7 +126,6 @@ list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${MPI_CXX_INCLUDE_PATH})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${PYBIND11_INCLUDE_DIR})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${LIBELEMENTAL_INCLUDE_DIR})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${LIBTASKFORCE_INCLUDE_DIRS})
-list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/cereal/include)
 
 #############################################################
 # Libraries and link flags (including interface libraries)

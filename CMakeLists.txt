@@ -87,7 +87,6 @@ ExternalProject_Add(pulsar_core
 add_dependencies(pulsar_core memwatch_external
                              bphash_external
                              pybind11_external
-                             cereal_external
                              libtaskforce_external
                )
 

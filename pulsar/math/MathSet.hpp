@@ -173,7 +173,11 @@ public:
         Universe_=RHS.Universe_;
         return *this;
     }
-    MathSet & operator=(My_t&&) = default;
+    MathSet & operator=(My_t&& RHS){//Getting undefined reference when defaulted
+        Base_t::operator=(std::move(RHS));
+        Universe_=std::move(RHS.Universe_);
+        return *this;
+    }
     MathSet(const My_t&) = default;
     MathSet(My_t&&) = default;
 
