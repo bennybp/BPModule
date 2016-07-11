@@ -12,3 +12,5 @@ __pycache__
 install.sh
 CMakeCache.txt
 
+# pybind11 build in-source...
+example.*.so
