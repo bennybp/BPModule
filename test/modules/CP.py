@@ -7,6 +7,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(thispath),"helper"))
 
 from MiscFxns import *
 from StandardModules import *
+import pulsar_psi4
+
+
 
 def ApplyBasis(syst,bsname,bslabel="primary"):
     return psr.system.apply_single_basis(bslabel,bsname,syst)
@@ -35,13 +38,13 @@ def Run(mm):
     try:
         tester = psr.testing.Tester("Testing Boys and Bernardi CP")
         tester.print_header()
-       
+        pulsar_psi4.pulsar_psi4_setup(mm)
         LoadDefaultModules(mm)
-        mm.change_option("PSR_SCF","BASIS_SET","sto-3g")
-        mm.change_option("PSR_CP","METHOD","PSR_SCF")
-        mm.change_option("PSR_MBE","METHOD","PSR_SCF")
+        mm.change_option("PSI4_SCF","BASIS_KEY","sto-3g")
+        mm.change_option("PSR_CP","METHOD","PSI4_SCF")
+        mm.change_option("PSR_MBE","METHOD","PSI4_SCF")
 
-        mol=psr.system.MakeSystem("""
+        mol=psr.system.make_system("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
         H    0.5104418   0.8944555   0.5514190
@@ -59,13 +62,15 @@ def Run(mm):
 
         MyMod=mm.get_module("PSR_CP",0)
 
-        NewWfn,Egy=MyMod.Deriv(0,wfn)
+        NewWfn,Egy=MyMod.deriv(0,wfn)
+        print(Egy)
         tester.test("Testing CP Energy via Deriv(0)", True, CompareEgy, Egy[0])
-        NewWfn,Egy=MyModenergy(wfn)
+        return()
+        NewWfn,Egy=MyMod.energy(wfn)
         tester.test("Testing CP Energy via Energy()", True, CompareEgy, Egy)
-        NewWfn,Egy=MyMod.Deriv(1,wfn)
+        NewWfn,Egy=MyMod.deriv(1,wfn)
         tester.test("Testing CP Gradient via Deriv(1)", True, CompareGrad, Egy)
-        NewWfn,Egy=MyMod.Gradient(wfn)
+        NewWfn,Egy=MyMod.gradient(wfn)
         tester.test("Testing CP Gradient via Gradient()", True, CompareGrad, Egy)
         
         tester.print_results()

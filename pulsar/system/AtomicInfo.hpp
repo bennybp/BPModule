@@ -248,10 +248,10 @@ double vdw_radius_from_symbol(const std::string & sym);
 static const int GHOST_ATOM_Z = 0;
 
 //! Z-number representing a dummy atom
-static const int DUMMY_ATOM_Z = -1;
+static const int DUMMY_ATOM_Z = -999;
 
 //! Z-number representing a point charge
-static const int POINTCHARGE_ATOM_Z = -2;
+static const int POINTCHARGE_ATOM_Z = 999;
 
 
 

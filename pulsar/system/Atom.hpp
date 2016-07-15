@@ -215,9 +215,6 @@ bool is_dummy_atom(const Atom & atom);
 ///@}
 
 
-#undef GetSetX
-
-
 } // close namespace system
 } // close namespace pulsar
 
