@@ -48,7 +48,6 @@ list(APPEND PULSAR_CXX_INCLUDES @MPI_CXX_INCLUDE_PATH@)
 list(APPEND PULSAR_CXX_INCLUDES @PULSAR_CORE_PYTHON_INCLUDE_DIRS@)
 list(APPEND PULSAR_CXX_INCLUDES ${PYBIND11_INCLUDE_DIR})
 list(APPEND PULSAR_CXX_INCLUDES ${MEMWATCH_INCLUDE_DIR})
-list(APPEND PULSAR_CXX_INCLUDES ${LIBELEMENTAL_INCLUDE_DIR})
 target_include_directories(pulsar SYSTEM INTERFACE ${PULSAR_CXX_INCLUDES})
 
 
@@ -56,28 +55,3 @@ target_include_directories(pulsar SYSTEM INTERFACE ${PULSAR_CXX_INCLUDES})
 # Add interface libraries to link to
 #######################################
 target_link_libraries(pulsar INTERFACE bphash libtaskforce)
-
-
-#######################################
-# Add the libraries to link to
-#######################################
-
-# Sometimes this has a leading whitespace which CMake doesn't like
-#string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
-
-# Main dependencies
-# Shouldn't really be needed?
-#list(APPEND PULSAR_CXX_LINK_FLAGS ${OpenMP_CXX_FLAGS})
-#list(APPEND PULSAR_CXX_LINK_FLAGS ${PYTHON_LIBRARIES})
-#list(APPEND PULSAR_CXX_LINK_FLAGS ${BLAS_LIBRARIES})
-#list(APPEND PULSAR_CXX_LINK_FLAGS ${LAPACK_LIBRARIES})
-#list(APPEND PULSAR_CXX_LINK_FLAGS ${MPI_CXX_LINK_FLAGS})
-#list(APPEND PULSAR_CXX_LINK_FLAGS ${MPI_CXX_LIBRARIES})
-
-# External dependencies
-# Shouldn't really be needed?
-#list(APPEND PULSAR_CXX_LINK_FLAGS ${MEMWATCH_LIBRARIES})
-#list(APPEND PULSAR_CXX_LINK_FLAGS ${LIBELEMENTAL_LIBRARIES})
-
-#target_link_libraries(pulsar INTERFACE ${PULSAR_CXX_LINK_FLAGS})
-
