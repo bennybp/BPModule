@@ -19,6 +19,7 @@
 #include <cereal/types/tuple.hpp>
 #include <cereal/types/string.hpp>
 #include <cereal/types/complex.hpp>
+#include <cereal/types/polymorphic.hpp>
 
 #include "pulsar/util/Serialization_fwd.hpp" // for ByteArray
 #include "pulsar/util/SerializationArchives.hpp"

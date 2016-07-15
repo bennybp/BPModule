@@ -11,7 +11,7 @@
 #include <ostream>
 
 #include <pybind11/pybind11.h>
-#include "pulsar/util/Serialization_fwd.hpp"
+#include "pulsar/util/Serialization.hpp"
 
 #include "bphash/types/string.hpp" // Includes Hasher
 
@@ -98,7 +98,7 @@ class OptionBase
          *
          * \return True if this option has a default, false otherwise
          */
-        virtual bool HasDefault(void) const noexcept = 0;
+        virtual bool has_default(void) const noexcept = 0;
 
 
         /*! \brief Check if this option is set
@@ -143,7 +143,7 @@ class OptionBase
 
         /*! \brief Compare with another OptionBase object
          */
-        virtual bool compare(const OptionBase & rhs) const = 0; 
+        virtual bool compare(const OptionBase & rhs) const = 0;
 
 
         /*! \brief Get the type of this option as a string
@@ -167,10 +167,6 @@ class OptionBase
          * option is not the default, the Changed() output is used.
          */
         virtual void print(std::ostream & os) const = 0;
-
-
-        /*! \brief Serialize the option to a byte array */
-        virtual ByteArray to_byte_array(void) const = 0;
 
 
 
@@ -234,7 +230,7 @@ class OptionBase
          */
         bool is_set_if_required(void) const noexcept
         {
-            return has_value() || HasDefault() || !is_required();
+            return has_value() || has_default() || !is_required();
         }
 
 
@@ -266,13 +262,14 @@ class OptionBase
          */
         void hash_value(bphash::Hasher & h) const
         {
-            hash_value(h);
+            h(key_);
+            hash_value_(h);
         }
 
 
     protected:
         /*! \brief For serialization only
-         * 
+         *
          * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
          */
         OptionBase() = default;
@@ -288,15 +285,28 @@ class OptionBase
         //! \name Hashing and Serialization
         ///@{
 
+        DECLARE_SERIALIZATION_FRIENDS
         friend class bphash::Hasher;
 
         virtual void hash(bphash::Hasher & h) const
         {
             h(key_, required_, help_);
+            hash_(h);
         }
 
-        /*! \brief Hash the contents of this option */
+        /*! \brief Hash only the value of this option */
         virtual void hash_value_(bphash::Hasher & h) const = 0;
+
+
+        /*! \brief Hash the contents of this option */
+        virtual void hash_(bphash::Hasher & h) const = 0;
+
+
+        template<class Archive>
+        void serialize(Archive & ar)
+        {
+            ar(key_, required_, help_);
+        }
 
         ///@}
 

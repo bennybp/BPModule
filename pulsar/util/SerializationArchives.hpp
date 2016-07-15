@@ -18,7 +18,6 @@
 
 namespace pulsar{
 namespace util {
-
 namespace detail {
 
 
@@ -75,8 +74,6 @@ class StdStreamArchive
 
 
         /*! \brief Stop serialization
-         * 
-         * \return The hash of all the serialized data
          * 
          * \throw pulsar::exception::SerializationException if the object is
          *        unserializing or if it is not serializing to begin with.
@@ -196,10 +193,10 @@ class StdStreamArchive
         /*! \brief Get the contents of this archive as a byte array */
         std::vector<char> to_byte_array(void)
         {
+            const size_t s = size();
+
             begin_unserialization(); // perform checks and reset positions
-            std::vector<char> ret;
-            size_t s = size();
-            ret.resize(s);
+            std::vector<char> ret(s);
             stream_.read(ret.data(), s);
             end_unserialization();
             return ret;

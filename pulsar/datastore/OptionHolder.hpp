@@ -13,11 +13,9 @@
 #include "pulsar/datastore/OptionBase.hpp"
 #include "pulsar/datastore/OptionTypes.hpp"
 #include "pulsar/datastore/OptionHolder_printing.hpp"
-#include "pulsar/util/Serialization.hpp"
 #include "pulsar/python/Call.hpp"
 #include "pulsar/output/Output.hpp"
 
-#include "bphash/types/memory.hpp"
 
 namespace pulsar{
 namespace datastore {
@@ -37,13 +35,6 @@ OptionBasePtr
 CreateOptionHolder(std::string key, OptionType opttype, bool required,
                    const pybind11::object & validator, std::string help,
                    const pybind11::object & def);
-
-/*! \brief Creates an OptionHolder based on an OptionType
- *
- * Passes the rest of the arguments to the OptionHolder constructor
- */
-OptionBasePtr
-OptionHolderFromByteArray(OptionType opttype, const ByteArray & ba);
 
 
 
@@ -164,7 +155,16 @@ class OptionHolder : public OptionBase
 
 
 
-        OptionHolder(void)                                  = delete;
+
+        /*! \brief For serialization only
+         *
+         * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
+         * \todo Replace if cereal fixes this
+         */
+        OptionHolder() {} // cannot be "=default" due to compiler bugs
+                          // (symbol may be missing when compiled in Debug mode)
+
+
         OptionHolder(OptionHolder && oph)                   = delete;
         OptionHolder & operator=(const OptionHolder & oph)  = delete;
         OptionHolder & operator=(OptionHolder && oph)       = delete;
@@ -178,7 +178,7 @@ class OptionHolder : public OptionBase
          *
          * \exstrong
          */
-        void Change(const stored_type & value)
+        void change(const stored_type & value)
         {
             value_ = std::unique_ptr<stored_type>(new stored_type(value));
         }
@@ -192,7 +192,7 @@ class OptionHolder : public OptionBase
          * \throw pulsar::exception::OptionException
          *        If the option does not have a value or a default
          */
-        const stored_type & Get(void) const
+        const stored_type & get(void) const
         {
             if(value_)
                 return *value_;
@@ -210,7 +210,7 @@ class OptionHolder : public OptionBase
          * \throw pulsar::exception::OptionException
          *        If the option does not have a default
          */
-        const stored_type & GetDefault(void) const
+        const stored_type & get_default(void) const
         {
             if(default_)
                 return *default_;
@@ -245,7 +245,7 @@ class OptionHolder : public OptionBase
             return bool(value_) || bool(default_);
         }
 
-        virtual bool HasDefault(void) const noexcept
+        virtual bool has_default(void) const noexcept
         {
             return bool(default_);
         }
@@ -350,27 +350,18 @@ class OptionHolder : public OptionBase
             PRAGMA_WARNING_IGNORE_FP_EQUALITY
 
             if(! (this->is_set() == op->is_set() &&
-                  this->HasDefault() == op->HasDefault()) )
+                  this->has_default() == op->has_default()) )
                 return false;
 
             // we checked above that they are both set and unset
             if(this->is_set() && *value_ != *(op->value_))
                 return false;
 
-            if(this->HasDefault() && *default_ != *(op->default_))
+            if(this->has_default() && *default_ != *(op->default_))
                 return false;
 
             return true;
             PRAGMA_WARNING_POP
-        }
-
-        virtual ByteArray to_byte_array(void) const
-        {
-            util::MemoryArchive mar;
-            mar.begin_serialization();
-            mar.serialize(key(), is_required(), help(), value_, default_);
-            mar.end_serialization();
-            return mar.to_byte_array();
         }
 
 
@@ -380,7 +371,7 @@ class OptionHolder : public OptionBase
         virtual pybind11::object get_py(void) const
         {
             try {                                                     
-                return python::convert_to_py(Get());                            
+                return python::convert_to_py(get());                            
             }                                                         
             catch(std::exception & ex)                                
             {                                                         
@@ -401,13 +392,11 @@ class OptionHolder : public OptionBase
                 throw exception::OptionException(ex, "optionkey", key());
             }
 
-            Change(val);
+            change(val);
         }
 
 
     private:
-        friend OptionBasePtr OptionHolderFromByteArray(OptionType, const ByteArray &);
-
         // used in constructor delegation
         OptionHolder(const std::string & key,
                      bool required, const pybind11::object & validator,
@@ -441,25 +430,27 @@ class OptionHolder : public OptionBase
         //! \name Hashing and Serialization
         ///@{
 
-        friend class bphash::Hasher;
+        DECLARE_SERIALIZATION_FRIENDS
 
-        void hash(bphash::Hasher & h) const
+        void hash_(bphash::Hasher & h) const
         {
-            OptionBase::hash(h);
             h(value_, default_);
         }
 
-
         void hash_value_(bphash::Hasher & h) const
         {
-            h(static_cast<const OptionBase &>(*this));
-
             if(has_value())
-                h(Get());
+                h(get());
             else
                 h(std::string("__!%_NOVALUE_%!__"));
         }
 
+
+        template<class Archive>
+        void serialize(Archive & ar)
+        {
+            ar(cereal::base_class<OptionBase>(this), value_, default_);
+        }
 
         ///@}
 };

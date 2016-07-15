@@ -229,9 +229,9 @@ class OptionMap
             static constexpr OptionType opt_type = OptionTypeMap<T>::opt_type;
             typedef typename OptionTypeInfo<opt_type>::stored_type stored_type;
 
-            CheckType_<T>();
+            check_type_<T>();
 
-            stored_type val = get_or_throw_Cast_<opt_type>(key)->Get();
+            stored_type val = get_or_throw_cast_<opt_type>(key)->get();
 
             try {
                 return OptionCast<T,stored_type>::cast(val);
@@ -261,7 +261,7 @@ class OptionMap
             static constexpr OptionType opt_type = OptionTypeMap<T>::opt_type;
             typedef typename OptionTypeInfo<opt_type>::stored_type stored_type;
 
-            CheckType_<T>();
+            check_type_<T>();
 
             stored_type convval;
 
@@ -274,7 +274,7 @@ class OptionMap
                 throw exception::OptionException(ex, "optionkey", key);
             }
 
-            get_or_throw_Cast_<opt_type>(key)->Change(convval);
+            get_or_throw_cast_<opt_type>(key)->change(convval);
         }
 
 
@@ -284,7 +284,7 @@ class OptionMap
          * Checks that all keys exist in both maps and that
          * all values match. It doesn't matter where the value
          * comes from (default or user-supplied), just that
-         * the value obtained from Get() match
+         * the value obtained from get() match
          */
         bool compare(const OptionMap & rhs) const; 
 
@@ -404,7 +404,7 @@ class OptionMap
          *        be cast to the desired type
          */
         template<OptionType OPTTYPE>
-        const detail::OptionHolder<OPTTYPE> * get_or_throw_Cast_(const std::string & key) const
+        const detail::OptionHolder<OPTTYPE> * get_or_throw_cast_(const std::string & key) const
         {
             const detail::OptionBase * ptr = get_or_throw_(key);
             const detail::OptionHolder<OPTTYPE> * oh = dynamic_cast<const detail::OptionHolder<OPTTYPE> *>(ptr);
@@ -417,10 +417,10 @@ class OptionMap
         }
 
 
-        /*! \copydoc get_or_throw_Cast_
+        /*! \copydoc get_or_throw_cast_
          */
         template<OptionType OPTTYPE>
-        detail::OptionHolder<OPTTYPE> * get_or_throw_Cast_(const std::string & key)
+        detail::OptionHolder<OPTTYPE> * get_or_throw_cast_(const std::string & key)
         {
             detail::OptionBase * ptr = get_or_throw_(key);
             detail::OptionHolder<OPTTYPE> * oh = dynamic_cast<detail::OptionHolder<OPTTYPE> *>(ptr);
@@ -439,11 +439,11 @@ class OptionMap
          * If the type is not valid, the program will not compile
          */
         template<typename T>
-        static void CheckType_(void) noexcept
+        static void check_type_(void) noexcept
         {
             /*! \todo - check types for better compilation error messages */
-            //static_assert( OptionTypeMap<T>::valid,
-            //               "Invalid type for an option given to OptionMap");
+            static_assert( OptionTypeMap<T>::value,
+                           "Invalid type for an option given to OptionMap");
         }
 
 
@@ -461,11 +461,10 @@ class OptionMap
             // after unserializing
             ar(expert_);
 
-            // We have to do the options a special way
             // static cast for size - just to be absolutely sure
             ar(static_cast<size_t>(opmap_.size()));
             for(const auto & it : opmap_)
-                ar(it.first, it.second->type(), it.second->to_byte_array());
+                ar(it.first, it.second);
         }
 
         template<class Archive>
@@ -478,10 +477,8 @@ class OptionMap
             for(size_t i = 0; i < size; i++)
             {
                 std::string key;
-                OptionType opttype;
-                ByteArray ba;
-                ar(key, opttype, ba);
-                detail::OptionBasePtr opt = detail::OptionHolderFromByteArray(opttype, ba);
+                detail::OptionBasePtr opt;
+                ar(key, opt);
                 opmap_.emplace(key, std::move(opt));
             }
         }

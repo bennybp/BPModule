@@ -161,10 +161,10 @@ MAKE_CONTAINER_TYPE_DICT(OptionType::String, OptionType::String, OptionType::Dic
 // option types
 ////////////////////////////////////////
 
-template<typename T> struct OptionTypeMap { static constexpr bool valid = false; };
+template<typename T> struct OptionTypeMap : public std::false_type { };
 
 #define MAPTOOPTIONTYPE(TYPE, OPTTYPE) \
-        template<> struct OptionTypeMap<TYPE> { \
+        template<> struct OptionTypeMap<TYPE> : public std::true_type { \
         static constexpr OptionType opt_type = OptionType::OPTTYPE; };
 
 MAPTOOPTIONTYPE(bool,                Bool)
@@ -194,7 +194,7 @@ static constexpr OptionType opt_type = OptionType::String; };
 // Sets
 
 template<typename T>
-struct OptionTypeMap<std::set<T>>
+struct OptionTypeMap<std::set<T>> : public std::true_type
 {
     static constexpr OptionType inner_type = OptionTypeMap<T>::opt_type;
     static constexpr OptionType opt_type = ContainerMap<inner_type>::set_type;
@@ -202,7 +202,7 @@ struct OptionTypeMap<std::set<T>>
 
 // Lists/vectors
 template<typename T>
-struct OptionTypeMap<std::vector<T>>
+struct OptionTypeMap<std::vector<T>> : public std::true_type
 {
     static constexpr OptionType inner_type = OptionTypeMap<T>::opt_type;
     static constexpr OptionType opt_type = ContainerMap<inner_type>::list_type;
@@ -210,7 +210,7 @@ struct OptionTypeMap<std::vector<T>>
 
 // Maps
 template<typename T, typename U>
-struct OptionTypeMap<std::map<T, U>>
+struct OptionTypeMap<std::map<T, U>> : public std::true_type
 {
     static constexpr OptionType inner_key_type = OptionTypeMap<T>::opt_type;
     static constexpr OptionType inner_val_type = OptionTypeMap<U>::opt_type;
