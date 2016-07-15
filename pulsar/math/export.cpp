@@ -16,6 +16,9 @@
 #include "pulsar/math/Grid.hpp"
 #include "pulsar/math/Irrep.hpp"
 #include "pulsar/math/RegisterMathSet.hpp"
+#include "pulsar/math/BlockByIrrepSpin.hpp"
+#include "pulsar/math/EigenCommon.hpp"
+
 
 //declared in RegisterMathSet
 //!\todo - fix multiple definitions of this in pybind11
@@ -32,6 +35,26 @@ namespace export_python {
 
 // in testing_export.cpp
 void export_testing(pybind11::module & m);
+
+///Function that exports the various IrrepSpin tensors
+///T is the actual type, T2 is the type it wraps, Name is the python class name
+template<typename T,typename T2>
+void  export_irrep_spin_X(pybind11::module& m,const char* Name)
+{   pybind11::class_<T>(m,Name)
+    .def("has",&T::has)
+    .def("get_irreps",&T:get_irreps)
+    .def("get_spins",&T::get_spins)
+    .def("get",static_cast<T2(T::*)(Irrep,int)>(&T::get))
+    .def("set",static_cast<void(T::*)(Irrep,int,T2&&)>(&T::set))
+    .def("same_structure",&T::same_structure)
+    .def("my_hash",&T::my_hash)
+    .def("__iter__", [](const T& t){
+                        return pybind11::make_iterator(t.begin(),t.end());
+                      },pybind11::keep_alive<0, 1>())
+    .def(pybind11::self == pybind11::self)
+    .def(pybind11::self != pybind11::self)
+    ;
+}
 
 
 
@@ -104,11 +127,7 @@ void export_pybind11(pybind11::module & mtop)
     register_Universe<Universe<GridPoint>>(m, "GridUniverse"); 
     register_MathSet<MathSet<GridPoint>>(m, "Grid"); 
 
-
-
-
-
-   
+  
     /////////////////////////// 
     // Enumeration for Irreps
     /////////////////////////// 
@@ -121,7 +140,12 @@ void export_pybind11(pybind11::module & mtop)
     .value("B2u", Irrep::B2u).value("E1u", Irrep::E1u).value("E2u", Irrep::E2u)
     ;
 
-
+    using SharedMatrix=std::shared_ptr<Eigen::MatrixXd>;
+    using SharedVector=std::shared_ptr<Eigen::VectorXd>;
+    
+    export_irrep_spin_X<IrrepSpinMatrixD,SharedMatrix>(m,"IrrepSpinMatrixD");
+    export_irrep_spin_X<IrrepSpinVectorD,SharedVector>(m,"IrrepSpinVectorD");                      
+    
     // Export the testing stuff
     export_testing(m);
 }
