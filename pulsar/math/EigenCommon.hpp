@@ -1,8 +1,8 @@
 #ifndef PULSAR_GUARD_COMMON__EIGENCOMMON_HPP_
 #define PULSAR_GUARD_COMMON__EIGENCOMMON_HPP_
 
-#include <pulsar/math/BlockByIrrepSpin.hpp>
-#include <pulsar/math/TensorImpl.hpp>
+#include "pulsar/math/BlockByIrrepSpin.hpp"
+#include "pulsar/math/TensorImpl.hpp"
 
 #include <Eigen/Dense>
 

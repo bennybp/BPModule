@@ -64,25 +64,29 @@ add_subdirectory(external)
 #################################
 # Core Pulsar
 #################################
+set(STAGE_DIR ${CMAKE_BINARY_DIR}/stage)
+
 ExternalProject_Add(pulsar_core
-                    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pulsar
-                    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-                               -DCMAKE_BUILD_TYPE=${PULSAR_BUILD_TYPE}
-                               -DDESTDIR=${CMAKE_BINARY_DIR}/stage                   # Pass in to allow for searching for dependencies 
-                               -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/external
-                               -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
-                               -DMPI_C_COMPILER=${MPI_C_COMPILER}
-                               -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                               -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-			                   -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-                               -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
-                               -DPULSAR_MATH_LIBS=${PULSAR_MATH_LIBS}
-                    CMAKE_CACHE_ARGS -DPULSAR_CORE_PYTHON_LIBRARIES:STRING=${PYTHON_LIBRARIES}
-                                     -DPULSAR_CORE_PYTHON_INCLUDE_DIRS:STRING=${PYTHON_INCLUDE_DIRS}
-                                     -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
-                    BUILD_COMMAND $(MAKE)
-                    BUILD_ALWAYS 1
-                    INSTALL_COMMAND $(MAKE) install DESTDIR=${CMAKE_BINARY_DIR}/stage
+   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pulsar
+   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+              -DCMAKE_BUILD_TYPE=${PULSAR_BUILD_TYPE}
+              -DDESTDIR=${STAGE_DIR} # Pass in for searching for dependencies 
+              -DCMAKE_PREFIX_PATH=${STAGE_DIR}/${CMAKE_INSTALL_PREFIX}/external
+              -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
+              -DMPI_C_COMPILER=${MPI_C_COMPILER}
+              -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+              -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+              -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+              -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+              -DPULSAR_MATH_LIBS=${PULSAR_MATH_LIBS}
+              -DEIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
+   CMAKE_CACHE_ARGS -DPULSAR_CORE_PYTHON_LIBRARIES:STRING=${PYTHON_LIBRARIES}
+                    -DPULSAR_CORE_PYTHON_INCLUDE_DIRS:STRING=${PYTHON_INCLUDE_DIRS}
+                    -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
+                    -DCMAKE_MODULE_PATH:STRING=${CMAKE_MODULE_PATH}
+   BUILD_COMMAND $(MAKE)
+   BUILD_ALWAYS 1
+   INSTALL_COMMAND $(MAKE) install DESTDIR=${STAGE_DIR}
 )
 add_dependencies(pulsar_core memwatch_external
                              bphash_external
