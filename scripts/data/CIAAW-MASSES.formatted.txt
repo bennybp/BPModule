@@ -2,7 +2,8 @@ Comission on Isotopic Abundances and Atomic Weights 2015
 International Union of Pure and Applied Chemistry
 http://www.ciaaw.org/atomic-weights.htm
 
-
+-999    Dum     0.0                       0.0                       0.0
+0       Gho     0.0                       0.0                       0.0
 1       H       1.007975                  1.00784                   1.00811                  
 2       He      4.002602                  4.0026                    4.002604                 
 3       Li      6.9675                    6.938                     6.997                    
@@ -121,3 +122,4 @@ http://www.ciaaw.org/atomic-weights.htm
 116     Lv      0                         0                         0                        
 117     Uus     0                         0                         0                        
 118     Uuo     0                         0                         0                        
+999     Chg     0                         0                         0

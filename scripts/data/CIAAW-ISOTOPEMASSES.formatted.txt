@@ -2,9 +2,9 @@ Comission on Isotopic Abundances and Atomic Weights 2012
 International Union of Pure and Applied Chemistry
 http://www.ciaaw.org/atomic-masses.htm
 
--999    Dm      0        0.0
-999     Q       0        0.0
-0       Gh      0        0.0
+-999    Dum      -999     0.0 0.0 0.0
+999     Chg      999      0.0 0.0 0.0
+0       Gho      0        0.0 0.0 0.0
 1       H       1        1.0078250322              1.0078250316              1.0078250328             
 1       H       2        2.0141017781              2.0141017773              2.0141017789             
 2       He      3        3.01602932                3.0160293                 3.01602934               
