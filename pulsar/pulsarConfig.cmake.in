@@ -16,8 +16,9 @@ list(APPEND CMAKE_MODULE_PATH "${PULSAR_EXTERNAL_DIR}/cmake")
 # Find external projects
 find_package(memwatch REQUIRED)
 find_package(pybind11 REQUIRED)
-find_package(libtaskforce REQUIRED)
 find_package(bphash REQUIRED)
+find_package(libtaskforce REQUIRED)
+
 
 # Create the target to link against
 add_library(pulsar INTERFACE)
@@ -48,16 +49,13 @@ list(APPEND PULSAR_CXX_INCLUDES @PULSAR_CORE_PYTHON_INCLUDE_DIRS@)
 list(APPEND PULSAR_CXX_INCLUDES ${PYBIND11_INCLUDE_DIR})
 list(APPEND PULSAR_CXX_INCLUDES ${MEMWATCH_INCLUDE_DIR})
 list(APPEND PULSAR_CXX_INCLUDES ${LIBELEMENTAL_INCLUDE_DIR})
-list(APPEND PULSAR_CXX_INCLUDES ${MADNESS_INCLUDE_DIRS})
-list(APPEND PULSAR_CXX_INCLUDES ${LIBTASKFORCE_INCLUDE_DIRS})
-list(APPEND PULSAR_CXX_INCLUDES ${TENSOR_CXX_INCLUDES})
 target_include_directories(pulsar SYSTEM INTERFACE ${PULSAR_CXX_INCLUDES})
 
 
 #######################################
 # Add interface libraries to link to
 #######################################
-target_link_libraries(pulsar INTERFACE bphash)
+target_link_libraries(pulsar INTERFACE bphash libtaskforce)
 
 
 #######################################
