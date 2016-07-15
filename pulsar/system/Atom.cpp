@@ -132,10 +132,11 @@ Atom create_atom(double x, double y, double z, int Z, int isotope)
     return create_atom({x,y,z}, Z, isotope);
 }
 
-
+//RMR, although we don't need the Z, for interfacing to programs we might so,
+//I'm going negative
 Atom make_ghost_atom(const Atom & atom)
 {
-    Atom ghost = create_atom(atom.get_coords(), GHOST_ATOM_Z);
+    Atom ghost = create_atom(atom.get_coords(), -1*abs(atom.Z));
     ghost.basis_sets = atom.basis_sets;
     return ghost;
 }
@@ -143,7 +144,7 @@ Atom make_ghost_atom(const Atom & atom)
 bool is_ghost_atom(const Atom & atom)
 {
     //! \todo simple enough check?
-    return atom.Z == GHOST_ATOM_Z;
+    return atom.Z < 0;
 }
 
 

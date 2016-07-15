@@ -289,6 +289,7 @@ extern const std::map<int, AtomicData> atomic_Z_data_{
              0.0,
              0.0,
               {
+                  {0,0.0}
               },
            },
   },
@@ -304,6 +305,7 @@ extern const std::map<int, AtomicData> atomic_Z_data_{
              0.0,
              0.0,
               {
+                  {0,0.0}
               },
            },
   },
@@ -319,6 +321,7 @@ extern const std::map<int, AtomicData> atomic_Z_data_{
              0.0,
              0.0,
               {
+                  {0,0.0}
               },
            },
   },

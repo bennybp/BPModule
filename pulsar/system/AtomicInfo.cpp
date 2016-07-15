@@ -26,6 +26,8 @@ using lut::atomic_Z_data_;
 
 int atomic_z_from_symbol(const std::string & sym)
 {
+    if(sym[0]=='@')
+        return atomic_sym_Z_.at(sym.substr(1));
     if(atomic_sym_Z_.count(sym))
         return atomic_sym_Z_.at(sym);
     else
@@ -37,6 +39,8 @@ int atomic_z_from_symbol(const std::string & sym)
 
 std::string atomic_symbol_from_z(int Z)
 {
+    if(Z<0)
+      return "@"+atomic_symbol_from_z(abs(Z));
     if(atomic_Z_sym_.count(Z))
         return atomic_Z_sym_.at(Z);
     else
@@ -48,6 +52,8 @@ std::string atomic_symbol_from_z(int Z)
 
 const AtomicData & atomic_info_from_z(int Z)
 {
+    if(Z<0)
+        return atomic_Z_data_.at(GHOST_ATOM_Z);
     if(atomic_Z_data_.count(Z))
         return atomic_Z_data_.at(Z);
     else

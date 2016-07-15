@@ -1,6 +1,6 @@
--2     Chg    Charge
--1     Dum    Dummy
-0      Gho    Ghost
+POINT_CHARGE_Z     Chg    Charge
+DUMMY_ATOM_Z     Dum    Dummy
+GHOST_ATOM_Z      Gho    Ghost
 1      H      Hydrogen
 2      He     Helium
 3      Li     Lithium
