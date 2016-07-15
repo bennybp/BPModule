@@ -40,7 +40,7 @@ def Run(mm):
         tester.print_header()
         pulsar_psi4.pulsar_psi4_setup(mm)
         LoadDefaultModules(mm)
-        mm.change_option("PSI4_SCF","BASIS_KEY","sto-3g")
+        mm.change_option("PSI4_SCF","BASIS_SET","sto-3g")
         mm.change_option("PSR_CP","METHOD","PSI4_SCF")
         mm.change_option("PSR_MBE","METHOD","PSI4_SCF")
 
