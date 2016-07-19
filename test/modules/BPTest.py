@@ -46,16 +46,16 @@ def Run(mm):
         mm.load_module("Methods",    "BasicFockBuild",           "FOCKBUILD")
         mm.load_module("Integrals",  "NuclearRepulsion",         "NUC_REP")
         mm.load_module("Integrals",  "NuclearDipole",            "NUC_DIP")
-        mm.load_module("Integrals",  "Overlap",                  "AO_OVERLAP")
-        mm.load_module("Integrals",  "CoreBuild",                "AO_COREBUILD")
-        mm.load_module("Integrals",  "KineticEnergy",            "AO_KINETIC")
-        mm.load_module("Integrals",  "OneElectronPotential",     "AO_NUCEL")
-        mm.load_module("Integrals",  "OneElectron_Eigen",              "ONEEL_CACHE")
+        mm.load_module("Integrals",  "OSOverlap",                "AO_OVERLAP")
+        mm.load_module("Integrals",  "OneElectronIntegralSum",   "AO_COREBUILD")
+        mm.load_module("Integrals",  "OSKineticEnergy",          "AO_KINETIC")
+        mm.load_module("Integrals",  "OSOneElectronPotential",   "AO_NUCEL")
+        mm.load_module("Integrals",  "OneElectron_Eigen",        "ONEEL_CACHE")
         mm.load_module("SimintERI",  "SimintERI",                "AO_ERI")
         #mm.load_module("TwoElectronIntegrals",  "ReferenceERI",                "AO_ERI")
 
 
-        mm.load_module("Integrals",  "Dipole",                   "AO_DIPOLE")
+        mm.load_module("Integrals",  "OSDipole",                 "AO_DIPOLE")
         mm.load_module("Integrals",  "OneElectronProperty",      "PROP_DIPOLE")
 
         mm.change_option("ONEEL_CACHE", "CACHE_RESULTS", True)
@@ -74,7 +74,7 @@ def Run(mm):
 
 
         # Tell the core builder which modules to use
-        mm.change_option("AO_COREBUILD", "KEY_AO_CORE_TERMS", [ "AO_KINETIC", "AO_NUCEL" ])
+        mm.change_option("AO_COREBUILD", "KEY_AO_TERMS", [ "AO_KINETIC", "AO_NUCEL" ])
 
         # Tell the core guess which modules to use
         mm.change_option("IGUESS", "KEY_NUC_REPULSION", "NUC_REP")
