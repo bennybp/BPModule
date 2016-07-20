@@ -10,12 +10,16 @@
 #include <pybind11/complex.h>
 #include <pybind11/functional.h>
 #include <pybind11/operators.h>
+#include <pybind11/eigen.h>
 #include "pulsar/math/Factorial.hpp"
 #include "pulsar/math/Universe.hpp"
 #include "pulsar/math/Point.hpp"
 #include "pulsar/math/Grid.hpp"
 #include "pulsar/math/Irrep.hpp"
 #include "pulsar/math/RegisterMathSet.hpp"
+#include "pulsar/math/IrrepSpinMatrix.hpp"
+#include "pulsar/math/EigenCommon.hpp"
+
 
 //declared in RegisterMathSet
 //!\todo - fix multiple definitions of this in pybind11
@@ -33,7 +37,46 @@ namespace export_python {
 // in testing_export.cpp
 void export_testing(pybind11::module & m);
 
+//Function for exporting our eigen adapted tensors
+template<typename TensorT,typename EigenType>
+void export_eigen_x_impl(pybind11::module& m,const char* Name)
+{
+    using SharedX=std::shared_ptr<EigenType>;
+    pybind11::class_<TensorT>(m,Name)
+    .def(pybind11::init<const SharedX&>())
+    .def(pybind11::init<const EigenType&>())
+    //.def(pybind11::init<EigenType&&>())
+    .def("sizes",&TensorT::sizes)
+    .def("get_value",&TensorT::get_value)
+    .def("set_value",&TensorT::set_value)
+    .def("get_matrix",&TensorT::get_matrix)
+    ;
+}
 
+
+//Function that exports the various IrrepSpin tensors, TensorT is the final type
+//TensorI is the type it wraps, and Name is the python class name
+template<typename TensorT,typename TensorI>
+void  export_irrep_spin_X(pybind11::module& m,const char* Name)
+{   pybind11::class_<TensorT>(m,Name)
+    .def("has",&TensorT::has)
+    .def("get_irreps",&TensorT::get_irreps)
+    .def("get_spins",&TensorT::get_spins)
+    .def("get",[](TensorT& t,Irrep ir,int spin)->std::shared_ptr<TensorI>{
+                  return t.get(ir,spin);          
+     })
+    .def("set",[](TensorT& t,Irrep ir,int spin,TensorI&& tensor){        
+        t.set(ir,spin,std::move(std::make_shared<TensorI>(std::move(tensor))));
+    })
+    .def("same_structure",&TensorT::same_structure)
+    .def("my_hash",&TensorT::my_hash)
+    .def("__iter__", [](const TensorT& t){
+                        return pybind11::make_iterator(t.begin(),t.end());
+                      },pybind11::keep_alive<0, 1>())
+    .def(pybind11::self == pybind11::self)
+    .def(pybind11::self != pybind11::self)
+    ;
+}
 
 void export_pybind11(pybind11::module & mtop)
 {
@@ -104,11 +147,7 @@ void export_pybind11(pybind11::module & mtop)
     register_Universe<Universe<GridPoint>>(m, "GridUniverse"); 
     register_MathSet<MathSet<GridPoint>>(m, "Grid"); 
 
-
-
-
-
-   
+  
     /////////////////////////// 
     // Enumeration for Irreps
     /////////////////////////// 
@@ -120,8 +159,14 @@ void export_pybind11(pybind11::module & mtop)
     .value("A1u", Irrep::A1u).value("A2u", Irrep::A2u).value("B1u", Irrep::B1u)
     .value("B2u", Irrep::B2u).value("E1u", Irrep::E1u).value("E2u", Irrep::E2u)
     ;
-
-
+   
+    export_eigen_x_impl<EigenMatrixImpl,Eigen::MatrixXd>(m,"EigenMatrixImpl");
+    export_eigen_x_impl<EigenVectorImpl,Eigen::VectorXd>(m,"EigenVectorImpl");
+    //export_irrep_spin_X<IrrepSpinMatrixD,EigenMatrixImpl,Eigen::MatrixXd>
+    //   (m,"IrrepSpinMatrixD");
+    //export_irrep_spin_X<IrrepSpinVectorD,EigenVectorImpl,Eigen::VectorXd>
+    //   (m,"IrrepSpinVectorD");                      
+    
     // Export the testing stuff
     export_testing(m);
 }

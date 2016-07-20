@@ -13,6 +13,7 @@ set(PULSAR_CORE_PYTHON_INCLUDE_DIRS "" CACHE STRING "Include directories for pyt
 ##########################
 find_package(OpenMP REQUIRED)
 find_package(MPI REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 
 ##########################
@@ -122,7 +123,7 @@ list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${MEMWATCH_INCLUDE_DIR})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${PULSAR_CORE_PYTHON_INCLUDE_DIRS})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${MPI_CXX_INCLUDE_PATH})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${PYBIND11_INCLUDE_DIR})
-
+list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${EIGEN3_INCLUDE_DIR})
 #############################################################
 # Libraries and link flags (including interface libraries)
 #############################################################
