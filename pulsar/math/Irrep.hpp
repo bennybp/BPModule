@@ -7,11 +7,11 @@
 #ifndef PULSAR_GUARD_MATH__IRREP_HPP_
 #define PULSAR_GUARD_MATH__IRREP_HPP_
 
+#include<map>
 
 namespace pulsar{
 namespace math{
 
-//! \todo to_string, etc
 enum class Irrep {
   A,Ag,Au,Ap,App,
   B,Bg,Bu,
@@ -22,6 +22,9 @@ enum class Irrep {
   E1, E1g, E1u,
   E2, E2g, E2u,
 };
+
+extern const std::map<Irrep,std::string> irrep_to_string;
+
 
 ///To ensure we do alpha/beta consistent
 enum Spin {//purposely use old-school enums to allow falling back to ints

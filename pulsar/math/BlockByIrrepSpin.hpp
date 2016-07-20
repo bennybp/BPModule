@@ -8,6 +8,7 @@
 #define PULSAR_GUARD_MATH__BLOCKBYIRREPSPIN_HPP_
 
 #include <map>
+#include <iostream>
 #include "pulsar/util/Serialization.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/math/Irrep.hpp"
@@ -177,6 +178,9 @@ class BlockByIrrepSpin
         {
             return bphash::make_hash(bphash::HashType::Hash128, *this);
         }
+        
+        ///Prints the tensor by passing underlying tensor type to ostream
+        std::ostream& print(std::ostream& os)const;
 
     private:
         IrrepSpinMap data_;
@@ -201,7 +205,44 @@ class BlockByIrrepSpin
         ///@}
 };
 
+///Helper function that determines if this data is for a restricted computation
+template<typename T>
+bool is_restricted(const T& Tensor){
+    for(const auto& irr: Tensor)
+    {
+        
+        if(irr.second.size()!=2 ||  //Only two spins
+           !irr.second.count(Spin::alpha) ||  //One is alpha...
+           !irr.second.count(Spin::beta)  ||  //...other is beta
+           irr.second.at(Spin::alpha)!=irr.second.at(Spin::beta) //literally same
+           )return false;
+    }
+    return true;
+}
 
+template<typename T>
+std::ostream& BlockByIrrepSpin<T>::print(std::ostream& os)const
+{
+    for(const auto& irr: data_)
+    {
+        if(is_restricted(*this))
+            os<<irrep_to_string.at(irr.first)<<" alpha==beta"<<std::endl
+              <<irr.second.at(Spin::alpha)<<std::endl;
+        else
+        {
+            for(const typename SpinMap::value_type& spin: irr.second)
+               os<<irrep_to_string.at(irr.first)<<" "<<spin.first
+                 <<" "<<std::endl<<spin.second<<std::endl;
+        }
+    }
+    return os;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& os,const BlockByIrrepSpin<T>& tensor)
+{
+    return tensor.print(os);
+}
 
 } // close namespace math
 } // close namespace pulsar

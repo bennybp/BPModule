@@ -19,6 +19,7 @@
 #include "pulsar/math/RegisterMathSet.hpp"
 #include "pulsar/math/IrrepSpinMatrix.hpp"
 #include "pulsar/math/EigenCommon.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
 //#include "external/pybind11/pybind11-source/include/pybind11/pytypes.h"
 
 
@@ -72,17 +73,22 @@ void export_eigen_x_impl(pybind11::module& m,const char* Name)
 //TensorI is the type it wraps, and Name is the python class name
 template<typename TensorT,typename TensorI>
 void  export_irrep_spin_X(pybind11::module& m,const char* Name)
-{   pybind11::class_<TensorT/*,std::shared_ptr<TensorT>*/>(m,Name)
+{   pybind11::class_<TensorT,std::shared_ptr<TensorT>>(m,Name)
     .def(pybind11::init<>())
     .def(pybind11::init<const TensorT&>())
+    //.def(pybind11::init<TensorT&&>())
     .def("has",&TensorT::has)
     .def("get_irreps",&TensorT::get_irreps)
     .def("get_spins",&TensorT::get_spins)
     .def("get",[](TensorT& t,Irrep ir,int spin){
                   return t.get(ir,spin);          
      })
-    .def("set",[](TensorT& t,Irrep ir,int spin,const TensorI& tensor){        
-        t.set(ir,spin,std::move(tensor));
+    .def("set",[](TensorT& t,Irrep ir,int spin,TensorI tensor){        
+        t.set(ir,spin,tensor);
+    })
+    .def("__repr__",[](const TensorT& t){
+        pulsar::output::get_global_output()<<t;
+        return "";
     })
     //.def("same_structure",&TensorT::same_structure)
     //.def("my_hash",&TensorT::my_hash)
