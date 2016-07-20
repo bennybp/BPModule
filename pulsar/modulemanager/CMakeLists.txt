@@ -6,6 +6,7 @@ set(PULSAR_MODULEMANAGER_FILES
             ModuleManager.cpp
             ModuleTree.cpp
             ModuleTree_iterators.cpp
+            Checkpoint.cpp
             export.cpp
             testing_export.cpp
 

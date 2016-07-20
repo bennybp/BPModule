@@ -36,7 +36,7 @@ class GenericHolder : public GenericBase
          *  \param [in] m The object to copy
          */
         GenericHolder(const T & m)
-            : obj(m)
+            : obj(std::make_shared<const T>(m))
         { }
 
 
@@ -50,7 +50,7 @@ class GenericHolder : public GenericBase
          * \param [in] m The object to move
          */
         GenericHolder(T && m)
-            : obj(std::move(m))
+            : obj(std::make_shared<const T>(std::move(m)))
         { }
 
 
@@ -63,25 +63,13 @@ class GenericHolder : public GenericBase
         virtual ~GenericHolder()                           = default;
 
 
-        /*! Return a reference to the underlying data
-         *
-         * \exnothrow
-         *
-         * \return A reference to the underlying data
-         */ 
-        T & get_ref(void) noexcept
-        {
-            return obj;
-        }
-
-
         /*! Return a const reference to the underlying data
          *
          * \exnothrow
          *
          * \return A const reference to the underlying data
          */ 
-        const T & get_ref(void) const noexcept
+        std::shared_ptr<const T> get(void) const noexcept
         {
             return obj;
         }
@@ -103,13 +91,13 @@ class GenericHolder : public GenericBase
         
         virtual std::string demangled_type(void) const
         {
-            return util::demangle_cpp_or_py_type(obj);
+            return util::demangle_cpp_or_py_type(*obj);
         }
 
 
     private:
         //! The actual data
-        T obj;
+        std::shared_ptr<const T> obj;
 };
 
 

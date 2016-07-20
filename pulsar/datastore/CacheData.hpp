@@ -10,6 +10,7 @@
 
 #include <set>
 #include <map>
+#include <mutex>
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/output/Output.hpp"
 #include "pulsar/datastore/GenericHolder.hpp"
@@ -33,6 +34,7 @@ namespace datastore {
  * in python.
  *
  * \todo thread safety
+ * \todo note why we don't allow setting via shared_ptr (data in cache is immutable)
  */
 class CacheData
 {
@@ -54,6 +56,7 @@ class CacheData
          */
         bool count(const std::string & key) const
         {
+            std::lock_guard<std::mutex> l(mutex_);
             return cmap_.count(key);
         }
 
@@ -64,8 +67,11 @@ class CacheData
         std::set<std::string> get_keys(void) const
         {
             std::set<std::string> v;
+
+            std::lock_guard<std::mutex> l(mutex_);
             for(const auto & it : cmap_)
                 v.insert(it.first);
+
             return v;
         }
 
@@ -77,6 +83,7 @@ class CacheData
          */
         size_t size(void) const noexcept
         {
+            std::lock_guard<std::mutex> l(mutex_);
             return cmap_.size();
         }
 
@@ -91,10 +98,11 @@ class CacheData
          * \return A const referance to the data
          */
         template<typename T>
-        const T & get(const std::string & key) const
+        std::shared_ptr<const T> get(const std::string & key) const
         {
-            const detail::GenericHolder<T> * ph = get_or_throw_Cast_<T>(key);
-            return ph->get_ref();
+            // mutex locking handled in get_or_throw_cast
+            const detail::GenericHolder<T> * ph = get_or_throw_cast_<T>(key);
+            return ph->get();
         }
 
         /*! \brief Return the underlying data (python version)
@@ -112,12 +120,13 @@ class CacheData
          */
         pybind11::object get_py(const std::string & key) const
         {
-            return get<pybind11::object>(key);
+            return *(get<pybind11::object>(key));
         }
 
         /*! \brief Add data associated with a given key via copy
          * 
-         * Keys are not overwritten. Instead, additional keys are inserted
+         * Keys are overwritten if they exist. This should not affect any data
+         * previously retrieved via get(), etc
          *
          * \tparam T The type of the data
          *
@@ -127,8 +136,13 @@ class CacheData
         template<typename T>
         void set(const std::string & key, const T & value)
         {
-            set_(key, std::unique_ptr<detail::GenericBase>(new detail::GenericHolder<T>(value)));
+            // construct outside of mutex locking
+            std::unique_ptr<detail::GenericBase> newdata(new detail::GenericHolder<T>(value));
+
+            // mutex locking handled in set_
+            set_(key, std::move(newdata));
         }
+
 
         /*! \brief Add data associated with a given key via move semantics
          * 
@@ -137,15 +151,17 @@ class CacheData
         template<typename T>
         void take(const std::string & key, T && value)
         {
-            set_(key, std::unique_ptr<detail::GenericBase>(new detail::GenericHolder<T>(std::move(value))));
+            // construct outside of mutex locking
+            std::unique_ptr<detail::GenericBase> newdata(new detail::GenericHolder<T>(std::move(value)));
+
+            // mutex locking handled in set_
+            set_(key, std::move(newdata));
         }
 
         /*! \brief Set the data associated with a given key (python version)
          * 
          * Data is stored as a python object
          * 
-         * Keys are not overwritten. Instead, additional keys are inserted
-         *
          * \param [in] key The key to the data
          * \param [in] value The data to store
          */
@@ -163,16 +179,18 @@ class CacheData
          */
         size_t erase(const std::string & key)
         {
+            std::lock_guard<std::mutex> l(mutex_);
             return cmap_.erase(key);
         }
 
-        /*! \brief print information about the cache
-         */
         void print(std::ostream & os) const
         {
             using namespace pulsar::output;
 
-            print_output(os, "Cache data with %? entries\n", size());
+            // We lock the mutex here. As such, we cannot call size(), etc. So
+            std::lock_guard<std::mutex> l(mutex_);
+ 
+            print_output(os, "Cache data with %? entries\n", cmap_.size());
 
             for(const auto & it : cmap_)
                 print_output(os, "  -Key: %-20?  Type: %?\n", it.first,
@@ -184,6 +202,10 @@ class CacheData
         ////////////////////////////////
         // Actual storage of the data //
         ////////////////////////////////
+
+        /*! \brief Mutex protecting this object during multi-threaded access */
+        mutable std::mutex mutex_;
+
 
         /*! \brief Stores a pointer to a placeholder, plus some other information
          * 
@@ -216,6 +238,7 @@ class CacheData
          */ 
         const CacheDataEntry & get_or_throw_(const std::string & key) const
         {
+            std::lock_guard<std::mutex> l(mutex_);
 
             if(cmap_.count(key))
                 return cmap_.at(key);
@@ -233,9 +256,12 @@ class CacheData
          * \return detail::GenericHolder containing the data for the given key
          */ 
         template<typename T>
-        const detail::GenericHolder<T> * get_or_throw_Cast_(const std::string & key) const
+        const detail::GenericHolder<T> * get_or_throw_cast_(const std::string & key) const
         {
+            // get_or_throw will lock the mutex and then release it when done
             const CacheDataEntry & pme = get_or_throw_(key);
+
+            // this stuff is safe to do with an unlocked mutex
             const detail::GenericHolder<T> * ph = dynamic_cast<const detail::GenericHolder<T> *>(pme.value.get());
             if(ph == nullptr)
                 throw exception::DataStoreException("Bad cast in CacheData", "key", key,
@@ -253,6 +279,8 @@ class CacheData
          */ 
         void set_(const std::string & key, std::unique_ptr<detail::GenericBase> && ptr)
         {
+            std::lock_guard<std::mutex> l(mutex_);
+
             // emplace has strong exception guarantee
             cmap_.emplace(key, CacheDataEntry{std::move(ptr)});
         }

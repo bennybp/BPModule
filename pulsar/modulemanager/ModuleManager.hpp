@@ -24,7 +24,7 @@ namespace modulemanager {
 
 // forward declaration
 class SupermoduleLoaderBase;
-
+class Checkpoint;
 
 
 /*! \brief Handles loading of supermodules and creation of modules
@@ -276,6 +276,7 @@ class ModuleManager
 
 
     private:
+        friend class Checkpoint;
 
         /*! \brief An entry for a module in the database
          */
