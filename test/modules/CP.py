@@ -63,11 +63,9 @@ def Run(mm):
         MyMod=mm.get_module("PSR_CP",0)
 
         NewWfn,Egy=MyMod.deriv(0,wfn)
-        print(Egy)
         tester.test("Testing CP Energy via Deriv(0)", True, CompareEgy, Egy[0])
         NewWfn,Egy=MyMod.energy(wfn)
         tester.test("Testing CP Energy via Energy()", True, CompareEgy, Egy)
-        return()
         NewWfn,Egy=MyMod.deriv(1,wfn)
         tester.test("Testing CP Gradient via Deriv(1)", True, CompareGrad, Egy)
         NewWfn,Egy=MyMod.gradient(wfn)
