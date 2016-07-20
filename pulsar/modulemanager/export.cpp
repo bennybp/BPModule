@@ -8,6 +8,7 @@
 #include <pybind11/functional.h>
 #include <pybind11/operators.h>
 #include "pulsar/modulemanager/ModuleManager.hpp"
+#include "pulsar/modulemanager/Checkpoint.hpp"
 
 using pulsar::modulemanager::detail::ConstModuleTreeIter;
 using pulsar::modulemanager::detail::ConstModuleFlatTreeIter;
@@ -50,7 +51,6 @@ void export_pybind11(pybind11::module & mtop)
     .def_readonly("minfo", &ModuleTreeNode::minfo)
     .def_readonly("output", &ModuleTreeNode::output)
     .def_readonly("id", &ModuleTreeNode::id)
-    .def_readonly("wfns", &ModuleTreeNode::wfns)
     .def_readonly("parentid", &ModuleTreeNode::parentid)
     .def_readonly("children", &ModuleTreeNode::children)
     ;
@@ -92,10 +92,7 @@ void export_pybind11(pybind11::module & mtop)
     .def("load_module_from_minfo", &ModuleManager::load_module_from_minfo)
     .def("enable_debug", &ModuleManager::enable_debug)
     .def("enable_debug_all", &ModuleManager::enable_debug_all)
-    .def("tree_begin", &ModuleManager::tree_begin)
-    .def("tree_end", &ModuleManager::tree_end)
-    .def("flat_tree_begin", &ModuleManager::flat_tree_begin)
-    .def("flat_tree_end", &ModuleManager::flat_tree_end)
+    .def("run_checkpoint", &ModuleManager::run_checkpoint)
     ;
 
 

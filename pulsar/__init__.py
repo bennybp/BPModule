@@ -54,11 +54,13 @@ thispath = os.path.dirname(os.path.realpath(__file__))
 toppath = os.path.realpath(os.path.join(thispath, "../../"))
 
 pulsar_paths = { "base": thispath,
-                 "basis": [ os.path.join(toppath, "basis") ]
+                 "basis": [ os.path.join(toppath, "basis") ],
+                 "shared_scratch": [ "/tmp" ],
+                 "local_scratch": [ "/tmp" ],
                }
 
 
-def initialize(argv, out = "stdout", color = True, debug = False,nthreads=1):
+def initialize(argv, out = "stdout", color = True, debug = False, nthreads=1):
   """Initializes the Pulsar core
 
   Initializes MPI, libraries, etc, as well as the

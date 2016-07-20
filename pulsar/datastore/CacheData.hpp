@@ -16,9 +16,14 @@
 #include "pulsar/datastore/GenericHolder.hpp"
 #include <pybind11/pybind11.h>
 
+namespace pulsar {
+namespace modulemanager {
+class Checkpoint;
+}
+}
 
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 
 
@@ -187,7 +192,7 @@ class CacheData
         {
             using namespace pulsar::output;
 
-            // We lock the mutex here. As such, we cannot call size(), etc. So
+            // We lock the mutex here. As such, we cannot call size(), etc.
             std::lock_guard<std::mutex> l(mutex_);
  
             print_output(os, "Cache data with %? entries\n", cmap_.size());
@@ -199,6 +204,8 @@ class CacheData
 
 
     private:
+        friend class modulemanager::Checkpoint;
+
         ////////////////////////////////
         // Actual storage of the data //
         ////////////////////////////////
@@ -206,14 +213,16 @@ class CacheData
         /*! \brief Mutex protecting this object during multi-threaded access */
         mutable std::mutex mutex_;
 
+        /*! \brief ID to give to the next piece of data coming in */
+        uint64_t curid_ = 0;
+
 
         /*! \brief Stores a pointer to a placeholder, plus some other information
-         * 
-         * May be expanded in the future
          */
         struct CacheDataEntry
         {
-            std::unique_ptr<detail::GenericBase> value;      //! The stored data
+            std::unique_ptr<detail::GenericBase> value;      //!< The stored data
+            uint64_t uid;                                    //!< Unique ID given to the data
         };
 
 
@@ -282,7 +291,8 @@ class CacheData
             std::lock_guard<std::mutex> l(mutex_);
 
             // emplace has strong exception guarantee
-            cmap_.emplace(key, CacheDataEntry{std::move(ptr)});
+            cmap_.emplace(key, CacheDataEntry{std::move(ptr), curid_});
+            curid_++;
         }
 
 

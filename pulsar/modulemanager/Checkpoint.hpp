@@ -24,7 +24,7 @@ class Checkpoint
     public:
         Checkpoint(const std::string & path);
 
-        ~Checkpoint();
+        ~Checkpoint() = default;
 
 
         // no copy construction or assignment
@@ -34,11 +34,12 @@ class Checkpoint
         Checkpoint & operator=(Checkpoint && rhs)      = default;
 
 
+        void save(const ModuleManager & mm);
+
+
     private:
         std::string path_;
 };
-
-
 
 } // close namespace modulemanager
 } // close namespace pulsar

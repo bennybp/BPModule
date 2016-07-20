@@ -9,6 +9,7 @@
 #include "pulsar/modulebase/ModuleBase.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/datastore/Wavefunction.hpp"
+#include "pulsar/modulemanager/Checkpoint.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 
 ////////////////////////
@@ -27,7 +28,7 @@ namespace pulsar{
 namespace modulemanager {
 
 
-static std::string MakeCacheKey(const ModuleInfo & mi)
+static std::string make_cache_key(const ModuleInfo & mi)
 {
     return mi.name + "_v" + mi.version;
 }
@@ -40,18 +41,26 @@ ModuleManager::ModuleManager()
     // add the handlers
     loadhandlers_.emplace("c_module", std::unique_ptr<SupermoduleLoaderBase>(new CppSupermoduleLoader()));
     loadhandlers_.emplace("python_module", std::unique_ptr<SupermoduleLoaderBase>(new PySupermoduleLoader()));
+
+    //! \todo pass in via ModuleAdministrator or something
+    scratch_path_ = "/tmp";
 }
 
 
 ModuleManager::~ModuleManager()
 {
+    // wait for any checkpointing operations to finish
+    if(checkpoint_thread_)
+    {
+        print_global_warning("Waiting for any checkpoint threads to finish\n");
+        checkpoint_thread_->join();
+        checkpoint_thread_.reset();
+    }
+
     /*
      * Warn of any in-use modules
      */
-    size_t ninuse = 0;
-    for(auto it = mtree_.flat_begin(); it != mtree_.flat_end(); ++it)
-        ninuse += (it->inuse ? 1 : 0);
-                        
+    size_t ninuse = modules_inuse_.size();;
     if(ninuse)
         print_global_warning("ModuleManager is destructing with %? modules in use\n", ninuse);
     else
@@ -83,50 +92,63 @@ ModuleManager::~ModuleManager()
 
 size_t ModuleManager::size(void) const noexcept
 {
+    std::lock_guard<std::mutex> l(mutex_);
     return store_.size();
 }
 
 
 bool ModuleManager::has_key(const std::string & modulekey) const
 {
+    std::lock_guard<std::mutex> l(mutex_);
     return store_.count(modulekey);
 }
 
 
 ModuleInfo ModuleManager::module_key_info(const std::string & modulekey) const
 {
-    return get_or_throw_(modulekey).mi;
+    auto & se = get_or_throw_(modulekey);
+
+    std::lock_guard<std::mutex> l(se.semutex);
+    return se.mi;
 }
 
 
 void ModuleManager::duplicate_key(const std::string & modulekey, const std::string newkey)
 {
-    if(has_key(newkey))
+    std::lock_guard<std::mutex> l(mutex_);
+    if(!store_.count(newkey))
         throw ModuleLoadException("Cannot duplicate key: new key already exists",
                                   "modulekey", modulekey, "newkey", newkey);
 
     // copy
-    StoreEntry se = get_or_throw_(modulekey);
+    StoreEntry se = store_.at(modulekey);
 
-    // set the number of times this key has been called
+    // reset the number of times this key has been called
     se.ncalled = 0;
 
+    // move the copy to the new key
     store_.emplace(newkey, std::move(se));
 }
 
-std::string ModuleManager::generate_unique_key() const{
+std::string ModuleManager::generate_unique_key() const
+{
+    //! \todo still not guarenteed in multi-threaded contexts
+    std::lock_guard<std::mutex> l(mutex_);
     std::random_device r;
     std::default_random_engine e(r());
     std::uniform_int_distribution<int> dist;
     std::stringstream ss;
-    do{
-        ss<<dist(e);
-    }while(has_key(ss.str()));
+
+    do {
+        ss << dist(e);
+    } while(store_.count(ss.str()));
+
     return ss.str();
 }
 
 void ModuleManager::print(std::ostream & os) const
 {
+    std::lock_guard<std::mutex> l(mutex_);
     for(const auto & it : store_)
         it.second.mi.print(os);
 }
@@ -172,7 +194,8 @@ void ModuleManager::test_all(void)
 
 ModuleManager::StoreEntry & ModuleManager::get_or_throw_(const std::string & modulekey)
 {
-    if(has_key(modulekey))
+    std::lock_guard<std::mutex> l(mutex_);
+    if(store_.count(modulekey))
         return store_.at(modulekey);
     else
         throw ModuleManagerException("Missing module key in ModuleManager", "modulekey", modulekey);
@@ -181,7 +204,8 @@ ModuleManager::StoreEntry & ModuleManager::get_or_throw_(const std::string & mod
 
 const ModuleManager::StoreEntry & ModuleManager::get_or_throw_(const std::string & modulekey) const
 {
-    if(has_key(modulekey))
+    std::lock_guard<std::mutex> l(mutex_);
+    if(store_.count(modulekey))
         return store_.at(modulekey);
     else
         throw ModuleManagerException("Missing module key in ModuleManager", "modulekey", modulekey);
@@ -190,6 +214,7 @@ const ModuleManager::StoreEntry & ModuleManager::get_or_throw_(const std::string
 
 void ModuleManager::enable_debug(const std::string & modulekey, bool debug)
 {
+    std::lock_guard<std::mutex> l(mutex_);
     if(debug)
         keydebug_.insert(modulekey);
     else
@@ -199,28 +224,8 @@ void ModuleManager::enable_debug(const std::string & modulekey, bool debug)
 
 void ModuleManager::enable_debug_all(bool debug) noexcept
 {
+    // mutex lock isn't needed - debugall is std::atomic<bool>
     debugall_ = debug;
-}
-
-
-ModuleTree::const_iterator ModuleManager::tree_begin(ID_t startid) const
-{
-    return mtree_.begin(startid);
-}
-
-ModuleTree::const_iterator ModuleManager::tree_end(void) const
-{
-    return mtree_.end();
-}
-
-ModuleTree::const_flat_iterator ModuleManager::flat_tree_begin(void) const
-{
-    return mtree_.flat_begin();
-}
-
-ModuleTree::const_flat_iterator ModuleManager::flat_tree_end(void) const
-{
-    return mtree_.flat_end();
 }
 
 
@@ -229,6 +234,8 @@ ModuleTree::const_flat_iterator ModuleManager::flat_tree_end(void) const
 /////////////////////////////////////////
 void ModuleManager::load_module_from_minfo(const ModuleInfo & minfo, const std::string & modulekey)
 {
+    //! \todo document as not thread safe
+
     // path set in the module info?
     if(minfo.path.size() == 0)
         throw ModuleLoadException("Cannot load module: Empty path",
@@ -253,36 +260,56 @@ void ModuleManager::load_module_from_minfo(const ModuleInfo & minfo, const std::
         throw ModuleLoadException("Creators from this supermodule cannot create a module with this name",
                                   "path", minfo.path, "modulename", minfo.name);
 
+
     // add to store with the given module name
     // Arguments: module info, creator, ncalled
-    store_.emplace(modulekey, StoreEntry{minfo, mcf.get_creator(minfo.name), 0});
+    StoreEntry se;
+    se.mi = minfo;
+    se.mc = mcf.get_creator(minfo.name);
+    se.ncalled = 0;
+    store_.emplace(modulekey, std::move(se));
+}
+
+
+void ModuleManager::notify_destruction(ID_t id)
+{
+    modules_inuse_.erase(id);
 }
 
 
 bool ModuleManager::module_in_use(ID_t id) const
 {
-    if(!mtree_.has_id(id))
-        return false;
-    else
-        return mtree_.get_by_id(id).inuse;
+    std::lock_guard<std::mutex> l(mutex_);
+    return(modules_inuse_.count(id));
 }
+
 
 
 /////////////////////////////////////////
 // Module Creation
 /////////////////////////////////////////
 std::unique_ptr<detail::ModuleIMPLHolder>
-ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
+ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
 {
     // obtain the information for this key
+    // (will lock & release mutex)
     StoreEntry & se = get_or_throw_(modulekey);
+
+    // lock everything for the duration of this function
+    // it might be possible to split it, but we will see if this causes
+    // problems (I'm expecting it won't)
+    std::lock_guard<std::mutex> l(se.semutex);
+    std::lock_guard<std::mutex> l2(mutex_);
+
+
+    if(parentid != 0 && !mtree_.has_id(parentid))
+        throw exception::ModuleCreateException("Parent does not exist on map", "parentid", parentid);
+
 
     // obtain the options and validate them.
     // Throw an exception if they are invalid (and not in expert mode)
     // NOTE - we do this first so that we don't create a module
     // if the options are bad (and an exception is thrown)
-    ModuleInfo mi(se.mi);
-
     OptionMapIssues iss = se.mi.options.get_issues();
     if(!iss.ok())
     {
@@ -307,8 +334,6 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
                       se.mi,          // module info
                       std::string(),  // output
                       curid_,         // module id
-                      {},             // wavefunctions
-                      true            // module is in use
                      };
 
     // actually create the module
@@ -333,14 +358,11 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
                                                "modulename", se.mi.name);
 
 
-    // If there is a parent, get its wavefunction and use that
-    if(parentid != 0 && !mtree_.has_id(parentid))
-        throw exception::ModuleCreateException("Parent does not exist on map", "parentid", parentid);
-
     // move the data to the tree
+    mtree_.insert(std::move(me), parentid);
+
     // "me" should not be accessed after this, so
     // we load a reference to it
-    mtree_.insert(std::move(me), parentid);
     ModuleTreeNode & mtn = mtree_.get_by_id(curid_);
 
 
@@ -355,10 +377,12 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
     if(debugall_ || keydebug_.count(modulekey))
         p->enable_debug(true);
 
+    // Mark the id as in use
+    modules_inuse_.emplace(curid_);
 
     // get this module's cache
     // don't use .at() -- we need it created if it doesn't exist already
-    std::string mbstr = MakeCacheKey(mtn.minfo);
+    std::string mbstr = make_cache_key(mtn.minfo);
     p->set_cache_(&(cachemap_[mbstr]));
 
     // next id
@@ -379,7 +403,8 @@ ModuleManager::CreateModule_(const std::string & modulekey, ID_t parentid)
 pybind11::object ModuleManager::get_module_py(const std::string & modulekey,
                                             ID_t parentid)
 {
-    std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(modulekey, parentid);
+    // mutex locking handled in create_module_
+    std::unique_ptr<detail::ModuleIMPLHolder> umbptr = create_module_(modulekey, parentid);
 
     // we use a pointer so that the python object
     // can take ownership and we can avoid having
@@ -391,6 +416,8 @@ pybind11::object ModuleManager::get_module_py(const std::string & modulekey,
 void ModuleManager::change_option_py(const std::string & modulekey, const std::string & optkey, const pybind11::object & value)
 {
     StoreEntry & se = get_or_throw_(modulekey);
+
+    std::lock_guard<std::mutex> l(se.semutex);
     if(se.ncalled != 0)
         throw ModuleManagerException("Attempting to change options for a previously-used module key", "modulekey", modulekey, "optkey", optkey);
 
@@ -403,6 +430,41 @@ void ModuleManager::change_option_py(const std::string & modulekey, const std::s
         throw;
     }
 }
+
+
+////////////////////
+// Checkpointing
+////////////////////
+
+static void checkpoint_thread_function_(const ModuleManager & mm, std::string path)
+{
+    Checkpoint cp(path);
+    cp.save(mm); 
+}
+
+void ModuleManager::run_checkpoint(bool separate_thread) const
+{
+    // wait for any existing checkpointing operations to finish
+    if(checkpoint_thread_)
+    {
+        print_global_warning("Waiting for existing checkpoint thread to finish\n");
+        checkpoint_thread_->join();
+        checkpoint_thread_.reset();
+    }
+
+    // always create another thread (because I'm lazy)
+    std::thread th(checkpoint_thread_function_, std::ref(*this), scratch_path_);
+    checkpoint_thread_ = std::unique_ptr<std::thread>(new std::thread(std::move(th)));
+
+    // if we don't want a separate thread, just join and wait for the
+    // new thread to finish
+    if(!separate_thread)
+    {
+        checkpoint_thread_->join();
+        checkpoint_thread_.reset();
+    }
+}
+
 
 
 } // close namespace modulemanager

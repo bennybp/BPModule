@@ -9,6 +9,7 @@
 #define PULSAR_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
 
 #include <atomic>
+#include <thread>
 
 #include "pulsar/datastore/CacheData.hpp"
 #include "pulsar/exception/Exceptions.hpp"
@@ -86,6 +87,7 @@ class ModuleManager
          *
          * \exbasic
          * \todo make strong?
+         * \todo not threadsafe - shouldn't be
          */
         void test_all(void);
 
@@ -119,8 +121,9 @@ class ModuleManager
         template<typename T>
         ModulePtr<T> get_module(const std::string & modulekey, ID_t parentid)
         {
+            // mutex locking handled create_module_
             // may throw
-            std::unique_ptr<detail::ModuleIMPLHolder> umbptr = CreateModule_(modulekey, parentid);
+            std::unique_ptr<detail::ModuleIMPLHolder> umbptr = create_module_(modulekey, parentid);
 
             if(!umbptr->IsType<T>())
                 throw exception::ModuleCreateException("Module for this key is not of the right type",
@@ -180,6 +183,9 @@ class ModuleManager
             using namespace exception;
 
             StoreEntry & se = get_or_throw_(modulekey);
+
+            std::lock_guard<std::mutex> l(se.semutex);
+
             if(se.ncalled != 0)
                 throw ModuleManagerException("Attempting to change options for a previously-used module key",
                                              "modulekey", modulekey, "optkey", optkey);
@@ -263,28 +269,41 @@ class ModuleManager
          */
         void enable_debug_all(bool debug) noexcept;
 
+        /*! \brief Notify the module manager that a module ID is no longer in use */
+        void notify_destruction(ID_t id);
 
-        /*! \brief begin iterating over the module tree
-         */
-        ModuleTree::const_iterator tree_begin(ID_t startid) const;
-
-        ModuleTree::const_iterator tree_end(void) const;
-
-        ModuleTree::const_flat_iterator flat_tree_begin(void) const;
-
-        ModuleTree::const_flat_iterator flat_tree_end(void) const;
+        /*! \brief Runs a checkpoint operation on this module manager */
+        void run_checkpoint(bool separate_thread) const;
 
 
     private:
         friend class Checkpoint;
 
+        //! Protects the class in multi-thread operations
+        mutable std::mutex mutex_;
+
+        //! Threads currently running checkpointing operations
+        mutable std::unique_ptr<std::thread> checkpoint_thread_;
+
+        //! My scratch path (for checkpointing, etc)
+        std::string scratch_path_;
+
         /*! \brief An entry for a module in the database
          */
         struct StoreEntry
         {
-            ModuleInfo mi;             //!< Information for this module
+            ModuleInfo mi;                //!< Information for this module
             ModuleCreationFuncs::Func mc; //!< Function to create this module
-            unsigned int ncalled; //!< Number of times this key has been used for creation
+            unsigned int ncalled;         //!< Number of times this key has been used for creation
+            mutable std::mutex semutex;   //!< Mutex for this module's information
+
+            StoreEntry() = default;
+            StoreEntry(StoreEntry &&) = default;
+
+            // we need a custom copy constructore due to the std::mutex
+            StoreEntry(const StoreEntry & rhs)
+                : mi(rhs.mi), mc(rhs.mc), ncalled(rhs.ncalled)
+            { }
         };
 
 
@@ -303,7 +322,7 @@ class ModuleManager
 
 
         /*! \brief Debug for all? */
-        bool debugall_;
+        std::atomic<bool> debugall_;
 
 
         /*! \brief Tree for storing created module information
@@ -359,8 +378,7 @@ class ModuleManager
          *
          */
         std::unique_ptr<detail::ModuleIMPLHolder>
-        CreateModule_(const std::string & modulekey, ID_t parentid);
-
+        create_module_(const std::string & modulekey, ID_t parentid);
 };
 
 

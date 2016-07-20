@@ -5,6 +5,7 @@ set(PULSAR_UTIL_FILES
             StringUtil.cpp 
             Mangle.cpp
             Filesystem.cpp
+            Time.cpp
             export.cpp
 
             vprintfcpp/Format.cpp
