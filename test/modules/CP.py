@@ -9,8 +9,6 @@ from MiscFxns import *
 from StandardModules import *
 import pulsar_psi4
 
-
-
 def ApplyBasis(syst,bsname,bslabel="primary"):
     return psr.system.apply_single_basis(bslabel,bsname,syst)
 

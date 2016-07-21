@@ -34,7 +34,7 @@ base_options = {
                           'will be sampled) for the finite difference computation.'),
     #RMR This only makes sense for iterative methods and a priori it is not clear
     #to me that most methods are iterative
-    "E_TOLERANCE"     :  (OptionType.Float, 1.0e-8, False, GreaterThan(0),
+    "EGY_TOLERANCE"     :  (OptionType.Float, 1.0e-8, False, GreaterThan(0),
                           'Tolerance for energy convergence'),
   }
 }
