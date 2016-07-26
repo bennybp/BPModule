@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <cstdlib>
-//#include <LibTaskForce/LibTaskForce.hpp>
+#include <LibTaskForce/LibTaskForce.hpp>
 
 namespace pulsar{
 namespace math{
@@ -44,9 +44,8 @@ struct FDiffVisitor{
     virtual VarType operator()(size_t i)const=0;
     
     ///Return Old+H*Shift
-    virtual VarType operator()(const VarType& Old,
-                             const VarType& H,
-                             double Shift)const{
+    virtual VarType operator()(const VarType& Old,const VarType& H,double Shift)const
+    {
         return Old+H*Shift;
     }
     
@@ -54,16 +53,16 @@ struct FDiffVisitor{
     virtual ResultType operator()(size_t i, const VarType& NewVar)const=0;
     
     ///Instructs you to scale Result by coef (Result has been initialized)
-    void operator()(ResultType& Result,double Coef)const{
+    void operator()(ResultType& Result,double Coef)const
+    {
         for(auto & i :Result)i*=Coef;
     }
     
     ///Instructs you to set the i-th element of Result to Element/H
     ///(Result may not have been initialized)
-    void operator()(ResultType& Result,
-                  ResultType& Element,
-                  size_t,
-                  const VarType& H)const{
+    void operator()(ResultType& Result,ResultType& Element,
+                  size_t,const VarType& H)const
+    {
         if(Result.size()==0){
             for(size_t i=0;i<Element.size();++i)
                 Result.push_back(Element[i]/H);
@@ -118,7 +117,7 @@ template<typename VarType,typename ResultType=VarType>
 class FiniteDiff{
    private:
       //The communicator in charge of this FDiff
-      //LibTaskForce::communicator& Comm_;
+      LibTaskForce::HybridComm& Comm_;
       typedef FiniteDiff<VarType,ResultType> My_t;
    protected:
       ///Function to generate the coefs, minor tweaks for backwards and central
@@ -147,7 +146,7 @@ class FiniteDiff{
       My_t operator=(const My_t&)=delete;
       
       ///Communicator on which to run the tasks
-      FiniteDiff(/*LibTaskForce::Communicator& Comm):Comm_(Comm*/){}
+      FiniteDiff(LibTaskForce::HybridComm& Comm):Comm_(Comm){}
       
       /** \brief Computes the actual finite difference
        * 
@@ -186,7 +185,7 @@ class ForwardDiff: public FiniteDiff<VarType,ReturnType>{
       ///Just casts to double 
       double Shift(size_t I,size_t)const{return static_cast<double>(I);}
    public:
-       ForwardDiff(/*LibTaskForce::communicator& Comm):Base_t(Comm*/){}
+       ForwardDiff(LibTaskForce::HybridComm& Comm):Base_t(Comm){}
 };
 
 /** \brief The backward difference
@@ -219,7 +218,7 @@ class BackwardDiff: public FiniteDiff<VarType,ReturnType>{
           return temp;
       }
    public:
-      BackwardDiff(/*LibTaskForce::communicator& Comm):Base_t(Comm*/){}
+      BackwardDiff(LibTaskForce::HybridComm& Comm):Base_t(Comm){}
 
 };
 
@@ -257,7 +256,7 @@ class CentralDiff:public FiniteDiff<VarType,ReturnType>{
       }
 
    public:
-       CentralDiff(/*LibTaskForce::communicator& Comm):Base_t(Comm*/){}
+       CentralDiff(LibTaskForce::HybridComm& Comm):Base_t(Comm){}
 };
 
 
@@ -276,38 +275,41 @@ std::vector<ResultType> FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
         private:
             Fxn_t& Fxn_;
             double Coef_;
+            VarType Coord_;
+            size_t i_;
         public:
-            FDWrapper(Fxn_t& Fxn,double Coef):Fxn_(Fxn),Coef_(Coef){}
-            ResultType operator()(VarType Coord,size_t i){
+            FDWrapper(Fxn_t& Fxn,double Coef,VarType Coord, size_t i):
+               Fxn_(Fxn),Coef_(Coef),Coord_(Coord),i_(i){}
+            ResultType operator()(const LibTaskForce::HybridComm&)const{
                 //Have it compute the fxn's value at the new point
-                ResultType result=Fxn_(i,Coord);
+                ResultType result=Fxn_(i_,Coord_);
                 //Have it scale the result
                 Fxn_(result,Coef_);
                 return result;
             }
     };
     //Will store our derivatives
-    std::vector<ResultType> Deriv_;
+    std::vector<LibTaskForce::HybridFuture<ResultType>> Derivs;
     //Complete loop before assigning results
     for(size_t i=0;i<NVars;++i){//Loop over variables
         VarType Old=Fxn2Run(i);
         for(size_t j=0;j<NCalcs(NPoints);++j){//Loop over calcs per variable
-            Deriv_.push_back(
-               //Comm_.AddTask(
-                   FDWrapper(Fxn2Run,Coefs[j])(
-                   Fxn2Run(Old,H,Shift(j,NPoints)),i
-                   )
-               //)
+            Derivs.push_back(
+               Comm_.add_task<ResultType>(
+                   FDWrapper(Fxn2Run,Coefs[j],
+                     Fxn2Run(Old,H,Shift(j,NPoints)),i)                   
+               )
             );
         }
     }
     
     std::vector<ResultType> Result(NVars);
-    //Deriv_.Synch();
     //Will deref the futures now, in order we added them
     for(size_t i=0;i<NVars;++i)
-        for(size_t j=0;j<NCalcs(NPoints);++j)
-            Fxn2Run(Result[i],Deriv_[i*NCalcs(NPoints)+j],i,H);
+        for(size_t j=0;j<NCalcs(NPoints);++j){
+            ResultType DerivI=Derivs[i*NCalcs(NPoints)+j].get();
+            Fxn2Run(Result[i],DerivI,i,H);
+        }
     return Result;
 }
 

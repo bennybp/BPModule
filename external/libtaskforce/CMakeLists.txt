@@ -4,9 +4,9 @@
 ################################################################################
 include(ExternalProject)
 
-find_package(LIBTASKFORCE QUIET)
+find_package(libtaskforce)
 
-if(NOT LIBTASKFORCE_FOUND)
+if(NOT libtaskforce_FOUND)
    message(STATUS "We will build libtaskforce for you")
 ExternalProject_Add(libtaskforce_external
    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libtaskforce-source

@@ -22,6 +22,7 @@
     - [Understanding the Graph and the Cache](@ref graphcache)
     - [Understanding Shared Libraries](@ref shared)
     - [Using and Setting Options](@ref Options)
+    - [Printing Things Out](@ref printing)
 
 
 \section Authors

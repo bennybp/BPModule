@@ -41,6 +41,7 @@ def Run(mm):
         mm.change_option("PSI4_SCF","BASIS_SET","sto-3g")
         mm.change_option("PSR_CP","METHOD","PSI4_SCF")
         mm.change_option("PSR_MBE","METHOD","PSI4_SCF")
+        mm.change_option("PSI4_SCF","PRINT",0)
 
         mol=psr.system.make_system("""
         0 1
