@@ -105,7 +105,12 @@ bool OptionMap::has_key(const std::string & key) const
     return opmap_.count(key);
 }
 
-
+std::vector<std::string> OptionMap::get_keys()const
+{
+    std::vector<std::string> keys;
+    for(const auto &key_i: opmap_)keys.push_back(key_i.first);
+    return keys;
+}
 
 size_t OptionMap::size(void) const noexcept
 {

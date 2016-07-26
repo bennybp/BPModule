@@ -114,7 +114,8 @@ class OptionMap
          */
         bool has_key(const std::string & key) const;
 
-
+        /* Returns a vector of all keys known to the map*/
+        std::vector<std::string> get_keys()const;
 
         /*! \brief Return the number of elements contained in this object
          *

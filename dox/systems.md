@@ -17,7 +17,7 @@ basis functions, equivalence of two atoms requires they have equivalent basis
 sets, etc.).  Although this is non-standard, I think once you start using it
 you'll realize this simplifies things quite a bit.
 
-Another slightly odd thing about our system class is it's set like nature.
+Another slightly odd thing about our system class is its set like nature.
 Many system manipulations can be thought of as set operations.  For example
 combining two molecules requires taking the union, list of all elements common
 to two molecules is an intersection, atoms present in one, but not the other is
@@ -52,19 +52,17 @@ ghost atoms.  More on that later.  For the time being note it is as simple as
 
 ~~~{.cpp} 
 pulsar::system::AtomSetUniverse MyNewUniverse;
-MyNewUniverse.insert(pulsar::system::CreateAtom(0,{x,y,z},Z)); 
+MyNewUniverse.insert(pulsar::system::CreateAtom({x,y,z},Z)); 
 ~~~
 
 or in Python:
 
 ~~~{.py} 
 MyNewUniverse=pulsar.system.AtomSetUniverse()
-MyNewUniverse.insert(pulsar.system.CreateAtom(0,[x,y,z],Z)) 
+MyNewUniverse.insert(pulsar.system.CreateAtom([x,y,z],Z)) 
 ~~~
 
-In either case we are creating an atom with index 0 (the ability to specify
-indices will likely go away in the future and instead will be done automatically
-for you), the given Cartesian coordinates (should be in a.u.), and an 
+In either case we are creating an atom with the given Cartesian coordinates (should be in a.u.), and an 
 atomic number of Z.  One
 continues to add atoms in this fashion until all desired atoms are in the 
 Universe. Next, we make a system that is associated with that universe in (C++):
@@ -81,4 +79,4 @@ MyNewSystem=pulsar.system.System(MyNewUniverse,True)
 
 in both cases the true argument tells our system to go ahead and populate the
 system with all the atoms in the universe.  If we had used false instead then
-our system would have no atoms yet.  Once we have a system we can now a   
+our system would have no atoms yet.

@@ -9,8 +9,6 @@ from MiscFxns import *
 from StandardModules import *
 import pulsar_psi4
 
-
-
 def ApplyBasis(syst,bsname,bslabel="primary"):
     return psr.system.apply_single_basis(bslabel,bsname,syst)
 
@@ -40,9 +38,10 @@ def Run(mm):
         tester.print_header()
         pulsar_psi4.pulsar_psi4_setup(mm)
         LoadDefaultModules(mm)
-        mm.change_option("PSI4_SCF","BASIS_KEY","sto-3g")
+        mm.change_option("PSI4_SCF","BASIS_SET","sto-3g")
         mm.change_option("PSR_CP","METHOD","PSI4_SCF")
         mm.change_option("PSR_MBE","METHOD","PSI4_SCF")
+        mm.change_option("PSI4_SCF","PRINT",0)
 
         mol=psr.system.make_system("""
         0 1
@@ -63,9 +62,7 @@ def Run(mm):
         MyMod=mm.get_module("PSR_CP",0)
 
         NewWfn,Egy=MyMod.deriv(0,wfn)
-        print(Egy)
         tester.test("Testing CP Energy via Deriv(0)", True, CompareEgy, Egy[0])
-        return()
         NewWfn,Egy=MyMod.energy(wfn)
         tester.test("Testing CP Energy via Energy()", True, CompareEgy, Egy)
         NewWfn,Egy=MyMod.deriv(1,wfn)

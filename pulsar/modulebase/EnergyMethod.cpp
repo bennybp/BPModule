@@ -20,7 +20,7 @@ using pulsar::system::Atom;
 using pulsar::system::System;
 using pulsar::datastore::Wavefunction;
 using pulsar::system::AtomSetUniverse;
-//using LibTaskForce::Communicator;
+using LibTaskForce::HybridComm;
 using pulsar::exception::GeneralException;
 
 typedef vector<Atom> AtomV_t;
@@ -85,12 +85,12 @@ EnergyMethod::finite_difference_(size_t Order, const datastore::Wavefunction & W
     vector<Atom> Atoms;
     vector<Return_t> TempDeriv;
     //I don't know why the fill constructor is not working...
-    for(const Atom& AnAtom: Mol)
-          Atoms.push_back(AnAtom);
-    //const Communicator& Comm=parallel::GetEnv().Comm();
-    //Communicator NewComm=Comm.Split(Comm.NThreads(),1);
+    for(const Atom& AnAtom: Mol)Atoms.push_back(AnAtom);
+    
+    const HybridComm& Comm=parallel::get_env().comm();
+    std::unique_ptr<HybridComm> NewComm=Comm.split(Comm.nprocs(),1);
 
-    math::CentralDiff<double,Return_t> FD/*(*NewComm)*/;
+    math::CentralDiff<double,Return_t> FD(*NewComm);
 
     FDFunctor Thing2Run=FDFunctor(Order,Atoms,module_manager(),Wfn,key(),id());
     TempDeriv=FD.Run(Thing2Run,3*Mol.size(),
@@ -100,8 +100,7 @@ EnergyMethod::finite_difference_(size_t Order, const datastore::Wavefunction & W
     for(size_t i=1;i<TempDeriv.size();++i)
        for(double j :  TempDeriv[i])
            TempDeriv[0].push_back(j);
-
-    //! \todo what wfn to return
+    
     EnergyMethod::DerivReturnType CWfn=
             create_child<EnergyMethod>(key())->deriv(Order-1,Wfn);
     return {CWfn.first, TempDeriv[0]};

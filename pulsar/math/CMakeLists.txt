@@ -5,6 +5,6 @@ set(PULSAR_MATH_FILES
             FiniteDiff.cpp
             export.cpp
             testing_export.cpp
-
+            Irrep.cpp
             PARENT_SCOPE
    )
