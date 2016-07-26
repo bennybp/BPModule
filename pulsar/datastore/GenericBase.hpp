@@ -8,6 +8,8 @@
 #ifndef PULSAR_GUARD_DATASTORE__GENERICBASE_HPP_
 #define PULSAR_GUARD_DATASTORE__GENERICBASE_HPP_
 
+#include "pulsar/util/Serialization_fwd.hpp"
+
 #include <memory>
 
 namespace pulsar{
@@ -44,17 +46,6 @@ class GenericBase
         virtual const char * type(void) const noexcept = 0;
 
 
-
-        /*! \brief Returns the std::type_info for the stored object
-         *
-         * \exnothrow
-         *
-         * \return A std::type_info structure representing the stored type
-         */
-        virtual const std::type_info & type_info(void) const noexcept = 0;
-
-
-
         /*! \brief Returns a string representing the demangled type of the stored object
          *
          * For a C++ object, will return the demangled C++ type. For a python
@@ -70,24 +61,8 @@ class GenericBase
         virtual bool is_serializable(void) const = 0;
 
 
-
-        ///////////////////////////////////
-        // Base functions
-        ///////////////////////////////////
-        /*! \brief Determines if the contained type matches a given type
-         *
-         * \exnothrow
-         *
-         * \tparam U The type to compare to
-         *
-         * \return True if the contained object is of type U, false otherwise
-         */ 
-        template<typename U>
-        bool is_type(void) const noexcept
-        {
-            return typeid(U) == type_info();
-        }
-
+        /*! \brief Serialize the data as a byte array */
+        virtual ByteArray to_byte_array(void) const = 0;
 };
 
 

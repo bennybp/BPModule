@@ -10,7 +10,12 @@
 
 #include <string>
 
-namespace pulsar{
+namespace pulsar {
+
+namespace datastore {
+class CacheData;
+}
+
 namespace modulemanager {
 
 
@@ -39,6 +44,8 @@ class Checkpoint
 
     private:
         std::string path_;
+
+        void save_module_cache_(const datastore::CacheData & cd);
 };
 
 } // close namespace modulemanager

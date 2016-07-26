@@ -84,6 +84,32 @@ std::unique_ptr<T> new_from_byte_array(const ByteArray & arr)
 
 
 
+template<typename T>
+struct SerializeCheck 
+   : public std::integral_constant<bool, cereal::traits::is_output_serializable<T, cereal::BinaryOutputArchive>::value &&
+                                         cereal::traits::is_input_serializable<T, cereal::BinaryInputArchive>::value >
+{ };
+
+
+template<typename T>
+struct SerializeCheck<std::shared_ptr<T>> : public SerializeCheck<T> { };
+
+template<typename T>
+struct SerializeCheck<std::unique_ptr<T>> : public SerializeCheck<T> { };
+
+template<typename T>
+struct SerializeCheck<std::vector<T>> : public SerializeCheck<T> { };
+
+template<typename T>
+struct SerializeCheck<std::set<T>> : public SerializeCheck<T> { };
+
+template<typename T, typename V>
+struct SerializeCheck<std::map<T, V>> : public std::integral_constant<bool, SerializeCheck<T>::value &&
+                                                                             SerializeCheck<V>::value> { };
+
+
+
+
 } // close namespace util
 } // close namespace pulsar
 

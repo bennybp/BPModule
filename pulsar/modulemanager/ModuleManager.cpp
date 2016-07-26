@@ -28,7 +28,7 @@ namespace pulsar{
 namespace modulemanager {
 
 
-static std::string make_cache_key(const ModuleInfo & mi)
+std::string ModuleManager::make_cache_key_(const ModuleInfo & mi)
 {
     return mi.name + "_v" + mi.version;
 }
@@ -382,7 +382,7 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
 
     // get this module's cache
     // don't use .at() -- we need it created if it doesn't exist already
-    std::string mbstr = make_cache_key(mtn.minfo);
+    std::string mbstr = make_cache_key_(mtn.minfo);
     p->set_cache_(&(cachemap_[mbstr]));
 
     // next id

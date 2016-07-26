@@ -379,6 +379,10 @@ class ModuleManager
          */
         std::unique_ptr<detail::ModuleIMPLHolder>
         create_module_(const std::string & modulekey, ID_t parentid);
+
+
+        /*! \brief Create a key for the cache given a ModuleInfo */
+        static std::string make_cache_key_(const ModuleInfo & mi);
 };
 
 

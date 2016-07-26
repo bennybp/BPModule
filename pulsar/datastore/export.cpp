@@ -109,23 +109,31 @@ void export_pybind11(pybind11::module & mtop)
     // CacheData
     // Can just store python object
     ////////////////////////////////////////
-    pybind11::class_<CacheData>(m, "CacheData")
-    .def("size", &CacheData::size)
-    .def("get_keys", &CacheData::get_keys)
-    .def("erase", &CacheData::erase)
-    .def("print", &CacheData::print)
-    .def("count", &CacheData::count,
+    pybind11::class_<CacheData> cd(m, "CacheData");
+    cd.def("size", &CacheData::size)
+      .def("get_keys", &CacheData::get_keys)
+      .def("erase", &CacheData::erase)
+      .def("print", &CacheData::print)
+      .def("count", &CacheData::count,
                    "See if the cache has some data",
                    pybind11::arg("key"))
-    .def("get", &CacheData::get_py, 
-                "Get reference", pybind11::return_value_policy::reference_internal,
-                pybind11::arg("key"))
-    .def("set", &CacheData::set_py, 
-                "Set data",
-                pybind11::arg("key"), 
-                pybind11::arg("obj"))
+      .def("get", &CacheData::get_py, 
+                  "Get reference", pybind11::return_value_policy::reference_internal,
+                  pybind11::arg("key"))
+      .def("set", &CacheData::set_py, 
+                  "Set data",
+                  pybind11::arg("key"), 
+                  pybind11::arg("obj"),
+                  pybind11::arg("policy"))
     ;
 
+
+    pybind11::enum_<CacheData::CachePolicy>(cd, "CachePolicy")
+    .value("NoCheckpoint", CacheData::NoCheckpoint)
+    .value("CheckpointLocal", CacheData::CheckpointLocal)
+    .value("CheckpointGlobal", CacheData::CheckpointGlobal)
+    .export_values()
+    ;
 
     // Export the testing stuff
     export_testing(m);
