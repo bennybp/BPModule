@@ -55,6 +55,10 @@ class Tester:
         
         self.ntest += 1
 
-    def test_value(self, desc, v1, v2):
-        self.test(desc, True, lambda w1, w2: w1 == w2, v1, v2)
+    def test_value(self, desc, v1, v2, Tol=0.00001):
+        if type(v1)==float or type(v2)==float:
+            self.test(desc,True,lambda w1, w2: abs(w1-w2)<Tol,v1,v2)
+        else:
+           self.test(desc, True, lambda w1, w2: w1 == w2, v1, v2)
+    
          

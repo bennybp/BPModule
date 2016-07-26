@@ -14,7 +14,7 @@
 
 // This is needed for the member data of
 // the wavefunction struct
-PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
+PYBIND11_DECLARE_HOLDER_TYPE(_T_,std::shared_ptr<_T_>);
 
 using pulsar::system::System;
 using pulsar::datastore::Wavefunction;
@@ -70,6 +70,7 @@ void export_pybind11(pybind11::module & mtop)
     .def(pybind11::init<>())
     .def("has", &OptionMap::has)
     .def("has_key", &OptionMap::has_key)
+    .def("get_keys",&OptionMap::get_keys)
     .def("size", &OptionMap::size)
     .def("is_default", &OptionMap::is_default)
     .def("is_set", &OptionMap::is_set)

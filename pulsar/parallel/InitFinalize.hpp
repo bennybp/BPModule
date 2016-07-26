@@ -9,18 +9,16 @@
 #define PULSAR_GUARD_PARALLEL__INITFINALIZE_HPP_
 
 #include <cstddef> //For size_t
+#include <LibTaskForce/LibTaskForce.hpp>
 
 //! \todo We need to store multiple communicators, etc
 
-namespace LibTaskForce{
-    class Environment;
-}
 
 namespace pulsar{
 namespace parallel {
 
 //Returns the current environment
-//const LibTaskForce::Environment& GetEnv();    
+const LibTaskForce::HybridEnv& get_env();    
     
 /*! \brief Initialize the parallelization functionality
  *
