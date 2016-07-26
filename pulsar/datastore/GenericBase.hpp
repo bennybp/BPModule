@@ -66,6 +66,11 @@ class GenericBase
 
 
 
+        /*! \brief Check if the data stored in this object is serializable */
+        virtual bool is_serializable(void) const = 0;
+
+
+
         ///////////////////////////////////
         // Base functions
         ///////////////////////////////////

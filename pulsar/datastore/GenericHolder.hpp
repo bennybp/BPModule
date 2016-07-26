@@ -11,19 +11,26 @@
 #include "pulsar/util/Mangle.hpp"
 #include "pulsar/datastore/GenericBase.hpp"
 
+#include <cereal/cereal.hpp>
+#include <cereal/archives/binary.hpp>
+
 
 namespace pulsar{
 namespace datastore {
 namespace detail {
 
 
-
 /*! \brief A container that can hold anything
  *
  * \tparam T The type of the data this object is holding
  */ 
+template<typename T, bool = cereal::traits::is_output_serializable<T, cereal::BinaryOutputArchive>::value &&
+                            cereal::traits::is_input_serializable<T, cereal::BinaryInputArchive>::value >
+class GenericHolder;
+
+
 template<typename T>
-class GenericHolder : public GenericBase
+class GenericHolderBase : public GenericBase
 {
     public:
         /*! \brief Construct via copying a data object
@@ -35,7 +42,7 @@ class GenericHolder : public GenericBase
          *
          *  \param [in] m The object to copy
          */
-        GenericHolder(const T & m)
+        GenericHolderBase(const T & m)
             : obj(std::make_shared<const T>(m))
         { }
 
@@ -49,18 +56,18 @@ class GenericHolder : public GenericBase
          *
          * \param [in] m The object to move
          */
-        GenericHolder(T && m)
+        GenericHolderBase(T && m)
             : obj(std::make_shared<const T>(std::move(m)))
         { }
 
 
         // no other constructors, etc
-        GenericHolder(void)                                = delete;
-        GenericHolder(const GenericHolder & oph)              = delete;
-        GenericHolder(GenericHolder && oph)                   = delete;
-        GenericHolder & operator=(const GenericHolder & oph)  = delete;
-        GenericHolder & operator=(GenericHolder && oph)       = delete;
-        virtual ~GenericHolder()                           = default;
+        GenericHolderBase(void)                                       = delete;
+        GenericHolderBase(const GenericHolderBase & oph)              = delete;
+        GenericHolderBase(GenericHolderBase && oph)                   = delete;
+        GenericHolderBase & operator=(const GenericHolderBase & oph)  = delete;
+        GenericHolderBase & operator=(GenericHolderBase && oph)       = delete;
+        virtual ~GenericHolderBase()                                  = default;
 
 
         /*! Return a const reference to the underlying data
@@ -98,6 +105,33 @@ class GenericHolder : public GenericBase
     private:
         //! The actual data
         std::shared_ptr<const T> obj;
+};
+
+
+
+template<typename T>
+class GenericHolder<T, false> : public GenericHolderBase<T>
+{
+    public:
+        using GenericHolderBase<T>::GenericHolderBase;
+
+        virtual bool is_serializable(void) const
+        {
+            return false;
+        }
+};
+
+
+template<typename T>
+class GenericHolder<T, true> : public GenericHolderBase<T>
+{
+    public:
+        using GenericHolderBase<T>::GenericHolderBase;
+
+        virtual bool is_serializable(void) const
+        {
+            return true;
+        }
 };
 
 

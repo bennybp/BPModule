@@ -198,7 +198,8 @@ class CacheData
             print_output(os, "Cache data with %? entries\n", cmap_.size());
 
             for(const auto & it : cmap_)
-                print_output(os, "  -Key: %-20?  Type: %?\n", it.first,
+                print_output(os, "  -Key: %-20?  Serializable: %?  Type: %?\n", it.first,
+                             it.second.value->is_serializable(),
                              it.second.value->demangled_type());
         }
 
@@ -274,8 +275,8 @@ class CacheData
             const detail::GenericHolder<T> * ph = dynamic_cast<const detail::GenericHolder<T> *>(pme.value.get());
             if(ph == nullptr)
                 throw exception::DataStoreException("Bad cast in CacheData", "key", key,
-                                                    "fromtype", pme.value->type(),
-                                                    "totype", typeid(T).name()); 
+                                                    "fromtype", pme.value->demangled_type(),
+                                                    "totype", util::demangle_cpp_type<T>()); 
 
             return ph;
         }
