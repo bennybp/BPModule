@@ -13,7 +13,7 @@ set(PULSAR_CORE_PYTHON_INCLUDE_DIRS "" CACHE STRING "Include directories for pyt
 ##########################
 find_package(OpenMP REQUIRED)
 find_package(MPI REQUIRED)
-find_package(Eigen3 REQUIRED)
+
 
 
 ##########################
@@ -28,6 +28,7 @@ find_package(pybind11 REQUIRED)
 find_package(memwatch REQUIRED)
 find_package(bphash REQUIRED)
 find_package(libtaskforce REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 # For some reason, this has a leading whitespace
 string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
