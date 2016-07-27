@@ -125,7 +125,7 @@ git clone --recursive git@github.com:pulsar-chem/Pulsar-Core.git
 ```
 If you forget to do that in the Pulsar home directory run:
 ```git
-git submodule --init --recursive
+git submodule update --init --recursive
 ```
 which will then checkout all of the submodules for you.
 
