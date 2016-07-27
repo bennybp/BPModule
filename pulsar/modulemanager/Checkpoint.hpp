@@ -9,6 +9,7 @@
 #define PULSAR_GUARD_MODULEMANAGER__CHECKPOINT_HPP_
 
 #include <string>
+#include <map>
 
 namespace pulsar {
 
@@ -45,7 +46,12 @@ class Checkpoint
     private:
         std::string path_;
 
-        void save_module_cache_(const datastore::CacheData & cd);
+        /*! \brief Maps a module's key in the cache map to a unique id */
+        unsigned long cur_modid_;
+        std::map<std::string, unsigned long> modid_map_;
+
+
+        void save_module_cache_(const datastore::CacheData & cd, unsigned long modid);
 };
 
 } // close namespace modulemanager

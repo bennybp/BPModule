@@ -10,6 +10,8 @@
 
 #include "pulsar/util/Serialization_fwd.hpp"
 
+#include <bphash/Hash.hpp>
+
 #include <memory>
 
 namespace pulsar{
@@ -55,14 +57,17 @@ class GenericBase
          */
         virtual std::string demangled_type(void) const = 0;
 
-
-
         /*! \brief Check if the data stored in this object is serializable */
         virtual bool is_serializable(void) const = 0;
 
+        /*! \brief Check if the data stored in this object is hashable */
+        virtual bool is_hashable(void) const = 0;
 
         /*! \brief Serialize the data as a byte array */
         virtual ByteArray to_byte_array(void) const = 0;
+
+        /*! \brief Obtain the hash of the data */
+        virtual bphash::HashValue my_hash(void) const = 0;
 };
 
 

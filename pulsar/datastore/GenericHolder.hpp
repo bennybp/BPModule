@@ -15,6 +15,7 @@
 
 #include <cereal/cereal.hpp>
 #include <cereal/archives/binary.hpp>
+#include <bphash/Hasher.hpp>
 
 
 namespace pulsar{
@@ -22,16 +23,8 @@ namespace datastore {
 namespace detail {
 
 
-/*! \brief A container that can hold anything
- *
- * \tparam T The type of the data this object is holding
- */ 
-template<typename T, bool = util::SerializeCheck<T>::value>
-class GenericHolder;
-
-
 template<typename T>
-class GenericHolderBase : public GenericBase
+class GenericHolder : public GenericBase
 {
     public:
         /*! \brief Construct via copying a data object
@@ -43,7 +36,7 @@ class GenericHolderBase : public GenericBase
          *
          *  \param [in] m The object to copy
          */
-        GenericHolderBase(const T & m)
+        GenericHolder(const T & m)
             : obj(std::make_shared<const T>(m))
         { }
 
@@ -57,18 +50,18 @@ class GenericHolderBase : public GenericBase
          *
          * \param [in] m The object to move
          */
-        GenericHolderBase(T && m)
+        GenericHolder(T && m)
             : obj(std::make_shared<const T>(std::move(m)))
         { }
 
 
         // no other constructors, etc
-        GenericHolderBase(void)                                       = delete;
-        GenericHolderBase(const GenericHolderBase & oph)              = delete;
-        GenericHolderBase(GenericHolderBase && oph)                   = delete;
-        GenericHolderBase & operator=(const GenericHolderBase & oph)  = delete;
-        GenericHolderBase & operator=(GenericHolderBase && oph)       = delete;
-        virtual ~GenericHolderBase()                                  = default;
+        GenericHolder(void)                                       = delete;
+        GenericHolder(const GenericHolder & oph)              = delete;
+        GenericHolder(GenericHolder && oph)                   = delete;
+        GenericHolder & operator=(const GenericHolder & oph)  = delete;
+        GenericHolder & operator=(GenericHolder && oph)       = delete;
+        virtual ~GenericHolder()                                  = default;
 
 
         /*! Return a const reference to the underlying data
@@ -96,41 +89,67 @@ class GenericHolderBase : public GenericBase
             return util::demangle_cpp_or_py_type(*obj);
         }
 
+
+
+        ///////////////////////////////
+        // Serialization
+        ///////////////////////////////
+
         virtual bool is_serializable(void) const
         {
             return util::SerializeCheck<T>::value;
         }
 
+    
+        virtual ByteArray to_byte_array(void) const
+        {
+            return to_byte_array_helper_();
+        }
+
+        ///////////////////////////////
+        // Hashing
+        ///////////////////////////////
+        virtual bool is_hashable(void) const
+        {
+            return bphash::is_hashable<T>::value;
+        }
+
+        virtual bphash::HashValue my_hash(void) const
+        {
+            return hash_helper_();
+        }
 
     protected:
         //! The actual data
         std::shared_ptr<const T> obj;
-};
 
+    private:
+        template<typename U = T>
+        typename std::enable_if<util::SerializeCheck<U>::value, ByteArray>::type
+        to_byte_array_helper_(void) const
+        {
+            return util::to_byte_array(*(GenericHolder<T>::obj));
+        }
 
-
-template<typename T>
-class GenericHolder<T, false> : public GenericHolderBase<T>
-{
-    public:
-        using GenericHolderBase<T>::GenericHolderBase;
-
-        virtual ByteArray to_byte_array(void) const
+        template<typename U = T>
+        typename std::enable_if<!util::SerializeCheck<U>::value, ByteArray>::type
+        to_byte_array_helper_(void) const
         {
             throw exception::GeneralException("to_byte_array called for unserializable cache data");
         }
-};
 
-
-template<typename T>
-class GenericHolder<T, true> : public GenericHolderBase<T>
-{
-    public:
-        using GenericHolderBase<T>::GenericHolderBase;
-
-        virtual ByteArray to_byte_array(void) const
+        template<typename U = T>
+        typename std::enable_if<bphash::is_hashable<U>::value, bphash::HashValue>::type
+        hash_helper_(void) const
         {
-            return util::to_byte_array(*(GenericHolderBase<T>::obj));
+            return bphash::make_hash(bphash::HashType::Hash128, *obj);
+        }
+
+        template<typename U = T>
+        typename std::enable_if<!bphash::is_hashable<U>::value, bphash::HashValue>::type
+        hash_helper_(void) const
+        {
+            throw exception::GeneralException("hash called for unhashable cache data");
         }
 };
 

@@ -196,7 +196,7 @@ class CacheData
 
             for(const auto & it : cmap_)
                 print_output(os, "  -Key: %-20?  Serializable: %?  Type: %?\n", it.first,
-                             it.second.value->is_serializable(),
+                             it.second.value->is_serializable() ? "Yes" : "No",
                              it.second.value->demangled_type());
         }
 

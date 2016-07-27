@@ -212,7 +212,9 @@ class StdStreamArchive
 
 
     protected:
-        StdStreamArchive() = default;
+        template<typename ... Targs>
+        StdStreamArchive(Targs &&... args)
+            : stream_(std::forward<Targs>(args)...) { }
 
         STREAM stream_;
         bool serializing_ = false;
@@ -272,9 +274,13 @@ class MemoryArchive : public detail::StdStreamArchive<std::stringstream>
 {
     private:
         typedef detail::StdStreamArchive<std::stringstream> Base;
+
     public:
-        // forward the protected constructor
-        using Base::Base;
+        MemoryArchive(void) 
+            : detail::StdStreamArchive<std::stringstream>(std::stringstream::out |
+                                                          std::stringstream::in |
+                                                          std::stringstream::binary)
+        { }
 
 }; 
 

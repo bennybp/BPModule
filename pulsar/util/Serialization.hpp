@@ -29,6 +29,8 @@
     template<typename T> friend class pulsar::util::detail::StdStreamArchive;
 
 
+//! \todo There is an extra copy that in to_byte_array (ie, data -> sstream -> vector).
+//        This could be fixed with a custom stream buffer that writes to a std::vector
 
 namespace pulsar{
 namespace util {
@@ -94,8 +96,8 @@ struct SerializeCheck
 template<typename T>
 struct SerializeCheck<std::shared_ptr<T>> : public SerializeCheck<T> { };
 
-template<typename T>
-struct SerializeCheck<std::unique_ptr<T>> : public SerializeCheck<T> { };
+template<typename T, typename D>
+struct SerializeCheck<std::unique_ptr<T, D>> : public SerializeCheck<T> { };
 
 template<typename T>
 struct SerializeCheck<std::vector<T>> : public SerializeCheck<T> { };
