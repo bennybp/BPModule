@@ -16,7 +16,8 @@ namespace detail {
 
 /*! \brief Hashing of std::unordered_set */
 template<typename Key, typename HashT, typename Pred, typename Alloc>
-struct ObjectHasher<std::unordered_set<Key, HashT, Pred, Alloc>> : public ContainerHasher<std::unordered_set<Key, HashT, Pred, Alloc>> { };
+struct ObjectHasher<std::unordered_set<Key, HashT, Pred, Alloc>> 
+         : public ContainerHasher<std::unordered_set<Key, HashT, Pred, Alloc>> { };
 
 
 } // close namespace detail

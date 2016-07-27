@@ -19,6 +19,11 @@
 
 namespace bphash {
 
+
+// forward declaration
+class Hasher;
+
+
 namespace detail {
 
 
@@ -49,6 +54,28 @@ struct PointerWrapper
     size_t len;         //!< Length of the array (as number of elements of \p T)
 };
 
+
+
+/*! \brief Detectes if a class has a hash() member function with the
+ *         appropriate signature
+ */
+template <typename T>
+class detect_hash_member
+{
+    private:
+        using Yes = std::true_type;
+        using No = std::false_type;
+
+        template<typename C> static auto test(void*)
+                -> decltype(static_cast<void (C::*)(Hasher &) const>(&C::hash), Yes{});
+
+  template<typename> static No & test(...);
+
+  public:
+      static bool const value = std::is_same<decltype(test<T>(0)), Yes>::value;
+};  
+
+
 } // close namespace detail
 
 
@@ -61,6 +88,36 @@ enum class HashType
     Hash64,
     Hash128
 };
+
+
+/*! \brief Trait class that determines if a type is hashable or not
+ *
+ * Whether or not a type is hashable can be determined via is_hashable<Type>::value
+ *
+ * This also works with multiple types. If multiple types are specified, \p value is
+ * only true if all are hashable.
+ */
+template<typename ... Targs>
+struct is_hashable;
+
+
+template<typename T>
+struct is_hashable<T>
+{
+    using my_type = typename std::remove_cv<typename std::remove_reference<T>::type>::type;
+
+    static constexpr bool value = detail::detect_hash_member<my_type>::value ||
+                                  detail::ObjectHasher<my_type>::value ||
+                                  std::is_enum<my_type>::value;
+};
+
+template<typename T, typename ... Targs>
+struct is_hashable<T, Targs...>
+{
+    static constexpr bool value = is_hashable<T>::value &&
+                                  is_hashable<Targs...>::value;
+};
+
 
 
 
@@ -102,6 +159,8 @@ class Hasher
         template<typename T, typename... Targs>
         void operator()(const T & obj, const Targs &... objs)
         {
+            static_assert(is_hashable<T>::value, "Object is not hashable");
+
             // hash the type of the object
             const char * typestr = typeid(T).name();
             size_t len = strlen(typestr);
@@ -210,7 +269,7 @@ HashValue make_hash(HashType type, const Targs &... args)
  * \param [in] last An iterator of the element following the last element to hash
  */
 template<typename InputIterator>
-HashValue MakeHashRange(HashType type, InputIterator first, InputIterator last)
+HashValue make_hash_range(HashType type, InputIterator first, InputIterator last)
 {
     Hasher hasher(type);
 
@@ -234,7 +293,7 @@ HashValue MakeHashRange(HashType type, InputIterator first, InputIterator last)
  * \return The pointer information wrapped in PointerWrapper
  */
 template<typename T>
-detail::PointerWrapper<T> HashPointer(const T * ptr, size_t len = 1)
+detail::PointerWrapper<T> hash_pointer(const T * ptr, size_t len = 1)
 {
     return detail::PointerWrapper<T> {typeid(T *).name(), ptr, len};
 }
@@ -267,7 +326,7 @@ struct ObjectHasher<PointerWrapper<T>> : public std::true_type
  *
  * It is assumed that the pointer points to a single element.
  * If there is more than one element, you must wrap the pointer in
- * a PointerWrapper manually (via HashPointer).
+ * a PointerWrapper manually (via hash_pointer).
  */
 template<typename T>
 struct ObjectHasher<T *> : public std::true_type
@@ -275,7 +334,7 @@ struct ObjectHasher<T *> : public std::true_type
     static void
     hash(Hasher & hasher, const T * obj)
     {
-        hasher(HashPointer(obj, 1));
+        hasher(hash_pointer(obj, 1));
     }
 };
 
@@ -284,7 +343,7 @@ struct ObjectHasher<T *> : public std::true_type
  *
  * It is assumed that the pointer points to a null-terminated
  * array of characters. If not, you must wrap the pointer in
- * a PointerWrapper manually (via HashPointer).
+ * a PointerWrapper manually (via hash_pointer).
  */
 template<>
 struct ObjectHasher<const char *> : public std::true_type
@@ -292,7 +351,7 @@ struct ObjectHasher<const char *> : public std::true_type
     static void
     hash(Hasher & hasher, const char * obj)
     {
-        hasher(HashPointer(obj, strlen(obj)));
+        hasher(hash_pointer(obj, strlen(obj)));
     }
 };
 
@@ -331,8 +390,15 @@ DECLARE_FUNDAMENTAL_HASHER(long double)
 #undef DECLARE_FUNDAMENTAL_HASHER
 
 } // close namespace detail
+
+
+
 } // close namespace bphash
 
+
+#define DECLARE_HASHING_FRIENDS \
+    friend class bphash::Hasher;\
+    template<typename T> friend class bphash::detail::detect_hash_member;
 
 
 #endif

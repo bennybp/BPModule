@@ -16,7 +16,7 @@ namespace detail {
 
 /*! \brief Hashing of std::tuple */
 template<typename... Types>
-struct ObjectHasher<std::tuple<Types...>> : public std::true_type
+struct ObjectHasher<std::tuple<Types...>> : public is_hashable<Types...>
 {
     private:
         template<size_t Idx>

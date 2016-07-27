@@ -16,7 +16,7 @@ namespace detail {
 
 /*! \brief Hashing of std::complex */
 template<typename T>
-struct ObjectHasher<std::complex<T>> : public std::true_type
+struct ObjectHasher<std::complex<T>> : public is_hashable<T>
 {
     static void
     hash(Hasher & hasher, const std::complex<T> & obj)
