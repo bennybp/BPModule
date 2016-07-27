@@ -18,9 +18,8 @@
 #include "pulsar/math/Irrep.hpp"
 #include "pulsar/math/RegisterMathSet.hpp"
 #include "pulsar/math/IrrepSpinMatrix.hpp"
-#include "pulsar/math/EigenCommon.hpp"
+#include "pulsar/math/EigenImpl.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
-//#include "external/pybind11/pybind11-source/include/pybind11/pytypes.h"
 
 
 //declared in RegisterMathSet

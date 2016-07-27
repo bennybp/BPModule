@@ -1,6 +1,6 @@
 set(PULSAR_MATH_FILES
             Binomial.cpp
-            EigenCommon.cpp
+            EigenImpl.cpp
             Factorial_LUT.cpp
             FiniteDiff.cpp
             export.cpp

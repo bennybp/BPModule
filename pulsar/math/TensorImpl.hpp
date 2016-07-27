@@ -5,7 +5,7 @@
 #include<iostream>
 #include<iomanip>
 #include<pulsar/util/IterTools.hpp>
-
+#include<pulsar/util/Serialization.hpp>
 
 namespace pulsar{
 namespace math {
@@ -19,9 +19,26 @@ class TensorImpl
         virtual void set_value(std::array<size_t, Rank> idx, DataType val) = 0;
 
         size_t size(int dim) const { return sizes().at(dim); }
+
         ///Prints the tensor by calling get_value many times (i.e. this is slow)
-        std::ostream& print(std::ostream& os)const;
+        std::ostream & print(std::ostream& os) const;
+
+    private:
+        DECLARE_SERIALIZATION_FRIENDS
+
+        template<class Archive>
+        void save(Archive & archive) const
+        {
+            // reserved for future use
+        }
+
+        template<class Archive>
+        void load(Archive & archive)
+        {
+            // reserved for future use
+        }
 };
+
 
 ///Specialization so that Python calls the right virtual function
 template<size_t Rank,typename DataType>

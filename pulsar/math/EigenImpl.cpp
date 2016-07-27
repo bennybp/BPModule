@@ -1,10 +1,12 @@
-#include "pulsar/math/EigenCommon.hpp"
+#include "pulsar/math/EigenImpl.hpp"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 using namespace pulsar::math;
 
+namespace pulsar {
+namespace math {
 
 std::shared_ptr<const MatrixXd>
 convert_to_eigen(const std::shared_ptr<const pulsar::math::TensorImpl<2, double>> & ten)
@@ -41,3 +43,7 @@ convert_to_eigen(const std::shared_ptr<const pulsar::math::TensorImpl<1, double>
     return ret;
 }
 
+
+
+} // close namespace math
+} // close namespace pulsar

@@ -8,6 +8,7 @@
 #include "pulsar/modulemanager/ModuleManager.hpp"
 #include "pulsar/datastore/CacheData.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
+#include "pulsar/math/EigenImpl.hpp"
 #include "pulsar/util/Time.hpp"
 
 #include <bphash/types/vector.hpp>
@@ -103,6 +104,7 @@ void Checkpoint::save_module_cache_(const CacheData & cd, unsigned long modid)
             serializable++;
 
     print_global_output("     > ID %? : %? entries, %? serializable\n", modid, cd.size(), serializable);
+
     cd.print(get_global_output());
 
     for(const auto & it : cd.cmap_)
