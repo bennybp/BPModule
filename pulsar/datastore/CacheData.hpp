@@ -16,9 +16,14 @@
 #include "pulsar/datastore/GenericHolder.hpp"
 #include <pybind11/pybind11.h>
 
+namespace pulsar {
+namespace modulemanager {
+class Checkpoint;
+}
+}
 
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 
 
@@ -39,6 +44,15 @@ namespace datastore {
 class CacheData
 {
     public:
+
+        enum CachePolicy
+        {
+            NoCheckpoint     = 1,
+            CheckpointLocal  = 2,
+            CheckpointGlobal = 4
+        };
+
+
         CacheData(void)          = default;
         virtual ~CacheData(void) = default;
 
@@ -134,29 +148,17 @@ class CacheData
          * \param [in] value The data to store
          */
         template<typename T>
-        void set(const std::string & key, const T & value)
+        void set(const std::string & key, T && value, unsigned int policyflags)
         {
+            typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type HolderType;
+
             // construct outside of mutex locking
-            std::unique_ptr<detail::GenericBase> newdata(new detail::GenericHolder<T>(value));
+            std::unique_ptr<detail::GenericBase> newdata(new detail::GenericHolder<HolderType>(std::forward<T>(value)));
 
             // mutex locking handled in set_
-            set_(key, std::move(newdata));
+            set_(key, std::move(newdata), policyflags);
         }
 
-
-        /*! \brief Add data associated with a given key via move semantics
-         * 
-         * \copydetails set
-         */
-        template<typename T>
-        void take(const std::string & key, T && value)
-        {
-            // construct outside of mutex locking
-            std::unique_ptr<detail::GenericBase> newdata(new detail::GenericHolder<T>(std::move(value)));
-
-            // mutex locking handled in set_
-            set_(key, std::move(newdata));
-        }
 
         /*! \brief Set the data associated with a given key (python version)
          * 
@@ -165,9 +167,9 @@ class CacheData
          * \param [in] key The key to the data
          * \param [in] value The data to store
          */
-        void set_py(const std::string & key, const pybind11::object & value)
+        void set_py(const std::string & key, const pybind11::object & value, unsigned int policyflags)
         {
-            set(key, value);
+            set(key, value, policyflags);
         }
 
         /*! \brief Remove a key from this data store
@@ -187,18 +189,21 @@ class CacheData
         {
             using namespace pulsar::output;
 
-            // We lock the mutex here. As such, we cannot call size(), etc. So
+            // We lock the mutex here. As such, we cannot call size(), etc.
             std::lock_guard<std::mutex> l(mutex_);
  
             print_output(os, "Cache data with %? entries\n", cmap_.size());
 
             for(const auto & it : cmap_)
-                print_output(os, "  -Key: %-20?  Type: %?\n", it.first,
+                print_output(os, "  -Key: %-20?  Serializable: %?  Type: %?\n", it.first,
+                             it.second.value->is_serializable(),
                              it.second.value->demangled_type());
         }
 
 
     private:
+        friend class modulemanager::Checkpoint;
+
         ////////////////////////////////
         // Actual storage of the data //
         ////////////////////////////////
@@ -206,22 +211,22 @@ class CacheData
         /*! \brief Mutex protecting this object during multi-threaded access */
         mutable std::mutex mutex_;
 
+        /*! \brief ID to give to the next piece of data coming in */
+        uint64_t curid_ = 0;
+
 
         /*! \brief Stores a pointer to a placeholder, plus some other information
-         * 
-         * May be expanded in the future
          */
         struct CacheDataEntry
         {
-            std::unique_ptr<detail::GenericBase> value;      //! The stored data
+            std::unique_ptr<detail::GenericBase> value;  //!< The stored data
+            unsigned int policy;                         //!< Policy flags for this entry 
+            uint64_t uid;                                //!< Unique ID given to the data
         };
-
 
 
         //! The container to use to store the data
         std::map<std::string, CacheDataEntry> cmap_;
-
-
 
 
         ////////////////////////////////
@@ -265,8 +270,8 @@ class CacheData
             const detail::GenericHolder<T> * ph = dynamic_cast<const detail::GenericHolder<T> *>(pme.value.get());
             if(ph == nullptr)
                 throw exception::DataStoreException("Bad cast in CacheData", "key", key,
-                                                    "fromtype", pme.value->type(),
-                                                    "totype", typeid(T).name()); 
+                                                    "fromtype", pme.value->demangled_type(),
+                                                    "totype", util::demangle_cpp_type<T>()); 
 
             return ph;
         }
@@ -277,12 +282,15 @@ class CacheData
          * \param [in] key Key of the data to set
          * \param [in] value Pointer to the data to set
          */ 
-        void set_(const std::string & key, std::unique_ptr<detail::GenericBase> && ptr)
+        void set_(const std::string & key,
+                  std::unique_ptr<detail::GenericBase> && ptr,
+                  unsigned int policyflags)
         {
             std::lock_guard<std::mutex> l(mutex_);
 
             // emplace has strong exception guarantee
-            cmap_.emplace(key, CacheDataEntry{std::move(ptr)});
+            cmap_.emplace(key, CacheDataEntry{std::move(ptr), policyflags, curid_});
+            curid_++;
         }
 
 

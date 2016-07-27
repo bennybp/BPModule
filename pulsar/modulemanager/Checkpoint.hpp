@@ -10,7 +10,12 @@
 
 #include <string>
 
-namespace pulsar{
+namespace pulsar {
+
+namespace datastore {
+class CacheData;
+}
+
 namespace modulemanager {
 
 
@@ -24,7 +29,7 @@ class Checkpoint
     public:
         Checkpoint(const std::string & path);
 
-        ~Checkpoint();
+        ~Checkpoint() = default;
 
 
         // no copy construction or assignment
@@ -34,11 +39,14 @@ class Checkpoint
         Checkpoint & operator=(Checkpoint && rhs)      = default;
 
 
+        void save(const ModuleManager & mm);
+
+
     private:
         std::string path_;
+
+        void save_module_cache_(const datastore::CacheData & cd);
 };
-
-
 
 } // close namespace modulemanager
 } // close namespace pulsar

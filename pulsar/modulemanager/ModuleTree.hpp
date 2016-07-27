@@ -12,7 +12,6 @@
 #include "pulsar/types.h"
 #include "pulsar/modulemanager/ModuleTree_iterators.hpp"
 #include "pulsar/modulemanager/ModuleInfo.hpp"
-#include "pulsar/datastore/Wavefunction.hpp"
 
 namespace pulsar{
 namespace modulemanager {
@@ -25,8 +24,6 @@ namespace modulemanager {
  */
 struct ModuleTreeNode
 {
-    typedef std::pair<const datastore::Wavefunction, const datastore::Wavefunction> WfnPair;
-    
     /*
      * This is a simple structure, and the compiler-generated constructors, move
      * constructor, etc, should be OK
@@ -36,10 +33,6 @@ struct ModuleTreeNode
     std::string output;                   //!< Output captured from the module
 
     ID_t id;                              //!< ID of the created module (also identifies this node)
-    std::vector<WfnPair> wfns;            //!< Wavefunctions calculated by this module
-
-    // is the tree node in use
-    bool inuse;
 
     // tree stuff
     ID_t parentid;               //!< ID of the parent tree node
@@ -61,7 +54,6 @@ struct ModuleTreeNode
         void serialize(Archive & ar)
         {
             ar(modulekey, minfo, output, id);
-            ar(wfns);
             ar(parentid, children);
         }
 
@@ -80,23 +72,6 @@ class ModuleTree
 {
     private:
         std::map<ID_t, ModuleTreeNode> data_;
-
-        //! \name Serialization
-        ///@{
-
-        DECLARE_SERIALIZATION_FRIENDS
-
-        /* We have to split load/save since the
-         * the shared_ptr points to const data, and
-         * cereal can't serialize to const data
-         */
-        template<class Archive>
-        void serialize(Archive & ar)
-        {
-            ar(data_);
-        }
-
-        ///@}
 
     public:
         /// Depth-first iterator

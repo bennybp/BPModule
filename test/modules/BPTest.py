@@ -90,7 +90,7 @@ def Run(mm):
         mm.change_option("SCF_DIIS", "KEY_NUC_REPULSION", "NUC_REP")
         mm.change_option("SCF_DIIS", "KEY_AO_OVERLAP",    "AO_OVERLAP")
         mm.change_option("SCF_DIIS", "MAX_ITER", 1000)
-        mm.change_option("SCF_DIIS", "E_TOLERANCE", 1e-10)
+        mm.change_option("SCF_DIIS", "EGY_TOLERANCE", 1e-10)
         mm.change_option("SCF_DIIS", "DENS_TOLERANCE", 1e-8)
         mm.change_option("SCF_DIIS", "KEY_ONEEL_MAT",     "ONEEL_CACHE")
 
@@ -100,7 +100,7 @@ def Run(mm):
         mm.change_option("SCF_DAMPING", "KEY_AO_COREBUILD",  "AO_COREBUILD")
         mm.change_option("SCF_DAMPING", "KEY_NUC_REPULSION", "NUC_REP")
         mm.change_option("SCF_DAMPING", "MAX_ITER", 1000)
-        mm.change_option("SCF_DAMPING", "E_TOLERANCE", 1e-10)
+        mm.change_option("SCF_DAMPING", "EGY_TOLERANCE", 1e-10)
         mm.change_option("SCF_DAMPING", "DENS_TOLERANCE", 1e-8)
         mm.change_option("SCF_DAMPING", "KEY_ONEEL_MAT",     "ONEEL_CACHE")
 
@@ -159,9 +159,10 @@ psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 
 with psr.ModuleAdministrator() as mm:
     Run(mm)
+mm.run_checkpoint(False)
 
-dotout = print_dot_tree(mm)
-with open("module_tree.dot", 'w') as f:
-  f.write(dotout)
+#dotout = print_dot_tree(mm)
+#with open("module_tree.dot", 'w') as f:
+#  f.write(dotout)
 
 psr.finalize()

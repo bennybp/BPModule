@@ -38,7 +38,7 @@ ModuleBase::~ModuleBase()
     {
         out.debug("Module [%?] : Output size: %?\n", id(), get_output().size());
         out.debug("Destructed module [%?] : %? v%?\n", id(), name(), version());
-        treenode_->inuse = false;
+        mlocator_->notify_destruction(id());
     }
 }
 
