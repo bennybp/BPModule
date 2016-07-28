@@ -4,7 +4,7 @@
 ################################################################################
 include(ExternalProject)
 
-find_package(libtaskforce)
+find_package(libtaskforce QUIET)
 
 if(NOT libtaskforce_FOUND)
    message(STATUS "We will build libtaskforce for you")
