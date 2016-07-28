@@ -42,6 +42,7 @@ bool Checkpoint::toc_has_hash(const bphash::HashValue & h) const
 bool Checkpoint::toc_has_entry(unsigned long modid, const std::string & cachekey,
                                const bphash::HashValue & h) const
 {
+    //! \todo check type and other stuff?
     auto it = std::find_if(toc_.begin(), toc_.end(),
                            [ modid, & cachekey, & h ] (const TOCEntry & e)
                            { return e.modid == modid &&
@@ -64,6 +65,63 @@ const Checkpoint::TOCEntry & Checkpoint::get_toc_entry(const bphash::HashValue &
 }
 
 
+void Checkpoint::load(ModuleManager & mm)
+{
+    using namespace pulsar::datastore::detail;
+
+    std::lock_guard<std::mutex> l_mm(mm.mutex_);
+    std::string metafile = path_ + "/psrtest/chkpt.meta";
+    std::string datafile = path_ + "/psrtest/chkpt.dat";
+
+    //! \todo enable exceptions on the streams
+    std::ifstream meta_of(metafile.c_str(), std::fstream::binary);
+    std::ifstream data_of(datafile.c_str(), std::fstream::binary);
+
+    if(!meta_of.is_open())
+        throw exception::GeneralException("Unable to open metatdata file for writing", "file", metafile);
+    if(!data_of.is_open())
+        throw exception::GeneralException("Unable to open data file for writing", "file", datafile);
+
+
+    // load the toc and metadata
+    {
+        cereal::BinaryInputArchive iar(meta_of);
+        iar(toc_, modid_map_, cur_modid_);
+
+        print_global_output("Loaded data from file %?\n", metafile);
+        print_global_output("Module ID map\n");
+
+        for(const auto & it : modid_map_)
+            print_global_output("    %4?  %?\n", it.second, it.first);
+
+        print_global_output("Data from the cache\n");
+        for(const auto & it : toc_)
+            print_global_output("    %4?  %?  %? pos: %?  size: %?\n", it.modid,
+                                bphash::hash_to_string(it.hash), it.cachekey,
+                                it.pos, it.size);
+    }
+
+    // build a reverse map
+    std::map<unsigned long, std::string> revmap;
+    for(const auto & it : modid_map_)
+        revmap.emplace(it.second, it.first);
+
+    // load the data
+    for(const auto & it : toc_)
+    {
+        std::string modkey = revmap.at(it.modid);
+        print_global_output("Loading (%?) %?   %?\n", it.modid, modkey, it.cachekey);
+
+        data_of.seekg(it.pos, std::ios::beg);
+        ByteArray bar(it.size);
+        data_of.read(bar.data(), it.size);
+
+        SerializedCacheData scd{std::move(bar), it.type, it.hash};
+        std::unique_ptr<SerializedDataHolder> sdh(new SerializedDataHolder(std::move(scd)));
+
+        mm.cachemap_[modkey].set_(it.cachekey, std::move(sdh), it.policy);
+    }
+}
 
 
 void Checkpoint::save(const ModuleManager & mm)
@@ -77,8 +135,8 @@ void Checkpoint::save(const ModuleManager & mm)
     print_global_output("   Data file: %?\n", datafile);
 
     //! \todo enable exceptions on the streams
-    std::ofstream meta_of(metafile.c_str(), std::fstream::trunc | std::fstream::binary);
-    std::ofstream data_of(datafile.c_str(), std::fstream::trunc | std::fstream::binary);
+    std::ofstream meta_of(metafile.c_str(), std::ofstream::trunc | std::ofstream::binary);
+    std::ofstream data_of(datafile.c_str(), std::ofstream::trunc | std::ofstream::binary);
 
     if(!meta_of.is_open())
         throw exception::GeneralException("Unable to open metatdata file for writing", "file", metafile);
@@ -114,7 +172,7 @@ void Checkpoint::save(const ModuleManager & mm)
     
     {
         cereal::BinaryOutputArchive oar(meta_of);
-        oar(toc_, modid_map_);
+        oar(toc_, modid_map_, cur_modid_);
     }
 
     print_global_output("Checkpoint finished at %?\n", util::timestamp_string());
@@ -175,7 +233,7 @@ void Checkpoint::save_module_cache_(const CacheData & cd, unsigned long modid,
 
 
             // build the toc entry
-            TOCEntry te{modid, it.first, h, 0};
+            TOCEntry te{modid, it.first, h, it.second.value->type(), 0, it.second.policy};
 
             // see if this has already been stored
             bool existing = false;
@@ -185,7 +243,9 @@ void Checkpoint::save_module_cache_(const CacheData & cd, unsigned long modid,
                 {
                     // already been stored somewhere
                     // get that position
-                    te.pos = static_cast<size_t>(get_toc_entry(h).pos);
+                    const auto & te_existing = get_toc_entry(h);
+                    te.pos = te_existing.pos;
+                    te.size = te_existing.size;
                     existing = true;
                 }
             }
@@ -198,6 +258,8 @@ void Checkpoint::save_module_cache_(const CacheData & cd, unsigned long modid,
                 ByteArray bar = it.second.value->to_byte_array();
 
                 size_t nbytes = bar.size() * sizeof(ByteArray::value_type);
+                te.size = nbytes;
+
                 of.write(bar.data(), nbytes);
                 print_global_output("           * wrote %? bytes to position %?\n", nbytes, te.pos);
             }

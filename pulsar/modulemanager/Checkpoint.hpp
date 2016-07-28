@@ -44,6 +44,7 @@ class Checkpoint
 
 
         void save(const ModuleManager & mm);
+        void load(ModuleManager & mm);
 
 
     private:
@@ -56,12 +57,15 @@ class Checkpoint
             unsigned long modid;
             std::string cachekey;
             bphash::HashValue hash;
+            std::string type;
             size_t pos;
+            size_t size;
+            unsigned int policy;
 
             template<typename Archive>
             void serialize(Archive & ar)
             {
-                ar(modid, cachekey, hash, pos);
+                ar(modid, cachekey, hash, type, pos, size, policy);
             }
         };
 

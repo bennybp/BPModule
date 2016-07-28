@@ -442,7 +442,7 @@ static void checkpoint_thread_function_(const ModuleManager & mm, std::string pa
     cp.save(mm); 
 }
 
-void ModuleManager::run_checkpoint(bool separate_thread) const
+void ModuleManager::save_checkpoint(bool separate_thread) const
 {
     // wait for any existing checkpointing operations to finish
     if(checkpoint_thread_)
@@ -463,6 +463,13 @@ void ModuleManager::run_checkpoint(bool separate_thread) const
         checkpoint_thread_->join();
         checkpoint_thread_.reset();
     }
+}
+
+
+void ModuleManager::load_checkpoint(void)
+{
+    Checkpoint cp(scratch_path_);
+    cp.load(*this);
 }
 
 

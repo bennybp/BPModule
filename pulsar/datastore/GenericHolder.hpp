@@ -182,14 +182,14 @@ class GenericHolder : public GenericBase
 };
 
 
-
 /*! \brief Storage type for serialized data */
 struct SerializedCacheData
 {
     ByteArray data;
     std::string type;
-    std::string demangled_type;
+    bphash::HashValue hash;
 };
+
 
 
 /*! \brief Holds serialized data in the cache
@@ -225,17 +225,6 @@ class SerializedDataHolder : public GenericBase
         virtual ~SerializedDataHolder()                                 = default;
 
 
-        /*! Return a const reference to the underlying data
-         *
-         * \exnothrow
-         *
-         * \return A const reference to the underlying data
-         */ 
-        const SerializedCacheData & get(void) const noexcept
-        {
-            return obj;
-        }
-
 
         ////////////////////////////////////////
         // Virtual functions from GenericBase
@@ -247,7 +236,7 @@ class SerializedDataHolder : public GenericBase
 
         virtual std::string demangled_type(void) const
         {
-            return obj.demangled_type.c_str();
+            return util::demangle_cpp(obj.type);
         }
 
         virtual bool is_serializable(void) const noexcept
@@ -255,11 +244,42 @@ class SerializedDataHolder : public GenericBase
             return false;
         }
 
+        virtual bool is_hashable(void) const noexcept
+        {
+            // hash will be empty if not hashable
+            return obj.hash.size();
+        }
+
+        virtual bphash::HashValue my_hash(void) const
+        {
+            if(is_hashable())
+                return obj.hash;
+            else
+                throw exception::GeneralException("hash called for unhashable cache data");
+        }
+
         virtual ByteArray to_byte_array(void) const
         {
             throw exception::GeneralException("to_byte_array called for already-serialized data");
         }
 
+        virtual void from_byte_array(const ByteArray & arr)
+        {
+            throw exception::GeneralException("from_byte_array called for already-serialized data");
+        }
+
+        template<typename T>
+        std::shared_ptr<const T> get(void) const noexcept
+        {
+            std::string desired_type = typeid(T).name();
+            if(desired_type != obj.type)
+                throw exception::GeneralException("Desired type does not match serialized data",
+                                                  "desired", util::demangle_cpp(desired_type),
+                                                  "stored", util::demangle_cpp(obj.type));
+
+            std::unique_ptr<T> ret(util::new_from_byte_array<T>(obj.data);
+            return std::make_shared<const T>(ret.release());
+        }
 
     private:
         //! The actual data

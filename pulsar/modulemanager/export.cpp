@@ -92,7 +92,8 @@ void export_pybind11(pybind11::module & mtop)
     .def("load_module_from_minfo", &ModuleManager::load_module_from_minfo)
     .def("enable_debug", &ModuleManager::enable_debug)
     .def("enable_debug_all", &ModuleManager::enable_debug_all)
-    .def("run_checkpoint", &ModuleManager::run_checkpoint)
+    .def("save_checkpoint", &ModuleManager::save_checkpoint)
+    .def("load_checkpoint", &ModuleManager::load_checkpoint)
     ;
 
 

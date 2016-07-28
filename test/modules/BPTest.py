@@ -159,7 +159,8 @@ psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 
 with psr.ModuleAdministrator() as mm:
     Run(mm)
-mm.run_checkpoint(False)
+mm.save_checkpoint(False)
+mm.load_checkpoint()
 
 #dotout = print_dot_tree(mm)
 #with open("module_tree.dot", 'w') as f:
