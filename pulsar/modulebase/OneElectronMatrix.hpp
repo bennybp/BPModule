@@ -21,7 +21,7 @@ class OneElectronMatrix : public ModuleBase
 {
     public:
         typedef OneElectronMatrix BaseType;
-        typedef std::vector<std::shared_ptr<const math::TensorImpl<2, double>>> ReturnType;
+        typedef std::vector<std::shared_ptr<const math::MatrixDImpl>> ReturnType;
 
         OneElectronMatrix(ID_t id)
             : ModuleBase(id, "OneElectronMatrix")

@@ -9,7 +9,7 @@
 namespace pulsar {
 namespace math {
 
-class EigenMatrixImpl : public pulsar::math::TensorImpl<2, double>
+class EigenMatrixImpl : public pulsar::math::MatrixDImpl
 {
     public:
 
@@ -59,7 +59,7 @@ class EigenMatrixImpl : public pulsar::math::TensorImpl<2, double>
         template<class Archive>
         void save(Archive & archive) const
         {
-            archive(cereal::base_class<pulsar::math::TensorImpl<2, double>>(this));
+            archive(cereal::base_class<pulsar::math::MatrixDImpl>(this));
             unsigned int nrow = mat_->rows();
             unsigned int ncol = mat_->cols();
 
@@ -74,7 +74,7 @@ class EigenMatrixImpl : public pulsar::math::TensorImpl<2, double>
         template<class Archive>
         void load(Archive & archive)
         {
-            archive(cereal::base_class<pulsar::math::TensorImpl<2, double>>(this));
+            archive(cereal::base_class<pulsar::math::MatrixDImpl>(this));
 
             unsigned int nrow, ncol;
             archive(nrow, ncol);
@@ -89,7 +89,7 @@ class EigenMatrixImpl : public pulsar::math::TensorImpl<2, double>
 };
 
 
-class EigenVectorImpl : public pulsar::math::TensorImpl<1, double>
+class EigenVectorImpl : public pulsar::math::VectorDImpl
 {
     public:
         /*! \brief For serialization only
@@ -138,7 +138,7 @@ class EigenVectorImpl : public pulsar::math::TensorImpl<1, double>
         template<class Archive>
         void save(Archive & archive) const
         {
-            archive(cereal::base_class<pulsar::math::TensorImpl<1, double>>(this));
+            archive(cereal::base_class<pulsar::math::VectorDImpl>(this));
             unsigned int nrow = mat_->rows();
             unsigned int ncol = mat_->cols();
 
@@ -153,7 +153,7 @@ class EigenVectorImpl : public pulsar::math::TensorImpl<1, double>
         template<class Archive>
         void load(Archive & archive)
         {
-            archive(cereal::base_class<pulsar::math::TensorImpl<1, double>>(this));
+            archive(cereal::base_class<pulsar::math::VectorDImpl>(this));
 
             unsigned int nrow, ncol;
             archive(nrow, ncol);
@@ -169,10 +169,10 @@ class EigenVectorImpl : public pulsar::math::TensorImpl<1, double>
 
 
 std::shared_ptr<const Eigen::MatrixXd>
-convert_to_eigen(const std::shared_ptr<const pulsar::math::TensorImpl<2, double>> & ten);
+convert_to_eigen(const std::shared_ptr<const pulsar::math::MatrixDImpl> & ten);
 
 std::shared_ptr<const Eigen::VectorXd>
-convert_to_eigen(const std::shared_ptr<const pulsar::math::TensorImpl<1, double>> & ten);
+convert_to_eigen(const std::shared_ptr<const pulsar::math::VectorDImpl> & ten);
 
 
 typedef pulsar::math::BlockByIrrepSpin<Eigen::MatrixXd> BlockedEigenMatrix;
@@ -182,12 +182,6 @@ typedef pulsar::math::BlockByIrrepSpin<Eigen::VectorXd> BlockedEigenVector;
 } // close namespace math
 } // close namespace pulsar
 
-
-//////////////////////////////
-// For Serialization
-//////////////////////////////
-CEREAL_REGISTER_TYPE(pulsar::math::EigenMatrixImpl);
-CEREAL_REGISTER_TYPE(pulsar::math::EigenVectorImpl);
 
 #endif
 

@@ -14,6 +14,13 @@ template<size_t Rank, typename DataType>
 class TensorImpl
 {
     public:
+        /*! \brief For serialization only
+         * 
+         * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
+         * \todo Replace if cereal fixes this
+         */
+        TensorImpl() = default;
+
         virtual std::array<size_t, Rank> sizes(void) const = 0;
         virtual DataType get_value(std::array<size_t, Rank> idx) const = 0;
         virtual void set_value(std::array<size_t, Rank> idx, DataType val) = 0;
@@ -110,6 +117,9 @@ std::ostream& operator<<(std::ostream& os, const TensorImpl<Rank,DataType>& t)
 {
    return t.print(os);
 }
+
+typedef TensorImpl<2, double> MatrixDImpl;
+typedef TensorImpl<1, double> VectorDImpl;
 
 } // close namespace math
 } // close namespace pulsar

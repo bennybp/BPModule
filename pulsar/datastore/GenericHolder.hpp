@@ -38,7 +38,10 @@ class GenericHolder : public GenericBase
          */
         GenericHolder(const T & m)
             : obj(std::make_shared<const T>(m))
-        { }
+        {
+            if(is_hashable())
+                make_my_hash_();
+        }
 
 
         /*! \brief Construct via moving a data object
@@ -95,33 +98,43 @@ class GenericHolder : public GenericBase
         // Serialization
         ///////////////////////////////
 
-        virtual bool is_serializable(void) const
+        virtual bool is_serializable(void) const noexcept
         {
             return util::SerializeCheck<T>::value;
         }
 
-    
         virtual ByteArray to_byte_array(void) const
         {
             return to_byte_array_helper_();
         }
 
+        virtual void from_byte_array(const ByteArray & arr)
+        {
+            from_byte_array_helper_(arr);
+        }
+
         ///////////////////////////////
         // Hashing
         ///////////////////////////////
-        virtual bool is_hashable(void) const
+        virtual bool is_hashable(void) const noexcept
         {
             return bphash::is_hashable<T>::value;
         }
 
         virtual bphash::HashValue my_hash(void) const
         {
-            return hash_helper_();
+            if(is_hashable())
+                return hash_;
+            else
+                throw exception::GeneralException("hash called for unhashable cache data");
         }
 
     protected:
         //! The actual data
         std::shared_ptr<const T> obj;
+
+        //! Hash of the object (if hashable)
+        bphash::HashValue hash_;
 
     private:
         template<typename U = T>
@@ -139,15 +152,30 @@ class GenericHolder : public GenericBase
         }
 
         template<typename U = T>
-        typename std::enable_if<bphash::is_hashable<U>::value, bphash::HashValue>::type
-        hash_helper_(void) const
+        typename std::enable_if<util::SerializeCheck<U>::value, void>::type
+        from_byte_array_helper_(const ByteArray & arr)
         {
-            return bphash::make_hash(bphash::HashType::Hash128, *obj);
+            GenericHolder<T>::obj = std::make_shared<T>(util::from_byte_array<T>(arr));
+        }
+
+        template<typename U = T>
+        typename std::enable_if<!util::SerializeCheck<U>::value, void>::type
+        from_byte_array_helper_(const ByteArray & arr)
+        {
+            throw exception::GeneralException("from_byte_array called for unserializable cache data");
+        }
+
+
+        template<typename U = T>
+        typename std::enable_if<bphash::is_hashable<U>::value, bphash::HashValue>::type
+        make_my_hash_(void) const
+        {
+            hash_ = bphash::make_hash(bphash::HashType::Hash128, *obj);
         }
 
         template<typename U = T>
         typename std::enable_if<!bphash::is_hashable<U>::value, bphash::HashValue>::type
-        hash_helper_(void) const
+        make_my_hash_(void) const
         {
             throw exception::GeneralException("hash called for unhashable cache data");
         }
@@ -222,7 +250,7 @@ class SerializedDataHolder : public GenericBase
             return obj.demangled_type.c_str();
         }
 
-        virtual bool is_serializable(void) const
+        virtual bool is_serializable(void) const noexcept
         {
             return false;
         }

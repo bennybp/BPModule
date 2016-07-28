@@ -20,19 +20,6 @@ using namespace pulsar::output;
 using namespace pulsar::datastore;
 
 
-namespace {
-
-    /*! \brief Data object stored in the checkpoint file */
-    struct CheckPointData
-    {
-        std::string modulekey;
-        std::string cachekey;
-        bphash::HashValue hash;
-        ByteArray data;
-    };
-};
-
-
 namespace pulsar {
 namespace modulemanager {
 
@@ -43,25 +30,62 @@ Checkpoint::Checkpoint(const std::string & path)
 { }
 
 
+bool Checkpoint::toc_has_hash(const bphash::HashValue & h) const
+{
+    auto it = std::find_if(toc_.begin(), toc_.end(),
+                           [ & h ] (const TOCEntry & e)
+                           { return e.hash == h; });
+
+    return it != toc_.end();
+}
+
+bool Checkpoint::toc_has_entry(unsigned long modid, const std::string & cachekey,
+                               const bphash::HashValue & h) const
+{
+    auto it = std::find_if(toc_.begin(), toc_.end(),
+                           [ modid, & cachekey, & h ] (const TOCEntry & e)
+                           { return e.modid == modid &&
+                                    e.cachekey == cachekey &&
+                                    e.hash == h; });
+
+    return it != toc_.end();
+}
+
+const Checkpoint::TOCEntry & Checkpoint::get_toc_entry(const bphash::HashValue & h) const
+{
+    auto it = std::find_if(toc_.begin(), toc_.end(),
+                           [ & h ] (const TOCEntry & e)
+                           { return e.hash == h; });
+
+    if(it == toc_.end())
+        throw exception::GeneralException("TOC entry not available");
+    else
+        return *it;
+}
+
+
+
+
 void Checkpoint::save(const ModuleManager & mm)
 {
-    print_global_output("Starting checkpoint at %?\n", util::timestamp_string());
-
     std::lock_guard<std::mutex> l_mm(mm.mutex_);
+    std::string metafile = path_ + "/psrtest/chkpt.meta";
+    std::string datafile = path_ + "/psrtest/chkpt.dat";
 
-    std::set<std::string> keys_inuse;
-    std::set<std::string> keys_available;
+    print_global_output("Starting checkpoint at %?\n", util::timestamp_string());
+    print_global_output("   Meta file: %?\n", metafile);
+    print_global_output("   Data file: %?\n", datafile);
 
-    // get inuse modules
-    for(const auto & it : mm.modules_inuse_)
-    {
-        // get the moduleinfo and make the cache key
-        const ModuleInfo & minfo = mm.mtree_.get_by_id(it).minfo;
-        std::string cckey = mm.make_cache_key_(minfo);
-        keys_inuse.insert(cckey);
-    }
+    //! \todo enable exceptions on the streams
+    std::ofstream meta_of(metafile.c_str(), std::fstream::trunc | std::fstream::binary);
+    std::ofstream data_of(datafile.c_str(), std::fstream::trunc | std::fstream::binary);
 
-    print_global_output("Cache entries:\n");
+    if(!meta_of.is_open())
+        throw exception::GeneralException("Unable to open metatdata file for writing", "file", metafile);
+    if(!data_of.is_open())
+        throw exception::GeneralException("Unable to open data file for writing", "file", datafile);
+
+    print_global_output("Cache entries in the module manager:\n");
     for(const auto & it : mm.cachemap_)
     {
         unsigned long modid = 0;
@@ -76,55 +100,117 @@ void Checkpoint::save(const ModuleManager & mm)
             modid = modid_map_.at(it.first);
 
 
-        bool inuse = keys_inuse.count(it.first);
-        print_global_output("    %10?  %4?  %?\n", inuse ? "(in use)" : "", modid, it.first);
-
-
-        if(!inuse)
-            keys_available.insert(it.first);
+        print_global_output("    %4?  %?\n", modid, it.first);
     }
 
-    for(const auto & key : keys_available)
+    for(const auto & it : mm.cachemap_)
     {
-        print_global_output("++ Checkpointing %?\n", key);
-        save_module_cache_(mm.cachemap_.at(key), modid_map_.at(key));
+        print_global_output("++ Checkpointing [%?] %?\n", modid_map_.at(it.first), it.first);
+        save_module_cache_(it.second, modid_map_.at(it.first), data_of);
     }
 
-    //sleep(5);
+
+    print_global_output("Writing metadata\n");
+    
+    {
+        cereal::BinaryOutputArchive oar(meta_of);
+        oar(toc_, modid_map_);
+    }
 
     print_global_output("Checkpoint finished at %?\n", util::timestamp_string());
 }
 
 
-void Checkpoint::save_module_cache_(const CacheData & cd, unsigned long modid)
+void Checkpoint::save_module_cache_(const CacheData & cd, unsigned long modid,
+                                    std::ofstream & of)
 {
-    int serializable = 0;
-    for(const auto & it : cd.cmap_)
-        if(it.second.value->is_serializable())
-            serializable++;
-
-    print_global_output("     > ID %? : %? entries, %? serializable\n", modid, cd.size(), serializable);
-
-    cd.print(get_global_output());
-
+    unsigned int nserializable = 0;
+    unsigned int nlocal = 0;
+    unsigned int nglobal = 0;
     for(const auto & it : cd.cmap_)
     {
         if(it.second.value->is_serializable())
         {
-            ByteArray bar = it.second.value->to_byte_array();
-
-            std::string hashstr = "(not hashable)";
-
-            if(it.second.value->is_hashable())
-                hashstr = bphash::hash_to_string(it.second.value->my_hash());
-
-            print_global_output("    + entry: %?  hash: %?  size: %?\n", it.first, hashstr, bar.size());
+            nserializable++;
+            if(it.second.policy & CacheData::CheckpointGlobal)
+                nglobal++;
+            else if(it.second.policy & CacheData::CheckpointLocal)
+                nlocal++;
         }
+    }
 
+    print_global_output("     > %? entries, %? nserializable, %? local, %? global\n",
+                        cd.size(), nserializable, nlocal, nglobal);
+
+    if(nlocal == 0 && nglobal == 0)
+        print_global_output("      skipping...\n");
+
+    for(const auto & it : cd.cmap_)
+    {
+        if( it.second.value->is_serializable() &&
+           (it.second.policy & CacheData::CheckpointGlobal ||
+            it.second.policy & CacheData::CheckpointLocal) )
+        {
+            bool ishashable = it.second.value->is_hashable();
+
+            bphash::HashValue h;
+            std::string hashstr = "(not hashable)";
+            if(ishashable)
+            {
+                h = it.second.value->my_hash();
+                hashstr = bphash::hash_to_string(h);
+            }
+
+            print_global_output("       + saving: %?  hash: %?\n", it.first, hashstr);
+
+
+            // has this already been written?
+            if(toc_has_entry(modid, it.first, h))
+            {
+                //! \todo overwrite? delete old?
+                //        probably not until we have a proper DB backend
+                print_global_output("           * existing entry found in TOC. skipping");
+                continue;
+            }
+
+
+            // build the toc entry
+            TOCEntry te{modid, it.first, h, 0};
+
+            // see if this has already been stored
+            bool existing = false;
+            if(ishashable)
+            {
+                if(toc_has_hash(h))
+                {
+                    // already been stored somewhere
+                    // get that position
+                    te.pos = static_cast<size_t>(get_toc_entry(h).pos);
+                    existing = true;
+                }
+            }
+
+            if(!existing)
+            {
+                te.pos = of.tellp();
+
+                // serialize and write
+                ByteArray bar = it.second.value->to_byte_array();
+
+                size_t nbytes = bar.size() * sizeof(ByteArray::value_type);
+                of.write(bar.data(), nbytes);
+                print_global_output("           * wrote %? bytes to position %?\n", nbytes, te.pos);
+            }
+            else
+                print_global_output("           * existing data found. position = %?\n", te.pos);
+
+
+            // add the toc entry
+            toc_.push_back(std::move(te));
+        }
     }
 
     print_global_output("\n");
-
 }
 
 
