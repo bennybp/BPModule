@@ -116,7 +116,7 @@ ModuleInfo ModuleManager::module_key_info(const std::string & modulekey) const
 void ModuleManager::duplicate_key(const std::string & modulekey, const std::string newkey)
 {
     std::lock_guard<std::mutex> l(mutex_);
-    if(!store_.count(newkey))
+    if(store_.count(newkey))
         throw ModuleLoadException("Cannot duplicate key: new key already exists",
                                   "modulekey", modulekey, "newkey", newkey);
 
