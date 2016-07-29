@@ -146,9 +146,10 @@ class CacheData
          *
          * \param [in] key The key to the data
          * \param [in] value The data to store
+         * \param [in] policyflags Checkpointing policy for data
          */
         template<typename T>
-        void set(const std::string & key, T && value, unsigned int policyflags)
+        void set(const std::string & key, T && value, CachePolicy policyflags)
         {
             typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type HolderType;
 
@@ -166,8 +167,9 @@ class CacheData
          * 
          * \param [in] key The key to the data
          * \param [in] value The data to store
+         * \param [in] policyflags Checkpointing policy for data
          */
-        void set_py(const std::string & key, const pybind11::object & value, unsigned int policyflags)
+        void set_py(const std::string & key, const pybind11::object & value, CachePolicy policyflags)
         {
             set(key, value, policyflags);
         }
