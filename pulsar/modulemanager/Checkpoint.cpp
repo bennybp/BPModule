@@ -30,7 +30,7 @@ Checkpoint::Checkpoint(const std::string & path)
 { }
 
 
-bool Checkpoint::toc_has_hash(const bphash::HashValue & h) const
+bool Checkpoint::toc_has_hash_(const bphash::HashValue & h) const
 {
     auto it = std::find_if(toc_.begin(), toc_.end(),
                            [ & h ] (const TOCEntry & e)
@@ -39,15 +39,14 @@ bool Checkpoint::toc_has_hash(const bphash::HashValue & h) const
     return it != toc_.end();
 }
 
-bool Checkpoint::toc_has_entry(unsigned long modid, const std::string & cachekey,
-                               const bphash::HashValue & h) const
+bool Checkpoint::toc_has_entry_(const TOCEntry & te) const
 {
-    //! \todo check type and other stuff?
     auto it = std::find_if(toc_.begin(), toc_.end(),
-                           [ modid, & cachekey, & h ] (const TOCEntry & e)
-                           { return e.modid == modid &&
-                                    e.cachekey == cachekey &&
-                                    e.hash == h; });
+                           [ & te ] (const TOCEntry & e)
+                           { return e.modid == te.modid &&
+                                    e.cachekey == te.cachekey &&
+                                    e.hash == te.hash &&
+                                    e.type == te.type; });
 
     return it != toc_.end();
 }
@@ -70,17 +69,16 @@ void Checkpoint::load(ModuleManager & mm)
     using namespace pulsar::datastore::detail;
 
     std::lock_guard<std::mutex> l_mm(mm.mutex_);
-    std::string metafile = path_ + "/psrtest/chkpt.meta";
-    std::string datafile = path_ + "/psrtest/chkpt.dat";
+    std::string metafile = path_ + ".meta";
 
     //! \todo enable exceptions on the streams
     std::ifstream meta_of(metafile.c_str(), std::fstream::binary);
-    std::ifstream data_of(datafile.c_str(), std::fstream::binary);
+    std::ifstream data_of(path_.c_str(), std::fstream::binary);
 
     if(!meta_of.is_open())
-        throw exception::GeneralException("Unable to open metatdata file for writing", "file", metafile);
+        throw exception::GeneralException("Unable to open metadata file for reading", "file", metafile);
     if(!data_of.is_open())
-        throw exception::GeneralException("Unable to open data file for writing", "file", datafile);
+        throw exception::GeneralException("Unable to open data file for reading", "file", path_);
 
 
     // load the toc and metadata
@@ -117,7 +115,8 @@ void Checkpoint::load(ModuleManager & mm)
         data_of.read(bar.data(), it.size);
 
         SerializedCacheData scd{std::move(bar), it.type, it.hash};
-        std::unique_ptr<SerializedDataHolder> sdh(new SerializedDataHolder(std::move(scd)));
+        auto pscd = std::make_shared<SerializedCacheData>(std::move(scd));
+        std::unique_ptr<SerializedDataHolder> sdh(new SerializedDataHolder(pscd));
 
         mm.cachemap_[modkey].set_(it.cachekey, std::move(sdh), it.policy);
     }
@@ -127,21 +126,20 @@ void Checkpoint::load(ModuleManager & mm)
 void Checkpoint::save(const ModuleManager & mm)
 {
     std::lock_guard<std::mutex> l_mm(mm.mutex_);
-    std::string metafile = path_ + "/psrtest/chkpt.meta";
-    std::string datafile = path_ + "/psrtest/chkpt.dat";
+    std::string metafile = path_ + ".meta";
 
     print_global_output("Starting checkpoint at %?\n", util::timestamp_string());
     print_global_output("   Meta file: %?\n", metafile);
-    print_global_output("   Data file: %?\n", datafile);
+    print_global_output("   Data file: %?\n", path_);
 
     //! \todo enable exceptions on the streams
     std::ofstream meta_of(metafile.c_str(), std::ofstream::trunc | std::ofstream::binary);
-    std::ofstream data_of(datafile.c_str(), std::ofstream::trunc | std::ofstream::binary);
+    std::ofstream data_of(path_.c_str(), std::ofstream::trunc | std::ofstream::binary);
 
     if(!meta_of.is_open())
-        throw exception::GeneralException("Unable to open metatdata file for writing", "file", metafile);
+        throw exception::GeneralException("Unable to open metadata file for writing", "file", metafile);
     if(!data_of.is_open())
-        throw exception::GeneralException("Unable to open data file for writing", "file", datafile);
+        throw exception::GeneralException("Unable to open data file for writing", "file", path_);
 
     print_global_output("Cache entries in the module manager:\n");
     for(const auto & it : mm.cachemap_)
@@ -222,8 +220,11 @@ void Checkpoint::save_module_cache_(const CacheData & cd, unsigned long modid,
             print_global_output("       + saving: %?  hash: %?\n", it.first, hashstr);
 
 
+            // build the toc entry
+            TOCEntry te{modid, it.first, h, it.second.value->type(), 0, it.second.policy};
+
             // has this already been written?
-            if(toc_has_entry(modid, it.first, h))
+            if(toc_has_entry_(te))
             {
                 //! \todo overwrite? delete old?
                 //        probably not until we have a proper DB backend
@@ -232,14 +233,11 @@ void Checkpoint::save_module_cache_(const CacheData & cd, unsigned long modid,
             }
 
 
-            // build the toc entry
-            TOCEntry te{modid, it.first, h, it.second.value->type(), 0, it.second.policy};
-
             // see if this has already been stored
             bool existing = false;
             if(ishashable)
             {
-                if(toc_has_hash(h))
+                if(toc_has_hash_(h))
                 {
                     // already been stored somewhere
                     // get that position

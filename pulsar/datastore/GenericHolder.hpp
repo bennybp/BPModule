@@ -211,7 +211,7 @@ class SerializedDataHolder : public GenericBase
          *
          * \param [in] m The object to move
          */
-        SerializedDataHolder(SerializedCacheData && m)
+        SerializedDataHolder(std::shared_ptr<SerializedCacheData> m)
             : obj(std::move(m))
         { }
 
@@ -231,12 +231,12 @@ class SerializedDataHolder : public GenericBase
         ////////////////////////////////////////
         virtual const char * type(void) const noexcept
         {
-            return obj.type.c_str();
+            return obj->type.c_str();
         }
 
         virtual std::string demangled_type(void) const
         {
-            return util::demangle_cpp(obj.type);
+            return util::demangle_cpp(obj->type);
         }
 
         virtual bool is_serializable(void) const noexcept
@@ -247,13 +247,13 @@ class SerializedDataHolder : public GenericBase
         virtual bool is_hashable(void) const noexcept
         {
             // hash will be empty if not hashable
-            return obj.hash.size();
+            return obj->hash.size();
         }
 
         virtual bphash::HashValue my_hash(void) const
         {
             if(is_hashable())
-                return obj.hash;
+                return obj->hash;
             else
                 throw exception::GeneralException("hash called for unhashable cache data");
         }
@@ -269,21 +269,20 @@ class SerializedDataHolder : public GenericBase
         }
 
         template<typename T>
-        std::shared_ptr<const T> get(void) const noexcept
+        std::unique_ptr<T> get(void) const
         {
             std::string desired_type = typeid(T).name();
-            if(desired_type != obj.type)
+            if(desired_type != obj->type)
                 throw exception::GeneralException("Desired type does not match serialized data",
                                                   "desired", util::demangle_cpp(desired_type),
-                                                  "stored", util::demangle_cpp(obj.type));
+                                                  "stored", util::demangle_cpp(obj->type));
 
-            std::unique_ptr<T> ret(util::new_from_byte_array<T>(obj.data);
-            return std::make_shared<const T>(ret.release());
+            return util::new_from_byte_array<T>(obj->data);
         }
 
     private:
         //! The actual data
-        SerializedCacheData obj;
+        std::shared_ptr<SerializedCacheData> obj;
 };
 
 

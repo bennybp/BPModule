@@ -42,8 +42,8 @@ class Checkpoint
         Checkpoint & operator=(const Checkpoint & rhs) = delete;
         Checkpoint & operator=(Checkpoint && rhs)      = default;
 
-
         void save(const ModuleManager & mm);
+
         void load(ModuleManager & mm);
 
 
@@ -72,10 +72,10 @@ class Checkpoint
         //! The table of contents
         std::vector<TOCEntry> toc_;
 
-        bool toc_has_hash(const bphash::HashValue & h) const;
+        bool toc_has_hash_(const bphash::HashValue & h) const;
 
-        bool toc_has_entry(unsigned long modid, const std::string & cachekey,
-                           const bphash::HashValue & h) const;
+        bool toc_has_entry_(const TOCEntry & te) const;
+
 
         const TOCEntry & get_toc_entry(const bphash::HashValue & h) const;
 

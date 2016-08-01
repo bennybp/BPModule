@@ -436,6 +436,7 @@ void ModuleManager::change_option_py(const std::string & modulekey, const std::s
 // Checkpointing
 ////////////////////
 
+/*
 static void checkpoint_thread_function_(const ModuleManager & mm, std::string path)
 {
     Checkpoint cp(path);
@@ -471,7 +472,7 @@ void ModuleManager::load_checkpoint(void)
     Checkpoint cp(scratch_path_);
     cp.load(*this);
 }
-
+*/
 
 
 } // close namespace modulemanager

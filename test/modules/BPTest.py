@@ -21,16 +21,6 @@ from pulsar.modulemanager.ModuleTreePrinters import print_dot_tree
 
 from helper.TestAtoms import water2
 
-def CompareList(lst1, lst2, tol):
-  if len(lst1) != len(lst2):
-    return False
-
-  else:
-    for i in range(0, len(lst1)):
-        if abs(lst1[i]-lst2[i]) > tol:
-            return False
-
-  return True
 
 def Run(mm):
     try:
@@ -157,10 +147,19 @@ def Run(mm):
 
 psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
 
+usechk = False
+if os.path.isfile("/tmp/psrtest/chkpt.meta"):
+  cp = psr.modulemanager.Checkpoint("/tmp/psrtest/chkpt")
+  usechk = True
+
 with psr.ModuleAdministrator() as mm:
+    if usechk:
+        cp.load(mm)
     Run(mm)
-mm.save_checkpoint(False)
-mm.load_checkpoint()
+
+cp = psr.modulemanager.Checkpoint("/tmp/psrtest/chkpt")
+cp.save(mm)
+#cp.load(mm)
 
 #dotout = print_dot_tree(mm)
 #with open("module_tree.dot", 'w') as f:
