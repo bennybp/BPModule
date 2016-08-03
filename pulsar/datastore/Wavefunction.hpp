@@ -87,27 +87,26 @@ class Wavefunction
         template<class Archive>
         void save(Archive & ar) const
         {
-            throw exception::GeneralException("TODO - serialization of wfn");
-            //ar(system, cmat, epsilon, occupations);
+            ar(system, cmat, epsilon, occupations, opdm);
         }
 
         template<class Archive>
         void load(Archive & ar)
         {
-            throw exception::GeneralException("TODO - serialization of wfn");
-            /*
             std::shared_ptr<system::System> newsystem;
             std::shared_ptr<math::IrrepSpinMatrixD> newcmat;
             std::shared_ptr<math::IrrepSpinVectorD> newepsilon;
+            std::shared_ptr<math::IrrepSpinMatrixD> newopdm;
             std::shared_ptr<math::IrrepSpinVectorD> newocc;
 
-            ar(newsystem, newcmat, newepsilon, newocc);
+            ar(newsystem, newcmat, newepsilon, newocc, newopdm);
 
             system = newsystem; 
             cmat = newcmat;
             epsilon = newepsilon;
             occupations = newocc;
-            */
+            opdm = newopdm;
+
         }
 
         void hash(bphash::Hasher & h) const;
