@@ -145,7 +145,7 @@ def Run(mm):
 
 
 
-psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, color = True, debug = True)
 
 usechk = False
 if os.path.isfile("/tmp/psrtest/chkpt.meta"):

@@ -32,7 +32,7 @@ class TeeBufToString : public std::streambuf
          * \param [in] sb The streambuf to tee from
          * \param [in] str The string to copy output to
          */ 
-        TeeBufToString(std::streambuf * sb, std::string * str) noexcept
+        TeeBufToString(std::streambuf * sb, std::string * str)
             : sb_(sb), str_(str)
         {
             if(sb == nullptr)

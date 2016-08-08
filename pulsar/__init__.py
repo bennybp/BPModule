@@ -60,24 +60,29 @@ pulsar_paths = { "base": thispath,
                }
 
 
-def initialize(argv, out = "stdout", color = True, debug = False, nthreads=1):
+def initialize(argv,
+               outpath = os.getcwd(),
+               outbase = "psr_output",
+               color = True,
+               debug = False,
+               use_stdout = True,
+               nthreads = 1):
+
   """Initializes the Pulsar core
 
   Initializes MPI, libraries, etc, as well as the
   output streams.
   """
 
-  output.set_global_out_to_stdout()
+  # Output depends on MPI being initialized, so we do that first
+  util.set_cmdline(argv)
+  parallel.initialize(nthreads)
+
+  output.create_global_output(outpath, outbase, use_stdout)
   output.enable_color(color)
 
   gout = output.get_global_output()
   gout.enable_debug(debug)
-
-  # Set the command line
-  util.set_cmdline(argv)
-
-  # Initialize Parallel
-  parallel.initialize(nthreads)
 
 
 def finalize():

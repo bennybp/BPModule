@@ -36,6 +36,14 @@ std::string remove_trailing_slash(const std::string & path);
 std::pair<std::string, std::string> split_path(const std::string & path);
 
 
+/*! \brief Joins two pieces of a path
+ *
+ * The resulting path will not have a trailing slash, regardless of if
+ * \p subpath has one.
+ */
+std::string join_path(const std::string & base, const std::string & subpath);
+
+
 } // close namespace util
 } // close namespace pulsar
 

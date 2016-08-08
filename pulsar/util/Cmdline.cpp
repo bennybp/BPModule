@@ -7,10 +7,7 @@
 #include <cstring>
 
 #include "pulsar/util/Cmdline.hpp"
-#include "pulsar/output/GlobalOutput.hpp"
 #include "pulsar/exception/Exceptions.hpp"
-
-using namespace pulsar::output;
 
 
 namespace {
@@ -45,9 +42,6 @@ void set_cmdline(const std::vector<std::string> & argv)
         clear_cmdline();
 
     argc_ = static_cast<int>(argv.size());
-    print_global_debug("Command line has %? args\n", argc_);
-    for(const auto & it : argv)
-        print_global_debug("   %?\n", it);
 
     // copy argv
     // argv[argc] should always be NULL

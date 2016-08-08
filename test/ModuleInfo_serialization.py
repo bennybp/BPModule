@@ -74,6 +74,6 @@ def Run():
 
 
 
-psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, color = True, debug = True)
 Run()
 psr.finalize()

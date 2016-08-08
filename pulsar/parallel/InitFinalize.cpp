@@ -3,11 +3,12 @@
  * \brief Parallelization functionality (source)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
+
+#include <iostream>
 #include <memory>
 #include <mpi.h>
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/parallel/InitFinalize.hpp"
-#include "pulsar/output/GlobalOutput.hpp"
 #include "pulsar/util/Cmdline.hpp"
 
 namespace pulsar{
@@ -22,20 +23,21 @@ const Env_t& get_env(){return *Env_;}
 
 void initialize(size_t NThreads)
 {
-    output::print_global_output("Calling MPI Init\n");
     int provided;
     MPI_Init_thread(nullptr,nullptr,MPI_THREAD_MULTIPLE,&provided);
+
     if(provided!=MPI_THREAD_MULTIPLE)
         throw pulsar::exception::GeneralException("MPI does not support threading");
+
     Env_=std::unique_ptr<Env_t>(new Env_t(MPI_COMM_WORLD,NThreads));
 
-    output::print_global_output("Initialized Process %? of %?\n", get_proc_id(), get_nproc());
+    std::cout << "Initialized process " << get_proc_id() << " of " << get_nproc() << "\n";
 }
 
 
 void finalize(void)
 {
-    output::print_global_output("Finalizing Process %? of %?\n", get_proc_id(), get_nproc());
+    std::cout << "Finalizing process " << get_proc_id() << " of " << get_nproc() << "\n";
     Env_.reset();
 }
 
