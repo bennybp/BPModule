@@ -1,6 +1,6 @@
 /*! \file
  *
- * \brief global_ output printing (header)
+ * \brief Global output printing (header)
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
@@ -20,7 +20,9 @@ namespace output {
 
 /*! \brief Sets the global output to stdout
  */
-void set_global_out_to_stdout(void);
+void create_global_output(const std::string & path,
+                          const std::string & base,
+                          bool use_stdout);
 
 
 //bool SetOut_File(const std::string & filepath);

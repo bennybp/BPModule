@@ -15,6 +15,7 @@
 
 #include <cereal/cereal.hpp>
 #include <cereal/archives/binary.hpp>
+#include <bphash/Hasher.hpp>
 
 
 namespace pulsar{
@@ -22,16 +23,8 @@ namespace datastore {
 namespace detail {
 
 
-/*! \brief A container that can hold anything
- *
- * \tparam T The type of the data this object is holding
- */ 
-template<typename T, bool = util::SerializeCheck<T>::value>
-class GenericHolder;
-
-
 template<typename T>
-class GenericHolderBase : public GenericBase
+class GenericHolder : public GenericBase
 {
     public:
         /*! \brief Construct via copying a data object
@@ -43,9 +36,12 @@ class GenericHolderBase : public GenericBase
          *
          *  \param [in] m The object to copy
          */
-        GenericHolderBase(const T & m)
+        GenericHolder(const T & m)
             : obj(std::make_shared<const T>(m))
-        { }
+        {
+            if(is_hashable())
+                make_my_hash_();
+        }
 
 
         /*! \brief Construct via moving a data object
@@ -57,18 +53,18 @@ class GenericHolderBase : public GenericBase
          *
          * \param [in] m The object to move
          */
-        GenericHolderBase(T && m)
+        GenericHolder(T && m)
             : obj(std::make_shared<const T>(std::move(m)))
         { }
 
 
         // no other constructors, etc
-        GenericHolderBase(void)                                       = delete;
-        GenericHolderBase(const GenericHolderBase & oph)              = delete;
-        GenericHolderBase(GenericHolderBase && oph)                   = delete;
-        GenericHolderBase & operator=(const GenericHolderBase & oph)  = delete;
-        GenericHolderBase & operator=(GenericHolderBase && oph)       = delete;
-        virtual ~GenericHolderBase()                                  = default;
+        GenericHolder(void)                                       = delete;
+        GenericHolder(const GenericHolder & oph)              = delete;
+        GenericHolder(GenericHolder && oph)                   = delete;
+        GenericHolder & operator=(const GenericHolder & oph)  = delete;
+        GenericHolder & operator=(GenericHolder && oph)       = delete;
+        virtual ~GenericHolder()                                  = default;
 
 
         /*! Return a const reference to the underlying data
@@ -96,44 +92,94 @@ class GenericHolderBase : public GenericBase
             return util::demangle_cpp_or_py_type(*obj);
         }
 
-        virtual bool is_serializable(void) const
+
+
+        ///////////////////////////////
+        // Serialization
+        ///////////////////////////////
+
+        virtual bool is_serializable(void) const noexcept
         {
             return util::SerializeCheck<T>::value;
         }
 
+        virtual ByteArray to_byte_array(void) const
+        {
+            return to_byte_array_helper_();
+        }
+
+        virtual void from_byte_array(const ByteArray & arr)
+        {
+            from_byte_array_helper_(arr);
+        }
+
+        ///////////////////////////////
+        // Hashing
+        ///////////////////////////////
+        virtual bool is_hashable(void) const noexcept
+        {
+            return bphash::is_hashable<T>::value;
+        }
+
+        virtual bphash::HashValue my_hash(void) const
+        {
+            if(is_hashable())
+                return hash_;
+            else
+                throw exception::GeneralException("hash called for unhashable cache data");
+        }
 
     protected:
         //! The actual data
         std::shared_ptr<const T> obj;
-};
 
+        //! Hash of the object (if hashable)
+        bphash::HashValue hash_;
 
+    private:
+        template<typename U = T>
+        typename std::enable_if<util::SerializeCheck<U>::value, ByteArray>::type
+        to_byte_array_helper_(void) const
+        {
+            return util::to_byte_array(*(GenericHolder<T>::obj));
+        }
 
-template<typename T>
-class GenericHolder<T, false> : public GenericHolderBase<T>
-{
-    public:
-        using GenericHolderBase<T>::GenericHolderBase;
-
-        virtual ByteArray to_byte_array(void) const
+        template<typename U = T>
+        typename std::enable_if<!util::SerializeCheck<U>::value, ByteArray>::type
+        to_byte_array_helper_(void) const
         {
             throw exception::GeneralException("to_byte_array called for unserializable cache data");
         }
-};
 
-
-template<typename T>
-class GenericHolder<T, true> : public GenericHolderBase<T>
-{
-    public:
-        using GenericHolderBase<T>::GenericHolderBase;
-
-        virtual ByteArray to_byte_array(void) const
+        template<typename U = T>
+        typename std::enable_if<util::SerializeCheck<U>::value, void>::type
+        from_byte_array_helper_(const ByteArray & arr)
         {
-            return util::to_byte_array(*(GenericHolderBase<T>::obj));
+            GenericHolder<T>::obj = std::make_shared<T>(util::from_byte_array<T>(arr));
+        }
+
+        template<typename U = T>
+        typename std::enable_if<!util::SerializeCheck<U>::value, void>::type
+        from_byte_array_helper_(const ByteArray & arr)
+        {
+            throw exception::GeneralException("from_byte_array called for unserializable cache data");
+        }
+
+
+        template<typename U = T>
+        typename std::enable_if<bphash::is_hashable<U>::value, bphash::HashValue>::type
+        make_my_hash_(void) const
+        {
+            hash_ = bphash::make_hash(bphash::HashType::Hash128, *obj);
+        }
+
+        template<typename U = T>
+        typename std::enable_if<!bphash::is_hashable<U>::value, bphash::HashValue>::type
+        make_my_hash_(void) const
+        {
+            throw exception::GeneralException("hash called for unhashable cache data");
         }
 };
-
 
 
 /*! \brief Storage type for serialized data */
@@ -141,8 +187,9 @@ struct SerializedCacheData
 {
     ByteArray data;
     std::string type;
-    std::string demangled_type;
+    bphash::HashValue hash;
 };
+
 
 
 /*! \brief Holds serialized data in the cache
@@ -164,7 +211,7 @@ class SerializedDataHolder : public GenericBase
          *
          * \param [in] m The object to move
          */
-        SerializedDataHolder(SerializedCacheData && m)
+        SerializedDataHolder(std::shared_ptr<SerializedCacheData> m)
             : obj(std::move(m))
         { }
 
@@ -178,34 +225,37 @@ class SerializedDataHolder : public GenericBase
         virtual ~SerializedDataHolder()                                 = default;
 
 
-        /*! Return a const reference to the underlying data
-         *
-         * \exnothrow
-         *
-         * \return A const reference to the underlying data
-         */ 
-        const SerializedCacheData & get(void) const noexcept
-        {
-            return obj;
-        }
-
 
         ////////////////////////////////////////
         // Virtual functions from GenericBase
         ////////////////////////////////////////
         virtual const char * type(void) const noexcept
         {
-            return obj.type.c_str();
+            return obj->type.c_str();
         }
 
         virtual std::string demangled_type(void) const
         {
-            return obj.demangled_type.c_str();
+            return util::demangle_cpp(obj->type);
         }
 
-        virtual bool is_serializable(void) const
+        virtual bool is_serializable(void) const noexcept
         {
             return false;
+        }
+
+        virtual bool is_hashable(void) const noexcept
+        {
+            // hash will be empty if not hashable
+            return obj->hash.size();
+        }
+
+        virtual bphash::HashValue my_hash(void) const
+        {
+            if(is_hashable())
+                return obj->hash;
+            else
+                throw exception::GeneralException("hash called for unhashable cache data");
         }
 
         virtual ByteArray to_byte_array(void) const
@@ -213,10 +263,26 @@ class SerializedDataHolder : public GenericBase
             throw exception::GeneralException("to_byte_array called for already-serialized data");
         }
 
+        virtual void from_byte_array(const ByteArray & arr)
+        {
+            throw exception::GeneralException("from_byte_array called for already-serialized data");
+        }
+
+        template<typename T>
+        std::unique_ptr<T> get(void) const
+        {
+            std::string desired_type = typeid(T).name();
+            if(desired_type != obj->type)
+                throw exception::GeneralException("Desired type does not match serialized data",
+                                                  "desired", util::demangle_cpp(desired_type),
+                                                  "stored", util::demangle_cpp(obj->type));
+
+            return util::new_from_byte_array<T>(obj->data);
+        }
 
     private:
         //! The actual data
-        SerializedCacheData obj;
+        std::shared_ptr<SerializedCacheData> obj;
 };
 
 

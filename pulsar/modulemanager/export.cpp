@@ -92,7 +92,6 @@ void export_pybind11(pybind11::module & mtop)
     .def("load_module_from_minfo", &ModuleManager::load_module_from_minfo)
     .def("enable_debug", &ModuleManager::enable_debug)
     .def("enable_debug_all", &ModuleManager::enable_debug_all)
-    .def("run_checkpoint", &ModuleManager::run_checkpoint)
     ;
 
 
@@ -111,6 +110,16 @@ void export_pybind11(pybind11::module & mtop)
     .def(pybind11::init<>())
     .def("add_py_creator", &ModuleCreationFuncs::add_py_creator)
     .def("has_creator", &ModuleCreationFuncs::has_creator)
+    ;
+
+
+    //////////////////////////////
+    // Checkpointing
+    //////////////////////////////
+    pybind11::class_<Checkpoint>(m, "Checkpoint")
+    .def(pybind11::init<const std::string &>())
+    .def("save", &Checkpoint::save)
+    .def("load", &Checkpoint::load)
     ;
 
     // Export the testing stuff

@@ -5,7 +5,7 @@
 #include<iostream>
 #include<iomanip>
 #include<pulsar/util/IterTools.hpp>
-
+#include<pulsar/util/Serialization.hpp>
 
 namespace pulsar{
 namespace math {
@@ -14,14 +14,38 @@ template<size_t Rank, typename DataType>
 class TensorImpl
 {
     public:
+        /*! \brief For serialization only
+         * 
+         * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
+         * \todo Replace if cereal fixes this
+         */
+        TensorImpl() = default;
+
         virtual std::array<size_t, Rank> sizes(void) const = 0;
         virtual DataType get_value(std::array<size_t, Rank> idx) const = 0;
         virtual void set_value(std::array<size_t, Rank> idx, DataType val) = 0;
 
         size_t size(int dim) const { return sizes().at(dim); }
+
         ///Prints the tensor by calling get_value many times (i.e. this is slow)
-        std::ostream& print(std::ostream& os)const;
+        std::ostream & print(std::ostream& os) const;
+
+    private:
+        DECLARE_SERIALIZATION_FRIENDS
+
+        template<class Archive>
+        void save(Archive & archive) const
+        {
+            // reserved for future use
+        }
+
+        template<class Archive>
+        void load(Archive & archive)
+        {
+            // reserved for future use
+        }
 };
+
 
 ///Specialization so that Python calls the right virtual function
 template<size_t Rank,typename DataType>
@@ -93,6 +117,9 @@ std::ostream& operator<<(std::ostream& os, const TensorImpl<Rank,DataType>& t)
 {
    return t.print(os);
 }
+
+typedef TensorImpl<2, double> MatrixDImpl;
+typedef TensorImpl<1, double> VectorDImpl;
 
 } // close namespace math
 } // close namespace pulsar

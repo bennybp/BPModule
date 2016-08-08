@@ -1,13 +1,15 @@
-#include "pulsar/math/EigenCommon.hpp"
+#include "pulsar/math/EigenImpl.hpp"
 
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 using namespace pulsar::math;
 
+namespace pulsar {
+namespace math {
 
 std::shared_ptr<const MatrixXd>
-convert_to_eigen(const std::shared_ptr<const pulsar::math::TensorImpl<2, double>> & ten)
+convert_to_eigen(const std::shared_ptr<const MatrixDImpl> & ten)
 {
     // does the TensorImpl contain an eigen matrix?
     auto test = std::dynamic_pointer_cast<const EigenMatrixImpl>(ten);
@@ -25,7 +27,7 @@ convert_to_eigen(const std::shared_ptr<const pulsar::math::TensorImpl<2, double>
 }
 
 std::shared_ptr<const VectorXd>
-convert_to_eigen(const std::shared_ptr<const pulsar::math::TensorImpl<1, double>> & ten)
+convert_to_eigen(const std::shared_ptr<const VectorDImpl> & ten)
 {
     // does the TensorImpl contain an eigen matrix?
     auto test = std::dynamic_pointer_cast<const EigenVectorImpl>(ten);
@@ -40,4 +42,15 @@ convert_to_eigen(const std::shared_ptr<const pulsar::math::TensorImpl<1, double>
         (*ret)(i) = ten->get_value({i});
     return ret;
 }
+
+
+} // close namespace math
+} // close namespace pulsar
+
+
+//////////////////////////////
+// For Serialization
+//////////////////////////////
+CEREAL_REGISTER_TYPE(EigenMatrixImpl);
+CEREAL_REGISTER_TYPE(EigenVectorImpl);
 

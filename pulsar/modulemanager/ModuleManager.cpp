@@ -436,13 +436,14 @@ void ModuleManager::change_option_py(const std::string & modulekey, const std::s
 // Checkpointing
 ////////////////////
 
+/*
 static void checkpoint_thread_function_(const ModuleManager & mm, std::string path)
 {
     Checkpoint cp(path);
     cp.save(mm); 
 }
 
-void ModuleManager::run_checkpoint(bool separate_thread) const
+void ModuleManager::save_checkpoint(bool separate_thread) const
 {
     // wait for any existing checkpointing operations to finish
     if(checkpoint_thread_)
@@ -465,6 +466,13 @@ void ModuleManager::run_checkpoint(bool separate_thread) const
     }
 }
 
+
+void ModuleManager::load_checkpoint(void)
+{
+    Checkpoint cp(scratch_path_);
+    cp.load(*this);
+}
+*/
 
 
 } // close namespace modulemanager

@@ -61,5 +61,13 @@ std::pair<std::string, std::string> split_path(const std::string & path)
 }
 
 
+std::string join_path(const std::string & base, const std::string & subpath)
+{
+    std::string ret = remove_trailing_slash(base);
+    ret = add_trailing_slash(ret);
+    return ret + remove_trailing_slash(subpath);
+}
+
+
 } // close namespace util
 } // close namespace pulsar

@@ -531,7 +531,7 @@ class BasisShellBase
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        friend class bphash::Hasher;
+        DECLARE_HASHING_FRIENDS
 
         template<class Archive>
         void serialize(Archive & ar)
@@ -544,8 +544,8 @@ class BasisShellBase
         void hash(bphash::Hasher & h) const
         {
             h(type_, am_, nprim_, ngen_, nfunc_,
-                   bphash::HashPointer(alphas_, n_primitives()),
-                   bphash::HashPointer(coefs_, n_coefficients()));
+                   bphash::hash_pointer(alphas_, n_primitives()),
+                   bphash::hash_pointer(coefs_, n_coefficients()));
         }
 
 

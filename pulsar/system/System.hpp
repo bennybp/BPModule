@@ -86,7 +86,7 @@ private:
     ///@{
 
     DECLARE_SERIALIZATION_FRIENDS
-    friend class bphash::Hasher;
+    DECLARE_HASHING_FRIENDS
 
     template<class Archive>
     void serialize(Archive & ar)

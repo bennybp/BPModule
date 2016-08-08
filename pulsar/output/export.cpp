@@ -50,8 +50,7 @@ void export_pybind11(pybind11::module & mtop)
     m.def("enable_color", enable_color);
 
     m.def("get_global_output", get_global_output, pybind11::return_value_policy::reference);
-    m.def("set_global_out_to_stdout", set_global_out_to_stdout);
-    //m.def("SetOut_File", SetOut_File);
+    m.def("create_global_output", create_global_output);
 
     m.def("print_general_output",  print_general_output<>);
     m.def("print_global_output",  print_global_output<>);

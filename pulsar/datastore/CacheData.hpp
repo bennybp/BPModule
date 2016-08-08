@@ -112,7 +112,7 @@ class CacheData
          * \return A const referance to the data
          */
         template<typename T>
-        std::shared_ptr<const T> get(const std::string & key) const
+        std::shared_ptr<const T> get(const std::string & key)
         {
             // mutex locking handled in get_or_throw_cast
             const detail::GenericHolder<T> * ph = get_or_throw_cast_<T>(key);
@@ -132,9 +132,10 @@ class CacheData
          * \param [in] key The key to the data
          * \return A copy of the data
          */
-        pybind11::object get_py(const std::string & key) const
+        pybind11::object get_py(const std::string & key)
         {
-            return *(get<pybind11::object>(key));
+            const detail::GenericHolder<pybind11::object> * ph = get_or_throw_cast_py_(key);
+            return *(ph->get());
         }
 
         /*! \brief Add data associated with a given key via copy
@@ -198,7 +199,7 @@ class CacheData
 
             for(const auto & it : cmap_)
                 print_output(os, "  -Key: %-20?  Serializable: %?  Type: %?\n", it.first,
-                             it.second.value->is_serializable(),
+                             it.second.value->is_serializable() ? "Yes" : "No",
                              it.second.value->demangled_type());
         }
 
@@ -213,9 +214,6 @@ class CacheData
         /*! \brief Mutex protecting this object during multi-threaded access */
         mutable std::mutex mutex_;
 
-        /*! \brief ID to give to the next piece of data coming in */
-        uint64_t curid_ = 0;
-
 
         /*! \brief Stores a pointer to a placeholder, plus some other information
          */
@@ -223,7 +221,6 @@ class CacheData
         {
             std::unique_ptr<detail::GenericBase> value;  //!< The stored data
             unsigned int policy;                         //!< Policy flags for this entry 
-            uint64_t uid;                                //!< Unique ID given to the data
         };
 
 
@@ -263,17 +260,76 @@ class CacheData
          * \return detail::GenericHolder containing the data for the given key
          */ 
         template<typename T>
-        const detail::GenericHolder<T> * get_or_throw_cast_(const std::string & key) const
+        const detail::GenericHolder<T> * get_or_throw_cast_(const std::string & key)
         {
+            using namespace detail;
+
             // get_or_throw will lock the mutex and then release it when done
             const CacheDataEntry & pme = get_or_throw_(key);
 
             // this stuff is safe to do with an unlocked mutex
-            const detail::GenericHolder<T> * ph = dynamic_cast<const detail::GenericHolder<T> *>(pme.value.get());
+            auto ptr = pme.value.get();
+
+            //! \todo mutex work makes sense? It's handed in set
+
+            const GenericHolder<T> * ph = dynamic_cast<const GenericHolder<T> *>(ptr);
             if(ph == nullptr)
-                throw exception::DataStoreException("Bad cast in CacheData", "key", key,
-                                                    "fromtype", pme.value->demangled_type(),
-                                                    "totype", util::demangle_cpp_type<T>()); 
+            {
+                // is this serialized data?
+                const SerializedDataHolder * scd = dynamic_cast<const SerializedDataHolder *>(ptr);
+                if(scd == nullptr)
+                {
+                    throw exception::DataStoreException("Bad cast in CacheData", "key", key,
+                                                        "fromtype", pme.value->demangled_type(),
+                                                        "totype", util::demangle_cpp_type<T>());
+                }
+                else
+                {
+                    // convert to a new holder
+                    //! \todo flags
+                    std::unique_ptr<T> unserialized(scd->get<T>());
+
+                    // will replace the old key
+                    set(key, std::move(*unserialized), CacheData::NoCheckpoint);
+
+                    // call this function again - should load the unserialized data
+                    return get_or_throw_cast_<T>(key);
+                }
+            }
+
+            return ph;
+        }
+
+        /*! \brief Obtains a pointer to a GenericHolder cast to desired type
+         * 
+         * \throw pulsar::exception::DataStoreException if key
+         *        doesn't exist or the cast fails.
+         *
+         * \param [in] key Key of the data to get
+         * \return detail::GenericHolder containing the data for the given key
+         */ 
+        const detail::GenericHolder<pybind11::object> * get_or_throw_cast_py_(const std::string & key)
+        {
+            // we need a separate function since pybind11::object is not serializable.
+            //! \todo fix if we can serialize pybind11::objects
+            using namespace detail;
+
+            // get_or_throw will lock the mutex and then release it when done
+            const CacheDataEntry & pme = get_or_throw_(key);
+
+            // this stuff is safe to do with an unlocked mutex
+            auto ptr = pme.value.get();
+
+            //! \todo mutex work makes sense? It's handed in set
+
+            const GenericHolder<pybind11::object> * ph = dynamic_cast<const GenericHolder<pybind11::object> *>(ptr);
+
+            if(ph == nullptr)
+            {
+                    throw exception::DataStoreException("Bad cast in CacheData", "key", key,
+                                                        "fromtype", pme.value->demangled_type(),
+                                                        "totype", util::demangle_cpp_type<pybind11::object>());
+            }
 
             return ph;
         }
@@ -290,9 +346,9 @@ class CacheData
         {
             std::lock_guard<std::mutex> l(mutex_);
 
-            // emplace has strong exception guarantee
-            cmap_.emplace(key, CacheDataEntry{std::move(ptr), policyflags, curid_});
-            curid_++;
+            if(cmap_.count(key))
+                cmap_.erase(key);
+            cmap_.emplace(key, CacheDataEntry{std::move(ptr), policyflags,});
         }
 
 

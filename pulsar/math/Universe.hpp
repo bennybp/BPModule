@@ -175,7 +175,7 @@ private:
     ///@{
     
     DECLARE_SERIALIZATION_FRIENDS
-    friend class bphash::Hasher;
+    DECLARE_HASHING_FRIENDS
 
     /* We have to split load/save since MathSet uses
      * load/save, and these are inherited. If not,

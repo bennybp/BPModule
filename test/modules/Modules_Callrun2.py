@@ -51,7 +51,7 @@ def Run(mm):
 
 
 
-psr.initialize(sys.argv, out = "stdout", color = True, debug = True)
+psr.initialize(sys.argv, color = True, debug = True)
 
 with psr.ModuleAdministrator() as mm:
     Run(mm)

@@ -272,10 +272,6 @@ class ModuleManager
         /*! \brief Notify the module manager that a module ID is no longer in use */
         void notify_destruction(ID_t id);
 
-        /*! \brief Runs a checkpoint operation on this module manager */
-        void run_checkpoint(bool separate_thread) const;
-
-
     private:
         friend class Checkpoint;
 

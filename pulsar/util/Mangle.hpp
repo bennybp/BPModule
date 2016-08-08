@@ -22,6 +22,13 @@ namespace util {
 std::string demangle_cpp(const char * typestr);
 
 
+/*! \brief Demangle a type string for a C++ object into something human-readable
+ *
+ * ie, converts  3barI5emptyLi17EE to bar<empty, 17>
+ */
+std::string demangle_cpp(const std::string & typestr);
+
+
 /*! \brief Demangle the type of an object
  *
  * \param [in] t The object whose type to demangle

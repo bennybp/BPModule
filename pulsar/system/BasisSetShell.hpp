@@ -197,7 +197,7 @@ class BasisSetShell : public BasisShellBase
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        friend class bphash::Hasher;
+        DECLARE_HASHING_FRIENDS
 
         template<class Archive>
         void serialize(Archive & ar)
@@ -209,7 +209,7 @@ class BasisSetShell : public BasisShellBase
         void hash(bphash::Hasher & h) const
         {
             h(static_cast<const BasisShellBase &>(*this),
-              bphash::HashPointer(xyz_, 3));
+              bphash::hash_pointer(xyz_, 3));
         }
  
         ///@}
