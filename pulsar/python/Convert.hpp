@@ -77,7 +77,9 @@ pybind11::object convert_to_py(const T & obj,
         //! \todo fix if this pybind11 is changed to throw an exception
         if(!pyobj)
         {
-            throw PythonConvertException(detail::get_py_exception(),
+            auto pyex = detail::get_py_exception();
+
+            throw PythonConvertException(pyex.first,
                                          "when", "in converting from C++ to python",
                                          "fromtype", util::demangle_cpp_type<T>(),
                                          "info", "Resulting object pointer is null");

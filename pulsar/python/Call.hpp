@@ -47,8 +47,16 @@ Ret call_py_func(const pybind11::object & obj, Targs &&... Fargs)
     }
     catch(const std::exception &)
     {
-        std::string what = detail::get_py_exception();
-        throw PythonCallException(what, "from", "within a python function");
+        auto what = detail::get_py_exception();
+
+        std::string from = what.second;
+
+        PythonCallException pyex(what.first);
+
+        if(from.size() != 0)
+            pyex.append_info("from", from);
+
+        throw pyex;
     }
     catch(...)
     {
