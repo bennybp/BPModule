@@ -1,5 +1,5 @@
 #include "pulsar/math/EigenImpl.hpp"
-
+#include <cereal/archives/binary.hpp>
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
@@ -47,10 +47,6 @@ convert_to_eigen(const std::shared_ptr<const VectorDImpl> & ten)
 } // close namespace math
 } // close namespace pulsar
 
-
-//////////////////////////////
-// For Serialization
-//////////////////////////////
+#include <cereal/archives/portable_binary.hpp>
 CEREAL_REGISTER_TYPE(EigenMatrixImpl);
 CEREAL_REGISTER_TYPE(EigenVectorImpl);
-

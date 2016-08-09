@@ -182,6 +182,5 @@ typedef pulsar::math::BlockByIrrepSpin<Eigen::VectorXd> BlockedEigenVector;
 } // close namespace math
 } // close namespace pulsar
 
-
 #endif
 
