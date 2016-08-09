@@ -182,6 +182,14 @@ typedef pulsar::math::BlockByIrrepSpin<Eigen::VectorXd> BlockedEigenVector;
 } // close namespace math
 } // close namespace pulsar
 
+#include <cereal/types/polymorphic.hpp>
+#include <cereal/archives/binary.hpp>
+#include <cereal/archives/portable_binary.hpp>
+
+CEREAL_REGISTER_TYPE(pulsar::math::EigenMatrixImpl);
+CEREAL_REGISTER_TYPE(pulsar::math::EigenVectorImpl);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(pulsar::math::MatrixDImpl,pulsar::math::EigenMatrixImpl);
+CEREAL_REGISTER_POLYMORPHIC_RELATION(pulsar::math::VectorDImpl,pulsar::math::EigenVectorImpl);
 
 #endif
 
