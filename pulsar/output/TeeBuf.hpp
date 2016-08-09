@@ -67,10 +67,16 @@ class TeeBuf : public std::streambuf
                 return !EOF;
             else
             {
-                int ret1 = sb1_->sputc(static_cast<char>(c));
-                int ret2 = sb2_->sputc(static_cast<char>(c));
+                int ret1 = 0;
+                int ret2 = 0;
 
-                if(ret1 != ret2)
+                if(sb1_)
+                    ret1 = sb1_->sputc(static_cast<char>(c));
+
+                if(sb2_)
+                    ret2 = sb2_->sputc(static_cast<char>(c));
+
+                if(sb1_ && sb2_ && ret1 != ret2)
                     throw std::runtime_error("Different return values in TeeBufToString::overflow");
 
                 return ret1;
@@ -79,10 +85,16 @@ class TeeBuf : public std::streambuf
         
         virtual int sync()
         {
-            int ret1 = sb1_->pubsync();
-            int ret2 = sb2_->pubsync();
+            int ret1 = 0;
+            int ret2 = 0;
 
-            if(ret1 != ret2)
+            if(sb1_)
+                ret1 = sb1_->pubsync();
+
+            if(sb2_)
+                ret2 = sb2_->pubsync();
+
+            if(sb1_ && sb2_ && ret1 != ret2)
                 throw std::runtime_error("Different return values in TeeBufToString::sync");
 
             return ret1;
