@@ -7,6 +7,7 @@
 
 #include "pulsar/modulebase/ModuleBase.hpp"
 #include "pulsar/datastore/Wavefunction.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
 
 using pulsar::modulemanager::ModuleManager;
 using pulsar::modulemanager::ModuleInfo;
@@ -22,7 +23,7 @@ namespace modulebase {
 
 
 ModuleBase::ModuleBase(ID_t id, const char * modtype)
-    : tbts_(std::cout.rdbuf(), nullptr),  // by default, go to cout only
+    : tbts_(output::get_global_output().rdbuf(), nullptr),
       out(&tbts_),
       id_(id), modtype_(modtype), mlocator_(nullptr), treenode_(nullptr)
 {
