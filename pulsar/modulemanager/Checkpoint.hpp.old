@@ -1,0 +1,56 @@
+/*! \file
+ *
+ * \brief Checkpointing of a calcualtion (header)
+ * \author Benjamin Pritchard (ben@bennyp.org)
+ */
+
+
+#pragma once
+
+#include <string>
+
+namespace pulsar {
+
+namespace datastore {
+class CacheData;
+}
+
+namespace modulemanager {
+
+
+class ModuleManager;
+class CheckpointIO;
+
+
+/*! \brief Handles checkpointing of a module manager
+ */
+class Checkpoint
+{
+    public:
+        Checkpoint(const std::shared_ptr<CheckpointIO> & cache_backend,
+                   const std::shared_ptr<CheckpointIO> & tree_backend);
+
+        ~Checkpoint() = default;
+
+
+        // no copy construction or assignment
+        Checkpoint(const Checkpoint & rhs)             = delete;
+        Checkpoint(Checkpoint && rhs)                  = default;
+        Checkpoint & operator=(const Checkpoint & rhs) = delete;
+        Checkpoint & operator=(Checkpoint && rhs)      = default;
+
+        void save(const ModuleManager & mm);
+
+        void load(ModuleManager & mm);
+
+
+    private:
+        std::shared_ptr<CheckpointIO> cache_backend_;
+        std::shared_ptr<CheckpointIO> tree_backend_;
+};
+
+} // close namespace modulemanager
+} // close namespace pulsar
+
+
+#endif

@@ -9,6 +9,10 @@
 #include <pybind11/operators.h>
 #include "pulsar/modulemanager/ModuleManager.hpp"
 #include "pulsar/modulemanager/Checkpoint.hpp"
+#include "pulsar/modulemanager/CheckpointIO.hpp"
+#include "pulsar/modulemanager/checkpoint_backends/DummyCheckpointIO.hpp"
+
+PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
 
 using pulsar::modulemanager::detail::ConstModuleTreeIter;
 using pulsar::modulemanager::detail::ConstModuleFlatTreeIter;
@@ -114,12 +118,23 @@ void export_pybind11(pybind11::module & mtop)
 
 
     //////////////////////////////
+    // Checkpointing Backends
+    //////////////////////////////
+
+    // No need to export most of the member functions of these classes.
+    // Those are meant to be used only from C++ (for now)
+    pybind11::class_<CheckpointIO, std::shared_ptr<CheckpointIO>> cpio(m, "CheckpointIO");
+
+    pybind11::class_<DummyCheckpointIO, std::shared_ptr<DummyCheckpointIO>>(m, "DummyCheckpointIO", cpio)
+    .def(pybind11::init<>())
+    ;
+
+    //////////////////////////////
     // Checkpointing
     //////////////////////////////
     pybind11::class_<Checkpoint>(m, "Checkpoint")
-    .def(pybind11::init<const std::string &>())
-    .def("save", &Checkpoint::save)
-    .def("load", &Checkpoint::load)
+    .def(pybind11::init<const std::shared_ptr<CheckpointIO> &, const std::shared_ptr<CheckpointIO> &>())
+    .def("save_local_cache", &Checkpoint::save_local_cache)
     ;
 
     // Export the testing stuff

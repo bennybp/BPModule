@@ -9,7 +9,6 @@
 #include "pulsar/modulebase/ModuleBase.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/datastore/Wavefunction.hpp"
-#include "pulsar/modulemanager/Checkpoint.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 
 ////////////////////////

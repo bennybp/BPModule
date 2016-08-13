@@ -147,19 +147,17 @@ def Run(mm):
 
 psr.initialize(sys.argv, color = True, debug = True)
 
-usechk = False
-if os.path.isfile("/tmp/psrtest/chkpt.meta"):
-  cp = psr.modulemanager.Checkpoint("/tmp/psrtest/chkpt")
-  usechk = True
-
 with psr.ModuleAdministrator() as mm:
-    if usechk:
-        cp.load(mm)
     Run(mm)
 
-cp = psr.modulemanager.Checkpoint("/tmp/psrtest/chkpt")
-cp.save(mm)
-#cp.load(mm)
+
+cpio_local = psr.modulemanager.DummyCheckpointIO()
+cpio_global = psr.modulemanager.DummyCheckpointIO()
+cp = psr.modulemanager.Checkpoint(cpio_local, cpio_global)
+print(cpio_local)
+print(cpio_global)
+print(cp)
+cp.save_local_cache(mm)
 
 #dotout = print_dot_tree(mm)
 #with open("module_tree.dot", 'w') as f:
