@@ -10,7 +10,9 @@
 #include "pulsar/modulemanager/ModuleManager.hpp"
 #include "pulsar/modulemanager/Checkpoint.hpp"
 #include "pulsar/modulemanager/CheckpointIO.hpp"
+
 #include "pulsar/modulemanager/checkpoint_backends/DummyCheckpointIO.hpp"
+#include "pulsar/modulemanager/checkpoint_backends/FileCheckpointIO.hpp"
 
 PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
 
@@ -127,6 +129,10 @@ void export_pybind11(pybind11::module & mtop)
 
     pybind11::class_<DummyCheckpointIO, std::shared_ptr<DummyCheckpointIO>>(m, "DummyCheckpointIO", cpio)
     .def(pybind11::init<>())
+    ;
+
+    pybind11::class_<FileCheckpointIO, std::shared_ptr<FileCheckpointIO>>(m, "FileCheckpointIO", cpio)
+    .def(pybind11::init<const std::string &, bool>())
     ;
 
     //////////////////////////////
