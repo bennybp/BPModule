@@ -35,18 +35,11 @@ class DummyCheckpointIO : public CheckpointIO
 
         virtual std::set<std::string> all_keys(void) const { return {}; }
 
-        virtual void write(const std::string &,
-                           const ByteArray &,
-                           const ByteArray &) { }
+        virtual void write(const std::string &, const ByteArray &) { }
 
-        virtual std::pair<ByteArray, ByteArray> read(const std::string &) const
+        virtual ByteArray read(const std::string &) const
         {
             throw exception::GeneralException("Cannot read from dummy IO");
-        }
-
-        virtual ByteArray read_metadata(const std::string &) const
-        {
-            throw exception::GeneralException("Cannot read metadata from dummy IO");
         }
 
         virtual void erase(const std::string &)

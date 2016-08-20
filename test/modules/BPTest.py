@@ -147,17 +147,18 @@ def Run(mm):
 
 psr.initialize(sys.argv, color = True, debug = True)
 
+cpio_global = psr.modulemanager.BDBCheckpointIO("/tmp/TestChk_global.dat", True)
+cpio_local = psr.modulemanager.BDBCheckpointIO("/tmp/TestChk_local.dat", False)
+cp = psr.modulemanager.Checkpoint(cpio_local, cpio_global)
+
 with psr.ModuleAdministrator() as mm:
+    cp.load_local_cache(mm)
     Run(mm)
 
 
-cpio_local = psr.modulemanager.DummyCheckpointIO()
-cpio_global = psr.modulemanager.DummyCheckpointIO()
-cp = psr.modulemanager.Checkpoint(cpio_local, cpio_global)
-print(cpio_local)
-print(cpio_global)
-print(cp)
 cp.save_local_cache(mm)
+
+print(cp.local_keys())
 
 #dotout = print_dot_tree(mm)
 #with open("module_tree.dot", 'w') as f:

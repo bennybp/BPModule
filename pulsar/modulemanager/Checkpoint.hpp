@@ -9,6 +9,7 @@
 #include <memory>
 #include <map>
 #include <vector>
+#include <set>
 
 namespace pulsar {
 
@@ -43,7 +44,9 @@ class Checkpoint
 
         void save_local_cache(const ModuleManager & mm);
 
-        //void load_local_cache(ModuleManager & mm);
+        std::set<std::string> local_keys(void) const;
+
+        void load_local_cache(ModuleManager & mm);
 
     private:
         std::shared_ptr<CheckpointIO> backend_local_;
@@ -51,9 +54,6 @@ class Checkpoint
 
         std::map<std::string, std::vector<std::string>>
         form_local_cache_save_list_(const ModuleManager & mm, CheckpointIO & backend);
-
-        static std::string make_cache_key_(const std::string & modkey,
-                                           const std::string & datakey);
 };
 
 

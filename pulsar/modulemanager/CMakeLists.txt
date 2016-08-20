@@ -10,7 +10,7 @@ set(PULSAR_MODULEMANAGER_FILES
             export.cpp
             testing_export.cpp
 
-            checkpoint_backends/FileCheckpointIO.cpp
+            checkpoint_backends/BDBCheckpointIO.cpp
 
             PARENT_SCOPE
    )

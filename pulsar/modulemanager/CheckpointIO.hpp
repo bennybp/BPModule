@@ -11,7 +11,6 @@
 
 #include <string>
 #include <set>
-#include <utility>
 
 namespace pulsar {
 namespace modulemanager {
@@ -37,13 +36,9 @@ class CheckpointIO
 
         virtual std::set<std::string> all_keys(void) const = 0;
 
-        virtual void write(const std::string & key,
-                           const ByteArray & metadata,
-                           const ByteArray & data) = 0;
+        virtual void write(const std::string & key, const ByteArray & data) = 0;
 
-        virtual std::pair<ByteArray, ByteArray> read(const std::string & key) const = 0;
-
-        virtual ByteArray read_metadata(const std::string & key) const = 0;
+        virtual ByteArray read(const std::string & key) const = 0;
 
         virtual void erase(const std::string & key) = 0;
 

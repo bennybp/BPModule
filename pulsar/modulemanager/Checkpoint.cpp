@@ -16,10 +16,62 @@ using namespace pulsar::output;
 
 namespace {
 
+static bool is_meta_key(const std::string & s)
+{
+    if(s.size() <= 6)
+        return false; // needs at least one char + "##META"
+
+    std::string last5 = s.substr(s.size()-6, 6);
+
+    if(last5 == "##META")
+        return true;
+    else
+        return false;
+}
+
+static bool is_cache_key(const std::string & s)
+{
+    if(s.size() <= 13)
+        return false; // Needs at least "CHKPT_CACHE__" + one char
+
+    std::string first13 = s.substr(0, 13);
+
+    if(first13 != "CHKPT_CACHE__")
+        return false;
+
+    // also needs a "_##_" in the middle
+    if(s.find("_##_") != std::string::npos)
+        return true;
+    else
+        return false;
+}
+
+
+static std::string make_cache_key(const std::string & modkey,
+                                  const std::string & datakey)
+{
+    return std::string("CHKPT_CACHE__") + modkey + "_##_" + datakey;
+}
+
+std::pair<std::string, std::string>
+split_cache_key(const std::string & key)
+{
+    if(!is_cache_key(key))
+        throw GeneralException("Unknown key format: not a cache key",
+                               "key", key);
+
+    std::string real_key = key.substr(13); // remove "CHKPT_CACHE__"
+    size_t sep_pos = real_key.find("_##_");
+    return {real_key.substr(0, sep_pos),
+            real_key.substr(sep_pos+4)};
+    
+}
+
 struct CacheEntryMetadata
 {
     std::string modkey;
     std::string cachekey;
+    std::string type;
     bphash::HashValue hash;  //!< Hash of original data, NOT serialized data
     size_t size;             //!< Size of serialized data
     unsigned int policy;     //!< Storage policy
@@ -27,7 +79,7 @@ struct CacheEntryMetadata
     template<typename Archive>
     void serialize(Archive & ar)
     {
-        ar(modkey, cachekey, hash, size, policy);
+        ar(modkey, cachekey, type, hash, size, policy);
     }
 };
 
@@ -47,12 +99,12 @@ Checkpoint::Checkpoint(const std::shared_ptr<CheckpointIO> & backend_local,
 { }
 
 
-std::string Checkpoint::make_cache_key_(const std::string & modkey,
-                                        const std::string & datakey)
-{
-    return std::string("CHKPT_CACHE__") + modkey + "__" + datakey;
-}
 
+        
+std::set<std::string> Checkpoint::local_keys(void) const
+{
+    return backend_local_->all_keys();
+}
 
 std::map<std::string, std::vector<std::string>>
 Checkpoint::form_local_cache_save_list_(const ModuleManager & mm,
@@ -77,15 +129,16 @@ Checkpoint::form_local_cache_save_list_(const ModuleManager & mm,
 
             if(data.second.policy & CacheData::CheckpointLocal && gb.is_serializable())
             {
-                std::string fullkey = make_cache_key_(cd.first, data.first);
+                std::string full_key = make_cache_key(cd.first, data.first);
+                std::string full_metakey = full_key + "##META";
 
                 // does the data already exist?
-                if(backend.count(fullkey))
+                if(backend.count(full_key))
                 {
                     // if it's hashable, read the metadata and compare the hashes
                     if(gb.is_hashable())
                     {
-                        ByteArray ba_meta = backend.read_metadata(fullkey);
+                        ByteArray ba_meta = backend.read(full_metakey);
                         auto meta = util::from_byte_array<CacheEntryMetadata>(ba_meta);
 
                         auto newhash = gb.my_hash();
@@ -108,12 +161,6 @@ Checkpoint::form_local_cache_save_list_(const ModuleManager & mm,
                         save = true;
                         stat = '!';
                     }
-
-                    // this is ok if they aren't hashable.
-                    // This will always be true
-                    
-                    stat = '!';
-                    save = false;
                 }
                 else
                 {
@@ -159,9 +206,9 @@ void Checkpoint::save_local_cache(const ModuleManager & mm)
             const auto & cdat = modcache.cmap_.at(cachekey);
             const auto & gb = *(cdat.value);
             unsigned int policy = cdat.policy;
-            const std::string fullkey = make_cache_key_(modkey, cachekey);
+            const std::string full_key = make_cache_key(modkey, cachekey);
+            const std::string full_metakey = full_key + "##META";
             
-
             // serialize the data
             ByteArray ba_data = gb.to_byte_array();
 
@@ -170,13 +217,53 @@ void Checkpoint::save_local_cache(const ModuleManager & mm)
                 h = gb.my_hash();
 
             // construct the metadata
-            CacheEntryMetadata meta{modkey, cachekey, h, ba_data.size(), policy};
+            CacheEntryMetadata meta{modkey, cachekey, 
+                                    gb.type(), h,
+                                    ba_data.size(), policy};
             ByteArray ba_meta = util::to_byte_array(meta);
 
             print_global_output("Saving: (%10? bytes)   %-30?  %?\n", ba_data.size(), modkey, cachekey);
 
             // write to the backend
-            backend_local_->write(fullkey, ba_meta, ba_data); 
+            backend_local_->write(full_key, ba_data); 
+            backend_local_->write(full_metakey, ba_meta); 
+        }
+    }
+}
+
+void Checkpoint::load_local_cache(ModuleManager & mm)
+{
+    using namespace pulsar::datastore::detail;
+    using namespace pulsar::util; // to/from_byte_array
+
+    std::lock_guard<std::mutex> l_mm(mm.mutex_);
+
+    auto all_keys = backend_local_->all_keys();
+
+    print_global_output("Checkpoint keys:\n");
+    for(const auto & key : all_keys)
+        print_global_output("    %?\n", key);
+
+    // load the data
+    for(const auto & it : all_keys)
+    {
+        if(is_cache_key(it) && !is_meta_key(it))
+        {
+            auto key_components = split_cache_key(it);
+            const std::string modkey = key_components.first;
+            const std::string cachekey = key_components.second;
+            print_global_output("Loading %?   %?\n", modkey, cachekey);
+
+            const std::string metakey = it + "##META";
+
+            ByteArray data = backend_local_->read(it);
+            ByteArray metadata = backend_local_->read(metakey);
+            auto cem = from_byte_array<CacheEntryMetadata>(metadata);
+
+            SerializedCacheData scd{std::move(data), cem.type, cem.hash};
+            auto pscd = std::make_shared<SerializedCacheData>(std::move(scd));
+            std::unique_ptr<SerializedDataHolder> sdh(new SerializedDataHolder(pscd));
+            mm.cachemap_[modkey].set_(cachekey, std::move(sdh), cem.policy);
         }
     }
 }

@@ -12,7 +12,7 @@
 #include "pulsar/modulemanager/CheckpointIO.hpp"
 
 #include "pulsar/modulemanager/checkpoint_backends/DummyCheckpointIO.hpp"
-#include "pulsar/modulemanager/checkpoint_backends/FileCheckpointIO.hpp"
+#include "pulsar/modulemanager/checkpoint_backends/BDBCheckpointIO.hpp"
 
 PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
 
@@ -131,7 +131,7 @@ void export_pybind11(pybind11::module & mtop)
     .def(pybind11::init<>())
     ;
 
-    pybind11::class_<FileCheckpointIO, std::shared_ptr<FileCheckpointIO>>(m, "FileCheckpointIO", cpio)
+    pybind11::class_<BDBCheckpointIO, std::shared_ptr<BDBCheckpointIO>>(m, "BDBCheckpointIO", cpio)
     .def(pybind11::init<const std::string &, bool>())
     ;
 
@@ -141,6 +141,8 @@ void export_pybind11(pybind11::module & mtop)
     pybind11::class_<Checkpoint>(m, "Checkpoint")
     .def(pybind11::init<const std::shared_ptr<CheckpointIO> &, const std::shared_ptr<CheckpointIO> &>())
     .def("save_local_cache", &Checkpoint::save_local_cache)
+    .def("load_local_cache", &Checkpoint::load_local_cache)
+    .def("local_keys", &Checkpoint::local_keys)
     ;
 
     // Export the testing stuff
