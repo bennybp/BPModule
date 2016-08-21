@@ -11,7 +11,10 @@
 #include "pulsar/output/GlobalOutput.hpp"
 
 using namespace pulsar::exception;
-
+using pulsar::util::to_byte_array;
+using pulsar::util::from_byte_array;
+    
+#define SPECIAL_KEY "_%%__STORED_KEYS__%%_"
 
 
 namespace pulsar {
@@ -19,139 +22,161 @@ namespace modulemanager {
         
 
 BDBCheckpointIO::BDBCheckpointIO(const std::string & path, bool truncate)
-    : path_(path), db_(NULL, 0)
+    : path_(path), db_(nullptr)
 {
-
     u_int32_t open_flags = DB_CREATE;
+    int ret = 0;
+
     if(truncate)
         open_flags |= DB_TRUNCATE;
 
-    try {
-        // Open the database
-        db_.open(NULL,           // Transaction pointer
-                 path_.c_str(),  // Database file name
-                 NULL,           // Optional logical database name
-                 DB_BTREE,       // Database access method
-                 open_flags,     // Open flags
-                 0);             // File mode (using defaults)
+    ret = db_create(&db_, NULL, 0);
 
-    // DbException is not subclassed from std::exception, so
-    // need to catch both of these.
-    }
-    catch(DbException &e) {
-        throw GeneralException("DB error when opening checkpoint file",
-                               "what", e.what(),
+    if(ret != 0)
+        throw GeneralException("Error while creating Berkeley DB",
+                               "what", db_strerror(ret),
                                "path", path);
-    }
-    catch(std::exception &e) {
-        throw GeneralException("STD error when opening checkpoint file",
-                               "what", e.what(),
+
+
+    // Open the database
+    ret = db_->open(db_,
+                    NULL,           // Transaction pointer
+                    path_.c_str(),  // Database file name
+                    NULL,           // Optional logical database name
+                    DB_BTREE,       // Database access method
+                    open_flags,     // Open flags
+                    0);             // File create mode (using defaults)
+
+    if(ret != 0)
+        throw GeneralException("Error while opening Berkeley DB",
+                               "what", db_strerror(ret),
                                "path", path);
-    }
+
+
+    if(count(SPECIAL_KEY) > 0)
+        read_keys_();
 }
 
 BDBCheckpointIO::~BDBCheckpointIO()
 {
     //! \todo exceptions?
-    db_.close(0);
+    db_->close(db_, 0);
 }
 
 
-size_t BDBCheckpointIO::size(void) const
+void BDBCheckpointIO::read_keys_(void)
 {
-    //! \todo I don't understand Db.stat()
-    return all_keys().size();
+    ByteArray key_data = read(SPECIAL_KEY);
+    stored_keys_ = from_byte_array<std::set<std::string>>(key_data);
 }
-
 
 size_t BDBCheckpointIO::count(const std::string & key) const
 {
-    char key_str[key.size()+1];
-    strncpy(key_str, key.c_str(), key.size()+1);
-    Dbt dbt_key(key_str, key.size()+1);
-    if(db_.exists(NULL, &dbt_key, 0) != DB_NOTFOUND)
+    // we need to const cast, since the C api for DBT 
+    // requires non-const
+    char * key_str = const_cast<char *>(key.c_str());
+
+    DBT dbt_key;
+    dbt_key.data = key_str;
+    dbt_key.size = key.size()+1; // don't forget terminating \0
+    dbt_key.flags = 0;
+
+    if(db_->exists(db_, NULL, &dbt_key, 0) == 0)
         return 1;
-    return 0;
+    else
+        return 0;
 }
 
 std::set<std::string> BDBCheckpointIO::all_keys(void) const
 {
-    std::set<std::string> keys;
-
-    Dbc *cursorp;
-
-    db_.cursor(NULL, &cursorp, 0);
-
-    Dbt key, data;
-    int ret;
-
-    while ((ret = cursorp->get(&key, &data, DB_NEXT)) == 0)
-    {
-        char * key_data = reinterpret_cast<char *>(key.get_data());
-        std::string key_str(key_data);
-        keys.emplace(std::move(key_str));
-    }
-
-    if (cursorp != NULL)
-        cursorp->close();
-
-    return keys;
+    return stored_keys_;
 }
 
 void BDBCheckpointIO::write(const std::string & key, const ByteArray & data)
 {
-    using pulsar::util::to_byte_array;
+    write_(key, data, true);
+}
 
-    char key_str[key.size()+1];
-    strncpy(key_str, key.c_str(), key.size()+1);
-    Dbt dbt_key(key_str, key.size()+1);
+void BDBCheckpointIO::write_(const std::string & key, const ByteArray & data,
+                             bool add_key)
+{
+    // we need to const cast, since the C api for DBT 
+    // requires non-const
+    char * key_ptr = const_cast<char *>(key.c_str());
+    char * data_ptr = const_cast<char *>(data.data());
 
-    ByteArray data_tmp = data;
-    Dbt dbt_data(data_tmp.data(), data.size());    
+    DBT dbt_key;
+    dbt_key.data = key_ptr;
+    dbt_key.size = key.size()+1;
+    dbt_key.flags = 0;
+
+    DBT dbt_data;
+    dbt_data.data = data_ptr;
+    dbt_data.size = data.size();
+    dbt_data.flags = 0;
 
     //! \todo errors & exceptions?
-    db_.put(NULL, &dbt_key, &dbt_data, 0);
+    int ret = db_->put(db_, NULL, &dbt_key, &dbt_data, 0);
+    if(ret != 0)
+        throw GeneralException("Error while writing to Berkeley DB",
+                               "what", db_strerror(ret),
+                               "path", path_,
+                               "key", key);
+
+    if(add_key)
+    {
+        // add to the stored keys
+        stored_keys_.insert(key);
+        ByteArray key_data = to_byte_array(stored_keys_);
+        write_(SPECIAL_KEY, key_data, false);
+    }
+    
 }
 
 ByteArray BDBCheckpointIO::read(const std::string & key) const
 {
-    using pulsar::util::to_byte_array;
-
     if(count(key) == 0)
         throw GeneralException("Cannot read data from checkpoint file - key doesn't exist",
                                "key", key);
 
-    char key_str[key.size()+1];
+    // we need to const cast, since the C api for DBT 
+    // requires non-const
+    char * key_ptr = const_cast<char *>(key.c_str());
 
-    strncpy(key_str, key.c_str(), key.size()+1);
+    DBT dbt_key;
+    dbt_key.data = key_ptr;
+    dbt_key.size = key.size()+1;
+    dbt_key.flags = 0;
+
+    DBT dbt_data;
 
 
-    Dbt dbt_key(key_str, key.size()+1);
-    Dbt dbt_data;
+    // start with a 4k buffer. If more is needed, that is handled
+    // in the loop below
+    ByteArray data_bytes(4096);
+    dbt_data.data = data_bytes.data();
+    dbt_data.ulen = 4096;
+    dbt_data.flags = DB_DBT_USERMEM;
 
-    //! \todo errors & exceptions?
-
-    // We need to get the size of the data
-    dbt_data.set_data(NULL);
-    dbt_data.set_ulen(0);
-    dbt_data.set_flags(DB_DBT_USERMEM);
-
-    try {
-        db_.get(NULL, &dbt_key, &dbt_data, 0);
+    int ret;
+    while( (ret = db_->get(db_, NULL, &dbt_key, &dbt_data, 0)) == DB_BUFFER_SMALL)
+    {
+        data_bytes.resize(dbt_data.size);        
+        dbt_data.data = data_bytes.data();
+        dbt_data.ulen = data_bytes.size();
     }
-    catch(...)
-    { } // swallow the exception
 
-    // now we have the size. allocate the byte array
-    size_t datasize = dbt_data.get_size();
-    ByteArray ret(datasize);
-    dbt_data.set_ulen(datasize);
-    dbt_data.set_data(ret.data());
+    if(ret != 0)
+        throw GeneralException("Error while reading from Berkeley DB",
+                               "what", db_strerror(ret),
+                               "path", path_,
+                               "key", key);
 
-    // actually retrieve the data
-    db_.get(NULL, &dbt_key, &dbt_data, 0);
+    // but now data_bytes might be too big.
+    // Shrink it
+    data_bytes.resize(dbt_data.size);
 
-    return ret;
+    return data_bytes;
 }
 
 void BDBCheckpointIO::erase(const std::string & key)

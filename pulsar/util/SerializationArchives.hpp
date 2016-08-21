@@ -14,6 +14,7 @@
 #include <cereal/archives/binary.hpp>
 
 #include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/util/Serialization_fwd.hpp"
 
 
 namespace pulsar{
@@ -191,22 +192,28 @@ class StdStreamArchive
 
 
         /*! \brief Get the contents of this archive as a byte array */
-        std::vector<char> to_byte_array(void)
+        ByteArray to_byte_array(void)
         {
             const size_t s = size();
 
             begin_unserialization(); // perform checks and reset positions
-            std::vector<char> ret(s);
+            ByteArray ret(s);
             stream_.read(ret.data(), s);
             end_unserialization();
             return ret;
         }
 
         /*! \brief Create this archive from a byte array */
-        void from_byte_array(const std::vector<char> & arr)
+        void from_byte_array(const ByteArray & arr)
+        {
+            from_byte_array(arr.data(), arr.size());
+        }
+
+        /*! \brief Create this archive from a byte array */
+        void from_byte_array(const char * arr, size_t size)
         {
             begin_serialization(); // perform checks and reset positions
-            stream_.write(arr.data(), arr.size());
+            stream_.write(arr, size);
             end_serialization();
         }
 

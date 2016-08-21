@@ -29,8 +29,6 @@ class DummyCheckpointIO : public CheckpointIO
         DummyCheckpointIO & operator=(const DummyCheckpointIO & rhs) = delete;
         DummyCheckpointIO & operator=(DummyCheckpointIO && rhs)      = default;
 
-        virtual size_t size(void) const { return 0; }
-
         virtual size_t count(const std::string &) const { return 0; }
 
         virtual std::set<std::string> all_keys(void) const { return {}; }

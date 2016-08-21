@@ -8,13 +8,17 @@
 #pragma once
 
 #include "pulsar/modulemanager/CheckpointIO.hpp"
-#include <db_cxx.h> // BerkeleyDB C++ API
+#include <db.h> // BerkeleyDB C API
 
 namespace pulsar {
 namespace modulemanager {
 
 
 /*! \brief Interface to an IO backend for checkpointing
+ *
+ * \note This uses the C api. I know BerkeleyDB has a C++ API, but
+ *       it doesn't add much, and tends to throw exceptions when
+ *       I don't want it to.
  */
 class BDBCheckpointIO : public CheckpointIO
 {
@@ -30,8 +34,6 @@ class BDBCheckpointIO : public CheckpointIO
         BDBCheckpointIO & operator=(const BDBCheckpointIO & rhs) = delete;
         BDBCheckpointIO & operator=(BDBCheckpointIO && rhs)      = default;
 
-        virtual size_t size(void) const;
-
         virtual size_t count(const std::string & key) const;
 
         virtual std::set<std::string> all_keys(void) const;
@@ -46,7 +48,13 @@ class BDBCheckpointIO : public CheckpointIO
 
     private:
         const std::string path_;
-        mutable Db db_;
+        std::set<std::string> stored_keys_;
+        DB * db_;
+
+        void read_keys_(void);
+
+        void write_(const std::string & key, const ByteArray & data,
+                    bool add_key);
 };
 
 } // close namespace modulemanager

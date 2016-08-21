@@ -67,6 +67,24 @@ T from_byte_array(const ByteArray & arr)
 }
 
 
+
+/*! \brief Create c++ object from a byte array
+ *
+ * The C++ object must be serializable
+ */
+template<typename T>
+T from_byte_array(const char * bytes, size_t size)
+{
+    MemoryArchive mar;
+    mar.from_byte_array(bytes, size);
+    mar.begin_unserialization();
+    T obj;
+    mar.unserialize(obj);
+    mar.end_unserialization();
+    return obj; 
+}
+
+
 /*! \brief Create c++ object from a byte array
  *
  * The C++ object must be serializable
