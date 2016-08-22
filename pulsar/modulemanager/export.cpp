@@ -132,7 +132,7 @@ void export_pybind11(pybind11::module & mtop)
     ;
 
     pybind11::class_<BDBCheckpointIO, std::shared_ptr<BDBCheckpointIO>>(m, "BDBCheckpointIO", cpio)
-    .def(pybind11::init<const std::string &, bool>())
+    .def(pybind11::init<const std::string &>())
     ;
 
     //////////////////////////////
@@ -142,7 +142,8 @@ void export_pybind11(pybind11::module & mtop)
     .def(pybind11::init<const std::shared_ptr<CheckpointIO> &, const std::shared_ptr<CheckpointIO> &>())
     .def("save_local_cache", &Checkpoint::save_local_cache)
     .def("load_local_cache", &Checkpoint::load_local_cache)
-    .def("local_keys", &Checkpoint::local_keys)
+    .def("save_global_cache", &Checkpoint::save_global_cache)
+    .def("load_global_cache", &Checkpoint::load_global_cache)
     ;
 
     // Export the testing stuff

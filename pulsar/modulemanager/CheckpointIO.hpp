@@ -30,6 +30,10 @@ class CheckpointIO
         CheckpointIO & operator=(const CheckpointIO & rhs) = delete;
         CheckpointIO & operator=(CheckpointIO && rhs)      = default;
 
+        virtual void open(void) = 0;
+
+        virtual void close(void) = 0;
+
         virtual size_t count(const std::string & key) const = 0;
 
         virtual std::set<std::string> all_keys(void) const = 0;

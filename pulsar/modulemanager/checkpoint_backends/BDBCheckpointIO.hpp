@@ -23,7 +23,7 @@ namespace modulemanager {
 class BDBCheckpointIO : public CheckpointIO
 {
     public:
-        BDBCheckpointIO(const std::string & path, bool truncate);
+        BDBCheckpointIO(const std::string & path);
         ~BDBCheckpointIO();
 
 
@@ -33,6 +33,10 @@ class BDBCheckpointIO : public CheckpointIO
         BDBCheckpointIO(BDBCheckpointIO && rhs)                  = default;
         BDBCheckpointIO & operator=(const BDBCheckpointIO & rhs) = delete;
         BDBCheckpointIO & operator=(BDBCheckpointIO && rhs)      = default;
+
+        virtual void open(void);
+
+        virtual void close(void);
 
         virtual size_t count(const std::string & key) const;
 

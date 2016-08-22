@@ -45,12 +45,13 @@ class CacheData
 {
     public:
 
-        enum CachePolicy
-        {
-            NoCheckpoint     = 1,
-            CheckpointLocal  = 2,
-            CheckpointGlobal = 4
-        };
+        //! \todo these are unsigned int rather than enum, since
+        //        we need to be able to combine them in python
+        //        (pybind11 won't be able to do bitwise OR, etc,
+        //        unless they are integers)
+        static constexpr const unsigned int NoCheckpoint     = 1;
+        static constexpr const unsigned int CheckpointLocal  = 2;
+        static constexpr const unsigned int CheckpointGlobal = 4;
 
 
         CacheData(void)          = default;
@@ -150,7 +151,7 @@ class CacheData
          * \param [in] policyflags Checkpointing policy for data
          */
         template<typename T>
-        void set(const std::string & key, T && value, CachePolicy policyflags)
+        void set(const std::string & key, T && value, unsigned int policyflags)
         {
             typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type HolderType;
 
@@ -170,7 +171,7 @@ class CacheData
          * \param [in] value The data to store
          * \param [in] policyflags Checkpointing policy for data
          */
-        void set_py(const std::string & key, const pybind11::object & value, CachePolicy policyflags)
+        void set_py(const std::string & key, const pybind11::object & value, unsigned int policyflags)
         {
             set(key, value, policyflags);
         }
@@ -290,7 +291,7 @@ class CacheData
                     std::unique_ptr<T> unserialized(scd->get<T>());
 
                     // will replace the old key
-                    set(key, std::move(*unserialized), CacheData::NoCheckpoint);
+                    set(key, std::move(*unserialized), pme.policy);
 
                     // call this function again - should load the unserialized data
                     return get_or_throw_cast_<T>(key);

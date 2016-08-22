@@ -21,21 +21,28 @@ namespace pulsar {
 namespace modulemanager {
         
 
-BDBCheckpointIO::BDBCheckpointIO(const std::string & path, bool truncate)
+BDBCheckpointIO::BDBCheckpointIO(const std::string & path)
     : path_(path), db_(nullptr)
+{
+}
+
+BDBCheckpointIO::~BDBCheckpointIO()
+{
+    close();
+}
+
+
+void BDBCheckpointIO::open(void)
 {
     u_int32_t open_flags = DB_CREATE;
     int ret = 0;
 
-    if(truncate)
-        open_flags |= DB_TRUNCATE;
 
     ret = db_create(&db_, NULL, 0);
-
     if(ret != 0)
         throw GeneralException("Error while creating Berkeley DB",
                                "what", db_strerror(ret),
-                               "path", path);
+                               "path", path_);
 
 
     // Open the database
@@ -50,18 +57,21 @@ BDBCheckpointIO::BDBCheckpointIO(const std::string & path, bool truncate)
     if(ret != 0)
         throw GeneralException("Error while opening Berkeley DB",
                                "what", db_strerror(ret),
-                               "path", path);
-
+                               "path", path_);
 
     if(count(SPECIAL_KEY) > 0)
         read_keys_();
 }
 
-BDBCheckpointIO::~BDBCheckpointIO()
+
+void BDBCheckpointIO::close(void)
 {
-    //! \todo exceptions?
-    db_->close(db_, 0);
+    //! \todo errors?
+    if(db_ != nullptr)
+        db_->close(db_, 0);
+    db_ = nullptr;
 }
+
 
 
 void BDBCheckpointIO::read_keys_(void)

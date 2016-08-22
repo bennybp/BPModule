@@ -126,14 +126,9 @@ void export_pybind11(pybind11::module & mtop)
                   pybind11::arg("key"), 
                   pybind11::arg("obj"),
                   pybind11::arg("policy"))
-    ;
-
-
-    pybind11::enum_<CacheData::CachePolicy>(cd, "CachePolicy")
-    .value("NoCheckpoint", CacheData::NoCheckpoint)
-    .value("CheckpointLocal", CacheData::CheckpointLocal)
-    .value("CheckpointGlobal", CacheData::CheckpointGlobal)
-    .export_values()
+      .def_readonly_static("NoCheckpoint", &CacheData::NoCheckpoint)
+      .def_readonly_static("CheckpointLocal", &CacheData::CheckpointLocal)
+      .def_readonly_static("CheckpointGlobal", &CacheData::CheckpointGlobal)
     ;
 
     // Export the testing stuff

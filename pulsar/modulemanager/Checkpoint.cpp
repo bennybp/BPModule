@@ -8,13 +8,31 @@
 #include "pulsar/modulemanager/ModuleManager.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 #include "pulsar/util/Serialization.hpp"
+#include "pulsar/parallel/InitFinalize.hpp"
 
 using namespace pulsar::exception;
 using namespace pulsar::datastore;
+using namespace pulsar::modulemanager;
 using namespace pulsar::output;
 
 
 namespace {
+
+struct CacheEntryMetadata
+{
+    std::string modkey;
+    std::string cachekey;
+    std::string type;
+    bphash::HashValue hash;  //!< Hash of original data, NOT serialized data
+    size_t size;             //!< Size of serialized data
+    unsigned int policy;     //!< Storage policy
+
+    template<typename Archive>
+    void serialize(Archive & ar)
+    {
+        ar(modkey, cachekey, type, hash, size, policy);
+    }
+};
 
 static bool is_meta_key(const std::string & s)
 {
@@ -67,22 +85,6 @@ split_cache_key(const std::string & key)
     
 }
 
-struct CacheEntryMetadata
-{
-    std::string modkey;
-    std::string cachekey;
-    std::string type;
-    bphash::HashValue hash;  //!< Hash of original data, NOT serialized data
-    size_t size;             //!< Size of serialized data
-    unsigned int policy;     //!< Storage policy
-
-    template<typename Archive>
-    void serialize(Archive & ar)
-    {
-        ar(modkey, cachekey, type, hash, size, policy);
-    }
-};
-
 
 }
 
@@ -101,15 +103,11 @@ Checkpoint::Checkpoint(const std::shared_ptr<CheckpointIO> & backend_local,
 
 
         
-std::set<std::string> Checkpoint::local_keys(void) const
-{
-    return backend_local_->all_keys();
-}
-
 std::map<std::string, std::vector<std::string>>
-Checkpoint::form_local_cache_save_list_(const ModuleManager & mm,
-                                        CheckpointIO & backend)
-{ 
+Checkpoint::form_cache_save_list_(const ModuleManager & mm,
+                                  CheckpointIO & backend,
+                                  std::function<bool(unsigned int)> policy_check)
+{
     // modulemanager should be locked already!
     // print out some info and get what we should be checkpointing
     print_global_output("Cache entries in the module manager:\n");
@@ -127,7 +125,9 @@ Checkpoint::form_local_cache_save_list_(const ModuleManager & mm,
             bool save = false;
             char stat = ' ';
 
-            if(data.second.policy & CacheData::CheckpointLocal && gb.is_serializable())
+            print_global_output("CHECKING POLICY for %? : %?\n", data.first, data.second.policy);
+
+            if(policy_check(data.second.policy) && gb.is_serializable())
             {
                 std::string full_key = make_cache_key(cd.first, data.first);
                 std::string full_metakey = full_key + "##META";
@@ -181,9 +181,15 @@ Checkpoint::form_local_cache_save_list_(const ModuleManager & mm,
 }
 
 
+
+
+
 void Checkpoint::save_local_cache(const ModuleManager & mm)
 {
     using namespace pulsar::util; // to/from_byte_array
+
+    // Actually save the data
+    backend_local_->open();
 
     if(!backend_local_ || !backend_global_)
         throw GeneralException("Nullptr for backend in Checkpoint");
@@ -192,43 +198,54 @@ void Checkpoint::save_local_cache(const ModuleManager & mm)
     std::lock_guard<std::mutex> l_mm(mm.mutex_);
 
     // print out some info and get what we should be checkpointing
-    auto to_save = form_local_cache_save_list_(mm, *backend_local_);
+    auto to_save = form_cache_save_list_(mm, *backend_local_,
+                                         [](unsigned int pol) { return pol & CacheData::CheckpointLocal; });
 
-    // Actually save the data
-    for(const auto & mod : to_save)
-    {
-        std::string modkey = mod.first;
 
-        const auto & modcache = mm.cachemap_.at(modkey);
-
-        for(const auto & cachekey : mod.second)
+    try {
+        for(const auto & mod : to_save)
         {
-            const auto & cdat = modcache.cmap_.at(cachekey);
-            const auto & gb = *(cdat.value);
-            unsigned int policy = cdat.policy;
-            const std::string full_key = make_cache_key(modkey, cachekey);
-            const std::string full_metakey = full_key + "##META";
-            
-            // serialize the data
-            ByteArray ba_data = gb.to_byte_array();
+            std::string modkey = mod.first;
 
-            bphash::HashValue h;
-            if(gb.is_hashable())
-                h = gb.my_hash();
+            const auto & modcache = mm.cachemap_.at(modkey);
 
-            // construct the metadata
-            CacheEntryMetadata meta{modkey, cachekey, 
-                                    gb.type(), h,
-                                    ba_data.size(), policy};
-            ByteArray ba_meta = util::to_byte_array(meta);
+            for(const auto & cachekey : mod.second)
+            {
+                const auto & cdat = modcache.cmap_.at(cachekey);
+                const auto & gb = *(cdat.value);
+                unsigned int policy = cdat.policy;
+                const std::string full_key = make_cache_key(modkey, cachekey);
+                const std::string full_metakey = full_key + "##META";
+                
+                // serialize the data
+                ByteArray ba_data = gb.to_byte_array();
 
-            print_global_output("Saving: (%10? bytes)   %-30?  %?\n", ba_data.size(), modkey, cachekey);
+                bphash::HashValue h;
+                if(gb.is_hashable())
+                    h = gb.my_hash();
 
-            // write to the backend
-            backend_local_->write(full_key, ba_data); 
-            backend_local_->write(full_metakey, ba_meta); 
+                // construct the metadata
+                CacheEntryMetadata meta{modkey, cachekey, 
+                                        gb.type(), h,
+                                        ba_data.size(), policy};
+                ByteArray ba_meta = util::to_byte_array(meta);
+
+                print_global_output("Saving: (%10? bytes)   %-30?  %?\n", ba_data.size(), modkey, cachekey);
+                print_global_output("SAVING POLICY: %u\n", policy);
+
+                // write to the backend
+                backend_local_->write(full_key, ba_data); 
+                backend_local_->write(full_metakey, ba_meta); 
+            }
         }
     }
+    catch(...)
+    {
+        backend_local_->close();
+        throw;
+    }
+
+    backend_local_->close();
 }
 
 void Checkpoint::load_local_cache(ModuleManager & mm)
@@ -238,34 +255,65 @@ void Checkpoint::load_local_cache(ModuleManager & mm)
 
     std::lock_guard<std::mutex> l_mm(mm.mutex_);
 
-    auto all_keys = backend_local_->all_keys();
+    backend_local_->open();
 
-    print_global_output("Checkpoint keys:\n");
-    for(const auto & key : all_keys)
-        print_global_output("    %?\n", key);
+    try {
+        auto all_keys = backend_local_->all_keys();
 
-    // load the data
-    for(const auto & it : all_keys)
-    {
-        if(is_cache_key(it) && !is_meta_key(it))
+        print_global_output("Checkpoint keys:\n");
+        for(const auto & key : all_keys)
+            print_global_output("    %?\n", key);
+
+        // load the data
+        for(const auto & it : all_keys)
         {
-            auto key_components = split_cache_key(it);
-            const std::string modkey = key_components.first;
-            const std::string cachekey = key_components.second;
-            print_global_output("Loading %?   %?\n", modkey, cachekey);
+            if(is_cache_key(it) && !is_meta_key(it))
+            {
+                auto key_components = split_cache_key(it);
+                const std::string modkey = key_components.first;
+                const std::string cachekey = key_components.second;
+                print_global_output("Loading %?   %?\n", modkey, cachekey);
 
-            const std::string metakey = it + "##META";
+                const std::string metakey = it + "##META";
 
-            ByteArray data = backend_local_->read(it);
-            ByteArray metadata = backend_local_->read(metakey);
-            auto cem = from_byte_array<CacheEntryMetadata>(metadata);
+                ByteArray data = backend_local_->read(it);
+                ByteArray metadata = backend_local_->read(metakey);
+                auto cem = from_byte_array<CacheEntryMetadata>(metadata);
 
-            SerializedCacheData scd{std::move(data), cem.type, cem.hash};
-            auto pscd = std::make_shared<SerializedCacheData>(std::move(scd));
-            std::unique_ptr<SerializedDataHolder> sdh(new SerializedDataHolder(pscd));
-            mm.cachemap_[modkey].set_(cachekey, std::move(sdh), cem.policy);
+                SerializedCacheData scd{std::move(data), cem.type, cem.hash};
+                auto pscd = std::make_shared<SerializedCacheData>(std::move(scd));
+                std::unique_ptr<SerializedDataHolder> sdh(new SerializedDataHolder(pscd));
+                mm.cachemap_[modkey].set_(cachekey, std::move(sdh), cem.policy);
+                print_global_output("LOADING POLICY: %u\n", cem.policy);
+            }
         }
     }
+    catch(...)
+    {
+        backend_local_->close();
+        throw;
+    }
+
+    backend_local_->close();
+}
+
+
+void Checkpoint::save_global_cache(const ModuleManager & mm)
+{
+    const long my_rank = parallel::get_proc_id();
+    const long nproc = parallel::get_nproc();
+
+
+    print_global_output("Global checkpoint for ID $?\n", my_rank);
+    if(my_rank == 0)
+    {
+        
+    }
+
+}
+
+void Checkpoint::load_global_cache(ModuleManager & mm)
+{
 }
 
 

@@ -42,18 +42,23 @@ class Checkpoint
         Checkpoint & operator=(Checkpoint && rhs)      = default;
 
 
+
         void save_local_cache(const ModuleManager & mm);
 
-        std::set<std::string> local_keys(void) const;
-
         void load_local_cache(ModuleManager & mm);
+
+        void save_global_cache(const ModuleManager & mm);
+
+        void load_global_cache(ModuleManager & mm);
 
     private:
         std::shared_ptr<CheckpointIO> backend_local_;
         std::shared_ptr<CheckpointIO> backend_global_;
 
-        std::map<std::string, std::vector<std::string>>
-        form_local_cache_save_list_(const ModuleManager & mm, CheckpointIO & backend);
+        static std::map<std::string, std::vector<std::string>>
+        form_cache_save_list_(const ModuleManager & mm,
+                              CheckpointIO & backend,
+                              std::function<bool(unsigned int)> policy_check);
 };
 
 
