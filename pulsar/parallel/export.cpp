@@ -19,6 +19,8 @@ void export_pybind11(pybind11::module & mtop)
     // Parallelization
     m.def("initialize", initialize);
     m.def("finalize", finalize);
+    m.def("get_proc_id", get_proc_id);
+    m.def("get_nproc", get_nproc);
 }
 
 

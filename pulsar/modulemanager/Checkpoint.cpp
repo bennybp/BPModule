@@ -98,7 +98,10 @@ Checkpoint::Checkpoint(const std::shared_ptr<CheckpointIO> & backend_local,
                        const std::shared_ptr<CheckpointIO> & backend_global)
     : backend_local_(backend_local),
       backend_global_(backend_global)
-{ }
+{
+    if(backend_local == backend_global)
+        throw GeneralException("Local and Global backends are the same! This will lead to problems");
+}
 
 
 
@@ -124,8 +127,6 @@ Checkpoint::form_cache_save_list_(const ModuleManager & mm,
 
             bool save = false;
             char stat = ' ';
-
-            print_global_output("CHECKING POLICY for %? : %?\n", data.first, data.second.policy);
 
             if(policy_check(data.second.policy) && gb.is_serializable())
             {
@@ -182,27 +183,23 @@ Checkpoint::form_cache_save_list_(const ModuleManager & mm,
 
 
 
-
-
-void Checkpoint::save_local_cache(const ModuleManager & mm)
+void Checkpoint::save_cache_(const ModuleManager & mm,
+                             CheckpointIO & backend,
+                             std::function<bool(unsigned int)> policy_check)
 {
     using namespace pulsar::util; // to/from_byte_array
 
     // Actually save the data
-    backend_local_->open();
-
-    if(!backend_local_ || !backend_global_)
-        throw GeneralException("Nullptr for backend in Checkpoint");
+    backend.open();
 
     // we have to lock the module manager for a while
     std::lock_guard<std::mutex> l_mm(mm.mutex_);
 
     // print out some info and get what we should be checkpointing
-    auto to_save = form_cache_save_list_(mm, *backend_local_,
-                                         [](unsigned int pol) { return pol & CacheData::CheckpointLocal; });
-
+    auto to_save = form_cache_save_list_(mm, backend, policy_check);
 
     try {
+
         for(const auto & mod : to_save)
         {
             std::string modkey = mod.first;
@@ -231,34 +228,34 @@ void Checkpoint::save_local_cache(const ModuleManager & mm)
                 ByteArray ba_meta = util::to_byte_array(meta);
 
                 print_global_output("Saving: (%10? bytes)   %-30?  %?\n", ba_data.size(), modkey, cachekey);
-                print_global_output("SAVING POLICY: %u\n", policy);
 
                 // write to the backend
-                backend_local_->write(full_key, ba_data); 
-                backend_local_->write(full_metakey, ba_meta); 
+                backend.write(full_key, ba_data); 
+                backend.write(full_metakey, ba_meta); 
             }
         }
     }
     catch(...)
     {
-        backend_local_->close();
+        backend.close();
         throw;
     }
 
-    backend_local_->close();
+    backend.close();
 }
 
-void Checkpoint::load_local_cache(ModuleManager & mm)
+
+void Checkpoint::load_cache_(ModuleManager & mm, CheckpointIO & backend)
 {
     using namespace pulsar::datastore::detail;
     using namespace pulsar::util; // to/from_byte_array
 
     std::lock_guard<std::mutex> l_mm(mm.mutex_);
 
-    backend_local_->open();
+    backend.open();
 
     try {
-        auto all_keys = backend_local_->all_keys();
+        auto all_keys = backend.all_keys();
 
         print_global_output("Checkpoint keys:\n");
         for(const auto & key : all_keys)
@@ -276,44 +273,121 @@ void Checkpoint::load_local_cache(ModuleManager & mm)
 
                 const std::string metakey = it + "##META";
 
-                ByteArray data = backend_local_->read(it);
-                ByteArray metadata = backend_local_->read(metakey);
+                ByteArray data = backend.read(it);
+                ByteArray metadata = backend.read(metakey);
                 auto cem = from_byte_array<CacheEntryMetadata>(metadata);
 
                 SerializedCacheData scd{std::move(data), cem.type, cem.hash};
                 auto pscd = std::make_shared<SerializedCacheData>(std::move(scd));
                 std::unique_ptr<SerializedDataHolder> sdh(new SerializedDataHolder(pscd));
                 mm.cachemap_[modkey].set_(cachekey, std::move(sdh), cem.policy);
-                print_global_output("LOADING POLICY: %u\n", cem.policy);
             }
         }
     }
     catch(...)
     {
-        backend_local_->close();
+        backend.close();
         throw;
     }
 
-    backend_local_->close();
+    backend.close();
 }
 
 
-void Checkpoint::save_global_cache(const ModuleManager & mm)
+
+void Checkpoint::perform_on_all_ranks_(const std::string & description, std::function<void(void)> func)
 {
     const long my_rank = parallel::get_proc_id();
     const long nproc = parallel::get_nproc();
 
-
-    print_global_output("Global checkpoint for ID $?\n", my_rank);
     if(my_rank == 0)
     {
+        print_global_output("On master: ");
+        print_global_output(description + "\n");
+
+        func(); // call the function
+
+        if(nproc > 1)
+        {
+            long dest = 1;
+
+            // send a note to rank 1 to let it know
+            // it can safely use the global file
+            MPI_Send(&dest, 1, MPI_LONG_INT, dest, 283, MPI_COMM_WORLD);
+        }
+    }
+    else
+    {
+        // wait for the note from the previous rank
+        long r;
+        long src = my_rank - 1;
+
+        MPI_Status status;
+
+        MPI_Recv(&r, 1, MPI_LONG_INT, src, 283, MPI_COMM_WORLD, &status);
+
+        //! \todo if r != my_rank, then what?
         
+        print_global_output("On rank %?: ", my_rank);
+        print_global_output(description + "\n");
+        func(); // call the function
+
+
+        long dest = my_rank + 1;
+        if(dest < nproc)
+        {
+            // send a note to the next node to let it know
+            // it can safely use the global file
+            MPI_Send(&dest, 1, MPI_LONG_INT, dest, 283, MPI_COMM_WORLD);
+        }
     }
 
+    MPI_Barrier(MPI_COMM_WORLD); //! \todo is this really necessary
+}
+
+
+void Checkpoint::save_local_cache(const ModuleManager & mm)
+{
+    if(!backend_local_ || !backend_global_)
+        throw GeneralException("Nullptr for backend in Checkpoint");
+
+    print_global_output("Saving local cache\n");
+    save_cache_(mm, *backend_local_, 
+                    [](unsigned int pol) { return pol & CacheData::CheckpointLocal; });
+}
+
+void Checkpoint::load_local_cache(ModuleManager & mm)
+{
+    if(!backend_local_ || !backend_global_)
+        throw GeneralException("Nullptr for backend in Checkpoint");
+
+    print_global_output("Loading local cache\n");
+    load_cache_(mm, *backend_local_);
+}
+
+
+
+void Checkpoint::save_global_cache(const ModuleManager & mm)
+{
+    if(!backend_local_ || !backend_global_)
+        throw GeneralException("Nullptr for backend in Checkpoint");
+
+    std::function<void(void)> func = std::bind(&Checkpoint::save_cache_, this,
+                                               std::ref(mm), std::ref(*backend_global_),
+                                               [](unsigned int pol) { return pol & CacheData::CheckpointGlobal; });
+
+    perform_on_all_ranks_("Saving global cache", func);
 }
 
 void Checkpoint::load_global_cache(ModuleManager & mm)
 {
+    if(!backend_local_ || !backend_global_)
+        throw GeneralException("Nullptr for backend in Checkpoint");
+
+    std::function<void(void)> func = std::bind(&Checkpoint::load_cache_, this,
+                                               std::ref(mm), std::ref(*backend_global_));
+
+    perform_on_all_ranks_("Loading global cache", func);
 }
 
 

@@ -147,16 +147,21 @@ def Run(mm):
 
 psr.initialize(sys.argv, color = True, debug = True)
 
+myrank = psr.parallel.get_proc_id()
+print_global_output("My rank: {}\n".format(myrank))
+
 cpio_global = psr.modulemanager.BDBCheckpointIO("/tmp/TestChk_global.dat")
-cpio_local = psr.modulemanager.BDBCheckpointIO("/tmp/TestChk_local.dat")
+cpio_local = psr.modulemanager.BDBCheckpointIO("/tmp/TestChk_local.dat.{}".format(myrank))
 cp = psr.modulemanager.Checkpoint(cpio_local, cpio_global)
 
 with psr.ModuleAdministrator() as mm:
     cp.load_local_cache(mm)
+    cp.load_global_cache(mm)
     Run(mm)
 
 
 cp.save_local_cache(mm)
+cp.save_global_cache(mm)
 
 #dotout = print_dot_tree(mm)
 #with open("module_tree.dot", 'w') as f:

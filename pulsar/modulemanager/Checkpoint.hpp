@@ -59,6 +59,13 @@ class Checkpoint
         form_cache_save_list_(const ModuleManager & mm,
                               CheckpointIO & backend,
                               std::function<bool(unsigned int)> policy_check);
+
+        void perform_on_all_ranks_(const std::string & description, std::function<void(void)> func);
+
+        void load_cache_(ModuleManager & mm, CheckpointIO & backend);
+
+        void save_cache_(const ModuleManager & mm, CheckpointIO & backend,
+                         std::function<bool(unsigned int)> policy_check);
 };
 
 

@@ -38,6 +38,9 @@ void initialize(size_t NThreads)
 void finalize(void)
 {
     std::cout << "Finalizing process " << get_proc_id() << " of " << get_nproc() << "\n";
+
+    //! \todo shouldn't be needed?
+    MPI_Barrier(MPI_COMM_WORLD);
     Env_.reset();
 }
 

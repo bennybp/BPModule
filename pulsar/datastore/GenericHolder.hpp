@@ -148,6 +148,7 @@ class GenericHolder : public GenericBase
         typename std::enable_if<!util::SerializeCheck<U>::value, ByteArray>::type
         to_byte_array_helper_(void) const
         {
+            //! \todo can be static assert?
             throw exception::GeneralException("to_byte_array called for unserializable cache data");
         }
 
@@ -162,21 +163,23 @@ class GenericHolder : public GenericBase
         typename std::enable_if<!util::SerializeCheck<U>::value, void>::type
         from_byte_array_helper_(const ByteArray & arr)
         {
+            //! \todo can be static assert?
             throw exception::GeneralException("from_byte_array called for unserializable cache data");
         }
 
 
         template<typename U = T>
-        typename std::enable_if<bphash::is_hashable<U>::value, bphash::HashValue>::type
-        make_my_hash_(void) const
+        typename std::enable_if<bphash::is_hashable<U>::value, void>::type
+        make_my_hash_(void)
         {
             hash_ = bphash::make_hash(bphash::HashType::Hash128, *obj);
         }
 
         template<typename U = T>
-        typename std::enable_if<!bphash::is_hashable<U>::value, bphash::HashValue>::type
-        make_my_hash_(void) const
+        typename std::enable_if<!bphash::is_hashable<U>::value, void>::type
+        make_my_hash_(void)
         {
+            //! \todo can be static assert?
             throw exception::GeneralException("hash called for unhashable cache data");
         }
 };
