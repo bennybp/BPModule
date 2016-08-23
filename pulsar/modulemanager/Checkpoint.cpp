@@ -300,47 +300,33 @@ void Checkpoint::perform_on_all_ranks_(const std::string & description, std::fun
     const long my_rank = parallel::get_proc_id();
     const long nproc = parallel::get_nproc();
 
-    if(my_rank == 0)
+    // who do we notify when we are done?
+    const long dest = my_rank + 1;
+
+    // who tells us when it's our turn?
+    const long src = my_rank - 1;
+
+    // buffer for receiving from src
+    long r;
+
+    // if we aren't rank 0, we have to wait for a signal
+    // from (my_rank - 1). This lets us know it's our turn
+    if(my_rank > 0)
     {
-        print_global_output("On master: ");
-        print_global_output(description + "\n");
-
-        func(); // call the function
-
-        if(nproc > 1)
-        {
-            long dest = 1;
-
-            // send a note to rank 1 to let it know
-            // it can safely use the global file
-            MPI_Send(&dest, 1, MPI_LONG_INT, dest, 283, MPI_COMM_WORLD);
-        }
-    }
-    else
-    {
-        // wait for the note from the previous rank
-        long r;
-        long src = my_rank - 1;
-
         MPI_Status status;
-
         MPI_Recv(&r, 1, MPI_LONG_INT, src, 283, MPI_COMM_WORLD, &status);
 
         //! \todo if r != my_rank, then what?
-        
-        print_global_output("On rank %?: ", my_rank);
-        print_global_output(description + "\n");
-        func(); // call the function
-
-
-        long dest = my_rank + 1;
-        if(dest < nproc)
-        {
-            // send a note to the next node to let it know
-            // it can safely use the global file
-            MPI_Send(&dest, 1, MPI_LONG_INT, dest, 283, MPI_COMM_WORLD);
-        }
     }
+
+    // perform the action
+    print_global_output("On rank %?: ", my_rank);
+    print_global_output(description + "\n");
+    func(); // call the function
+
+    // if we aren't the last rank, we must send the signal to (my_rank + 1)
+    if(my_rank != (nproc-1))
+        MPI_Send(&dest, 1, MPI_LONG_INT, (my_rank+1), 283, MPI_COMM_WORLD);
 
     MPI_Barrier(MPI_COMM_WORLD); //! \todo is this really necessary
 }
