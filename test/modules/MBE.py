@@ -7,6 +7,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(thispath),"helper"))
 
 from MiscFxns import *
 from StandardModules import *
+import pulsar_psi4
+
 
 #Correct energies
 UnCPEgy=224.90851104986243
@@ -59,19 +61,21 @@ def Run(mm):
         tester = psr.testing.Tester("Testing Various Flavors of MBE")
         tester.print_header()
 
+        pulsar_psi4.pulsar_psi4_setup(mm)
         LoadDefaultModules(mm)
 
         mm.change_option("PSR_BOND_FRAG","TRUNCATION_ORDER",2)       
-        mm.change_option("PSR_SCF","BASIS_SET","sto-3g")
+        mm.change_option("PSI4_SCF","BASIS_SET","sto-3g")
         
-        mm.change_option("PSR_MBE","METHOD","PSR_SCF")
+        mm.change_option("PSR_MBE","METHOD","PSI4_SCF")
         mm.change_option("PSR_MBE","FRAGMENTIZER","PSR_BOND_FRAG")       
-        mm.DuplicateKey("PSR_MBE","PSR_VMFC")
-        mm.change_option("PSR_VMFC","METHOD","PSR_SCF")
+        mm.duplicate_key("PSR_MBE","PSR_VMFC")
+        mm.change_option("PSR_VMFC","METHOD","PSI4_SCF")
         mm.change_option("PSR_VMFC","FRAGMENTIZER","PSR_VMFC_FRAG")
+        mm.change_option("PSI4_SCF","PRINT",0)#Set to 1+ to see all the output
 
         
-        mol=psr.system.MakeSystem("""
+        mol=psr.system.make_system("""
         0 1
         O    1.2361419   1.0137761  -0.0612424
         H    0.5104418   0.8944555   0.5514190
@@ -89,24 +93,24 @@ def Run(mm):
         
         
         MyMod=mm.get_module("PSR_MBE",0)
-        NewWfn,Egy=MyMod.Deriv(0,wfn)
+        NewWfn,Egy=MyMod.deriv(0,wfn)
         tester.test("Testing MBE(2) Energy via Deriv(0)",True,CompareEgy,Egy[0],UnCPEgy)
-        NewWfn,Egy=MyModenergy(wfn)
+        NewWfn,Egy=MyMod.energy(wfn)
         tester.test("Testing MBE(2) Energy via Energy()",True,CompareEgy,Egy,UnCPEgy)
-        NewWfn,Grad=MyMod.Deriv(1,wfn)
+        NewWfn,Grad=MyMod.deriv(1,wfn)
         tester.test("Testing MBE(2) Gradient via Deriv(1)",True, CompareGrad,Grad,UnCPGrad)
-        NewWfn,Grad=MyMod.Gradient(wfn)
+        NewWfn,Grad=MyMod.gradient(wfn)
         tester.test("Testing MBE(2) Gradient via Gradient()",True,CompareGrad,Grad,UnCPGrad)
 
 
         MyMod=mm.get_module("PSR_VMFC",0)
-        NewWfn,Egy=MyMod.Deriv(0,wfn)
+        NewWfn,Egy=MyMod.deriv(0,wfn)
         tester.test("Testing VMFC(2) Energy via Deriv(0)",True,CompareEgy,Egy[0],VMFCEgy)
-        NewWfn,Egy=MyModenergy(wfn)
+        NewWfn,Egy=MyMod.energy(wfn)
         tester.test("Testing VMFC(2) Energy via Energy()",True,CompareEgy,Egy,VMFCEgy)
-        NewWfn,Grad=MyMod.Deriv(1,wfn)
+        NewWfn,Grad=MyMod.deriv(1,wfn)
         tester.test("Testing VMFC(2) Gradient via Deriv(1)",True, CompareGrad,Grad,VMFCGrad)
-        NewWfn,Grad=MyMod.Gradient(wfn)
+        NewWfn,Grad=MyMod.gradient(wfn)
         tester.test("Testing VMFC(2) Gradient via Gradient()",True,CompareGrad,Grad,VMFCGrad)       
 
         tester.print_results()
