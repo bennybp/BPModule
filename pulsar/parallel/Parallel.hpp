@@ -5,16 +5,15 @@
  */ 
 
 
-#ifndef PULSAR_GUARD_PARALLEL__INITFINALIZE_HPP_
-#define PULSAR_GUARD_PARALLEL__INITFINALIZE_HPP_
+#ifndef PULSAR_GUARD_PARALLEL__PARALLEL_HPP_
+#define PULSAR_GUARD_PARALLEL__PARALLEL_HPP_
 
 #include <cstddef> //For size_t
+#include <functional>
 #include <LibTaskForce/LibTaskForce.hpp>
 
-//! \todo We need to store multiple communicators, etc
 
-
-namespace pulsar{
+namespace pulsar {
 namespace parallel {
 
 //Returns the current environment

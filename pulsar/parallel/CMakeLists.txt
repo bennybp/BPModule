@@ -1,5 +1,5 @@
 set(PULSAR_PARALLEL_FILES
-            InitFinalize.cpp
+            Parallel.cpp
             export.cpp
 
             PARENT_SCOPE

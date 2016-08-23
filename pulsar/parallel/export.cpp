@@ -5,7 +5,7 @@
  */ 
 
 
-#include "pulsar/parallel/InitFinalize.hpp"
+#include "pulsar/parallel/Parallel.hpp"
 #include <pybind11/pybind11.h>
 
 namespace pulsar{

@@ -8,7 +8,7 @@
 #include "pulsar/modulemanager/ModuleManager.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 #include "pulsar/util/Serialization.hpp"
-#include "pulsar/parallel/InitFinalize.hpp"
+#include "pulsar/parallel/Parallel.hpp"
 
 using namespace pulsar::exception;
 using namespace pulsar::datastore;

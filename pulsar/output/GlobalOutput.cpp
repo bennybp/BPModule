@@ -10,7 +10,7 @@
 #include <memory>
 
 #include "pulsar/output/GlobalOutput.hpp"
-#include "pulsar/parallel/InitFinalize.hpp"
+#include "pulsar/parallel/Parallel.hpp"
 #include "pulsar/util/Filesystem.hpp"
 #include "pulsar/output/TeeBuf.hpp"
 

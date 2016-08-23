@@ -9,7 +9,6 @@
 #include <memory>
 #include <map>
 #include <vector>
-#include <set>
 
 namespace pulsar {
 

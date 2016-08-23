@@ -8,7 +8,7 @@
 #include <memory>
 #include <mpi.h>
 #include "pulsar/exception/Exceptions.hpp"
-#include "pulsar/parallel/InitFinalize.hpp"
+#include "pulsar/parallel/Parallel.hpp"
 #include "pulsar/util/Cmdline.hpp"
 
 namespace pulsar{
@@ -55,6 +55,7 @@ long get_nproc(void)
 {
     return static_cast<long>(Env_->comm().nprocs());
 }
+
 
 } // close namespace parallel
 } // close namespace pulsar
