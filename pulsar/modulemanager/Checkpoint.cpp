@@ -300,35 +300,19 @@ void Checkpoint::perform_on_all_ranks_(const std::string & description, std::fun
     const long my_rank = parallel::get_proc_id();
     const long nproc = parallel::get_nproc();
 
-    // who do we notify when we are done?
-    const long dest = my_rank + 1;
 
-    // who tells us when it's our turn?
-    const long src = my_rank - 1;
-
-    // buffer for receiving from src
-    long r;
-
-    // if we aren't rank 0, we have to wait for a signal
-    // from (my_rank - 1). This lets us know it's our turn
-    if(my_rank > 0)
+    for(long rank = 0; rank < nproc; rank++)
     {
-        MPI_Status status;
-        MPI_Recv(&r, 1, MPI_LONG_INT, src, 283, MPI_COMM_WORLD, &status);
+        if(rank == my_rank)
+        {
+            // perform the action
+            print_global_output("On rank %?: ", my_rank);
+            print_global_output(description + "\n");
+            func(); // call the function
+        }
 
-        //! \todo if r != my_rank, then what?
+        MPI_Barrier(MPI_COMM_WORLD); //! \todo different comm?
     }
-
-    // perform the action
-    print_global_output("On rank %?: ", my_rank);
-    print_global_output(description + "\n");
-    func(); // call the function
-
-    // if we aren't the last rank, we must send the signal to (my_rank + 1)
-    if(my_rank != (nproc-1))
-        MPI_Send(&dest, 1, MPI_LONG_INT, (my_rank+1), 283, MPI_COMM_WORLD);
-
-    MPI_Barrier(MPI_COMM_WORLD); //! \todo is this really necessary
 }
 
 
