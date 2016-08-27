@@ -1,15 +1,10 @@
 /*! \file
- *
- * \brief The base, general exception for Pulsar (header)
- * \author Benjamin Pritchard (ben@bennyp.org)
+ * \brief Exceptions thrown by Pulsar (header)
  */
 
-
-#ifndef PULSAR_GUARD_EXCEPTION__EXCEPTIONS_HPP_
-#define PULSAR_GUARD_EXCEPTION__EXCEPTIONS_HPP_
+#pragma once
 
 #include <stdexcept>
-
 #include <vector>
 #include <string>
 #include <sstream>
@@ -20,155 +15,183 @@ namespace exception {
 
 /*! \brief A base exception for Pulsar
  *
- * Basically, this is a string with some fancy formatting.
- * There is one line (basically an overall description)
- * followed by pairs of information. This is all available
- * via the what() member.
+ * An exception in Pulsar is basically a string with some fancy formatting.
+ * There is one line (an overall description) followed by pairs of
+ * information. This is all available via the what() member, which will
+ * print this information in a nicely-formatted manner.
  *
- * Pairs of information can be appended to the string via
- * append_info().
+ * An exception in Pulsar is basically a string with some fancy formatting.
+ * There is one line (an overall description) followed by pairs of
+ * information. This is all available via the what() member, which will
+ * return this information as a nicely-formatted manner.
  *
- * When constructed from another std::exception, the what() string
- * of that is copied first.
+ * After construction, pairs of information can be added to the exception via
+ * the `append_info` functions.
  */
 class GeneralException : public std::exception
 {
     public:
+        GeneralException()                                     = delete;
+        GeneralException(const GeneralException &)             = default;
+        GeneralException(GeneralException &&)                  = default;
+        GeneralException & operator=(GeneralException &&)      = default;
+        GeneralException & operator=(const GeneralException &) = default;
+        virtual ~GeneralException()                            = default;
+
+
         /*! \brief Constructor
          *
-         * \param [in] whatstr Some descriptive string
-         * \param [in] exinfo Pairs of strings with other information.
+         * The extra information passed to this function via \p exinfo must be
+         * in the form "key1, value1, key2, value2, ...". The keys must be
+         * strings and the values must be a string or convertible to a string
+         * via a c++ stream object.
+         *
+         * \param [in] whatstr Some string describing the exception
+         * \param [in] exinfo Additional information to add to the exception
          */
         template<typename... Targs>
         GeneralException(const std::string & whatstr, const Targs& ... exinfo)
             : whatstr_(whatstr)
         {
-            static_assert( (sizeof...(exinfo) % 2) == 0,
-                           "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
-            append_info(exinfo...);
+            append_info_(exinfo...);
         }
 
 
-        /*! \brief Constructor, using another exception as a base
+        /*! \brief Constructor, using an std::exception as a base
          *
-         * Can be used to append additional information
+         * The `what()` value of the `std::exception` is used as the main
+         * description of the exception.
+         *
+         * The extra information passed to this function via \p exinfo must be
+         * in the form "key1, value1, key2, value2, ...". The keys must be
+         * strings and the values must be a string or convertible to a string
+         * via a c++ stream object.
          *
          * \param [in] ex Exception to copy
-         * \param [in] exinfo Additional information. Must be an even number of strings
+         * \param [in] exinfo Additional information too add to the exception
          */
         template<typename... Targs>
         GeneralException(const std::exception & ex, const Targs&... exinfo)
             : GeneralException(ex.what(), exinfo...)
+        { }
+
+
+        /* \brief Add information to this exception object
+         *
+         * The extra information passed to this function via \p exinfo must be
+         * in the form "key1, value1, key2, value2, ...". The keys must be
+         * strings and the values must be a string or convertible to a string
+         * via a c++ stream object.
+         */
+        template<typename... Targs>
+        void append_info(const Targs&... exinfo)
         {
+            static_assert( (sizeof...(exinfo) % 2) == 0,
+                           "Information being added to exception has an odd"
+                           " number of values. Arguments must be in the form"
+                           " key1, value1, key2, value2, ...");
+
+            append_info_(exinfo...);
         }
 
 
-
-        GeneralException()                                         = delete;
-        GeneralException(const GeneralException & /*rhs*/)             = default;
-        GeneralException(GeneralException && /*rhs*/)                  = default;
-        GeneralException & operator=(GeneralException &&/*rhs*/)      = default;
-        GeneralException & operator=(const GeneralException &/*rhs*/) = default;
-        virtual ~GeneralException()                                = default;
-
-
-        /*! \brief Add information to this exception object
+        /*! \brief Return all the information as a string
+         *
+         * The string will be formatted for output, with the description on
+         * its own line and each key,value pair on its own line.
          */
-        void append_info(const std::string & key, const std::string & value);
+        const char * what(void) const noexcept;
+
+
+    private:
+        /*! A string representing all the information contained
+            in this exception, formatted for output.
+         */
+        std::string whatstr_;
 
 
         /*! \brief Add information to this exception object
          *
-         * \p value is converted via stringstreams
+         * \note Used to terminate the parameter pack expansion
+         *       in some instances
+         */
+        void append_info_(void) noexcept { };
+
+
+        /*! \brief Add a single pair of information to exception object
+         *
+         * \param [in] key A description of what \p value means
+         * \param [in] value An informative string expected to help the user
+         *                   or developer.
+         */
+        void append_info_(const std::string & key, const std::string & value);
+
+
+        /*! \brief Add a single pair of information to exception object
+         *
+         * The \p value must be a string or convertible to a string
+         * via a c++ stream object.
+         *
+         * \param [in] key A description of what \p value means
+         * \param [in] value Information expected to help the user
+         *                   or developer.
          */
         template<typename T>
-        void append_info(const std::string & key, const T & value)
+        void append_info_(const std::string & key, const T & value)
         {
             std::stringstream ss;
             ss << value;
-            append_info(key, ss.str());
+            append_info_(key, ss.str());
         }
 
 
 
         /*! \brief Add information to this exception object
-         * 
-         * Used to terminate the parameter pack expansion (in some instances)
-         */
-        void append_info(void);
-
-
-
-        /*! \brief Add information to this exception object
          *
-         * There must be an even number of arguments.
-         */
-        template<typename... Targs>
-        void append_info(const std::string & key, const std::string & value,
-                        const Targs&... exinfo)
-        {
-            static_assert( (sizeof...(exinfo) % 2) == 0,
-                           "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
-            append_info(key, value);
-            append_info(exinfo...);
-        }
-
-
-        /*! \brief Add information to this exception object
+         * The \p value must be a string or convertible to a string
+         * via a c++ stream object.
          *
-         * There must be an even number of arguments.
+         * \param [in] key A description of what \p value means
+         * \param [in] value Information expected to help the user
+         *                   or developer.
          */
         template<typename T, typename... Targs>
-        void append_info(const std::string & key, const T & value,
-                        const Targs&... exinfo)
+        void append_info_(const std::string & key, const T & value,
+                          const Targs&... exinfo)
         {
-            static_assert( (sizeof...(exinfo) % 2) == 0,
-                           "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
-            append_info(key, value);
-            append_info(exinfo...);
+            append_info_(key, value);
+            append_info_(exinfo...);
         }
-
 
 
         /*! \brief Add information to this exception object
          *
-         * Overload for a vector of strings. Each element will get its own line.
+         * Used to add a vector of information. Each element of \p value
+         * will get its own line, with the key only appearing on the first.
          *
-         * There must be an even number of arguments.
+         * The elements of \p value must be a string or convertible to a string
+         * via a c++ stream object.
+         *
+         * If \p value does not contain any elements, the string "(empty)" is
+         * used instead.
          */
         template<typename T, typename... Targs>
-        void append_info(const std::string & key,
-                        const std::vector<T> & value,
-                        const Targs&... exinfo)
+        void append_info_(const std::string & key,
+                          const std::vector<T> & value,
+                          const Targs&... exinfo)
         {
-            static_assert( (sizeof...(exinfo) % 2) == 0,
-                           "Information being added to exception has an odd number of values. Must be key1, value1, key2, value2, etc...");
             std::string str = "(empty)";
 
-            // this is done manually
-            // to prevent a dependence on other core modules
             std::stringstream ss;
             if(value.size())
                 ss << value[0];
             for(size_t i = 1; i < value.size(); i++)
                 ss << "\n" << value[i];
 
-            append_info(key, ss.str());
-            append_info(exinfo...);
+            append_info_(key, ss.str());
+            append_info_(exinfo...);
         }
-
-
-        /*! \brief Return all the information as a string
-         */
-        const char * what(void) const noexcept;
-
-
-    private:
-
-        //! The "what" string
-        std::string whatstr_;
 };
-
 
 
 /*! \brief An exception thrown if something is called that
@@ -304,5 +327,3 @@ class PythonConvertException : public GeneralException
 
 } // close namespace exception
 } // close namespace pulsar
-
-#endif

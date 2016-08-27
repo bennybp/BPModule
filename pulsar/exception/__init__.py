@@ -1,5 +1,5 @@
-# SO file
+# Forward stuff from pulsar_core SO file
 from ..pulsar_core.exception import *
 
-# Python versions
+# Python counterparts to the C++ classes
 from .Exceptions import *

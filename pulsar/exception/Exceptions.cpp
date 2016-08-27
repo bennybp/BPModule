@@ -1,49 +1,47 @@
 /*! \file
- *
- * \brief The base, general exception for Pulsar (source)
- * \author Benjamin Pritchard (ben@bennyp.org)
+ * \brief Exceptions thrown by Pulsar (source)
  */
-
-
-#include <sstream>
 
 #include "pulsar/exception/Exceptions.hpp"
 
+#include <iomanip>
 
-namespace pulsar{
+namespace pulsar {
 namespace exception {
 
 
-void GeneralException::append_info(void)
+void GeneralException::append_info_(const std::string & key,
+                                    const std::string & value)
 {
-}
+    // NOTE: The formatting here is done manually so that
+    //       it is completely independent of the rest of
+    //       Pulsar
 
-
-void GeneralException::append_info(const std::string & key, const std::string & value)
-{
-    // done manully rather than through util::FormatString
-    // so that there is no dependence on that module
-    std::stringstream sstr(value);
-    std::string str;
-    std::getline(sstr, str);
-
+    // The full, formatted output
     std::stringstream ss;
-    auto oldw = ss.width(24);
-    ss << key;
-    ss.width(oldw);
-    ss << " : " << str;
 
+    // Store the original width of the stringstream
+    auto oldw = ss.width();
+
+    // The value parameter as a string
+    std::string str;
+
+    // Convert the value to a string
+    std::stringstream sstr(value);
+
+    // Get the first line of the formatted output and
+    // output it to the stream
+    std::getline(sstr, str);
+    ss << std::setw(24) << key << std::setw(oldw) << " : " << str;
+
+    // For the rest of the lines, output the values aligned
+    // with the first
     while(std::getline(sstr, str).good())
-    {
-        ss << "\n";
-        oldw = ss.width(24);
-        ss << " ";
-        ss.width(oldw);
-        ss << "     " << str;
-    }
+        ss << "\n" << std::setw(24) << " " << oldw << "     " << str;
 
-
-    // escape the formatting percent signs
+    // The resulting string may be output via printf() or the
+    // pulsar output functions which use percent signs as escape
+    // characters. So we must escape the percent signs here
     std::string escaped;
 
     for(const auto & it : ss.str())
@@ -54,6 +52,7 @@ void GeneralException::append_info(const std::string & key, const std::string & 
             escaped.push_back(it);
     }
 
+    // now add the information to my final string
     whatstr_.append("\n");
     whatstr_.append(escaped);
 }
@@ -65,7 +64,6 @@ const char * GeneralException::what(void) const noexcept
 }
 
 
-
-
 } // close namespace exception
 } // close namespace pulsar
+

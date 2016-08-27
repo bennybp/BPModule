@@ -15,6 +15,7 @@
 #include "bphash/Hasher.hpp"
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/pragma.h"
 
 
 namespace pulsar{
