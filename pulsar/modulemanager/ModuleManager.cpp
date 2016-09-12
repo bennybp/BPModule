@@ -431,6 +431,15 @@ void ModuleManager::change_option_py(const std::string & modulekey, const std::s
 }
 
 
+pybind11::object copy_key_change_options_py(
+        const std::string& modulekey, ID_t parentid,ModuleManager& mm,
+        const std::map<std::string,pybind11::object>& options){
+    std::string temp_name=mm.generate_unique_key();
+    mm.duplicate_key(modulekey,temp_name);
+    for(auto i:options)mm.change_option_py(temp_name,i.first,i.second);
+    return mm.get_module_py(temp_name,parentid);
+}
+
 ////////////////////
 // Checkpointing
 ////////////////////

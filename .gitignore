@@ -11,6 +11,8 @@ __pycache__
 .pydevproject
 install.sh
 CMakeCache.txt
+#Psi4 junk
+*.clean
 
 # pybind11 build in-source...
 example.*.so

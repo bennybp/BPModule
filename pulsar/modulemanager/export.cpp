@@ -100,6 +100,7 @@ void export_pybind11(pybind11::module & mtop)
     .def("enable_debug_all", &ModuleManager::enable_debug_all)
     ;
 
+    m.def("copy_key_change_options",&copy_key_change_options_py);
 
     ////////////////////////////////
     // Pointers, etc

@@ -38,7 +38,7 @@ void export_pybind11(pybind11::module & mtop)
          .def("print", &ModuleBase::print)
          .def("options", static_cast<OptionMap & (ModuleBase::*)(void)>(&ModuleBase::options), pybind11::return_value_policy::reference_internal)
          .def("create_child", &ModuleBase::create_child_py)
-         .def("create_childFromOption", &ModuleBase::create_child_from_option_py)
+         .def("create_child_from_option", &ModuleBase::create_child_from_option_py)
          .def("enable_debug", &ModuleBase::enable_debug)
          .def("debug_enabled", &ModuleBase::debug_enabled)
          ;
