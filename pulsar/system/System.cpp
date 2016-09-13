@@ -312,7 +312,8 @@ bphash::HashValue System::my_hash(void) const
 
 void System::hash(bphash::Hasher & h) const
 {
-    h(atoms_, charge_, multiplicity_, nelectrons_);
+    for(Atom a: *this)h(a);
+    h(charge_, multiplicity_, nelectrons_);
 }
 
 ///Returns the distance between each pair of atoms in sys
