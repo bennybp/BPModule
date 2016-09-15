@@ -52,7 +52,7 @@ static OptionIssues ValidatorWrapper_(pybind11::object & valobj,
                                       const OptionHolder<OPTTYPE> & value)
 {
     try {
-        if(!valobj || python::is_none(valobj))
+        if(!valobj || valobj.is_none())
             return {};
         return python::call_py_func_attr<OptionIssues>(valobj, "validate", value.get_py());
     }

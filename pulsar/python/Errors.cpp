@@ -29,7 +29,7 @@ static std::string format_traceback(pybind11::object tb)
 
     // loop over all the frames and grab the info
     // This will result in a "reverse" traceback
-    while(tb && !is_none(tb))
+    while(tb && !tb.is_none())
     {
         // line number is easy
         long lineno = tb.attr("tb_lineno").cast<long>();

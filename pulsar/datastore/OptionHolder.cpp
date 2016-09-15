@@ -59,7 +59,7 @@ template class OptionHolder<OptionType::DictStringString>;
 //! \todo make_unique in c++14
 #define CASE_RETURN_OPTIONHOLDER(TYPE) \
     case OptionType::TYPE: \
-         if(python::is_none(def)) \
+         if(def.is_none()) \
              return OptionBasePtr(new OptionHolder<OptionType::TYPE>(key, required, validator, help));\
          else\
              return OptionBasePtr(new OptionHolder<OptionType::TYPE>(key, required, validator, help, def));

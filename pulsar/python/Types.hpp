@@ -22,11 +22,6 @@ namespace python {
 std::string get_py_class(const pybind11::object & obj);
 
 
-/*! \brief Determine if an object is "None"
- */
-bool is_none(const pybind11::object & obj);
-
-
 /*! \brief Check if a python object has a given attribute
  */
 bool has_attr(const pybind11::object & obj, const std::string & attr);

@@ -22,11 +22,6 @@ std::string get_py_class(const pybind11::object & obj)
     return name.cast<std::string>();
 }
 
-bool is_none(const pybind11::object & obj)
-{
-    return get_py_class(obj) == "NoneType";
-}
-
 bool has_attr(const pybind11::object & obj, const std::string & attr)
 {
     psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
