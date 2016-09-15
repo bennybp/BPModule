@@ -1,35 +1,27 @@
 /*! \file
- *
  * \brief Hashing of std::pair
- * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+/* Copyright (c) 2016 Benjamin Pritchard <ben@bennyp.org>
+ * This file is part of the BPHash project, which is released
+ * under the BSD 3-clause license. See the LICENSE file for details
+ */
 
-#ifndef BPHASH_GUARD_UTILITY_HPP_
-#define BPHASH_GUARD_UTILITY_HPP_
+#pragma once
 
 #include "bphash/Hasher.hpp"
 #include <utility>
 
 namespace bphash {
-namespace detail {
 
 /*! \brief Hashing of std::pair */
 template<typename T1, typename T2>
-struct ObjectHasher<std::pair<T1, T2>> : public is_hashable<T1, T2>
+typename std::enable_if<is_hashable<T1, T2>::value, void>::type
+hash_object( const std::pair<T1, T2> & p, Hasher & h)
 {
-    template<typename U1 = T1, typename U2 = T2>
-    static
-    typename std::enable_if<is_hashable<U1>::value &&
-                            is_hashable<U2>::value, void>::type
-    hash(Hasher & hasher, const std::pair<U1, U2> & obj)
-    {
-        hasher(obj.first, obj.second);
-    }
-};
+    h(p.first, p.second);
+}
 
 
-} // close namespace detail
 } // close namespace bphash
 
-#endif

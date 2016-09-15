@@ -78,7 +78,7 @@ class Wavefunction
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        BPHASH_DECLARE_HASHING_FRIENDS
 
         /* We have to split load/save since the
          * the shared_ptr points to const data, and

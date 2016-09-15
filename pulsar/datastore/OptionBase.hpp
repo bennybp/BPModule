@@ -286,7 +286,7 @@ class OptionBase
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        BPHASH_DECLARE_HASHING_FRIENDS
 
         virtual void hash(bphash::Hasher & h) const
         {

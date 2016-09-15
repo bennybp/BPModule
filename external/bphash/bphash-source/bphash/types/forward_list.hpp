@@ -1,25 +1,27 @@
 /*! \file
- *
  * \brief Hashing of std::forward_list
- * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+/* Copyright (c) 2016 Benjamin Pritchard <ben@bennyp.org>
+ * This file is part of the BPHash project, which is released
+ * under the BSD 3-clause license. See the LICENSE file for details
+ */
 
-#ifndef BPHASH_GUARD_FORWARD_LIST_HPP_
-#define BPHASH_GUARD_FORWARD_LIST_HPP_
+#pragma once
 
 #include "bphash/types/ContainerHelper.hpp"
 #include <forward_list>
 
 namespace bphash {
-namespace detail {
 
 /*! \brief Hashing of std::forward_list */
 template<typename T, typename Alloc>
-struct ObjectHasher<std::forward_list<T, Alloc>> : public ContainerHasher<std::forward_list<T, Alloc>> { };
+typename std::enable_if<is_hashable<T>::value, void>::type
+hash_object( const std::forward_list<T, Alloc> & a, Hasher & h)
+{
+    detail::hash_container_object(a, h);
+}
 
 
-} // close namespace detail
 } // close namespace bphash
 
-#endif

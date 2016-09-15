@@ -1,25 +1,27 @@
 /*! \file
- *
  * \brief Hashing of std::list
- * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+/* Copyright (c) 2016 Benjamin Pritchard <ben@bennyp.org>
+ * This file is part of the BPHash project, which is released
+ * under the BSD 3-clause license. See the LICENSE file for details
+ */
 
-#ifndef BPHASH_GUARD_LIST_HPP_
-#define BPHASH_GUARD_LIST_HPP_
+#pragma once
 
 #include "bphash/types/ContainerHelper.hpp"
 #include <list>
 
 namespace bphash {
-namespace detail {
 
 /*! \brief Hashing of std::list */
 template<typename T, typename Alloc>
-struct ObjectHasher<std::list<T, Alloc>> : public ContainerHasher<std::list<T, Alloc>> { };
+typename std::enable_if<is_hashable<T>::value, void>::type
+hash_object( const std::list<T, Alloc> & a, Hasher & h)
+{
+    detail::hash_container_object(a, h);
+}
 
 
-} // close namespace detail
 } // close namespace bphash
 
-#endif

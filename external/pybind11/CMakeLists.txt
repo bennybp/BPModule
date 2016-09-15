@@ -16,6 +16,8 @@ if(NOT PYBIND11_FOUND)
                                  -DPYBIND11_PYTHON_VERSION=${PYTHONLIBS_VERSION_STRING}
                                  -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                                  -DCMAKE_CXX_FLAGS="-std=c++11"
+                                 -DPYBIND11_INSTALL=True
+                                 -DPYBIND11_TEST=False
                       INSTALL_COMMAND make install DESTDIR=${CMAKE_BINARY_DIR}/stage
                      )
 else()

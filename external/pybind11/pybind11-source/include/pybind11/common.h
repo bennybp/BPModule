@@ -32,6 +32,7 @@
 
 #define PYBIND11_VERSION_MAJOR 1
 #define PYBIND11_VERSION_MINOR 9
+#define PYBIND11_VERSION_PATCH dev0
 
 /// Include Python header, disable linking to pythonX_d.lib on Windows in debug mode
 #if defined(_MSC_VER)
@@ -48,7 +49,11 @@
 #include <frameobject.h>
 #include <pythread.h>
 
-#ifdef isalnum
+#if defined(_WIN32) && (defined(min) || defined(max))
+#  error Macro clash with min and max -- define NOMINMAX when compiling your program on Windows
+#endif
+
+#if defined(isalnum)
 #  undef isalnum
 #  undef isalpha
 #  undef islower
@@ -66,6 +71,7 @@
 #  pragma warning(pop)
 #endif
 
+#include <forward_list>
 #include <vector>
 #include <string>
 #include <stdexcept>
@@ -89,6 +95,7 @@
 #define PYBIND11_STRING_NAME "str"
 #define PYBIND11_SLICE_OBJECT PyObject
 #define PYBIND11_FROM_STRING PyUnicode_FromString
+#define PYBIND11_STR_TYPE ::pybind11::str
 #define PYBIND11_OB_TYPE(ht_type) (ht_type).ob_base.ob_base.ob_type
 #define PYBIND11_PLUGIN_IMPL(name) \
     extern "C" PYBIND11_EXPORT PyObject *PyInit_##name()
@@ -107,6 +114,7 @@
 #define PYBIND11_STRING_NAME "unicode"
 #define PYBIND11_SLICE_OBJECT PySliceObject
 #define PYBIND11_FROM_STRING PyString_FromString
+#define PYBIND11_STR_TYPE ::pybind11::bytes
 #define PYBIND11_OB_TYPE(ht_type) (ht_type).ob_type
 #define PYBIND11_PLUGIN_IMPL(name) \
     extern "C" PYBIND11_EXPORT PyObject *init##name()
@@ -195,15 +203,16 @@ enum class return_value_policy : uint8_t {
 
 /// Information record describing a Python buffer object
 struct buffer_info {
-    void *ptr;                   // Pointer to the underlying storage
-    size_t itemsize;             // Size of individual items in bytes
-    size_t size;                 // Total number of entries
-    std::string format;          // For homogeneous buffers, this should be set to format_descriptor<T>::value
-    size_t ndim;                 // Number of dimensions
+    void *ptr = nullptr;         // Pointer to the underlying storage
+    size_t itemsize = 0;         // Size of individual items in bytes
+    size_t size = 0;             // Total number of entries
+    std::string format;          // For homogeneous buffers, this should be set to format_descriptor<T>::format()
+    size_t ndim = 0;             // Number of dimensions
     std::vector<size_t> shape;   // Shape of the tensor (1 entry per dimension)
     std::vector<size_t> strides; // Number of entries between adjacent entries (for each per dimension)
 
-    buffer_info() : ptr(nullptr), view(nullptr) {}
+    buffer_info() { }
+
     buffer_info(void *ptr, size_t itemsize, const std::string &format, size_t ndim,
                 const std::vector<size_t> &shape, const std::vector<size_t> &strides)
         : ptr(ptr), itemsize(itemsize), size(1), format(format),
@@ -212,9 +221,13 @@ struct buffer_info {
             size *= shape[i];
     }
 
-    buffer_info(Py_buffer *view)
+    buffer_info(void *ptr, size_t itemsize, const std::string &format, size_t size)
+    : buffer_info(ptr, itemsize, format, 1, std::vector<size_t> { size },
+                  std::vector<size_t> { itemsize }) { }
+
+    buffer_info(Py_buffer *view, bool ownview = true)
         : ptr(view->buf), itemsize((size_t) view->itemsize), size(1), format(view->format),
-          ndim((size_t) view->ndim), shape((size_t) view->ndim), strides((size_t) view->ndim), view(view) {
+          ndim((size_t) view->ndim), shape((size_t) view->ndim), strides((size_t) view->ndim), view(view), ownview(ownview) {
         for (size_t i = 0; i < (size_t) view->ndim; ++i) {
             shape[i] = (size_t) view->shape[i];
             strides[i] = (size_t) view->strides[i];
@@ -222,11 +235,33 @@ struct buffer_info {
         }
     }
 
-    ~buffer_info() {
-        if (view) { PyBuffer_Release(view); delete view; }
+    buffer_info(const buffer_info &) = delete;
+    buffer_info& operator=(const buffer_info &) = delete;
+
+    buffer_info(buffer_info &&other) {
+        (*this) = std::move(other);
     }
+
+    buffer_info& operator=(buffer_info &&rhs) {
+        ptr = rhs.ptr;
+        itemsize = rhs.itemsize;
+        size = rhs.size;
+        format = std::move(rhs.format);
+        ndim = rhs.ndim;
+        shape = std::move(rhs.shape);
+        strides = std::move(rhs.strides);
+        std::swap(view, rhs.view);
+        std::swap(ownview, rhs.ownview);
+        return *this;
+    }
+
+    ~buffer_info() {
+        if (view && ownview) { PyBuffer_Release(view); delete view; }
+    }
+
 private:
     Py_buffer *view = nullptr;
+    bool ownview = false;
 };
 
 NAMESPACE_BEGIN(detail)
@@ -239,7 +274,6 @@ inline std::string error_string();
 template <typename type> struct instance_essentials {
     PyObject_HEAD
     type *value;
-    PyObject *parent;
     PyObject *weakrefs;
     bool owned : 1;
     bool constructed : 1;
@@ -260,10 +294,11 @@ struct overload_hash {
 
 /// Internal data struture used to track registered instances and types
 struct internals {
-    std::unordered_map<std::type_index, void*> registered_types_cpp; // std::type_index -> type_info
-    std::unordered_map<const void *, void*> registered_types_py;     // PyTypeObject* -> type_info
-    std::unordered_map<const void *, void*> registered_instances;    // void * -> PyObject*
+    std::unordered_map<std::type_index, void*> registered_types_cpp;   // std::type_index -> type_info
+    std::unordered_map<const void *, void*> registered_types_py;       // PyTypeObject* -> type_info
+    std::unordered_multimap<const void *, void*> registered_instances; // void * -> PyObject*
     std::unordered_set<std::pair<const PyObject *, const char *>, overload_hash> inactive_overload_cache;
+    std::forward_list<void (*) (std::exception_ptr)> registered_exception_translators;
 #if defined(WITH_THREAD)
     decltype(PyThread_create_key()) tstate = 0; // Usually an int but a long on Cygwin64 with Python 3.x
     PyInterpreterState *istate = nullptr;
@@ -291,9 +326,61 @@ template <typename T> struct intrinsic_type<T&>                   { typedef type
 template <typename T> struct intrinsic_type<T&&>                  { typedef typename intrinsic_type<T>::type type; };
 template <typename T, size_t N> struct intrinsic_type<const T[N]> { typedef typename intrinsic_type<T>::type type; };
 template <typename T, size_t N> struct intrinsic_type<T[N]>       { typedef typename intrinsic_type<T>::type type; };
+template <typename T> using intrinsic_t = typename intrinsic_type<T>::type;
 
 /// Helper type to replace 'void' in some expressions
 struct void_type { };
+
+/// from __cpp_future__ import (convenient aliases from C++14/17)
+template <bool B> using bool_constant = std::integral_constant<bool, B>;
+template <class T> using negation = bool_constant<!T::value>;
+template <bool B, typename T = void> using enable_if_t = typename std::enable_if<B, T>::type;
+template <bool B, typename T, typename F> using conditional_t = typename std::conditional<B, T, F>::type;
+
+/// Compile-time integer sum
+constexpr size_t constexpr_sum() { return 0; }
+template <typename T, typename... Ts>
+constexpr size_t constexpr_sum(T n, Ts... ns) { return size_t{n} + constexpr_sum(ns...); }
+
+// Counts the number of types in the template parameter pack matching the predicate
+#if !defined(_MSC_VER)
+template <template<typename> class Predicate, typename... Ts>
+using count_t = std::integral_constant<size_t, constexpr_sum(Predicate<Ts>::value...)>;
+#else
+// MSVC workaround (2015 Update 3 has issues with some member type aliases and constexpr)
+template <template<typename> class Predicate, typename... Ts> struct count_t;
+template <template<typename> class Predicate> struct count_t<Predicate> : std::integral_constant<size_t, 0> {};
+template <template<typename> class Predicate, class T, class... Ts>
+struct count_t<Predicate, T, Ts...> : std::integral_constant<size_t, Predicate<T>::value + count_t<Predicate, Ts...>::value> {};
+#endif
+
+/// Return true if all/any Ts satify Predicate<T>
+template <template<typename> class Predicate, typename... Ts>
+using all_of_t = bool_constant<(count_t<Predicate, Ts...>::value == sizeof...(Ts))>;
+template <template<typename> class Predicate, typename... Ts>
+using any_of_t = bool_constant<(count_t<Predicate, Ts...>::value > 0)>;
+
+// Extracts the first type from the template parameter pack matching the predicate, or Default if none match.
+template <template<class> class Predicate, class Default, class... Ts> struct first_of;
+template <template<class> class Predicate, class Default> struct first_of<Predicate, Default> {
+    using type = Default;
+};
+template <template<class> class Predicate, class Default, class T, class... Ts>
+struct first_of<Predicate, Default, T, Ts...> {
+    using type = typename std::conditional<
+        Predicate<T>::value,
+        T,
+        typename first_of<Predicate, Default, Ts...>::type
+    >::type;
+};
+template <template<class> class Predicate, class Default, class... T> using first_of_t = typename first_of<Predicate, Default, T...>::type;
+
+/// Defer the evaluation of type T until types Us are instantiated
+template <typename T, typename... /*Us*/> struct deferred_type { using type = T; };
+template <typename T, typename... Us> using deferred_t = typename deferred_type<T, Us...>::type;
+
+/// Ignore that a variable is unused in compiler warnings
+inline void ignore_unused(const int *) { }
 
 NAMESPACE_END(detail)
 
@@ -308,7 +395,9 @@ NAMESPACE_END(detail)
 class error_already_set : public std::runtime_error { public: error_already_set() : std::runtime_error(detail::error_string())  {} };
 PYBIND11_RUNTIME_EXCEPTION(stop_iteration)
 PYBIND11_RUNTIME_EXCEPTION(index_error)
+PYBIND11_RUNTIME_EXCEPTION(key_error)
 PYBIND11_RUNTIME_EXCEPTION(value_error)
+PYBIND11_RUNTIME_EXCEPTION(type_error)
 PYBIND11_RUNTIME_EXCEPTION(cast_error) /// Thrown when pybind11::cast or handle::call fail due to a type casting error
 PYBIND11_RUNTIME_EXCEPTION(reference_cast_error) /// Used internally
 
@@ -316,14 +405,26 @@ PYBIND11_RUNTIME_EXCEPTION(reference_cast_error) /// Used internally
 [[noreturn]] PYBIND11_NOINLINE inline void pybind11_fail(const std::string &reason) { throw std::runtime_error(reason); }
 
 /// Format strings for basic number types
-#define PYBIND11_DECL_FMT(t, v) template<> struct format_descriptor<t> { static constexpr const char *value = v; }
+#define PYBIND11_DECL_FMT(t, v) template<> struct format_descriptor<t> \
+    { static constexpr const char* value = v; /* for backwards compatibility */ \
+      static std::string format() { return value; } }
+
 template <typename T, typename SFINAE = void> struct format_descriptor { };
+
 template <typename T> struct format_descriptor<T, typename std::enable_if<std::is_integral<T>::value>::type> {
     static constexpr const char value[2] =
         { "bBhHiIqQ"[detail::log2(sizeof(T))*2 + (std::is_unsigned<T>::value ? 1 : 0)], '\0' };
+    static std::string format() { return value; }
 };
+
 template <typename T> constexpr const char format_descriptor<
     T, typename std::enable_if<std::is_integral<T>::value>::type>::value[2];
-PYBIND11_DECL_FMT(float, "f"); PYBIND11_DECL_FMT(double, "d"); PYBIND11_DECL_FMT(bool, "?");
+
+PYBIND11_DECL_FMT(float, "f");
+PYBIND11_DECL_FMT(double, "d");
+PYBIND11_DECL_FMT(bool, "?");
+
+/// Dummy destructor wrapper that can be used to expose classes with a private destructor
+struct nodelete { template <typename T> void operator()(T*) { } };
 
 NAMESPACE_END(pybind11)

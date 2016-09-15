@@ -201,7 +201,7 @@ class PointT
         ///@{
         
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        BPHASH_DECLARE_HASHING_FRIENDS
         
         template<class Archive>
         void serialize(Archive & ar)

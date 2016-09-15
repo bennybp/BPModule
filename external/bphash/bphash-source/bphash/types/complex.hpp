@@ -1,32 +1,27 @@
 /*! \file
- *
  * \brief Hashing of std::complex
- * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+/* Copyright (c) 2016 Benjamin Pritchard <ben@bennyp.org>
+ * This file is part of the BPHash project, which is released
+ * under the BSD 3-clause license. See the LICENSE file for details
+ */
 
-#ifndef BPHASH_GUARD_COMPLEX_HPP_
-#define BPHASH_GUARD_COMPLEX_HPP_
+#pragma once
 
 #include "bphash/Hasher.hpp"
 #include <complex>
 
 namespace bphash {
-namespace detail {
 
 /*! \brief Hashing of std::complex */
 template<typename T>
-struct ObjectHasher<std::complex<T>> : public is_hashable<T>
+typename std::enable_if<is_hashable<T>::value, void>::type
+hash_object( const std::complex<T> & a, Hasher & h)
 {
-    static void
-    hash(Hasher & hasher, const std::complex<T> & obj)
-    {
-        hasher(obj.real(), obj.imag());
-    }
-};
+    h(a.real(), a.imag());
+}
 
 
-} // close namespace detail
 } // close namespace bphash
 
-#endif

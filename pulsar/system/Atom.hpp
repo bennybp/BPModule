@@ -109,7 +109,7 @@ struct Atom : public math::Point
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        BPHASH_DECLARE_HASHING_FRIENDS
 
 
         template<class Archive>

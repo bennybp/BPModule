@@ -1,15 +1,15 @@
 /*! \file
- *
  * \brief Base class for a hash implementation
- * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef BPHASH_GUARD_HASHIMPL_HPP_
-#define BPHASH_GUARD_HASHIMPL_HPP_
+/* Copyright (c) 2016 Benjamin Pritchard <ben@bennyp.org>
+ * This file is part of the BPHash project, which is released
+ * under the BSD 3-clause license. See the LICENSE file for details
+ */
+
+#pragma once
 
 #include "bphash/Hash.hpp"
-
-#include <cstdlib>
 
 namespace bphash {
 namespace detail {
@@ -25,17 +25,18 @@ class HashImpl
 
         /*! \brief Add some data to the hash
          *
-         * Any remaining from the previous call will be done, and
-         * any that doesn't fill out a whole block will be stored
-         * until next time
+         * \param [in] data The raw data to hash
+         * \param [in] nbytes Number of bytes pointed to by data
          */
-        virtual void update(void const * buffer, size_t size) = 0;
+        virtual void update(void const * data, size_t nbytes) = 0;
 
 
         /*! \brief Finish hashing and report the hash
          *
-         * Any remaining data (that doesn't fill out a block) will be done.
-         * Then, any finalization steps will be done and the hash returned.
+         * Finish hashing any remaining data if necessary, and perform
+         * and last steps. Then, return the hash.
+         *
+         * \return The computed hash of all the data that had been added
          */
         virtual HashValue finalize(void) = 0;
 
@@ -46,10 +47,12 @@ class HashImpl
          * before or after finalize.
          */
         virtual void reset(void) = 0;
+
+
+        virtual ~HashImpl() = default;
 };
 
 
 } // close namespace detail
 } // close namespace bphash
 
-#endif

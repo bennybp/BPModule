@@ -1,12 +1,13 @@
 /*! \file
- *
  * \brief Helpers for hashing STL containers
- * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+/* Copyright (c) 2016 Benjamin Pritchard <ben@bennyp.org>
+ * This file is part of the BPHash project, which is released
+ * under the BSD 3-clause license. See the LICENSE file for details
+ */
 
-#ifndef BPHASH_GUARD_CONTAINERHELPER_HPP_
-#define BPHASH_GUARD_CONTAINERHELPER_HPP_
+#pragma once
 
 #include "bphash/Hasher.hpp"
 
@@ -15,24 +16,18 @@ namespace detail {
 
 /*! \brief Helper for hashing STL containers */
 template<typename Cont>
-struct ContainerHasher : public is_hashable<typename Cont::value_type>
+typename std::enable_if<is_hashable<typename Cont::value_type>::value, void>::type
+hash_container_object(const Cont & cont, Hasher & hasher)
 {
-    template<typename U = Cont>
-    static
-    typename std::enable_if<is_hashable<typename U::value_type>::value, void>::type
-    hash(Hasher & hasher, const Cont & cont)
-    {
-        // some containers don't have size() (ie, forward_list)
-        size_t d = static_cast<size_t>(std::distance(cont.begin(), cont.end()));
-        hasher(d);
+    // some containers don't have size() (ie, forward_list)
+    size_t d = static_cast<size_t>(std::distance(cont.begin(), cont.end()));
+    hasher(d);
 
-        for(const auto & it : cont)
-            hasher(it);
-    }
-};
+    for(const auto & it : cont)
+        hasher(it);
+}
 
 
 } // close namespace detail
 } // close namespace bphash
 
-#endif

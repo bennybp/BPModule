@@ -268,7 +268,7 @@ class BasisSet
         ///@{
 
         DECLARE_SERIALIZATION_FRIENDS
-        DECLARE_HASHING_FRIENDS
+        BPHASH_DECLARE_HASHING_FRIENDS
 
         template<class Archive>
         void save(Archive & ar) const

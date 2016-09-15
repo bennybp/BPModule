@@ -1,25 +1,27 @@
 /*! \file
- *
  * \brief Hashing of std::array
- * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+/* Copyright (c) 2016 Benjamin Pritchard <ben@bennyp.org>
+ * This file is part of the BPHash project, which is released
+ * under the BSD 3-clause license. See the LICENSE file for details
+ */
 
-#ifndef BPHASH_GUARD_ARRAY_HPP_
-#define BPHASH_GUARD_ARRAY_HPP_
+#pragma once
 
-#include "bphash/types/ContainerHelper.hpp"
+#include "bphash/Hasher.hpp"
 #include <array>
 
 namespace bphash {
-namespace detail {
 
 /*! \brief Hashing of std::array */
 template<typename T, size_t N>
-struct ObjectHasher<std::array<T, N>> : public ContainerHasher<std::array<T, N>> { };
+typename std::enable_if<is_hashable<T>::value, void>::type
+hash_object( const std::array<T, N> & a, Hasher & h)
+{
+    h(hash_pointer(a.data(), N));
+}
 
 
-} // close namespace detail
 } // close namespace bphash
 
-#endif

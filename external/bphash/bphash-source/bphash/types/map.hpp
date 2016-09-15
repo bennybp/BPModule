@@ -1,27 +1,28 @@
 /*! \file
- *
  * \brief Hashing of std::map
- * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
+/* Copyright (c) 2016 Benjamin Pritchard <ben@bennyp.org>
+ * This file is part of the BPHash project, which is released
+ * under the BSD 3-clause license. See the LICENSE file for details
+ */
 
-#ifndef BPHASH_GUARD_MAP_HPP_
-#define BPHASH_GUARD_MAP_HPP_
+#pragma once
 
 #include "bphash/types/ContainerHelper.hpp"
 #include "bphash/types/utility.hpp"
 #include <map>
 
 namespace bphash {
-namespace detail {
 
 /*! \brief Hashing of std::map */
 template<typename Key, typename T, typename Compare, typename Alloc>
-struct ObjectHasher<std::map<Key, T, Compare, Alloc>>
-            : public ContainerHasher<std::map<Key, T, Compare, Alloc>> { };
+typename std::enable_if<is_hashable<Key, T>::value, void>::type
+hash_object( const std::map<Key, T, Compare, Alloc> & m, Hasher & h)
+{
+    detail::hash_container_object(m, h);
+}
 
 
-} // close namespace detail
 } // close namespace bphash
 
-#endif
