@@ -269,20 +269,16 @@ class ModuleManager
          */
         void enable_debug_all(bool debug) noexcept;
 
+
         /*! \brief Notify the module manager that a module ID is no longer in use */
         void notify_destruction(ID_t id);
+
 
     private:
         friend class Checkpoint;
 
         //! Protects the class in multi-thread operations
         mutable std::mutex mutex_;
-
-        //! Threads currently running checkpointing operations
-        mutable std::unique_ptr<std::thread> checkpoint_thread_;
-
-        //! My scratch path (for checkpointing, etc)
-        std::string scratch_path_;
 
         /*! \brief An entry for a module in the database
          */

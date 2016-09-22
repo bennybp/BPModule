@@ -40,22 +40,11 @@ ModuleManager::ModuleManager()
     // add the handlers
     loadhandlers_.emplace("c_module", std::unique_ptr<SupermoduleLoaderBase>(new CppSupermoduleLoader()));
     loadhandlers_.emplace("python_module", std::unique_ptr<SupermoduleLoaderBase>(new PySupermoduleLoader()));
-
-    //! \todo pass in via ModuleAdministrator or something
-    scratch_path_ = "/tmp";
 }
 
 
 ModuleManager::~ModuleManager()
 {
-    // wait for any checkpointing operations to finish
-    if(checkpoint_thread_)
-    {
-        print_global_warning("Waiting for any checkpoint threads to finish\n");
-        checkpoint_thread_->join();
-        checkpoint_thread_.reset();
-    }
-
     /*
      * Warn of any in-use modules
      */
@@ -439,48 +428,6 @@ pybind11::object copy_key_change_options_py(
     for(auto i:options)mm.change_option_py(temp_name,i.first,i.second);
     return mm.get_module_py(temp_name,parentid);
 }
-
-////////////////////
-// Checkpointing
-////////////////////
-
-/*
-static void checkpoint_thread_function_(const ModuleManager & mm, std::string path)
-{
-    Checkpoint cp(path);
-    cp.save(mm); 
-}
-
-void ModuleManager::save_checkpoint(bool separate_thread) const
-{
-    // wait for any existing checkpointing operations to finish
-    if(checkpoint_thread_)
-    {
-        print_global_warning("Waiting for existing checkpoint thread to finish\n");
-        checkpoint_thread_->join();
-        checkpoint_thread_.reset();
-    }
-
-    // always create another thread (because I'm lazy)
-    std::thread th(checkpoint_thread_function_, std::ref(*this), scratch_path_);
-    checkpoint_thread_ = std::unique_ptr<std::thread>(new std::thread(std::move(th)));
-
-    // if we don't want a separate thread, just join and wait for the
-    // new thread to finish
-    if(!separate_thread)
-    {
-        checkpoint_thread_->join();
-        checkpoint_thread_.reset();
-    }
-}
-
-
-void ModuleManager::load_checkpoint(void)
-{
-    Checkpoint cp(scratch_path_);
-    cp.load(*this);
-}
-*/
 
 
 } // close namespace modulemanager
