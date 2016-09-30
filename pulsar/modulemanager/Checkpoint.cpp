@@ -55,12 +55,8 @@ static bool is_cache_key(const std::string & s)
 
     if(first13 != "CHKPT_CACHE__")
         return false;
-
-    // also needs a "_##_" in the middle
-    if(s.find("_##_") != std::string::npos)
-        return true;
     else
-        return false;
+        return true;
 }
 
 
@@ -206,8 +202,10 @@ void Checkpoint::save_cache_(const ModuleManager & mm,
 
             // construct the metadata
             CacheEntryMetadata meta{cachekey, 
-                                    gb.type(), h,
-                                    ba_data.size(), policy};
+                                    gb.type(),
+                                    h,
+                                    ba_data.size(),
+                                    policy};
             ByteArray ba_meta = util::to_byte_array(meta);
 
             print_global_output("Saving: (%10? bytes)   %?\n", ba_data.size(), cachekey);
@@ -259,7 +257,7 @@ void Checkpoint::load_cache_(ModuleManager & mm, CheckpointIO & backend)
                 ByteArray metadata = backend.read(metakey);
                 auto cem = from_byte_array<CacheEntryMetadata>(metadata);
 
-                SerializedCacheData scd{std::move(data), cem.type, cem.hash};
+                SerializedCacheData scd{std::move(data), cem.type, cem.hash, cem.policy};
                 auto pscd = std::make_shared<SerializedCacheData>(std::move(scd));
                 std::unique_ptr<SerializedDataHolder> sdh(new SerializedDataHolder(pscd));
                 mm.cachemap_.set_(cachekey, std::move(sdh), cem.policy); // set_ won't lock the mutex

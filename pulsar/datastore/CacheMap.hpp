@@ -281,6 +281,14 @@ class CacheMap
         template<typename T>
         const detail::GenericHolder<T> * get_or_throw_cast_(const std::string & key)
         {
+            //////////////////////////////////////////////////////
+            // This whole function is to be called from a public function, which
+            // should lock this structure for the entire duration
+            //////////////////////////////////////////////////////
+
+            // may be needed for unserializing
+            typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type HolderType;
+
             using namespace detail;
 
             const CacheMapEntry_ & pme = get_or_throw_(key);
@@ -290,8 +298,8 @@ class CacheMap
             if(ph == nullptr)
             {
                 // is this serialized data?
-                const SerializedDataHolder * scd = dynamic_cast<const SerializedDataHolder *>(ptr);
-                if(scd == nullptr)
+                const SerializedDataHolder * sdh = dynamic_cast<const SerializedDataHolder *>(ptr);
+                if(sdh == nullptr)
                 {
                     throw exception::DataStoreException("Bad cast in CacheMap", "key", key,
                                                         "fromtype", pme.value->demangled_type(),
@@ -300,11 +308,15 @@ class CacheMap
                 else
                 {
                     // convert to a new holder
-                    //! \todo flags
-                    std::unique_ptr<T> unserialized(scd->get<T>());
+                    std::unique_ptr<T> unserialized(sdh->get<T>());
+                    unsigned int policyflags = sdh->policy_flags();
 
                     // will replace the old key
-                    set(key, std::move(*unserialized), pme.policy);
+
+                    // this is basically a copy of set(), but we need to avoid a mutex deadlock
+                    std::unique_ptr<detail::GenericBase> newdata(new detail::GenericHolder<HolderType>(std::move(*unserialized)));
+
+                    set_(key, std::move(newdata), policyflags);
 
                     // call this function again - should load the unserialized data
                     return get_or_throw_cast_<T>(key);

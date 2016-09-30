@@ -191,6 +191,7 @@ struct SerializedCacheData
     ByteArray data;
     std::string type;
     bphash::HashValue hash;
+    unsigned int policyflags;
 };
 
 
@@ -281,6 +282,11 @@ class SerializedDataHolder : public GenericBase
                                                   "stored", util::demangle_cpp(obj->type));
 
             return util::new_from_byte_array<T>(obj->data);
+        }
+
+        unsigned int policy_flags(void) const
+        {
+            return obj->policyflags;
         }
 
     private:

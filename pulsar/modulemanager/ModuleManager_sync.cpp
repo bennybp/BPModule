@@ -9,6 +9,7 @@
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/parallel/Parallel.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
+#include "pulsar/util/Serialization.hpp"
 
 using namespace pulsar::exception;
 
@@ -56,9 +57,51 @@ void ModuleManager::sync_thread_func_(void)
     int cmd;
     int ack = MM_SYNC_ACK;
     int my_rank = parallel::get_proc_id();
+    int nproc = parallel::get_nproc();
 
     bool keep_running = true;
     output::print_global_debug("Starting sync event loop for rank %? (using tag %?)\n", my_rank, sync_tag_);
+
+
+    // This keeps track of what ranks have what keys
+    // This is only used for rank 0
+    std::multimap<std::string, int> cachedata_rank_map;
+
+    // Initial set up: See what ranks have what cache data
+    // Collect what cache keys I have
+    std::set<std::string> my_cache_keys = cachemap_.get_keys();
+    output::print_global_debug("Rank %? has %? entries in its cache\n", my_rank, cachemap_.size());
+
+    if(my_rank == 0)
+    {
+        for(const auto & it : my_cache_keys)
+            cachedata_rank_map.emplace(it, 0);
+
+        // receive from all other ranks
+        for(int src = 1; src < nproc; src++)
+        {
+            int size = 0;
+            MPI_Probe(src, sync_tag_, MPI_COMM_WORLD, &stat);
+            MPI_Get_count(&stat, MPI_BYTE, &size);
+            ByteArray ba_recv(size);
+            MPI_Recv(ba_recv.data(), size, MPI_BYTE, src, sync_tag_, MPI_COMM_WORLD, &stat);
+
+            auto recv_keys = util::from_byte_array<std::set<std::string>>(ba_recv);
+            for(const auto & it : recv_keys)
+                cachedata_rank_map.emplace(it, src);
+        }
+
+        output::print_global_debug("Rank 0 has %? entries in its cache data -> rank map\n", cachedata_rank_map.size());
+        for(const auto & it : cachedata_rank_map)
+            output::print_global_debug("    - [%?]  [%?]\n", it.second, it.first);
+    }
+    else
+    {
+        auto ckey_dat = util::to_byte_array(my_cache_keys);
+        int size = static_cast<int>(ckey_dat.size());
+        MPI_Send(ckey_dat.data(), size, MPI_BYTE, 0, sync_tag_, MPI_COMM_WORLD);
+    }
+
 
     while(keep_running)
     {
