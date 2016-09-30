@@ -5,8 +5,7 @@
  */
 
 
-#ifndef PULSAR_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
-#define PULSAR_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
+#pragma once
 
 #include <atomic>
 #include <thread>
@@ -274,6 +273,13 @@ class ModuleManager
         void notify_destruction(ID_t id);
 
 
+        /*! \brief Start syncronizing this module manager across all ranks */
+        void start_sync_thread(int tag);
+
+        /*! \brief Stop syncronizing this module manager across all ranks */
+        void stop_sync_thread(void);
+
+
     private:
         friend class Checkpoint;
 
@@ -333,6 +339,12 @@ class ModuleManager
         /*! \brief All of the cache data */
         datastore::CacheMap cachemap_;
 
+        /*! \brief The separate synchronization thread */
+        std::thread sync_thread_;
+
+        /*! \brief The current MPI tag being used to sync this manager */
+        int sync_tag_;
+
 
         /*! \brief Obtain stored internal info for a module (via module key) or throw an exception
          *
@@ -347,7 +359,6 @@ class ModuleManager
         /*! \copydoc get_or_throw_
          */
         StoreEntry & get_or_throw_(const std::string & modulekey);
-
 
 
         /*! \brief Create a module via its creator function
@@ -370,8 +381,9 @@ class ModuleManager
         create_module_(const std::string & modulekey, ID_t parentid);
 
 
-        /*! \brief Create a key for the cache given a ModuleInfo */
-        static std::string make_cache_key_(const ModuleInfo & mi);
+        /*! \brief Function to be run by the synhcronization thread */
+        void sync_thread_func_(void);
+
 };
 
 
@@ -390,5 +402,3 @@ pybind11::object copy_key_change_options_py(const std::string& modulekey,
 } // close namespace modulemanager
 } // close namespace pulsar
 
-
-#endif

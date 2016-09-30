@@ -8,7 +8,6 @@
 #include "pulsar/datastore/CacheData.hpp"
 #include "pulsar/output/Output.hpp"
 #include "pulsar/modulebase/ModuleBase.hpp"
-#include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/datastore/Wavefunction.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 
@@ -28,15 +27,10 @@ namespace pulsar{
 namespace modulemanager {
 
 
-std::string ModuleManager::make_cache_key_(const ModuleInfo & mi)
-{
-    return mi.name + "_v" + mi.version;
-}
-
-
 ModuleManager::ModuleManager()
     : debugall_(false),
-      curid_(100)
+      curid_(100),
+      sync_tag_(-1)
 {
     // add the handlers
     loadhandlers_.emplace("c_module", std::unique_ptr<SupermoduleLoaderBase>(new CppSupermoduleLoader()));
@@ -46,6 +40,9 @@ ModuleManager::ModuleManager()
 
 ModuleManager::~ModuleManager()
 {
+    // kill any syncronization threads first
+    stop_sync_thread();
+
     /*
      * Warn of any in-use modules
      */
@@ -370,7 +367,8 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
     modules_inuse_.emplace(curid_);
 
     // create a CacheData for this module
-    p->set_cache_(CacheData(&cachemap_, make_cache_key_(se.mi)));
+    const std::string ckey = se.mi.name + "_v" + se.mi.version;
+    p->set_cache_(CacheData(&cachemap_, ckey));
 
     // next id
     curid_++;
@@ -427,6 +425,7 @@ pybind11::object copy_key_change_options_py(
     for(auto i:options)mm.change_option_py(temp_name,i.first,i.second);
     return mm.get_module_py(temp_name,parentid);
 }
+
 
 
 } // close namespace modulemanager

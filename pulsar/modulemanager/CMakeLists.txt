@@ -4,6 +4,7 @@ set(PULSAR_MODULEMANAGER_FILES
             ModuleIMPLHolder.cpp
             ModuleInfo.cpp
             ModuleManager.cpp
+            ModuleManager_sync.cpp
             ModuleTree.cpp
             ModuleTree_iterators.cpp
             Checkpoint.cpp
