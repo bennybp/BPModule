@@ -40,7 +40,7 @@ class SCFIterator_Py : public SCFIterator{
 
         virtual datastore::Wavefunction next_(const datastore::Wavefunction & wfn, const math::IrrepSpinMatrixD & fmat)
         {
-            return call_py_override<datastore::Wavefunction>("next_", wfn, fmat);
+            return call_py_override<datastore::Wavefunction>(this, "next_", wfn, fmat);
         }
 };
 

@@ -40,7 +40,7 @@ class OneElectronMatrix : public ModuleBase
                              unsigned int deriv, const datastore::Wavefunction & wfn,
                              const system::BasisSet & bs1, const system::BasisSet & bs2)
         {
-            return ModuleBase::fast_call_function(&OneElectronMatrix::calculate_,
+            return ModuleBase::call_function(&OneElectronMatrix::calculate_,
                                                 key, deriv, wfn, bs1, bs2);
         }
 
@@ -68,7 +68,7 @@ class OneElectronMatrix_Py : public OneElectronMatrix
                                       unsigned int deriv, const datastore::Wavefunction & wfn,
                                       const system::BasisSet & bs1, const system::BasisSet & bs2)
         {
-            return call_py_override<ReturnType>("calculate_", key, deriv, wfn, bs1, bs2);
+            return call_py_override<ReturnType>(this, "calculate_", key, deriv, wfn, bs1, bs2);
         }
 };
 

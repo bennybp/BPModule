@@ -1,26 +1,12 @@
 /*! \file
  *
  * \brief Storage of cache data (header)
- * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
 
-#ifndef PULSAR_GUARD_DATASTORE__CACHEDATA_HPP_
-#define PULSAR_GUARD_DATASTORE__CACHEDATA_HPP_
+#pragma once
 
-#include <set>
-#include <map>
-#include <mutex>
-#include "pulsar/exception/Exceptions.hpp"
-#include "pulsar/output/Output.hpp"
-#include "pulsar/datastore/GenericHolder.hpp"
-#include <pybind11/pybind11.h>
-
-namespace pulsar {
-namespace modulemanager {
-class Checkpoint;
-}
-}
+#include "pulsar/datastore/CacheMap.hpp"
 
 
 namespace pulsar {
@@ -30,31 +16,27 @@ namespace datastore {
 /*! Storage of cache data
  *
  * Each module gets a CacheData object that is shared between
- * instantiations. It allows for storage of arbitrary data
- * mapped to a key. What the key represents is left up to
- * the module.
+ * instantiations. This contains a pointer to a master
+ * CacheMap object which actually stores the data.
  *
  * Once data is stored, the data itself should be considered
  * constant, although this cannot be strictly enforced
  * in python.
- *
- * \todo thread safety
- * \todo note why we don't allow setting via shared_ptr (data in cache is immutable)
  */
 class CacheData
 {
     public:
-
-        //! \todo these are unsigned int rather than enum, since
-        //        we need to be able to combine them in python
-        //        (pybind11 won't be able to do bitwise OR, etc,
-        //        unless they are integers)
-        static constexpr const unsigned int NoCheckpoint     = 1;
-        static constexpr const unsigned int CheckpointLocal  = 2;
-        static constexpr const unsigned int CheckpointGlobal = 4;
+        static constexpr const unsigned int NoCheckpoint     = CacheMap::NoCheckpoint;
+        static constexpr const unsigned int CheckpointLocal  = CacheMap::CheckpointLocal;
+        static constexpr const unsigned int CheckpointGlobal = CacheMap::CheckpointGlobal;
+        static constexpr const unsigned int DistributeGlobal = CacheMap::DistributeGlobal;
 
 
-        CacheData(void)          = default;
+        CacheData(CacheMap * parent_cmap, std::string module_key)
+            : module_key_(module_key + "%%"),  // use %% as a separator
+              parent_cmap_(parent_cmap)
+        { }
+
         virtual ~CacheData(void) = default;
 
 
@@ -71,8 +53,7 @@ class CacheData
          */
         bool count(const std::string & key) const
         {
-            std::lock_guard<std::mutex> l(mutex_);
-            return cmap_.count(key);
+            return parent_cmap_->count(make_full_key_(key));
         }
 
         /*! \brief Obtain all the keys contained in this object
@@ -81,13 +62,7 @@ class CacheData
          */
         std::set<std::string> get_keys(void) const
         {
-            std::set<std::string> v;
-
-            std::lock_guard<std::mutex> l(mutex_);
-            for(const auto & it : cmap_)
-                v.insert(it.first);
-
-            return v;
+            return get_my_keys_();
         }
 
         /*! \brief Return the number of elements contained
@@ -98,8 +73,7 @@ class CacheData
          */
         size_t size(void) const noexcept
         {
-            std::lock_guard<std::mutex> l(mutex_);
-            return cmap_.size();
+            return get_my_keys_().size();
         }
 
         /*! \brief Return the underlying data
@@ -115,9 +89,7 @@ class CacheData
         template<typename T>
         std::shared_ptr<const T> get(const std::string & key)
         {
-            // mutex locking handled in get_or_throw_cast
-            const detail::GenericHolder<T> * ph = get_or_throw_cast_<T>(key);
-            return ph->get();
+            return parent_cmap_->get<T>(make_full_key_(key));
         }
 
         /*! \brief Return the underlying data (python version)
@@ -135,8 +107,7 @@ class CacheData
          */
         pybind11::object get_py(const std::string & key)
         {
-            const detail::GenericHolder<pybind11::object> * ph = get_or_throw_cast_py_(key);
-            return *(ph->get());
+            return parent_cmap_->get_py(make_full_key_(key));
         }
 
         /*! \brief Add data associated with a given key via copy
@@ -153,13 +124,7 @@ class CacheData
         template<typename T>
         void set(const std::string & key, T && value, unsigned int policyflags)
         {
-            typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type HolderType;
-
-            // construct outside of mutex locking
-            std::unique_ptr<detail::GenericBase> newdata(new detail::GenericHolder<HolderType>(std::forward<T>(value)));
-
-            // mutex locking handled in set_
-            set_(key, std::move(newdata), policyflags);
+            parent_cmap_->set(make_full_key_(key), std::forward<T>(value), policyflags);
         }
 
 
@@ -173,8 +138,9 @@ class CacheData
          */
         void set_py(const std::string & key, const pybind11::object & value, unsigned int policyflags)
         {
-            set(key, value, policyflags);
+            parent_cmap_->set_py(make_full_key_(key), value, policyflags);
         }
+
 
         /*! \brief Remove a key from this data store
          * 
@@ -185,183 +151,43 @@ class CacheData
          */
         size_t erase(const std::string & key)
         {
-            std::lock_guard<std::mutex> l(mutex_);
-            return cmap_.erase(key);
-        }
-
-        void print(std::ostream & os) const
-        {
-            using namespace pulsar::output;
-
-            // We lock the mutex here. As such, we cannot call size(), etc.
-            std::lock_guard<std::mutex> l(mutex_);
- 
-            print_output(os, "Cache data with %? entries\n", cmap_.size());
-
-            for(const auto & it : cmap_)
-                print_output(os, "  -Key: %-20?  Serializable: %?  Type: %?\n", it.first,
-                             it.second.value->is_serializable() ? "Yes" : "No",
-                             it.second.value->demangled_type());
+            return parent_cmap_->erase(make_full_key_(key));
         }
 
 
     private:
-        friend class modulemanager::Checkpoint;
+        //! A unique string representing the module that this belongs to
+        std::string module_key_;
 
-        ////////////////////////////////
-        // Actual storage of the data //
-        ////////////////////////////////
+        //! Parent CacheMap object
+        CacheMap * parent_cmap_;
+        
 
-        /*! \brief Mutex protecting this object during multi-threaded access */
-        mutable std::mutex mutex_;
-
-
-        /*! \brief Stores a pointer to a placeholder, plus some other information
-         */
-        struct CacheDataEntry
+        std::string make_full_key_(const std::string & data_key) const
         {
-            std::unique_ptr<detail::GenericBase> value;  //!< The stored data
-            unsigned int policy;                         //!< Policy flags for this entry 
-        };
-
-
-        //! The container to use to store the data
-        std::map<std::string, CacheDataEntry> cmap_;
-
-
-        ////////////////////////////////
-        // Private functions          //
-        ////////////////////////////////
-
-        /*! \brief Obtains a CacheDataEntry or throws if data doesn't exist
-         * 
-         * \throw pulsar::exception::DataStoreException if key
-         *        doesn't exist
-         *
-         * \param [in] key Key of the data to get
-         * \return CacheDataEntry containing the data for the given key
-         */ 
-        const CacheDataEntry & get_or_throw_(const std::string & key) const
-        {
-            std::lock_guard<std::mutex> l(mutex_);
-
-            if(cmap_.count(key))
-                return cmap_.at(key);
-            else
-                throw exception::DataStoreException("Key not found in CacheData", "key", key);
+            return module_key_ + data_key;
         }
 
-
-        /*! \brief Obtains a pointer to a GenericHolder cast to desired type
-         * 
-         * \throw pulsar::exception::DataStoreException if key
-         *        doesn't exist or the cast fails.
-         *
-         * \param [in] key Key of the data to get
-         * \return detail::GenericHolder containing the data for the given key
-         */ 
-        template<typename T>
-        const detail::GenericHolder<T> * get_or_throw_cast_(const std::string & key)
+        /*! \brief Obtains all the keys from the parent that belong to this module */
+        std::set<std::string> get_my_keys_(void) const
         {
-            using namespace detail;
-
-            // get_or_throw will lock the mutex and then release it when done
-            const CacheDataEntry & pme = get_or_throw_(key);
-
-            // this stuff is safe to do with an unlocked mutex
-            auto ptr = pme.value.get();
-
-            //! \todo mutex work makes sense? It's handed in set
-
-            const GenericHolder<T> * ph = dynamic_cast<const GenericHolder<T> *>(ptr);
-            if(ph == nullptr)
+            std::set<std::string> my_keys;
+            auto all_keys = parent_cmap_->get_keys();
+            for(auto & k : all_keys)
             {
-                // is this serialized data?
-                const SerializedDataHolder * scd = dynamic_cast<const SerializedDataHolder *>(ptr);
-                if(scd == nullptr)
-                {
-                    throw exception::DataStoreException("Bad cast in CacheData", "key", key,
-                                                        "fromtype", pme.value->demangled_type(),
-                                                        "totype", util::demangle_cpp_type<T>());
-                }
-                else
-                {
-                    // convert to a new holder
-                    //! \todo flags
-                    std::unique_ptr<T> unserialized(scd->get<T>());
-
-                    // will replace the old key
-                    set(key, std::move(*unserialized), pme.policy);
-
-                    // call this function again - should load the unserialized data
-                    return get_or_throw_cast_<T>(key);
-                }
+                // only gdo greate than, since the actual data key must be at
+                // least one character
+                if(k.size() > module_key_.size() &&
+                   k.substr(0, module_key_.size()) == module_key_)
+                    my_keys.emplace(std::move(k));
             }
 
-            return ph;
+            return my_keys;
         }
-
-        /*! \brief Obtains a pointer to a GenericHolder cast to desired type
-         * 
-         * \throw pulsar::exception::DataStoreException if key
-         *        doesn't exist or the cast fails.
-         *
-         * \param [in] key Key of the data to get
-         * \return detail::GenericHolder containing the data for the given key
-         */ 
-        const detail::GenericHolder<pybind11::object> * get_or_throw_cast_py_(const std::string & key)
-        {
-            // we need a separate function since pybind11::object is not serializable.
-            //! \todo fix if we can serialize pybind11::objects
-            using namespace detail;
-
-            // get_or_throw will lock the mutex and then release it when done
-            const CacheDataEntry & pme = get_or_throw_(key);
-
-            // this stuff is safe to do with an unlocked mutex
-            auto ptr = pme.value.get();
-
-            //! \todo mutex work makes sense? It's handed in set
-
-            const GenericHolder<pybind11::object> * ph = dynamic_cast<const GenericHolder<pybind11::object> *>(ptr);
-
-            if(ph == nullptr)
-            {
-                    throw exception::DataStoreException("Bad cast in CacheData", "key", key,
-                                                        "fromtype", pme.value->demangled_type(),
-                                                        "totype", util::demangle_cpp_type<pybind11::object>());
-            }
-
-            return ph;
-        }
-
-
-        /*! \brief sets the data for a given key via a pointer
-         * 
-         * \param [in] key Key of the data to set
-         * \param [in] value Pointer to the data to set
-         */ 
-        void set_(const std::string & key,
-                  std::unique_ptr<detail::GenericBase> && ptr,
-                  unsigned int policyflags)
-        {
-            std::lock_guard<std::mutex> l(mutex_);
-
-            if(cmap_.count(key))
-                cmap_.erase(key);
-            cmap_.emplace(key, CacheDataEntry{std::move(ptr), policyflags,});
-        }
-
 
 };
 
 
-
-
 } // close namespace datastore
 } // close namespace pulsar
-
-
-
-#endif
 

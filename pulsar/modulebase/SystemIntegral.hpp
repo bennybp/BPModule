@@ -34,8 +34,8 @@ class SystemIntegral : public ModuleBase
          */
         void initialize(unsigned int deriv, const system::System & sys)
         {
-            ModuleBase::fast_call_function(&SystemIntegral::uninitialized_or_throw_);
-            ModuleBase::fast_call_function(&SystemIntegral::initialize_, deriv, sys);
+            ModuleBase::call_function(&SystemIntegral::uninitialized_or_throw_);
+            ModuleBase::call_function(&SystemIntegral::initialize_, deriv, sys);
             initialized_ = true;
         }
 
@@ -49,8 +49,8 @@ class SystemIntegral : public ModuleBase
          */
         uint64_t calculate(double * outbuffer, size_t bufsize)
         {
-            ModuleBase::fast_call_function(&SystemIntegral::initialized_or_throw_);
-            return ModuleBase::fast_call_function(&SystemIntegral::calculate_,
+            ModuleBase::call_function(&SystemIntegral::initialized_or_throw_);
+            return ModuleBase::call_function(&SystemIntegral::calculate_,
                                                 outbuffer, bufsize);
         }
 
@@ -67,7 +67,7 @@ class SystemIntegral : public ModuleBase
         {
             auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
-            return ModuleBase::fast_call_function(&SystemIntegral::calculate_,
+            return ModuleBase::call_function(&SystemIntegral::calculate_,
                                                   ptrinfo.first, ptrinfo.second[0]);
         }
 
@@ -111,7 +111,7 @@ class SystemIntegral_Py : public SystemIntegral
 
         virtual void initialize_(unsigned int deriv, const system::System & sys)
         {
-            return call_py_override<void>("initialize_", deriv, sys);
+            return call_py_override<void>(this, "initialize_", deriv, sys);
         }
 
         virtual uint64_t calculate_(double * outbuffer, size_t bufsize)
@@ -123,7 +123,7 @@ class SystemIntegral_Py : public SystemIntegral
                                       1, { bufsize },
                                       { sizeof(double) });
 
-            return call_py_override<uint64_t>("calculate_", buf, bufsize);
+            return call_py_override<uint64_t>(this, "calculate_", buf, bufsize);
         }
 };
 

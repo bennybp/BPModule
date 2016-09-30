@@ -13,6 +13,7 @@
 #include "pulsar/types.h"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/modulemanager/ModuleManager.hpp"
+#include "pulsar/datastore/CacheData.hpp"
 #include "pulsar/output/OutputStream.hpp"
 #include "pulsar/output/TeeBufToString.hpp"
 #include "pulsar/util/Format.hpp"
@@ -229,7 +230,7 @@ class ModuleBase
          * \param [in] args Arguments to forward
          */
         template<typename R, typename P, typename ... Targs1, typename ... Targs2>
-        R fast_call_function( R(P::*func)(Targs1...), Targs2 &&... args)
+        R call_function( R(P::*func)(Targs1...), Targs2 &&... args)
         {
             //////////////////////////////////////////////////////////////////
             // So you think you like pointers and templates?
@@ -259,9 +260,9 @@ class ModuleBase
             }
         }
 
-        /*! \copydocs fast_call_function */
+        /*! \copydocs call_function */
         template<typename R, typename P, typename ... Targs1, typename ... Targs2>
-        R fast_call_function( R(P::*func)(Targs1...) const, Targs2 &&... args) const
+        R call_function( R(P::*func)(Targs1...) const, Targs2 &&... args) const
         {
             using exception::GeneralException;
 
@@ -289,55 +290,29 @@ class ModuleBase
         }
 
 
-
-        /*! \brief Call a function, catching exceptions
-         *
-         * Meant to be used to call virtual functions that are
-         * implemented in a the derived class.
-         *
-         * \tparam R Return type
-         * \tparam P Derived class type
-         * \tparam Targs1 Arguments types for the function
-         * \tparam Targs2 Arguments types actually passed in
-         *
-         * \param [in] func Pointer to member function of class P and returning R
-         * \param [in] args Arguments to forward
+        /*! \brief Calls a python function that overrides a virtual function
          */
-        template<typename R, typename P, typename ... Targs1, typename ... Targs2>
-        R call_function( R(P::*func)(Targs1...), Targs2 &&... args)
-        {
-            return fast_call_function<R>(func, std::forward<Targs1>(args)...);
-        }
-
-        /*! \copydocs call_function */
-        template<typename R, typename P, typename ... Targs1, typename ... Targs2>
-        R call_function( R(P::*func)(Targs1...) const, Targs2 &&... args) const
-        {
-            return fast_call_function<R>(func, std::forward<Targs1>(args)...);
-        }
-
-        /*! \brief Calls a python function that overrides a virtual function */
-        template<typename R, typename ... Targs>
-        R call_py_override(const char * name, Targs &&... args)
+        template<typename R, typename D, typename ... Targs>
+        R call_py_override(D * obj, const char * name, Targs &&... args)
         {
             // Module information is not appended to the exception since
             // this should always be called from the derived class
             pybind11::gil_scoped_acquire gil;
-            pybind11::function overload = pybind11::get_overload(this, name);
+            pybind11::function overload = pybind11::get_overload(obj, name);
             if(overload)
                 return python::call_py_func<R>(overload, std::forward<Targs>(args)...);
             else
                 throw exception::GeneralException("Cannot find overridden function", "vfunc", name);
         }
 
-        /*! \brief Calls a python function that overrides a virtual function */
-        template<typename R, typename ... Targs>
-        R call_py_override(const char * name, Targs &&... args) const
+        /*! \copydocs call_py_override */
+        template<typename R, typename D, typename ... Targs>
+        R call_py_override(const D * obj, const char * name, Targs &&... args) const
         {
             // Module information is not appended to the exception since
             // this should always be called from the derived class
             pybind11::gil_scoped_acquire gil;
-            pybind11::function overload = pybind11::get_overload(this, name);
+            pybind11::function overload = pybind11::get_overload(obj, name);
             if(overload)
                 return python::call_py_func<R>(overload, std::forward<Targs>(args)...);
             else
@@ -345,10 +320,12 @@ class ModuleBase
         }
 
 
-        /*! \brief See if this class has a member implemented in python */
-        bool has_py_override(const char * name) const
+        /*! \brief See if this class has a member implemented in python
+         */
+        template<typename D>
+        bool has_py_override(const D * obj, const char * name) const
         {
-            pybind11::function overload = pybind11::get_overload(this, name);
+            pybind11::function overload = pybind11::get_overload(obj, name);
             return (bool)overload;
         }
 
@@ -409,7 +386,7 @@ class ModuleBase
         modulemanager::ModuleTreeNode * treenode_;
 
         //! My cache
-        datastore::CacheData * cache_;
+        std::unique_ptr<datastore::CacheData> cache_;
 
 
         ////////////////////
@@ -433,9 +410,9 @@ class ModuleBase
         modulemanager::ModuleTreeNode & my_node(void);
 
 
-        /*! \brief Set the cache object to use
+        /*! \brief Move-Create my CacheData object
          */
-        void set_cache_(datastore::CacheData * cache) noexcept;
+        void set_cache_(datastore::CacheData && cache);
 };
 
 

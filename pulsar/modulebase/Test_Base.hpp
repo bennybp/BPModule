@@ -135,27 +135,27 @@ class Test_Base_Py : public Test_Base
 
         virtual void run_test_(void)
         {
-            return call_py_override<void>("run_test_");
+            return call_py_override<void>(this, "run_test_");
         }
 
         virtual void call_run_test_(const std::string & other)
         {
-            return call_py_override<void>("call_run_test_", other);
+            return call_py_override<void>(this, "call_run_test_", other);
         }
 
         virtual void call_run_test2_(const std::string & other1, const std::string & other2)
         {
-            return call_py_override<void>("call_run_test2_", other1, other2);
+            return call_py_override<void>(this, "call_run_test2_", other1, other2);
         }
 
         virtual void test_throw_(void)
         {
-            return call_py_override<void>("test_throw_");
+            return call_py_override<void>(this, "test_throw_");
         }
 
         virtual void call_throw_(const std::string & other)
         {
-            return call_py_override<void>("call_throw_", other);
+            return call_py_override<void>(this, "call_throw_", other);
         }
 
 };

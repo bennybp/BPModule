@@ -109,12 +109,12 @@ void export_pybind11(pybind11::module & mtop)
     ////////////////////////////////////////
     // CacheData
     // Can just store python object
+    // NOTE: We are purposely not exporting CacheMap
     ////////////////////////////////////////
     pybind11::class_<CacheData> cd(m, "CacheData");
     cd.def("size", &CacheData::size)
       .def("get_keys", &CacheData::get_keys)
       .def("erase", &CacheData::erase)
-      .def("print", &CacheData::print)
       .def("count", &CacheData::count,
                    "See if the cache has some data",
                    pybind11::arg("key"))
@@ -129,6 +129,7 @@ void export_pybind11(pybind11::module & mtop)
       .def_readonly_static("NoCheckpoint", &CacheData::NoCheckpoint)
       .def_readonly_static("CheckpointLocal", &CacheData::CheckpointLocal)
       .def_readonly_static("CheckpointGlobal", &CacheData::CheckpointGlobal)
+      .def_readonly_static("DistributeGlobal", &CacheData::DistributeGlobal)
     ;
 
     // Export the testing stuff

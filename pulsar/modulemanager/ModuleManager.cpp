@@ -5,6 +5,7 @@
  */
 #include <random>
 #include "pulsar/modulemanager/ModuleManager.hpp"
+#include "pulsar/datastore/CacheData.hpp"
 #include "pulsar/output/Output.hpp"
 #include "pulsar/modulebase/ModuleBase.hpp"
 #include "pulsar/exception/Exceptions.hpp"
@@ -368,10 +369,8 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
     // Mark the id as in use
     modules_inuse_.emplace(curid_);
 
-    // get this module's cache
-    // don't use .at() -- we need it created if it doesn't exist already
-    std::string mbstr = make_cache_key_(mtn.minfo);
-    p->set_cache_(&(cachemap_[mbstr]));
+    // create a CacheData for this module
+    p->set_cache_(CacheData(&cachemap_, make_cache_key_(se.mi)));
 
     // next id
     curid_++;

@@ -25,7 +25,8 @@ namespace modulebase {
 ModuleBase::ModuleBase(ID_t id, const char * modtype)
     : tbts_(output::get_global_output().rdbuf(), nullptr),
       out(&tbts_),
-      id_(id), modtype_(modtype), mlocator_(nullptr), treenode_(nullptr)
+      id_(id), modtype_(modtype), mlocator_(nullptr),
+      treenode_(nullptr)
 {
     out.debug("Constructed %? module [%?]\n", modtype, id);
 }
@@ -141,7 +142,7 @@ pybind11::object ModuleBase::create_child_from_option_py(const std::string & opt
 
 CacheData & ModuleBase::cache(void) const noexcept
 {
-    if(cache_ == nullptr)
+    if(!cache_)
         throw std::logic_error("Developer error - cache_ is null for a module!");
 
     return *cache_;
@@ -175,9 +176,9 @@ ModuleTreeNode & ModuleBase::my_node(void)
     return *treenode_;
 }
 
-void ModuleBase::set_cache_(CacheData * cache) noexcept
+void ModuleBase::set_cache_(CacheData && cache)
 {
-    cache_ = cache;
+    cache_ = std::unique_ptr<CacheData>(new CacheData(std::move(cache)));
 }
 
 } // close namespace modulebase

@@ -11,7 +11,7 @@
 #include <atomic>
 #include <thread>
 
-#include "pulsar/datastore/CacheData.hpp"
+#include "pulsar/datastore/CacheMap.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/modulemanager/ModuleCreationFuncs.hpp"
 #include "pulsar/modulemanager/ModuleTree.hpp"
@@ -330,11 +330,8 @@ class ModuleManager
         std::set<ID_t> modules_inuse_;
 
 
-        /*! \brief Map of cache data
-         *
-         * The key is a combination of the module name and version
-         */
-        std::map<std::string, datastore::CacheData> cachemap_;
+        /*! \brief All of the cache data */
+        datastore::CacheMap cachemap_;
 
 
         /*! \brief Obtain stored internal info for a module (via module key) or throw an exception
@@ -377,10 +374,12 @@ class ModuleManager
         static std::string make_cache_key_(const ModuleInfo & mi);
 };
 
-/** \brief Given an existing module, the ID of the new module's parent, a module manager, and a map (option_key to value) of options to change.  This function will copy the module into a unique key, change the options, and return the module implementation.
- 
- TODO: Make a C++ version
- 
+
+/** \brief Given an existing module, the ID of the new module's parent, a module manager, and a
+ *  map (option_key to value) of options to change.  This function will copy the module into a
+ *  unique key, change the options, and return the module implementation.
+ *
+ *  \todo Make a C++ version
  */
 pybind11::object copy_key_change_options_py(const std::string& modulekey, 
                                             ID_t parentid,ModuleManager& mm,

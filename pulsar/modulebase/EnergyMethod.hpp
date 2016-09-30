@@ -114,7 +114,7 @@ class EnergyMethod_Py : public EnergyMethod{
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
         virtual DerivReturnType deriv_(size_t Order,const datastore::Wavefunction & wfn){
-            return call_py_override<DerivReturnType>("deriv_",Order,wfn);
+            return call_py_override<DerivReturnType>(this, "deriv_",Order,wfn);
         }
 };
 
