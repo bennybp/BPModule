@@ -10,6 +10,7 @@
 #include <set>
 #include <map>
 #include <mutex>
+#include <thread>
 
 #include <pybind11/pybind11.h>
 
@@ -54,7 +55,9 @@ class CacheMap
         static constexpr const unsigned int DistributeGlobal = 8;
 
 
-        CacheMap(void)          = default;
+        CacheMap(void)
+            : sync_tag_(-1) { }
+
         virtual ~CacheMap(void) = default;
 
 
@@ -231,11 +234,24 @@ class CacheMap
         }
 
 
+        /*! \brief Start synchronization across all ranks */
+        void start_sync(int tag);
+
+        /*! \brief Stop synchronization across all ranks */
+        void stop_sync(void);
+
+
     private:
         friend class modulemanager::Checkpoint;
 
         /*! \brief Mutex protecting this object during multi-threaded access */
         mutable std::mutex mutex_;
+
+        /*! \brief The separate synchronization thread */
+        std::thread sync_thread_;
+
+        /*! \brief The current MPI tag being used to sync this manager */
+        int sync_tag_;
 
         /*! \brief Stores a pointer to a placeholder, plus some other information
          */
@@ -370,6 +386,8 @@ class CacheMap
             cmap_.emplace(key, CacheMapEntry_{std::move(ptr), policyflags,});
         }
 
+        /*! \brief Function run by the synchronization thread */
+        void sync_thread_func_(void);
 };
 
 

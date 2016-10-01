@@ -29,8 +29,7 @@ namespace modulemanager {
 
 ModuleManager::ModuleManager()
     : debugall_(false),
-      curid_(100),
-      sync_tag_(-1)
+      curid_(100)
 {
     // add the handlers
     loadhandlers_.emplace("c_module", std::unique_ptr<SupermoduleLoaderBase>(new CppSupermoduleLoader()));
@@ -41,7 +40,7 @@ ModuleManager::ModuleManager()
 ModuleManager::~ModuleManager()
 {
     // kill any syncronization threads first
-    stop_sync_thread();
+    stop_cache_sync();
 
     /*
      * Warn of any in-use modules
@@ -424,6 +423,17 @@ pybind11::object copy_key_change_options_py(
     mm.duplicate_key(modulekey,temp_name);
     for(auto i:options)mm.change_option_py(temp_name,i.first,i.second);
     return mm.get_module_py(temp_name,parentid);
+}
+
+
+void ModuleManager::start_cache_sync(int tag)
+{
+    cachemap_.start_sync(tag);
+}
+
+void ModuleManager::stop_cache_sync(void)
+{
+    cachemap_.stop_sync();
 }
 
 

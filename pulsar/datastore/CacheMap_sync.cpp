@@ -4,8 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "pulsar/modulemanager/ModuleManager.hpp"
-#include "pulsar/modulemanager/SyncCommands.hpp"
+#include "pulsar/datastore/CacheMap.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/parallel/Parallel.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
@@ -13,24 +12,29 @@
 
 using namespace pulsar::exception;
 
+// Commands that are sent through MPI
+#define MM_SYNC_PING 0
+#define MM_SYNC_ACK 1
+#define MM_SYNC_STOP 100
 
-namespace pulsar{
-namespace modulemanager {
+
+namespace pulsar {
+namespace datastore {
 
 
-void ModuleManager::start_sync_thread(int tag)
+void CacheMap::start_sync(int tag)
 {
     if(sync_tag_ >= 0)
         return; // already running
 
     if(tag < 0)
-        throw ModuleManagerException("Attempting to use a negative tag number for the sync thread");
+        throw GeneralException("Attempting to use a negative tag number for the sync thread");
 
     sync_tag_ = tag;
-    sync_thread_ = std::thread(&ModuleManager::sync_thread_func_, this);
+    sync_thread_ = std::thread(&CacheMap::sync_thread_func_, this);
 }
 
-void ModuleManager::stop_sync_thread(void)
+void CacheMap::stop_sync(void)
 {
     if(sync_tag_ < 0)
         return; // not running
@@ -44,14 +48,14 @@ void ModuleManager::stop_sync_thread(void)
     MPI_Recv(&ack, 1, MPI_INT, my_rank, sync_tag_, MPI_COMM_WORLD, &stat);
 
     if(ack != MM_SYNC_ACK)
-        throw ModuleManagerException("Unknown ack received when attempting to stop thread", "ack", ack);
+        throw GeneralException("Unknown ack received when attempting to stop thread", "ack", ack);
 
     sync_thread_.join();
     sync_tag_ = -1;
 }
 
 
-void ModuleManager::sync_thread_func_(void)
+void CacheMap::sync_thread_func_(void)
 {
     MPI_Status stat;
     int cmd;
@@ -69,8 +73,9 @@ void ModuleManager::sync_thread_func_(void)
 
     // Initial set up: See what ranks have what cache data
     // Collect what cache keys I have
-    std::set<std::string> my_cache_keys = cachemap_.get_keys();
-    output::print_global_debug("Rank %? has %? entries in its cache\n", my_rank, cachemap_.size());
+    std::set<std::string> my_cache_keys = get_keys();
+    output::print_global_debug("Rank %? has %? entries in its cache\n",
+                               my_rank, size());
 
     if(my_rank == 0)
     {
@@ -84,14 +89,16 @@ void ModuleManager::sync_thread_func_(void)
             MPI_Probe(src, sync_tag_, MPI_COMM_WORLD, &stat);
             MPI_Get_count(&stat, MPI_BYTE, &size);
             ByteArray ba_recv(size);
-            MPI_Recv(ba_recv.data(), size, MPI_BYTE, src, sync_tag_, MPI_COMM_WORLD, &stat);
+            MPI_Recv(ba_recv.data(), size, MPI_BYTE, src, sync_tag_,
+                     MPI_COMM_WORLD, &stat);
 
             auto recv_keys = util::from_byte_array<std::set<std::string>>(ba_recv);
             for(const auto & it : recv_keys)
                 cachedata_rank_map.emplace(it, src);
         }
 
-        output::print_global_debug("Rank 0 has %? entries in its cache data -> rank map\n", cachedata_rank_map.size());
+        output::print_global_debug("Rank 0 has %? entries in its cache data -> rank map\n",
+                                   cachedata_rank_map.size());
         for(const auto & it : cachedata_rank_map)
             output::print_global_debug("    - [%?]  [%?]\n", it.second, it.first);
     }
@@ -125,5 +132,5 @@ void ModuleManager::sync_thread_func_(void)
     output::print_global_debug("Sync event loop ended for rank %? (using tag %?)\n", my_rank, sync_tag_);
 }
 
-} // close namespace modulemanager
+} // close namespace datastore
 } // close namespace pulsar

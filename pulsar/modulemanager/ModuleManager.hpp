@@ -273,11 +273,15 @@ class ModuleManager
         void notify_destruction(ID_t id);
 
 
-        /*! \brief Start syncronizing this module manager across all ranks */
-        void start_sync_thread(int tag);
+        /*! \brief Start syncronizing this module manager's cache
+         *         across all ranks
+         */
+        void start_cache_sync(int tag);
 
-        /*! \brief Stop syncronizing this module manager across all ranks */
-        void stop_sync_thread(void);
+        /*! \brief Stop syncronizing this module manager's cache
+         *  across all ranks
+         */
+        void stop_cache_sync(void);
 
 
     private:
@@ -339,14 +343,9 @@ class ModuleManager
         /*! \brief All of the cache data */
         datastore::CacheMap cachemap_;
 
-        /*! \brief The separate synchronization thread */
-        std::thread sync_thread_;
 
-        /*! \brief The current MPI tag being used to sync this manager */
-        int sync_tag_;
-
-
-        /*! \brief Obtain stored internal info for a module (via module key) or throw an exception
+        /*! \brief Obtain stored internal info for a module (via module key)
+         *         or throw an exception
          *
          * \throw pulsar::exception::ModuleManagerException
          *        if the key or name doesn't exist
@@ -379,11 +378,6 @@ class ModuleManager
          */
         std::unique_ptr<detail::ModuleIMPLHolder>
         create_module_(const std::string & modulekey, ID_t parentid);
-
-
-        /*! \brief Function to be run by the synhcronization thread */
-        void sync_thread_func_(void);
-
 };
 
 
