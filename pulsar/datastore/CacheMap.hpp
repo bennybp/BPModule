@@ -95,6 +95,7 @@ class CacheMap
         }
 
 
+
         /*! \brief Return the number of elements contained
          *
          * \exnothrow
@@ -277,12 +278,20 @@ class CacheMap
          * \param [in] key Key of the data to get
          * \return CacheMapEntry_ containing the data for the given key
          */ 
-        const CacheMapEntry_ & get_or_throw_(const std::string & key) const
+        const CacheMapEntry_ & get_or_throw_(const std::string & key)
         {
             if(cmap_.count(key))
                 return cmap_.at(key);
             else
-                throw exception::DataStoreException("Key not found in CacheMap", "key", key);
+            {
+                // see if we can obtain it from the distributed cache
+                obtain_from_global_(key);
+
+                if(cmap_.count(key)) // did we get it?
+                    return cmap_.at(key);
+                else
+                    throw exception::DataStoreException("Key not found in CacheMap", "key", key);
+            }
         }
 
 
@@ -384,10 +393,20 @@ class CacheMap
             if(cmap_.count(key))
                 cmap_.erase(key);
             cmap_.emplace(key, CacheMapEntry_{std::move(ptr), policyflags,});
+            if(policyflags & DistributeGlobal)
+                notify_global_add_(key);
         }
 
         /*! \brief Function run by the synchronization thread */
         void sync_thread_func_(void);
+
+        /*! \brief Obtain data from another rank, if possible */
+        void obtain_from_global_(const std::string & key);
+
+        void notify_global_add_(const std::string & key);
+
+        void notify_global_delete_(const std::string & key);
+
 };
 
 

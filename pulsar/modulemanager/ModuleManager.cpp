@@ -136,6 +136,8 @@ void ModuleManager::print(std::ostream & os) const
     std::lock_guard<std::mutex> l(mutex_);
     for(const auto & it : store_)
         it.second.mi.print(os);
+
+    cachemap_.print(os);
 }
 
 
