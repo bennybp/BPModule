@@ -8,7 +8,6 @@
 
 #include "pulsar/datastore/CacheMap.hpp"
 
-
 namespace pulsar {
 namespace datastore {
 
@@ -51,19 +50,13 @@ class CacheData
          * \param [in] key The key to the data
          * \return True if the key exists, false otherwise
          */
-        bool count(const std::string & key) const
-        {
-            return parent_cmap_->count(make_full_key_(key));
-        }
+        size_t count(const std::string & key) const;
 
         /*! \brief Obtain all the keys contained in this object
          * 
          * \return A vector of strings containing all the keys
          */
-        std::set<std::string> get_keys(void) const
-        {
-            return get_my_keys_();
-        }
+        std::set<std::string> get_keys(void) const;
 
         /*! \brief Return the number of elements contained
          *
@@ -71,10 +64,7 @@ class CacheData
          *
          * \return Number of elements in this container
          */
-        size_t size(void) const noexcept
-        {
-            return get_my_keys_().size();
-        }
+        size_t size(void) const noexcept;
 
         /*! \brief Return the underlying data
          *
@@ -92,24 +82,6 @@ class CacheData
             return parent_cmap_->get<T>(make_full_key_(key));
         }
 
-        /*! \brief Return the underlying data (python version)
-         * 
-         * Since it actually stores python objects, returning by
-         * copy or reference is undefined.
-         *
-         * \throw pulsar::exception::DataStoreException if key
-         *        doesn't exist
-         *
-         * \tparam T The type of the data
-         *
-         * \param [in] key The key to the data
-         * \return A copy of the data
-         */
-        pybind11::object get_py(const std::string & key)
-        {
-            return parent_cmap_->get_py(make_full_key_(key));
-        }
-
         /*! \brief Add data associated with a given key via copy
          * 
          * Keys are overwritten if they exist. This should not affect any data
@@ -119,28 +91,14 @@ class CacheData
          *
          * \param [in] key The key to the data
          * \param [in] value The data to store
-         * \param [in] policyflags Checkpointing policy for data
+         * \param [in] policy Checkpointing policy for data
          */
         template<typename T>
-        void set(const std::string & key, T && value, unsigned int policyflags)
+        void set(const std::string & key, T && value, unsigned int policy)
         {
-            parent_cmap_->set(make_full_key_(key), std::forward<T>(value), policyflags);
+            const std::string full_key = make_full_key_(key);
+            parent_cmap_->set(full_key, std::forward<T>(value), policy);
         }
-
-
-        /*! \brief Set the data associated with a given key (python version)
-         * 
-         * Data is stored as a python object
-         * 
-         * \param [in] key The key to the data
-         * \param [in] value The data to store
-         * \param [in] policyflags Checkpointing policy for data
-         */
-        void set_py(const std::string & key, const pybind11::object & value, unsigned int policyflags)
-        {
-            parent_cmap_->set_py(make_full_key_(key), value, policyflags);
-        }
-
 
         /*! \brief Remove a key from this data store
          * 
@@ -149,10 +107,7 @@ class CacheData
          * \param [in] key The key to the data
          * \return The number of elements removed
          */
-        size_t erase(const std::string & key)
-        {
-            return parent_cmap_->erase(make_full_key_(key));
-        }
+        size_t erase(const std::string & key);
 
 
     private:

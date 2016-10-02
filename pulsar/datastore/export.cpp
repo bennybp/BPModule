@@ -20,7 +20,7 @@ using pulsar::system::System;
 using pulsar::datastore::Wavefunction;
 
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 namespace export_python {
 
@@ -118,10 +118,9 @@ void export_pybind11(pybind11::module & mtop)
       .def("count", &CacheData::count,
                    "See if the cache has some data",
                    pybind11::arg("key"))
-      .def("get", &CacheData::get_py, 
-                  "Get reference", pybind11::return_value_policy::reference_internal,
+      .def("get", [](CacheData & cd, const std::string & key) { return *cd.get<pybind11::object>(key); },
                   pybind11::arg("key"))
-      .def("set", &CacheData::set_py, 
+      .def("set", static_cast<void (CacheData::*)(const std::string &, pybind11::object &, unsigned int)>(&CacheData::set), 
                   "Set data",
                   pybind11::arg("key"), 
                   pybind11::arg("obj"),

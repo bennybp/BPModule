@@ -4,7 +4,13 @@ set(PULSAR_DATASTORE_FILES
             OptionTypes.cpp
             OptionMap.cpp
             Wavefunction.cpp
+            CacheMap.cpp
+            CacheData.cpp
             CacheMap_sync.cpp
+
+            SerializedDataHolder.cpp
+            GenericHolder_python.cpp
+
             export.cpp
             testing_export.cpp
 

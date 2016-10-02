@@ -12,7 +12,7 @@
 #include "pulsar/util/Format.hpp"
 
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 namespace detail {
 

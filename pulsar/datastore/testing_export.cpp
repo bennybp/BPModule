@@ -9,7 +9,7 @@
 #include "pulsar/testing/TestSerialization.hpp"
 
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 namespace export_python {
 

@@ -17,7 +17,7 @@
 #include "bphash/Hasher.hpp"
 
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 
 

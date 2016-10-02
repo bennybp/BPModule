@@ -15,7 +15,7 @@
 
 #include "bphash/types/string.hpp" // Includes Hasher
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 
 //! A collection of problems with an option

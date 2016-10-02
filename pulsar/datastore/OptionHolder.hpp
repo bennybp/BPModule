@@ -17,7 +17,7 @@
 #include "pulsar/output/Output.hpp"
 
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 namespace detail {
 

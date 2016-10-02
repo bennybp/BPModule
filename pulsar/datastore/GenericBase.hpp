@@ -14,7 +14,7 @@
 
 #include <memory>
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 namespace detail {
 
