@@ -10,13 +10,6 @@ CacheMap::CacheMap(void)
 { }
 
 
-size_t CacheMap::count(const std::string & key) const
-{
-    std::lock_guard<std::mutex> l(mutex_);
-    return cmap_.count(key);
-}
-
-
 std::set<std::string> CacheMap::get_keys(void) const
 {
     std::set<std::string> v;

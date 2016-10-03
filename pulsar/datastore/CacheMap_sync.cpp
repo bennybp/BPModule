@@ -211,14 +211,14 @@ void CacheMap::sync_thread_func_(void)
     output::print_global_debug("Sync event loop ended for rank %? (using tag %?)\n", my_rank, sync_tag_);
 }
 
-void CacheMap::notify_global_add_(const std::string & key)
+void CacheMap::notify_distcache_add_(const std::string & key)
 {
     int cmd = MM_SYNC_ADD;
     MPI_Send(&cmd, 1, MPI_INT, 0, sync_tag_, MPI_COMM_WORLD);
     MPI_Send(key.c_str(), key.size(), MPI_CHAR, 0, sync_tag_, MPI_COMM_WORLD);
 }
 
-void CacheMap::notify_global_delete_(const std::string & key)
+void CacheMap::notify_distcache_delete_(const std::string & key)
 {
     int cmd = MM_SYNC_DELETE;
     MPI_Send(&cmd, 1, MPI_INT, 0, sync_tag_, MPI_COMM_WORLD);
@@ -226,11 +226,11 @@ void CacheMap::notify_global_delete_(const std::string & key)
 }
 
 
-void CacheMap::obtain_from_global_(const std::string & key)
+bool CacheMap::obtain_from_distcache_(const std::string & key)
 {
     // are we currently syncing?
     if(sync_tag_ < 0)
-        return;
+        return false;
 
     output::print_global_debug("Looking to obtain %? from dist cache\n", key);
     int cmd = MM_SYNC_QUERY;
@@ -243,9 +243,10 @@ void CacheMap::obtain_from_global_(const std::string & key)
     MPI_Status stat;
     MPI_Recv(&r, 1, MPI_INT, 0, sync_tag_, MPI_COMM_WORLD, &stat);
     if(r < 0)
-        return; // not found anywhere
+        return false; // not found anywhere
 
     output::print_global_debug("Going to ask %? for key %?\n", r, key);
+    return false;
 }
 
 

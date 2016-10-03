@@ -115,17 +115,22 @@ void export_pybind11(pybind11::module & mtop)
     cd.def("size", &CacheData::size)
       .def("get_keys", &CacheData::get_keys)
       .def("erase", &CacheData::erase)
-      .def("count", &CacheData::count,
-                   "See if the cache has some data",
-                   pybind11::arg("key"))
-      .def("get", [](CacheData & cd, const std::string & key) { return *cd.get<pybind11::object>(key); },
-                  pybind11::arg("key"))
+      .def("get", [](CacheData & cd, const std::string & key, bool use_distcache) 
+                  { 
+                      auto r = cd.get<pybind11::object>(key, use_distcache);
+                      if(r)
+                        return *r;
+                      else
+                        return pybind11::none();
+                  },
+                  pybind11::arg("key"),
+                  pybind11::arg("use_distcache"))
       .def("set", static_cast<void (CacheData::*)(const std::string &, pybind11::object &, unsigned int)>(&CacheData::set), 
                   "Set data",
                   pybind11::arg("key"), 
                   pybind11::arg("obj"),
                   pybind11::arg("policy"))
-      .def_readonly_static("NoCheckpoint", &CacheData::NoCheckpoint)
+      .def_readonly_static("NoPolicy", &CacheData::NoPolicy)
       .def_readonly_static("CheckpointLocal", &CacheData::CheckpointLocal)
       .def_readonly_static("CheckpointGlobal", &CacheData::CheckpointGlobal)
       .def_readonly_static("DistributeGlobal", &CacheData::DistributeGlobal)

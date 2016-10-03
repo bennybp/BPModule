@@ -34,7 +34,7 @@ struct SerializedCacheData
  * When serialized data is loaded, it is kept as 
  * this type in the CacheData object. The CacheData
  * object will detect this and attempt to unserialize
- * when get() is called.
+ * when unserialize() is called.
  */
 class SerializedDataHolder : public GenericBase
 {
@@ -78,7 +78,9 @@ class SerializedDataHolder : public GenericBase
         virtual void from_byte_array(const ByteArray & arr);
 
         template<typename T>
-        std::unique_ptr<T> get(void) const
+        typename std::enable_if<util::SerializeCheck<T>::value,
+                                std::unique_ptr<T>>::type
+        unserialize(void) const
         {
             std::string desired_type = typeid(T).name();
             if(desired_type != obj->type)
@@ -87,6 +89,20 @@ class SerializedDataHolder : public GenericBase
                                                   "stored", util::demangle_cpp(obj->type));
 
             return util::new_from_byte_array<T>(obj->data);
+        }
+
+        template<typename T>
+        typename std::enable_if<!util::SerializeCheck<T>::value,
+                                std::unique_ptr<T>>::type
+        unserialize(void) const
+        {
+            // this is mostly to make compilers happy, since calls
+            // unserialize() cannot be optimized out
+            // (if that makes any sense, you have been programming in C++ for too long)
+            std::string desired_type = typeid(T).name();
+            throw exception::GeneralException("Attempting to unserialize non-serializable data??",
+                                                  "desired", util::demangle_cpp(desired_type),
+                                                  "stored", util::demangle_cpp(obj->type));
         }
 
         unsigned int policy(void) const;

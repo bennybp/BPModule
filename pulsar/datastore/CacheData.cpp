@@ -3,11 +3,6 @@
 namespace pulsar {
 namespace datastore {
 
-size_t CacheData::count(const std::string & key) const
-{
-    return parent_cmap_->count(make_full_key_(key));
-}
-
 std::set<std::string> CacheData::get_keys(void) const
 {
     return get_my_keys_();

@@ -25,7 +25,7 @@ namespace datastore {
 class CacheData
 {
     public:
-        static constexpr const unsigned int NoCheckpoint     = CacheMap::NoCheckpoint;
+        static constexpr const unsigned int NoPolicy         = CacheMap::NoPolicy;
         static constexpr const unsigned int CheckpointLocal  = CacheMap::CheckpointLocal;
         static constexpr const unsigned int CheckpointGlobal = CacheMap::CheckpointGlobal;
         static constexpr const unsigned int DistributeGlobal = CacheMap::DistributeGlobal;
@@ -44,13 +44,6 @@ class CacheData
         CacheData & operator=(const CacheData &) = delete;
         CacheData & operator=(CacheData &&)      = default;
 
-
-        /*! \brief Determine if this object contains data for a key
-         *
-         * \param [in] key The key to the data
-         * \return True if the key exists, false otherwise
-         */
-        size_t count(const std::string & key) const;
 
         /*! \brief Obtain all the keys contained in this object
          * 
@@ -77,9 +70,9 @@ class CacheData
          * \return A const referance to the data
          */
         template<typename T>
-        std::shared_ptr<const T> get(const std::string & key)
+        std::shared_ptr<const T> get(const std::string & key, bool use_distcache)
         {
-            return parent_cmap_->get<T>(make_full_key_(key));
+            return parent_cmap_->get<T>(make_full_key_(key), use_distcache);
         }
 
         /*! \brief Add data associated with a given key via copy

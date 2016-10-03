@@ -49,10 +49,10 @@ class CacheMap
         //        we need to be able to combine them in python
         //        (pybind11 won't be able to do bitwise OR, etc,
         //        unless they are integers)
-        static constexpr const unsigned int NoCheckpoint     = 1;
-        static constexpr const unsigned int CheckpointLocal  = 2;
-        static constexpr const unsigned int CheckpointGlobal = 4;
-        static constexpr const unsigned int DistributeGlobal = 8;
+        static constexpr const unsigned int NoPolicy         = 0;
+        static constexpr const unsigned int CheckpointLocal  = 1;
+        static constexpr const unsigned int CheckpointGlobal = 2;
+        static constexpr const unsigned int DistributeGlobal = 4;
 
 
         CacheMap(void);
@@ -66,27 +66,24 @@ class CacheMap
         CacheMap & operator=(CacheMap &&)      = default;
 
 
-        /*! \brief Determine if this object contains data
-         *
-         * \param [in] key The key to the data
-         * \return The number of times this key appears in the map
-         *         (zero or one)
+        /*! \brief Obtain all of the unique keys contained in this object
+         * 
+         * This only returns the local keys
          */
-        size_t count(const std::string & key) const;
-
-
-        /*! \brief Obtain all of the unique keys contained in this object */
         std::set<std::string> get_keys(void) const;
 
 
-        /*! \brief Return the number of elements contained */
+        /*! \brief Return the number of elements contained
+         * 
+         * This only returns the size of the local cache map
+         */
         size_t size(void) const noexcept;
 
 
         /*! \brief Return the underlying data
          *
-         * \throw pulsar::exception::DataStoreException if key
-         *        doesn't exist or is of the wrong type
+         * If the key does not exist or is of the wrong type,
+         * an empty shared_ptr is returned.
          *
          * \tparam T The type of the data
          *
@@ -94,17 +91,23 @@ class CacheMap
          * \return A const referance to the data
          */
         template<typename T>
-        std::shared_ptr<const T> get(const std::string & key)
+        std::shared_ptr<const T> get(const std::string & key, bool use_distcache)
         {
             const detail::GenericHolder<T> * ph;
 
             {
                 std::lock_guard<std::mutex> l(mutex_);
-                ph = get_or_throw_cast_<T>(key);
+                ph = get_cast_<T>(key, use_distcache);
             }
 
-            return ph->get();
+            // If we found it, return it. Else, return
+            // an empty shared_ptr
+            if(ph)
+                return ph->get();
+            else
+                return {};
         }
+
 
         /*! \brief Add data associated with a given key via copy
          * 
@@ -122,11 +125,9 @@ class CacheMap
         {
             using detail::GenericBase;
             using detail::GenericHolder;
-
-            // strip const/volatile and references from the type
-            // and typedef the holder type
-            typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type HeldType;
-            typedef GenericHolder<HeldType> HolderType;
+            typedef typename std::remove_reference<T>::type HeldType_base;
+            typedef typename std::remove_cv<HeldType_base>::type HeldType;
+            typedef detail::GenericHolder<HeldType> HolderType;
 
             // construct outside of mutex locking
             std::unique_ptr<GenericBase> newdata(new HolderType(std::forward<T>(value)));
@@ -168,12 +169,6 @@ class CacheMap
         /*! \brief Mutex protecting this object during multi-threaded access */
         mutable std::mutex mutex_;
 
-        /*! \brief The separate synchronization thread */
-        std::thread sync_thread_;
-
-        /*! \brief The current MPI tag being used to sync this manager */
-        int sync_tag_;
-
         /*! \brief Stores a pointer to a placeholder, plus some other information
          */
         struct CacheMapEntry_
@@ -190,118 +185,86 @@ class CacheMap
         // Private functions          //
         ////////////////////////////////
 
-        /*! \brief Obtains a CacheMapEntry_ or throws if data doesn't exist
-         * 
-         * \throw pulsar::exception::DataStoreException if key
-         *        doesn't exist
-         *
-         * \param [in] key Key of the data to get
-         * \return CacheMapEntry_ containing the data for the given key
-         */ 
-        const CacheMapEntry_ & get_or_throw_(const std::string & key)
-        {
-            if(cmap_.count(key))
-                return cmap_.at(key);
-            else
-            {
-                // see if we can obtain it from the distributed cache
-                obtain_from_global_(key);
-
-                if(cmap_.count(key)) // did we get it?
-                    return cmap_.at(key);
-                else
-                    throw exception::DataStoreException("Key not found in CacheMap", "key", key);
-            }
-        }
-
 
         /*! \brief Obtains a pointer to a GenericHolder cast to desired type
          * 
-         * \throw pulsar::exception::DataStoreException if key
-         *        doesn't exist or the cast fails.
-         *
          * \param [in] key Key of the data to get
          * \return detail::GenericHolder containing the data for the given key
          */ 
         template<typename T>
-        typename std::enable_if<util::SerializeCheck<T>::value,
-                                const detail::GenericHolder<T> *>::type
-        get_or_throw_cast_(const std::string & key)
+        const detail::GenericHolder<T> *
+        get_cast_(const std::string & key, bool use_distcache)
         {
             //////////////////////////////////////////////////////
             // This whole function is to be called from a public function, which
             // should lock this structure for the entire duration
             //////////////////////////////////////////////////////
+            using detail::GenericBase;
+            using detail::GenericHolder;
+            using detail::SerializedDataHolder;
+            typedef typename std::remove_reference<T>::type HeldType_base;
+            typedef typename std::remove_cv<HeldType_base>::type HeldType;
+            typedef detail::GenericHolder<HeldType> HolderType;
 
-            // may be needed for unserializing
-            typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type HolderType;
+            // Try to obtain the entry in the local cache
+            const CacheMapEntry_ * cme = nullptr;
 
-            using namespace detail;
-
-            const CacheMapEntry_ & pme = get_or_throw_(key);
-            auto ptr = pme.value.get();
-
-            const GenericHolder<T> * ph = dynamic_cast<const GenericHolder<T> *>(ptr);
-            if(ph == nullptr)
+            if(cmap_.count(key))
+                cme = &cmap_.at(key);
+            else if(use_distcache)
             {
-                // is this serialized data?
-                const SerializedDataHolder * sdh = dynamic_cast<const SerializedDataHolder *>(ptr);
-                if(sdh == nullptr)
-                {
-                    throw exception::DataStoreException("Bad cast in CacheMap", "key", key,
-                                                        "fromtype", pme.value->demangled_type(),
-                                                        "totype", util::demangle_cpp_type<T>());
-                }
-                else
-                {
-                    // convert to a new holder
-                    std::unique_ptr<T> unserialized(sdh->get<T>());
-                    unsigned int policy = sdh->policy();
-
-                    // will replace the old key
-
-                    // this is basically a copy of set(), but we need to avoid a mutex deadlock
-                    std::unique_ptr<detail::GenericBase> newdata(new detail::GenericHolder<HolderType>(std::move(*unserialized)));
-
-                    set_(key, std::move(newdata), policy);
-
-                    // call this function again - should load the unserialized data
-                    return get_or_throw_cast_<T>(key);
-                }
+                // See if we can obtain it from the distributed cache.
+                // This will place it in the local cache
+                if(obtain_from_distcache_(key))
+                    cme = &cmap_.at(key);
             }
+            
 
-            return ph;
+            if(cme == nullptr) // could not find data
+                return nullptr;
+
+            auto ptr = cme->value.get();
+
+            // attempt to cast to a GenericHolder of the correct type
+            const HolderType * ph = dynamic_cast<const HolderType *>(ptr);
+            if(ph != nullptr) // found it
+                return ph;
+
+            // If we didn't find it, see if it is serialized data
+            const SerializedDataHolder * sdh = dynamic_cast<const SerializedDataHolder *>(ptr);
+            if(sdh == nullptr)
+            {
+                // We didn't find the correct type nor did we find
+                // serialized data
+                return nullptr;
+            }
+            else
+            {
+                // We found serialized data with that key
+                // See if the type is correct
+                const std::string heldtype_str = typeid(HeldType).name();
+                const std::string serialized_type = sdh->type();
+
+                if(heldtype_str != serialized_type)
+                    return nullptr; // We have a serialized entry, but it
+                                    // doesn't store the correct type
+                
+
+                // convert to a new holder
+                std::unique_ptr<HeldType> new_data(sdh->unserialize<HeldType>());
+                unsigned int policy = sdh->policy();
+
+                std::unique_ptr<GenericBase> new_entry(new HolderType(std::move(*new_data)));
+                new_data.reset();
+
+                // actually add to the data base
+                set_(key, std::move(new_entry), policy);
+
+                // call this function again - should load the newly-created data
+                return get_cast_<T>(key, use_distcache);
+            }
         }
 
-
-        template<typename T>
-        typename std::enable_if<!util::SerializeCheck<T>::value,
-                                const detail::GenericHolder<T> *>::type
-        get_or_throw_cast_(const std::string & key)
-        {
-            //////////////////////////////////////////////////////
-            // This whole function is to be called from a public function, which
-            // should lock this structure for the entire duration
-            //////////////////////////////////////////////////////
-
-            // may be needed for unserializing
-            typedef typename std::remove_cv<typename std::remove_reference<T>::type>::type HolderType;
-
-            using namespace detail;
-
-            const CacheMapEntry_ & pme = get_or_throw_(key);
-            auto ptr = pme.value.get();
-
-            const GenericHolder<T> * ph = dynamic_cast<const GenericHolder<T> *>(ptr);
-            if(ph == nullptr)
-            {
-                throw exception::DataStoreException("Bad cast in CacheMap", "key", key,
-                                                    "fromtype", pme.value->demangled_type(),
-                                                    "totype", util::demangle_cpp_type<T>());
-            }
-
-            return ph;
-        }
 
 
         /*! \brief sets the data for a given key via a pointer
@@ -315,20 +278,33 @@ class CacheMap
         {
             if(cmap_.count(key))
                 cmap_.erase(key);
+
             cmap_.emplace(key, CacheMapEntry_{std::move(ptr), policy,});
+
             if(policy & DistributeGlobal)
-                notify_global_add_(key);
+                notify_distcache_add_(key);
         }
+
+
+        ///@{ \name Distributed synchronization of the cache
+
+        /*! \brief The separate synchronization thread */
+        std::thread sync_thread_;
+
+        /*! \brief The current MPI tag being used to sync this manager */
+        int sync_tag_;
 
         /*! \brief Function run by the synchronization thread */
         void sync_thread_func_(void);
 
         /*! \brief Obtain data from another rank, if possible */
-        void obtain_from_global_(const std::string & key);
+        bool obtain_from_distcache_(const std::string & key);
 
-        void notify_global_add_(const std::string & key);
+        void notify_distcache_add_(const std::string & key);
 
-        void notify_global_delete_(const std::string & key);
+        void notify_distcache_delete_(const std::string & key);
+
+        ///@}
 
 };
 
