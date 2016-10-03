@@ -93,9 +93,9 @@ class Test_Base : public ModuleBase
          * 
          * \param [in] policy The policy of the cache element to add
          */
-        void get_from_cache(const std::string & key)
+        void get_from_cache(const std::string & key, bool use_distcache)
         {
-            return ModuleBase::call_function(&Test_Base::get_from_cache_, key);
+            return ModuleBase::call_function(&Test_Base::get_from_cache_, key, use_distcache);
         }
 
 
@@ -148,7 +148,7 @@ class Test_Base : public ModuleBase
          *
          * \note To be implemented by derived classes
          */
-        virtual void get_from_cache_(const std::string & key) = 0;
+        virtual void get_from_cache_(const std::string & key, bool use_distcache) = 0;
 
 
 };
@@ -194,9 +194,9 @@ class Test_Base_Py : public Test_Base
             return call_py_override<void>(this, "add_to_cache_", key, policy);
         }
 
-        virtual void get_from_cache_(const std::string & key)
+        virtual void get_from_cache_(const std::string & key, bool use_distcache)
         {
-            return call_py_override<void>(this, "get_from_cache_", key);
+            return call_py_override<void>(this, "get_from_cache_", key, use_distcache);
         }
 
 

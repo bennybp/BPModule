@@ -288,6 +288,9 @@ class CacheMap
 
         ///@{ \name Distributed synchronization of the cache
 
+        //! \brief Allows only one thread to use the sync facility at a time
+        std::mutex sync_comm_mutex_;
+
         /*! \brief The separate synchronization thread */
         std::thread sync_thread_;
 
