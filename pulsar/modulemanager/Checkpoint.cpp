@@ -33,7 +33,7 @@ struct CacheEntryMetadata
     }
 };
 
-static bool is_meta_key(const std::string & s)
+bool is_meta_key(const std::string & s)
 {
     if(s.size() <= 6)
         return false; // needs at least one char + "##META"
@@ -46,7 +46,7 @@ static bool is_meta_key(const std::string & s)
         return false;
 }
 
-static bool is_cache_key(const std::string & s)
+bool is_cache_key(const std::string & s)
 {
     if(s.size() <= 13)
         return false; // Needs at least "CHKPT_CACHE__" + one char
@@ -60,7 +60,7 @@ static bool is_cache_key(const std::string & s)
 }
 
 
-static std::string make_cache_key(const std::string & datakey)
+std::string make_cache_key(const std::string & datakey)
 {
     return std::string("CHKPT_CACHE__") + datakey;
 }
@@ -76,7 +76,7 @@ split_cache_key(const std::string & key)
 }
 
 
-}
+} // close anonymous namespace
 
 
 
@@ -101,6 +101,8 @@ Checkpoint::form_cache_save_list_(const ModuleManager & mm,
                                   CheckpointIO & backend,
                                   std::function<bool(unsigned int)> policy_check)
 {
+    using datastore::detail::SerializedDataHolder;
+
     // modulemanager should be locked already!
     // print out some info and get what we should be checkpointing
     print_global_output("Cache entries in the module manager:\n");
@@ -109,26 +111,30 @@ Checkpoint::form_cache_save_list_(const ModuleManager & mm,
 
     for(const auto & data : mm.cachemap_.cmap_)
     {
-        const auto & gb = *(data.second.value);
+        const auto * gb = data.second.value.get();
 
         bool save = false;
         char stat = ' ';
 
-        if(policy_check(data.second.policy) && gb.is_serializable())
+        // is this a SerializedDataHolder?
+        const SerializedDataHolder * sd = dynamic_cast<const SerializedDataHolder *>(gb);
+        bool is_serialized = (sd != nullptr);
+
+        if(policy_check(data.second.policy) && (is_serialized || gb->is_serializable()))
         {
             std::string full_key = make_cache_key(data.first);
             std::string full_metakey = full_key + "##META";
 
-            // does the data already exist?
+            // does the data already exist in the checkpoint backend?
             if(backend.count(full_key))
             {
                 // if it's hashable, read the metadata and compare the hashes
-                if(gb.is_hashable())
+                if(gb->is_hashable())
                 {
                     ByteArray ba_meta = backend.read(full_metakey);
                     auto meta = util::from_byte_array<CacheEntryMetadata>(ba_meta);
 
-                    auto newhash = gb.my_hash();
+                    auto newhash = gb->my_hash();
                     if(newhash != meta.hash)
                     {
                         save = true;

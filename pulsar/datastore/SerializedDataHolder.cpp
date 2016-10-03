@@ -49,12 +49,12 @@ bphash::HashValue SerializedDataHolder::my_hash(void) const
 
 ByteArray SerializedDataHolder::to_byte_array(void) const
 {
-    throw exception::GeneralException("to_byte_array called for already-serialized data");
+    return obj->data;
 }
 
 void SerializedDataHolder::from_byte_array(const ByteArray & arr)
 {
-    throw exception::GeneralException("from_byte_array called for already-serialized data");
+    obj->data = arr;
 }
 
 unsigned int SerializedDataHolder::policy(void) const
