@@ -93,19 +93,91 @@ class CacheMap
         template<typename T>
         std::shared_ptr<const T> get(const std::string & key, bool use_distcache)
         {
-            const detail::GenericHolder<T> * ph;
+            static_assert(!std::is_reference<T>::value,
+                          "Cannot get/store a reference type in the cache");
 
+            static_assert(!std::is_pointer<T>::value,
+                          "Cannot get/store a pointer type in the cache");
+
+            using detail::GenericBase;
+            using detail::GenericHolder;
+            using detail::SerializedDataHolder;
+            typedef typename std::remove_cv<T>::type HeldType;
+            typedef detail::GenericHolder<HeldType> HolderType;
+
+            std::unique_lock<std::mutex> l(mutex_);
+
+            // Try to obtain the entry in the local cache
+            const CacheMapEntry_ * cme = nullptr;
+
+            if(cmap_.count(key))
+                cme = &cmap_.at(key);
+            else if(use_distcache)
             {
-                std::lock_guard<std::mutex> l(mutex_);
-                ph = get_cast_<T>(key, use_distcache);
+                // See if we can obtain it from the distributed cache.
+                // This will place it in the local cache
+                l.unlock();
+                obtain_from_distcache_(key);
+                l.lock();
+
+                if(cmap_.count(key)) 
+                    cme = &cmap_.at(key);
+            }
+            
+
+            if(cme == nullptr) // could not find data
+                return {};
+
+            auto ptr = cme->value.get();
+
+            // attempt to cast to a GenericHolder of the correct type
+            const HolderType * ph = dynamic_cast<const HolderType *>(ptr);
+            if(ph != nullptr) // found it
+                return ph->get();  //implicitly cast to std::shared_ptr<const T>
+
+            // If we didn't find it, see if it is serialized data
+            const SerializedDataHolder * sdh = dynamic_cast<const SerializedDataHolder *>(ptr);
+            if(sdh == nullptr)
+            {
+                // We didn't find the correct type nor did we find
+                // serialized data
+                return {};
             }
 
-            // If we found it, return it. Else, return
-            // an empty shared_ptr
-            if(ph)
-                return ph->get();
-            else
-                return {};
+            // We found serialized data with that key
+            // See if the type is correct
+            const std::string heldtype_str = typeid(HeldType).name();
+            const std::string serialized_type = sdh->type();
+
+            if(heldtype_str != serialized_type)
+                return {}; // We have a serialized entry, but it
+                           // doesn't store the correct type
+            
+
+            // convert to a new holder
+            std::unique_ptr<HeldType> new_data(sdh->unserialize<HeldType>());
+            unsigned int policy = sdh->policy();
+
+            std::unique_ptr<HolderType> new_entry(new HolderType(std::move(*new_data)));
+            new_data.reset();
+
+            // the shared_ptr we are actually returning
+            // Why this is done here: We need the shared pointer (with
+            // the incremented counter) in case the entry gets erased soon
+            // after unlocking the mutex.
+            std::shared_ptr<const T> retptr = new_entry->get();
+
+            // actually add 2to map (this replaces the old data)
+            set_(key, std::move(new_entry), policy);
+
+            // it should be safe now to unlock the mutex
+            l.unlock();
+
+            // notify the dist cache
+            if(policy & DistributeGlobal)
+                notify_distcache_add_(key);
+
+            return retptr;
         }
 
 
@@ -123,6 +195,9 @@ class CacheMap
         template<typename T>
         void set(const std::string & key, T && value, unsigned int policy)
         {
+            static_assert(!std::is_pointer<T>::value,
+                          "Cannot get/store a pointer type in the cache");
+
             using detail::GenericBase;
             using detail::GenericHolder;
             typedef typename std::remove_reference<T>::type HeldType_base;
@@ -133,8 +208,15 @@ class CacheMap
             std::unique_ptr<GenericBase> newdata(new HolderType(std::forward<T>(value)));
 
             // now lock and set
-            std::lock_guard<std::mutex> l(mutex_);
-            set_(key, std::move(newdata), policy);
+            {
+                std::lock_guard<std::mutex> l(mutex_);
+                set_(key, std::move(newdata), policy);
+            }
+
+            // notify the dist cache
+            if(policy & DistributeGlobal)
+                notify_distcache_add_(key);
+
         }
 
 
@@ -186,87 +268,6 @@ class CacheMap
         ////////////////////////////////
 
 
-        /*! \brief Obtains a pointer to a GenericHolder cast to desired type
-         * 
-         * \param [in] key Key of the data to get
-         * \return detail::GenericHolder containing the data for the given key
-         */ 
-        template<typename T>
-        const detail::GenericHolder<T> *
-        get_cast_(const std::string & key, bool use_distcache)
-        {
-            //////////////////////////////////////////////////////
-            // This whole function is to be called from a public function, which
-            // should lock this structure for the entire duration
-            //////////////////////////////////////////////////////
-            using detail::GenericBase;
-            using detail::GenericHolder;
-            using detail::SerializedDataHolder;
-            typedef typename std::remove_reference<T>::type HeldType_base;
-            typedef typename std::remove_cv<HeldType_base>::type HeldType;
-            typedef detail::GenericHolder<HeldType> HolderType;
-
-            // Try to obtain the entry in the local cache
-            const CacheMapEntry_ * cme = nullptr;
-
-            if(cmap_.count(key))
-                cme = &cmap_.at(key);
-            else if(use_distcache)
-            {
-                // See if we can obtain it from the distributed cache.
-                // This will place it in the local cache
-                if(obtain_from_distcache_(key))
-                    cme = &cmap_.at(key);
-            }
-            
-
-            if(cme == nullptr) // could not find data
-                return nullptr;
-
-            auto ptr = cme->value.get();
-
-            // attempt to cast to a GenericHolder of the correct type
-            const HolderType * ph = dynamic_cast<const HolderType *>(ptr);
-            if(ph != nullptr) // found it
-                return ph;
-
-            // If we didn't find it, see if it is serialized data
-            const SerializedDataHolder * sdh = dynamic_cast<const SerializedDataHolder *>(ptr);
-            if(sdh == nullptr)
-            {
-                // We didn't find the correct type nor did we find
-                // serialized data
-                return nullptr;
-            }
-            else
-            {
-                // We found serialized data with that key
-                // See if the type is correct
-                const std::string heldtype_str = typeid(HeldType).name();
-                const std::string serialized_type = sdh->type();
-
-                if(heldtype_str != serialized_type)
-                    return nullptr; // We have a serialized entry, but it
-                                    // doesn't store the correct type
-                
-
-                // convert to a new holder
-                std::unique_ptr<HeldType> new_data(sdh->unserialize<HeldType>());
-                unsigned int policy = sdh->policy();
-
-                std::unique_ptr<GenericBase> new_entry(new HolderType(std::move(*new_data)));
-                new_data.reset();
-
-                // actually add to the data base
-                set_(key, std::move(new_entry), policy);
-
-                // call this function again - should load the newly-created data
-                return get_cast_<T>(key, use_distcache);
-            }
-        }
-
-
-
         /*! \brief sets the data for a given key via a pointer
          * 
          * \param [in] key Key of the data to set
@@ -280,9 +281,6 @@ class CacheMap
                 cmap_.erase(key);
 
             cmap_.emplace(key, CacheMapEntry_{std::move(ptr), policy,});
-
-            if(policy & DistributeGlobal)
-                notify_distcache_add_(key);
         }
 
 
@@ -301,7 +299,7 @@ class CacheMap
         void sync_thread_func_(void);
 
         /*! \brief Obtain data from another rank, if possible */
-        bool obtain_from_distcache_(const std::string & key);
+        void obtain_from_distcache_(const std::string & key);
 
         void notify_distcache_add_(const std::string & key);
 

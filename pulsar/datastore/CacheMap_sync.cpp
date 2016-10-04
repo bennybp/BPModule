@@ -115,6 +115,8 @@ namespace datastore {
 
 void CacheMap::start_sync(int tag)
 {
+    std::lock_guard<std::mutex> l(mutex_);
+
     MPI_Barrier(MPI_COMM_WORLD);
     if(sync_tag_ >= 0)
         return; // already running
@@ -124,6 +126,9 @@ void CacheMap::start_sync(int tag)
 
     sync_tag_ = tag;
     sync_thread_ = std::thread(&CacheMap::sync_thread_func_, this);
+
+    // make sure all ranks are running their event loop
+    MPI_Barrier(MPI_COMM_WORLD);
 }
 
 void CacheMap::stop_sync(void)
@@ -308,11 +313,11 @@ void CacheMap::notify_distcache_delete_(const std::string & key)
 }
 
 
-bool CacheMap::obtain_from_distcache_(const std::string & key)
+void CacheMap::obtain_from_distcache_(const std::string & key)
 {
     // are we currently syncing?
     if(sync_tag_ < 0)
-        return false;
+        return;
 
     print_global_debug("Looking to obtain %? from dist cache\n", key);
 
@@ -329,7 +334,7 @@ bool CacheMap::obtain_from_distcache_(const std::string & key)
         print_global_debug("Looking to get key %? from rank %?\n", key, r);
 
         if(r < 0)
-            return false;
+            return;
 
         // get the info from the desired rank
         send_int(r, sync_tag_, MM_SYNC_GET);
@@ -342,7 +347,7 @@ bool CacheMap::obtain_from_distcache_(const std::string & key)
             ba_data = recv_data(r, sync_tag_+1);
         }
         else
-            return false;
+            return;
     }
 
     MetaData md = from_byte_array<MetaData>(ba_meta);
@@ -351,9 +356,9 @@ bool CacheMap::obtain_from_distcache_(const std::string & key)
     SerializedCacheData scd{std::move(ba_data), md.type, md.hash, md.policy};
     auto pscd = std::make_shared<SerializedCacheData>(std::move(scd));
     std::unique_ptr<SerializedDataHolder> sdh(new SerializedDataHolder(pscd));
-    set_(key, std::move(sdh), md.policy);
 
-    return true;
+    std::lock_guard<std::mutex> l(mutex_);
+    set_(key, std::move(sdh), md.policy);
 }
 
 
