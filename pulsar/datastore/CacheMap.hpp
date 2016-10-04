@@ -238,7 +238,13 @@ class CacheMap
          */
         void print(std::ostream & os) const;
 
-        /*! \brief Start synchronization across all ranks */
+        /*! \brief Start synchronization across all ranks
+         *
+         * \warning Two additional tags will be used (tag+1 and tag+2).
+         *          Using these elsewhere will lead to problems.
+         *
+         * \param [in] tag Which MPI tag to use (will also use tag+1 and tag+2)
+         */
         void start_sync(int tag);
 
         /*! \brief Stop synchronization across all ranks */

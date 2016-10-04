@@ -117,7 +117,6 @@ void CacheMap::start_sync(int tag)
 {
     std::lock_guard<std::mutex> l(mutex_);
 
-    MPI_Barrier(MPI_COMM_WORLD);
     if(sync_tag_ >= 0)
         return; // already running
 
@@ -126,9 +125,6 @@ void CacheMap::start_sync(int tag)
 
     sync_tag_ = tag;
     sync_thread_ = std::thread(&CacheMap::sync_thread_func_, this);
-
-    // make sure all ranks are running their event loop
-    MPI_Barrier(MPI_COMM_WORLD);
 }
 
 void CacheMap::stop_sync(void)
@@ -176,9 +172,6 @@ void CacheMap::sync_thread_func_(void)
         }
     }
         
-    print_global_debug("Rank %? has %?/%? available entries in its cache\n",
-                       my_rank, my_cache_keys.size(), this->size());
-
     if(my_rank == 0)
     {
         for(const auto & it : my_cache_keys)
@@ -187,7 +180,7 @@ void CacheMap::sync_thread_func_(void)
         // receive from all other ranks
         for(int src = 1; src < nproc; src++)
         {
-            ByteArray ba = recv_data(src, sync_tag_);
+            ByteArray ba = recv_data(src, sync_tag_+2);
             auto recv_keys = from_byte_array<std::set<std::string>>(ba);
             for(const auto & it : recv_keys)
                 key_rank_map.emplace(it, src);
@@ -196,9 +189,8 @@ void CacheMap::sync_thread_func_(void)
     else
     {
         auto ckey_dat = to_byte_array(my_cache_keys);
-        send_data(0, sync_tag_, ckey_dat);
+        send_data(0, sync_tag_+2, ckey_dat);
     }
-
 
     bool keep_running = true;
     while(keep_running)
