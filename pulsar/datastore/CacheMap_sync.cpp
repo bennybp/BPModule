@@ -344,10 +344,8 @@ void CacheMap::obtain_from_distcache_(const std::string & key)
 
     MetaData md = from_byte_array<MetaData>(ba_meta);
 
-    //! \todo helper function for this? happens in checkpointing too
-    SerializedCacheData scd{std::move(ba_data), md.type, md.hash, md.policy};
-    auto pscd = std::make_shared<SerializedCacheData>(std::move(scd));
-    std::unique_ptr<SerializedDataHolder> sdh(new SerializedDataHolder(pscd));
+    SerializedGenericData scd{std::move(ba_data), md.type, md.hash, md.policy};
+    std::unique_ptr<GenericHolder<SerializedGenericData>> sdh(new GenericHolder<SerializedGenericData>(std::move(scd)));
 
     std::lock_guard<std::mutex> l(mutex_);
     set_(key, std::move(sdh), md.policy);

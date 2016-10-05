@@ -239,11 +239,14 @@ TAB_SIZE               = 4
 # newlines.
 
 ALIASES                = "throwno=@par Exceptions:\n" \
-                         "exsafe=@par Exception Safety:\n" \
-                         "exnone=\exsafe None (may leak. should probably be fixed)\n" \
-                         "exbasic=\exsafe Basic exception guarantee (will not leak)\n" \
-                         "exstrong=\exsafe Strong exception guarantee (if exception is thrown, object will be in original state)\n" \
-                         "exnothrow=\exsafe Will not throw or will not fail\n"
+                         "exsafe_par=@par Exception Safety:\n" \
+                         "exnone=\exsafe_par None (may leak. should probably be fixed)\n" \
+                         "exbasic=\exsafe_par Basic exception guarantee (will not leak)\n" \
+                         "exstrong=\exsafe_par Strong exception guarantee (if exception is thrown, object will be in original state)\n" \
+                         "exnothrow=\exsafe_par Will not throw or will not fail\n" \
+                         "threadsafe_par=@par Thread Safety:\n" \
+                         "threadsafe=\threadsafe_par Access from multiple threads is safe\n" \
+                         "threadunsafe=\threadsafe_par Access from multiple threads is NOT safe\n"
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"

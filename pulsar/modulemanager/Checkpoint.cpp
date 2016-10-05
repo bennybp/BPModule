@@ -101,7 +101,8 @@ Checkpoint::form_cache_save_list_(const ModuleManager & mm,
                                   CheckpointIO & backend,
                                   std::function<bool(unsigned int)> policy_check)
 {
-    using datastore::detail::SerializedDataHolder;
+    using datastore::detail::GenericHolder;
+    using datastore::detail::SerializedGenericData;
 
     // modulemanager should be locked already!
     // print out some info and get what we should be checkpointing
@@ -116,8 +117,8 @@ Checkpoint::form_cache_save_list_(const ModuleManager & mm,
         bool save = false;
         char stat = ' ';
 
-        // is this a SerializedDataHolder?
-        const SerializedDataHolder * sd = dynamic_cast<const SerializedDataHolder *>(gb);
+        // is this actually serialized data?
+        const GenericHolder<SerializedGenericData> * sd = dynamic_cast<const GenericHolder<SerializedGenericData> *>(gb);
         bool is_serialized = (sd != nullptr);
 
         if(policy_check(data.second.policy) && (is_serialized || gb->is_serializable()))
@@ -263,9 +264,8 @@ void Checkpoint::load_cache_(ModuleManager & mm, CheckpointIO & backend)
                 ByteArray metadata = backend.read(metakey);
                 auto cem = from_byte_array<CacheEntryMetadata>(metadata);
 
-                SerializedCacheData scd{std::move(data), cem.type, cem.hash, cem.policy};
-                auto pscd = std::make_shared<SerializedCacheData>(std::move(scd));
-                std::unique_ptr<SerializedDataHolder> sdh(new SerializedDataHolder(pscd));
+                SerializedGenericData scd{std::move(data), cem.type, cem.hash, cem.policy};
+                std::unique_ptr<GenericHolder<SerializedGenericData>> sdh(new GenericHolder<SerializedGenericData>(std::move(scd)));
                 mm.cachemap_.set_(cachekey, std::move(sdh), cem.policy); // set_ won't lock the mutex
             }
         }

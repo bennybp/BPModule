@@ -8,9 +8,6 @@ set(PULSAR_DATASTORE_FILES
             CacheData.cpp
             CacheMap_sync.cpp
 
-            SerializedDataHolder.cpp
-            GenericHolder_python.cpp
-
             export.cpp
             testing_export.cpp
 

@@ -13,10 +13,8 @@
 
 #include <pybind11/pybind11.h>
 
-#include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/datastore/GenericHolder.hpp"
-#include "pulsar/datastore/GenericHolder_python.hpp"
-#include "pulsar/datastore/SerializedDataHolder.hpp"
+#include "pulsar/datastore/GenericHolder_serialized.hpp"
 
 namespace pulsar {
 namespace modulemanager {
@@ -101,7 +99,7 @@ class CacheMap
 
             using detail::GenericBase;
             using detail::GenericHolder;
-            using detail::SerializedDataHolder;
+            using detail::SerializedGenericData;
             typedef typename std::remove_cv<T>::type HeldType;
             typedef detail::GenericHolder<HeldType> HolderType;
 
@@ -136,7 +134,8 @@ class CacheMap
                 return ph->get();  //implicitly cast to std::shared_ptr<const T>
 
             // If we didn't find it, see if it is serialized data
-            const SerializedDataHolder * sdh = dynamic_cast<const SerializedDataHolder *>(ptr);
+            const GenericHolder<SerializedGenericData> * sdh;
+            sdh = dynamic_cast<GenericHolder<SerializedGenericData> *>(ptr);
             if(sdh == nullptr)
             {
                 // We didn't find the correct type nor did we find
@@ -155,11 +154,10 @@ class CacheMap
             
 
             // convert to a new holder
-            std::unique_ptr<HeldType> new_data(sdh->unserialize<HeldType>());
-            unsigned int policy = sdh->policy();
-
+            const SerializedGenericData & sgd = *(sdh->get()); // get() returns a shared_ptr
+            std::unique_ptr<HeldType> new_data = sdh->unserialize<HeldType>();
             std::unique_ptr<HolderType> new_entry(new HolderType(std::move(*new_data)));
-            new_data.reset();
+
 
             // the shared_ptr we are actually returning
             // Why this is done here: We need the shared pointer (with
@@ -167,14 +165,14 @@ class CacheMap
             // after unlocking the mutex.
             std::shared_ptr<const T> retptr = new_entry->get();
 
-            // actually add 2to map (this replaces the old data)
-            set_(key, std::move(new_entry), policy);
+            // actually add to map (this replaces the old data)
+            set_(key, std::move(new_entry), sgd.policy);
 
             // it should be safe now to unlock the mutex
             l.unlock();
 
             // notify the dist cache
-            if(policy & DistributeGlobal)
+            if(sgd.policy & DistributeGlobal)
                 notify_distcache_add_(key);
 
             return retptr;
