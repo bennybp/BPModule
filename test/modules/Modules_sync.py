@@ -33,7 +33,6 @@ def Run(mm):
       mm.start_cache_sync(10)
 
       mr = str(myrank)
-      mr2 = str( (myrank+1) % nproc)
       b1.add_to_cache("TestCache1_" + mr, 0);
       b2.add_to_cache("TestCache1_Py_" + mr, 0);
 
@@ -41,17 +40,15 @@ def Run(mm):
       b1.add_to_cache("TestDist1_" + mr, pol);
       b2.add_to_cache("TestDist1_Py_" + mr, pol);
 
-      #time.sleep(1)
       b1.get_from_cache("TestCache1_" + mr, False);
       b2.get_from_cache("TestCache1_Py_" + mr, False);
       b1.get_from_cache("TestDist1_" + mr, False);
       b2.get_from_cache("TestDist1_Py_" + mr, False);
 
       # Get stuff from distributed cache
-      b1.get_from_cache("TestDist1_" + mr2, False);
-      b1.get_from_cache("TestDist1_" + mr2, True);
-
-      #b2.get_from_cache("TestDist1_Py_" + mr2);
+      for i in range(0, 100):
+        for c in range(0, nproc):
+          b1.get_from_cache("TestDist1_" + str(c), True)
 
       #mm.print(out)
 

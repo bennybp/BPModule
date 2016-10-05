@@ -30,7 +30,7 @@ std::string SerializedDataHolder::demangled_type(void) const
 
 bool SerializedDataHolder::is_serializable(void) const noexcept
 {
-    return false;
+    return true;
 }
 
 bool SerializedDataHolder::is_hashable(void) const noexcept
