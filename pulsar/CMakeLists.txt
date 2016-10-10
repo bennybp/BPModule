@@ -11,9 +11,10 @@ set(PULSAR_CORE_PYTHON_INCLUDE_DIRS "" CACHE STRING "Include directories for pyt
 ##########################
 # Dependencies
 ##########################
+message(STATUS ${CMAKE_MODULE_PATH})
 find_package(OpenMP REQUIRED)
 find_package(MPI REQUIRED)
-
+find_package(BerkeleyDB REQUIRED)
 
 
 ##########################

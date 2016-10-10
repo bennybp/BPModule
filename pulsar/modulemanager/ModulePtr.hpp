@@ -9,6 +9,7 @@
 #define PULSAR_GUARD_MODULEMANAGER__MODULEPTR_HPP_
 
 #include "pulsar/modulemanager/ModuleIMPLHolder.hpp"
+#include "pulsar/exception/Exceptions.hpp"
 
 namespace pulsar{
 namespace modulemanager {
@@ -89,6 +90,8 @@ class ModulePtr
          */
         T & operator*() const
         {
+            using namespace pulsar::exception;
+            
             if(!holder_)
                 throw GeneralException("ModulePtr has an empty unique pointer");
             if(ptr_ == nullptr)

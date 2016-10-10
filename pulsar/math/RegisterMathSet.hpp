@@ -14,7 +14,7 @@
 #include "pulsar/math/Universe.hpp"
 #include "pulsar/math/MathSet.hpp"
 
-PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
+PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>)
 
 //! \todo Export exact casts? Or have the equivalent with python?
 

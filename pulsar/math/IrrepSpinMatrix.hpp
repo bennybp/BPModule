@@ -14,14 +14,14 @@
 namespace pulsar{
 namespace math{
 
-template<typename T>
-using IrrepSpinMatrix = BlockByIrrepSpin<std::shared_ptr<math::TensorImpl<2, T>>>;
+template<typename DaType>
+using IrrepSpinMatrix = BlockByIrrepSpin<std::shared_ptr<math::TensorImpl<2, DaType>>>;
 
-template<typename T>
-using IrrepSpinVector = BlockByIrrepSpin<std::shared_ptr<math::TensorImpl<1, T>>>;
+template<typename DaType>
+using IrrepSpinVector = BlockByIrrepSpin<std::shared_ptr<math::TensorImpl<1, DaType>>>;
 
-template<typename T>
-using IrrepSpinScalar = BlockByIrrepSpin<T>;
+template<typename DaType>
+using IrrepSpinScalar = BlockByIrrepSpin<DaType>;
 
 typedef IrrepSpinMatrix<double>  IrrepSpinMatrixD;
 typedef IrrepSpinVector<double>  IrrepSpinVectorD;

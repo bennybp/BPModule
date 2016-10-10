@@ -48,5 +48,5 @@ convert_to_eigen(const std::shared_ptr<const VectorDImpl> & ten)
 } // close namespace pulsar
 
 #include <cereal/archives/portable_binary.hpp>
-CEREAL_REGISTER_TYPE(EigenMatrixImpl);
-CEREAL_REGISTER_TYPE(EigenVectorImpl);
+CEREAL_REGISTER_TYPE(EigenMatrixImpl)
+CEREAL_REGISTER_TYPE(EigenVectorImpl)

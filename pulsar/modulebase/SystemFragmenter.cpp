@@ -26,7 +26,7 @@ namespace modulebase{
 void GetCoef(bool Even,const SNType& SN,NMerSetType& NMers){
     if(NMers.count(SN)==0)return;//We assumed this interaction is negligible
     NMers[SN].Weight+=(Even?1.0:-1.0);
-    PowerSetItr<SNType> Frags(SN,1,SN.size()-1);
+    PowerSetItr<SNType> Frags(SN,1,(int)SN.size()-1);
     while(Frags){
         GetCoef(!Even,*Frags,NMers);
         ++Frags;
@@ -46,10 +46,11 @@ NMerSetType SystemFragmenter::make_nmers(const NMerSetType& Frags){
     if(NEnd==1)return Frags;//The fragments we were given
 
     //Real scenarios follow...
-    PowerSetItr<NMerSetType> Comb(Frags,1,NEnd);
+    PowerSetItr<NMerSetType> Comb(Frags,1,(int)NEnd);
     while(Comb){
         const size_t N=Comb->size();
-        const double Thresh=(Dists.count(N)==1?N*Dists.at(N)*Dists.at(N):DaMax);
+        const double DistN=(double)Dists.at(N);
+        const double Thresh=(Dists.count(N)==1?(double)N*DistN*DistN:DaMax);
         NMerInfo DaNMer;
         for(const auto& Frag : *Comb){
             const NMerInfo& NMer=Frag.second;

@@ -60,8 +60,8 @@ class EigenMatrixImpl : public pulsar::math::MatrixDImpl
         void save(Archive & archive) const
         {
             archive(cereal::base_class<pulsar::math::MatrixDImpl>(this));
-            unsigned int nrow = mat_->rows();
-            unsigned int ncol = mat_->cols();
+            unsigned int nrow = (unsigned int) mat_->rows();
+            unsigned int ncol = (unsigned int) mat_->cols();
 
             archive(nrow, ncol);
 
@@ -139,8 +139,8 @@ class EigenVectorImpl : public pulsar::math::VectorDImpl
         void save(Archive & archive) const
         {
             archive(cereal::base_class<pulsar::math::VectorDImpl>(this));
-            unsigned int nrow = mat_->rows();
-            unsigned int ncol = mat_->cols();
+            unsigned int nrow = (unsigned int) mat_->rows();
+            unsigned int ncol = (unsigned int) mat_->cols();
 
             archive(nrow, ncol);
 

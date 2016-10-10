@@ -382,7 +382,7 @@ class ModuleBase
                                        "from", exception_desc());
 
 
-            if (info.ndim != ndim)
+            if ((int)info.ndim != ndim)
                 throw GeneralException("Bad number of dimensions for python buffer",
                                        "ndim", info.ndim,
                                        "desired ndim", ndim,

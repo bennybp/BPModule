@@ -131,7 +131,6 @@ protected:
 
 public:
     typedef SystemFragmenter BaseType;
-    using NMerSetType = NMerSetType;
 
     SystemFragmenter(ID_t id)
     : ModuleBase(id, "SystemFragmenter")

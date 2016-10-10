@@ -94,7 +94,7 @@ MAKE_OPTION_TYPE(ListString,  std::vector<std::string>)
 MAKE_OPTION_TYPE(SetInt,      std::set<OptionInt>)
 MAKE_OPTION_TYPE(SetFloat,    std::set<OptionFloat>)
 MAKE_OPTION_TYPE(SetBool,     std::set<bool>)
-MAKE_OPTION_TYPE(SetString,   std::set<std::string>);
+MAKE_OPTION_TYPE(SetString,   std::set<std::string>)
 
 
 MAKE_OPTION_DICT_TYPE(DictIntInt,       OptionInt,   OptionInt)

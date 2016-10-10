@@ -76,7 +76,7 @@ size_t EnergyMethod::max_deriv_()const{
 }
 
 
-EnergyMethod::DerivReturnType
+DerivReturnType
 EnergyMethod::finite_difference_(size_t Order, const datastore::Wavefunction & Wfn){
     if(Order==0)
         throw GeneralException("I do not know how to obtain an energy via "
@@ -101,7 +101,7 @@ EnergyMethod::finite_difference_(size_t Order, const datastore::Wavefunction & W
        for(double j :  TempDeriv[i])
            TempDeriv[0].push_back(j);
     
-    EnergyMethod::DerivReturnType CWfn=
+    DerivReturnType CWfn=
             create_child<EnergyMethod>(key())->deriv(Order-1,Wfn);
     return {CWfn.first, TempDeriv[0]};
 }

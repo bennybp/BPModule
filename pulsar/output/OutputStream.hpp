@@ -142,9 +142,9 @@ class OutputStream : public std::ostream
          *
          * \param [in] debug True if you want debugging enabled for this stream, False to disable it 
          */ 
-        void enable_debug(bool debug) noexcept
+        void enable_debug(bool do_debug) noexcept
         {
-            debug_ = debug;
+            debug_ = do_debug;
         }
 
     private:

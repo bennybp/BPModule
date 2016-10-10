@@ -14,7 +14,7 @@
 
 // This is needed for the member data of
 // the wavefunction struct
-PYBIND11_DECLARE_HOLDER_TYPE(_T_,std::shared_ptr<_T_>);
+PYBIND11_DECLARE_HOLDER_TYPE(_T_,std::shared_ptr<_T_>)
 
 using pulsar::system::System;
 using pulsar::datastore::Wavefunction;

@@ -38,8 +38,7 @@ inline const char * ShellTypeString(ShellType type)
         default:
             throw std::logic_error("Shell type to string is missing");
     }
-};
-
+}
 
 
 } // close namespace system

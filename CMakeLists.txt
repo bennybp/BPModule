@@ -65,7 +65,7 @@ add_subdirectory(external)
 # Core Pulsar
 #################################
 set(STAGE_DIR ${CMAKE_BINARY_DIR}/stage)
-
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/cmake)
 ExternalProject_Add(pulsar_core
    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pulsar
    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}

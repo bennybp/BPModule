@@ -9,19 +9,23 @@
 #  DB_FOUND, If false, do not try to use BerkeleyDB.
 # also defined, but not for general use are
 #  DB_LIBRARY, where to find the BerkeleyDB library.
+find_package(PkgConfig)
+pkg_search_module(PC_DB QUIET db)
 
 FIND_PATH(DB_INCLUDE_DIR db.h
   /usr/local/include/db4
   /usr/local/include
   /usr/include/db4
   /usr/include
+  HINTS ${PC_DB_INCLUDE_DIRS}
   )
 
 SET(DB_NAMES ${DB_NAMES} db)
 FIND_LIBRARY(DB_LIBRARY
   NAMES ${DB_NAMES}
   PATHS /usr/lib /usr/local/lib
-  )
+  HINTS ${PC_DB_LIBRARY_DIRS}
+)
 
 IF (DB_LIBRARY AND DB_INCLUDE_DIR)
   SET(DB_LIBRARIES ${DB_LIBRARY})

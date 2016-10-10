@@ -161,7 +161,7 @@ class GenericHolder : public GenericBase
 
         template<typename U = T>
         typename std::enable_if<!util::SerializeCheck<U>::value, void>::type
-        from_byte_array_helper_(const ByteArray & arr)
+        from_byte_array_helper_(const ByteArray &)
         {
             //! \todo can be static assert?
             throw exception::GeneralException("from_byte_array called for unserializable cache data");
@@ -266,7 +266,7 @@ class SerializedDataHolder : public GenericBase
             throw exception::GeneralException("to_byte_array called for already-serialized data");
         }
 
-        virtual void from_byte_array(const ByteArray & arr)
+        virtual void from_byte_array(const ByteArray & )
         {
             throw exception::GeneralException("from_byte_array called for already-serialized data");
         }

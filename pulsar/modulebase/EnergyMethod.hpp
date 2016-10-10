@@ -37,8 +37,6 @@ class EnergyMethod : public ModuleBase
 {
     public:
         typedef EnergyMethod BaseType;
-        using EnergyReturnType=EnergyReturnType;
-        using DerivReturnType=DerivReturnType;
 
         EnergyMethod(ID_t id): ModuleBase(id,"EnergyMethod"){ }
 

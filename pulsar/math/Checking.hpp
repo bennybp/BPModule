@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <type_traits>
+#include "pulsar/pragma.h"
 
 namespace pulsar{
 namespace math {

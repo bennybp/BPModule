@@ -26,7 +26,7 @@
 
 #define DECLARE_SERIALIZATION_FRIENDS \
     friend class cereal::access; \
-    template<typename T> friend class pulsar::util::detail::StdStreamArchive;
+    template<typename NoShadowT> friend class pulsar::util::detail::StdStreamArchive;
 
 
 //! \todo There is an extra copy that in to_byte_array (ie, data -> sstream -> vector).

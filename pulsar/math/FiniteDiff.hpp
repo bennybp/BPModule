@@ -143,7 +143,7 @@ class FiniteDiff{
       ///comm's dont move/copy
       FiniteDiff(const My_t&)=delete;
       FiniteDiff(const My_t&&)=delete;
-      My_t operator=(const My_t&)=delete;
+      My_t& operator=(const My_t&)=delete;
       
       ///Communicator on which to run the tasks
       FiniteDiff(LibTaskForce::HybridComm& Comm):Comm_(Comm){}
@@ -249,7 +249,7 @@ class CentralDiff:public FiniteDiff<VarType,ReturnType>{
          return NPoints-1;
      }
       double Shift(size_t I,size_t NPoints)const{
-         const size_t Half=NCalcs(NPoints)/2.0;
+         const size_t Half=NCalcs(NPoints)/2;
          double shift=static_cast<double>(I)-static_cast<double>(Half);
          if(I>=Half)shift+=1.0;
          return shift;

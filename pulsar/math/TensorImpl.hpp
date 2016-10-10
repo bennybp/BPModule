@@ -4,6 +4,7 @@
 #include<array>
 #include<iostream>
 #include<iomanip>
+#include<pybind11/pybind11.h>
 #include<pulsar/util/IterTools.hpp>
 #include<pulsar/util/Serialization.hpp>
 
@@ -34,13 +35,13 @@ class TensorImpl
         DECLARE_SERIALIZATION_FRIENDS
 
         template<class Archive>
-        void save(Archive & archive) const
+        void save(Archive & ) const
         {
             // reserved for future use
         }
 
         template<class Archive>
-        void load(Archive & archive)
+        void load(Archive & )
         {
             // reserved for future use
         }
@@ -50,34 +51,24 @@ class TensorImpl
 ///Specialization so that Python calls the right virtual function
 template<size_t Rank,typename DataType>
 class TensorImpl_Py : public TensorImpl<Rank,DataType>{
+    private:
+        //g++ is giving me problems with passing these as argument to a macro
+        using SizeArray=std::array<size_t,Rank>;
+        using Base_t=TensorImpl<Rank,DataType>;
     public:
         std::array<size_t,Rank> sizes()const
         {
-            PYBIND11_OVERLOAD_PURE(
-                std::array<size_t,Rank>,
-                TensorImpl,
-                sizes
-            );
+            PYBIND11_OVERLOAD_PURE(SizeArray,Base_t,sizes);
         }
         
         DataType get_value(std::array<size_t,Rank> idx)const
         { 
-          PYBIND11_OVERLOAD_PURE(
-              DataType,
-              TensorImpl,
-              get_value,
-              idx
-          );
+          PYBIND11_OVERLOAD_PURE(DataType,Base_t,get_value,idx);
         }
         
         void set_value(std::array<size_t,Rank> idx,DataType val)
         {
-            PYBIND11_OVERLOAD_PURE(
-                    void,
-                    TensorImpl,
-                    set_value,
-                    idx,val
-            );
+            PYBIND11_OVERLOAD_PURE(void,Base_t,set_value,idx,val);
         }
 };
 

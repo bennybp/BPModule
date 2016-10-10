@@ -67,7 +67,7 @@ class BasisShellBase
             validate_gen_idx_(n);
 
             // if is_combined_am(), first is s, second is p, ...
-            return (is_combined_am()) ? n : am_;
+            return (is_combined_am()) ? (int) n : (int) am_;
         }
 
         /// Get the number of primitives in this shell
@@ -420,7 +420,7 @@ class BasisShellBase
 
             // If this is sp, spd, spdf, etc, then ngen
             // must be exactly 2, 3, 4 respectively
-            if(am < 0 && ((-am)+1) != ngen)
+            if(am < 0 && ((-am)+1) != (int)ngen)
                 throw BasisSetException("Invalid number of general contractions for special AM",
                                                    "am", am, "expected_ngen", ((-am)+1));
 

@@ -103,15 +103,15 @@ NonSymmDiagReturn_t NonSymmetricDiagonalize(Mat_t Matrix,int n,
     if(Stride==0)Stride=n;
     double wkopt;
     char rv=RVecs?'V':'N',lv=LVecs?'V':'N';
-    double evalReal[n],evalImag[n];
+    std::vector<double> evalReal(n),evalImag(n);
     std::vector<double> vl(LVecs?n*Stride:1),vr(RVecs?n*Stride:1);
     dgeev(&rv,&lv,&n,Matrix.data(),&Stride,
-          evalReal,evalImag,vl.data(),&n,vr.data(),&n,&wkopt,&lwork,&info);
+          evalReal.data(),evalImag.data(),vl.data(),&n,vr.data(),&n,&wkopt,&lwork,&info);
 
     lwork=(int)wkopt;
     double* work=new double[lwork];
     dgeev(&rv,&lv,&n,Matrix.data(),&Stride,
-            evalReal,evalImag,vl.data(),&n,vr.data(),&n,work,&lwork,&info);
+            evalReal.data(),evalImag.data(),vl.data(),&n,vr.data(),&n,work,&lwork,&info);
     if(info!=0){
         throw exception::GeneralException("There was a problem diagonalizing"
                 "your matrix.","info code:",info);
@@ -145,7 +145,7 @@ SVDReturn_t SVD(Mat_t M, size_t m, size_t n,size_t LDA=0,size_t LDU=0,
         throw exception::GeneralException("SVD failed to converge");
     
     return std::make_tuple(LVecs,SVals,RVecs);    
-};
+}
 
 
 ///Returns the cross product of two vectors

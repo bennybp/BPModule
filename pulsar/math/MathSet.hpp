@@ -63,7 +63,7 @@ namespace math {
  *
  */
 template<typename T, typename U = std::vector<T>>
-class MathSet : private Universe<T, U> {
+class MathSet : public Universe<T, U> {
 private:
     ///Base class's type
     typedef Universe<T, U> Base_t;
@@ -92,9 +92,9 @@ private:
 
     // constructs via shared pointer to universe and a given
     // set of elements
-    MathSet(std::shared_ptr<const Base_t> Universe,
+    MathSet(std::shared_ptr<const Base_t> AUniverse,
             const std::set<size_t> & Elems)
-    : Universe_(Universe)
+    : Universe_(AUniverse)
     {
         this->Elems_ = Elems;
     }

@@ -280,7 +280,7 @@ void CheckSn(size_t n,const System& Mol,const Vector_t& Axis,
 
 SymmetryGroup Symmetrizer::get_symmetry(const System& Mol)const{
     if(Mol.size()==1)
-        return PointGroup::Kh({});
+        return PointGroup::Kh(std::unordered_set<SymmetryElement>());
     const double SymTol=0.1;
 
 
@@ -329,7 +329,7 @@ SymmetryGroup Symmetrizer::get_symmetry(const System& Mol)const{
     std::set<Axis_t> Axes=NewGetCns(PrinMol,SEAs,SymTol);
 
     for(const Axis_t& axis:Axes){
-        for(int k:math::factors(axis.second)){
+        for(int k:math::factors((int)axis.second)){
             if(k==1)continue;
             Rotation Cm(axis.first,k,1);
             size_t Old=Elems.size();
