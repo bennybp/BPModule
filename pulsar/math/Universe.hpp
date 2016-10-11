@@ -213,7 +213,7 @@ public:
     ///Makes an empty universe
     Universe() : Storage_(new U) { };
     ///Move construct
-    Universe(My_t &&) = default;
+    //Universe(My_t &&) = default;
     ///Deep copies the universe
     Universe(const My_t& RHS) 
       : Storage_(new U(*RHS.Storage_)), Elems_(RHS.Elems_) { }

@@ -1,4 +1,5 @@
 set(PULSAR_DATASTORE_FILES
+            CacheData.cpp
             OptionHolder.cpp
             OptionHolder_serialization.cpp
             OptionTypes.cpp

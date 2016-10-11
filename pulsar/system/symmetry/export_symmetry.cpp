@@ -65,7 +65,7 @@ void export_symmetry(pybind11::module & m)
     .def(pybind11::init<>());
  
 //For PGs w/ an n
-#define ExportPGn(name)\  
+#define ExportPGn(name)\
     pybind11::class_<PointGroup::name>\
     (m,#name,pybind11::base<SymmetryGroup>())\
     .def(pybind11::init<const std::unordered_set<SymmetryElement>&,size_t>())\

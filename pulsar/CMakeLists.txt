@@ -11,7 +11,6 @@ set(PULSAR_CORE_PYTHON_INCLUDE_DIRS "" CACHE STRING "Include directories for pyt
 ##########################
 # Dependencies
 ##########################
-message(STATUS ${CMAKE_MODULE_PATH})
 find_package(OpenMP REQUIRED)
 find_package(MPI REQUIRED)
 find_package(BerkeleyDB REQUIRED)
@@ -25,12 +24,9 @@ list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/pybin
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/memwatch")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/bphash")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/libtaskforce")
-find_package(BerkeleyDB REQUIRED)
-find_package(pybind11 REQUIRED)
-find_package(memwatch REQUIRED)
-find_package(bphash REQUIRED)
-find_package(libtaskforce REQUIRED)
-find_package(Eigen3 REQUIRED)
+foreach(pkg pybind11 memwatch bphash libtaskforce Eigen3)
+    find_package(${pkg} REQUIRED)
+endforeach()
 
 # For some reason, this has a leading whitespace
 string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
@@ -45,19 +41,10 @@ message(STATUS "Going to use python include dirs: ${PULSAR_CORE_PYTHON_INCLUDE_D
 #################################################
 # Obtain all the sources of the core submodules
 #################################################
-add_subdirectory(python)
-add_subdirectory(output)
-add_subdirectory(util)
-add_subdirectory(exception)
-add_subdirectory(parallel)
-add_subdirectory(math)
-add_subdirectory(datastore)
-add_subdirectory(modulebase)
-add_subdirectory(modulemanager)
-add_subdirectory(system)
-add_subdirectory(testing)
-
-
+foreach(sub_dir python output util exception parallel math datastore modulebase
+                modulemanager system testing)
+    add_subdirectory(${sub_dir})
+endforeach()
 
 
 ##################################################################################
@@ -205,10 +192,7 @@ install(TARGETS pulsar_core
         LIBRARY DESTINATION modules/pulsar
         RUNTIME DESTINATION modules/pulsar)
 
-
-
-
-##################################################################
+#################################################################
 # Make a header-only interface library for pulsar modules to use
 ##################################################################
 # Install the config file

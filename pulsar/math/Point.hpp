@@ -32,28 +32,44 @@ template<typename T>
 class PointT
 {
     public:
+        ///The type storing the coordinates
         typedef std::array<T, 3> CoordType;
+        ///The type of each coordinate
         typedef typename CoordType::value_type value_type;
+        ///A constant iterator over the coordinates
         typedef typename CoordType::const_iterator const_iterator;
+        ///An iterator over the coordinates
         typedef typename CoordType::iterator iterator;
         
+        ///Makes a point given an std::array
         PointT(const CoordType & coords)
             : coords_(coords)
         { }
 
+        ///Given individual coordinates fills point
         PointT(T x, T y, T z)
             : coords_{x,y,z}
         { }            
 
+        ///Default constructor, defaults each coordinate
         PointT()                           = default;
+        ///Deep copies another point
         PointT(const PointT &)             = default;
+        ///Takes ownership of another point
         PointT(PointT &&)                  = default;
+        ///Deep copy assignment
         PointT & operator=(const PointT &) = default;
+        ///Assignment by taking ownership
         PointT & operator=(PointT &&)      = default;
+        ///Destructor does nothing
         virtual ~PointT()                  = default;
+        
+        ///Returns the number of coordinates in the point
         constexpr size_t size()const{return coords_.size();}
         
+        ///Returns a constant iterator to the beginning of the coordinate
         const_iterator begin()const{return coords_.begin();}
+        ///Returns an iterator to the beginning of the coordinate
         iterator begin(){return coords_.begin();}
         const_iterator end()const{return coords_.end();}
         iterator end(){return coords_.end();}

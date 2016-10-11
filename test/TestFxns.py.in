@@ -1,0 +1,4 @@
+import sys
+sys.path.insert(0, "@PULSAR_INSTALL_ROOT@/modules")
+import modules.pulsar as psr
+psr.initialize(sys.argv, color = True, debug = False)

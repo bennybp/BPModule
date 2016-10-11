@@ -49,9 +49,9 @@ class CacheData
         //        we need to be able to combine them in python
         //        (pybind11 won't be able to do bitwise OR, etc,
         //        unless they are integers)
-        static constexpr const unsigned int NoCheckpoint     = 1;
-        static constexpr const unsigned int CheckpointLocal  = 2;
-        static constexpr const unsigned int CheckpointGlobal = 4;
+        static const unsigned int NoCheckpoint;
+        static const unsigned int CheckpointLocal;
+        static const unsigned int CheckpointGlobal;
 
 
         CacheData(void)          = default;

@@ -1,0 +1,1 @@
+pulsar_py_test(TestPoint)

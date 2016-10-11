@@ -7,6 +7,8 @@ INPUT+=  dox/basic.md \
          dox/philosophy.md \
          dox/shared.md \
          dox/printing.md \
-         dox/systems.md
+         dox/systems.md \
+         dox/terminology.md \
+         dox/testing.md
 
 INPUT += dox/mainpage.dox

@@ -328,11 +328,13 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
 
 
     // add the moduleinfo to the tree
-    // (parentid, etc, will be set by the tree)
+    // (parentid, etc, will be set by the tree, but my compiler complains...)
     ModuleTreeNode me{modulekey,      // key
                       se.mi,          // module info
                       std::string(),  // output
                       curid_,         // module id
+                      0,              // parent id
+                      {}              // children
                      };
 
     // actually create the module

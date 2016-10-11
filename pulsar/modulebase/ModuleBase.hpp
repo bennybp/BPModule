@@ -375,10 +375,10 @@ class ModuleBase
             using exception::GeneralException;
 
             pybind11::buffer_info info = buf.request();
-            if (info.format != pybind11::format_descriptor<T>::value)
+            if (info.format != pybind11::format_descriptor<T>::format())
                 throw GeneralException("Bad format of python buffer",
                                        "format", info.format,
-                                       "desired format", pybind11::format_descriptor<T>::value,
+                                       "desired format", pybind11::format_descriptor<T>::format(),
                                        "from", exception_desc());
 
 

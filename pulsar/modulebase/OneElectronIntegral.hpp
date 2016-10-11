@@ -228,7 +228,7 @@ class OneElectronIntegral_Py : public OneElectronIntegral
 
             pybind11::buffer_info buf(outbuffer,
                                       sizeof(double),
-                                      pybind11::format_descriptor<double>::value,
+                                      pybind11::format_descriptor<double>::format(),
                                       1, { bufsize },
                                       { sizeof(double) });
 
@@ -246,7 +246,7 @@ class OneElectronIntegral_Py : public OneElectronIntegral
 
                 pybind11::buffer_info pybuf(outbuffer,
                                             sizeof(double),
-                                            pybind11::format_descriptor<double>::value,
+                                            pybind11::format_descriptor<double>::format(),
                                             1, { bufsize },
                                             { sizeof(double) });
 

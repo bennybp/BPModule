@@ -104,8 +104,8 @@ You must have the following already compiled and available:
   * CMake version 3.0 or higher
   * GCC or Intel compiler with C++11 support
     * GCC recommended for now, but Intel is regularly tested too
-  * Basic Linear Algebra System (BLAS) library
-    * Needed for math
+  * Eigen matrix library
+  * BerkeleyDB (it's on almost every Linux box by default).
 
 The following are our current dependencies (and their dependencies).  If we can
 not locate them on your system they will be built for you using the settings
