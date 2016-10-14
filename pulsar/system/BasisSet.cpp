@@ -65,7 +65,7 @@ BasisSet::BasisSet(const BasisSet & rhs)
 
 
 
-void BasisSet::allocate_(size_t nshells, size_t nprim, size_t ncoef, size_t nxyz)
+void BasisSet::allocate_(size_t /*nshells*/, size_t nprim, size_t ncoef, size_t nxyz)
 {
     // totalstorage = number of doubles to store
     // nshells*3 = storage for xyz

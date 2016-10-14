@@ -7,10 +7,15 @@ from . import *
 
 # TODO - document me
 class ModuleAdministrator(modulemanager.ModuleManager):
-    def __init__(self):
-        super(ModuleAdministrator, self).__init__()
+    """The Python interface to the ModuleManager.
 
-        # Module search paths
+    Attributes:
+        paths: A list of places to look for modules
+    """
+
+    def __init__(self):
+        """Initializes an empty ModuleAdministrator."""
+        super(ModuleAdministrator, self).__init__()
         self.paths = [ ]
 
 
@@ -23,6 +28,7 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         
 
     def add_path(self, path):
+        """Adds path to the list of paths to search"""
         self.paths.append(path)
 
 

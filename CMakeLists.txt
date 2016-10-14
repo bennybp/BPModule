@@ -95,6 +95,7 @@ add_dependencies(pulsar_core memwatch_external
                )
 ExternalProject_Add(pulsar_test
    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test
+   BINARY_DIR ${CMAKE_BINARY_DIR}/test   
    CMAKE_ARGS -DCMAKE_BUILD_TYPE=${PULSAR_BUILD_TYPE}
               -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
               -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}

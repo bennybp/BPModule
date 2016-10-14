@@ -84,6 +84,8 @@ We see the main reasons to use Pulsar as:
 - Standards/ Best Practices/ Developer's Manual
   - We strive to make our code practices transparent and readily available
 
+To learn more about Pulsar we encourage you to build the documentation, which can be done by cloning this repo and running `doxygen` in the top-level directory of the resulting clone.  The documentation contains detailed explanations of how to do common tasks in Pulsar, APIs for all classes (Python APIs require you to install doxypypy, which can be done by running `pip install doxypypy`), etc.
+
 # Compilation Instructions
 
 Great.  We convinced you to at least try Pulsar.  So how do you go about

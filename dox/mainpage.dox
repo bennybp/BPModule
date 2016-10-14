@@ -13,12 +13,13 @@ is stuff you will likely want to know before reading further.
 
   - Pulsar Basics
     - [Terminology](@ref terminology)
-    - \todo Compiling
   - User notes
     - [Making Modules and Supermodules](@ref makemod)
+    - [Printing Things Out](@ref printing)
     - [Making and Using Systems](@ref systems)
   - Developer notes
     - [Testing](@ref testing)
+    - [Documenting](@ref documenting)
     - [Basic Filesystem Layout](@ref basic)
     - [Exceptions and Error Handeling](@ref except)
     - [Module Basics](@ref modulebasics)
@@ -26,7 +27,7 @@ is stuff you will likely want to know before reading further.
     - [Understanding the Graph and the Cache](@ref graphcache)
     - [Understanding Shared Libraries](@ref shared)
     - [Using and Setting Options](@ref Options)
-    - [Printing Things Out](@ref printing)
+
 
 
 \section Authors

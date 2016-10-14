@@ -1,5 +1,10 @@
 # Shared Object Files, Plugins, and the Symbol Table ##       {#shared}
 
+\note On this page "module" is not used in the Pulsar sense, but rather in the
+      shared object library sense.  When we discuss Pulsar's modules we will
+      call them Pulsar modules.
+
+
 ## The Symbol Table ###
 
 Each process has a table of associated symbols with it. These symbols
@@ -7,22 +12,24 @@ correspond to functions, global variables, etc, available to code
 running within the process.  If you ever get an "undefined symbol:
 (gibberish)" error, that means the program is requesting something that
 has not been loaded into its symbol table. When using C++, the gibberish
-is a mangled name.
+is a mangled name.  Each symbol can be thought of as the key in a map, where
+the value is the machine code to execute when that symbol is called.
 
-The symbol table is loaded from a few different places:
+The code a symbol maps to can be loaded from a few different places:
 
   * Anything compiled in (ie, the source files that were compiled into that binary)
   * Static libraries (linked at compile time, also in the binary file)
   * Shared libraries (linked at compile time, loaded at runtime)
   * Modules (NOT linked at compile time, loaded at runtime)
 
-The only real difference between shared libraries and modules is that the existence of
-the module is unknown at compile time.
+The only real difference between shared libraries and modules is that you can't
+link against a module.
 
 ## What is a Shared-Object (SO) File ##
 
-An SO file is just a collection of functions and other data that is accessible from other programs at runtime.
-That's about it.
+An SO file is just a collection of functions and other data that is accessible 
+from other programs at runtime.  There are two types of so files, shared
+libraries and modules.  That's about it.
 
 ## Shared Libraries ##
 
@@ -45,31 +52,42 @@ some different compilation flags may be required to really do this).
 
 ## What is a Module ##
 
-A module is very similar to an SO file. However, it is not linked to the binary, and therefore the operating system
-does not know anything about the link between them.
+A module is very similar to an SO file. However, it is not linked to the binary,
+and therefore the operating system does not know anything about the link between
+them.  This is the key feature of a module and the reason they are essential to
+interpretive languages; the language doesn't have to know what it's going to do
+at compile time.
 
-So how does it get used? In linux, this is done via `dlopen()` and `dlsym()`. `dlopen()` opens a module, and
-`dlsym()` searches for a symbol in the module and returns a pointer to it. Casting the pointer to the right
-type (like a function pointer) allows you to use it. This is very, very powerful and the entire basis
-behind plugin architectures.
+So how does it get used? In linux, this is done via `dlopen()` and `dlsym()`. 
+`dlopen()` opens a module, and
+`dlsym()` searches for a symbol in the module and returns a pointer to it. 
+Casting the pointer to the right
+type (like a function pointer) allows you to use it. This is very, very powerful
+and the entire basis behind plugin architectures.
 
-But what happens to the symbol table? It depends on what you want, and this is controlled by
+But what happens to the symbol table? It depends on what you want, and this is 
+controlled by
 flags passed to `dlopen`.
 
-  - `RTLD_LOCAL` means that the symbols remain local to the module. Except for what you purposely grab
+  - `RTLD_LOCAL` means that the symbols remain local to the module. Except for 
+     what you purposely grab
      out via `dlsym()`, it is unusable, particularly by libraries loaded afterwards.
-  - `RTLD_GLOBAL` means the symbols are added to the processes symbol table, and libraries opened
-     afterwards can use them.
+  - `RTLD_GLOBAL` means the symbols are added to the processes symbol table, and
+     libraries opened afterwards can use them.
 
-\note Not sure the symbols are actually added to the symbol table, but I think that's right.
+\note Not sure the symbols are actually added to the symbol table, but I think 
+      that's right.
 
 What about symbols not defined in the module file, but in other module files?
 
-  - `RTLD_NOW` means to resolve all the symbols in the module right now. If it can't, the program aborts
+  - `RTLD_NOW` means to resolve all the symbols in the module right now. If it 
+    can't, the program aborts
   - `RTLD_LAZY` means to wait until a symbol is actually used to resolve it.
 
-Modules can be linked to shared libraries as well, and these are resolved when using `dlopen()`. Symbols
-from these chained shared-object libraries are available as if they were part of the module.
+Modules can be linked to shared libraries as well, and these are resolved when 
+using `dlopen()`. Symbols
+from these chained shared-object libraries are available as if they were part of
+ the module.
 
 \note   I think
 
@@ -99,26 +117,38 @@ functionality from the first module.
 
 ## Using this to our advantage ##
 
-So how does this work in practice in Pulsar? Well, it starts with `import`ing pulsar.
-This is a traditional python library, with an `__init__.py` file. In that file the core modules
+So how does this work in practice in Pulsar? Well, it starts with `import`ing 
+pulsar.
+This is a traditional python library, with an `__init__.py` file. In that file 
+the core modules
 (written in C++) are imported via `dlopen()`/`dlsym()` with three steps
 
-  1. Set `RTLD_GLOBAL` and `RTLD_LAZY`. We want the symbols from the core modules to be available
-     to everything else that's loaded afterwards. `RTLD_LAZY` is needed because of circular dependencies
+  1. Set `RTLD_GLOBAL` and `RTLD_LAZY`. We want the symbols from the core 
+     modules to be available
+     to everything else that's loaded afterwards. `RTLD_LAZY` is needed because 
+     of circular dependencies
      in between the core modules.
 
-  2. Import the core modules. Because of `RTLD_GLOBAL`, each module can use symbols from the others. And,
-     because modules may be linked to shared libraries, they bring along the shared libraries as well.
+  2. Import the core modules. Because of `RTLD_GLOBAL`, each module can use 
+     symbols from the others. And,
+     because modules may be linked to shared libraries, they bring along the 
+     shared libraries as well.
 
   3. Reset the `RTLD_` flags to their original state.
     
-This simplifies the build process tremendously, since modules don't have to be linked to each other
-at build time. In addition, external dependencies (such as taskforce, etc) only have to be linked to
-a single module. Then, when that module is loaded, that library comes along with it. Ta-dah!
+This simplifies the build process tremendously, since modules don't have to be 
+linked to each other
+at build time. In addition, external dependencies (such as taskforce, etc) only 
+have to be linked to
+a single module. Then, when that module is loaded, that library comes along with
+ it. Ta-dah!
 
-Pulsar "modules" use a similar idea, although the module loading is handled in C++. The file is opened,
-a specific function is found, run, etc. And because the core was loaded with `RTLD_GLOBAL`, all core
-functionality (again, including the linked libraries) are available to the module without having to link
+Pulsar "modules" use a similar idea, although the module loading is handled in 
+C++. The file is opened,
+a specific function is found, run, etc. And because the core was loaded with 
+`RTLD_GLOBAL`, all core
+functionality (again, including the linked libraries) are available to the 
+module without having to link
 to it at build time. Ta-dah! (again)
 
 Note that modules are loaded with `RTLD_LOCAL`, since we want to compartmentalize

@@ -1,6 +1,5 @@
 set(PULSAR_TESTING_FILES
-            TestDatastore.cpp
-            TestOptions.cpp
+            Tester.cpp
             export.cpp
 
             PARENT_SCOPE

@@ -1,4 +1,5 @@
-#How to Make and Use Systems ##  {#systems}
+How to Make and Use Systems                                          {#systems}
+===========================
 
 This page is aimed at giving you a crash course in working with the Pulsar
 System.  If there is a task you commonly perform with a system not covered

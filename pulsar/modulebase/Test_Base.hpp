@@ -16,12 +16,13 @@ namespace modulebase {
 
 /*! \brief A test module
  *
- * Just to make sure the library works
+ * Just to make sure the library works and provides a base class for C++
+ * interface tests.
  */
 class Test_Base : public ModuleBase
 {
     public:
-        typedef Test_Base BaseType;
+        typedef Test_Base BaseType;///< The type of the base
 
 
         Test_Base(ID_t id)
