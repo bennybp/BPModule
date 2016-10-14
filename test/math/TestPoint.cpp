@@ -19,6 +19,10 @@ protected:
         const std::string & other2){}
         virtual void test_throw_(void){}
         virtual void call_throw_(const std::string & other){}
+        void add_to_cache_(const std::string & key, unsigned int policy){}
+        void get_from_cache_(const std::string & key, bool use_distcache){}
+        
+        
 public:
     using Test_Base::Test_Base;
 };

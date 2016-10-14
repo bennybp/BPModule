@@ -5,7 +5,7 @@
 #include "pulsar/output/Table.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 
-using pulsar::exception::GeneralException;
+using pulsar::GeneralException;
 typedef std::vector<char> Border_t;
 namespace pulsar{
     namespace output{

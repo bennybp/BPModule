@@ -31,7 +31,7 @@ using pulsar::math::Point;
 using pulsar::math::are_equal;
 using pulsar::math::Dot;
 using pulsar::math::Cross;
-using pulsar::exception::GeneralException;
+using pulsar::GeneralException;
 typedef std::unordered_set<Atom> AtomSet_t;
 typedef std::array<double,3> Vector_t;
 typedef std::array<double,9> Matrix_t;

@@ -33,7 +33,7 @@ static std::map<OptionType, const char *> option_namemap_{
 
 
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 
 const char * OptionTypeToString(OptionType ot)

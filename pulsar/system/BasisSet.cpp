@@ -14,8 +14,8 @@
 #include "bphash/types/memory.hpp"
 #include "bphash/types/vector.hpp"
 
-using pulsar::exception::psr_assert;
-using pulsar::exception::BasisSetException;
+using pulsar::psr_assert;
+using pulsar::BasisSetException;
 
 /*! \todo std::max_element requires that the container not be empty. Clean that up */
 

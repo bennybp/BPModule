@@ -88,7 +88,7 @@ class BlockByIrrepSpin
         {
             //! \todo need irrep to string
             //if(!HasMatrix(irrep, spin))
-            //    throw exception::MathException("No matrix with this irrep/spin",
+            //    throw MathException("No matrix with this irrep/spin",
             //                                   "irrep", irrep, "spin", spin);    
 
             return data_.at(irrep).at(spin);
@@ -98,7 +98,7 @@ class BlockByIrrepSpin
         {
             //! \todo need irrep to string
             //if(!HasMatrix(irrep, spin))
-            //    throw exception::MathException("No matrix with this irrep/spin",
+            //    throw MathException("No matrix with this irrep/spin",
             //                                   "irrep", irrep, "spin", spin);    
 
             return data_.at(irrep).at(spin);

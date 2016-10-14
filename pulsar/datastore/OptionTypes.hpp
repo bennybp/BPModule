@@ -19,7 +19,7 @@
 #include "pulsar/math/Cast.hpp"
 #include "pulsar/math/Cast_stl.hpp"
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 
 

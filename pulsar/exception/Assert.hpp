@@ -7,7 +7,6 @@
 #include <utility> // for std::forward
 
 namespace pulsar {
-namespace exception {
 
 #ifndef NDEBUG
 
@@ -49,6 +48,5 @@ void psr_assert(bool, Targs &&...) noexcept
 
 #endif
 
-} // close namespace exception
 } // close namespace pulsar
 

@@ -70,7 +70,6 @@ class Test_Base : public ModuleBase
         }
 
 
-
         /*! \brief Call Throw() of another module
          *
          * \param [in] other Key of the other module in the database
@@ -81,6 +80,24 @@ class Test_Base : public ModuleBase
         }
 
 
+
+        /*! \brief Add something to this module's cache
+         * 
+         * \param [in] policy The policy of the cache element to add
+         */
+        void add_to_cache(const std::string & key, unsigned int policy)
+        {
+            return ModuleBase::call_function(&Test_Base::add_to_cache_, key, policy);
+        }
+
+        /*! \brief Get something from this module's cache
+         * 
+         * \param [in] policy The policy of the cache element to add
+         */
+        void get_from_cache(const std::string & key, bool use_distcache)
+        {
+            return ModuleBase::call_function(&Test_Base::get_from_cache_, key, use_distcache);
+        }
 
 
         /////////////////////////////////////////
@@ -121,6 +138,20 @@ class Test_Base : public ModuleBase
         virtual void call_throw_(const std::string & other) = 0;
 
 
+        /*! \copydoc add_to_cache
+         *
+         * \note To be implemented by derived classes
+         */
+        virtual void add_to_cache_(const std::string & key, unsigned int policy) = 0;
+
+
+        /*! \copydoc get_from_cache
+         *
+         * \note To be implemented by derived classes
+         */
+        virtual void get_from_cache_(const std::string & key, bool use_distcache) = 0;
+
+
 };
 
 
@@ -136,28 +167,39 @@ class Test_Base_Py : public Test_Base
 
         virtual void run_test_(void)
         {
-            return call_py_override<void>("run_test_");
+            return call_py_override<void>(this, "run_test_");
         }
 
         virtual void call_run_test_(const std::string & other)
         {
-            return call_py_override<void>("call_run_test_", other);
+            return call_py_override<void>(this, "call_run_test_", other);
         }
 
         virtual void call_run_test2_(const std::string & other1, const std::string & other2)
         {
-            return call_py_override<void>("call_run_test2_", other1, other2);
+            return call_py_override<void>(this, "call_run_test2_", other1, other2);
         }
 
         virtual void test_throw_(void)
         {
-            return call_py_override<void>("test_throw_");
+            return call_py_override<void>(this, "test_throw_");
         }
 
         virtual void call_throw_(const std::string & other)
         {
-            return call_py_override<void>("call_throw_", other);
+            return call_py_override<void>(this, "call_throw_", other);
         }
+
+        virtual void add_to_cache_(const std::string & key, unsigned int policy)
+        {
+            return call_py_override<void>(this, "add_to_cache_", key, policy);
+        }
+
+        virtual void get_from_cache_(const std::string & key, bool use_distcache)
+        {
+            return call_py_override<void>(this, "get_from_cache_", key, use_distcache);
+        }
+
 
 };
 

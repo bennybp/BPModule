@@ -98,6 +98,8 @@ void export_pybind11(pybind11::module & mtop)
     .def("load_module_from_minfo", &ModuleManager::load_module_from_minfo)
     .def("enable_debug", &ModuleManager::enable_debug)
     .def("enable_debug_all", &ModuleManager::enable_debug_all)
+    .def("start_cache_sync", &ModuleManager::start_cache_sync)
+    .def("stop_cache_sync", &ModuleManager::stop_cache_sync)
     ;
 
     m.def("copy_key_change_options",&copy_key_change_options_py);

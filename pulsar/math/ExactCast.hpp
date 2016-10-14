@@ -65,12 +65,12 @@ struct ExactCast
                     Source tmax = static_cast<Source>(std::numeric_limits<Target>::max());
                     Source tmin = static_cast<Source>(std::numeric_limits<Target>::lowest());
                     if(s > tmax)
-                        throw exception::MathException("Error in numeric_cast",
+                        throw MathException("Error in numeric_cast",
                                                        "desc", "source value overflows target type",
                                                        "ifrom", util::demangle_cpp_type<Source>(),
                                                        "ito", util::demangle_cpp_type<Target>());
                     else if(s < tmin)
-                        throw exception::MathException("Error in numeric_cast",
+                        throw MathException("Error in numeric_cast",
                                                        "desc", "source value underflows target type",
                                                        "ifrom", util::demangle_cpp_type<Source>(),
                                                        "ito", util::demangle_cpp_type<Target>());
@@ -83,7 +83,7 @@ struct ExactCast
             else if(std::is_signed<Source>::value) // Source is signed, Target is unsigned
             {
                 if(s < 0)
-                    throw exception::MathException("Error in numeric_cast",
+                    throw MathException("Error in numeric_cast",
                                                    "desc", "source value underflows target type",
                                                    "ifrom", util::demangle_cpp_type<Source>(),
                                                    "ito", util::demangle_cpp_type<Target>());
@@ -98,7 +98,7 @@ struct ExactCast
                     // casting to Source type should be ok since sizeof(Source) > sizeof(Target)
                     Source tmax = static_cast<Source>(std::numeric_limits<Target>::max());
                     if(s > tmax)
-                        throw exception::MathException("Error in numeric_cast",
+                        throw MathException("Error in numeric_cast",
                                                        "desc", "source value overflows target type",
                                                        "ifrom", util::demangle_cpp_type<Source>(),
                                                        "ito", util::demangle_cpp_type<Target>());
@@ -120,7 +120,7 @@ struct ExactCast
                     // casting to Source type should be ok since sizeof(Source) > sizeof(Target)
                     Source tmax = static_cast<Source>(std::numeric_limits<Target>::max());
                     if(s > tmax)
-                        throw exception::MathException("Error in numeric_cast",
+                        throw MathException("Error in numeric_cast",
                                                        "desc", "source value overflows target type",
                                                        "ifrom", util::demangle_cpp_type<Source>(),
                                                        "ito", util::demangle_cpp_type<Target>());
@@ -149,7 +149,7 @@ struct ExactCast
             if(s == s2)
                 return t;
             else
-                throw exception::MathException("Error in numeric_cast",
+                throw MathException("Error in numeric_cast",
                                                "desc", "Floating point conversion results in loss of precision",
                                                "fpfrom", util::demangle_cpp_type<Source>(),
                                                "fpto", util::demangle_cpp_type<Target>());
@@ -160,7 +160,7 @@ struct ExactCast
         {
             // Check validity (ie does the FP source have exactly an integer?)
             if(!is_integer(s))
-                throw exception::MathException("Error in numeric_cast",
+                throw MathException("Error in numeric_cast",
                                                "desc", "Floating point conversion to integer results in loss of information",
                                                "fpfrom", util::demangle_cpp_type<Source>(),
                                                "ito", util::demangle_cpp_type<Target>());
@@ -174,7 +174,7 @@ struct ExactCast
             Target t = static_cast<Target>(s);
 
             if(!is_integer(s))
-                throw exception::MathException("Error in numeric_cast",
+                throw MathException("Error in numeric_cast",
                                                "desc", "Floating point type cannot exactly handle this integer",
                                                "ifrom", util::demangle_cpp_type<Source>(),
                                                "fpto", util::demangle_cpp_type<Target>());
@@ -183,7 +183,7 @@ struct ExactCast
             PRAGMA_WARNING_PUSH
             PRAGMA_WARNING_IGNORE_FP_EQUALITY
             if(s != s2)
-                throw exception::MathException("Error in numeric_cast",
+                throw MathException("Error in numeric_cast",
                                                "desc", "Floating point type cannot exactly handle this integer",
                                                "ifrom", util::demangle_cpp_type<Source>(),
                                                "fpto", util::demangle_cpp_type<Target>());

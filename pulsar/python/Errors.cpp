@@ -13,7 +13,7 @@
 
 #include <algorithm> // std::reverse
 
-using pulsar::exception::GeneralException;
+using pulsar::GeneralException;
 using pulsar::util::format_string;
 using pulsar::util::join;
 

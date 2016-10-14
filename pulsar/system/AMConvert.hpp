@@ -17,7 +17,7 @@ namespace system {
  *
  * The string is not case sensitive
  *
- * \throw pulsar::exception::BasisSetException if the string is not found
+ * \throw pulsar::BasisSetException if the string is not found
  */
 int string_to_am(const std::string & s);
 
@@ -27,7 +27,7 @@ int string_to_am(const std::string & s);
  *
  * The string is always lowercase
  *
- * \throw pulsar::exception::BasisSetException if the integer is not found
+ * \throw pulsar::BasisSetException if the integer is not found
  */
 std::string am_to_string(int am);
 

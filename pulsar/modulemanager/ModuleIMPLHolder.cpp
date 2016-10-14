@@ -17,7 +17,7 @@ namespace detail {
 PyModuleIMPLHolder::PyModuleIMPLHolder(const pybind11::object & mod)
     : mod_(mod)
 {
-    using namespace pulsar::exception;
+    
 
     if(!mod)
         throw GeneralException("PyModuleIMPLHolder given a null object");

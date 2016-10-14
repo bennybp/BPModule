@@ -6,7 +6,7 @@
 
 #include "pulsar/modulemanager/ModuleTree.hpp"
 
-using pulsar::exception::ModuleManagerException;
+using pulsar::ModuleManagerException;
 
 
 namespace pulsar{

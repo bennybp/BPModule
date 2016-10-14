@@ -65,7 +65,7 @@ class ModuleIMPLHolder
         template<typename T>
         bool IsType(void) const
         {
-            using namespace pulsar::exception;
+            
 
             if(CppPtr() == nullptr)
                 throw GeneralException("Null pointer in ModuleIMPLHolder");
@@ -98,7 +98,7 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
 
         virtual modulebase::ModuleBase * CppPtr(void) const
         {
-            using namespace pulsar::exception;
+            
             if(!mod_)
                 throw GeneralException("Null pointer in CppModuleIMPLHolder");
             return mod_.get();
@@ -107,7 +107,7 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
 
         virtual pybind11::object PythonObject(void) const
         {
-            using namespace pulsar::exception;
+            
             if(!mod_)
               throw GeneralException("Null pointer in CppModuleIMPLHolder");
             T * ptr = mod_.get();

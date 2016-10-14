@@ -21,7 +21,7 @@ using pulsar::system::System;
 using pulsar::datastore::Wavefunction;
 using pulsar::system::AtomSetUniverse;
 using LibTaskForce::HybridComm;
-using pulsar::exception::GeneralException;
+using pulsar::GeneralException;
 
 typedef vector<Atom> AtomV_t;
 typedef pulsar::modulemanager::ModuleManager MM_t;

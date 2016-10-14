@@ -40,7 +40,7 @@ class OutputStream : public std::ostream
 
         /*! \brief Print formatted text this stream
          *
-         * \throw pulsar::exception::GeneralException with malformed formats,
+         * \throw pulsar::GeneralException with malformed formats,
          *        improper number of arguments, etc.
          *
          * \tparam Targs The types of the arguments to print
@@ -60,7 +60,7 @@ class OutputStream : public std::ostream
 
         /*! \brief Print formatted general output to this stream
          * 
-         * \throw pulsar::exception::GeneralException with malformed formats,
+         * \throw pulsar::GeneralException with malformed formats,
          *        improper number of arguments, etc.
          *
          * \tparam Targs The types of the arguments to print

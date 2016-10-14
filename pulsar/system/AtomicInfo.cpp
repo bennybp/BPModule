@@ -31,7 +31,7 @@ int atomic_z_from_symbol(const std::string & sym)
     if(atomic_sym_Z_.count(sym))
         return atomic_sym_Z_.at(sym);
     else
-        throw exception::SystemException("No Z number for this atomic symbol",
+        throw SystemException("No Z number for this atomic symbol",
                                            "symbol", sym);
 }
 
@@ -44,7 +44,7 @@ std::string atomic_symbol_from_z(int Z)
     if(atomic_Z_sym_.count(Z))
         return atomic_Z_sym_.at(Z);
     else
-        throw exception::SystemException("No symbol for this Z number",
+        throw SystemException("No symbol for this Z number",
                                            "Z", Z);
 }
 
@@ -57,7 +57,7 @@ const AtomicData & atomic_info_from_z(int Z)
     if(atomic_Z_data_.count(Z))
         return atomic_Z_data_.at(Z);
     else
-        throw exception::SystemException("No atomic data for this Z number",
+        throw SystemException("No atomic data for this Z number",
                                            "Z", Z);
 }
 
@@ -78,7 +78,7 @@ const IsotopeData & isotope_info_from_z(int Z, int isonum)
         if(it.isonum == isonum)
             return it;
 
-    throw exception::SystemException("No isotope data for this Z and isotope number",
+    throw SystemException("No isotope data for this Z and isotope number",
                                            "Z", Z,
                                            "isotope", isonum);
 }
@@ -95,7 +95,7 @@ int most_common_isotope_from_z(int Z)
 {
     const AtomicData & ad = atomic_info_from_z(Z);
     if(ad.isotopes.size() == 0)
-        throw exception::SystemException("Developer error: No isotopes for this Z number?",
+        throw SystemException("Developer error: No isotopes for this Z number?",
                                            "Z", Z);
 
     auto maxit = std::max_element(ad.isotopes.begin(), ad.isotopes.end(),

@@ -11,7 +11,7 @@
 #include <cmath>
 
 using pulsar::output::print_global_output;
-using pulsar::exception::GeneralException;
+using pulsar::GeneralException;
 using std::to_string;
 
 namespace pulsar {

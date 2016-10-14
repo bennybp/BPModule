@@ -35,7 +35,7 @@ class PropertyCalculator : public ModuleBase
                                       const system::BasisSet & bs1,
                                       const system::BasisSet & bs2)
         {
-            return ModuleBase::fast_call_function(&PropertyCalculator::calculate_,
+            return ModuleBase::call_function(&PropertyCalculator::calculate_,
                                                 deriv, wfn, bs1, bs2);
         }
 
@@ -63,7 +63,7 @@ class PropertyCalculator_Py : public PropertyCalculator
                                                const system::BasisSet & bs1,
                                                const system::BasisSet & bs2)
         {
-            return call_py_override<std::vector<double>>("calculate_", wfn, deriv, bs1, bs2);
+            return call_py_override<std::vector<double>>(this, "calculate_", wfn, deriv, bs1, bs2);
         }
 };
 

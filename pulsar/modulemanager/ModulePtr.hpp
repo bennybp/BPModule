@@ -38,7 +38,7 @@ class ModulePtr
         ModulePtr(std::unique_ptr<detail::ModuleIMPLHolder> && holder)
                 : holder_(std::move(holder))
         {
-            using namespace pulsar::exception;
+            
 
             // check before getting Cpp pointer
             if(!holder_)
@@ -66,12 +66,12 @@ class ModulePtr
          *
          * Used to call functions of the contained module object
          *
-         * \throw pulsar::exception::GeneralException if there is a null pointer
+         * \throw pulsar::GeneralException if there is a null pointer
          *        in this object (ie, has been deleted)
          */
         T * operator->() const
         {
-            using namespace pulsar::exception;
+            
 
             if(!holder_)
                 throw GeneralException("ModulePtr has an empty unique pointer");
@@ -85,12 +85,12 @@ class ModulePtr
          *
          * Used to call functions of the contained module object
          *
-         * \throw pulsar::exception::GeneralException if there is a null pointer
+         * \throw pulsar::GeneralException if there is a null pointer
          *        in this object (ie, has been deleted)
          */
         T & operator*() const
         {
-            using namespace pulsar::exception;
+            
             
             if(!holder_)
                 throw GeneralException("ModulePtr has an empty unique pointer");
@@ -131,7 +131,7 @@ class PyModulePtr
         PyModulePtr(std::unique_ptr<detail::ModuleIMPLHolder> && holder)
                   : holder_(std::move(holder))
         {
-            using namespace pulsar::exception;
+            
 
             // check before getting the python object
             if(!holder_)
@@ -154,14 +154,14 @@ class PyModulePtr
          *
          * See \ref python_smart_pointer
          *
-         * \throw pulsar::exception::GeneralException if there is a null pointer
+         * \throw pulsar::GeneralException if there is a null pointer
          *        or empty object in this object (ie, has been deleted)
          *
          * \param [in] name The attribute to get from the module
          */
         pybind11::object py__getattr__(const std::string & name)
         {
-            using namespace pulsar::exception;
+            
 
             // check before getting the python object
             if(!holder_)

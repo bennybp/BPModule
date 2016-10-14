@@ -23,7 +23,7 @@ namespace util {
 int * get_argc(void)
 {
     if(!set_)
-        throw exception::GeneralException("Command line has not been set! Definite developer error");
+        throw GeneralException("Command line has not been set! Definite developer error");
 
     return &argc_;
 }
@@ -31,7 +31,7 @@ int * get_argc(void)
 char *** get_argv(void)
 {
     if(!set_)
-        throw exception::GeneralException("Command line has not been set! Definite developer error");
+        throw GeneralException("Command line has not been set! Definite developer error");
 
     return &argv_;
 }

@@ -17,7 +17,7 @@
 #include "pulsar/output/Output.hpp"
 
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 namespace detail {
 
@@ -42,7 +42,7 @@ CreateOptionHolder(std::string key, OptionType opttype, bool required,
  *
  * Will call the python function \p func and give it \p val as its only argument
  *
- * \throw pulsar::exception::PythonCallException if there is a problem calling
+ * \throw pulsar::PythonCallException if there is a problem calling
  *        the python function or if the return type can't be converted
  *
  */
@@ -58,7 +58,7 @@ static OptionIssues ValidatorWrapper_(pybind11::object & valobj,
     }
     catch(const std::exception & ex)
     {
-        throw exception::OptionException(ex, "optionkey", key,
+        throw OptionException(ex, "optionkey", key,
                                          "when", "Attempting to validate an option");
     }
 }
@@ -91,11 +91,11 @@ class OptionHolder : public OptionBase
          *
          * The value is not set on construction, only the default
          *
-         * \throw pulsar::exception::OptionException
+         * \throw pulsar::OptionException
          *        If the default value is invalid, or
          *        there is a default argument supplied for a 'required' option.
          *
-         * \throw pulsar::exception::PythonCallException
+         * \throw pulsar::PythonCallException
          *       If there is a problem calling the validation function
          *
          * \param [in] key The key of this option
@@ -115,8 +115,6 @@ class OptionHolder : public OptionBase
                      const std::string & help, const stored_type & def)
             : OptionHolder(key, required, validator, help, new stored_type(def))
         {
-            using exception::OptionException;
-
             if(required)
                 throw OptionException("Default value supplied for required option",
                                       "optionkey", key);
@@ -189,7 +187,7 @@ class OptionHolder : public OptionBase
          *
          * If the value is not set, but a default exists, the default is returned.
          *
-         * \throw pulsar::exception::OptionException
+         * \throw pulsar::OptionException
          *        If the option does not have a value or a default
          */
         const stored_type & get(void) const
@@ -199,7 +197,7 @@ class OptionHolder : public OptionBase
             else if(default_)
                 return *default_;
             else
-                throw exception::OptionException("Option does not have a value",
+                throw OptionException("Option does not have a value",
                                                  "optionkey", key());
         }
 
@@ -207,7 +205,7 @@ class OptionHolder : public OptionBase
 
         /*! \brief Get the default value
          *
-         * \throw pulsar::exception::OptionException
+         * \throw pulsar::OptionException
          *        If the option does not have a default
          */
         const stored_type & get_default(void) const
@@ -215,7 +213,7 @@ class OptionHolder : public OptionBase
             if(default_)
                 return *default_;
             else
-                throw exception::OptionException("Option does not have a default",
+                throw OptionException("Option does not have a default",
                                                  "optionkey", key());
         }
 
@@ -375,7 +373,7 @@ class OptionHolder : public OptionBase
             }                                                         
             catch(std::exception & ex)                                
             {                                                         
-                throw exception::OptionException(ex, "optionkey", key());        
+                throw OptionException(ex, "optionkey", key());        
             }                                                         
 
         }
@@ -389,7 +387,7 @@ class OptionHolder : public OptionBase
             }
             catch(std::exception & ex)
             {
-                throw exception::OptionException(ex, "optionkey", key());
+                throw OptionException(ex, "optionkey", key());
             }
 
             change(val);

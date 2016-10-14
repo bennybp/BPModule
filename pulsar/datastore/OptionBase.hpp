@@ -15,7 +15,7 @@
 
 #include "bphash/types/string.hpp" // Includes Hasher
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 
 //! A collection of problems with an option
@@ -132,7 +132,7 @@ class OptionBase
          * Does not throw on validation error, but will throw if the validator
          * cannot be called (python issues, etc).
          *
-         * \throw pulsar::exception::PythonCallException if there is a problem
+         * \throw pulsar::PythonCallException if there is a problem
          *        with the validation function
          *
          * \return Any problems / issues with this option
@@ -175,7 +175,7 @@ class OptionBase
         /////////////////////////////////////////
         /*! \brief Return a copy of the value as a python object
          *
-         * \throw pulsar::exception::OptionException
+         * \throw pulsar::OptionException
          *        If the value does not exist or cannot
          *        be converted to a python object
          */
@@ -185,7 +185,7 @@ class OptionBase
 
         /*! \brief Change the value via a python object
          *
-         * \throw pulsar::exception::OptionException
+         * \throw pulsar::OptionException
          *        if there is a problem with the python conversion
          *
          *  \exstrong
@@ -249,7 +249,7 @@ class OptionBase
 
         /*! \brief Test if this option has issues
          *
-         * \throw pulsar::exception::PythonCallException if there is a problem
+         * \throw pulsar::PythonCallException if there is a problem
          *        with the validation function
          */
         bool has_issues(void) const

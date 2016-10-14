@@ -1,12 +1,10 @@
 /*! \file
  *
- * \brief Storage of generic data (inner class) 
- * \author Benjamin Pritchard (ben@bennyp.org)
- */ 
+ * \brief Base class for holding generic data
+ */
 
 
-#ifndef PULSAR_GUARD_DATASTORE__GENERICBASE_HPP_
-#define PULSAR_GUARD_DATASTORE__GENERICBASE_HPP_
+#pragma once
 
 #include "pulsar/util/Serialization_fwd.hpp"
 
@@ -14,7 +12,7 @@
 
 #include <memory>
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 namespace detail {
 
@@ -26,13 +24,15 @@ namespace detail {
  *
  * Answer: It would require registering every type of GenericHolder<T>,
  * including any types held in the modules. That's a pain, so I work around
- * it a bit
+ * it a bit by having the derived GenericHolder<T> handle the serialization
  */
 
 
 /*! \brief An interface to a templated class that can hold anything
  *
- *  This allows for use in containers, etc.
+ *  This allows for storing any data types in containers.
+ *
+ * \threadunsafe
  */
 class GenericBase
 {
@@ -52,8 +52,6 @@ class GenericBase
         ///////////////////////////////////
         /*! \brief Returns a string representing the type
          *
-         * \exnothrow
-         *
          * \return A string representing the type (obtained via typeid().name())
          */
         virtual const char * type(void) const noexcept = 0;
@@ -68,22 +66,36 @@ class GenericBase
          */
         virtual std::string demangled_type(void) const = 0;
 
-        /*! \brief Check if the data stored in this object is serializable */
+
+        /*! \brief Check if the data stored in this object is serializable
+         *
+         * \return True if the stored type is serializable, false otherwise
+         */
         virtual bool is_serializable(void) const noexcept = 0;
 
-        /*! \brief Check if the data stored in this object is hashable */
+
+        /*! \brief Check if the data stored in this object is hashable
+         *
+         * \return True if the stored type is hashable, false otherwise
+         */
         virtual bool is_hashable(void) const noexcept = 0;
 
-        /*! \brief Serialize the data as a byte array */
+
+        /*! \brief Serialize the data as a byte array
+         *
+         * \throw pulsar::GeneralException if the type is not
+         *        serializable
+         */
         virtual ByteArray to_byte_array(void) const = 0;
 
-        /*! \brief Unserialize a byte array */
-        virtual void from_byte_array(const ByteArray & arr) = 0;
 
-        /*! \brief Obtain the hash of the data */
+        /*! \brief Obtain the hash of the data
+         *
+         * \throw pulsar::GeneralException if the type is not
+         *        hashable
+         */
         virtual bphash::HashValue my_hash(void) const = 0;
 };
-
 
 
 
@@ -91,4 +103,3 @@ class GenericBase
 } //closing namespace datastore
 } //closing namespace pulsar
 
-#endif

@@ -13,7 +13,7 @@
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/exception/Assert.hpp"
 
-using namespace pulsar::exception;
+
 using namespace pulsar::output;
 
 

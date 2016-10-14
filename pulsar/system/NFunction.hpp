@@ -88,7 +88,7 @@ inline int n_spherical_gaussian(int am)
  *
  * This takes into account combined shells (sp, spd, etc).
  *
- * \throw pulsar::exception::BasisSetException if the type is unknown
+ * \throw pulsar::BasisSetException if the type is unknown
  */
 inline int n_functions(ShellType type, int am)
 {
@@ -99,7 +99,7 @@ inline int n_functions(ShellType type, int am)
         case ShellType::SphericalGaussian:
             return n_spherical_gaussian(am);
         default:
-            throw exception::BasisSetException("Unknown shell type", "type", static_cast<int>(type));
+            throw BasisSetException("Unknown shell type", "type", static_cast<int>(type));
     }
 }
 
@@ -110,7 +110,7 @@ inline int n_functions(ShellType type, int am)
  * container of angular momenta (std::array or std::vector) for which
  * all the angular momenta are multiplied together.
  *
- * \throw pulsar::exception::BasisSetException if the type is unknown
+ * \throw pulsar::BasisSetException if the type is unknown
  */
 template<typename Container>
 int n_functions(ShellType type, const Container & amcont)

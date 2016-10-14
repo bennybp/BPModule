@@ -12,7 +12,7 @@
 #include "pulsar/system/BasisSet.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 
-using namespace pulsar::exception;
+
 
 namespace pulsar{
 namespace system {
@@ -144,7 +144,7 @@ BSReorderMap make_basis_reorder_map(const AOOrderingMaps & src,
 
 std::vector<size_t> make_ao_basis_ordering(const BasisSet & bs, const BSReorderMap & bm)
 {
-    using exception::BasisSetException;
+    
     
     // creat the full reorder vector
     std::vector<size_t> fullreorder;

@@ -17,7 +17,7 @@ namespace python {
 
 /*! \brief Calls a python object
  *
- * \throw pulsar::exception::PythonCallException if there is an error (including conversion error)
+ * \throw pulsar::PythonCallException if there is an error (including conversion error)
  *
  * \param [in] obj The python object to call
  * \param [in] Fargs Arguments to call the function with
@@ -25,10 +25,10 @@ namespace python {
 template<typename Ret, typename... Targs>
 Ret call_py_func(const pybind11::object & obj, Targs &&... Fargs)
 {
-    using pulsar::exception::PythonCallException;
-    using pulsar::exception::PythonConvertException;
-    using pulsar::exception::GeneralException;
-    using pulsar::exception::psr_assert;
+    using pulsar::PythonCallException;
+    using pulsar::PythonConvertException;
+    using pulsar::GeneralException;
+    using pulsar::psr_assert;
 
     psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
 
@@ -81,7 +81,7 @@ Ret call_py_func(const pybind11::object & obj, Targs &&... Fargs)
 
 /*! \brief Calls a function that is an attribute a python object
  *
- * \throw pulsar::exception::PythonCallException if there is an error, including
+ * \throw pulsar::PythonCallException if there is an error, including
  *        if the object does not have the given attribute or if there is a conversion
  *        error
  *
@@ -92,9 +92,9 @@ Ret call_py_func(const pybind11::object & obj, Targs &&... Fargs)
 template<typename Ret, typename... Targs>
 Ret call_py_func_attr(const pybind11::object & obj, const char * attribute, Targs &&... Fargs)
 {
-    using pulsar::exception::PythonCallException;
-    using pulsar::exception::GeneralException;
-    using pulsar::exception::psr_assert;
+    using pulsar::PythonCallException;
+    using pulsar::GeneralException;
+    using pulsar::psr_assert;
 
     psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
 

@@ -53,7 +53,7 @@ void enable_color(bool enabled) noexcept;
 
 /*! \brief Print formatted text to the global output stream
  *
- * \throw pulsar::exception::GeneralException with malformed formats,
+ * \throw pulsar::GeneralException with malformed formats,
  *        improper number of arguments, etc.
  *
  * \tparam Targs The types of the arguments to print
@@ -71,7 +71,7 @@ void print_global_general_output(const std::string & fmt, OutputType type, const
 
 /*! \brief Print formatted general output to the global output stream
  * 
- * \throw pulsar::exception::GeneralException with malformed formats,
+ * \throw pulsar::GeneralException with malformed formats,
  *        improper number of arguments, etc.
  *
  * \tparam Targs The types of the arguments to print

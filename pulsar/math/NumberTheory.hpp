@@ -28,7 +28,7 @@ namespace math{
 template<typename T>
 std::set<T> factors(T Num){
     if(!is_integer(Num))
-        throw pulsar::exception::GeneralException("Integer required");
+        throw pulsar::GeneralException("Integer required");
     std::set<T> f;
     T max=(T)floor(sqrt(numeric_cast<double>(Num)));
     for(T i=1;i<=max;++i)

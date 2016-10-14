@@ -19,7 +19,7 @@ namespace util {
 
 /*! \brief Output a formatted string to a stream
  *
- * \throw pulsar::exception::GeneralException for malformed inputs, etc
+ * \throw pulsar::GeneralException for malformed inputs, etc
  *
  * \tparam Targs The types of the arguments to print
  *
@@ -36,7 +36,7 @@ void format_stream(std::ostream & os, const std::string & fmt,
     }
     catch(std::exception & ex)
     {
-        throw exception::GeneralException("Error in formatting a string or stream",
+        throw GeneralException("Error in formatting a string or stream",
                                           "error", ex.what(),
                                           "fmt", fmt, "nargs", sizeof...(Fargs));
     }
@@ -46,7 +46,7 @@ void format_stream(std::ostream & os, const std::string & fmt,
 
 /*! \brief Create a formatted string
  *
- * \throw pulsar::exception::GeneralException for malformed inputs, etc
+ * \throw pulsar::GeneralException for malformed inputs, etc
  *
  * \tparam Targs The types of the arguments to print
  *
@@ -62,7 +62,7 @@ std::string format_string(const std::string & fmt, const Targs&... Fargs)
     }
     catch(std::exception & ex)
     {
-        throw exception::GeneralException("Error in formatting a string or stream",
+        throw GeneralException("Error in formatting a string or stream",
                                           "error", ex.what(),
                                           "fmt", fmt, "nargs", sizeof...(Fargs));
     }

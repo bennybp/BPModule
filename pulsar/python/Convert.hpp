@@ -22,7 +22,7 @@ namespace python {
 
 /*! \brief Convert a python object to a C++ object
  *
- * \throw pulsar::exception::PythonConvertException on error
+ * \throw pulsar::PythonConvertException on error
  *
  * \tparam T The C++ type to convert to
  * \param [in] obj The python object to convert
@@ -30,9 +30,9 @@ namespace python {
 template<typename T>
 T convert_to_cpp(const pybind11::object & obj)
 {
-    using pulsar::exception::PythonConvertException;
-    using pulsar::exception::GeneralException;
-    using pulsar::exception::psr_assert;
+    using pulsar::PythonConvertException;
+    using pulsar::GeneralException;
+    using pulsar::psr_assert;
 
     psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
 
@@ -57,7 +57,7 @@ T convert_to_cpp(const pybind11::object & obj)
 
 /*! \brief Convert a C++ object to a python object
  *
- * \throw pulsar::exception::PythonConvertException on error
+ * \throw pulsar::PythonConvertException on error
  *
  * \tparam T The C++ type to convert from
  * \param [in] obj The python object to convert
@@ -67,7 +67,7 @@ template<typename T>
 pybind11::object convert_to_py(const T & obj,
                              pybind11::return_value_policy pol = pybind11::return_value_policy::copy)
 {
-    using pulsar::exception::PythonConvertException;
+    using pulsar::PythonConvertException;
 
 
     // may NOT throw if there is an issue
@@ -105,7 +105,7 @@ pybind11::object convert_to_py(const T & obj,
 
 /*! \brief Convert a plain array of C++ objects to a python object
  *
- * \throw exception::PythonConvertException if the
+ * \throw PythonConvertException if the
  *        data could not be converted
  *
  * \tparam T The C++ type to convert from

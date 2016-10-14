@@ -41,7 +41,7 @@ class DummyCheckpointIO : public CheckpointIO
 
         virtual ByteArray read(const std::string &) const
         {
-            throw exception::GeneralException("Cannot read from dummy IO");
+            throw GeneralException("Cannot read from dummy IO");
         }
 
         virtual void erase(const std::string &)

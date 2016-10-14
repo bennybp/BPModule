@@ -9,7 +9,7 @@
 
 #include "pulsar/datastore/Wavefunction.hpp"
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 
 bool Wavefunction::operator==(const Wavefunction & rhs) const
