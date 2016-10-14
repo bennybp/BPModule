@@ -22,7 +22,11 @@ namespace math{
 
 /*! \brief A simple class representing a Point
  *
- * Cartesian point of data type \p T
+ * Cartesian point of data type \p T.  Historically this was meant as a bit of
+ * a wrapper around the std::array class now however it has blossmed into a
+ * three vector, which raises the issue of whether we want to keep maintaining
+ * it as Eigen already provides this.  At least for the time being we are
+ * keeping it around since it's hashable.
  *
  * \par Hashing
  * The hash value of a point represents a unique value
@@ -32,32 +36,51 @@ template<typename T>
 class PointT
 {
     public:
+        ///The type storing the coordinates
         typedef std::array<T, 3> CoordType;
+        ///The type of each coordinate
         typedef typename CoordType::value_type value_type;
+        ///A constant iterator over the coordinates
         typedef typename CoordType::const_iterator const_iterator;
+        ///An iterator over the coordinates
         typedef typename CoordType::iterator iterator;
         
+        ///Makes a point given an std::array
         PointT(const CoordType & coords)
             : coords_(coords)
         { }
 
+        ///Given individual coordinates fills point
         PointT(T x, T y, T z)
             : coords_{x,y,z}
         { }            
 
+        ///Default constructor calls default constructor of each coordinate
         PointT()                           = default;
+        ///Deep copies another point
         PointT(const PointT &)             = default;
+        ///Takes ownership of another point
         PointT(PointT &&)                  = default;
+        ///Deep copy assignment
         PointT & operator=(const PointT &) = default;
+        ///Assignment by taking ownership
         PointT & operator=(PointT &&)      = default;
+        ///Destructor does nothing
         virtual ~PointT()                  = default;
+        
+        ///Returns the number of coordinates in the point
         constexpr size_t size()const{return coords_.size();}
         
+        ///Returns a constant iterator to the beginning of the coordinate
         const_iterator begin()const{return coords_.begin();}
+        ///Returns an iterator to the beginning of the coordinate
         iterator begin(){return coords_.begin();}
+        ///Returns a const iterator just past the end
         const_iterator end()const{return coords_.end();}
+        ///Returns an iterator just past the end
         iterator end(){return coords_.end();}
         
+        ///True if coordinates of Points compare equal element-wise
         bool operator==(const PointT & rhs) const
         {
             PRAGMA_WARNING_PUSH
@@ -66,21 +89,26 @@ class PointT
             PRAGMA_WARNING_POP
         }
 
+        ///True if this point's coordinates are not element-wise equal to \p rhs
         bool operator!=(const PointT & rhs) const
         {
             return !((*this) == rhs);
         }
 
+        ///Returns a modifiable version of the i-th coordinate
         T & operator[](size_t i) { return coords_[i]; }
+        ///Returns the i-th coordinate
         T & at(size_t i) { return coords_.at(i); }
 
+        ///Returns a constant version of the i-th coordinate
         const T & operator[](size_t i) const { return coords_[i]; }
+        ///Returns a constant version of the i-th coordinate
         const T & at(size_t i) const { return coords_.at(i); }
         
 
         CoordType get_coords(void) const { return coords_; }
         double get_coord(int i) const { return coords_.at(i); }
-        void set_coord(int i, double val) const { coords_.at(i) = val; }
+        void set_coord(int i, double val) { coords_.at(i) = val; }
 
         void set_coords(const CoordType & coords) { coords_ = coords; }
         void set_coords(T x, T y, T z) { coords_ = CoordType{x,y,z}; }

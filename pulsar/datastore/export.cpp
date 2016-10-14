@@ -20,7 +20,7 @@ using pulsar::system::System;
 using pulsar::datastore::Wavefunction;
 
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 namespace export_python {
 
@@ -109,26 +109,32 @@ void export_pybind11(pybind11::module & mtop)
     ////////////////////////////////////////
     // CacheData
     // Can just store python object
+    // NOTE: We are purposely not exporting CacheMap
     ////////////////////////////////////////
-    pybind11::class_<CacheData> cd(m, "CacheData");
-    cd.def("size", &CacheData::size)
+    pybind11::class_<CacheData>(m, "CacheData")
+      .def("size", &CacheData::size)
       .def("get_keys", &CacheData::get_keys)
       .def("erase", &CacheData::erase)
-      .def("print", &CacheData::print)
-      .def("count", &CacheData::count,
-                   "See if the cache has some data",
-                   pybind11::arg("key"))
-      .def("get", &CacheData::get_py, 
-                  "Get reference", pybind11::return_value_policy::reference_internal,
-                  pybind11::arg("key"))
-      .def("set", &CacheData::set_py, 
+      .def("get", [](CacheData & cd, const std::string & key, bool use_distcache) 
+                  { 
+                      auto r = cd.get<pybind11::object>(key, use_distcache);
+                      if(r)
+                        return *r;
+                      else
+                          throw pulsar::GeneralException("Not in cache and C++ complains that pybind11::none() is not a pybind11::object");
+                          //return pybind11::none();
+                  },
+                  pybind11::arg("key"),
+                  pybind11::arg("use_distcache"))
+      .def("set", static_cast<void (CacheData::*)(const std::string &, pybind11::object &, unsigned int)>(&CacheData::set), 
                   "Set data",
                   pybind11::arg("key"), 
                   pybind11::arg("obj"),
                   pybind11::arg("policy"))
-      .def_readonly_static("NoCheckpoint", &CacheData::NoCheckpoint)
+      .def_readonly_static("NoPolicy", &CacheData::NoPolicy)
       .def_readonly_static("CheckpointLocal", &CacheData::CheckpointLocal)
       .def_readonly_static("CheckpointGlobal", &CacheData::CheckpointGlobal)
+      .def_readonly_static("DistributeGlobal", &CacheData::DistributeGlobal)
     ;
 
     // Export the testing stuff

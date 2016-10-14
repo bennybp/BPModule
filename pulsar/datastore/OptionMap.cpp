@@ -16,11 +16,11 @@
 
 
 using namespace pulsar::python;
-using namespace pulsar::exception;
+
 using namespace pulsar::output;
 
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 
 

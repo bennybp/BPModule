@@ -157,7 +157,7 @@ CombItr<T>::CombItr(const T& Set, size_t K) :
 template<typename T>
 void CombItr<T>::initialize(){
     if (Set_.size()<K_)
-    throw pulsar::exception::GeneralException(
+    throw pulsar::GeneralException(
            "I don't know how to generate combinations with"
            " more items than you gave me....",
            "NObjects",Set_.size(),"Requested K",K_);

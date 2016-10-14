@@ -55,7 +55,7 @@ const AOOrderingMaps & all_ao_orderings(void) noexcept;
 /*! \brief Obtain the ordering in pulsar of m_l for gaussians of
  *         a given angular momentum
  *
- * \throw pulsar::exception::BasisSetException if the value of the
+ * \throw pulsar::BasisSetException if the value of the
  *        angular momentum is out of range
  */
 const std::vector<int8_t> & spherical_ordering(int am);
@@ -64,7 +64,7 @@ const std::vector<int8_t> & spherical_ordering(int am);
 /*! \brief Obtain the ordering in pulsar of cartesian gaussians for
  *         a given angular momentum
  *
- * \throw pulsar::exception::BasisSetException if the value of the
+ * \throw pulsar::BasisSetException if the value of the
  *        angular momentum is out of range
  */
 const std::vector<IJK> & cartesian_ordering(int am);
@@ -73,7 +73,7 @@ const std::vector<IJK> & cartesian_ordering(int am);
 /*! \brief Get the index of a cartesian gaussian basis function
  *         in pulsar ordering
  *
- * \throw pulsar::exception::BasisSetException if the value of the
+ * \throw pulsar::BasisSetException if the value of the
  *        angular momentum is out of range or if the value of ijk
  *        is not found for the given am
  *
@@ -86,7 +86,7 @@ size_t cartesian_index(int am, IJK ijk);
 /*! \brief Get the index of a cartesian gaussian basis function
  *         among functions for [0, \p am] in pulsar ordering
  *
- * \throw pulsar::exception::BasisSetException if the value of the
+ * \throw pulsar::BasisSetException if the value of the
  *        angular momentum is out of range or if the value of ijk
  *        is not found for the given am
  *
@@ -99,7 +99,7 @@ size_t full_cartesian_index(int am, IJK ijk);
 /*! \brief Get the index of a spherical gaussian basis function
  *         in pulsar ordering
  *
- * \throw pulsar::exception::BasisSetException if the value of the
+ * \throw pulsar::BasisSetException if the value of the
  *        angular momentum is out of range or if the value of m
  *        is not found for the given am
  *
@@ -112,7 +112,7 @@ size_t spherical_index(int am, int m);
 /*! \brief Get the index of a spherical gaussian basis function
  *         among functions for [0, \p am] in pulsar ordering
  *
- * \throw pulsar::exception::BasisSetException if the value of the
+ * \throw pulsar::BasisSetException if the value of the
  *        angular momentum is out of range or if the value of m
  *        is not found for the given am
  *
@@ -132,7 +132,7 @@ size_t full_spherical_index(int am, int m);
  * If data for an angular momentum exists in \p dest but not
  * in \p src, it is skipped.
  *
- * \throw pulsar::exception::MathException if an element
+ * \throw pulsar::MathException if an element
  *        in \p dest does not exist in \p src
  */ 
 BSReorderMap make_basis_reorder_map(const AOOrderingMaps & src,
@@ -152,7 +152,7 @@ BSReorderMap make_basis_reorder_map(const AOOrderingMaps & src,
  * elements, this would reorder the entire vector or array to the
  * new ordering.
  *
- * \throw pulsar::exception::BasisSetException if ordering data is
+ * \throw pulsar::BasisSetException if ordering data is
  *        missing for a given angular momentum and/or shell type.
  */
 std::vector<size_t> make_ao_basis_ordering(const BasisSet & bs, const BSReorderMap & bm);

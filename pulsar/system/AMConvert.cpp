@@ -78,7 +78,7 @@ int string_to_am(const std::string & s)
     if(toi_.count(s))
         return toi_.at(s);
     else
-        throw exception::BasisSetException("Cannot find integer AM for this string", "str", s);
+        throw BasisSetException("Cannot find integer AM for this string", "str", s);
 }
 
 
@@ -87,7 +87,7 @@ std::string am_to_string(int am)
     if(tostr_.count(am))
         return tostr_.at(am);
     else
-        throw exception::BasisSetException("Cannot find string for this integer AM", "int", am);
+        throw BasisSetException("Cannot find string for this integer AM", "int", am);
 }
 
 

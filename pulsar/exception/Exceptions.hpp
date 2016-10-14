@@ -11,7 +11,6 @@
 
 
 namespace pulsar{
-namespace exception {
 
 /*! \brief A base exception for Pulsar
  *
@@ -323,7 +322,4 @@ class PythonConvertException : public GeneralException
         using GeneralException::GeneralException;
 };
 
-
-
-} // close namespace exception
 } // close namespace pulsar

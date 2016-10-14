@@ -33,15 +33,15 @@ class StdStreamArchive
     public:
         /*! \brief Start serialization into storage
          * 
-         * \throw pulsar::exception::SerializationException if the object is
+         * \throw pulsar::SerializationException if the object is
          *        already serializing or unserializing
          */
         void begin_serialization(void)
         {
             if(serializing_ == true)
-                throw exception::SerializationException("Can't start serializing - Already serializing");
+                throw SerializationException("Can't start serializing - Already serializing");
             if(unserializing_ == true)
-                throw exception::SerializationException("Can't start serializing - Currently unserializing");
+                throw SerializationException("Can't start serializing - Currently unserializing");
             if(oarchive_)
                 throw std::logic_error("OArchive is valid, but we aren't doing anything");
 
@@ -57,14 +57,14 @@ class StdStreamArchive
          * 
          * The objects must be serializable
          * 
-         * \throw pulsar::exception::SerializationException if we are not serializing or we
+         * \throw pulsar::SerializationException if we are not serializing or we
          *        are unserializing.
          */
         template<typename... Targs>
         void serialize(const Targs &... args)
         {
             if(!serializing_)
-                throw exception::SerializationException("serialize called when we aren't serializing");
+                throw SerializationException("serialize called when we aren't serializing");
             if(unserializing_)
                 throw std::logic_error("Serializing and unserializing at the same time");
             if(!oarchive_)
@@ -76,15 +76,15 @@ class StdStreamArchive
 
         /*! \brief Stop serialization
          * 
-         * \throw pulsar::exception::SerializationException if the object is
+         * \throw pulsar::SerializationException if the object is
          *        unserializing or if it is not serializing to begin with.
          */
         void end_serialization(void)
         {
             if(serializing_ == false)
-                throw exception::SerializationException("Can't stop serializing - Not serializing");
+                throw SerializationException("Can't stop serializing - Not serializing");
             if(unserializing_ == true)
-                throw exception::SerializationException("Can't stop serializing - Currently unserializing");
+                throw SerializationException("Can't stop serializing - Currently unserializing");
             if(!oarchive_)
                 throw std::logic_error("OArchive is not valid, but we are ending serialization");
 
@@ -97,15 +97,15 @@ class StdStreamArchive
 
         /*! \brief Start unserialization of stored data
          * 
-         * \throw pulsar::exception::SerializationException if the object is
+         * \throw pulsar::SerializationException if the object is
          *        already serializing or unserializing
          */
         void begin_unserialization(void)
         {
             if(serializing_ == true)
-                throw exception::SerializationException("Can't start unserializing - Currently serializing");
+                throw SerializationException("Can't start unserializing - Currently serializing");
             if(unserializing_ == true)
-                throw exception::SerializationException("Can't start unserializing - Already unserializing");
+                throw SerializationException("Can't start unserializing - Already unserializing");
             if(iarchive_)
                 throw std::logic_error("IArchive is valid, but we aren't doing anything");
 
@@ -121,14 +121,14 @@ class StdStreamArchive
 
         /*! \brief Extract data from the archive
          * 
-         * \throw pulsar::exception::SerializationException if we are serializing or we
+         * \throw pulsar::SerializationException if we are serializing or we
          *        are not unserializing.
          */
         template<typename... Targs>
         void unserialize(Targs &... args)
         {
             if(!unserializing_)
-                throw exception::SerializationException("unserialize called when we aren't unserializing");
+                throw SerializationException("unserialize called when we aren't unserializing");
             if(serializing_)
                 throw std::logic_error("Serializing and unserializing at the same time");
             if(!iarchive_)
@@ -143,7 +143,7 @@ class StdStreamArchive
          * 
          * Returns a single object. Useful for types without a public default constructor
          * 
-         * \throw pulsar::exception::SerializationException if we are serializing or we
+         * \throw pulsar::SerializationException if we are serializing or we
          *        are not unserializing.
          */
         template<typename T>
@@ -158,15 +158,15 @@ class StdStreamArchive
 
         /*! \brief Stop unserialization
          * 
-         * \throw pulsar::exception::SerializationException if the object is
+         * \throw pulsar::SerializationException if the object is
          *        serializing or if it is not unserializing to begin with.
          */
         void end_unserialization(void)
         {
             if(serializing_ == true)
-                throw exception::SerializationException("Can't stop unserializing - Currently serializing");
+                throw SerializationException("Can't stop unserializing - Currently serializing");
             if(unserializing_ == false)
-                throw exception::SerializationException("Can't stop unserializing - Not unserializing");
+                throw SerializationException("Can't stop unserializing - Not unserializing");
             if(!iarchive_)
                 throw std::logic_error("IArchive is not valid, but we are ending unserialization");
 
@@ -304,7 +304,7 @@ class FileArchive : public detail::StdStreamArchive<std::fstream>
         {
             stream_.open(path.c_str(), mode);
             if(!stream_.good())
-                throw exception::SerializationException("Error opening file");
+                throw SerializationException("Error opening file");
         }
 };
 

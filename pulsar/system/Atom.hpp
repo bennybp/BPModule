@@ -24,9 +24,6 @@ namespace system {
 
 /*! \brief A center in a system
  *
- * Atoms contain a unique index, which must be set on construction.
- * This would generally be the input ordering, but is otherwise arbitrary.
- *
  * Generally, Atoms would be created by one of the create_atom
  * free functions, which fill in much of the information with defaults
  * given a Z number (and optionally an isotope number).

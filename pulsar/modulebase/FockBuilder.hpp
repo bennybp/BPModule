@@ -51,7 +51,7 @@ class FockBuilder : public ModuleBase
          */
         math::IrrepSpinMatrixD calculate(const datastore::Wavefunction & wfn)
         {
-            return ModuleBase::fast_call_function(&FockBuilder::calculate_, wfn);
+            return ModuleBase::call_function(&FockBuilder::calculate_, wfn);
         }
 
 
@@ -82,13 +82,13 @@ class FockBuilder_Py : public FockBuilder
                                  const system::BasisSet & bs)
 
         {
-            return call_py_override<void>("initialize_", deriv, wfn, bs);
+            return call_py_override<void>(this, "initialize_", deriv, wfn, bs);
         }
 
 
         virtual math::IrrepSpinMatrixD calculate_(const datastore::Wavefunction & wfn)
         {
-            return call_py_override<math::IrrepSpinMatrixD>("calculate_", wfn);
+            return call_py_override<math::IrrepSpinMatrixD>(this, "calculate_", wfn);
         }
 };
 

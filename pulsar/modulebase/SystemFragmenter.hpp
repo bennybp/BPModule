@@ -156,7 +156,7 @@ public:
 
     virtual NMerSetType fragmentize_(const system::System & mol)
     {
-        return call_py_override<NMerSetType>("fragmentize_", mol);
+        return call_py_override<NMerSetType>(this, "fragmentize_", mol);
     }
 
     ///Python's dictionaries are stupid, this rolls the STL set into a string

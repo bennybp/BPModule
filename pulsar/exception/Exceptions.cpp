@@ -7,7 +7,6 @@
 #include <iomanip>
 
 namespace pulsar {
-namespace exception {
 
 
 void GeneralException::append_info_(const std::string & key,
@@ -64,6 +63,5 @@ const char * GeneralException::what(void) const noexcept
 }
 
 
-} // close namespace exception
 } // close namespace pulsar
 

@@ -166,13 +166,13 @@ class BasisSetShell : public BasisShellBase
 
         void assert_xyz_ptr_(void) const
         {
-            using namespace exception;
+            
             psr_assert<BasisSetException>(xyz_ != nullptr, "Null pointers in BasisSetShell");
         }
 
         void validate_xyz_idx_(unsigned int i) const
         {
-            using namespace exception;
+            
             if(i > 2)
                 throw BasisSetException("Attempt to access coordinate direction that does not exist",
                                         "i", i);
@@ -180,7 +180,7 @@ class BasisSetShell : public BasisShellBase
 
         void assert_xyz_idx_(unsigned int i) const
         {
-            using namespace exception;
+            
             psr_assert<BasisSetException>(i < 3, "Attempt to access coordinate direction that does not exist",
                                              "i", i);
         }

@@ -35,7 +35,7 @@ class GeneralShellIterator
          */
         GeneralShellIterator(const std::array<wrap_type, N> shells, bool splitcombined)
         {
-            using namespace pulsar::exception;
+            
 
             totalnshell_ = 1;
 
@@ -81,7 +81,7 @@ class GeneralShellIterator
 
         size_t n_general_contractionsShells(int n) const ASSERTIONS_ONLY
         {
-            using namespace pulsar::exception;
+            
             psr_assert<GeneralException>(n < N, "Given index is beyond the number of shells I have"); 
             return ngen_[n];
         }
@@ -110,7 +110,7 @@ class GeneralShellIterator
 
         size_t GeneralIdx(int n) const ASSERTIONS_ONLY
         {
-            using namespace pulsar::exception;
+            
             psr_assert<GeneralException>(n < N, "Given index is beyond the number of shells I have"); 
             return genidx_[n];
         }
@@ -123,7 +123,7 @@ class GeneralShellIterator
 
         int AM(int n) const ASSERTIONS_ONLY
         {
-            using namespace pulsar::exception;
+            
             psr_assert<GeneralException>(n < N, "Given index is beyond the number of shells I have");
             return curam_[n];
         }
@@ -131,7 +131,7 @@ class GeneralShellIterator
 
         bool Next(void) ASSERTIONS_ONLY
         {
-            using namespace pulsar::exception;
+            
 
             if(!Valid())
                 return false;

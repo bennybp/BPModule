@@ -6,8 +6,8 @@
 
 #include "pulsar/python/Call.hpp"
 
-using pulsar::exception::psr_assert;
-using pulsar::exception::GeneralException;
+using pulsar::psr_assert;
+using pulsar::GeneralException;
 
 namespace pulsar{
 namespace python {

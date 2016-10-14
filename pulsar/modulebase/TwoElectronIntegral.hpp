@@ -44,7 +44,7 @@ class TwoElectronIntegral : public ModuleBase
                         const system::BasisSet & bs3,
                         const system::BasisSet & bs4)
         {
-            ModuleBase::fast_call_function(&TwoElectronIntegral::uninitialized_or_throw_);
+            ModuleBase::call_function(&TwoElectronIntegral::uninitialized_or_throw_);
             ModuleBase::call_function(&TwoElectronIntegral::initialize_, deriv, wfn, bs1, bs2, bs3, bs4);
             initialized_ = true;
         }
@@ -74,8 +74,8 @@ class TwoElectronIntegral : public ModuleBase
                            uint64_t shell3, uint64_t shell4,
                            double * outbuffer, size_t bufsize)
         {
-            ModuleBase::fast_call_function(&TwoElectronIntegral::initialized_or_throw_);
-            return ModuleBase::fast_call_function(&TwoElectronIntegral::calculate_,
+            ModuleBase::call_function(&TwoElectronIntegral::initialized_or_throw_);
+            return ModuleBase::call_function(&TwoElectronIntegral::calculate_,
                                                 shell1, shell2, shell3, shell4,
                                                 outbuffer, bufsize);
         }
@@ -95,7 +95,7 @@ class TwoElectronIntegral : public ModuleBase
         {
             auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
-            return ModuleBase::fast_call_function(&TwoElectronIntegral::calculate_,
+            return ModuleBase::call_function(&TwoElectronIntegral::calculate_,
                                                 shell1, shell2, shell3, shell4,
                                                 ptrinfo.first, ptrinfo.second[0]);
         }
@@ -117,8 +117,8 @@ class TwoElectronIntegral : public ModuleBase
                                  const std::vector<uint64_t> & shells4,
                                  double * outbuffer, size_t bufsize)
         {
-            ModuleBase::fast_call_function(&TwoElectronIntegral::initialized_or_throw_);
-            return ModuleBase::fast_call_function(&TwoElectronIntegral::calculate_multi_,
+            ModuleBase::call_function(&TwoElectronIntegral::initialized_or_throw_);
+            return ModuleBase::call_function(&TwoElectronIntegral::calculate_multi_,
                                                   shells1, shells2, shells3, shells4,
                                                   outbuffer, bufsize);
         }
@@ -141,7 +141,7 @@ class TwoElectronIntegral : public ModuleBase
         {
             auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
-            return ModuleBase::fast_call_function(&TwoElectronIntegral::calculate_multi_,
+            return ModuleBase::call_function(&TwoElectronIntegral::calculate_multi_,
                                                 shells1, shells2, shells3, shells4,
                                                 ptrinfo.first, ptrinfo.second[0]);
         }
@@ -209,13 +209,13 @@ class TwoElectronIntegral : public ModuleBase
         void initialized_or_throw_(void) const
         {
             if(!initialized_)
-                throw exception::GeneralException("Module is not yet initialized");
+                throw GeneralException("Module is not yet initialized");
         }
 
         void uninitialized_or_throw_(void) const
         {
             if(initialized_)
-                throw exception::GeneralException("Module has already been initialized");
+                throw GeneralException("Module has already been initialized");
         }
 };
 
@@ -235,14 +235,14 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
                                  const system::BasisSet & bs4)
 
         {
-            return call_py_override<void>("initialize_", deriv, wfn, bs1, bs2, bs3, bs4);
+            return call_py_override<void>(this, "initialize_", deriv, wfn, bs1, bs2, bs3, bs4);
         }
 
 
         virtual unsigned int n_components_(void) const
         {
-            if(has_py_override("n_components_"))
-                return call_py_override<unsigned int>("n_components_");
+            if(has_py_override<TwoElectronIntegral>(this, "n_components_"))
+                return call_py_override<unsigned int>(this, "n_components_");
             else
                 return TwoElectronIntegral::n_components_();
         }
@@ -256,12 +256,12 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
 
             pybind11::buffer_info buf(outbuffer,
                                       sizeof(double),
-                                      pybind11::format_descriptor<double>::value,
+                                      pybind11::format_descriptor<double>::format(),
                                       1, { bufsize },
                                       { sizeof(double) });
 
-            return call_py_override<uint64_t>("calculate_", shell1, shell2, shell3, shell4,
-                                            buf, bufsize);
+            return call_py_override<uint64_t>(this, "calculate_", shell1, shell2, shell3, shell4,
+                                              buf, bufsize);
         }
 
 
@@ -272,17 +272,17 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
                                           double * outbuffer, size_t bufsize)
         {
 
-            if(has_py_override("calculate_multi_"))
+            if(has_py_override<TwoElectronIntegral>(this, "calculate_multi_"))
             {
                 //! \todo untested
 
                 pybind11::buffer_info pybuf(outbuffer,
                                             sizeof(double),
-                                            pybind11::format_descriptor<double>::value,
+                                            pybind11::format_descriptor<double>::format(),
                                             1, { bufsize },
                                             { sizeof(double) });
 
-                return call_py_override<uint64_t>("calculate_multi_",
+                return call_py_override<uint64_t>(this, "calculate_multi_",
                                                 shells1, shells2, shells3, shells4, pybuf, bufsize);
             }
             else

@@ -3,26 +3,31 @@
 /////////////////////////
 /*! \mainpage
 
-\section Description
-
-\todo Description
+Welcome to the Pulsar user / developer manual.  We have attempted to separate
+topics by whether they are of interest to users (people looking to interface
+to Pulsar by contributing modules) or developers (people who want to contribute
+to the core of Pulsar).  We also have a section on the basics of Pulsar, which
+is stuff you will likely want to know before reading further.
 
 \section main_sec Contents
 
-  - \ref compiling_page
-  - \ref testing_page
+  - Pulsar Basics
+    - [Terminology](@ref terminology)
   - User notes
+    - [Making Modules and Supermodules](@ref makemod)
+    - [Printing Things Out](@ref printing)
     - [Making and Using Systems](@ref systems)
   - Developer notes
+    - [Testing](@ref testing)
+    - [Documenting](@ref documenting)
     - [Basic Filesystem Layout](@ref basic)
     - [Exceptions and Error Handeling](@ref except)
-    - [Making Modules and Supermodules](@ref makemod)
     - [Module Basics](@ref modulebasics)
     - [Program Philosophy](@ref philosophy)
     - [Understanding the Graph and the Cache](@ref graphcache)
     - [Understanding Shared Libraries](@ref shared)
     - [Using and Setting Options](@ref Options)
-    - [Printing Things Out](@ref printing)
+
 
 
 \section Authors

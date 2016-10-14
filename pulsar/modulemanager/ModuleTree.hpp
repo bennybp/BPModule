@@ -91,7 +91,7 @@ class ModuleTree
 
         /*! \brief insert a node onto the tree
          *
-         * \throw pulsar::exception::ModuleManagerException if the
+         * \throw pulsar::ModuleManagerException if the
          *        parent node doesn't exist or if the id is
          *        not unique
          */
@@ -108,7 +108,7 @@ class ModuleTree
          * The ID represents the unique ID of the module
          * and also the unique ID of the tree node
          *
-         * \throw pulsar::exception::ModuleManagerException if
+         * \throw pulsar::ModuleManagerException if
          *        a node with that ID doesn't exist
          */
         const ModuleTreeNode & get_by_id(ID_t id) const;
@@ -119,7 +119,7 @@ class ModuleTree
          * The ID represents the unique ID of the module
          * and also the unique ID of the tree node
          *
-         * \throw pulsar::exception::ModuleManagerException if
+         * \throw pulsar::ModuleManagerException if
          *        a node with that ID doesn't exist
          */
         ModuleTreeNode & get_by_id(ID_t id);
@@ -131,7 +131,7 @@ class ModuleTree
 
         /*! \brief Iterate (depth first) starting with a given ID
          *
-         * \throw pulsar::exception::ModuleManagerException if the
+         * \throw pulsar::ModuleManagerException if the
          *        a node with the starting id doesn't exist
          *
          * \param [in] startid ID to use as the base of the tree

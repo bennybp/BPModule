@@ -5,9 +5,9 @@
  */
 #include <random>
 #include "pulsar/modulemanager/ModuleManager.hpp"
+#include "pulsar/datastore/CacheData.hpp"
 #include "pulsar/output/Output.hpp"
 #include "pulsar/modulebase/ModuleBase.hpp"
-#include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/datastore/Wavefunction.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 
@@ -17,7 +17,7 @@
 #include "pulsar/modulemanager/CppSupermoduleLoader.hpp"
 #include "pulsar/modulemanager/PySupermoduleLoader.hpp"
 
-using namespace pulsar::exception;
+
 using namespace pulsar::datastore;
 using namespace pulsar::modulebase;
 using namespace pulsar::output;
@@ -27,12 +27,6 @@ namespace pulsar{
 namespace modulemanager {
 
 
-std::string ModuleManager::make_cache_key_(const ModuleInfo & mi)
-{
-    return mi.name + "_v" + mi.version;
-}
-
-
 ModuleManager::ModuleManager()
     : debugall_(false),
       curid_(100)
@@ -40,21 +34,13 @@ ModuleManager::ModuleManager()
     // add the handlers
     loadhandlers_.emplace("c_module", std::unique_ptr<SupermoduleLoaderBase>(new CppSupermoduleLoader()));
     loadhandlers_.emplace("python_module", std::unique_ptr<SupermoduleLoaderBase>(new PySupermoduleLoader()));
-
-    //! \todo pass in via ModuleAdministrator or something
-    scratch_path_ = "/tmp";
 }
 
 
 ModuleManager::~ModuleManager()
 {
-    // wait for any checkpointing operations to finish
-    if(checkpoint_thread_)
-    {
-        print_global_warning("Waiting for any checkpoint threads to finish\n");
-        checkpoint_thread_->join();
-        checkpoint_thread_.reset();
-    }
+    // kill any syncronization threads first
+    stop_cache_sync();
 
     /*
      * Warn of any in-use modules
@@ -150,6 +136,8 @@ void ModuleManager::print(std::ostream & os) const
     std::lock_guard<std::mutex> l(mutex_);
     for(const auto & it : store_)
         it.second.mi.print(os);
+
+    cachemap_.print(os);
 }
 
 
@@ -302,7 +290,7 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
 
 
     if(parentid != 0 && !mtree_.has_id(parentid))
-        throw exception::ModuleCreateException("Parent does not exist on map", "parentid", parentid);
+        throw ModuleCreateException("Parent does not exist on map", "parentid", parentid);
 
 
     // obtain the options and validate them.
@@ -328,11 +316,13 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
 
 
     // add the moduleinfo to the tree
-    // (parentid, etc, will be set by the tree)
+    // (parentid, etc, will be set by the tree, but my compiler complains...)
     ModuleTreeNode me{modulekey,      // key
                       se.mi,          // module info
                       std::string(),  // output
                       curid_,         // module id
+                      0,              // parent id
+                      {}              // children
                      };
 
     // actually create the module
@@ -344,14 +334,14 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
     }
     catch(const std::exception & ex)
     {
-        throw exception::ModuleCreateException(ex,
+        throw ModuleCreateException(ex,
                                                "path", se.mi.path,
                                                "modulekey", modulekey,
                                                "modulename", se.mi.name);
     }
 
     if(!umbptr)
-        throw exception::ModuleCreateException("Module function returned a null pointer",
+        throw ModuleCreateException("Module function returned a null pointer",
                                                "path", se.mi.path,
                                                "modulekey", modulekey,
                                                "modulename", se.mi.name);
@@ -379,10 +369,9 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
     // Mark the id as in use
     modules_inuse_.emplace(curid_);
 
-    // get this module's cache
-    // don't use .at() -- we need it created if it doesn't exist already
-    std::string mbstr = make_cache_key_(mtn.minfo);
-    p->set_cache_(&(cachemap_[mbstr]));
+    // create a CacheData for this module
+    const std::string ckey = se.mi.name + "_v" + se.mi.version;
+    p->set_cache_(CacheData(&cachemap_, ckey));
 
     // next id
     curid_++;
@@ -423,7 +412,7 @@ void ModuleManager::change_option_py(const std::string & modulekey, const std::s
     try {
         se.mi.options.change_py(optkey, value);
     }
-    catch(exception::GeneralException & ex)
+    catch(GeneralException & ex)
     {
         ex.append_info("modulekey", modulekey);
         throw;
@@ -440,47 +429,17 @@ pybind11::object copy_key_change_options_py(
     return mm.get_module_py(temp_name,parentid);
 }
 
-////////////////////
-// Checkpointing
-////////////////////
 
-/*
-static void checkpoint_thread_function_(const ModuleManager & mm, std::string path)
+void ModuleManager::start_cache_sync(int tag)
 {
-    Checkpoint cp(path);
-    cp.save(mm); 
+    cachemap_.start_sync(tag);
 }
 
-void ModuleManager::save_checkpoint(bool separate_thread) const
+void ModuleManager::stop_cache_sync(void)
 {
-    // wait for any existing checkpointing operations to finish
-    if(checkpoint_thread_)
-    {
-        print_global_warning("Waiting for existing checkpoint thread to finish\n");
-        checkpoint_thread_->join();
-        checkpoint_thread_.reset();
-    }
-
-    // always create another thread (because I'm lazy)
-    std::thread th(checkpoint_thread_function_, std::ref(*this), scratch_path_);
-    checkpoint_thread_ = std::unique_ptr<std::thread>(new std::thread(std::move(th)));
-
-    // if we don't want a separate thread, just join and wait for the
-    // new thread to finish
-    if(!separate_thread)
-    {
-        checkpoint_thread_->join();
-        checkpoint_thread_.reset();
-    }
+    cachemap_.stop_sync();
 }
 
-
-void ModuleManager::load_checkpoint(void)
-{
-    Checkpoint cp(scratch_path_);
-    cp.load(*this);
-}
-*/
 
 
 } // close namespace modulemanager

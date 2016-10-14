@@ -12,7 +12,7 @@
 #include "pulsar/math/PointManipulation.hpp"
 
 using pulsar::output::print_global_debug;
-using pulsar::exception::SystemException;
+using pulsar::SystemException;
 
 
 // Instantiate the MathSet, etc, templates

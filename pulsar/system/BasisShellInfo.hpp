@@ -48,7 +48,7 @@ class BasisShellInfo : public BasisShellBase
               alphas_(std::move(alphas)),
               coefs_(std::move(allcoefs))
         {
-            using namespace exception;
+            
 
             if(alphas_.size() != n_primitives())
                 throw BasisSetException("Incompatible dimensions for alphas", "nprim", n_primitives(),

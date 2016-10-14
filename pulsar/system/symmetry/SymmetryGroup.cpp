@@ -17,7 +17,7 @@ namespace system{
 
 using std::to_string;
 typedef std::unordered_set<SymmetryElement> Elem_t;
-using exception::GeneralException;
+
 
 
 inline std::string DnhMHSym(size_t n){
@@ -121,7 +121,7 @@ bool SymmetryGroup::finite()const{
 
 size_t SymmetryGroup::order()const{
     if(!finite())
-        throw exception::GeneralException("Group is infinite order");
+        throw GeneralException("Group is infinite order");
     return symmetry_elements.size();
 }
 

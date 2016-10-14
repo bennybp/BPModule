@@ -5,13 +5,12 @@
  */
 
 
-#ifndef PULSAR_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
-#define PULSAR_GUARD_MODULEMANAGER__MODULEMANAGER_HPP_
+#pragma once
 
 #include <atomic>
 #include <thread>
 
-#include "pulsar/datastore/CacheData.hpp"
+#include "pulsar/datastore/CacheMap.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/modulemanager/ModuleCreationFuncs.hpp"
 #include "pulsar/modulemanager/ModuleTree.hpp"
@@ -57,7 +56,7 @@ class ModuleManager
 
         /*! \brief Returns the information about a module with a given module key
          *
-         * \throw pulsar::exception::ModuleManagerException
+         * \throw pulsar::ModuleManagerException
          *        if the module key or its associated name doesn't exist in the database
          *
          * \param [in] modulekey A module key
@@ -83,7 +82,7 @@ class ModuleManager
          * This goes through and tests the module creation for all keys. It does
          * not attempt to cast them, though. This is a simple sanity check
          *
-         * \throw pulsar::exception::ModuleCreateException if there is a problem
+         * \throw pulsar::ModuleCreateException if there is a problem
          *
          * \exbasic
          * \todo make strong?
@@ -103,10 +102,10 @@ class ModuleManager
          * If the parent is not in use, the wavefunction is set to the final
          * wavefunction of the parent.
          *
-         * \throw pulsar::exception::ModuleManagerException
+         * \throw pulsar::ModuleManagerException
          *        if the key doesn't exist in the database
          *
-         * \throw pulsar::exception::ModuleCreateException if there are other
+         * \throw pulsar::ModuleCreateException if there are other
          *        problems creating the module
          *
          * \exbasic
@@ -126,7 +125,7 @@ class ModuleManager
             std::unique_ptr<detail::ModuleIMPLHolder> umbptr = create_module_(modulekey, parentid);
 
             if(!umbptr->IsType<T>())
-                throw exception::ModuleCreateException("Module for this key is not of the right type",
+                throw ModuleCreateException("Module for this key is not of the right type",
                                                        "modulekey", modulekey,
                                                        "expectedtype", util::demangle_cpp_type<T>());
 
@@ -148,10 +147,10 @@ class ModuleManager
          * If the parent is not in use, the wavefunction is set to the final
          * wavefunction of the parent.
          *
-         * \throw pulsar::exception::ModuleManagerException
+         * \throw pulsar::ModuleManagerException
          *        if the key doesn't exist in the database
          *
-         * \throw pulsar::exception::ModuleCreateException if there are other
+         * \throw pulsar::ModuleCreateException if there are other
          *        problems creating the module
          *
          * \exbasic
@@ -168,7 +167,7 @@ class ModuleManager
 
         /*! \brief Change an option for a module
          * 
-         * \throw pulsar::exception::ModuleManagerException
+         * \throw pulsar::ModuleManagerException
          *        if the key doesn't exist in the database or
          *        if options can't be changed since the module
          *        has been used.
@@ -180,7 +179,7 @@ class ModuleManager
         template<typename T>
         void change_option(const std::string & modulekey, const std::string & optkey, const T & value)
         {
-            using namespace exception;
+            
 
             StoreEntry & se = get_or_throw_(modulekey);
 
@@ -192,7 +191,7 @@ class ModuleManager
             try {
                 se.mi.options.change(optkey, value);
             }
-            catch(exception::GeneralException & ex)
+            catch(GeneralException & ex)
             {
                 ex.append_info("modulekey", modulekey);
                 throw;
@@ -204,7 +203,7 @@ class ModuleManager
          *
          * Options, etc, are copied from the original key.
          *
-         * \throw pulsar::exception::ModuleManagerException
+         * \throw pulsar::ModuleManagerException
          *        if the key doesn't exist in the database
          *
          * \param [in] modulekey Existing module key to duplicate
@@ -227,7 +226,7 @@ class ModuleManager
 
         /*! \brief Change an option for a module (python version)
          * 
-         * \throw pulsar::exception::ModuleManagerException
+         * \throw pulsar::ModuleManagerException
          *        if the key doesn't exist in the database or
          *        if options can't be changed since the module
          *        has been used.
@@ -245,7 +244,7 @@ class ModuleManager
          * The supermodule is loaded via a handler, and then info
          * for the module is extracted from the supermodule information.
          *
-         * \throw pulsar::exception::ModuleLoaderException if the key
+         * \throw pulsar::ModuleLoaderException if the key
          *        already exists in the database or if \p mc doesn't
          *        contain a creator for the given module name (in \p mi)
          *
@@ -269,20 +268,27 @@ class ModuleManager
          */
         void enable_debug_all(bool debug) noexcept;
 
+
         /*! \brief Notify the module manager that a module ID is no longer in use */
         void notify_destruction(ID_t id);
+
+
+        /*! \brief Start syncronizing this module manager's cache
+         *         across all ranks
+         */
+        void start_cache_sync(int tag);
+
+        /*! \brief Stop syncronizing this module manager's cache
+         *  across all ranks
+         */
+        void stop_cache_sync(void);
+
 
     private:
         friend class Checkpoint;
 
         //! Protects the class in multi-thread operations
         mutable std::mutex mutex_;
-
-        //! Threads currently running checkpointing operations
-        mutable std::unique_ptr<std::thread> checkpoint_thread_;
-
-        //! My scratch path (for checkpointing, etc)
-        std::string scratch_path_;
 
         /*! \brief An entry for a module in the database
          */
@@ -334,16 +340,14 @@ class ModuleManager
         std::set<ID_t> modules_inuse_;
 
 
-        /*! \brief Map of cache data
-         *
-         * The key is a combination of the module name and version
-         */
-        std::map<std::string, datastore::CacheData> cachemap_;
+        /*! \brief All of the cache data */
+        datastore::CacheMap cachemap_;
 
 
-        /*! \brief Obtain stored internal info for a module (via module key) or throw an exception
+        /*! \brief Obtain stored internal info for a module (via module key)
+         *         or throw an exception
          *
-         * \throw pulsar::exception::ModuleManagerException
+         * \throw pulsar::ModuleManagerException
          *        if the key or name doesn't exist
          *
          * \param [in] modulekey A module key
@@ -356,13 +360,12 @@ class ModuleManager
         StoreEntry & get_or_throw_(const std::string & modulekey);
 
 
-
         /*! \brief Create a module via its creator function
          *
-         * \throw pulsar::exception::ModuleManagerException
+         * \throw pulsar::ModuleManagerException
          *        if the key doesn't exist in the database
          *
-         * \throw pulsar::exception::ModuleCreateException if there are other
+         * \throw pulsar::ModuleCreateException if there are other
          *        problems creating the module
          *
          * \return A pair with the first member being a raw pointer and
@@ -375,16 +378,14 @@ class ModuleManager
          */
         std::unique_ptr<detail::ModuleIMPLHolder>
         create_module_(const std::string & modulekey, ID_t parentid);
-
-
-        /*! \brief Create a key for the cache given a ModuleInfo */
-        static std::string make_cache_key_(const ModuleInfo & mi);
 };
 
-/** \brief Given an existing module, the ID of the new module's parent, a module manager, and a map (option_key to value) of options to change.  This function will copy the module into a unique key, change the options, and return the module implementation.
- 
- TODO: Make a C++ version
- 
+
+/** \brief Given an existing module, the ID of the new module's parent, a module manager, and a
+ *  map (option_key to value) of options to change.  This function will copy the module into a
+ *  unique key, change the options, and return the module implementation.
+ *
+ *  \todo Make a C++ version
  */
 pybind11::object copy_key_change_options_py(const std::string& modulekey, 
                                             ID_t parentid,ModuleManager& mm,
@@ -395,5 +396,3 @@ pybind11::object copy_key_change_options_py(const std::string& modulekey,
 } // close namespace modulemanager
 } // close namespace pulsar
 
-
-#endif

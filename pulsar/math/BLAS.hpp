@@ -113,7 +113,7 @@ NonSymmDiagReturn_t NonSymmetricDiagonalize(Mat_t Matrix,int n,
     dgeev(&rv,&lv,&n,Matrix.data(),&Stride,
             evalReal.data(),evalImag.data(),vl.data(),&n,vr.data(),&n,work,&lwork,&info);
     if(info!=0){
-        throw exception::GeneralException("There was a problem diagonalizing"
+        throw GeneralException("There was a problem diagonalizing"
                 "your matrix.","info code:",info);
     }
     delete [] work;
@@ -142,7 +142,7 @@ SVDReturn_t SVD(Mat_t M, size_t m, size_t n,size_t LDA=0,size_t LDU=0,
            LVecs.data(),(int*)(&LDU),RVecs.data(),(int*)(&LDVT),work.data(),
            &lwork,&info);
     if(info > 0)
-        throw exception::GeneralException("SVD failed to converge");
+        throw GeneralException("SVD failed to converge");
     
     return std::make_tuple(LVecs,SVals,RVecs);    
 }

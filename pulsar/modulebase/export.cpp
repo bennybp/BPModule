@@ -57,6 +57,8 @@ void export_pybind11(pybind11::module & mtop)
             .def("call_run_test2", &Test_Base::call_run_test2)
             .def("test_throw", &Test_Base::test_throw)
             .def("call_throw", &Test_Base::call_throw)
+            .def("add_to_cache", &Test_Base::add_to_cache)
+            .def("get_from_cache", &Test_Base::get_from_cache)
             ;
 
 

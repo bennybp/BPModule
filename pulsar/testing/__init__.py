@@ -2,7 +2,7 @@
 from ..pulsar_core.testing import *
 
 # Tester class
-from .Tester import *
+from .TesterPy import *
 
 from pulsar.output import *
 

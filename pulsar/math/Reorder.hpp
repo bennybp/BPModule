@@ -117,15 +117,13 @@ void reorder_block(const std::vector<size_t> & neworder,
  * return a vector 3512460. Passing this vector
  * to reorder_block will transform \p src into \p dest 
  *
- * \throw pulsar::exception::MathException if the element of \p dest
+ * \throw pulsar::MathException if the element of \p dest
  *        is not found in \p src
  */
 template<typename T>
 std::vector<size_t> make_ordering(const std::vector<T> & src,
                                   const std::vector<T> & dest)
 {
-    using exception::MathException;
-
     std::vector<size_t> ret;
     ret.reserve(dest.size());
 

@@ -20,7 +20,7 @@ PRAGMA_WARNING_IGNORE_UNRECOGNIZED_PRAGMA
 //Intel at least doesn't seem to like it
 #pragma STDC FENV_ACCESS on
 PRAGMA_WARNING_POP
-using pulsar::exception::GeneralException;
+using pulsar::GeneralException;
 
 namespace pulsar{
     namespace math{

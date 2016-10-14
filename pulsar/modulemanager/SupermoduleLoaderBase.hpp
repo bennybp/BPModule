@@ -45,7 +45,7 @@ class SupermoduleLoaderBase
 
         /*! \brief Load a supermodule
          *
-         * \throw pulsar::exception::ModuleLoadException if there
+         * \throw pulsar::ModuleLoadException if there
          *        is a problem (missing function, etc)
          *
          * \param [in] spath The path to the supermodule to be loaded

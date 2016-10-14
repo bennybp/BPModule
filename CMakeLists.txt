@@ -93,15 +93,33 @@ add_dependencies(pulsar_core memwatch_external
                              pybind11_external
                              libtaskforce_external
                )
-
-
+ExternalProject_Add(pulsar_test
+   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test
+   BINARY_DIR ${CMAKE_BINARY_DIR}/test   
+   CMAKE_ARGS -DCMAKE_BUILD_TYPE=${PULSAR_BUILD_TYPE}
+              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
+              -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
+              -DMPI_C_COMPILER=${MPI_C_COMPILER}
+              -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
+              -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+              -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
+              -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+              -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
+   CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH};
+                                            ${STAGE_DIR}/${CMAKE_INSTALL_PREFIX}
+                    -DCMAKE_MODULE_PATH:STRING=${CMAKE_MODULE_PATH}
+   BUILD_COMMAND $(MAKE)
+   BUILD_ALWAYS 1
+   INSTALL_COMMAND $(MAKE) install
+)
+add_dependencies(pulsar_test pulsar_core)
 #################################
 # Installation
 #################################
 
 # Install the staging directory
-install(DIRECTORY ${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/ DESTINATION ${CMAKE_INSTALL_PREFIX} USE_SOURCE_PERMISSIONS)
+install(DIRECTORY ${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/ 
+        DESTINATION ${CMAKE_INSTALL_PREFIX} USE_SOURCE_PERMISSIONS)
 
 # Install some random stuff
 install(DIRECTORY basis DESTINATION ${CMAKE_INSTALL_PREFIX})
-install(DIRECTORY test DESTINATION ${CMAKE_INSTALL_PREFIX} USE_SOURCE_PERMISSIONS)

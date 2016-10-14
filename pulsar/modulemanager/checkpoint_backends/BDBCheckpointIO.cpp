@@ -10,7 +10,7 @@
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 
-using namespace pulsar::exception;
+
 using pulsar::util::to_byte_array;
 using pulsar::util::from_byte_array;
     

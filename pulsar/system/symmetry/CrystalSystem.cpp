@@ -42,7 +42,7 @@ CrystalSystem AssignCrystalSystem(const Vector_t& As,
         if(UniqueSides==2&&N120==1)return Hexagonal(As,Ss);
         else return Monoclinic(As,Ss);
     }    
-    throw exception::GeneralException("Your angle/sides do not correspond to any of the"
+    throw GeneralException("Your angle/sides do not correspond to any of the"
                            "7 possible crystal systems to within the"
                            "specified tolerance.",
                            "Alpha",As[0],"Beta",As[1],"Gamma",As[2],

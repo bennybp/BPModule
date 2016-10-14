@@ -10,9 +10,88 @@
 
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/math/Universe.hpp"
-
+#include "pulsar/util/IterTools.hpp"
+#include <iterator>
 namespace pulsar{
 namespace math {
+
+template<typename T,typename U> class MathSet;
+
+/** An iterator to go with the MathSet class, returns actual objects
+ *
+ * The iterator only allows accessing the data, not modifying. That is,
+ * this only behaves like a const_iterator
+ */
+template<typename T, typename U>
+class ConstSetItr : public std::iterator<std::input_iterator_tag, const T> {
+private:
+    ///My type
+    typedef ConstSetItr<T, U> My_t;
+    typedef Universe<T,U> Universe_t;
+    ///Type of the iterator to the Indices in the universe
+    typedef std::set<size_t>::const_iterator Itr_t;
+    ///The index I currently point to
+    Itr_t CurrIdx_;
+    ///The universe I am tied to
+    const Universe_t* Set_;
+    ///Let MathSet play with my private parts
+    friend MathSet<T, U>;
+    ///Only universe can make a working iterator
+    ConstSetItr(Itr_t CurrIdx, const Universe_t* Set) :
+        CurrIdx_(CurrIdx), Set_(Set) { }
+
+public:
+    ///Type being iterated over
+    typedef T value_type;
+
+    ///Resulting iterator is unusable unless it is set equal to usable version
+    ConstSetItr()=default;
+    ConstSetItr(const ConstSetItr&) = default;
+    ConstSetItr& operator=(const ConstSetItr&) = default;
+    ConstSetItr(ConstSetItr&&) = default;
+    ConstSetItr& operator=(ConstSetItr&&) = default;
+    ~ConstSetItr() = default;
+
+    ///Returns true if this iterator is equal to RHS
+    bool operator==(const My_t& RHS)const
+    {
+        return (CurrIdx_ == RHS.CurrIdx_ &&
+                Set_ == RHS.Set_);
+    }
+
+    ///Returns true if this iterator is not equal to RHS
+    bool operator!=(const My_t& RHS)const
+    {
+        return !this->operator==(RHS);
+    }
+
+    ///Returns a reference to the current element
+    const T & operator*()const
+    {
+        return (*Set_)[*CurrIdx_];
+    }
+
+    const T * operator->()const
+    {
+        return &((*Set_)[*CurrIdx_]);
+    }
+
+    ///Prefix increment operator
+    My_t& operator++()
+    {
+        ++CurrIdx_;
+        return *this;
+    }
+
+    ///Postfix increment operator
+    My_t operator++(int)
+    {
+        My_t ret(*this);
+        ++CurrIdx_;
+        return ret;
+    }
+
+};
 
 /** \brief A class for performing set manipulations efficiently relative to
  *   some universe.
@@ -26,31 +105,6 @@ namespace math {
  *   possible to simply use the Universe class for set manipulations (barring
  *   complement), it will just not be as efficient.
  *
- *   Because a MathSet derives from Universe it is perfectly capable of being
- *   itself used as a universe.  Note that the privateness of the Universe
- *   base class means you can't pass this class by it's base class to anything
- *   other than this class.  All classes that intend to use MathSet should
- *   derive from it.
- *
- *   Developer note:  I originally thought we could get away without the
- *   shared_ptr to the Universe_.  When we link to a Universe, we just set
- *   the Storage_ in the base class to that of the one in Universe we are
- *   linking to.  Then we can use the base class's interface to do everything.
- *   This works fine if we don't ever intend to use a MathSet as a universe, but
- *   we do.  Imagine we have:
- *   \code
- *    Universe U;
-     MathSet A(U);
- *    MathSet B(A);
- *   \endcode
- *   where we assume the objects are actually declared and setup correctly,
- *   additionally we assume A is a proper subset of U. Now how do we know if an
- *   element is in B's Universe?  For A we just had to check if it was in
- *   Storage_, but for B this won't work because Storage_ hasn't changed to
- *   represent the reduced subspace (we could do this, but then we'd have to
- *   copy and the point of this class is to avoid that (the Universe class
- *   would have taken that route)).  However, by storing a pointer to A, we
- *   need only compare against A's Elems_.
  *
  * \par Hashing
  *     The hash value of a MathSet is unique with respect to the values
@@ -63,96 +117,36 @@ namespace math {
  *
  */
 template<typename T, typename U = std::vector<T>>
-class MathSet : public Universe<T, U> {
+class MathSet {
 private:
-    ///Base class's type
-    typedef Universe<T, U> Base_t;
     ///This class's type
     typedef MathSet<T, U> My_t;
-
-    std::shared_ptr<const Base_t> Universe_;
-
-    void universe_contains(const T& Elem)const
-    {
-        if (!Universe_->count(Elem))
-            throw exception::ValueOutOfRange("Requested element is not in the universe for this set");
-    }
-
-    void universe_contains_idx(size_t Idx)const
-    {
-        if (!Universe_->count_idx(Idx))
-            throw exception::ValueOutOfRange("Requested element is not in the universe for this set");
-    }
-
-    void SameUniverse(const My_t& RHS) const
-    {
-        if(Universe_ != RHS.Universe_)
-            throw exception::MathException("Operation being performed on sets with different universes");
-    }
-
-    // constructs via shared pointer to universe and a given
-    // set of elements
-    MathSet(std::shared_ptr<const Base_t> AUniverse,
-            const std::set<size_t> & Elems)
-    : Universe_(AUniverse)
-    {
-        this->Elems_ = Elems;
-    }
-
-    //! \name Serialization and Hashing
-    ///@{
-
-    DECLARE_SERIALIZATION_FRIENDS
-    BPHASH_DECLARE_HASHING_FRIENDS
-
-    /* We have to split load/save since the
-     * the shared_ptr points to const data, and
-     * cereal can't serialize to const data
-     */
-    template<class Archive>
-    void save(Archive & ar) const
-    {
-        ar(cereal::base_class<Base_t>(this), Universe_);
-    }
-
-    template<class Archive>
-    void load(Archive & ar)
-    {
-        std::shared_ptr<Base_t> Newuniverse;
-        ar(cereal::base_class<Base_t>(this), Newuniverse);
-        Universe_=std::move(Newuniverse);
-    }
-
-    void hash(bphash::Hasher & h) const
-    {
-        h(static_cast<const Base_t &>(*this), Universe_);
-    }
-
-    ///@}
-
-
-
 public:
     typedef ConstSetItr<T, U> const_iterator;
     typedef T value_type;
     typedef U store_type;
     typedef std::function<bool(const T &) > SelectorFunc;
     typedef std::function<T(const T &)> TransformerFunc;
-
     typedef Universe<T, U> Universe_t;
 
 
     /// \name Constructors, destructors, assignment
     ///@{
-
+    // constructs via shared pointer to universe and a given
+    // set of elements
+    MathSet(std::shared_ptr<const Universe_t> AUniverse,
+            const std::set<size_t> & Elems)
+    : Universe_(AUniverse)
+    {
+        this->Elems_ = Elems;
+    }
     ///Makes a set that is part of the given universe
     // fill = Make this set a set of all elements in the universe
-    MathSet(std::shared_ptr<const Base_t> AUniverse, bool fill)
+    MathSet(std::shared_ptr<const Universe_t> AUniverse, bool fill)
           : Universe_(AUniverse)
     {
-        if (fill) {
-            this->Elems_ = AUniverse->Elems_;
-        }
+            for(size_t i : util::Range<0>(fill?AUniverse->size():0))
+                Elems_.insert(i);
     }
 
 
@@ -169,13 +163,13 @@ public:
     ///Deep copies elements, shallow copies Universe_ and (and Storage_)
     My_t & operator=(const My_t & RHS){//appears to also not work defaulted
         if(this==&RHS)return *this;
-        Base_t::operator=(RHS);
         Universe_=RHS.Universe_;
+        Elems_=RHS.Elems_;
         return *this;
     }
     MathSet & operator=(My_t&& RHS){//Getting undefined reference when defaulted
-        Base_t::operator=(std::move(RHS));
         Universe_=std::move(RHS.Universe_);
+        Elems_=std::move(RHS.Elems_);
         return *this;
     }
     MathSet(const My_t&) = default;
@@ -184,13 +178,12 @@ public:
     ///Returns a deep copy of everything
     My_t clone()const
     {
-        return My_t(std::shared_ptr<Base_t>(new Base_t(*Universe_)), this->Elems_);
-        //                                      ^^ Deep copy universe, copy elements
+        return My_t(std::make_shared<Universe_t>(*Universe_), this->Elems_);
     }
 
 
     /// Obtain the universe used by this set
-    std::shared_ptr<const Base_t> get_universe(void) const
+    std::shared_ptr<const Universe_t> get_universe(void) const
     {
         return Universe_;
     } 
@@ -200,11 +193,11 @@ public:
      *
      * The new universe is not linked to this object in any way
      */
-    Base_t as_universe(void) const
+    Universe_t as_universe(void) const
     {
-        Base_t newuniverse;
+        Universe_t newuniverse;
         for(const auto & it : *this)
-            newuniverse.insert(it);
+            newuniverse.push_back(it);
         return newuniverse;
     }   
 
@@ -217,17 +210,17 @@ public:
     ///Returns the number of elements in this set
     size_t size(void)const noexcept
     {
-        return this->Elems_.size();
+        return Elems_.size();
     }
 
     const_iterator begin() const
     {
-        return const_iterator(Universe_->MakeIterator(this->Elems_.begin()));
+        return const_iterator(Elems_.begin(),Universe_.get());
     }
 
     const_iterator end() const
     {
-        return const_iterator(Universe_->MakeIterator(this->Elems_.end()));
+        return const_iterator(Elems_.end(),Universe_.get());
     }
 
 
@@ -237,7 +230,7 @@ public:
                 count_idx(idx(Elem)) > 0);
     }
 
-    bool count_idx(size_t Idx)const { return this->Elems_.count(Idx); }
+    bool count_idx(size_t Idx)const { return Elems_.count(Idx); }
 
     size_t idx(const T& Elem)const
     {
@@ -254,21 +247,21 @@ public:
     My_t& insert(const T & Elem)
     {
         universe_contains(Elem);
-        this->Elems_.insert(idx(Elem));
+        Elems_.insert(idx(Elem));
         return *this;
     }
     
     My_t& insert_idx(size_t Idx)
     {
         universe_contains_idx(Idx);
-        this->Elems_.insert(Idx);
+        Elems_.insert(Idx);
         return *this;
     }
 
     My_t& union_assign(const My_t & RHS)
     {
         SameUniverse(RHS);
-        this->Elems_.insert(RHS.Elems_.begin(), RHS.Elems_.end());
+        Elems_.insert(RHS.Elems_.begin(), RHS.Elems_.end());
         return *this;
     }
 
@@ -278,36 +271,14 @@ public:
     }
 
 
-    My_t& intersection_assign(const My_t& RHS)
-    {
-        SameUniverse(RHS);
-        // careful, RHS may be the same object as this
-        std::set<size_t> NewTemp;
-        std::set_intersection(this->Elems_.begin(), this->Elems_.end(),
-                RHS.Elems_.begin(), RHS.Elems_.end(),
-                std::inserter<std::set<size_t>>(
-                NewTemp, NewTemp.begin()));
-        this->Elems_ = std::move(NewTemp);
-        return *this;
-    }
+    My_t& intersection_assign(const My_t& RHS);
 
     My_t intersection(const My_t & RHS) const
     {
         return My_t(*this).intersection_assign(RHS);
     }
 
-    My_t& difference_assign(const My_t& RHS)
-    {
-        SameUniverse(RHS);
-        // careful, RHS may be the same object as this
-        std::set<size_t> NewTemp;
-        std::set_difference(this->Elems_.begin(), this->Elems_.end(),
-                RHS.Elems_.begin(), RHS.Elems_.end(),
-                std::inserter<std::set < size_t >> (
-                NewTemp, NewTemp.begin()));
-        this->Elems_ = std::move(NewTemp);
-        return *this;
-    }
+    My_t& difference_assign(const My_t& RHS);
 
     My_t difference(const My_t& RHS) const
     {
@@ -459,7 +430,7 @@ public:
      */
     bool operator==(const My_t& RHS)const
     {
-        return (Universe_ == RHS.Universe_ && this->Elems_ == RHS.Elems_);
+        return (Universe_ == RHS.Universe_ && Elems_ == RHS.Elems_);
     }
 
     /** \brief Returns true if this does not equal other
@@ -484,12 +455,12 @@ public:
     {
         //! \todo better way to do this function?
         //  This makes some assumptions about the ordering of elements
-        std::shared_ptr<Base_t> newuniverse(new Base_t);
+        std::shared_ptr<Universe_t> newuniverse(new Universe_t);
 
         for(size_t i = 0; i < Universe_->size(); ++i) {
             const auto & it = (*Universe_).at(i);
 
-            if (this->Elems_.count(i) > 0)
+            if (Elems_.count(i) > 0)
                 newuniverse->insert(transformer(it));
             else
                 newuniverse->insert(it);
@@ -500,7 +471,7 @@ public:
     My_t partition(SelectorFunc selector) const
     {
         std::set<size_t> newelems;
-        for(const auto & idx : this->Elems_) {
+        for(const auto & idx : Elems_) {
             const auto & el = (*Universe_)[idx];
             if(selector(el))
                 newelems.insert(idx);
@@ -512,7 +483,7 @@ public:
     virtual std::string to_string()const
     {
         std::stringstream ss;
-        for (const size_t& EI : this->Elems_)
+        for (const size_t& EI : Elems_)
             ss << (*Universe_)[EI] << " ";
         return ss.str();
     }
@@ -528,11 +499,105 @@ public:
     {
         return bphash::make_hash(bphash::HashType::Hash128, *this);
     }
+    
+private:
+
+  
+    ///The universe associated with this MathSet
+    std::shared_ptr<const Universe_t> Universe_;
+    
+    ///Which elements of the universe are in the set
+    std::set<size_t> Elems_;
+
+    ///Does the universe contain the element
+    void universe_contains(const T& Elem)const
+    {
+        if (!Universe_->count(Elem))
+            throw ValueOutOfRange("Requested element is not in the universe");
+    }
+    
+    ///Does the universe contain the index
+    void universe_contains_idx(size_t Elem)const
+    {
+        if (Elem>=Universe_->size())
+            throw ValueOutOfRange("Requested element is not in the universe");
+    }
+
+    void SameUniverse(const My_t& RHS) const
+    {
+        if(Universe_ != RHS.Universe_)
+            throw MathException("Sets have different universes");
+    }
+
+    //! \name Serialization and Hashing
+    ///@{
+
+    DECLARE_SERIALIZATION_FRIENDS
+    BPHASH_DECLARE_HASHING_FRIENDS
+
+    /* We have to split load/save since the
+     * the shared_ptr points to const data, and
+     * cereal can't serialize to const data
+     */
+    template<class Archive>
+    void save(Archive & ar) const
+    {
+        ar(Universe_,Elems_);
+    }
+
+    template<class Archive>
+    void load(Archive & ar)
+    {
+        std::shared_ptr<Universe_t> Newuniverse;
+        ar(Newuniverse,Elems_);
+        Universe_=std::move(Newuniverse);
+    }
+
+    void hash(bphash::Hasher & h) const
+    {
+        h(Universe_,Elems_);
+    }
+
+    ///@}
+
 
 };
 
+template<typename T,typename U>
+MathSet<T,U>& MathSet<T,U>::intersection_assign(const MathSet<T,U>& RHS)
+{
+        SameUniverse(RHS);
+        if(&RHS==this)return *this;
+        std::set<size_t> NewTemp;
+        std::set_intersection(Elems_.begin(),Elems_.end(),
+                RHS.Elems_.begin(), RHS.Elems_.end(),
+                std::inserter<std::set<size_t>>(
+                NewTemp, NewTemp.begin()));
+        Elems_ = std::move(NewTemp);
+        return *this;
 }
-}//End namespaces
+
+
+template<typename T,typename U>
+MathSet<T,U>& MathSet<T,U>::difference_assign(const MathSet<T,U>& RHS)
+    {
+        SameUniverse(RHS);
+        if(&RHS==this){
+            Elems_=std::set<size_t>();
+            return *this;
+        }
+        std::set<size_t> NewTemp;
+        std::set_difference(Elems_.begin(),Elems_.end(),
+                RHS.Elems_.begin(), RHS.Elems_.end(),
+                std::inserter<std::set < size_t >> (
+                NewTemp, NewTemp.begin()));
+        Elems_ = std::move(NewTemp);
+        return *this;
+    }
+
+
+}//End namespace math
+}//End namespace pulsar
 
 #endif /* PULSAR_GUARD_MATHSET_HPP_ */
 

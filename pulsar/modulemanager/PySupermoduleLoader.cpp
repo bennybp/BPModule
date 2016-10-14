@@ -12,7 +12,7 @@
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/python/Call.hpp"
 
-using namespace pulsar::exception;
+
 using namespace pulsar::output;
 
 

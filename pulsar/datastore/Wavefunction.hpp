@@ -35,8 +35,6 @@ class Wavefunction
 
         void valid_check(void) const
         {
-            using exception::GeneralException;
-
             // check for consistent irreps, spins, etc,
             // accross all members 
             //! \todo compare with system?

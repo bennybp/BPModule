@@ -17,11 +17,11 @@
 #include "bphash/types/memory.hpp"
 
 using namespace pulsar::python;
-using namespace pulsar::exception;
+
 using namespace pulsar::util;
 
 
-namespace pulsar{
+namespace pulsar {
 namespace datastore {
 namespace detail {
 

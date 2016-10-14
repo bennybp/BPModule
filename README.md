@@ -84,6 +84,8 @@ We see the main reasons to use Pulsar as:
 - Standards/ Best Practices/ Developer's Manual
   - We strive to make our code practices transparent and readily available
 
+To learn more about Pulsar we encourage you to build the documentation, which can be done by cloning this repo and running `doxygen` in the top-level directory of the resulting clone.  The documentation contains detailed explanations of how to do common tasks in Pulsar, APIs for all classes (Python APIs require you to install doxypypy, which can be done by running `pip install doxypypy`), etc.
+
 # Compilation Instructions
 
 Great.  We convinced you to at least try Pulsar.  So how do you go about
@@ -104,8 +106,8 @@ You must have the following already compiled and available:
   * CMake version 3.0 or higher
   * GCC or Intel compiler with C++11 support
     * GCC recommended for now, but Intel is regularly tested too
-  * Basic Linear Algebra System (BLAS) library
-    * Needed for math
+  * Eigen matrix library
+  * BerkeleyDB (it's on almost every Linux box by default).
 
 The following are our current dependencies (and their dependencies).  If we can
 not locate them on your system they will be built for you using the settings

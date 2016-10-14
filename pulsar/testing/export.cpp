@@ -5,10 +5,9 @@
  */ 
 
 #include "pulsar/testing/TestConvert.hpp"
-#include "pulsar/testing/TestDatastore.hpp"
 #include "pulsar/testing/TestOptions.hpp"
 #include "pulsar/testing/TestingBase.hpp"
-
+#include "pulsar/testing/Tester.hpp"
 
 
 /*! \brief Returns the limits of a type as a python tuple
@@ -29,8 +28,21 @@ namespace export_python {
 
 void export_pybind11(pybind11::module & mtop)
 {
-    pybind11::module m = mtop.def_submodule("testing", "Some helpers for testing");
-
+    pybind11::module m = mtop.def_submodule("testing", "Some helpers for testing"); 
+    
+    using test1=void (Tester::*)(const std::string&,bool);
+    using test2=void (Tester::*)(const std::string&,double,double,double);
+    pybind11::class_<Tester>(m,"TesterBase")
+    .def(pybind11::init<const std::string&>())
+    .def("print_results",&Tester::print_results)
+    .def("test_bool",static_cast<test1>(&Tester::test))
+    .def("test_float",static_cast<test2>(&Tester::test),
+         pybind11::arg("desc"),pybind11::arg("v1"),
+         pybind11::arg("v2"),pybind11::arg("tol")=0.0001)
+    ;
+    
+    
+    
     // Limits for various types
     m.def("Limits_sshort", Limits<signed short>);
     m.def("Limits_ushort", Limits<unsigned short>);

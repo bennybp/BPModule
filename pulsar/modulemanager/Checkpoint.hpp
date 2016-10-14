@@ -7,7 +7,6 @@
 #pragma once
 
 #include <memory>
-#include <map>
 #include <vector>
 
 namespace pulsar {
@@ -54,7 +53,7 @@ class Checkpoint
         std::shared_ptr<CheckpointIO> backend_local_;
         std::shared_ptr<CheckpointIO> backend_global_;
 
-        static std::map<std::string, std::vector<std::string>>
+        static std::vector<std::string>
         form_cache_save_list_(const ModuleManager & mm,
                               CheckpointIO & backend,
                               std::function<bool(unsigned int)> policy_check);
