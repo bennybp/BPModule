@@ -1,18 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /* 
  * File:   CombItr.hpp
- * Author: richard
  *
  * Created on March 17, 2016, 10:52 AM
  */
 
-#ifndef PULSAR_GUARD_MATH__COMBITR_HPP_
-#define PULSAR_GUARD_MATH__COMBITR_HPP_
+#pragma once
 
 #include <vector>
 #include "pulsar/exception/Exceptions.hpp"
@@ -27,8 +19,7 @@ namespace math{
  *  the combination {1,2,3} equals {2,3,1}, i.e. the order of the
  *  elements do not matter.  This differs from a permutation, where
  *  the order does matter (and the permutation {1,2,3} does not equal
- *  the permutations {2,3,1} (to be more better ats da math, I should
- *  be using "()"'s to denote an ordered set, but f-it)).  If you
+ *  the permutations {2,3,1} ).  If you
  *  need permutations there is a C++ function std::next_permutation
  *  in the <algorithm> header that probably does what you want.
  *
@@ -39,16 +30,16 @@ namespace math{
  *  i.e. if you  gave the set {2,3,1} and wanted all pairs you would get
  *  (positions shown in parentheses):
  *  \verbatim
- *  2 3 (0 1)
- *  2 1 (0 2)
- *  3 1 (1 2)
- *  \endverbatim
+   2 3 (0 1)
+   2 1 (0 2)
+   3 1 (1 2)
+   \endverbatim
  *  Note that this is distinct from:
  *  \verbatim
- *  1 2
- *  1 3
- *  2 3
- *  \endverbatim
+   1 2
+   1 3
+   2 3
+   \endverbatim
  *  which is lexical order of the elements in that set.
  *
  *  Here's all you need to use this class.  Assume you have a container
@@ -76,10 +67,10 @@ namespace math{
  *  
  *  Note that you get your combinations back in whatever container type we
  *  are iterating over.
-
-    \param T The type of the set you want the combinations of.
+ *
+ *   \param T The type of the set you want the combinations of.
  *           Must minimally be:
- *           - Default constructable
+ *           - Default and copy constructable
  *           - Forward iterable (have begin() and end() functions)
  *           - A member type called const_iterator which is a typedef of a 
  *             constant iterator to that class.
@@ -90,6 +81,9 @@ namespace math{
  *           think only queue, stack, and array do not satisfy them.  Queue
  *           and stack basically fail all criteria, array does not have an
  *           insert member)
+ * 
+ * \note This class is not exported to Python because the default Python module
+ * itertools provides the generate `combinations()` which does the same thing
  */
 template <typename T>
 class CombItr {
@@ -121,9 +115,9 @@ class CombItr {
       ///Function that resets Comb_
       void reset_comb();
    public:
-      ///Makes a new iterator that will run through Set, K at a time
+      ///Makes a new iterator that will run through \p Set, \p K at a time
       CombItr(const T& Set, size_t K);
-      ///Makes a copy of the other iterator
+      ///Makes a deep copy of \p Other
       CombItr(const CombItr<T>& Other)=default;
       ///Returns the combination this iterator points to
       const T& operator*()const{return Comb_;}
@@ -141,12 +135,6 @@ class CombItr {
 };
 
 
-//! \todo ??? Don't think you can specialize single function of a templated class? And
-//            these are declared, but not defined...
-///Specializations of CombItr for system
-//template<> void math::CombItr<system::System>::reset_comb();
-//template<> math::CombItr<system::System>::CombItr(const system::System& Set,size_t K);
-
 /*********** Implementations ***************/
 template <typename T>
 CombItr<T>::CombItr(const T& Set, size_t K) :
@@ -161,7 +149,10 @@ void CombItr<T>::initialize(){
            "I don't know how to generate combinations with"
            " more items than you gave me....",
            "NObjects",Set_.size(),"Requested K",K_);
-
+    if(K_==0){
+        Done_=true;
+        return;
+    }
    //Form the starting combination
    TItr_t ElemI=Set_.begin();
    for(size_t i=0;i<K_;++i,++ElemI){
@@ -172,10 +163,6 @@ void CombItr<T>::initialize(){
 
 template <typename T>
 void CombItr<T>::next() {
-    if(K_==0){
-        Done_=true;
-        return;
-    }
     //Check indices right to left
     for(size_t i=1;i<=K_;++i){
         const size_t Offset=K_-i;
@@ -207,5 +194,4 @@ void CombItr<T>::reset_comb() {
 }
 
 }}//End namespaces
-#endif /* COMBITR_HPP */
 

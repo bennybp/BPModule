@@ -1,18 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /* 
  * File:   PowerSetItr.hpp
- * Author: richard
  *
  * Created on March 17, 2016, 6:07 PM
  */
 
-#ifndef PULSAR_GUARD_MATH__POWERSETITR_HPP_
-#define PULSAR_GUARD_MATH__POWERSETITR_HPP_
+#pragma once
+
 #include <memory>
 #include "pulsar/math/CombItr.hpp"
 namespace pulsar{
@@ -29,7 +22,7 @@ namespace math{
  *  when one is iterating over say all ways of picking one, two ,
  *  and three objects from a set.
  *
- *  Previously I had coded this iterator up in terms of counting in
+ *  Note for posterity, I had coded this iterator up in terms of counting in
  *  binary, which is based on the realization that the binary
  *  representation of \f$2^N-1\f$ contains \f$N\f$ 1's.  So counting
  *  from 0 to \f$2^N-1\f$, in binary will generate all of the
@@ -38,17 +31,17 @@ namespace math{
  *  absence.  Unfortunately this generates the subsets in a weird
  *  order, something akin to (assuming \f$S=\{1,2,3,\cdots,N\}\f$):
  *  \verbatim
- *  (empty set)
- *  1
- *  2
- *  1 2
- *  3
- *  1 3
- *  2 3
- *  1 2 3
- *  ...
- *  1 2 3...N
- *  \endverbatim
+   (empty set)
+   1
+   2
+   1 2
+   3
+   1 3
+   2 3
+   1 2 3
+   ...
+   1 2 3...N
+   \endverbatim
  *
  *  It's more natural to instead iterate in the order:
  *  \verbatim
@@ -71,7 +64,8 @@ namespace math{
  *  examining the intended order, or again by analogy to Pascal's
  *  triangle, one sees that we simply want to iterate over all
  *  combinations of our current set.  Hence we call CombItr \f$N\f$
- *  times.
+ *  times.  I suspect this is not as effecient as the counting in binary, but
+ *  I haven't timed it.
  *
  *  Usage of this class is similar to its cousin class CombItr:
  *  \code
@@ -129,10 +123,12 @@ namespace math{
    0 1 2 3 4
    \endverbatim
  *
- * \todo This is an old class, C++11-ize it
  *
  * \param T The type of the set we are iterating over, will also be
  *          the type of susbsets returned by the iterator.
+ * 
+ * \note This class is not exported to Python and itertools does not provide a
+ *     direct equivalent, but one can easily use chain() 
  */
 template<typename T>
 class PowerSetItr{
@@ -156,22 +152,25 @@ class PowerSetItr{
       /** \brief Given a set, iterates over all subsets containing Min
        *      number of elements to Max number of elements
        *
-       *  In an attempt to be mathematically rigorous the default is
-       *  to iterate over the entire powerset, so the empty set to
-       *  the entire set.  If your set has \f$N\f$ elements this
-       *  corresponds to a Max of N and a Min of 0.  Specifying a
-       *  negative number for either max or min will default to these
-       *  values.  Note that this leads to a very odd scenario as
-       *  far as C++ land is concerned, Max=2, for example, actually
-       *  corresponds to choosing up to 2 elements and not choosing
-       *  1 element.
+       *  Often one only wants to iterate over part of the power set, which
+       *  is what this function does.  Specifically it iterates from sets
+       *  containing \p Min elements to those containing \p Max elements
+       *  inclusively.  Note that this is not usual C++ counting (Min=1 really  
+       *  gives you sets with 1 element and not 2).
        */
-      PowerSetItr(const T& Set, int Min=-1, int Max=-1);
+      PowerSetItr(const T& Set, size_t Min, size_t Max);
+      ///Iterates over the entire power set
+      PowerSetItr(const T& Set):PowerSetItr(Set,0,Set.size()){}
+      ///Deep copies other iterator
+      PowerSetItr(const PowerSetItr&);
       ///Returns true if we have iterated over the whole range
       bool done()const{return Done_;}
+      ///Returns true if there are combinations left
       operator bool()const{return !Done_;}
-      ///Moves on to the next subset
+      ///Moves on to the next subset and returns it
       PowerSetItr<T>& operator++(){next();return *this;}
+      ///Moves to next, returns current
+      PowerSetItr<T> operator++(int);
       ///Returns the current subset
       const T& operator*()const{return CurrentIt_->operator*();}
       ///Allows access of the subset's container's members
@@ -180,28 +179,44 @@ class PowerSetItr{
 
 /******************** Implementations ******************/
 template<typename T>
-PowerSetItr<T>::PowerSetItr(const T& Set, int Min,int Max):
+PowerSetItr<T>::PowerSetItr(const PowerSetItr<T>& other)
+   : Set_(other.Set_),MaxOrder_(other.MaxOrder_),MinOrder_(other.MinOrder_),
+        Order_(other.Order_),
+        CurrentIt_(other.CurrentIt_?std::make_shared<CombItr_t>(*other.CurrentIt_):nullptr),
+        Done_(other.Done_)
+{
+          
+}
+
+
+template<typename T>
+PowerSetItr<T> PowerSetItr<T>::operator++(int)
+{
+    PowerSetItr<T> temp(*this);
+    next();
+    return temp;
+}
+
+template<typename T>
+PowerSetItr<T>::PowerSetItr(const T& Set, size_t Min,size_t Max):
         Set_(Set),
-        MaxOrder_(Max<0?Set_.size():static_cast<size_t>(Max)),
-        MinOrder_(Min<0?0:static_cast<size_t>(Min)),
+        MaxOrder_(Max),
+        MinOrder_(Min),
         Order_(MinOrder_),
-        CurrentIt_(new CombItr_t(Set_,Order_++)),
+        CurrentIt_(std::make_shared<CombItr_t>(Set_,Order_++)),
         //Can't iterate under this condition (it occurs quite naturally in
         //recursion)
-        Done_(MaxOrder_<MinOrder_){}
+        Done_(MaxOrder_<MinOrder_||Max==0){}
 
 template<typename T>
 void PowerSetItr<T>::next(){
    ++(*CurrentIt_);
    if(!CurrentIt_->done())return;
    else if(Order_<=MaxOrder_)
-     CurrentIt_=SharedItr_t(new CombItr_t(Set_,Order_++));
+     CurrentIt_=std::make_shared<CombItr_t>(Set_,Order_++);
    else Done_=true;
 }
 
 
 }}//End namespace
-
-
-#endif /* POWERSETITR_HPP */
 

@@ -1,8 +1,3 @@
-/*! \file
- *
- * \brief Write Me!!!!
- */
-
 #include "TestCXX.hpp"
 #include <pulsar/math/Universe.hpp>
 

@@ -1,2 +1,4 @@
+pulsar_cxx_test(TestCombItr)
+pulsar_cxx_test(TestPowerSetItr)
 pulsar_py_test(TestUniverse)
 pulsar_cxx_test(TestUniverse)
