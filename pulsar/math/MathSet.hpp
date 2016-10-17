@@ -196,9 +196,7 @@ public:
     Universe_t as_universe(void) const
     {
         Universe_t newuniverse;
-        for(const auto & it : *this)
-            newuniverse.push_back(it);
-        return newuniverse;
+        return newuniverse.insert(begin(),end());
     }   
 
 

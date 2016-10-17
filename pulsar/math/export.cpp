@@ -166,7 +166,8 @@ void export_pybind11(pybind11::module & mtop)
     .def("my_hash", &GridPoint::my_hash)
     ;
 
-
+    register_Universe<Universe<double>>(m, "DoubleUniverse"); 
+    register_MathSet<MathSet<double>>(m, "DoubleSet"); 
     register_Universe<Universe<GridPoint>>(m, "GridUniverse"); 
     register_MathSet<MathSet<GridPoint>>(m, "Grid"); 
 

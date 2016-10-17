@@ -54,10 +54,10 @@ public:
               bool should_pass,
               const return_t& expected,
               fxn_t fxn,
-              Args...args)
+              Args&&...args)
     {
         bool success=false;
-        try{success=(expected==fxn(args...) && should_pass);}
+        try{success=(expected==fxn(std::forward<Args>(args)...) && should_pass);}
         catch(...){success=!should_pass;}
         test(desc,success);
     }

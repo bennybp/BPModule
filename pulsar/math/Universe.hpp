@@ -72,12 +72,6 @@ private:
     
     ///Where the actual elements are stored
     U Storage_;
-    
-    ///Checks an index
-    void check_idx(size_t EI)const{
-        if(EI >= size())
-          throw ValueOutOfRange("Index is out of bounds", "index", EI);
-    }
 
 public:
     ///The type of the element
@@ -96,177 +90,130 @@ public:
     Universe(){ }
     
     ///Deep copies the universe
-    Universe(const My_t& RHS) 
-      : Storage_(RHS.Storage_) { }
+    Universe(const My_t& RHS) : Storage_(RHS.Storage_) { }
     
-    ///Creates universe that contains elements in constructor (attempts to use
-    ///different types will fail to initialize U)
+    ///Move constructs a universe
+    Universe(My_t&& RHS) : Storage_(std::move(RHS.Storage_)){}
+    
+    ///Initializes the elements of the universe to the arguments
     template<typename...Args>
-    Universe(T arg1,Args...args)
-      : Storage_({arg1,args...}){}
+    Universe(T arg1,Args...args): Storage_({arg1,args...}){}
        
     ///Creates universe that contains elements in initializer list
-    Universe(std::initializer_list<T> l)
-      :Storage_(l){}
+    Universe(std::initializer_list<T> l):Storage_(l){}
 
-    
     ///Deep copies during assignment
-    My_t& operator=(const My_t & RHS)
-    {
-        using std::swap;
-        if (this != &RHS) {
-            My_t tmp(RHS);
-            swap(*this, tmp);
-        }
-        return *this;
-    }
+    My_t& operator=(const My_t & RHS);
     
-
     ///Move assignment
-    My_t & operator=(My_t &&) = default;
+    My_t & operator=(My_t && RHS){Storage_=std::move(RHS.Storage_);}
     ///@}
 
-
+    ///@{
+    ///Basic properties
+    
+    //Returns the the number of elements in the universe
+    size_t size()const noexcept{return Storage_.size();}
+    
+    ///Returns the number of times \p Elem is present in the universe
+    bool count(const T& Elem)const{
+        return std::find(begin(),end(), Elem) != end();
+    }
+       
+    ///Returns the index of \p Elem, which is good for the life of this instance
+    size_t idx(const T& Elem)const;
+    
+    /** \brief Returns a hash of this universe
+     * 
+     * Hashes are the same if the held data is equivalent (ie,
+     * same values and same elements)
+     */
+    bphash::HashValue my_hash(void) const
+    {
+        return bphash::make_hash(bphash::HashType::Hash128, *this);
+    }
+    
+    ///@}
+    
+    
     ///@{
     ///Basic accessors
     
-    //Returns the cardinality of the universe (i.e. the number of elements)
-    size_t size()const noexcept
-    {
-        return Storage_.size();
-    }
-
     ///Returns a const iterator to the beginning of the universe 
-    const_iterator begin()const
-    {
-        return Storage_.begin();
-    }
+    const_iterator begin()const{return Storage_.begin();}
 
-    ///Returns an iterator just past a const version of the last element
-    const_iterator end()const
-    {
-        return Storage_.end();
-    }
+    ///Returns a const iterator just past the last element
+    const_iterator end()const{return Storage_.end();}
 
-    ///Returns true if this set contains Elem, comparison occurs via
-    ///Elem's operator==
-    bool count(const T& Elem)const
-    {
-        return std::find(begin(),end(), Elem) != end();
-    }
-    
-    bool count_idx(size_t Elem)const
-    {
-        return Elem<Storage_.size();
-    }
-
-    ///Returns the index of an Elem in Storage_
-    size_t idx(const T& Elem)const
-    {
-        auto it = std::find(begin(), end(), Elem);
-        if(it != end())
-            return std::distance(begin(), it);
-        else 
-            throw ValueOutOfRange("Element is not part of this universe");
-    }
-
-
+    ///Returns the \p EI -th element
     const T& operator[](size_t EI)const { return at(EI); }
-    //T& operator[](size_t EI){return at(EI);}
 
-    
+    ///Returns the element at index \p EI
     const T& at(size_t EI) const
     {
-        check_idx(EI);
+        if(EI>=Storage_.size())
+            throw ValueOutOfRange("Requested element is out of range","EI",EI);
         return Storage_.at(EI);
     }
-    
-    /*T& at(size_t EI)
+      
+    ///Inserts \p elem into the set at the end (satisfies std::set API)
+    Universe<T,U>& insert(const T& elem)
     {
-        check_idx(EI);
-        return Storage_.at(EI);
-    }*/
-
+        if(!count(elem))Storage_.insert(Storage_.end(),elem);
+        return *this;
+    }
+    
+    ///\copydoc insert
+    Universe<T,U>& insert(T&& elem)
+    {
+        if(!count(elem))Storage_.insert(Storage_.end(),std::move(elem));
+        return *this;
+    }
+    
+    ///Inserts all elements in range [b,e)
+    template<typename BeginItr,typename EndItr>
+    Universe<T,U>& insert(BeginItr b,EndItr e)
+    {
+        while(b!=e)insert(*b++);
+        return *this;
+    }
     ///@}
 
 
     /// \name Set operations
     ///@{
 
-
-    /** \brief Adds an element to this universe
-     * 
-     * This function adds \p elem to the universe if it is not already
-     * present.  \p elem will be copied.
-     * 
-     * \note this function (may) invalidate all iterators that are out
-     */
-    void push_back(const T& elem)
-    {
-        if(!count(elem))
-            Storage_.push_back(elem); // actually copy the data
-    }
-    
-    Universe<T,U>& insert(const T& elem){
-        push_back(elem);
-        return *this;
-    }
-
-     /** \brief Moves \p elem to this universe
-     * 
-     * This function moves \p elem into this universe iff the element is not
-     * already in the universe.
-     * 
-     * \note this function (may) invalidate all iterators that are out
-     */
-    void push_back(T&& elem)
-    {
-        if(!count(elem))
-            Storage_.push_back(std::move(elem));
-    }
-    
-    Universe<T,U>& insert(T&& elem)
-    {
-        push_back(std::move(elem));
-        return *this;
-    }
-
-    template<typename BeginItr,typename EndItr>
-    Universe<T,U>& insert(BeginItr b,EndItr e)
-    {
-        while(b!=e)push_back(*b++);
-        return *this;
-    }
     
     /** \brief Makes this the union of this and \p RHS
      * 
      *  This function appends the unique elements of \p RHS to this function.
      * 
-     *  \note In general the data in Storage_ is not sorted so we can't use
-     *  std::set_union.
+     *  \note Invalidates iterators and indicies
      */
     My_t& union_assign(const My_t& RHS)
     {
-        for (const T & EI : RHS)push_back(EI);
+        for (const T & EI : RHS.Storage_)insert(EI);
         return *this;
     }
 
-
+    ///\copydoc union_assign
     My_t& union_assign(My_t&& RHS)
     {
-        for(T& EI : RHS.Storage_)push_back(std::move(EI));
+        for(T& EI : RHS.Storage_)insert(std::move(EI));
         return *this;
     }
 
 
-    ///Returns a new universe that is union of this and \p RHS
+    /** \brief Returns a new universe that is union of this and \p RHS
+     * 
+     *  \note Invalidates iterators and indices
+     */ 
     My_t set_union(const My_t& RHS)const
     {
         return My_t(*this).union_assign(RHS);
     }
 
-    ///Returns a new universe (not linked to this one) that is union of this and
-    /// \p RHS
+    ///\copy_doc set_union
     My_t set_union(My_t&& RHS)const
     {
         return My_t(*this).union_assign(std::move(RHS));
@@ -277,6 +224,8 @@ public:
      *  Again, we don't want to sort and so we can't use std::set_intersection.
      *  The elements contained in this after the operation, will be in the same
      *  order they were  originally.
+     * 
+     *  \note Invalidates iterators and indices
      */
     My_t& intersection_assign(const My_t& RHS)
     {
@@ -380,55 +329,6 @@ public:
 
     ///@}
 
-
-    /// \name Operator overloads
-    ///@{
-
-    /// \copydoc insert(const T& Elem)
-    My_t & operator<<(const T& elem) { return insert(elem); }
-
-    /// \copydoc insert(const T&& Elem)
-    My_t & operator<<(T&& elem) { return insert(std::move(elem)); }
-
-    /// \copydoc union_assign(const My_t & RHS)
-    My_t& operator+=(const My_t& RHS) { return union_assign(RHS); }
-
-    /// \copydoc union_assign(My_t&& RHS)
-    My_t& operator+=(My_t&& RHS) { return union_assign(std::move(RHS)); }
-
-    /// \copydoc union(My_t& RHS)
-    My_t operator+(const My_t& RHS)const { return set_union(RHS); }
-
-    /// \copydoc union(My_t&& RHS)
-    My_t operator+(My_t&& RHS)const { return set_union(std::move(RHS)); }
-
-    /// \copydoc intersection_assign(const My_t & rhs)
-    My_t & operator/=(const My_t& RHS) { return intersection_assign(RHS); }
-
-    /// \copydoc intersection(const My_t & rhs)
-    My_t operator/(const My_t& RHS)const { return intersection(RHS); }
-
-    /// \copydoc difference_assign(const My_t &)
-    My_t & operator-=(const My_t& RHS) { return difference_assign(RHS); }
-
-    /// \copydoc difference(const My_t &)
-    My_t operator-(const My_t& RHS)const { return difference(RHS); }
-
-    /// \copydoc is_proper_subset_of
-    bool operator<(const My_t& RHS)const { return is_proper_subset_of(RHS); }
-
-    /// \copydoc is_subset_of
-    bool operator<=(const My_t& RHS)const { return is_subset_of(RHS); }
-
-    /// \copydoc is_proper_superset_of
-    bool operator>(const My_t& RHS)const { return is_proper_superset_of(RHS); }
-
-    /// \copydoc is_superset_of
-    bool operator>=(const My_t& RHS)const { return is_superset_of(RHS); }
-
-    ///@}
-
-
     ///@{ \brief Set comparison operators
 
     /** \brief Returns true if this set equals other
@@ -475,15 +375,7 @@ public:
     }
 
 
-    /* \brief Return a hash of this universe
-     * 
-     * Hashes are the same if the held data is equivalent (ie,
-     * same values and same elements)
-     */
-    bphash::HashValue my_hash(void) const
-    {
-        return bphash::make_hash(bphash::HashType::Hash128, *this);
-    }
+
     
     private:
     //! \name Serialization and Hashing
@@ -497,25 +389,36 @@ public:
      * cereal will find serialize() here and load/save
      * for MathSet, and trigger an assertion
      */
-    template<class Archive>
-    void save(Archive & ar) const
-    {
-        ar(Storage_);
-    }
+    template<class Archive> void save(Archive & ar) const{ar(Storage_);}
     
-    template<class Archive>
-    void load(Archive & ar)
-    {
-        ar(Storage_);
-    }
+    ///Loads the Universe from an archive
+    template<class Archive> void load(Archive & ar){ar(Storage_);}
 
-    void hash(bphash::Hasher & h) const
-    {
-        h(Storage_);
-    }
+    ///Hashes the Storage_ instance
+    void hash(bphash::Hasher & h) const{h(Storage_);}
 
     ///@}
 };
+
+template<typename T,typename U>
+Universe<T,U>& Universe<T,U>::operator=(const Universe<T,U>& RHS)
+{
+    if (this != &RHS) {
+            Universe<T,U> tmp(RHS);
+            std::swap(*this, tmp);
+    }
+    return *this;
+}
+
+template<typename T,typename U>
+size_t Universe<T,U>::idx(const T& Elem)const
+{
+    auto it = std::find(begin(), end(), Elem);
+    if(it != end())
+        return std::distance(begin(), it);
+    else 
+        throw ValueOutOfRange("Element is not part of this universe");
+}
 
 template<typename T, typename U>
 std::ostream& operator<<(std::ostream& os, const Universe<T, U>& AUniv)
@@ -523,6 +426,38 @@ std::ostream& operator<<(std::ostream& os, const Universe<T, U>& AUniv)
     return os << AUniv.to_string();
 }
 
+#define UNIVERSE_ASSIGN(sym,fxn)\
+   template<typename T,typename U>\
+   Universe<T,U>& sym(Universe<T,U>& LHS,const Universe<T,U>& RHS) {\
+      return LHS.fxn(RHS);\
+   }
+
+#define UNIVERSE_OP(sym,fxn)\
+   template<typename T,typename U>\
+   Universe<T,U> sym(const Universe<T,U>& LHS,const Universe<T,U>& RHS) {\
+      return LHS.fxn(RHS);\
+   }
+#define UNIVERSE_COMP(sym,fxn)\
+   template<typename T,typename U>\
+   bool sym(const Universe<T,U>& LHS,const Universe<T,U>& RHS) {\
+       return LHS.fxn(RHS);\
+   }
+
+UNIVERSE_ASSIGN(operator+=,union_assign)
+UNIVERSE_OP(operator+,set_union)
+UNIVERSE_ASSIGN(operator/=,intersection_assign)
+UNIVERSE_OP(operator/,intersection)
+UNIVERSE_ASSIGN(operator-=,difference_assign)
+UNIVERSE_OP(operator-,difference)
+UNIVERSE_COMP(operator>=,is_superset_of)
+UNIVERSE_COMP(operator<=,is_subset_of)
+UNIVERSE_COMP(operator>,is_proper_superset_of)
+UNIVERSE_COMP(operator<,is_proper_subset_of)
+
+
+#undef UNIVERSE_COMP
+#undef UNIVERSE_OP
+#undef UNIVERSE_ASSIGN
 }
 }//End namespaces
 

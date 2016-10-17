@@ -54,10 +54,10 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
                 if(j==(i-i%3)/3) { //does this coord index belong to this atom?
                     Atom atmp(Atoms_[j]);
                     atmp[i%3]=newcoord;
-                    NewU<<atmp;
+                    NewU.insert(atmp);
                 }
                 else
-                    NewU<<Atoms_[j];
+                    NewU.insert(Atoms_[j]);
             }
             Module_t NewModule=MM_.get_module<EnergyMethod>(Key_,ID_);
             Wavefunction NewWfn(Wfn_);

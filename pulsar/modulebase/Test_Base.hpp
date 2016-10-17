@@ -16,21 +16,27 @@ namespace modulebase {
 
 /*! \brief A test module
  *
- * Just to make sure the library works and provides a base class for C++
- * interface tests.
+ * This module serves to provide a means of testing module-module interactions.
+ * It is also used as a base for C++ tests of the various Pulsar classes.
+ * Through the derived class: Test_CXX_Base
+ * 
+ * \todo Is it OK to make all but run_test_ null functions in this class?
  */
 class Test_Base : public ModuleBase
 {
     public:
         typedef Test_Base BaseType;///< The type of the base
 
-
+        ///Just forwards arguments to base
         Test_Base(ID_t id)
             : ModuleBase(id, "Test_Base")
         { }
 
 
         /*! \brief Just test some functionality
+         * 
+         *  For C++ tests of the core functionality this is the function that
+         *  will be called which means you need to override run_test_
          */
         void run_test(void)
         {
@@ -40,6 +46,7 @@ class Test_Base : public ModuleBase
 
         /*! \brief Call run_test() of another module
          *
+         * 
          * \param [in] other Key of the other module in the database
          */
         void call_run_test(const std::string & other)
@@ -152,6 +159,19 @@ class Test_Base : public ModuleBase
         virtual void get_from_cache_(const std::string & key, bool use_distcache) = 0;
 
 
+};
+
+///Implements all but run_test_
+class Test_CXX_Base : public Test_Base {
+public:
+    using Test_Base::Test_Base;
+protected:
+        void call_run_test_(const std::string &){}
+        void call_run_test2_(const std::string &, const std::string &){}
+        void test_throw_(void){}
+        void call_throw_(const std::string &){}
+        void add_to_cache_(const std::string &, unsigned int){}
+        void get_from_cache_(const std::string &, bool){}
 };
 
 

@@ -7,7 +7,7 @@ only possible if we have unit tests.  We also need what are called acceptance
 tests, which ensure that the interface our users see is also working.  Testing
 Pulsar is a little bit different than testing other libraries because the core
 of Pulsar is only loadable at runtime, you can't link against it (for more on
-this see [module vs. shared library](@ref shared).
+this see [module vs. shared library](@ref shared)).
 
 
 ## Setting Up Tests and Using the Pulsar Tester Class
@@ -23,22 +23,84 @@ your tests:
 - `pulsar_test(name)` : This adds a test called name that is contained in a
    Python file called `name.py`
 
-Testing the C++ interface of a class requires a bit of explanation.  Pulsar
-itself is a dynamically loadable library and must be "dlopened".  To make this
-easier we have created a simple Python script `TestCpp.py` that will start a
-module manager and load the test as a module.  Within this module is where the
-tests need to run.
-
 For all tests one should use the Pulsar testing Tester.  This is an object
 designed to simplify and unify the testing procedure.  The Tester has both a
 C++ and a Python interface.
 
+### Testing in C++
 
+Testing the C++ interface of a class requires a bit of explanation.  Pulsar
+itself is a dynamically loadable library and must be "dlopen-ed".  To make this
+easier we have created a simple Python script `TestCpp.py` that will start a
+module manager and load the test as a module.  Within this module is where the
+tests need to run.  You will then have to define this module and compile it.
+Thankfully, there's a macro `TEST_CLASS` that does all this for you.
 
+A basic C++ test setup will look like this:
+~~~{.cpp}
+#include <pulsar/class/I/am/testing>
+#include "TestCXX.hpp"//Loads the Tester object and defines the TEST_CLASS macro
 
-Basic Python usage is very similar except that we can't overload functions
-(going through `Pybind11` we can, but that doesn't work with templates, which
-is the current case).
+TEST_CLASS(TheNameOfMyTest){
+
+    //Make a Tester instance
+    Tester my_tester("Description of the tests to run");
+
+    //Test that A_fxn returns true when given the arguments 1,2, and 3
+    my_tester.test("A_fxn(1,2,3)",true,true,A_fxn,1,2,3);
+
+    //Test that A_fxn throws when given the arguments 1,2, and 4
+    my_tester.test("A_fxn(1,2,4)",false,true,A_fxn,1,2,4);
+
+    //Test that two values are equal
+    my_tester.test("Is 3==3?",3,3);
+
+    //Test that two floats are equal to within 0.0001 (this is the default 
+    //tolerance and can be omitted)
+    my_tester.test("Is 2.123==2.123",2.123,2.123,0.0001);
+
+    //Print the result will also throw if any test failed
+    my_tester.print_result();
+
+}//End test
+~~~
+
+Here's a couple of hints for C++ testing:
+- To pass a member function use `std::bind` it looks something like:
+    ~~~{.cpp}
+    MyClass A;
+    //Makes a functor that calls A.fxn() 
+    auto Afxn=std::bind(&MyClass::fxn,A,std::placeholder::_1,std::placeholder::_2);
+    
+    //Pass the functor to the test method
+    my_tester.test("Test A.fxn that returns 1 when given 2",true,1,Afxn,2);
+    ~~~
+  - You need to include a placeholder for each argument that will be passed to
+    your function (including the MyClass instance)
+  - Testing overloaded methods is possible by casting the function pointer
+    ~~~{.cpp}
+    MyClass A;
+
+    //Assume A.fxn() returns an int 1 when given either 2 or 2.0, thus
+    //fxn has two overloads: one for int and one for double
+    //This is the double overload's type
+    using DoubleOvl_t=int(MyClass::*)(double);
+    
+    //This is then a functor to it
+    auto doubleovl=std::bind(static_cast<DoubleOvl_t>(&MyClass::fxn),
+        std::placeholder::_1,std::placeholder::_2);
+
+    //And finally the test
+    my_tester.test("Testing double overload",true,1,doubleovl,A,2.0);
+    ~~~
+  - The Tester needs some work if it's going to work with constructors or 
+    functions without returns
+
+### Testing Python
+
+Testing Python side is much easier because we don't have to worry about the
+types of the function; however, we can't overload functions so the
+ Tester's methods change name.  Aside from that not much else has changed:
 
 ~~~{.py}
 from TestFxns.py import * #Gives us the Tester class and sets up Pulsar
@@ -57,7 +119,7 @@ my_tester.test_value("Is 3==3?",3,3)
 
 #Test that two floats are equal to within 0.0001 (this is the default and can be
 #omitted)
-my_tester.test_Value("Is 2.123==2.123",2.123,2.123,0.0001)
+my_tester.test_value("Is 2.123==2.123",2.123,2.123,0.0001)
 
 #Print the result will also throw if any test failed
 my_tester.print_result()
@@ -77,30 +139,20 @@ Unit tests should:
 - All possible throws should be checked
   - For example: if a function is supposed to throw if the input is less than 0
     test it once with an input less than 0
+    - The Tester class will catch the throw for you and will mark the test a
+      success assuming you told it the function was supposed to fail
 - All languages that a class are accessible from should be tested
-  - The different language tests should be to the extent possible identical
+  - The different language tests should be, to the extent possible, identical
     - Ensures classes work identically from all languages
-  - Again, due to the somewhat unique setup of Pulsar this is largely only
-    applicable to the Pulsar Module interfaces (derive a energy method and test
-    it for example from both C++ and Python)
-  - Classes like System will only be tested from Python
+    - Yes, I realize the C++ tests are messy with types, but they still need
+      tested...
 - Try to minimize includes/imports in a test to better ensure you are testing
   what you think you are testing
 
-A basic Python unit test template looks like:
-~~~{.py}
-#Bare bones sets up Pulsar using staged version so test can occur in build dir 
-from .TestFxns import *
+## Acceptance Testing
 
-#Make a Tester instance used throughout this test
-tester = psr.testing.Tester("Describe the series of tests here")
-
-#Run tests here
-
-#Call to finalize the testing procedure
-tester.print_results()
-
-#Shuts down Pulsar gently to avoid seg-faults from leaving libraries open
-psr.finalize()
-~~~
+Acceptance testing focuses on testing common code interactions that we expect
+our users to do.  These should be tests that do not reproduce the unit tests.
+So even though we expect users to create wavefunctions often, creating a
+wavefunction, in all supported ways, is covered in the wavefunction unit test.
 

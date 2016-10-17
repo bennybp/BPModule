@@ -19,7 +19,7 @@ endfunction()
 #Macro for defining a C++ test
 function(pulsar_cxx_test test_name)
 add_library(${test_name} MODULE ${test_name}.cpp)
-target_include_directories(${test_name} PRIVATE pulsar)
+target_include_directories(${test_name} PRIVATE ${PROJECT_SOURCE_DIR} pulsar)
 target_link_libraries(${test_name} PRIVATE pulsar)
 add_test(NAME ${test_name}_CXX
          COMMAND ${PYTHON_EXECUTABLE} TestCXX.py ${test_name}

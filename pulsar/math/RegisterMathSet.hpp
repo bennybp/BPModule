@@ -96,12 +96,15 @@ void register_Universe(pybind11::module & m,
     pybind11::class_<T,std::shared_ptr<T>>(m, universename)
     .def(pybind11::init<>())
     .def(pybind11::init<const T &>())
+    .def("__init__",[](T& unv,std::vector<value_type> args){
+        new (&unv) T;
+        unv.insert(args.begin(),args.end());
+    })
     .def("size", &T::size)
     .def("my_hash", &T::my_hash)
     .def("idx",  &T::idx)
     .def("at",   &T::at, pybind11::return_value_policy::copy)
     .def("count", &T::count)
-    .def("count_idx", &T::count_idx)
     .def("insert", static_cast<T &(T::*)(const value_type &)>(&T::insert))
     .def("union_assign", static_cast<T &(T::*)(const T &)>(&T::union_assign),
                         pybind11::return_value_policy::reference)
@@ -127,6 +130,7 @@ void register_Universe(pybind11::module & m,
     .def(pybind11::self <= pybind11::self)
     .def(pybind11::self < pybind11::self)
     .def(pybind11::self == pybind11::self)
+    .def(pybind11::self != pybind11::self)
     .def("__len__",         &T::size)
     .def("__contains__",    &T::count)
     .def("__getitem__",     &T::at)

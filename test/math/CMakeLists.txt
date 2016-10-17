@@ -1,2 +1,2 @@
-pulsar_py_test(TestPoint)
-pulsar_cxx_test(TestPoint)
+pulsar_py_test(TestUniverse)
+pulsar_cxx_test(TestUniverse)
