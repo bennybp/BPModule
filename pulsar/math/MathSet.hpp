@@ -25,27 +25,19 @@ template<typename T,typename U> class MathSet;
 template<typename T, typename U>
 class ConstSetItr : public std::iterator<std::input_iterator_tag, const T> {
 private:
-    ///My type
-    typedef ConstSetItr<T, U> My_t;
-    typedef Universe<T,U> Universe_t;
-    ///Type of the iterator to the Indices in the universe
-    typedef std::set<size_t>::const_iterator Itr_t;
-    ///The index I currently point to
-    Itr_t CurrIdx_;
-    ///The universe I am tied to
-    const Universe_t* Set_;
-    ///Let MathSet play with my private parts
+    typedef ConstSetItr<T, U> My_t;///<Type of the iterator
+    typedef Universe<T,U> Universe_t;///<Type of Universe in MathSet
+    typedef std::set<size_t>::const_iterator Itr_t;///<Type of iterator to index
+    Itr_t CurrIdx_;///<An iterator to the indices in the current MathSet
+    const Universe_t* Set_;///<The Universe with the real data
     friend MathSet<T, U>;
-    ///Only universe can make a working iterator
+    ///Only MathSet can make a working iterator
     ConstSetItr(Itr_t CurrIdx, const Universe_t* Set) :
         CurrIdx_(CurrIdx), Set_(Set) { }
 
 public:
-    ///Type being iterated over
-    typedef T value_type;
+    typedef T value_type;///<The type this iterator returns
 
-    ///Resulting iterator is unusable unless it is set equal to usable version
-    ConstSetItr()=default;
     ConstSetItr(const ConstSetItr&) = default;
     ConstSetItr& operator=(const ConstSetItr&) = default;
     ConstSetItr(ConstSetItr&&) = default;
@@ -55,41 +47,23 @@ public:
     ///Returns true if this iterator is equal to RHS
     bool operator==(const My_t& RHS)const
     {
-        return (CurrIdx_ == RHS.CurrIdx_ &&
-                Set_ == RHS.Set_);
+        return (CurrIdx_ == RHS.CurrIdx_ &&Set_ == RHS.Set_);
     }
 
     ///Returns true if this iterator is not equal to RHS
-    bool operator!=(const My_t& RHS)const
-    {
-        return !this->operator==(RHS);
-    }
+    bool operator!=(const My_t& RHS)const{return !this->operator==(RHS);}
 
-    ///Returns a reference to the current element
-    const T & operator*()const
-    {
-        return (*Set_)[*CurrIdx_];
-    }
+    ///Returns current element
+    const T & operator*()const{return (*Set_)[*CurrIdx_];}
 
-    const T * operator->()const
-    {
-        return &((*Set_)[*CurrIdx_]);
-    }
+    ///Allows access to current element member functions
+    const T * operator->()const{return &((*Set_)[*CurrIdx_]);}
 
-    ///Prefix increment operator
-    My_t& operator++()
-    {
-        ++CurrIdx_;
-        return *this;
-    }
+    ///Increments and then returns this
+    My_t& operator++(){++CurrIdx_;return *this;}
 
-    ///Postfix increment operator
-    My_t operator++(int)
-    {
-        My_t ret(*this);
-        ++CurrIdx_;
-        return ret;
-    }
+    ///Returns a copy of this and then increments
+    My_t operator++(int){My_t ret(*this);++CurrIdx_;return ret;}
 
 };
 
@@ -100,10 +74,9 @@ public:
  *   copying the actual elements over.  Now that we know what our universe is,
  *   we can do these operations much more efficiently by mapping each element
  *   to an integer in the range 0 to the size of our universe and performing
- *   the operations on those integers.  That's what this class does.  Thus
- *   by default operations with this class are shallow copies.  It is entirely
- *   possible to simply use the Universe class for set manipulations (barring
- *   complement), it will just not be as efficient.
+ *   the operations on those integers.  That's what this class does.  It is 
+ *   entirely possible to simply use the Universe class for set manipulations 
+ *   (barring complement), it will just not be as efficient.
  *
  *
  * \par Hashing
@@ -119,15 +92,17 @@ public:
 template<typename T, typename U = std::vector<T>>
 class MathSet {
 private:
-    ///This class's type
-    typedef MathSet<T, U> My_t;
+    typedef MathSet<T, U> My_t;///<This class's type
 public:
-    typedef ConstSetItr<T, U> const_iterator;
-    typedef T value_type;
-    typedef U store_type;
+    typedef ConstSetItr<T, U> const_iterator;///<An iterator to this class
+    typedef T value_type;///<The type of the elements
+    typedef U store_type;///<The type of the container
+    typedef Universe<T, U> Universe_t;///<Type of the universe in this class
+    ///Type of a function capable of selecting elements
     typedef std::function<bool(const T &) > SelectorFunc;
+    ///Type of a function capable of transforming elements
     typedef std::function<T(const T &)> TransformerFunc;
-    typedef Universe<T, U> Universe_t;
+
 
 
     /// \name Constructors, destructors, assignment
@@ -140,15 +115,17 @@ public:
     {
         this->Elems_ = Elems;
     }
-    ///Makes a set that is part of the given universe
-    // fill = Make this set a set of all elements in the universe
-    MathSet(std::shared_ptr<const Universe_t> AUniverse, bool fill)
+    
+    ///Makes a set in the universe and fills in all elements if fill==true
+    explicit MathSet(std::shared_ptr<const Universe_t> AUniverse, bool fill)
           : Universe_(AUniverse)
     {
             for(size_t i : util::Range<0>(fill?AUniverse->size():0))
                 Elems_.insert(i);
     }
-
+    
+    MathSet(const My_t&) = default;///<copies indices, aliases universe
+    MathSet(My_t&&) = default;///<moves, but universe is still aliased
 
     /*! \brief For serialization only
      *
@@ -167,13 +144,13 @@ public:
         Elems_=RHS.Elems_;
         return *this;
     }
+    
     MathSet & operator=(My_t&& RHS){//Getting undefined reference when defaulted
         Universe_=std::move(RHS.Universe_);
         Elems_=std::move(RHS.Elems_);
         return *this;
     }
-    MathSet(const My_t&) = default;
-    MathSet(My_t&&) = default;
+
 
     ///Returns a deep copy of everything
     My_t clone()const
@@ -183,22 +160,14 @@ public:
 
 
     /// Obtain the universe used by this set
-    std::shared_ptr<const Universe_t> get_universe(void) const
-    {
-        return Universe_;
-    } 
+    std::shared_ptr<const Universe_t> get_universe(void)const{return Universe_;} 
 
 
     /*! \brief Obtain the contents of this MathSet as a new universe
      *
      * The new universe is not linked to this object in any way
      */
-    Universe_t as_universe(void) const
-    {
-        Universe_t newuniverse;
-        return newuniverse.insert(begin(),end());
-    }   
-
+    Universe_t as_universe()const{return Universe_t().insert(begin(),end());}   
 
     ///@}
 
@@ -206,42 +175,33 @@ public:
     ///Basic accessors
 
     ///Returns the number of elements in this set
-    size_t size(void)const noexcept
-    {
-        return Elems_.size();
-    }
+    size_t size(void)const noexcept{return Elems_.size();}
 
+    ///Returns a constant iterator to the start of this set
     const_iterator begin() const
     {
         return const_iterator(Elems_.begin(),Universe_.get());
     }
 
+    ///Returns a constant iterator just past the end of the this set
     const_iterator end() const
     {
         return const_iterator(Elems_.end(),Universe_.get());
     }
 
-
     ///Returns true if this set has the element
-    bool count(const T& Elem)const{
-        return (Universe_->count(Elem) &&
-                count_idx(idx(Elem)) > 0);
+    bool count(const T& Elem)const
+    {
+        return (Universe_->count(Elem) && count_idx(idx(Elem)) > 0);
     }
 
+    ///Returns true if the index is in the set
     bool count_idx(size_t Idx)const { return Elems_.count(Idx); }
 
-    size_t idx(const T& Elem)const
-    {
-        // will throw if Elem is not part of our universe
-        return Universe_->idx(Elem);
-    }
-
-    ///@}
-
-
-    /// \name Set operations
-    ///@{
-
+    ///Returns the index of \p Elem, throws if \p Elem is not in the Universe
+    size_t idx(const T& Elem)const{return Universe_->idx(Elem);}
+    
+    ///Inserts the element into the set, throws if \p Elem is not in Universe
     My_t& insert(const T & Elem)
     {
         universe_contains(Elem);
@@ -249,13 +209,20 @@ public:
         return *this;
     }
     
+    ///Inserts the element with index \p Idx into this set
     My_t& insert_idx(size_t Idx)
     {
         universe_contains_idx(Idx);
         Elems_.insert(Idx);
         return *this;
     }
+    ///@}
 
+
+    /// \name Set operations
+    ///@{
+
+    ///Makes this the union of this and \p RHS
     My_t& union_assign(const My_t & RHS)
     {
         SameUniverse(RHS);
@@ -263,27 +230,31 @@ public:
         return *this;
     }
 
+    ///Returns the union of this and \p RHS
     My_t set_union(const My_t& RHS)const
     {
         return My_t(*this).union_assign(RHS);
     }
 
-
+    ///Makes this the intersection of this and \p RHS
     My_t& intersection_assign(const My_t& RHS);
 
+    ///Returns the intersection of this and \p RHS
     My_t intersection(const My_t & RHS) const
     {
         return My_t(*this).intersection_assign(RHS);
     }
 
+    ///Returns the difference
     My_t& difference_assign(const My_t& RHS);
 
+    ///Returns the difference of this and \p RHS
     My_t difference(const My_t& RHS) const
     {
         return My_t(*this).difference_assign(RHS);
     }
 
-
+    ///Returns the complement of this set
     My_t complement()const
     {
         My_t Temp(Universe_,{});
@@ -292,8 +263,6 @@ public:
         }
         return Temp;
     }
-
-
 
     /** \brief Returns true if this is a proper subset of other
      *
@@ -364,71 +333,22 @@ public:
     ///@}
 
 
-    /// \name Operator overloads
-    ///@{
-
-    /// \copydoc insert(const T& Elem)
-    My_t & operator<<(const T& elem) { return insert(elem); }
-
-    /// \copydoc insert(const T&& Elem)
-    My_t & operator<<(T&& elem) { return insert(std::move(elem)); }
-
-    /// \copydoc union_assign(const My_t & RHS)
-    My_t& operator+=(const My_t& RHS) { return union_assign(RHS); }
-
-    /// \copydoc union_assign(My_t&& RHS)
-    My_t& operator+=(My_t&& RHS) { return union_assign(std::move(RHS)); }
-
-    /// \copydoc set_union(My_t& RHS)
-    My_t operator+(const My_t& RHS)const { return set_union(RHS); }
-
-    /// \copydoc set_union(My_t&& RHS)
-    My_t operator+(My_t&& RHS)const { return set_union(std::move(RHS)); }
-
-    /// \copydoc intersection_assign(const My_t & rhs)
-    My_t & operator/=(const My_t& RHS) { return intersection_assign(RHS); }
-
-    /// \copydoc intersection(const My_t & rhs)
-    My_t operator/(const My_t& RHS)const { return intersection(RHS); }
-
-    /// \copydoc difference_assign(const My_t &)
-    My_t & operator-=(const My_t& RHS) { return difference_assign(RHS); }
-
-    /// \copydoc difference(const My_t &)
-    My_t operator-(const My_t& RHS)const { return difference(RHS); }
-
-    /// \copydoc is_proper_subset_of
-    bool operator<(const My_t& RHS)const { return is_proper_subset_of(RHS); }
-
-    /// \copydoc is_subset_of
-    bool operator<=(const My_t& RHS)const { return is_subset_of(RHS); }
-
-    /// \copydoc is_proper_superset_of
-    bool operator>(const My_t& RHS)const { return is_proper_superset_of(RHS); }
-
-    /// \copydoc is_superset_of
-    bool operator>=(const My_t& RHS)const { return is_superset_of(RHS); }
-
-
-    ///@}
-
-
-
     ///@{ \brief Set comparison operators
 
 
     /** \brief Returns true if this set equals other
      *
-     *   We define equality as having literally the same universe,
-     *   i.e. the pointers to the Universes have to be the same, and
-     *   having the same elements.
+     *   Equality depends on two things the universe and which of the elements
+     *   from the universe are present in this set.  For equality The universes
+     *   must contain the same elements (as determined by Universe::operator==)
+     *   and each set must contain the same elements
      *
      *   \param[in] RHS The other MathSet to compare to
      *   \return True if this set equals other
      */
     bool operator==(const My_t& RHS)const
     {
-        return (Universe_ == RHS.Universe_ && Elems_ == RHS.Elems_);
+        return (Universe_==RHS.Universe_ && Elems_ == RHS.Elems_);
     }
 
     /** \brief Returns true if this does not equal other
@@ -443,12 +363,19 @@ public:
     {
         return !(*this == RHS);
     }
-
-
     ///@}
 
-
-
+        /** \brief Applies a function to each element in this set
+     * 
+     *  This function takes a function of the signature:
+     *  \code
+     *  T transformer(const T& elem_in);
+     *  \endcode
+     *  which given some element, returns that elements new value.
+     *  
+     * \param[in] transformer the function to apply
+     * \return A new, non-aliased, trasformed version of this set
+     */
     My_t transform(TransformerFunc transformer)const
     {
         //! \todo better way to do this function?
@@ -466,6 +393,20 @@ public:
         return My_t(newuniverse, this->Elems_);
     }
 
+    /** \brief Partitions the set in two based on some criteria
+     *
+     *  This function creates a new set, with an aliased universe, that is
+     *  made up of elements for which the selector function returns true.  The
+     *  selector function should have the signature:
+     *  \code
+     *  bool Selector(const T& elem_in);
+     *  \endcode
+     *  and should return true if the element it was given is to be in the new
+     *  set
+     * 
+     *  \param[in] selector the function used for selecting elements
+     *  \return The selected elements as a set
+     */
     My_t partition(SelectorFunc selector) const
     {
         std::set<size_t> newelems;
@@ -521,10 +462,12 @@ private:
             throw ValueOutOfRange("Requested element is not in the universe");
     }
 
-    void SameUniverse(const My_t& RHS) const
+    ///Same universe iff same pointer
+    bool SameUniverse(const My_t& RHS) const
     {
         if(Universe_ != RHS.Universe_)
             throw MathException("Sets have different universes");
+        return true;
     }
 
     //! \name Serialization and Hashing
@@ -561,6 +504,8 @@ private:
 
 };
 
+/*********************** Implementations **************************************/
+
 template<typename T,typename U>
 MathSet<T,U>& MathSet<T,U>::intersection_assign(const MathSet<T,U>& RHS)
 {
@@ -593,6 +538,36 @@ MathSet<T,U>& MathSet<T,U>::difference_assign(const MathSet<T,U>& RHS)
         return *this;
     }
 
+#define MATHSET_OP(op,name)\
+template<typename T,typename U>\
+MathSet<T,U> op(const MathSet<T,U>& LHS,const MathSet<T,U>& RHS) {\
+   return LHS.name(RHS);\
+}
+#define MATHSET_OP2(op,name)\
+template<typename T,typename U>\
+MathSet<T,U>& op(MathSet<T,U>& LHS,const MathSet<T,U>& RHS) {\
+   return LHS.name(RHS);\
+}
+#define MATHSET_COMP(op,name)\
+template<typename T,typename U>\
+bool op(const MathSet<T,U>& LHS,const MathSet<T,U>& RHS) {\
+    return LHS.name(RHS);\
+}
+
+MATHSET_OP(operator+,set_union)
+MATHSET_OP2(operator+=,union_assign)
+MATHSET_OP(operator/,intersection)
+MATHSET_OP2(operator/=,intersection_assign)
+MATHSET_OP(operator-,difference)
+MATHSET_OP2(operator-=,difference_assign)
+MATHSET_COMP(operator<,is_proper_subset_of)
+MATHSET_COMP(operator<=,is_subset_of)
+MATHSET_COMP(operator>,is_proper_superset_of)
+MATHSET_COMP(operator>=,is_superset_of)
+
+#undef MATHSET_COMP
+#undef MATHSET_OP2
+#undef MATHSET_OP
 
 }//End namespace math
 }//End namespace pulsar

@@ -35,11 +35,14 @@ void register_MathSet(pybind11::module & m,
                      const char * mathsetname)
 {
     typedef typename T::value_type value_type;
-
+    typedef std::shared_ptr<typename T::Universe_t> shared_universe;
+    
     // Register the MathSet
     pybind11::class_<T>(m, mathsetname)
-    .def(pybind11::init<std::shared_ptr<typename T::Universe_t>, bool>())
+    .def(pybind11::init<shared_universe, bool>())
+    .def(pybind11::init<shared_universe,std::set<size_t>>())
     .def(pybind11::init<const T &>())
+    .def("clone",&T::clone)
     .def("my_hash", &T::my_hash)
     .def("size", &T::size)
     .def("idx",  &T::idx)

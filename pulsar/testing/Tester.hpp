@@ -64,8 +64,8 @@ public:
     
     
     ///Test that compares two, non-double, values
-    template<typename T>
-    void test(const std::string& desc,T v1, T v2){
+    template<typename T1,typename T2>
+    void test(const std::string& desc,T1 v1, T2 v2){
         test(desc,v1==v2);
     }
     

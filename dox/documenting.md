@@ -14,7 +14,8 @@ de facto standard for Python is `Sphinx`, which is abismal for documenting C++.
 Of the two languages, C++ is more involved and `Doxygen` natively knows all of 
 its
 quirks and syntax rules (even the more obscure ones).  Getting Sphinx to this
-level would require you basically write a compiler (on some level `Doxygen` is
+level would require you to basically write a compiler (on some level `Doxygen` 
+is
 a symbolic compiler).  Furthermore `Doxygen` is far more automatic than `Sphinx` 
 in
 the sense that it keeps a "symbol table" so that it can cross link classes,
@@ -32,7 +33,8 @@ Once you have Doxypypy, running:
 doxygen
 ~~~
 in the Pulsar root directory should be sufficient to generate Python API
-documentation from the doc strings of the Python files.
+documentation from the doc strings of the Python files (and also gives you the
+C++ API documentation and user's/developer's manual).
 
 \note I am in no stretch of the imagination an expert in either documentation
 program (less so with `Sphinx`).  The above comments reflect my experience with
@@ -41,7 +43,14 @@ could not find with Google searching.
 
 ## Documenting C++
 
-Basically follow normal Doxygen standards.  I'll add more to this later.
+Basically follow normal Doxygen standards.  At the moment we suggest the
+following conventions to help keep the documentation concise:
+
+- Use `\copydoc function_name` when possible to avoid duplicating documentation
+- Prefer after member documentation for very short documentation, e.g.
+   ~~~{.cpp}
+   int natoms_;///<The number of atoms
+   ~~~
 
 ## Documenting Python
 Documentation in Python goes in doc strings.  For example:
@@ -124,6 +133,8 @@ Basically the doc string is seperated into several parts:
     section, which should be titled `Raises:`
 - Yields
   - Replaces `Returns:` for generators
+- You may use Doxygen commands such as \verbatim\f$\beta\f$\endverbatim to 
+  generate the Greek letter beta
 
 ## Adding Pages
 

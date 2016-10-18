@@ -4,7 +4,9 @@ Testing                                                               {#testing}
 In order to ensure that Pulsar is working well it is imparative to test it.
 These tests also allow us to determine if a check-in breaks something.  This is
 only possible if we have unit tests.  We also need what are called acceptance
-tests, which ensure that the interface our users see is also working.  Testing
+tests, which ensure that the interface our users see is also working.  Finally,
+we have stress tests, which aim to determine how well our classes hold up under
+large amounts of data or many calls.  Testing
 Pulsar is a little bit different than testing other libraries because the core
 of Pulsar is only loadable at runtime, you can't link against it (for more on
 this see [module vs. shared library](@ref shared)).
@@ -156,3 +158,6 @@ our users to do.  These should be tests that do not reproduce the unit tests.
 So even though we expect users to create wavefunctions often, creating a
 wavefunction, in all supported ways, is covered in the wavefunction unit test.
 
+## Stress Testing
+
+\todo Document Pulsar stress testing practices

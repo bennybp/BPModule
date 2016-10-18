@@ -106,7 +106,7 @@ public:
     My_t& operator=(const My_t & RHS);
     
     ///Move assignment
-    My_t & operator=(My_t && RHS){Storage_=std::move(RHS.Storage_);}
+    My_t& operator=(My_t && RHS){Storage_=std::move(RHS.Storage_);return *this;}
     ///@}
 
     ///@{
