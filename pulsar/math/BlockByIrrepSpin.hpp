@@ -25,45 +25,53 @@ namespace math{
  *     The hash value is unique with respect to the map between
  *     the irrep/spatial symmetry and the hashing of data type \p T.
  *     See that class for details.
+ * 
+ * \param[in] T The type of the data
  */
 template<typename T>
 class BlockByIrrepSpin
 {
     public:
-        typedef typename std::map<int, T> SpinMap;
-        typedef typename std::map<Irrep, SpinMap> IrrepSpinMap;
+        typedef typename std::map<int, T> SpinMap;///<Spin 2 data
+        typedef typename std::map<Irrep, SpinMap> IrrepSpinMap;///<Irrep 2 spin
 
-        typedef typename IrrepSpinMap::iterator iterator;
+        typedef typename IrrepSpinMap::iterator iterator;///<Over SpinMaps
+        ///Iterator over const SpinMaps
         typedef typename IrrepSpinMap::const_iterator const_iterator;
 
 
         //! \todo cannot be default due to some compiler issues
         BlockByIrrepSpin() {};
+        ///Deep copies all data of \p rhs
         BlockByIrrepSpin(const BlockByIrrepSpin & rhs) : data_(rhs.data_) { }
+        ///Moves other tensor
         BlockByIrrepSpin(BlockByIrrepSpin && rhs) : data_(std::move(rhs.data_)) { }
-
+        ///Deep copies
         BlockByIrrepSpin & operator=(const BlockByIrrepSpin &) = default;
+        ///Moves other tensor
         BlockByIrrepSpin & operator=(BlockByIrrepSpin &&) = default;
-
+        ///Calls operator== on each data element in this and in \p rhs
         bool operator==(const BlockByIrrepSpin & rhs) const
         {
             return data_ == rhs.data_;
         }
-
+        ///Checks if any element differs between this and \p rhs
         bool operator!=(const BlockByIrrepSpin & rhs) const
         {
             return !((*this) == rhs);
         }
 
 
+        ///True if there is an object with irrep \p irrep and spin \p spin
         bool has(Irrep irrep, int spin) const
         {
             if(data_.count(irrep))
                 return data_.at(irrep).count(spin);
             else
-                return 0;
+                return false;
         }
 
+        ///Returns the set of irreps indexing the symmetry axis
         std::set<Irrep> get_irreps(void) const
         {
             std::set<Irrep> ret;
@@ -71,7 +79,8 @@ class BlockByIrrepSpin
                 ret.insert(it.first);
             return ret;
         }
-
+        
+        ///Returns the spins associated with an irrep
         std::set<int> get_spins(Irrep irrep) const
         {
             std::set<int> ret;
@@ -83,89 +92,50 @@ class BlockByIrrepSpin
             return ret;
         }
 
-
+        ///Returns the data with irrep \p irrep and spin \p spin
         T & get(Irrep irrep, int spin)
         {
-            //! \todo need irrep to string
-            //if(!HasMatrix(irrep, spin))
-            //    throw MathException("No matrix with this irrep/spin",
-            //                                   "irrep", irrep, "spin", spin);    
+            if(!has(irrep, spin))
+               throw MathException("No matrix with this irrep/spin",
+                                   "irrep", irrep_to_string.at(irrep), 
+                                   "spin", spin);    
 
             return data_.at(irrep).at(spin);
         }
 
+        ///\copydoc get
         const T & get(Irrep irrep, int spin) const
         {
-            //! \todo need irrep to string
-            //if(!HasMatrix(irrep, spin))
-            //    throw MathException("No matrix with this irrep/spin",
-            //                                   "irrep", irrep, "spin", spin);    
+            if(!has(irrep, spin))
+                throw MathException("No matrix with this irrep/spin",
+                                    "irrep", irrep_to_string.at(irrep),
+                                    "spin", spin);    
 
             return data_.at(irrep).at(spin);
         }
 
-        void set(Irrep irrep, int spin, const T & val)
-        {
-            if(data_.count(irrep) == 0)
-            {
-                // will create a new SpinMap
-                data_[irrep].emplace(spin, val);
-            }
-            else
-            {
-                if(data_.at(irrep).count(spin))
-                    data_[irrep].erase(spin);  // avoid operator=
+        ///Sets the element with irrep \p irrep and spin \p spin to \p val
+        void set(Irrep irrep, int spin, const T & val);
+        
+        ///\copydoc set
+        void set(Irrep irrep, int spin, T && val);
 
-                data_.at(irrep).emplace(spin, val);
-            }
-        }
-
-        void set(Irrep irrep, int spin, T && val)
-        {
-            if(data_.count(irrep) == 0)
-            {
-                // will create a new SpinMap
-                data_[irrep].emplace(spin, std::move(val));
-            }
-            else
-            {
-                if(data_.at(irrep).count(spin))
-                    data_[irrep].erase(spin);  // avoid operator=
-
-                data_.at(irrep).emplace(spin, std::move(val));
-            }
-        }
-
-
+        ///Returns an iterator over SpinMaps
         iterator begin(void) { return data_.begin(); }
 
+        ///Returns const iterator over SpinMaps
         const_iterator begin(void) const { return data_.begin(); }
 
+        ///Returns iterator just past the last SpinMap
         iterator end(void) { return data_.end(); }
 
+        ///Returns const Iterator just past the las SpinMap
         const_iterator end(void) const { return data_.end(); }
 
 
         //! Does this object have same irrep/spin structure as another
         template<typename U>
-        bool same_structure(const BlockByIrrepSpin<U> & rhs) const
-        {
-            for(const auto & irrepit : *this)
-            for(const auto & spinit : irrepit.second)
-            {
-                if(!rhs.has(irrepit.first, spinit.first))
-                    return false;
-            }
-
-            for(const auto & irrepit : rhs)
-            for(const auto & spinit : irrepit.second)
-            {
-                if(!has(irrepit.first, spinit.first))
-                    return false;
-            }
-
-            return true;
-        }
+        bool same_structure(const BlockByIrrepSpin<U> & rhs) const;
 
 
         /*! \brief Obtain a hash of the data
@@ -183,7 +153,7 @@ class BlockByIrrepSpin
         std::ostream& print(std::ostream& os)const;
 
     private:
-        IrrepSpinMap data_;
+        IrrepSpinMap data_;///<The actual data
 
         //! \name Serialization
         ///@{
@@ -204,6 +174,65 @@ class BlockByIrrepSpin
 
         ///@}
 };
+
+/**************** Implementations *************************/
+template<typename T>
+void BlockByIrrepSpin<T>::set(Irrep irrep, int spin, const T & val)
+        {
+            if(data_.count(irrep) == 0)
+            {
+                // will create a new SpinMap
+                data_[irrep].emplace(spin, val);
+            }
+            else
+            {
+                if(data_.at(irrep).count(spin))
+                    data_[irrep].erase(spin);  // avoid operator=
+
+                data_.at(irrep).emplace(spin, val);
+            }
+        }
+
+
+template<typename T>
+void BlockByIrrepSpin<T>::set(Irrep irrep, int spin, T && val)
+        {
+            if(data_.count(irrep) == 0)
+            {
+                // will create a new SpinMap
+                data_[irrep].emplace(spin, std::move(val));
+            }
+            else
+            {
+                if(data_.at(irrep).count(spin))
+                    data_[irrep].erase(spin);  // avoid operator=
+
+                data_.at(irrep).emplace(spin, std::move(val));
+            }
+        }
+
+
+
+template<typename T>
+template<typename U>
+bool BlockByIrrepSpin<T>::same_structure(const BlockByIrrepSpin<U> & rhs) const
+        {
+            for(const auto & irrepit : *this)
+            for(const auto & spinit : irrepit.second)
+            {
+                if(!rhs.has(irrepit.first, spinit.first))
+                    return false;
+            }
+
+            for(const auto & irrepit : rhs)
+            for(const auto & spinit : irrepit.second)
+            {
+                if(!has(irrepit.first, spinit.first))
+                    return false;
+            }
+
+            return true;
+        }
 
 template<typename T>
 std::ostream& BlockByIrrepSpin<T>::print(std::ostream& os)const

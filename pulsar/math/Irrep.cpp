@@ -38,6 +38,11 @@ const std::map<Irrep,std::string> irrep_to_string={
     {Irrep::E2u,"E2u"}
 };
 
+//The unicode usage is is going to backfire, but it looks cool....
+const std::map<Spin,std::string> spin_to_string={
+    {Spin::alpha,"α"},
+    {Spin::beta,"β"}
+};
 
 }
 }

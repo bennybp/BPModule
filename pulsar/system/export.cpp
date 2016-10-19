@@ -28,10 +28,6 @@ namespace export_python {
 
 // in testing_export.cpp
 void export_testing(pybind11::module & m);
-// in symmetry/ExportSymmetry.cpp
-void export_symmetry(pybind11::module & m);
-
-
 
 void export_pybind11(pybind11::module & mtop)
 {
@@ -352,7 +348,6 @@ void export_pybind11(pybind11::module & mtop)
  
     // Export the testing stuff
     export_testing(m);
-    export_symmetry(m);
 }
 
 

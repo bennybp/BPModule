@@ -9,6 +9,7 @@ INPUT+=  dox/basic.md \
          dox/shared.md \
          dox/printing.md \
          dox/systems.md \
+         dox/tensor.md \
          dox/terminology.md \
          dox/testing.md
 

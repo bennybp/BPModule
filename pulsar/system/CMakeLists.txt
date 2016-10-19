@@ -14,11 +14,11 @@ set(PULSAR_SYSTEM_FILES
     export.cpp
     testing_export.cpp
 
-    symmetry/CrystalSystem.cpp
-    symmetry/Symmetrizer.cpp
-    symmetry/SymmetryElement.cpp
-    symmetry/SymmetryGroup.cpp
-    symmetry/export_symmetry.cpp
+    #symmetry/CrystalSystem.cpp
+    #symmetry/Symmetrizer.cpp
+    #symmetry/SymmetryElement.cpp
+    #symmetry/SymmetryGroup.cpp
+    #symmetry/export_symmetry.cpp
 
     PARENT_SCOPE
    )

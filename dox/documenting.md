@@ -46,7 +46,8 @@ could not find with Google searching.
 Basically follow normal Doxygen standards.  At the moment we suggest the
 following conventions to help keep the documentation concise:
 
-- Use `\copydoc function_name` when possible to avoid duplicating documentation
+- Use \verbatim\copydoc function_name\endverbatim when possible to avoid 
+  duplicating documentation
 - Prefer after member documentation for very short documentation, e.g.
    ~~~{.cpp}
    int natoms_;///<The number of atoms

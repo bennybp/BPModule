@@ -1,5 +1,4 @@
-#ifndef PULSAR_GUARD_COMMON__EIGENCOMMON_HPP_
-#define PULSAR_GUARD_COMMON__EIGENCOMMON_HPP_
+#pragma once
 
 #include "pulsar/math/BlockByIrrepSpin.hpp"
 #include "pulsar/math/TensorImpl.hpp"
@@ -9,10 +8,17 @@
 namespace pulsar {
 namespace math {
 
+/** \brief Specialization of TensorImpl to Eigen's Matrix
+ * 
+ *  \todo Should save/load use the fact that you can grab the double* from an
+ *        Eigen matrix?
+ *  \todo A lot of duplicate code b/w this and EigenVectorImpl combine?
+ */
 class EigenMatrixImpl : public pulsar::math::MatrixDImpl
 {
     public:
-
+        using matrix_type=Eigen::MatrixXd;
+        using shared_matrix=std::shared_ptr<matrix_type>;
         /*! \brief For serialization only
          * 
          * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
@@ -20,42 +26,71 @@ class EigenMatrixImpl : public pulsar::math::MatrixDImpl
          */
         EigenMatrixImpl() = default;
 
-        EigenMatrixImpl(const std::shared_ptr<Eigen::MatrixXd> & mat)
+        ///Aliases this Eigen matrix to \p mat
+        EigenMatrixImpl(const shared_matrix& mat)
             : mat_(mat) { }
 
-        EigenMatrixImpl(const Eigen::MatrixXd & mat)
-            : mat_(std::make_shared<Eigen::MatrixXd>(mat)) { }
+        ///Copies Eigen matrix from \p mat
+        EigenMatrixImpl(const matrix_type & mat)
+            : mat_(std::make_shared<matrix_type>(mat)) { }
 
-        EigenMatrixImpl(Eigen::MatrixXd && mat)
-            : mat_(std::make_shared<Eigen::MatrixXd>(std::move(mat))) { }
+        ///Moves Eigen matrix from \p mat 
+        EigenMatrixImpl(matrix_type && mat)
+            : mat_(std::make_shared<matrix_type>(std::move(mat))) { }
 
+        ///True if the underlying Eigen matrices are the same
+        bool operator==(const EigenMatrixImpl& rhs)const
+        {
+            return *mat_==*rhs.mat_;
+        }
+        
+        ///True if the underlying Eigen matrices are not the same
+        bool operator!=(const EigenMatrixImpl& rhs)const
+        {
+            return !((*this)==rhs);
+        }
+        
+        /*! \brief Obtain a hash of the data
+         *
+         * Details depend on what kind of data is stored.
+         * See the hashing functions of the stored type
+         * for details.
+         */
+        bphash::HashValue my_hash(void) const
+        {
+            return bphash::make_hash(bphash::HashType::Hash128, *this);
+        }
+        
+        ///\copydoc TensorImpl::sizes
         virtual std::array<size_t, 2> sizes(void) const
         {
             return {static_cast<size_t>((*mat_).rows()),
                     static_cast<size_t>((*mat_).cols())};
         }
 
+        ///\copydoc TensorImpl::get_value
         virtual double get_value(std::array<size_t, 2> idx) const
         {
             return (*mat_)(idx[0], idx[1]);
         }
 
+        ///\copydoc TensorImpl::set_Value
         virtual void set_value(std::array<size_t, 2> idx, double val)
         {
             (*mat_)(idx[0], idx[1]) = val;
         }
 
-        std::shared_ptr<const Eigen::MatrixXd>
-        get_matrix(void) const
+        ///Allows you to get the actual matrix (in constant form)
+        std::shared_ptr<const matrix_type> get_matrix(void) const
         {
             return mat_;
         }
 
     private:
-        std::shared_ptr<Eigen::MatrixXd> mat_;
+        shared_matrix mat_;///<The actual matrix
 
         DECLARE_SERIALIZATION_FRIENDS
-
+        BPHASH_DECLARE_HASHING_FRIENDS
         template<class Archive>
         void save(Archive & archive) const
         {
@@ -86,12 +121,21 @@ class EigenMatrixImpl : public pulsar::math::MatrixDImpl
             for(unsigned int j = 0; j < ncol; j++)
                 archive((*mat_)(i,j));
         }
+        
+        void hash(bphash::Hasher & h) const
+        {
+            //h(*mat_);
+        }
 };
 
 
+///Same as EigenMatrix except for vectors
 class EigenVectorImpl : public pulsar::math::VectorDImpl
 {
     public:
+        using vector_type=Eigen::VectorXd;///<Type of Eigen's vector class
+        using shared_vector=std::shared_ptr<vector_type>;///<Type of ptr to vec
+        
         /*! \brief For serialization only
          * 
          * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
@@ -99,42 +143,61 @@ class EigenVectorImpl : public pulsar::math::VectorDImpl
          */
         EigenVectorImpl() = default;
 
-        EigenVectorImpl(const std::shared_ptr<Eigen::VectorXd> & mat)
+        ///Aliases this vector to the one in \p mat
+        EigenVectorImpl(const shared_vector & mat)
             : mat_(mat) { }
 
-        EigenVectorImpl(const Eigen::VectorXd & mat)
-            : mat_(std::make_shared<Eigen::VectorXd>(mat)) { }
+        ///Deep copies the vector \p mat
+        EigenVectorImpl(const vector_type & mat)
+            : mat_(std::make_shared<vector_type>(mat)) { }
 
-        EigenVectorImpl(Eigen::VectorXd && mat)
-            : mat_(std::make_shared<Eigen::VectorXd>(std::move(mat))) { }
+        ///Moves \p mat into this vector
+        EigenVectorImpl(vector_type && mat)
+            : mat_(std::make_shared<vector_type>(std::move(mat))) { }
+        
+                ///True if the underlying Eigen vectors are the same
+        bool operator==(const EigenVectorImpl& rhs)const
+        {
+            return *mat_==*rhs.mat_;
+        }
+        
+        ///True if the underlying Eigen vectors are not the same
+        bool operator!=(const EigenVectorImpl& rhs)const
+        {
+            return !((*this)==rhs);
+        }
 
+        ///\copydoc TensorImpl::sizes()
         virtual std::array<size_t, 1> sizes(void) const
         {
             return {static_cast<size_t>((*mat_).size())};
         }
 
+        ///\copydoc TensorImpl::get_value
         virtual double get_value(std::array<size_t, 1> idx) const
         {
             return (*mat_)(idx[0]);
         }
 
+        ///\copydoc TensorImpl::set_value
         virtual void set_value(std::array<size_t, 1> idx, double val)
         {
             (*mat_)(idx[0]) = val;
         }
 
-        std::shared_ptr<const Eigen::VectorXd>
-        get_matrix(void) const
+        ///Returns the vector wrapped in this class
+        std::shared_ptr<const vector_type> get_matrix(void) const
         {
             return mat_;
         }
 
     private:
-        std::shared_ptr<Eigen::VectorXd> mat_;
+        shared_vector mat_;///<The actual vector
 
 
         DECLARE_SERIALIZATION_FRIENDS
-
+        BPHASH_DECLARE_HASHING_FRIENDS
+        
         template<class Archive>
         void save(Archive & archive) const
         {
@@ -165,22 +228,28 @@ class EigenVectorImpl : public pulsar::math::VectorDImpl
             for(unsigned int j = 0; j < ncol; j++)
                 archive((*mat_)(i,j));
         }
+        
+        void hash(bphash::Hasher & h) const
+        {
+            //h(*mat_);
+        }
 };
 
-
+///Converts a pulsar matrix to an Eigen matrix
 std::shared_ptr<const Eigen::MatrixXd>
-convert_to_eigen(const std::shared_ptr<const pulsar::math::MatrixDImpl> & ten);
+convert_to_eigen(const pulsar::math::MatrixDImpl & ten);
 
+///Converts a pulsar vector to an Eigen vector
 std::shared_ptr<const Eigen::VectorXd>
-convert_to_eigen(const std::shared_ptr<const pulsar::math::VectorDImpl> & ten);
+convert_to_eigen(const pulsar::math::VectorDImpl & ten);
 
+///Eigen Matrix suitable for use with symmetry and spin
+typedef pulsar::math::BlockByIrrepSpin<EigenMatrixImpl> BlockedEigenMatrix;
 
-typedef pulsar::math::BlockByIrrepSpin<Eigen::MatrixXd> BlockedEigenMatrix;
-typedef pulsar::math::BlockByIrrepSpin<Eigen::VectorXd> BlockedEigenVector;
+///Eigen vector suitable for use with symmetry and spin
+typedef pulsar::math::BlockByIrrepSpin<EigenVectorImpl> BlockedEigenVector;
 
 
 } // close namespace math
 } // close namespace pulsar
-
-#endif
 

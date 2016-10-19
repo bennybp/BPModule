@@ -30,6 +30,11 @@ install(TARGETS ${test_name}
 )
 endfunction()
 
+#Macro for defining both a Python and C++ test
+function(pulsar_test test_name)
+   pulsar_py_test(${test_name})
+   pulsar_cxx_test(${test_name})
+endfunction()
 
 #This file will allow us to run ctest in the top-level build dir
 #Basically it just defers to the actual top-level CTestTestfile.cmake in the

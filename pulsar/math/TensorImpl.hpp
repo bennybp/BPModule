@@ -11,6 +11,7 @@
 namespace pulsar{
 namespace math {
 
+///Provides the minimal interface a tensor must implement to work with Pulsar
 template<size_t Rank, typename DataType>
 class TensorImpl
 {
@@ -22,12 +23,19 @@ class TensorImpl
          */
         TensorImpl() = default;
 
+        ///Should return an arry of each dimension's length
         virtual std::array<size_t, Rank> sizes(void) const = 0;
+        
+        ///Should return the element stored at \p idx
         virtual DataType get_value(std::array<size_t, Rank> idx) const = 0;
+        
+        ///Should set \p idx to \p val
         virtual void set_value(std::array<size_t, Rank> idx, DataType val) = 0;
 
-        size_t size(int dim) const { return sizes().at(dim); }
 
+        ///Returns the length of dimension \p dim
+        size_t size(int dim) const { return sizes().at(dim); }
+        
         ///Prints the tensor by calling get_value many times (i.e. this is slow)
         std::ostream & print(std::ostream& os) const;
 
@@ -53,25 +61,29 @@ template<size_t Rank,typename DataType>
 class TensorImpl_Py : public TensorImpl<Rank,DataType>{
     private:
         //g++ is giving me problems with passing these as argument to a macro
-        using SizeArray=std::array<size_t,Rank>;
-        using Base_t=TensorImpl<Rank,DataType>;
+        using SizeArray=std::array<size_t,Rank>;///<Type of the lengths
+        using Base_t=TensorImpl<Rank,DataType>;///<Type of the base class
     public:
+        ///\copydoc sizes
         std::array<size_t,Rank> sizes()const
         {
             PYBIND11_OVERLOAD_PURE(SizeArray,Base_t,sizes);
         }
         
+        ///\copydoc get_value
         DataType get_value(std::array<size_t,Rank> idx)const
         { 
           PYBIND11_OVERLOAD_PURE(DataType,Base_t,get_value,idx);
         }
         
+        ///\copydoc set_value
         void set_value(std::array<size_t,Rank> idx,DataType val)
         {
             PYBIND11_OVERLOAD_PURE(void,Base_t,set_value,idx,val);
         }
 };
 
+/********************* Implementations ***************************************/
 
 template<size_t Rank,typename DataType>
 std::ostream& TensorImpl<Rank,DataType>::print(std::ostream& os)const
@@ -111,7 +123,8 @@ std::ostream& operator<<(std::ostream& os, const TensorImpl<Rank,DataType>& t)
 
 typedef TensorImpl<2, double> MatrixDImpl;
 typedef TensorImpl<1, double> VectorDImpl;
-
+using PyMatrixDImpl=TensorImpl_Py<2,double>;
+using PyVectorDImpl=TensorImpl_Py<1,double>;
 } // close namespace math
 } // close namespace pulsar
 

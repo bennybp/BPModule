@@ -12,6 +12,7 @@
 namespace pulsar{
 namespace math{
 
+///A list of irreps found in Albein point groups
 enum class Irrep {
   A,Ag,Au,Ap,App,
   B,Bg,Bu,
@@ -23,6 +24,7 @@ enum class Irrep {
   E2, E2g, E2u,
 };
 
+///A map from irrep to its string equivalent
 extern const std::map<Irrep,std::string> irrep_to_string;
 
 
@@ -30,6 +32,9 @@ extern const std::map<Irrep,std::string> irrep_to_string;
 enum Spin {//purposely use old-school enums to allow falling back to ints
     alpha=1,beta=-1
 };
+
+///A map from a spin to its string equivalent
+extern const std::map<Spin,std::string> spin_to_string;
 
 } // close namespace math
 } // close namespace pulsar

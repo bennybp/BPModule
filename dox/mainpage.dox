@@ -17,6 +17,7 @@ is stuff you will likely want to know before reading further.
     - [Making Modules and Supermodules](@ref makemod)
     - [Printing Things Out](@ref printing)
     - [Making and Using Systems](@ref systems)
+    - [Interfacing Custom Tensors](@ref tensors)
   - Developer notes
     - [Testing](@ref testing)
     - [Documenting](@ref documenting)
