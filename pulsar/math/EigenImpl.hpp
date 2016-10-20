@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pulsar/math/EigenHash.hpp"
 #include "pulsar/math/BlockByIrrepSpin.hpp"
 #include "pulsar/math/TensorImpl.hpp"
 
@@ -124,7 +125,7 @@ class EigenMatrixImpl : public pulsar::math::MatrixDImpl
         
         void hash(bphash::Hasher & h) const
         {
-            //h(*mat_);
+            h(*mat_);
         }
 };
 
@@ -231,7 +232,7 @@ class EigenVectorImpl : public pulsar::math::VectorDImpl
         
         void hash(bphash::Hasher & h) const
         {
-            //h(*mat_);
+            h(*mat_);
         }
 };
 
