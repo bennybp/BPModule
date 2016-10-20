@@ -137,8 +137,8 @@ void export_pybind11(pybind11::module & mtop)
     export_tensor_impl<VectorDImpl,PyVectorDImpl>(m,"VectorImplD");  
     export_eigen_x_impl<EigenMatrixImpl,Eigen::MatrixXd>(m,"EigenMatrixImpl");
     export_eigen_x_impl<EigenVectorImpl,Eigen::VectorXd>(m,"EigenVectorImpl");
-    export_irrep_spin_X<IrrepSpinMatrixD,SharedMatrix>(m,"IrrepSpinMatrixD");
-    export_irrep_spin_X<IrrepSpinVectorD,SharedVector>(m,"IrrepSpinVectorD");                      
+    export_irrep_spin_X<BlockedEigenMatrix,SharedMatrix>(m,"BlockedEigenMatrix");
+    export_irrep_spin_X<BlockedEigenVector,SharedVector>(m,"BlockedEigenVector");                      
      
     
     // Export the testing stuff

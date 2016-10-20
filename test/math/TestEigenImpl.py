@@ -15,6 +15,9 @@ tester.test("Matrix set_value works",True,55.0,M1.get_value,[0,2])
 tester.test("Matrix != works",True,True,M1.__ne__,M2)
 Mat4=M1.get_matrix()
 tester.test("Not an alias of numpy array",True,False,np.array_equal,Mat1,Mat4)
+m_hash=[146, 88, 75, 12, 250, 147, 195, 231, 81, 168, 57, 184, 212, 71, 236,168]
+tester.test("Matrix Hash Value",True,m_hash,M1.my_hash)
+
 
 Vec1=np.array([1.0,2.0,3.0,4.0])
 Vec2=np.array([2.0,3.0,4.0,5.0])
@@ -28,5 +31,7 @@ tester.test("Vector set_value works",True,55.0,V1.get_value,[2])
 tester.test("Vector != works",True,True,V1.__ne__,V2)
 Vec4=V1.get_matrix()
 tester.test("Not an alias of numpy array",True,False,np.array_equal,Vec1,Vec4)
+v_hash=[0, 119, 80, 12, 141, 99, 213, 252, 166, 38, 255, 42, 113, 45, 80, 61]
+tester.test("Vector Hash Value",True,v_hash,V1.my_hash)
 
 tester.print_results();

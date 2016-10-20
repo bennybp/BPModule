@@ -25,6 +25,9 @@ TEST_CLASS(TestEigenImpl){
     tester.test("Matrix != works",true,M3!=M1);
     auto Mat4=pulsar::math::convert_to_eigen(M1);
     tester.test("Matrix convert to eigen works",*Mat1,*Mat4);
+    const std::string m_hash="2844c428d93543305ca764952c28570e";
+    tester.test("Matrix hash is right 1",m_hash,bphash::hash_to_string(M1.my_hash()));
+    tester.test("Matrix hash is right 2",m_hash,bphash::hash_to_string(M2.my_hash()));
     
     Vector_t::shared_vector Vec1=std::make_shared<Vector_t::vector_type>(4);
     Vector_t::vector_type Vec2(4);
@@ -42,5 +45,9 @@ TEST_CLASS(TestEigenImpl){
     tester.test("Vector != works",true,V3!=V1);
     auto Vec4=pulsar::math::convert_to_eigen(V1);
     tester.test("Vector convert to eigen works",*Vec1,*Vec4);
+    const std::string v_hash="ad6127d08f5fe6a7504bfd1c8dfd9cdb";
+    tester.test("Vector hash is correct 1",v_hash,bphash::hash_to_string(V1.my_hash()));
+    tester.test("Vector hash is correct 2",v_hash,bphash::hash_to_string(V2.my_hash()));
+
     tester.print_results();
 }

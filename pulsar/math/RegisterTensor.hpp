@@ -5,6 +5,7 @@
 
 #pragma once
 #include <pybind11/eigen.h>
+#include <bphash/types/memory.hpp>
 #include "pulsar/math/Irrep.hpp"
 
 namespace pulsar {
@@ -32,6 +33,7 @@ void export_eigen_x_impl(pybind11::module& m,const char* Name)
     .def(pybind11::init<const EigenType&>())
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
+    .def("my_hash",&TensorT::my_hash)
     .def("sizes",&TensorT::sizes)
     .def("get_value",&TensorT::get_value)
     .def("set_value",&TensorT::set_value)
@@ -46,18 +48,18 @@ void export_eigen_x_impl(pybind11::module& m,const char* Name)
 //TensorI is the type it wraps, and Name is the python class name
 template<typename TensorT,typename TensorI>
 void  export_irrep_spin_X(pybind11::module& m,const char* Name)
-{   pybind11::class_<TensorT,std::shared_ptr<TensorT>>(m,Name)
+{   
+    using get_sig=TensorI&(TensorT::*)(pulsar::math::Irrep,int);
+    using set_sig=void(TensorT::*)(pulsar::math::Irrep,int,const TensorI&);
+    pybind11::class_<TensorT,std::shared_ptr<TensorT>>(m,Name)
     .def(pybind11::init<>())
     .def(pybind11::init<const TensorT&>())
+    .def("my_hash",&TensorT::my_hash)
     .def("has",&TensorT::has)
     .def("get_irreps",&TensorT::get_irreps)
     .def("get_spins",&TensorT::get_spins)
-    .def("get",[](TensorT& t,Irrep ir,int spin){
-                  return t.get(ir,spin);          
-     })
-    .def("set",[](TensorT& t,Irrep ir,int spin,TensorI tensor){        
-        t.set(ir,spin,tensor);
-    })
+    .def("get",static_cast<get_sig>(&TensorT::get))
+    .def("set",static_cast<set_sig>(&TensorT::set))
     .def("same_structure",[](const TensorT& t,const TensorT& t2)
     {
      return t.same_structure(t2);

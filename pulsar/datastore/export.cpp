@@ -121,7 +121,8 @@ void export_pybind11(pybind11::module & mtop)
                       if(r)
                         return *r;
                       else
-                        return static_cast<pybind11::object>(pybind11::none());
+                          return static_cast<pybind11::object>(pybind11::none());
+
                   },
                   pybind11::arg("key"),
                   pybind11::arg("use_distcache"))

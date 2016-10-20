@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pulsar/math/EigenHash.hpp"
 #include "pulsar/math/BlockByIrrepSpin.hpp"
 #include "pulsar/math/TensorImpl.hpp"
 
@@ -124,7 +125,7 @@ class EigenMatrixImpl : public pulsar::math::MatrixDImpl
         
         void hash(bphash::Hasher & h) const
         {
-            //h(*mat_);
+            h(*mat_);
         }
 };
 
@@ -190,6 +191,12 @@ class EigenVectorImpl : public pulsar::math::VectorDImpl
         {
             return mat_;
         }
+        
+        ///Returns the hash of this object
+        bphash::HashValue my_hash()const
+        {
+            return bphash::make_hash(bphash::HashType::Hash128, *this);
+        }
 
     private:
         shared_vector mat_;///<The actual vector
@@ -231,7 +238,7 @@ class EigenVectorImpl : public pulsar::math::VectorDImpl
         
         void hash(bphash::Hasher & h) const
         {
-            //h(*mat_);
+            h(*mat_);
         }
 };
 
@@ -244,10 +251,10 @@ std::shared_ptr<const Eigen::VectorXd>
 convert_to_eigen(const pulsar::math::VectorDImpl & ten);
 
 ///Eigen Matrix suitable for use with symmetry and spin
-typedef pulsar::math::BlockByIrrepSpin<EigenMatrixImpl> BlockedEigenMatrix;
+typedef pulsar::math::BlockByIrrepSpin<std::shared_ptr<EigenMatrixImpl>> BlockedEigenMatrix;
 
 ///Eigen vector suitable for use with symmetry and spin
-typedef pulsar::math::BlockByIrrepSpin<EigenVectorImpl> BlockedEigenVector;
+typedef pulsar::math::BlockByIrrepSpin<std::shared_ptr<EigenVectorImpl>> BlockedEigenVector;
 
 
 } // close namespace math
