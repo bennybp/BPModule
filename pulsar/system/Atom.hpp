@@ -141,7 +141,7 @@ Atom create_atom(CoordType xyz, int Z);
 
 
 /*! \copydoc create_atom(CoordType xyz, int Z) */
-Atom create_atom(double x, double y, double z, int Z);
+//Atom create_atom(double x, double y, double z, int Z);
 
 
 
@@ -153,7 +153,7 @@ Atom create_atom(CoordType xyz, int Z, int isonum);
 
 
 /*! \copydoc create_atom(CoordType xyz, int Z, int isonum) */ 
-Atom create_atom(double x, double y, double z, int Z, int isonum);
+//Atom create_atom(double x, double y, double z, int Z, int isonum);
 
 
 ///@{ \name Ghost Atom Functions
@@ -171,7 +171,6 @@ Atom make_ghost_atom(const Atom & atom);
 
 ///Returns true if AtomI is a ghost atom
 bool is_ghost_atom(const Atom & atom);
-
 ///@}
 
 
@@ -184,10 +183,10 @@ bool is_ghost_atom(const Atom & atom);
 Atom make_point_charge(const CoordType & xyz, double charge);
 
 ///Copies AtomI into a point charge
-Atom make_point_charge(const Atom & atom);
+Atom make_point_charge(const Atom & atom,double charge);
 
 ///Makes a point charge from a charge and coordinates
-Atom make_point_charge(double x, double y, double z, double charge);
+//Atom make_point_charge(double x, double y, double z, double charge);
 
 ///Returns true if AtomI is a point charge
 bool is_point_charge(const Atom& AtomI);
@@ -205,7 +204,7 @@ Atom make_dummy_atom(const CoordType & xyz);
 Atom make_dummy_atom(const Atom & atom);
 
 ///Makes a dummy atom from component coordinates
-Atom make_dummy_atom(double x, double y, double z);
+//Atom make_dummy_atom(double x, double y, double z);
 
 ///Returns true if AtomI is a dummy atom
 bool is_dummy_atom(const Atom & atom);

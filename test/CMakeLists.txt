@@ -42,6 +42,9 @@ endfunction()
 file(WRITE ${CMAKE_INSTALL_PREFIX}/CTestTestfile.cmake "subdirs(test)")
 
 add_subdirectory(math)
+add_subdirectory(system)
+
+
 configure_file("TestFxns.py.in" "TestFxns.py" @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/TestFxns.py
         DESTINATION ${CMAKE_INSTALL_PREFIX}/test)

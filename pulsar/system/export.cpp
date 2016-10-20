@@ -259,15 +259,11 @@ void export_pybind11(pybind11::module & mtop)
     // Atom creators, ghost/dummy/point charge, etc
     m.def("create_atom", static_cast<Atom (*)(CoordType, int)>(create_atom));
     m.def("create_atom", static_cast<Atom (*)(CoordType, int, int)>(create_atom));
-    m.def("create_atom", static_cast<Atom (*)(double, double, double, int)>(create_atom));
-    m.def("create_atom", static_cast<Atom (*)(double, double, double, int, int)>(create_atom));
     m.def("make_ghost_atom", make_ghost_atom);
-    m.def("make_point_charge", static_cast<Atom (*)(const CoordType & xyz, double charge)>(make_point_charge));
-    m.def("make_point_charge", static_cast<Atom (*)(const Atom & atom)>(make_point_charge));
-    m.def("make_point_charge", static_cast<Atom (*)(double x, double y, double z, double charge)>(make_point_charge));
-    m.def("make_dummy_atom", static_cast<Atom (*)(const Atom & atom)>(make_dummy_atom));
-    m.def("make_dummy_atom", static_cast<Atom (*)(const CoordType & xyz)>(make_dummy_atom));
-    m.def("make_dummy_atom", static_cast<Atom (*)(double x, double y, double z)>(make_dummy_atom));
+    m.def("make_point_charge", static_cast<Atom (*)(const CoordType &, double)>(make_point_charge));
+    m.def("make_point_charge", static_cast<Atom (*)(const Atom &,double)>(make_point_charge));
+    m.def("make_dummy_atom", static_cast<Atom (*)(const Atom &)>(make_dummy_atom));
+    m.def("make_dummy_atom", static_cast<Atom (*)(const CoordType &)>(make_dummy_atom));
     m.def("is_ghost_atom", is_ghost_atom);
     m.def("is_point_charge", is_point_charge);
     m.def("is_dummy_atom", is_dummy_atom);

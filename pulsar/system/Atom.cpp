@@ -122,18 +122,6 @@ Atom create_atom(CoordType xyz, int Z, int isotope)
                 );
 }
 
-Atom create_atom(double x, double y, double z, int Z)
-{
-    return create_atom({x,y,z}, Z);
-}
-
-Atom create_atom(double x, double y, double z, int Z, int isotope)
-{
-    return create_atom({x,y,z}, Z, isotope);
-}
-
-//RMR, although we don't need the Z, for interfacing to programs we might so,
-//I'm going negative
 Atom make_ghost_atom(const Atom & atom)
 {
     Atom ghost = create_atom(atom.get_coords(), -1*abs(atom.Z));
@@ -158,11 +146,6 @@ Atom make_dummy_atom(const Atom & atom)
     return create_atom(atom.get_coords(), DUMMY_ATOM_Z);
 }
 
-Atom make_dummy_atom(double x, double y, double z)
-{
-    return create_atom({x, y, z}, DUMMY_ATOM_Z);
-}
-
 bool is_dummy_atom(const Atom & atom)
 {
     //! \todo simple enough check?
@@ -177,14 +160,9 @@ Atom make_point_charge(const CoordType & xyz, double charge)
     return atom;
 }
 
-Atom make_point_charge(const Atom & atom)
+Atom make_point_charge(const Atom & atom, double charge)
 {
-    return make_point_charge(atom.get_coords(), atom.charge);
-}
-
-Atom make_point_charge(double x, double y, double z, double charge)
-{
-    return make_point_charge({x,y,z}, charge);
+    return make_point_charge(atom.get_coords(), charge);
 }
 
 bool is_point_charge(const Atom & atom)
