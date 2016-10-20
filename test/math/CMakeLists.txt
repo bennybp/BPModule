@@ -1,6 +1,7 @@
 pulsar_test(TestBlockByIrrepSpin)
 pulsar_cxx_test(TestCombItr)
 pulsar_test(TestEigenImpl)
+pulsar_cxx_test(TestFiniteDiff)
 pulsar_test(TestMathSet)
 pulsar_cxx_test(TestPowerSetItr)
 pulsar_test(TestUniverse)

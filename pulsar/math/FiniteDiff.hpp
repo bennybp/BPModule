@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdlib>
 #include <LibTaskForce/LibTaskForce.hpp>
+#include "pulsar/exception/Exceptions.hpp"
 
 namespace pulsar{
 namespace math{
@@ -12,64 +13,46 @@ namespace math{
  *  a visitor that provides the minimal functionality to be used with the
  *  finite difference algorithm.
  * 
-
- *  We need your help  doing five tasks:
- * 
- *  1. Give us the \f$i\f$-th of the \f$N\f$ variables
- *     - Handled by operator()(size_t i)const
- *  2. Update the coordinate we give you
- *     - operator()(const VarType&,const VarType&,double)const
- *  3. Compute a ResultType given the new coord for the i-th variable
- *     - operator()(size_t,const VarType&)
- *  4. Scale a ResultType by a double
- *     - operator()(ResultType&,double)
- *  5. Update the result
- *     - operator()(ResultType&,ResultType&,size_t,const VarType&)const
- * 
- *  You can use the predefined functions in this class if VarType supports
- *  addition by the plus operator, multiplication from the right by a double, 
- *  and division from the right by its type.  ResultType must contain iterators
- *  and an insert operator.  Basically we assume that ResultType is an
- *  std::vector<VarType> and VarType is a simple type like double.  It should be
- *  possible, via inheritance, to use more complicated types though.
+ *  See [Finite Difference With Pulsar](@ref fdiff) for a more detailed
+ *  description of how to use this class and the FDiff technology in general
  * 
  *  \param[in] VarType The type of each variable.
- *  \param[in] ResultType The type that goes into the final derivative.
+ *  \param[in] ResultType The type of the final derivative
  */
-template<typename VarType,typename ResultType=VarType>    
+template<typename VarType,typename ResultType>    
 struct FDiffVisitor{
     ///Makes sure the compiler doesn't complain
     virtual ~FDiffVisitor()=default;    
     ///Returns variable i
-    virtual VarType operator()(size_t i)const=0;
+    virtual VarType coord(size_t i)const=0;
     
     ///Return Old+H*Shift
-    virtual VarType operator()(const VarType& Old,const VarType& H,double Shift)const
+    virtual VarType shift(const VarType& Old,const VarType& H,double Shift)const
     {
         return Old+H*Shift;
     }
     
     ///Instructs you to run your function with the i-th variable set to NewVar
-    virtual ResultType operator()(size_t i, const VarType& NewVar)const=0;
+    virtual ResultType run(size_t i, const VarType& NewVar)const=0;
     
     ///Instructs you to scale Result by coef (Result has been initialized)
-    void operator()(ResultType& Result,double Coef)const
+    void scale(ResultType& Result,double Coef)const
     {
         for(auto & i :Result)i*=Coef;
     }
     
-    ///Instructs you to set the i-th element of Result to Element/H
-    ///(Result may not have been initialized)
-    void operator()(ResultType& Result,ResultType& Element,
+    ///Instructs you to sum into the i-th element of Result the quantity
+    ///Element/H (Result may not have been initialized)
+    void update(ResultType& Result,ResultType& Element,
                   size_t,const VarType& H)const
     {
         if(Result.size()==0){
             for(size_t i=0;i<Element.size();++i)
-                Result.push_back(Element[i]/H);
+                Result.insert(Result.end(),Element[i]/H);
         }
         else{
             for(size_t i=0;i<Result.size();++i)
-                Result[i]+=Element[i]/H;
+                Result[i]=Result[i]+Element[i]/H;//Avoid needing += operator
         }
     }
 };    
@@ -95,32 +78,14 @@ struct FDiffVisitor{
  */
  std::vector<double> coefs(const std::vector<double>& Stencil,size_t Deriv=1);
 
- /** \brief Base class for computing a derivative by finite difference
- *
- *  Given a set of \f$N\f$ variables \f$X=\lbrace X_i\rbrace\f$, a function
- *  that depends on those variables, \f$f(X)\f$, and a spacing \f$h\f$ we
- *  may define several ways of computing the difference between two points.
- *  In general we label that difference \f$\Gamma_h[f](X)\f$.  The derivative
- *  of \f$f\f$ with respect to \f$X\f$, \f$f_X\f$,  i.e. the gradient of
- *  \f$f\f$, is then given by:
- *  \f[
- *    f_X=\frac{\Gamma_h[f](X)}{h}.
- *  \f]
-  
- *  Eventually one wants to perform finite difference in other coordinates
- *  than Cartesians, in particular internal coordinates.  The visitor class
- *  puts you in control of each math step that involves your objects, thus it
- *  should be possible to use any objects you want by defining the visitor's
- *  fxns appropriately.
- */
-template<typename VarType,typename ResultType=VarType>
+ ///Base class for computing a derivative by FDiff
+template<typename VarType,typename ResultType>
 class FiniteDiff{
    private:
-      //The communicator in charge of this FDiff
-      LibTaskForce::HybridComm& Comm_;
-      typedef FiniteDiff<VarType,ResultType> My_t;
+      std::unique_ptr<LibTaskForce::HybridComm> Comm_;///<Comm for parallel
+      typedef FiniteDiff<VarType,ResultType> My_t;//The type of this class
    protected:
-      ///Function to generate the coefs, minor tweaks for backwards and central
+      ///Function to generate the coefs, minor tweaks for central
       virtual std::vector<double> get_coefs(size_t NPoints)const{
         std::vector<double> x(NPoints);
         for(size_t i=0;i<NPoints;i++)x[i]=Shift(i,NPoints);
@@ -135,128 +100,70 @@ class FiniteDiff{
       virtual double Shift(size_t I,size_t NPoint)const=0;
       
    public:
-      ///Default destructor is fine
-      virtual ~FiniteDiff()=default;
-      ///No default initialization b/c we want the communicator
-      //FiniteDiff()=delete;
-      ///Really don't see why you want to copy/move this, it's use as needed and
-      ///comm's dont move/copy
-      FiniteDiff(const My_t&)=delete;
-      FiniteDiff(const My_t&&)=delete;
-      My_t& operator=(const My_t&)=delete;
+      virtual ~FiniteDiff()=default;///<Default destructor, shuts compiler up
+      FiniteDiff(const My_t&)=delete;///<One time use class
+      FiniteDiff(const My_t&&)=delete;///<One time use class
+      My_t& operator=(const My_t&)=delete;///<One time use class
       
-      ///Communicator on which to run the tasks
-      FiniteDiff(LibTaskForce::HybridComm& Comm):Comm_(Comm){}
+      ///Makes a new FDiff that can run in parallel on Comm
+      FiniteDiff(LibTaskForce::HybridComm&& Comm)
+        :Comm_(new LibTaskForce::HybridComm(std::move(Comm))){}
       
-      /** \brief Computes the actual finite difference
-       * 
-       *   \param[in] Fxn2Run The visitor that we will be using to run the
-       *                      finite difference.  See FDVisitor class for
-       *                       requirements
-       *    \param[in] NVars  The number of variables
-       *    \param[in] H      The perturbation from the point
-       *    \param[in] NPoint How many points are in the stencil
-       *    \return your derivative
-       */ 
+      ///Normal FDiff, no parallel
+      FiniteDiff(){}
+      
+      ///FDiff fxn \p Fxn2Run of \p NVars variables with \p NPoint displacements
+      ///of size \p H
       template<typename Fxn_t>
-      std::vector<ResultType> Run(Fxn_t Fxn2Run,
-                                  size_t NVars,
-                                  const VarType& H,
-                                  size_t NPoint=3);
+      std::vector<ResultType> Run(Fxn_t Fxn2Run,size_t NVars,
+                                  const VarType& H,size_t NPoint=3);
 };
 
-
-
- /** \brief The forward difference
-  *
-  * The forward difference of \f$f\f$ at the point \f$X\f$,
-  * \f$\Delta_h[f](X)\f$, is defined as:
-  *  \f[
-  *    \Gamma_h[f](X)=\Delta_h[f](X)=f(X+h)-f(X).
-  *  \f]
-  *
-  *
-  */
-template<typename VarType,typename ReturnType=VarType>
+ ///Specializes shift for a Foward Diff
+template<typename VarType,typename ReturnType>
 class ForwardDiff: public FiniteDiff<VarType,ReturnType>{
    private:
-       ///Type of the base class
-       typedef FiniteDiff<VarType,ReturnType> Base_t;
-      ///Just casts to double 
+       typedef FiniteDiff<VarType,ReturnType> Base_t;///<Type of the base class
+      ///\copydoc FiniteDiff::Shift
       double Shift(size_t I,size_t)const{return static_cast<double>(I);}
    public:
-       ForwardDiff(LibTaskForce::HybridComm& Comm):Base_t(Comm){}
+       using FiniteDiff<VarType,ReturnType>::FiniteDiff;
 };
 
-/** \brief The backward difference
- *
- * The backward difference of \f$f\f$ at the point \f$X\f$,
- * \f$\bigtriangledown_h[f](X)\f$, is defined as:
- *  \f[
- *    \Gamma_h[f](X)=\bigtriangledown_h[f](X)=f(X)-f(X-h).
- *  \f]
- *
- *  The coefficients of the backwards difference are just those of the
- *  forward difference multiplied by negative one (for odd powered
- *  derivatives).
- *
- *
- */
-template<typename VarType,typename ReturnType=VarType>
+///Specializes Shift for a Backward FDiff
+template<typename VarType,typename ReturnType>
 class BackwardDiff: public FiniteDiff<VarType,ReturnType>{
    private:
-       ///Type of the base class
-      typedef FiniteDiff<VarType,ReturnType> Base_t;
-      
-      ///Negates the shift and casts to double
+      typedef FiniteDiff<VarType,ReturnType> Base_t;///<Type of the base class
+      ///\copydoc FiniteDiff::Shift
       double Shift(size_t I,size_t)const{return -1.0*static_cast<double>(I);}
       
-      ///Negates the normal coeffs
-      std::vector<double> get_coefs(size_t NPoints)const{
-          std::vector<double> temp=Base_t::get_coefs(NPoints);
-          for(size_t i=0;i<temp.size();++i)temp[i]*=-1.0;
-          return temp;
-      }
    public:
-      BackwardDiff(LibTaskForce::HybridComm& Comm):Base_t(Comm){}
+       using FiniteDiff<VarType,ReturnType>::FiniteDiff;
 
 };
 
-/** \brief The central difference is the usual way of taking a 
- *         finite difference
- *
- * The central difference of \f$f\f$ at the point \f$X\f$,
- * \f$\delta_h[f](X)\f$, is defined as:
- *  \f[
- *    \Gamma_h[f](X)=\delta_h[f](X)=f(X+h)-f(X-h).
- *  \f]
- *  This is what is termed the three-point central difference (in theory there
- *  is also an evaluation at f(X), but it has a coefficient of 0).  Central
- *  differences using an arbitrary odd number of points are available (the
- *  points have to be symmetrically distributed around the expansion point,
- *  hence the odd requirement, which also implies that 3 points is the minimum).
- *  The more points you use, the more accurate your resulting derivative
- *  will be, but the more calculations that must be performed.
- *
- *
- */
-template<typename VarType,typename ReturnType=VarType>
+///Specializes Shift and NCalcs for a central difference
+template<typename VarType,typename ReturnType>
 class CentralDiff:public FiniteDiff<VarType,ReturnType>{
    private:
-     typedef FiniteDiff<VarType,ReturnType> Base_t;  
+     ///\copydoc FiniteDiff::NCalcs
      size_t NCalcs(size_t NPoints)const{
-         ///\todo add assert that NPoints%2==0
+         if(NPoints%2!=1||NPoints==1)
+             throw GeneralException("Central difference requires an odd number"
+                                    " of points > 1");
          return NPoints-1;
      }
+     
+     ///\copydoc FiniteDiff::Shift
       double Shift(size_t I,size_t NPoints)const{
          const size_t Half=NCalcs(NPoints)/2;
          double shift=static_cast<double>(I)-static_cast<double>(Half);
          if(I>=Half)shift+=1.0;
          return shift;
       }
-
    public:
-       CentralDiff(LibTaskForce::HybridComm& Comm):Base_t(Comm){}
+       using FiniteDiff<VarType,ReturnType>::FiniteDiff;
 };
 
 
@@ -280,36 +187,40 @@ std::vector<ResultType> FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
         public:
             FDWrapper(Fxn_t& Fxn,double Coef,VarType Coord, size_t i):
                Fxn_(Fxn),Coef_(Coef),Coord_(Coord),i_(i){}
-            ResultType operator()(const LibTaskForce::HybridComm&)const{
-                //Have it compute the fxn's value at the new point
-                ResultType result=Fxn_(i_,Coord_);
-                //Have it scale the result
-                Fxn_(result,Coef_);
+            ResultType operator()()const{
+                ResultType result=Fxn_.run(i_,Coord_);
+                Fxn_.scale(result,Coef_);
                 return result;
+            }
+            //Wrapper for TaskForce
+            ResultType operator()(const LibTaskForce::HybridComm&)const{
+                return (*this)();
             }
     };
     //Will store our derivatives
     std::vector<LibTaskForce::HybridFuture<ResultType>> Derivs;
-    //Complete loop before assigning results
-    for(size_t i=0;i<NVars;++i){//Loop over variables
-        VarType Old=Fxn2Run(i);
-        for(size_t j=0;j<NCalcs(NPoints);++j){//Loop over calcs per variable
-            Derivs.push_back(
-               Comm_.add_task<ResultType>(
-                   FDWrapper(Fxn2Run,Coefs[j],
-                     Fxn2Run(Old,H,Shift(j,NPoints)),i)                   
-               )
-            );
+    
+    //This is for parallel, note need to complete loop before assigning results
+    for(size_t i=0;i<NVars && Comm_;++i){
+        VarType Old=Fxn2Run.coord(i);
+        for(size_t j=0;j<NCalcs(NPoints);++j){
+            const double da_shift=Shift(j,NPoints);
+            FDWrapper wrap(Fxn2Run,Coefs[j],Fxn2Run.shift(Old,H,da_shift),i);
+            Derivs.push_back(Comm_->add_task<ResultType>(wrap));
         }
     }
     
     std::vector<ResultType> Result(NVars);
-    //Will deref the futures now, in order we added them
-    for(size_t i=0;i<NVars;++i)
+    for(size_t i=0;i<NVars;++i){
+        VarType Old=Fxn2Run.coord(i);
         for(size_t j=0;j<NCalcs(NPoints);++j){
-            ResultType DerivI=Derivs[i*NCalcs(NPoints)+j].get();
-            Fxn2Run(Result[i],DerivI,i,H);
+            const double da_shift=Shift(j,NPoints);
+            FDWrapper wrap(Fxn2Run,Coefs[j],Fxn2Run.shift(Old,H,da_shift),i);
+            ResultType DerivI=(Comm_?
+                Derivs[i*NCalcs(NPoints)+j].get():wrap());
+            Fxn2Run.update(Result[i],DerivI,i,H);
         }
+    }
     return Result;
 }
 

@@ -51,7 +51,7 @@ TEST_CLASS(TestBlockByIrrepSpin){
     tester.test("Move set works",Mat3,M5.get(Irrep::B,Spin::alpha));
     tester.test("Same structure different",false,M5.same_structure(M6));
     tester.test("Same structure same",true,M2.same_structure(M3));
-    //std::cout<<bphash::hash_to_string(M2.my_hash())<<std::endl;
+    std::cout<<bphash::hash_to_string(M2.my_hash())<<std::endl;
     
         
     tester.print_results();

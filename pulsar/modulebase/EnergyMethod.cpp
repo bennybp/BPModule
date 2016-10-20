@@ -42,13 +42,11 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
         std::string Key_;
         ID_t ID_;
     public:
-        //Base class operators are fine in all but two cases
-        using Base_t::operator();
 
         //Returns the i-th Cartesian coordinate of our molecule
-        double operator()(size_t i)const{return Atoms_[(i-i%3)/3][i%3];}
+        double coord(size_t i)const{return Atoms_[(i-i%3)/3][i%3];}
 
-        Return_t operator()(size_t i,const double& newcoord)const{
+        Return_t run(size_t i,const double& newcoord)const{
             AtomSetUniverse NewU;
             for(size_t j=0;j<Atoms_.size();++j){
                 if(j==(i-i%3)/3) { //does this coord index belong to this atom?
@@ -90,7 +88,7 @@ EnergyMethod::finite_difference_(size_t Order, const datastore::Wavefunction & W
     const HybridComm& Comm=parallel::get_env().comm();
     std::unique_ptr<HybridComm> NewComm=Comm.split(Comm.nprocs(),1);
 
-    math::CentralDiff<double,Return_t> FD(*NewComm);
+    math::CentralDiff<double,Return_t> FD(std::move(*NewComm));
 
     FDFunctor Thing2Run=FDFunctor(Order,Atoms,module_manager(),Wfn,key(),id());
     TempDeriv=FD.Run(Thing2Run,3*Mol.size(),

@@ -1,5 +1,6 @@
 INPUT+=  dox/basic.md \
          dox/exceptions.md \
+         dox/finitediff.md \
          dox/documenting.md \
          dox/graphcache.md \
          dox/makingamodule.md \
