@@ -70,8 +70,8 @@ struct Atom : public math::Point
          */
         Atom() = default;
 
-        Atom(const Atom &)             = default;
-        Atom & operator=(const Atom &) = default;
+        Atom(const Atom &)             = default;///<Deep copy
+        Atom & operator=(const Atom &) = default;///<Deep copy
         Atom(Atom &&)                  = default;
         Atom & operator=(Atom &&)      = default;
 
@@ -96,7 +96,8 @@ struct Atom : public math::Point
         void print(std::ostream & os) const;
 
         ///@}
-
+        
+        ///Hashes all attributes of the class and returns the value
         bphash::HashValue my_hash(void) const;
 
 
