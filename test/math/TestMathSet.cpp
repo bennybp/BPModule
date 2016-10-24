@@ -108,7 +108,6 @@ TEST_CLASS(TestMathSet){
     tester.test("proper superset equal",true,false,sups2,S2,S13);
     tester.test("proper superset true",true,true,sups2,S9,S2);
     tester.test("proper superset false",true,false,sups2,S2,S9);
-    tester.test("not equal different universes",true,S2!=S4);
     tester.test("not equal",true,S2!=S14);
     
     

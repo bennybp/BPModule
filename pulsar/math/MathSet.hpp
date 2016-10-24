@@ -125,8 +125,11 @@ public:
     }
     
     MathSet(const My_t&) = default;///<copies indices, aliases universe
-    MathSet(My_t&&) = default;///<moves, but universe is still aliased
-
+    
+    ///Default, but compiler bug prevents using = default
+    MathSet(My_t&& RHS)
+      :Universe_(std::move(RHS.Universe_)),Elems_(std::move(RHS.Elems_)){}
+    
     /*! \brief For serialization only
      *
      * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
@@ -225,7 +228,7 @@ public:
     ///Makes this the union of this and \p RHS
     My_t& union_assign(const My_t & RHS)
     {
-        SameUniverse(RHS);
+        if(!SameUniverse(RHS))throw MathException("Incompatible universes");
         Elems_.insert(RHS.Elems_.begin(), RHS.Elems_.end());
         return *this;
     }
@@ -293,7 +296,7 @@ public:
      */
     bool is_subset_of(const My_t& RHS)const
     {
-        if(Universe_ != RHS.Universe_) return false;
+        if(!SameUniverse(RHS)) return false;
         for(const auto & it : *this)
             if(!RHS.count(it))
                 return false;
@@ -348,7 +351,8 @@ public:
      */
     bool operator==(const My_t& RHS)const
     {
-        return (Universe_==RHS.Universe_ && Elems_ == RHS.Elems_);
+        return (SameUniverse(RHS)
+                && Elems_ == RHS.Elems_);
     }
 
     /** \brief Returns true if this does not equal other
@@ -462,12 +466,10 @@ private:
             throw ValueOutOfRange("Requested element is not in the universe");
     }
 
-    ///Same universe iff same pointer
+    ///Same universe iff same pointer or universes are identical elem by elem
     bool SameUniverse(const My_t& RHS) const
     {
-        if(Universe_ != RHS.Universe_)
-            throw MathException("Sets have different universes");
-        return true;
+       return Universe_==RHS.Universe_ || *Universe_== *RHS.Universe_;
     }
 
     //! \name Serialization and Hashing
@@ -509,7 +511,7 @@ private:
 template<typename T,typename U>
 MathSet<T,U>& MathSet<T,U>::intersection_assign(const MathSet<T,U>& RHS)
 {
-        SameUniverse(RHS);
+        if(!SameUniverse(RHS))throw MathException("Universes are incompatible");
         if(&RHS==this)return *this;
         std::set<size_t> NewTemp;
         std::set_intersection(Elems_.begin(),Elems_.end(),
@@ -524,7 +526,7 @@ MathSet<T,U>& MathSet<T,U>::intersection_assign(const MathSet<T,U>& RHS)
 template<typename T,typename U>
 MathSet<T,U>& MathSet<T,U>::difference_assign(const MathSet<T,U>& RHS)
     {
-        SameUniverse(RHS);
+        if(!SameUniverse(RHS))throw MathException("Universes are incompatible");
         if(&RHS==this){
             Elems_=std::set<size_t>();
             return *this;

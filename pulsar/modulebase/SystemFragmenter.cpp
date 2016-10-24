@@ -60,9 +60,9 @@ NMerSetType SystemFragmenter::make_nmers(const NMerSetType& Frags){
             DaNMer.Weight=0.0;
         }
         double RHS=0.0;
-        const Point CoM=DaNMer.NMer.center_of_mass();
+        const Point CoM=system::center_of_mass(DaNMer.NMer);
         for(const auto& Frag: *Comb){//We needed the CoM, hence the two loops
-            const double Dist=Frag.second.NMer.center_of_mass().distance(CoM);
+            const double Dist=system::center_of_mass(Frag.second.NMer).distance(CoM);
             RHS+=Dist*Dist;
         }
         if(Thresh>=RHS)NMers.insert({DaNMer.SN,DaNMer});

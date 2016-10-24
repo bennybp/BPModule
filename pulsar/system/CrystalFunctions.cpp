@@ -9,13 +9,14 @@
 #include "pulsar/system/CrystalFunctions.hpp"
 #include "pulsar/util/IterTools.hpp"
 #include "pulsar/math/CombItr.hpp"
+#include "pulsar/math/ExactCast.hpp"
 #include "pulsar/constants.h"
 #include "pulsar/system/Space.hpp"
-#include "System.hpp"
+#include "pulsar/system/System.hpp"
 
 
 typedef std::array<double,3> Vector_t;
-
+using Cast=pulsar::math::detail::ExactCast<double,size_t>;
 namespace pulsar{
 namespace system{
 
@@ -32,7 +33,7 @@ AtomSetUniverse Frac2Cart(const AtomSetUniverse& DaU,const Space& DaSpace){
     double v=sqrt(1-CosA[0]*CosA[0]-CosA[1]*CosA[1]-CosA[2]*CosA[2]
                   -2*CosA[0]*CosBG);
     System DaSys(DaU,true);
-    System Temp=DaSys.rotate(std::array<double,9>(
+    System Temp=rotate(DaSys,std::array<double,9>(
             {Sides[0],Sides[1]*CosA[2],Sides[2]*CosA[1],
                     0,Sides[1]*SinG   ,Sides[2]*(CosA[0]-CosBG)/SinG,
                     0,               0,Sides[2]*v/SinG}));
@@ -44,11 +45,12 @@ AtomSetUniverse MakeSuperCell(const AtomSetUniverse& DaU,
     AtomSetUniverse NewU;
     System UC(DaU,true);
     for(size_t x=0;x<Dims[0];++x){
-        const double xSide=x*Sides[0];
+        const double xSide=Cast::cast(x)*Sides[0];
         for(size_t y=0;y<Dims[1];++y){
-            const double ySide=y*Sides[1];
+            const double ySide=Cast::cast(y)*Sides[1];
             for(size_t z=0;z<Dims[2];++z)
-                NewU+=UC.translate(Vector_t({xSide,ySide,z*Sides[2]})).as_universe();
+                NewU+=translate(UC,
+                  Vector_t({xSide,ySide,Cast::cast(z)*Sides[2]})).as_universe();
         }
     }
     return NewU;
@@ -90,7 +92,7 @@ AtomSetUniverse CarveUC(const AtomSetUniverse& SC,
     Vector_t Trans;
     std::transform(Sides.begin(),Sides.end(),Trans.begin(),
                    [](const double& a){return a*-1.0;});
-    return System(NewU,true).translate(Trans).as_universe();              
+    return translate(System(NewU,true),Trans).as_universe();              
 }
 
 bool CleanUCRecurse(AtomSetUniverse& MolU,
@@ -98,7 +100,7 @@ bool CleanUCRecurse(AtomSetUniverse& MolU,
                     const Vector_t& Sides,
                     Vector_t& Idx, size_t depth){
     if(depth==3){
-        AtomSetUniverse NewMol=Mol.translate(Idx).as_universe();
+        AtomSetUniverse NewMol=translate(Mol,Idx).as_universe();
         if(NewMol==MolU)return true;
         NewMol/=NewU;
         if(NewMol.size()!=0)return false;

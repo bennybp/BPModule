@@ -1,4 +1,5 @@
 INPUT+=  dox/basic.md \
+         dox/basisset.md \
          dox/exceptions.md \
          dox/finitediff.md \
          dox/documenting.md \

@@ -25,17 +25,11 @@ namespace system {
 
 void System::SetDefaults_(void)
 {
-    charge_=get_sum_charge();
-    nelectrons_=get_sum_n_electrons();
-
+    charge=get_sum_charge();
+    nelectrons=get_sum_n_electrons();
+    mass=get_sum_mass();
     //! \todo default multiplicity
-    multiplicity_=1.0;
-}
-
-System::System(const AtomSet & atoms)
-    :atoms_(atoms)
-{
-    SetDefaults_();
+    multiplicity=1.0;
 }
 
 System::System(std::shared_ptr<const AtomSetUniverse> universe,bool fill)
@@ -44,201 +38,103 @@ System::System(std::shared_ptr<const AtomSetUniverse> universe,bool fill)
     SetDefaults_();
 }
 
+System::System(AtomSetUniverse&& universe,bool fill):
+    System(std::make_shared<AtomSetUniverse>(std::move(universe)),fill)
+{
+}
+
 System::System(const AtomSetUniverse& universe,bool fill):
-    System(std::shared_ptr<AtomSetUniverse>(new AtomSetUniverse(universe)),fill)
+    System(std::make_shared<AtomSetUniverse>(universe),fill)
 {
 }
 
+//Macro for common code that adds stuff up
+#define SUM_STUFF(varname,fxn_name)\
+double System::fxn_name(void) const{\
+    return std::accumulate(this->begin(),this->end(),static_cast<double>(0.0),\
+                        [](double sum,const Atom& a){ return sum+a.varname; });}
 
-size_t System::size(void) const
-{
-    return atoms_.size();
-}
+SUM_STUFF(charge,get_sum_charge)
+SUM_STUFF(nelectrons,get_sum_n_electrons)
+SUM_STUFF(mass,get_sum_mass)
 
-double System::get_sum_charge(void) const
-{
-    return std::accumulate(this->begin(),this->end(),static_cast<double>(0.0),
-                           [](double sum,const Atom & a)
-                           { return sum+a.charge; });
-}
+#undef SUM_STUFF
 
-double System::get_sum_n_electrons(void) const
-{
-    return std::accumulate(this->begin(),this->end(),static_cast<double>(0.0),
-                           [](double sum,const Atom & a)
-                           { return sum+a.nelectrons; });
-}
-
-double System::get_charge(void) const
-{
-    return charge_;
-}
-
-void System::set_charge(double charge)
-{
-    charge_=charge;
-}
-
-double System::get_n_electrons(void) const
-{
-    return nelectrons_;
-}
-
-void System::set_n_electrons(double nelectrons)
-{
-    nelectrons_=nelectrons;
-}
-
-double System::get_multiplicity(void) const
-{
-    return multiplicity_;
-}
-
-void System::set_multiplicity(double m)
-{
-    multiplicity_=m;
-}
-
-Space System::get_space(void) const
-{
-    return Space_;
-}
-
-void System::set_space(const Space& S)
-{
-    Space_=S;
-}
-
-
-bool System::count(const Atom& AnAtom)const
-{
-    return atoms_.count(AnAtom);
-}
-
-System& System::insert(const Atom & atom)
-{
-    atoms_.insert(atom);
-    SetDefaults_();
-    return *this;
-}
-
-System& System::insert(Atom && atom)
-{
-    atoms_.insert(std::move(atom));
-    SetDefaults_();
-    return *this;
-}
-
-System & System::union_assign(const System& RHS)
-{
-    atoms_.union_assign(RHS.atoms_);
-    SetDefaults_();
-    return *this;
-}
+//Macro for adding atoms and then calling SetDefaults_
+#define ADD_ATOM(rv,fxn_name,lv,lvname)\
+rv System::fxn_name(lv){\
+   atoms_.fxn_name(lvname);SetDefaults_();return *this;}
+ADD_ATOM(System&,insert,const Atom& atom,atom)
+ADD_ATOM(System&,insert,Atom&& atom,std::move(atom))
+ADD_ATOM(System&,union_assign,const System& RHS,RHS.atoms_)
+ADD_ATOM(System&,intersection_assign,const System& RHS,RHS.atoms_)
+ADD_ATOM(System&,difference_assign,const System& RHS,RHS.atoms_)
+#undef ADD_ATOM
 
 System System::set_union(const System& RHS) const
 {
     return System(*this).union_assign(RHS);
 }
 
-System& System::intersection_assign(const System& RHS)
-{
-    atoms_.intersection_assign(RHS.atoms_);
-    SetDefaults_();
-    return *this;
-}
+
 
 System System::intersection(const System& RHS) const
 {
     return System(*this).intersection_assign(RHS);
 }
 
-System& System::difference_assign(const System& RHS)
-{
-    atoms_.difference_assign(RHS.atoms_);
-    SetDefaults_();
-    return *this;
-}
+
 
 System System::difference(const System& RHS) const
 {
     return System(*this).difference_assign(RHS);
 }
 
-System System::complement(void) const
-{
-    return System(atoms_.complement());
-}
+//Macro for forwarding a call to the MathSet
+#define CALL_ATOMS(rv,fxn_name,arg,arg2)\
+rv System::fxn_name(arg)const{return atoms_.fxn_name(arg2);}
 
-System System::partition(System::SelectorFunc selector) const
-{
-    return System(atoms_.partition(selector));
-}
-System System::transform(System::TransformerFunc Transformer) const
-{
-    return System(atoms_.transform(Transformer));
-}
+CALL_ATOMS(size_t,size,void,)
+CALL_ATOMS(bool,count,const Atom& AnAtom,AnAtom)
+CALL_ATOMS(std::shared_ptr<const AtomSetUniverse>,get_universe,void,)
+CALL_ATOMS(AtomSetUniverse,as_universe,void,)
+CALL_ATOMS(bool,is_proper_subset_of,const System& RHS,RHS.atoms_)
+CALL_ATOMS(bool,is_subset_of,const System& RHS,RHS.atoms_)
+CALL_ATOMS(bool,is_proper_superset_of,const System& RHS,RHS.atoms_)
+CALL_ATOMS(bool,is_superset_of,const System& RHS,RHS.atoms_)
 
-//! \todo will only be true if the universes are the same
+//Similar to CALL_ATOMS except the result is used to make a new system
+#define WRAP_CALL(fxn_name,arg1,arg2)\
+System System::fxn_name(arg1)const{System temp(*this);\
+    temp.atoms_=atoms_.fxn_name(arg2);\
+    temp.SetDefaults_();return temp;}
+
+WRAP_CALL(complement,void,)
+WRAP_CALL(partition,System::SelectorFunc selector,selector)
+WRAP_CALL(transform,System::TransformerFunc Transformer,Transformer)
+
+#undef WRAP_CALL
+#undef CALL_ATOMS
+
+
 bool System::operator==(const System& RHS)const
 {
-    return(compare_info(RHS) && atoms_ == RHS.atoms_);
+    return(compare_info(RHS) && 
+            (atoms_ == RHS.atoms_ || as_universe()==RHS.as_universe() )
+    );
 }
 
 bool System::compare_info(const System & RHS)const
 {
     PRAGMA_WARNING_PUSH
     PRAGMA_WARNING_IGNORE_FP_EQUALITY
-    return(charge_ == RHS.charge_ &&
-           multiplicity_ == RHS.multiplicity_ &&
-           nelectrons_ == RHS.nelectrons_);
+    return(mass == RHS.mass &&
+           charge == RHS.charge &&
+           multiplicity == RHS.multiplicity &&
+           nelectrons == RHS.nelectrons);
     PRAGMA_WARNING_POP
 }
 
-bool System::is_proper_subset_of(const System& RHS)const
-{
-    return atoms_.is_proper_subset_of(RHS.atoms_);
-}
-
-bool System::is_subset_of(const System& RHS)const
-{
-    return atoms_.is_subset_of(RHS.atoms_);
-}
-
-bool System::is_proper_superset_of(const System& RHS)const
-{
-    return atoms_.is_proper_superset_of(RHS.atoms_);
-}
-
-bool System::is_superset_of(const System& RHS)const
-{
-    return atoms_.is_superset_of(RHS.atoms_);
-}
-
-
-System& System::operator+=(const System& rhs) { return union_assign(rhs); }
-System System::operator+(const System& rhs)const { return set_union(rhs); }
-System& System::operator/=(const System& rhs) { return intersection_assign(rhs); }
-System System::operator/(const System& rhs)const { return intersection(rhs); }
-System& System::operator-=(const System& rhs) { return difference_assign(rhs); }
-System System::operator-(const System& rhs)const { return difference(rhs); }
-bool System::operator<=(const System& rhs)const { return is_subset_of(rhs); }
-bool System::operator<(const System& rhs)const { return is_proper_subset_of(rhs); }
-bool System::operator>=(const System& rhs)const { return is_superset_of(rhs); }
-bool System::operator>(const System& rhs)const { return is_proper_superset_of(rhs); }
-
-
-
-
-math::Point System::center_of_mass(void) const
-{
-    return math::weighted_points_center<math::Point>(*this, &Atom::mass);
-}
-
-math::Point System::center_of_nuclear_charge(void) const
-{
-    return math::weighted_points_center<math::Point>(*this, &Atom::Z);
-}
 
 bool System::has_basis_set(const std::string & basislabel) const
 {
@@ -291,19 +187,12 @@ BasisSet System::get_basis_set(const std::string & basislabel) const
     return bs.shrink_fit();
 }
 
-void System::print(std::ostream & os) const
+std::ostream& System::print(std::ostream & os) const
 {
     for(const auto & it:*this)
         it.print(os);
+    return os;
 }
-
-std::string System::to_string()const
-{
-    std::stringstream ss;
-    print(ss);
-    return ss.str();
-}
-
 
 bphash::HashValue System::my_hash(void) const
 {
@@ -313,7 +202,17 @@ bphash::HashValue System::my_hash(void) const
 void System::hash(bphash::Hasher & h) const
 {
     for(Atom a: *this)h(a);
-    h(charge_, multiplicity_, nelectrons_);
+    h(charge, multiplicity, nelectrons,mass);
+}
+
+math::Point center_of_mass(const System& Sys)
+{
+    return math::weighted_points_center<math::Point>(Sys, &Atom::mass);
+}
+
+math::Point center_of_nuclear_charge(const System& Sys)
+{
+    return math::weighted_points_center<math::Point>(Sys, &Atom::Z);
 }
 
 ///Returns the distance between each pair of atoms in sys

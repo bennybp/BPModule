@@ -74,7 +74,6 @@ tester.test("superset false",True,False,S2.is_superset_of,S9)
 tester.test("proper superset equal",True,False,S2.is_proper_superset_of,S13)
 tester.test("proper superset true",True,True,S9.is_proper_superset_of,S2)
 tester.test("proper superset false",True,False,S2.is_proper_superset_of,S9)
-tester.test("not equal different universes",True,True,S2.__ne__,S4)
 tester.test("not equal",True,True,S2.__ne__,S14)
     
 #Manipulations    

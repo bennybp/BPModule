@@ -127,6 +127,8 @@ my_tester.test_value("Is 2.123==2.123",2.123,2.123,0.0001)
 my_tester.print_result()
 ~~~
 
+\note One gotcha of Python testing is that you have to use test_value for
+attributes otherwise the Tester will attempt to call your attribute
 
 ## Unit Testing
 

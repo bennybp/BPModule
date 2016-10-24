@@ -17,6 +17,7 @@ is stuff you will likely want to know before reading further.
     - [Making Modules and Supermodules](@ref makemod)
     - [Printing Things Out](@ref printing)
     - [Making and Using Systems](@ref systems)
+    - [Making and Using Basis Sets](@ref basisset)
     - [Using and Setting Options](@ref Options)
     - [Interfacing Custom Tensors](@ref tensors)
     - [Understanding the Graph and the Cache](@ref graphcache)

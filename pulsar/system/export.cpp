@@ -225,7 +225,10 @@ void export_pybind11(pybind11::module & mtop)
     // Other free functions
     m.def("inertia_tensor",inertia_tensor);
     m.def("get_connectivity",get_connectivity);
-    
+    m.def("translate", translate<std::array<double, 3>>);
+    m.def("rotate", rotate<std::array<double, 9>>);
+    m.def("center_of_mass", center_of_mass);
+    m.def("center_of_nuclear_charge", center_of_nuclear_charge);
     
     m.def("Frac2Cart",Frac2Cart);
     m.def("MakeSuperCell",MakeSuperCell);
@@ -269,14 +272,18 @@ void export_pybind11(pybind11::module & mtop)
     m.def("is_dummy_atom", is_dummy_atom);
 
 
-    // Space 
+    // Space
     pybind11::class_<Space>(m,"Space")
       .def(pybind11::init<>())
+      .def(pybind11::init<const Space&>())
       .def(pybind11::init<const std::array<double,3>&,
                            const std::array<double,3>&>())
       .def("is_periodic", &Space::is_periodic)
+      .def_readonly_static("infinity",&Space::infinity)
       .def_readonly("lattice_sides",&Space::lattice_sides)
       .def_readonly("lattice_angles",&Space::lattice_angles)
+      .def(pybind11::self == pybind11::self)
+      .def(pybind11::self != pybind11::self)
     ;
 
  
@@ -285,30 +292,26 @@ void export_pybind11(pybind11::module & mtop)
     math::register_Universe<AtomSetUniverse>(m, "AtomSetUniverse");
 
     pybind11::class_<System, std::shared_ptr<System>>(m,"System")
-    .def(pybind11::init<const std::shared_ptr<AtomSetUniverse>, bool>())
+    .def(pybind11::init<const AtomSetUniverse&, bool>())
     .def(pybind11::init<const System &>())
+    .def("get_sum_mass",&System::get_sum_mass)
+    .def("get_sum_charge",&System::get_sum_charge)
+    .def("get_sum_n_electrons",&System::get_sum_n_electrons)
+    .def_readwrite("mass",&System::mass)
+    .def_readwrite("charge",&System::charge)
+    .def_readwrite("nelectrons",&System::nelectrons)
+    .def_readwrite("multiplicity",&System::multiplicity)
+    .def_readwrite("space",&System::space)
+    .def("compare_info",&System::compare_info)
     .def("size",&System::size)
     .def("count", &System::count)
     .def("insert", static_cast<System &(System::*)(const Atom &)>(&System::insert),
                    pybind11::return_value_policy::reference)
     .def("get_universe", &System::get_universe)
     .def("as_universe", &System::as_universe)
-    .def("get_charge",&System::get_charge)
-    .def("set_charge",&System::set_charge)
-    .def("get_multiplicity",&System::get_multiplicity)
-    .def("set_multiplicity",&System::set_multiplicity)
-    .def("get_n_electrons",&System::get_n_electrons)
-    .def("set_n_electrons",&System::set_n_electrons)
-    .def("get_space",&System::get_space)
-    .def("set_space",&System::set_space)
     .def("get_basis_set", &System::get_basis_set)
     .def("my_hash", &System::my_hash)
-    .def("translate", &System::translate<std::array<double, 3>>)
-    .def("rotate", &System::rotate<std::array<double, 9>>)
-    .def("center_of_mass", &System::center_of_mass)
-    .def("center_of_nuclear_charge", &System::center_of_nuclear_charge)
     .def("print", &System::print)
-    .def("to_string", &System::to_string)
     .def("union_assign", &System::union_assign, pybind11::return_value_policy::reference)
     .def("set_union", &System::set_union)
     .def("intersection_assign", &System::intersection_assign, pybind11::return_value_policy::reference)
@@ -336,7 +339,6 @@ void export_pybind11(pybind11::module & mtop)
     .def(pybind11::self != pybind11::self)
     .def("__len__",         &System::size)
     .def("__contains__",    &System::count)
-    .def("__str__",&System::to_string)
     .def("__iter__", [](const System & t) { return pybind11::make_iterator(t.begin(), t.end()); },
                      pybind11::keep_alive<0, 1>() )
     ;
