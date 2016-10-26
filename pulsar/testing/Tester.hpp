@@ -75,8 +75,19 @@ public:
     ///Overload of test for comparing doubles to within a tolerance
     void test(const std::string& desc,double v1,double v2,double tol=0.0001);
 };
+#define TEST_FXN(desc,should_pass,expected, fxn)\
+ do{bool success=false;\
+ try{success=(expected==fxn && should_pass);}\
+ catch(...){success=!should_pass;}\
+ tester.test(desc,success);}while(0)
 
-
+//Specializes TEST_FXN to case where fxn doesn't return
+#define TEST_VOID(msg,should_pass,fxn)\
+do{bool success=false;\
+try{fxn;success=should_pass;}\
+catch(...){success= !should_pass;}\
+tester.test(msg,true,success);} while(0)
+    
 }//End namespace testing
 }//End namespace pulsar
 

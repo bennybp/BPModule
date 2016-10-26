@@ -367,13 +367,13 @@ BasisSet::const_iterator BasisSet::end(void) const
     return shells_.end();
 }
 
-size_t BasisSet::max_property(std::function<size_t(const BasisSetShell &)> func) const
+/*size_t BasisSet::max_property(std::function<size_t(const BasisSetShell &)> func) const
 {
     size_t m = 0;
     for(const auto & it : shells_)
         m = std::max(m, func(it));
     return m;
-}
+}*/
 
 BasisSet BasisSet::transform(BasisSet::TransformerFunc Transformer) const
 {

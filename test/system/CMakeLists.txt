@@ -1,3 +1,7 @@
 pulsar_test(TestAtom)
+pulsar_test(TestBasisInfo)
+pulsar_test(TestBasisSet)
+pulsar_test(TestBasisShellBase)
+pulsar_test(TestBasisShellInfo)
 pulsar_test(TestSpace)
 pulsar_test(TestSystem)

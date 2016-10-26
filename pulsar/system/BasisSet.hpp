@@ -113,10 +113,10 @@ class BasisSet
         size_t max_n_functions(void) const;
 
 
-        /*! \brief Find some maximum property (ncartesian, etc)
-         */
+        /* \brief Find some maximum property (ncartesian, etc)
+         * RMR what property is there not a member function for?
         size_t max_property(std::function<size_t(const BasisSetShell &)> func) const;
-
+         */
         ///@}
 
         /// \name Shell information and manipulation

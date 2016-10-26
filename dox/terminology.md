@@ -1,6 +1,54 @@
 Terminology                                                       {#terminology}
 ===========
 
+Pulsar's documentation uses a mix of actual computer science terminology and
+terminology invented for Pulsar itself.  The next sections are designed to
+provide a glossary of the important terms and serve as a self contained
+reference for new users and developers.
+
+## Computer Science Terminology
+
+As a computer program, Pulsar relies heavily on established computer science
+ideas.  Particularly those of the object-oriented programming style.  We expect
+that users and developers are already familiar with many if not all of these
+terms, but in case there is some ambiguity in what we mean by a term we have
+included the key concepts here.
+
+- Resources : These are things like RAM, hard disk space, bandwidth.  They are
+  things your program requires of the computer or of the universe to run.  If
+  it doesn't have enough of these things the progam either can't run or will run
+  for a very long time.
+
+- Types : What kind of data something actually is, i.e. is it an integer
+  (typically called an int), is it an English word (called a string), is it
+  a real number (called a float or a double depending on how many digits it
+  stores), etc.  Types that literally do nothing but store data are often called
+  plain ol' data (POD) and those that are not are...
+
+- Class : These are non-POD types that are often domain specific.  For example
+  we have a System class to describe the molecule we are running a computation
+  on.  Unlike POD types, classes have actual code in them, which may include
+  the algorithms for setting them up, freeing any resources they require, and
+  functions to perform certain tasks, *e.g.* System has a function that will
+  compute its mass.
+
+- Class instance : This is an actual "value" of a class.  For example the System
+  class is the same thing regardless of whether the data inside of it is
+  consistent with that of hydrogen or DNA.  Hydrogen and DNA are two instances
+  of the System class.
+
+- Member function : A function that is part of a class
+
+- Member data (or attribute) : A POD value or class instance that is part of a
+  class
+
+- API : stands for application programming interface, but the initialism is 
+  becoming a word in and of itself.  This is the code interface that users
+  interact with to get the program to do tasks for them.
+
+
+## Pulsar Specific Terminology
+
 Much of the documentation of Pulsar uses a language we have agreed upon to
 describe key concepts.  These terms should hopefully be self explanatory without
 this page, but for reference, they are included here.

@@ -68,7 +68,9 @@ TEST_CLASS(TheNameOfMyTest){
 ~~~
 
 Here's a couple of hints for C++ testing:
-- To pass a member function use `std::bind` it looks something like:
+- Call your Tester instance "tester" so you can use the macros
+  - Could pass the tester in, but then most tests don't fit within 80 characters
+- To test a member function use `std::bind` it looks something like:
     ~~~{.cpp}
     MyClass A;
     //Makes a functor that calls A.fxn() 
@@ -95,8 +97,21 @@ Here's a couple of hints for C++ testing:
     //And finally the test
     my_tester.test("Testing double overload",true,1,doubleovl,A,2.0);
     ~~~
+    - This is the "proper" way to do this and super annoying, I have defined a
+      macro `TEST_FXN` that takes the test description, true/false if it should
+      pass, the expected value, the function, and assumes your Tester instance
+      is called "tester"
+      ~~~{.cpp}
+      TEST_FXN("This Fxn works",true,3.14,FxnThatMakesPi(3,5,9));
+      ~~~
   - The Tester needs some work if it's going to work with constructors or 
     functions without returns
+    - In the meantime I have defined a macro `TEST_VOID` that takes the test
+      description, true/false if it should pass, the function, and assumes your
+      Tester instance is called "tester"
+      ~~~{.cpp}
+      TEST_VOID("This function works",true,FxnWithNoReturn(Arg1,Arg2),tester);
+      ~~~
 
 ### Testing Python
 
@@ -127,9 +142,6 @@ my_tester.test_value("Is 2.123==2.123",2.123,2.123,0.0001)
 my_tester.print_result()
 ~~~
 
-\note One gotcha of Python testing is that you have to use test_value for
-attributes otherwise the Tester will attempt to call your attribute
-
 ## Unit Testing
 
 Unit testing is a method of testing that ensures the smallest possible parts of
@@ -139,7 +151,7 @@ related functions.
 Unit tests should:
 - Be for a specific class
   - Each class should have its own unit test and be tested individually
-- All functions should be tested including constructors/destructors
+- All functions should be tested including constructors
 - All possible throws should be checked
   - For example: if a function is supposed to throw if the input is less than 0
     test it once with an input less than 0
@@ -148,10 +160,12 @@ Unit tests should:
 - All languages that a class are accessible from should be tested
   - The different language tests should be, to the extent possible, identical
     - Ensures classes work identically from all languages
-    - Yes, I realize the C++ tests are messy with types, but they still need
-      tested...
+    - Even with the macros you'll need to cast to a const version of your
+      object to test the const versions of functions
 - Try to minimize includes/imports in a test to better ensure you are testing
   what you think you are testing
+
+\todo Go back and use macros in old C++ tests for readability
 
 ## Acceptance Testing
 

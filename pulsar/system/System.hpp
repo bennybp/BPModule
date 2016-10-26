@@ -12,6 +12,7 @@
 #include <unordered_set>
 #include "pulsar/system/Atom.hpp"
 #include "pulsar/system/Space.hpp"
+#include "pulsar/system/BasisSet.hpp"
 #include "pulsar/math/MathSet.hpp"
 #include "pulsar/math/PointManipulation.hpp"
 #include "bphash/Hasher.hpp"
@@ -22,12 +23,6 @@
 extern template class pulsar::math::Universe<pulsar::system::Atom>;
 extern template class pulsar::math::MathSet<pulsar::system::Atom>;
 
-
-// forward declare
-namespace pulsar{
-namespace system {
-class BasisSet;
-}}
 
 
 namespace pulsar{

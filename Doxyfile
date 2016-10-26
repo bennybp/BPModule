@@ -246,7 +246,8 @@ ALIASES                = "throwno=@par Exceptions:\n" \
                          "exnothrow=\exsafe_par Will not throw or will not fail\n" \
                          "threadsafe_par=@par Thread Safety:\n" \
                          "threadsafe=\threadsafe_par Access from multiple threads is safe\n" \
-                         "threadunsafe=\threadsafe_par Access from multiple threads is NOT safe\n"
+                         "threadunsafe=\threadsafe_par Access from multiple threads is NOT safe\n" \
+                         "question=\xrefitem Question \"Questions\" \"Active Questsions\" "
 
 # This tag can be used to specify a number of word-keyword mappings (TCL only).
 # A mapping has the form "name=value". For example adding "class=itcl::class"

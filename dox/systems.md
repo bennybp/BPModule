@@ -230,14 +230,15 @@ bool HasAtom=MySystem.count(MyAtom);
 MySystem.insert(MyAtom);
 
 //Loop over all the atoms in it [you can also use *.begin() and *.end()]
-for(const Atom& ai: MySystem)
+for(const Atom& ai: MySystem){
    /* Do something with the i-th atom */
+}
 
 //Check if two systems are equal
 bool AreEqual= MySystem==SomeOtherSystem;
 
-//Get the BasisSet of this system
-BasisSet BS=MySystem.get_basis_set();
+//Get the BasisSet of this system with tag "PRIMARY"
+BasisSet BS=MySystem.get_basis_set("PRIMARY");
 ~~~
 
 It's worth noting that if you have a non-const version of a System you can
@@ -254,7 +255,18 @@ basis functions from ghost atoms) more in line with what typical users are used
 to experiencing.  For more information on the BasisSet class see 
 [Making and Using Basis Sets in Pulsar](@ref basisset).
 
-### Advanced Usage of the System Class
+### Common System Queries
+
+Pulsar's philosophy is that anything that can be done through the public
+interface of a class should be a free function.  This keeps the size of the
+class down making it easier to keep bug-free as well as promoting code re-use
+for different classes.  Consequentially, things like center of mass are not
+member functions of the System class, but rather free functions.
+
+### Making a System Class
+
+Making a System is a bit involved, but we suspect users will not usually be
+doing this.  Let us start by explaining why it is so involved.
 
 Aside from simply providing the details of the system, the System class was
 designed for performance and manipulations involving combining many instances
@@ -276,9 +288,7 @@ of magnitude reduction in our memory footprint (and inclusion of the basis
 functions will not increase that cost) allowing us to consider very large 
 systems with ease.
 
-Now that we have hopefully somewhat justified the slightly increase complexity
-associated with the System class, let's consider the gotcha it in turn entails.
-Namely, we need to be careful when building and combining System classes
+Care needs to be taken when building and combining System classes
 because the MathSet instances must all have the same Universe.  This is simple
 to account for by making a Universe that contains the union of of all atoms you 
 may possibly need.  Notably this includes ghost atoms, 
@@ -310,4 +320,5 @@ for(size_t i=0;i<Atoms.size();++i){
 }
 ~~~
 For more complicated situations the set operations greatly facilitate 
-generalizations of this procedure by avoiding the if/then logic.
+generalizations of this procedure by avoiding the if/then logic embodied in the
+ternary operator.

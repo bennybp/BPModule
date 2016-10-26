@@ -28,12 +28,14 @@ namespace system {
 class BasisShellInfo : public BasisShellBase
 {
     public:
+        ///Preallocates the memory for the parameters
         BasisShellInfo(ShellType type, int am, size_t nprim, size_t ngen)
             : BasisShellInfo(type, am, nprim, ngen,
                              std::move(std::vector<double>(nprim)),
                              std::move(std::vector<double>(nprim*ngen)))
         { }
 
+        ///Copies the parameters into the class
         BasisShellInfo(ShellType type, int am, size_t nprim, size_t ngen,
                        const std::vector<double> & alphas, const std::vector<double> & allcoefs)
             : BasisShellInfo(type, am, nprim, ngen,
@@ -41,7 +43,7 @@ class BasisShellInfo : public BasisShellBase
                              std::move(std::vector<double>(allcoefs)))
         { }
 
-
+        ///Moves the parameters into the class
         BasisShellInfo(ShellType type, int am, size_t nprim, size_t ngen,
                        std::vector<double> && alphas, std::vector<double> && allcoefs)
             : BasisShellBase(type, am, nprim, ngen),
@@ -69,18 +71,19 @@ class BasisShellInfo : public BasisShellBase
          */
         BasisShellInfo() = default;
 
-
+        ///Deep copies data through BasisShellBase API
         BasisShellInfo(const BasisShellBase & rhs)
             : BasisShellInfo(rhs.get_type(), rhs.am(),
                             rhs.n_primitives(), rhs.n_general_contractions(),
                             rhs.get_alphas(), rhs.get_all_coefs())
         { }
 
+        ///Deep copies data
         BasisShellInfo(const BasisShellInfo & rhs)
             : BasisShellInfo(static_cast<const BasisShellBase &>(rhs))
         { }
 
-
+        ///Deep copies data
         BasisShellInfo & operator=(const BasisShellInfo & rhs)
         {
             using std::swap;
@@ -97,12 +100,14 @@ class BasisShellInfo : public BasisShellBase
         BasisShellInfo(BasisShellInfo &&)                  = default;
         BasisShellInfo & operator=(BasisShellInfo &&)      = default;
 
+        ///Compares exponents and coefs for equality
         bool operator==(const BasisShellInfo & rhs) const
         {
             // prevent implicit comparison between one type and another
             return BasisShellBase::base_compare_(rhs);
         }
 
+        ///Negates operator== returns result
         bool operator!=(const BasisShellInfo & rhs) const
         {
             return !((*this) == rhs);
