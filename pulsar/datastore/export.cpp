@@ -26,10 +26,8 @@ namespace pulsar {
 void export_testing_datastore(pybind11::module & m);
 
 
-void export_datastore(pybind11::module & mtop)
+void export_datastore(pybind11::module & m)
 {
-    pybind11::module m = mtop.def_submodule("datastore", "Data storage classes");
-
 
     //////////////////
     // OptionTypes

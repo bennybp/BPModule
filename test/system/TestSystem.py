@@ -3,28 +3,27 @@ import math
 
 tester=Tester("Testing the System class")
     
-MyU=psr.system.AtomSetUniverse();MyU2=psr.system.AtomSetUniverse()
-H=psr.system.create_atom([0.0,0.0,0.0],1)
-H1=psr.system.create_atom([0.0,0.0,0.89],1)
+MyU, MyU2=psr.AtomSetUniverse(), psr.AtomSetUniverse()
+H, H1 = psr.create_atom([0.0,0.0,0.0],1), psr.create_atom([0.0,0.0,0.89],1)
 MyU.insert(H)
 MyU.insert(H1)
     
 #Constructors and assignment
-Empty=psr.system.System(MyU,False)
-H2=psr.system.System(MyU,True)
+Empty=psr.System(MyU,False)
+H2=psr.System(MyU,True)
 tester.test("System is empty",True,0,Empty.size)
 tester.test("System is full",True,2,H2.size)
-Empty2=psr.system.System(MyU,False)
+Empty2=psr.System(MyU,False)
 tester.test("Different universes!=different systems",True,True,Empty.__eq__,Empty2)
-H22=psr.system.System(H2)
+H22=psr.System(H2)
 tester.test("Copy constructor works",True,True,H2.__eq__,H22)
 
 #At this point H2==H22={H,H1}
     
 #Properties
-q=psr.system.make_point_charge([0.0,0.0,-0.89],-1.0)
+q=psr.make_point_charge([0.0,0.0,-0.89],-1.0)
 MyU.insert(q)
-ChargedH2=psr.system.System(MyU,True)
+ChargedH2=psr.System(MyU,True)
 tester.test("size works",True,2,H2.size)
 tester.test("sum of mass works",True,2.01595,H22.get_sum_mass)
 tester.test_value("mass is set correct",2.01595,H22.mass)
@@ -35,7 +34,7 @@ tester.test_value("charge is set correctly (charged)",-1.0,ChargedH2.charge)
 tester.test_value("multiplicity is correct",1,H2.multiplicity)
 tester.test("sum of n electrons is correct",True,2,H22.get_sum_n_electrons)
 tester.test_value("n electrons is set correctly",2,H22.nelectrons)
-tester.test_value("spaces are the same",psr.system.Space(),H22.space)
+tester.test_value("spaces are the same",psr.Space(),H22.space)
 tester.test("count works",True,True,H22.count,H1)
 tester.test("compare info works",True,True,H22.compare_info,H2)
     
@@ -43,12 +42,12 @@ tester.test("compare info works",True,True,H22.compare_info,H2)
 HAtoms=[i for i in H22]
 corr_atoms=[H,H1]
 tester.test_value("Iterators work",HAtoms,corr_atoms)
-H26=psr.system.System(MyU,False);H27=psr.system.System(MyU,False)
+H26, H27 =psr.System(MyU,False), psr.System(MyU,False)
 H26.insert(H)
 H26.insert(H1)
 H27.insert(q)
 tester.test_value("Single element inserts work",H26,H22)
-H28=psr.system.System(ChargedH2)
+H28=psr.System(ChargedH2)
 #At this point H2=H22={H,H1} | H28==ChargedH2={H,H1,q} H26={H,H1} H27={q}
     
 #Set operations 
@@ -77,18 +76,18 @@ tester.test("proper superset false",True,False,H27.is_proper_superset_of,H28)
 tester.test("inequality works",True,True,H26.__ne__,H28)
     
 def part_fxn(atomi):
-    return psr.system.is_point_charge(atomi)
+    return psr.is_point_charge(atomi)
 
 tester.test("partition",True,H27,H28.partition,part_fxn)
-MyU3=psr.system.AtomSetUniverse([psr.system.create_atom([1.0,0.0,0.0],1),
-    psr.system.create_atom([1.0,0.0,0.89],1)])
+MyU3=psr.AtomSetUniverse([psr.create_atom([1.0,0.0,0.0],1),
+    psr.create_atom([1.0,0.0,0.89],1)])
     
 def translate_by_1(atomi):
-    temp=psr.system.Atom(atomi)
+    temp=psr.Atom(atomi)
     temp[0]=1.0
     return temp
 
-tester.test("transform",True,psr.system.System(MyU3,True),H22.transform,translate_by_1)
+tester.test("transform",True,psr.System(MyU3,True),H22.transform,translate_by_1)
 tester.test("get universe works",True,MyU,H27.get_universe)
 tester.test("as universe works",True,MyU,H28.as_universe)
 

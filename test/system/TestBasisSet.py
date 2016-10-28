@@ -1,27 +1,27 @@
 from TestFxns import *
 
 tester = Tester("Testing the BasisSet and BasisSetShell")
-cGTO = psr.system.ShellType.CartesianGaussian
-sGTO = psr.system.ShellType.SphericalGaussian
+cGTO = psr.ShellType.CartesianGaussian
+sGTO = psr.ShellType.SphericalGaussian
 alpha=[3.42525091, 0.62391373, 0.16885540]
 c=[0.15432897, 0.53532814, 0.44463454]
 
-FakeD=psr.system.BasisShellInfo(cGTO,2,3,1,alpha,c)
-FakeD2=psr.system.BasisShellInfo(sGTO,2,3,1,alpha,c)
+FakeD=psr.BasisShellInfo(cGTO,2,3,1,alpha,c)
+FakeD2=psr.BasisShellInfo(sGTO,2,3,1,alpha,c)
 carts=[0.0,0.0,0.0]
-H=psr.system.create_atom(carts,1)
-BI=psr.system.BasisInfo()
+H=psr.create_atom(carts,1)
+BI=psr.BasisInfo()
 BI.shells=[FakeD,FakeD2]
 H.basis_sets={"PRIMARY" :BI }
-GhH=psr.system.make_ghost_atom(H)
-Atoms=psr.system.AtomSetUniverse([H,GhH])
-Mol=psr.system.System(Atoms,True)
+GhH=psr.make_ghost_atom(H)
+Atoms=psr.AtomSetUniverse([H,GhH])
+Mol=psr.System(Atoms,True)
 BS=Mol.get_basis_set("PRIMARY")
-BS2=psr.system.BasisSet(BS)
+BS2=psr.BasisSet(BS)
 
 
 tester.test_value("Copy constructors work",BS,BS2)
-BS3=psr.system.BasisSet(1,3,3,3)
+BS3=psr.BasisSet(1,3,3,3)
 tester.test("Inequality works",True,True,BS3.__ne__,BS2)
 
 tester.test("Get types works",True,{cGTO,sGTO},BS.get_types)
@@ -49,7 +49,7 @@ for Sk in BS2:
 
 tester.test("Get valid shell info",True,FakeD,BS2.shell_info,0)
 tester.test("Get invalid shell info",False,FakeD,BS.shell_info,99)
-BS4=psr.system.BasisSet(1,3,3,3)
+BS4=psr.BasisSet(1,3,3,3)
 tester.test("Add shell that fits",True,None,BS4.add_shell,FakeD,carts)
 BS3.add_shell(FakeD,carts)
 tester.test("Shrink to fit",True,BS3,BS4.shrink_fit)

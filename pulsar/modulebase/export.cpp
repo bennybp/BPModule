@@ -11,10 +11,8 @@
 
 namespace pulsar{
 
-void export_modulebase(pybind11::module & mtop)
+void export_modulebase(pybind11::module & m)
 {
-    pybind11::module m = mtop.def_submodule("modulebase", "Base classes for all modules");
-
     ///////////////////////
     // Module Base classes
     ///////////////////////

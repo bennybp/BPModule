@@ -9,9 +9,8 @@
 
 namespace pulsar{
 
-void export_python(pybind11::module & mtop)
+void export_python(pybind11::module & m)
 {
-    pybind11::module m = mtop.def_submodule("python", "Some helper functions for python stuff");
 }
 
 } // close namespace pulsar

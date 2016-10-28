@@ -24,10 +24,8 @@ pybind11::tuple Limits(void)
 
 namespace pulsar{
 
-void export_testing(pybind11::module & mtop)
-{
-    pybind11::module m = mtop.def_submodule("testing", "Some helpers for testing"); 
-    
+void export_testing(pybind11::module & m)
+{   
     using test1=void (Tester::*)(const std::string&,bool);
     using test2=void (Tester::*)(const std::string&,double,double,double);
     pybind11::class_<Tester>(m,"TesterBase")

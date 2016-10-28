@@ -14,8 +14,6 @@
 # Either way, this is somewhat elegant as it stands
 ###############################################################
 
-from . import GeneralException as GeneralException_
-
 class GeneralException(Exception):
   """A base exception for Pulsar (python version)
 

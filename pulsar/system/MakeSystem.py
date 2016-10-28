@@ -1,7 +1,5 @@
 import re
 import math
-import pulsar as psr
-from pulsar.exception import GeneralException
 from copy import deepcopy
 
 def make_system(SomeString):

@@ -3,8 +3,6 @@
 
 using Matrix_t=pulsar::EigenMatrixImpl;
 using Vector_t=pulsar::EigenVectorImpl;
-using std::bind;
-using namespace std::placeholders;
 
 TEST_CLASS(TestEigenImpl){
     Tester tester("Testing Eigen Matrix and Vector Implementations.");
@@ -18,10 +16,11 @@ TEST_CLASS(TestEigenImpl){
     tester.test("Matrix shared pointer constructor works",*Mat1,*M1.get_matrix());
     tester.test("Matrix copy constructor works",M1,M2);
     tester.test("Matrix move constructor works",M1,M3);
-    tester.test("Matrix sizes works",std::array<size_t,2>({2,4}),M1.sizes());
-    tester.test("Matrix get_value works",3.0,M2.get_value({0,2}));
-    M3.set_value({0,2},55.0);
-    tester.test("Matrix set_value works",55.0,M3.get_value({0,2}));
+    std::array<size_t,2> twofour({2,4}),zerotwo({0,2});
+    TEST_FXN("Matrix sizes works",true,twofour,M1.sizes());
+    TEST_FXN("Matrix get_value works",true,3.0,M2.get_value(zerotwo));
+    TEST_VOID("Matrix set_value works",true,M3.set_value(zerotwo,55.0));
+    TEST_FXN("Matrix set_value is correct",true,55.0,M3.get_value(zerotwo));
     tester.test("Matrix != works",true,M3!=M1);
     auto Mat4=pulsar::convert_to_eigen(M1);
     tester.test("Matrix convert to eigen works",*Mat1,*Mat4);
@@ -36,10 +35,11 @@ TEST_CLASS(TestEigenImpl){
     tester.test("Vector shared pointer constructor works",*Vec1,*V1.get_matrix());
     tester.test("Vector copy constructor works",V1,V2);
     tester.test("Vector move constructor works",V1,V3);
-    tester.test("Vector sizes works",std::array<size_t,1>({4}),V1.sizes());
-    tester.test("Vector get_value works",3.0,V2.get_value({2}));
-    V3.set_value({2},55.0);
-    tester.test("Vector set_value works",55.0,V3.get_value({2}));
+    std::array<size_t,1> four({4}),two({2});
+    TEST_FXN("Vector sizes works",true,four,V1.sizes());
+    TEST_FXN("Vector get_value works",true,3.0,V2.get_value(two));
+    TEST_VOID("Vector set_value works",true,V3.set_value(two,55.0));
+    TEST_FXN("Vector set_value is correct",true,55.0,V3.get_value(two));
     tester.test("Vector != works",true,V3!=V1);
     auto Vec4=pulsar::convert_to_eigen(V1);
     tester.test("Vector convert to eigen works",*Vec1,*Vec4);

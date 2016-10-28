@@ -24,10 +24,8 @@ namespace pulsar{
 // in testing_export.cpp
 void export_testing_modulemanager(pybind11::module & m);
 
-void export_modulemanager(pybind11::module & mtop)
+void export_modulemanager(pybind11::module & m)
 {
-    pybind11::module m = mtop.def_submodule("modulemanager", "Module loading and location");
-
     //////////////////////
     // ModuleInfo
     //////////////////////

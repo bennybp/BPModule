@@ -36,10 +36,8 @@ namespace pulsar{
 void export_testing_math(pybind11::module & m);
 
 
-void export_math(pybind11::module & mtop)
+void export_math(pybind11::module & m)
 {
-    pybind11::module m = mtop.def_submodule("math", "Some common math operations");
-
     m.def("factorial", factorial); 
     m.def("factorial_f", factorial_f); 
     m.def("factorial_d", factorial_d); 

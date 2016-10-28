@@ -1,10 +1,10 @@
 from TestFxns import *
 import time
 
-BSI = psr.system.BasisShellInfo
-BSB = psr.system.BasisShellBase
-cGTO = psr.system.ShellType.CartesianGaussian
-sGTO = psr.system.ShellType.SphericalGaussian
+BSI = psr.BasisShellInfo
+BSB = psr.BasisShellBase
+cGTO = psr.ShellType.CartesianGaussian
+sGTO = psr.ShellType.SphericalGaussian
 tester = Tester("Testing BasisShellBase (BSB)")
 
 alpha =[3.42525091, 0.62391373, 0.16885540]

@@ -27,9 +27,8 @@ namespace pulsar{
 // in testing_export.cpp
 void export_testing_system(pybind11::module & m);
 
-void export_system(pybind11::module & mtop)
+void export_system(pybind11::module & m)
 {
-    pybind11::module m = mtop.def_submodule("system", "Molecular system specification");
 
     ///////////////
     // Angular momentum

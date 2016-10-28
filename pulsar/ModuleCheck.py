@@ -4,10 +4,6 @@ import os
 import sys
 from  importlib.machinery import SourceFileLoader
 
-from pulsar.output import *
-from pulsar.exception import GeneralException
-
-
 indent = "    "
 indent1 = indent*1
 indent2 = indent*2

@@ -2,11 +2,10 @@ import sys
 import os
 import importlib
 
-from . import *
-
+from .pulsar_core import ModuleManager
 
 # TODO - document me
-class ModuleAdministrator(modulemanager.ModuleManager):
+class ModuleAdministrator(ModuleManager):
     """The Python interface to the ModuleManager.
 
     Attributes:

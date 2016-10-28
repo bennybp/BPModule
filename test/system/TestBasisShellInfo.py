@@ -1,8 +1,8 @@
 from TestFxns import *
 
 tester = Tester("Testing the BasisShellInfo class")
-BSI=psr.system.BasisShellInfo
-cGTO = psr.system.ShellType.CartesianGaussian
+BSI=psr.BasisShellInfo
+cGTO = psr.ShellType.CartesianGaussian
 
 alpha=[3.42525091, 0.62391373, 0.16885540]
 c=[0.15432897, 0.53532814, 0.44463454]

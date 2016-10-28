@@ -3,22 +3,20 @@ from TestFxns import *
 tester=Tester("Testing MathSet and MathSet Iterator C++ Interface")
 
 
-U1=psr.math.DoubleUniverse([1.0,2.0,3.0])
-U2=psr.math.DoubleUniverse([3.0,4.0,5.0])
-U3=psr.math.DoubleUniverse([3.0])
+U1=psr.DoubleUniverse([1.0,2.0,3.0])
+U2, U3=psr.DoubleUniverse([3.0,4.0,5.0]),psr.DoubleUniverse([3.0])
 
 #Constructors
-S1=psr.math.DoubleSet(U1,{2})
-S2=psr.math.DoubleSet(S1)
+S1=psr.DoubleSet(U1,{2});S2=psr.DoubleSet(S1)
 tester.test_value("Constructor 1 and copy constructor work",S1,S2)
 U1.insert(4.0);
 tester.test_value("Shallow copy of universe",S1,S2)
-S3=psr.math.DoubleSet(U2,True)
-S4=psr.math.DoubleSet(U2,False)
+S3=psr.DoubleSet(U2,True)
+S4=psr.DoubleSet(U2,False)
 tester.test("Constructor 2",True,False,S3.__eq__,S4)
-S5=psr.math.DoubleSet(U2,{0,1,2})
+S5=psr.DoubleSet(U2,{0,1,2})
 tester.test_value("Fill constructor works",S3,S5);
-S8=psr.math.DoubleSet(S2.clone())
+S8=psr.DoubleSet(S2.clone())
 U1.insert(5.0)
 tester.test("Clone is not aliased",True,False,S8.__eq__,S2)    
     
@@ -35,16 +33,16 @@ itercheck=[i for i in S5]
 tester.test_value("iterators work",vals,itercheck)
 tester.test("idx valid",True,0,S3.idx,3.0)
 tester.test("idx invalid",False,2,S8.idx,55.0)
-S11=psr.math.DoubleSet(U1,{2,3})
+S11=psr.DoubleSet(U1,{2,3})
 tester.test("insert by valid elem",True,S11,S1.insert,4.0)
 tester.test("insert by invalid elem",False,S11,S1.insert,55.0)
 tester.test("insert by valid index",True,S11,S2.insert_idx,3)
 tester.test("insert by invalid index",False,S11,S2.insert_idx,99)
 
-S9=psr.math.DoubleSet(U1,{1,2,3})
-S10=psr.math.DoubleSet(U1,{1,2,4})
-S12=psr.math.DoubleSet(U1,{1,2})
-S13=psr.math.DoubleSet(U1,{3})
+S9=psr.DoubleSet(U1,{1,2,3})
+S10=psr.DoubleSet(U1,{1,2,4})
+S12=psr.DoubleSet(U1,{1,2})
+S13=psr.DoubleSet(U1,{3})
 tester.test("union",True,S9,S1.set_union,S12)
 tester.test("union fail",False,S9,S1.set_union,S4)
 tester.test("union assign",True,S9,S1.union_assign,S12)
@@ -57,7 +55,7 @@ tester.test("difference",True,S13,S2.difference,S12)
 tester.test("difference fail",False,S13,S2.difference,S4)
 tester.test("difference assign",True,S13,S2.difference_assign,S12)
 tester.test("difference assign fail",False,S13,S2.difference_assign,S4)
-S14=psr.math.DoubleSet(U1,True)
+S14=psr.DoubleSet(U1,True)
 S14-=S2
 tester.test("complement",True,S14,S2.complement);
 
