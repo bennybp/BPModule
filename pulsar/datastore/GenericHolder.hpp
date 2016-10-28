@@ -202,7 +202,7 @@ template<typename U>
 typename std::enable_if<SerializeCheck<U>::value, ByteArray>::type
 GenericHolder<T>::to_byte_array_helper_(void) const
 {
-    return to_byte_array(*obj);
+    return pulsar::to_byte_array(*obj);
 }
 
 template<typename T>
