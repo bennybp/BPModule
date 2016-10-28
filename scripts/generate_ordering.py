@@ -57,7 +57,7 @@ for l in range(-1, -5, -1):
 
 
 with psr_common.HeaderSourceFiles(outbase, "Ordering of basis functions",
-                                 ["pulsar","system","lut"],
+                                 ["pulsar","lut"],
                                  createheader = False,
                                  srcincludes = ["\"pulsar/system/AOOrdering.hpp\""]) as src:
 

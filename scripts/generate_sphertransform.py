@@ -117,7 +117,7 @@ for l in range(-4, 0):
 
 
 with psr_common.HeaderSourceFiles(outbase, "Conversion from cartesian to spherical harmonics",
-                                 ["pulsar","system","lut"],
+                                 ["pulsar","lut"],
                                  createheader = False,
                                  srcincludes = ["\"pulsar/system/SphericalTransform.hpp\""]) as src:
 
