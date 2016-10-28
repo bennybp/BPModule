@@ -13,12 +13,10 @@
 
 
 namespace pulsar{
-namespace modulemanager {
-
 
 void ModuleInfo::print(std::ostream & os) const
 {
-    using namespace output;
+    
 
     print_output(os, "\n");
     print_output(os, "  ++ Module: %?\n", name);
@@ -67,8 +65,5 @@ bool ModuleInfo::operator==(const ModuleInfo & rhs) const
             options == rhs.options);
 }
 
-
-
-} // close namespace modulemanager
 } // close namespace pulsar
 

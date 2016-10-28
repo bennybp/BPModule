@@ -1,7 +1,7 @@
 #include "TestCXX.hpp"
 #include <pulsar/system/System.hpp>
 
-using namespace pulsar::system;
+using namespace pulsar;
 using ShellSet=std::set<ShellType>;
 
 TEST_CLASS(TestBasisSet){
@@ -74,12 +74,8 @@ TEST_CLASS(TestBasisSet){
     TEST_FXN("Shrink to fit",true,BS5,BS4.shrink_fit());
     TEST_VOID("Add shell no fit",false,BS4.add_shell(FakeD2,carts));
 
-
-    const std::string da_hash=bphash::hash_to_string(BS.my_hash());
-    TEST_FXN("Hash BS",true,da_hash,bphash::hash_to_string(BS.my_hash()));
-    TEST_FXN("Hash BS2",true,da_hash,bphash::hash_to_string(BS2.my_hash()));
-    TEST_FXN("Hash BS3",true,da_hash,bphash::hash_to_string(BS3.my_hash()));
-    
+    TEST_FXN("Hash BS",true,BS.my_hash(),BS2.my_hash());
+    TEST_FXN("Hash BS2",true,BS.my_hash(),BS3.my_hash());   
     
     tester.print_results();
 }

@@ -9,8 +9,6 @@
 
 
 namespace pulsar{
-namespace util {
-
 
 void to_lower(std::string & str)
 {
@@ -101,8 +99,5 @@ std::string line(char c, int n)
     return std::string(n, c) + "\n";
 }
 
-
-
-} // close namespace util
 } // close namespace pulsar
 

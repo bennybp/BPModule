@@ -11,7 +11,6 @@
 
 
 namespace pulsar{
-namespace math {
 namespace detail {
 
 
@@ -67,13 +66,13 @@ struct ExactCast
                     if(s > tmax)
                         throw MathException("Error in numeric_cast",
                                                        "desc", "source value overflows target type",
-                                                       "ifrom", util::demangle_cpp_type<Source>(),
-                                                       "ito", util::demangle_cpp_type<Target>());
+                                                       "ifrom", demangle_cpp_type<Source>(),
+                                                       "ito", demangle_cpp_type<Target>());
                     else if(s < tmin)
                         throw MathException("Error in numeric_cast",
                                                        "desc", "source value underflows target type",
-                                                       "ifrom", util::demangle_cpp_type<Source>(),
-                                                       "ito", util::demangle_cpp_type<Target>());
+                                                       "ifrom", demangle_cpp_type<Source>(),
+                                                       "ito", demangle_cpp_type<Target>());
 
                     else // safe!
                         return static_cast<Target>(s);
@@ -85,8 +84,8 @@ struct ExactCast
                 if(s < 0)
                     throw MathException("Error in numeric_cast",
                                                    "desc", "source value underflows target type",
-                                                   "ifrom", util::demangle_cpp_type<Source>(),
-                                                   "ito", util::demangle_cpp_type<Target>());
+                                                   "ifrom", demangle_cpp_type<Source>(),
+                                                   "ito", demangle_cpp_type<Target>());
 
                 
                 // going from smaller to larger type - ok (since s >= 0)
@@ -100,8 +99,8 @@ struct ExactCast
                     if(s > tmax)
                         throw MathException("Error in numeric_cast",
                                                        "desc", "source value overflows target type",
-                                                       "ifrom", util::demangle_cpp_type<Source>(),
-                                                       "ito", util::demangle_cpp_type<Target>());
+                                                       "ifrom", demangle_cpp_type<Source>(),
+                                                       "ito", demangle_cpp_type<Target>());
 
                     else // safe!
                         return static_cast<Target>(s);
@@ -122,8 +121,8 @@ struct ExactCast
                     if(s > tmax)
                         throw MathException("Error in numeric_cast",
                                                        "desc", "source value overflows target type",
-                                                       "ifrom", util::demangle_cpp_type<Source>(),
-                                                       "ito", util::demangle_cpp_type<Target>());
+                                                       "ifrom", demangle_cpp_type<Source>(),
+                                                       "ito", demangle_cpp_type<Target>());
 
                     else // safe!
                         return static_cast<Target>(s);
@@ -151,8 +150,8 @@ struct ExactCast
             else
                 throw MathException("Error in numeric_cast",
                                                "desc", "Floating point conversion results in loss of precision",
-                                               "fpfrom", util::demangle_cpp_type<Source>(),
-                                               "fpto", util::demangle_cpp_type<Target>());
+                                               "fpfrom", demangle_cpp_type<Source>(),
+                                               "fpto", demangle_cpp_type<Target>());
             PRAGMA_WARNING_POP
         }
 
@@ -162,8 +161,8 @@ struct ExactCast
             if(!is_integer(s))
                 throw MathException("Error in numeric_cast",
                                                "desc", "Floating point conversion to integer results in loss of information",
-                                               "fpfrom", util::demangle_cpp_type<Source>(),
-                                               "ito", util::demangle_cpp_type<Target>());
+                                               "fpfrom", demangle_cpp_type<Source>(),
+                                               "ito", demangle_cpp_type<Target>());
             else
                 return static_cast<Target>(s);
         }
@@ -176,8 +175,8 @@ struct ExactCast
             if(!is_integer(s))
                 throw MathException("Error in numeric_cast",
                                                "desc", "Floating point type cannot exactly handle this integer",
-                                               "ifrom", util::demangle_cpp_type<Source>(),
-                                               "fpto", util::demangle_cpp_type<Target>());
+                                               "ifrom", demangle_cpp_type<Source>(),
+                                               "fpto", demangle_cpp_type<Target>());
 
             Source s2 = static_cast<Source>(s);
             PRAGMA_WARNING_PUSH
@@ -185,8 +184,8 @@ struct ExactCast
             if(s != s2)
                 throw MathException("Error in numeric_cast",
                                                "desc", "Floating point type cannot exactly handle this integer",
-                                               "ifrom", util::demangle_cpp_type<Source>(),
-                                               "fpto", util::demangle_cpp_type<Target>());
+                                               "ifrom", demangle_cpp_type<Source>(),
+                                               "fpto", demangle_cpp_type<Target>());
             else
                 return t;
             PRAGMA_WARNING_POP
@@ -222,7 +221,6 @@ struct ExactCast<Source, Source>
 
 
 } // close namespace detail
-} // close namespace math
 } // close namespace pulsar
 
 

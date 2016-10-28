@@ -11,10 +11,6 @@
 
 
 namespace pulsar{
-namespace system {
-
-
-
 
 namespace lut {
     extern const SphericalTransformMap spherical_transform_map_;
@@ -38,9 +34,6 @@ const std::vector<SphericalTransformCoefficient> & spherical_transform_for_am(in
     return lut::spherical_transform_map_.at(am);
 }
 
-
-
-} // close namespace system
 } // close namespace pulsar
 
 

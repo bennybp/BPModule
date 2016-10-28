@@ -1,5 +1,4 @@
-#ifndef PULSAR_GUARD_MATH__FINITEDIFF_HPP_
-#define PULSAR_GUARD_MATH__FINITEDIFF_HPP_
+#pragma once
 
 #include <vector>
 #include <cstdlib>
@@ -7,7 +6,6 @@
 #include "pulsar/exception/Exceptions.hpp"
 
 namespace pulsar{
-namespace math{
 
 /** \brief Abstract base class for an object meeting the requirements of
  *  a visitor that provides the minimal functionality to be used with the
@@ -224,5 +222,5 @@ std::vector<ResultType> FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
     return Result;
 }
 
-}}//End namespaces
-#endif
+}//End namespaces
+

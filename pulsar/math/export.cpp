@@ -31,15 +31,12 @@
 //! \todo Export exact casts? Or have the equivalent with python?
 
 namespace pulsar{
-namespace math {
-namespace export_python {
-
 
 // in testing_export.cpp
-void export_testing(pybind11::module & m);
+void export_testing_math(pybind11::module & m);
 
 
-void export_pybind11(pybind11::module & mtop)
+void export_math(pybind11::module & mtop)
 {
     pybind11::module m = mtop.def_submodule("math", "Some common math operations");
 
@@ -142,11 +139,8 @@ void export_pybind11(pybind11::module & mtop)
      
     
     // Export the testing stuff
-    export_testing(m);
+    export_testing_math(m);
 }
 
-
-} // close namespace export_python
-} // close namespace math 
 } // close namespace pulsar
 

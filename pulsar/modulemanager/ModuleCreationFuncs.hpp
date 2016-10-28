@@ -16,8 +16,6 @@
 
 
 namespace pulsar{
-namespace modulemanager {
-
 
 /*! \brief Stores creation functions for modules within a supermodule
  *
@@ -136,13 +134,11 @@ class ModuleCreationFuncs
         detail::ModuleIMPLHolder *
         py_constructor_wrapper_(const pybind11::object & cls, ID_t id)
         {
-            pybind11::object o = python::call_py_func<pybind11::object>(cls, id);
+            pybind11::object o = call_py_func<pybind11::object>(cls, id);
             return new detail::PyModuleIMPLHolder(std::move(o));
         }
 };
 
-
-} // close namespace modulemanager
 } // close namespace pulsar
 
 

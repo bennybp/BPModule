@@ -26,7 +26,7 @@ tester.test("Get invalid spin works",True,set(),M4.get_spins,iA)
 tester.test("Get invalid element throws",False,Mat1,M4.get,iA,sb)
 tester.test("Same structure different",True,False,M4.same_structure,M1)
 tester.test("Same structure same",True,True,M4.same_structure,M4)
-hash=[143, 206, 233, 85, 43, 195, 44, 253, 219, 213, 39, 129, 131, 160, 219,254]
-tester.test("Hash works",True,hash,M4.my_hash)
+M5=psr.math.BlockedEigenMatrix(M4)
+tester.test_value("Hash works",M4.my_hash(),M5.my_hash())
 
 tester.print_results()

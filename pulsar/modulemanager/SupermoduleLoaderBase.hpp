@@ -13,8 +13,6 @@
 
 
 namespace pulsar{
-namespace modulemanager {
-
 
 // forward declarations
 class ModuleCreationFuncs;
@@ -54,7 +52,6 @@ class SupermoduleLoaderBase
         virtual const ModuleCreationFuncs & load_supermodule(const std::string & spath) = 0;
 };
 
-} // close namespace modulemanager
 } // close namespace pulsar
 
 

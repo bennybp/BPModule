@@ -7,56 +7,43 @@
 
 #include <pybind11/pybind11.h>
 
-// helper for declaring submodule export functions
-#define EXPORT_SUBMODULE(ns) namespace ns { \
-              namespace export_python { \
-                     void export_pybind11(pybind11::module &); \
-              } }
-
-
 namespace pulsar{
 
 // declaration for all the various submodule exports
-EXPORT_SUBMODULE(datastore)
-EXPORT_SUBMODULE(exception)
-EXPORT_SUBMODULE(math)
-EXPORT_SUBMODULE(modulebase)
-EXPORT_SUBMODULE(modulemanager)
-EXPORT_SUBMODULE(output)
-EXPORT_SUBMODULE(parallel)
-EXPORT_SUBMODULE(python)
-EXPORT_SUBMODULE(system)
-EXPORT_SUBMODULE(testing)
-EXPORT_SUBMODULE(util)
-
+void export_datastore(pybind11::module &);
+void export_exception(pybind11::module &);
+void export_math(pybind11::module &);
+void export_modulebase(pybind11::module &);
+void export_modulemanager(pybind11::module &);
+void export_output(pybind11::module &);
+void export_parallel(pybind11::module &);
+void export_python(pybind11::module &);
+void export_system(pybind11::module &);
+void export_testing(pybind11::module &);
+void export_util(pybind11::module &);
 
 
 ////////////////////////////////////////
 // Main export for pulsar
 ////////////////////////////////////////
-namespace export_python {
-
 PYBIND11_PLUGIN(pulsar_core)
 {
     pybind11::module mtop("pulsar_core", "PulsarChem core");
 
-    datastore::export_python::export_pybind11(mtop);
-    exception::export_python::export_pybind11(mtop);
-    math::export_python::export_pybind11(mtop);
-    modulebase::export_python::export_pybind11(mtop);
-    modulemanager::export_python::export_pybind11(mtop);
-    output::export_python::export_pybind11(mtop);
-    parallel::export_python::export_pybind11(mtop);
-    python::export_python::export_pybind11(mtop);
-    system::export_python::export_pybind11(mtop);
-    testing::export_python::export_pybind11(mtop);
-    util::export_python::export_pybind11(mtop);
+    export_datastore(mtop);
+    export_exception(mtop);
+    export_math(mtop);
+    export_modulebase(mtop);
+    export_modulemanager(mtop);
+    export_output(mtop);
+    export_parallel(mtop);
+    export_python(mtop);
+    export_system(mtop);
+    export_testing(mtop);
+    export_util(mtop);
 
     return mtop.ptr();
 }
-
-
-} // close namespace export_python
 } // close namespace pulsar
 
 

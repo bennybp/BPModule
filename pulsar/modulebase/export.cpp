@@ -9,20 +9,9 @@
 #include "pulsar/datastore/Wavefunction.hpp"
 #include "pulsar/modulemanager/ModuleManager.hpp"
 
-
-using pulsar::modulemanager::ModuleManager;
-using pulsar::modulemanager::ModuleInfo;
-using pulsar::datastore::OptionMap;
-
-
-
 namespace pulsar{
-namespace modulebase {
-namespace export_python {
 
-
-
-void export_pybind11(pybind11::module & mtop)
+void export_modulebase(pybind11::module & mtop)
 {
     pybind11::module m = mtop.def_submodule("modulebase", "Base classes for all modules");
 
@@ -180,7 +169,6 @@ void export_pybind11(pybind11::module & mtop)
                 .def("hessian",&EnergyMethod::hessian)
                 ;
 }
-} // close namespace export_python
-} // close namespace modulebase
+
 } // close namespace pulsar
 

@@ -3,10 +3,7 @@
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-using namespace pulsar::math;
-
 namespace pulsar {
-namespace math {
 
 std::shared_ptr<const MatrixXd>
 convert_to_eigen(const MatrixDImpl & ten)
@@ -42,11 +39,8 @@ convert_to_eigen(const VectorDImpl & ten)
         (*ret)(i) = ten.get_value({i});
     return ret;
 }
-
-
-} // close namespace math
 } // close namespace pulsar
 
 #include <cereal/archives/portable_binary.hpp>
-CEREAL_REGISTER_TYPE(EigenMatrixImpl)
-CEREAL_REGISTER_TYPE(EigenVectorImpl)
+CEREAL_REGISTER_TYPE(pulsar::EigenMatrixImpl)
+CEREAL_REGISTER_TYPE(pulsar::EigenVectorImpl)

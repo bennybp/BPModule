@@ -10,7 +10,6 @@
 #include "pulsar/exception/Exceptions.hpp"
 
 namespace pulsar{
-namespace math{
 
 /** \brief An iterator to generate all combinations from n objects,
  *         k at a time, i.e. all k-combinations
@@ -193,5 +192,5 @@ void CombItr<T>::reset_comb() {
     Comb_=NewComb;    
 }
 
-}}//End namespaces
+}//End namespaces
 

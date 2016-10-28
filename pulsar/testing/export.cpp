@@ -23,10 +23,8 @@ pybind11::tuple Limits(void)
 
 
 namespace pulsar{
-namespace testing {
-namespace export_python {
 
-void export_pybind11(pybind11::module & mtop)
+void export_testing(pybind11::module & mtop)
 {
     pybind11::module m = mtop.def_submodule("testing", "Some helpers for testing"); 
     
@@ -181,8 +179,5 @@ void export_pybind11(pybind11::module & mtop)
     m.def("TestOptionMapChange_vector_string",     &TestOptionMap_Change<std::vector<std::string>>);
 }
 
-
-} // close namespace export_python
-} // close namespace testing 
 } // close namespace pulsar
 

@@ -15,7 +15,6 @@
 #define PULSAR_GUARD_ITERTOOLS_HPP
 
 namespace pulsar {
-namespace util{
 
 /** \brief An object that evaluates to an integer range for use in range based
  *         for loops
@@ -59,6 +58,6 @@ struct Range{
     iterator end()const{return iterator(End_);}
 };
 
-}}//End namespace pulsar
+}//End namespace pulsar
 #endif /* PULSAR_GHUARD_ITERTOOLS_HPP */
 

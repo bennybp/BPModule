@@ -1,8 +1,8 @@
 #include "TestCXX.hpp"
 #include <pulsar/math/MathSet.hpp>
 
-using Universe_t=pulsar::math::Universe<double>;
-using MathSet_t=pulsar::math::MathSet<double>;
+using Universe_t=pulsar::Universe<double>;
+using MathSet_t=pulsar::MathSet<double>;
 using std::bind;
 using namespace std::placeholders;
 
@@ -120,10 +120,7 @@ TEST_CLASS(TestMathSet){
     std::vector<double> partresults({2.0}),presults2(NewS2.begin(),NewS2.end());
     tester.test("partition works",partresults,presults2);
     
-    const std::string Corr_Hash="6c146c3b32a8c3dceed476a2279c3503";
-    auto hash=bind(&bphash::hash_to_string,bind(&MathSet_t::my_hash,_1));
-    tester.test("hash works check 1",true,Corr_Hash,hash,S2);
-    tester.test("hash works check 2",true,Corr_Hash,hash,S13);
-    
+    tester.test("hash works",S2.my_hash(),S13.my_hash());
+
     tester.print_results();
 }

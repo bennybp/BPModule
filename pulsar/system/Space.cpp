@@ -8,7 +8,6 @@
 #include "pulsar/constants.h"
 
 namespace pulsar{
-namespace system{
 constexpr const double Space::infinity;
 //::infinity=std::numeric_limits<double>::infinity();
 bool Space::is_periodic()const{
@@ -32,5 +31,5 @@ bool Space::operator==(const Space& RHS) const
            );
 }
 
-}}//End namespaces
+}//End namespaces
 

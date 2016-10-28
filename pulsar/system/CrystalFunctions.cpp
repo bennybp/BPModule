@@ -9,16 +9,14 @@
 #include "pulsar/system/CrystalFunctions.hpp"
 #include "pulsar/util/IterTools.hpp"
 #include "pulsar/math/CombItr.hpp"
-#include "pulsar/math/ExactCast.hpp"
+#include "pulsar/math/Cast.hpp"
 #include "pulsar/constants.h"
 #include "pulsar/system/Space.hpp"
 #include "pulsar/system/System.hpp"
 
 
 typedef std::array<double,3> Vector_t;
-using Cast=pulsar::math::detail::ExactCast<double,size_t>;
 namespace pulsar{
-namespace system{
 
 void ToRadian(double& angle){
     angle*=PI/180.0;
@@ -45,12 +43,12 @@ AtomSetUniverse MakeSuperCell(const AtomSetUniverse& DaU,
     AtomSetUniverse NewU;
     System UC(DaU,true);
     for(size_t x=0;x<Dims[0];++x){
-        const double xSide=Cast::cast(x)*Sides[0];
+        const double xSide=numeric_cast<double>(x)*Sides[0];
         for(size_t y=0;y<Dims[1];++y){
-            const double ySide=Cast::cast(y)*Sides[1];
+            const double ySide=numeric_cast<double>(y)*Sides[1];
             for(size_t z=0;z<Dims[2];++z)
                 NewU+=translate(UC,
-                  Vector_t({xSide,ySide,Cast::cast(z)*Sides[2]})).as_universe();
+                  Vector_t({xSide,ySide,numeric_cast<double>(z)*Sides[2]})).as_universe();
         }
     }
     return NewU;
@@ -80,7 +78,7 @@ AtomSetUniverse CarveUC(const AtomSetUniverse& SC,
     for(auto& ConnI:Conns){
         if(NewU.count(ConnI.first))continue;
         bool InCell=true;
-        for(size_t x: util::Range<0,3>())
+        for(size_t x: Range<0,3>())
             if(ConnI.first[x]<Low[x]||ConnI.first[x]>High[x]){
                 InCell=false;
                 break;
@@ -106,7 +104,7 @@ bool CleanUCRecurse(AtomSetUniverse& MolU,
         if(NewMol.size()!=0)return false;
     }
     else{
-        for(size_t x: util::Range<0,3>()){
+        for(size_t x: Range<0,3>()){
             Idx[depth]=(int(x)-1)*Sides[depth];
             if(!CleanUCRecurse(MolU,Mol,NewU,Sides,Idx,depth+1))return false;
         }
@@ -139,4 +137,4 @@ AtomSetUniverse CleanUC(const AtomSetUniverse& UC,
     return NewUC;
 }
 
-}}//End namespaces
+}//End namespaces

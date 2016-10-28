@@ -1,5 +1,6 @@
 INPUT+=  dox/basic.md \
          dox/basisset.md \
+         dox/building.md \
          dox/exceptions.md \
          dox/finitediff.md \
          dox/documenting.md \
@@ -13,6 +14,7 @@ INPUT+=  dox/basic.md \
          dox/systems.md \
          dox/tensor.md \
          dox/terminology.md \
-         dox/testing.md
+         dox/testing.md \
+         dox/wavefunction.md
 
 INPUT += dox/mainpage.dox

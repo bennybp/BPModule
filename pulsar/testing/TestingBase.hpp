@@ -12,14 +12,7 @@
 
 #include "pulsar/output/GlobalOutput.hpp"
 
-
-using pulsar::output::print_global_output;
-using pulsar::output::print_global_error;
-using pulsar::output::print_global_debug;
-
 namespace pulsar{
-namespace testing {
-
 
 /*! \brief Test a function call
  *
@@ -118,9 +111,6 @@ bool TestConstruct(Targs... Fargs)
     return true;
 }
 
-
-
-} // close namespace testing
 } // close namespace pulsar
 
 #endif

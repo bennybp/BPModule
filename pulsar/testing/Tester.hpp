@@ -10,7 +10,6 @@
 #include<string>
 
 namespace pulsar {
-namespace testing {
 
 /** \brief Class designed to assist in testing Pulsar's core
  *
@@ -88,7 +87,7 @@ try{fxn;success=should_pass;}\
 catch(...){success= !should_pass;}\
 tester.test(msg,true,success);} while(0)
     
-}//End namespace testing
+
 }//End namespace pulsar
 
 #endif /* TESTER_HPP */

@@ -15,8 +15,8 @@
 #include <cereal/archives/binary.hpp>
 #include <cereal/types/polymorphic.hpp>
 
-using namespace pulsar::datastore::detail;
-using pulsar::datastore::OptionType;
+using namespace pulsar::detail;
+using pulsar::OptionType;
 
 CEREAL_REGISTER_TYPE(OptionHolder<OptionType::Int>)
 CEREAL_REGISTER_TYPE(OptionHolder<OptionType::Float>)

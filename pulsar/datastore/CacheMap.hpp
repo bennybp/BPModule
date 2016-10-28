@@ -17,14 +17,11 @@
 #include "pulsar/datastore/GenericHolder_serialized.hpp"
 
 namespace pulsar {
-namespace modulemanager {
 class Checkpoint;
-}
 }
 
 
 namespace pulsar {
-namespace datastore {
 
 
 /*! Storage of cache data
@@ -250,7 +247,7 @@ class CacheMap
 
 
     private:
-        friend class modulemanager::Checkpoint;
+        friend class Checkpoint;
 
         /*! \brief Mutex protecting this object during multi-threaded access */
         mutable std::mutex mutex_;
@@ -316,7 +313,6 @@ class CacheMap
 
 
 
-} // close namespace datastore
 } // close namespace pulsar
 
 

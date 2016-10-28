@@ -10,7 +10,7 @@ S 3 1.00
 using std::bind;
 using std::move;
 using namespace std::placeholders;
-using namespace pulsar::system;
+using namespace pulsar;
 using BSI = BasisShellInfo;
 
 TEST_CLASS(TestBasisShellInfo)

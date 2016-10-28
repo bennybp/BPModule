@@ -12,11 +12,8 @@
 
 
 namespace pulsar{
-namespace util {
-namespace export_python {
 
-
-void export_pybind11(pybind11::module & mtop)
+void export_util(pybind11::module & mtop)
 {
     pybind11::module m = mtop.def_submodule("util", "Miscellaneous utilities");
 
@@ -33,8 +30,5 @@ void export_pybind11(pybind11::module & mtop)
     m.def("memwatch_getlimit", memwatch_getlimit);
 }
 
-
-} // close namespace export_python
-} // close namespace util
 } // close namespace pulsar
 

@@ -12,7 +12,6 @@
 #include "pulsar/system/System.hpp"
 
 namespace pulsar {
-namespace modulebase {
 
 using SNType = std::set<std::string>; //< The type of the serial number
 
@@ -24,7 +23,7 @@ struct NMerInfo {
     }
     ///\todo Do we need the SN in this struct?
     SNType SN; //< The serial number of the NMer
-    system::System NMer; //< The actual nmer
+    System NMer; //< The actual nmer
     double Weight; //< The weight of the nmer
 };
 
@@ -126,7 +125,7 @@ protected:
      *    if requested)
      * \note To be implemented by derived classes
      */
-    virtual NMerSetType fragmentize_(const system::System & mol) = 0;
+    virtual NMerSetType fragmentize_(const System & mol) = 0;
 
 
 public:
@@ -141,7 +140,7 @@ public:
      *
      *   The main call users of this class should call
      */
-    NMerSetType fragmentize(const system::System & mol)
+    NMerSetType fragmentize(const System & mol)
     {
         return ModuleBase::call_function(&SystemFragmenter::fragmentize_, mol);
     }
@@ -154,19 +153,18 @@ public:
     MODULEBASE_FORWARD_PROTECTED_TO_PY
 
 
-    virtual NMerSetType fragmentize_(const system::System & mol)
+    virtual NMerSetType fragmentize_(const System & mol)
     {
         return call_py_override<NMerSetType>(this, "fragmentize_", mol);
     }
 
     ///Python's dictionaries are stupid, this rolls the STL set into a string
-    std::map<std::string, NMerInfo> fragmentize_py(const system::System& mol);
+    std::map<std::string, NMerInfo> fragmentize_py(const System& mol);
 
 
 
 };
 
-} // close namespace modulebase
 } // close namespace pulsar
 
 #endif

@@ -5,15 +5,13 @@
  * Created on January 22, 2016, 11:11 AM
  */
 
-#ifndef PULSAR_GUARD_MATH__MATHSET_HPP_
-#define PULSAR_GUARD_MATH__MATHSET_HPP_
+#pragma once
 
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/math/Universe.hpp"
 #include "pulsar/util/IterTools.hpp"
 #include <iterator>
 namespace pulsar{
-namespace math {
 
 template<typename T,typename U> class MathSet;
 
@@ -120,7 +118,7 @@ public:
     explicit MathSet(std::shared_ptr<const Universe_t> AUniverse, bool fill)
           : Universe_(AUniverse)
     {
-            for(size_t i : util::Range<0>(fill?AUniverse->size():0))
+            for(size_t i : Range<0>(fill?AUniverse->size():0))
                 Elems_.insert(i);
     }
     
@@ -571,8 +569,5 @@ MATHSET_COMP(operator>=,is_superset_of)
 #undef MATHSET_OP2
 #undef MATHSET_OP
 
-}//End namespace math
 }//End namespace pulsar
-
-#endif /* PULSAR_GUARD_MATHSET_HPP_ */
 

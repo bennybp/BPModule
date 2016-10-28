@@ -1,6 +1,5 @@
-#include "FiniteDiff.hpp"
+#include "pulsar/math/FiniteDiff.hpp"
 namespace pulsar{
-namespace math {
 
 std::vector<double> coefs(const std::vector<double>& Stencil, size_t Deriv) {
    size_t M=Deriv,M1=M+1,N=Stencil.size();
@@ -31,5 +30,5 @@ std::vector<double> coefs(const std::vector<double>& Stencil, size_t Deriv) {
    return Cs;
 }
 
-}}//End namespaces
+}//End namespaces
 

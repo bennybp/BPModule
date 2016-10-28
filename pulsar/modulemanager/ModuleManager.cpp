@@ -17,14 +17,10 @@
 #include "pulsar/modulemanager/CppSupermoduleLoader.hpp"
 #include "pulsar/modulemanager/PySupermoduleLoader.hpp"
 
-
-using namespace pulsar::datastore;
-using namespace pulsar::modulebase;
-using namespace pulsar::output;
+using namespace pulsar;
 
 
 namespace pulsar{
-namespace modulemanager {
 
 
 ModuleManager::ModuleManager()
@@ -398,7 +394,7 @@ pybind11::object ModuleManager::get_module_py(const std::string & modulekey,
     // can take ownership and we can avoid having
     // a copy constructor for PyModulePtr
 
-    return python::convert_to_py(new PyModulePtr(std::move(umbptr)), pybind11::return_value_policy::take_ownership);
+    return convert_to_py(new PyModulePtr(std::move(umbptr)), pybind11::return_value_policy::take_ownership);
 }
 
 void ModuleManager::change_option_py(const std::string & modulekey, const std::string & optkey, const pybind11::object & value)
@@ -440,7 +436,4 @@ void ModuleManager::stop_cache_sync(void)
     cachemap_.stop_sync();
 }
 
-
-
-} // close namespace modulemanager
 } // close namespace pulsar

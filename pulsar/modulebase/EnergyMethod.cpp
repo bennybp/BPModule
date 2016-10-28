@@ -16,29 +16,28 @@
 
 using std::vector;
 
-using pulsar::system::Atom;
-using pulsar::system::System;
-using pulsar::datastore::Wavefunction;
-using pulsar::system::AtomSetUniverse;
+using pulsar::Atom;
+using pulsar::System;
+using pulsar::Wavefunction;
+using pulsar::AtomSetUniverse;
 using LibTaskForce::HybridComm;
 using pulsar::GeneralException;
 
 typedef vector<Atom> AtomV_t;
-typedef pulsar::modulemanager::ModuleManager MM_t;
+typedef pulsar::ModuleManager MM_t;
 typedef vector<double> Return_t;
 
 
 namespace pulsar{
-namespace modulebase {
 
-class FDFunctor:public math::FDiffVisitor<double,Return_t>{
+class FDFunctor:public FDiffVisitor<double,Return_t>{
     private:
-        typedef  math::FDiffVisitor<double,Return_t> Base_t;
-        typedef modulemanager::ModulePtr<EnergyMethod> Module_t;
+        typedef  FDiffVisitor<double,Return_t> Base_t;
+        typedef ModulePtr<EnergyMethod> Module_t;
         size_t Order_;
         const AtomV_t& Atoms_;
         MM_t& MM_;
-        const datastore::Wavefunction & Wfn_;
+        const Wavefunction & Wfn_;
         std::string Key_;
         ID_t ID_;
     public:
@@ -64,7 +63,7 @@ class FDFunctor:public math::FDiffVisitor<double,Return_t>{
         }
 
         FDFunctor(size_t Order,const AtomV_t& Atoms,
-                  MM_t& MM,const datastore::Wavefunction & Wfn, std::string Key,ID_t ID):
+                  MM_t& MM,const Wavefunction & Wfn, std::string Key,ID_t ID):
             Order_(Order),Atoms_(Atoms),MM_(MM),Wfn_(Wfn),Key_(Key),ID_(ID){}
 };
 
@@ -75,7 +74,7 @@ size_t EnergyMethod::max_deriv_()const{
 
 
 DerivReturnType
-EnergyMethod::finite_difference_(size_t Order, const datastore::Wavefunction & Wfn){
+EnergyMethod::finite_difference_(size_t Order, const Wavefunction & Wfn){
     if(Order==0)
         throw GeneralException("I do not know how to obtain an energy via "
                                "finite difference.");
@@ -85,10 +84,10 @@ EnergyMethod::finite_difference_(size_t Order, const datastore::Wavefunction & W
     //I don't know why the fill constructor is not working...
     for(const Atom& AnAtom: Mol)Atoms.push_back(AnAtom);
     
-    const HybridComm& Comm=parallel::get_env().comm();
+    const HybridComm& Comm=get_env().comm();
     std::unique_ptr<HybridComm> NewComm=Comm.split(Comm.nprocs(),1);
 
-    math::CentralDiff<double,Return_t> FD(std::move(*NewComm));
+    CentralDiff<double,Return_t> FD(std::move(*NewComm));
 
     FDFunctor Thing2Run=FDFunctor(Order,Atoms,module_manager(),Wfn,key(),id());
     TempDeriv=FD.Run(Thing2Run,3*Mol.size(),
@@ -104,4 +103,4 @@ EnergyMethod::finite_difference_(size_t Order, const datastore::Wavefunction & W
     return {CWfn.first, TempDeriv[0]};
 }
 
-}}
+}

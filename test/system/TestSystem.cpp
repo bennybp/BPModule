@@ -1,6 +1,6 @@
 #include "TestCXX.hpp"
 #include <pulsar/system/System.hpp>
-using namespace pulsar::system;
+using namespace pulsar;
 using shared_universe=std::shared_ptr<const AtomSetUniverse>;
 
 TEST_CLASS(TestSystem){
@@ -108,12 +108,10 @@ TEST_CLASS(TestSystem){
 
     //Despite the manipulations and different universes, the following sets are
     //all equal
-    const std::string da_hash="f41fa1a28efa39afc68e5f8c0a165578";
-    tester.test("Hash is correct 1",da_hash,bphash::hash_to_string(H22.my_hash()));
-    tester.test("Hash is correct 2",da_hash,bphash::hash_to_string(H24.my_hash()));
-    tester.test("Hash is correct 3",da_hash,bphash::hash_to_string(H2.my_hash()));
-    tester.test("Hash is correct 4",da_hash,bphash::hash_to_string(H27.my_hash()));
-    tester.test("Hash is correct 5",da_hash,bphash::hash_to_string(H210.my_hash()));
+    tester.test("Hash is correct 1",H22.my_hash(),H24.my_hash());
+    tester.test("Hash is correct 2",H22.my_hash(),H2.my_hash());
+    tester.test("Hash is correct 3",H22.my_hash(),H27.my_hash());
+    tester.test("Hash is correct 4",H22.my_hash(),H210.my_hash());
         
     tester.print_results();
     

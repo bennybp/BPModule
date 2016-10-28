@@ -12,8 +12,6 @@
 #include "pulsar/exception/Exceptions.hpp"
 
 namespace pulsar{
-namespace math {
-
 
 /*! \brief Reorders a block of data
  *
@@ -139,10 +137,6 @@ std::vector<size_t> make_ordering(const std::vector<T> & src,
     return ret;
 }
 
-
-
-
-} // close namespace math
 } // close namespace pulsar
 
 

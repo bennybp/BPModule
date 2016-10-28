@@ -27,10 +27,10 @@ namespace pulsar{
 namespace system{
 
 using std::make_pair;
-using pulsar::math::Point;
-using pulsar::math::are_equal;
-using pulsar::math::Dot;
-using pulsar::math::Cross;
+using pulsar::Point;
+using pulsar::are_equal;
+using pulsar::Dot;
+using pulsar::Cross;
 using pulsar::GeneralException;
 typedef std::unordered_set<Atom> AtomSet_t;
 typedef std::array<double,3> Vector_t;
@@ -72,7 +72,7 @@ bool IsGood(const System& Mol,const SymmEl_t& E,const Vector_t& Ax,double Tol){
 
 template<typename T>
 Vector_t Orient(const T& Axis){
-    Vector_t NAxis=math::Normalize(Axis);
+    Vector_t NAxis=Normalize(Axis);
     //Fix orientation so counter/clockwise are same direction
     //We do this by requiring our axis to point "up" in a right handed
     //coordinate system.  If it lies in the XY plane we then require that
@@ -97,7 +97,7 @@ Vector_t Orient(const T& Axis){
 ///Finds all symmetry equivalent atoms
 
 SEASet_t FindSEAs(const System& Mol,double Tol){
-    DistMat_t DistMat=pulsar::system::get_distance(Mol);
+    DistMat_t DistMat=pulsar::get_distance(Mol);
     SEASet_t SEAs;
     //Little class to enforce equality to within a tolerance
 
@@ -154,7 +154,7 @@ MoISys_t MoIOrient(const System& Mol){
     System CenteredMol=Mol.translate(-1.0*CoM);
     Matrix_t I=inertia_tensor(CenteredMol);
     Vector_t Moments{0.0,0.0,0.0};
-    math::SymmetricDiagonalize(I,Moments);
+    SymmetricDiagonalize(I,Moments);
     //Our molecule aligned with the principal moments of inertia
     //System PrinMol=CenteredMol.rotate(I);
     return std::make_tuple(CenteredMol,Moments,I);
@@ -177,7 +177,7 @@ Vector_t Transform(const Vector_t& Old,
 typedef std::pair<Vector_t,size_t> Axis_t;
 
 inline bool IsPlanar(const Vector_t& Moments){
-    return math::are_equal(Moments[0]+Moments[1],Moments[2],0.05*Moments[2]);
+    return are_equal(Moments[0]+Moments[1],Moments[2],0.05*Moments[2]);
 }
 
 std::set<Axis_t> NewGetCns(const System& PrinMol,const SEASet_t& SEAs,double Tol){
@@ -186,7 +186,7 @@ std::set<Axis_t> NewGetCns(const System& PrinMol,const SEASet_t& SEAs,double Tol
     std::set<Axis_t> Axes;
     for(const std::vector<Atom>& SEA:SEAs){
         if(SEA.size()==1)continue;//No info there...
-        math::CombItr<std::vector<Atom>>AtomPair(SEA,2);
+        CombItr<std::vector<Atom>>AtomPair(SEA,2);
         while(AtomPair){
             //Condition A for finding C2s
             Point BiSec=(*AtomPair)[0]+(*AtomPair)[1];
@@ -216,7 +216,7 @@ std::set<Axis_t> NewGetCns(const System& PrinMol,const SEASet_t& SEAs,double Tol
         System NewSEA=std::get<0>(PrinSEA);
         Vector_t SEAMoms=std::get<1>(PrinSEA);
         if(IsPlanar(SEAMoms)){
-            Vector_t PlaneNorm=Orient(math::get_plane(SEA[0],SEA[1],SEA[2]));
+            Vector_t PlaneNorm=Orient(get_plane(SEA[0],SEA[1],SEA[2]));
             Axes.insert(make_pair(PlaneNorm,SEA.size()));
         }
         else{
@@ -256,7 +256,7 @@ void CheckCn(int n,const System& Mol,const Vector_t& Axis,
     if(!IsGood(Mol,Cm,Axis,Tol))return;
     Elems.insert(Cm);
     for(int i=2;i<n;++i)
-        if(math::relatively_prime(n,i))
+        if(relatively_prime(n,i))
             Elems.insert(Rotation(Axis,n,i));
 }
 
@@ -271,7 +271,7 @@ void CheckSn(size_t n,const System& Mol,const Vector_t& Axis,
     const bool Odd=n%2==1;
     const size_t Max=(Odd?2*n:n);
     for(size_t i=3;i<Max;i+=2){
-        std::pair<size_t,size_t> Frac=math::reduce(i,n);
+        std::pair<size_t,size_t> Frac=reduce(i,n);
         if(Frac==std::make_pair<size_t,size_t>(1,1))continue;//Sn^n
         if(Frac==std::make_pair<size_t,size_t>(1,2))continue;//S2
         Elems.insert(ImproperRotation(Axis,Frac.second,Frac.first));
@@ -305,11 +305,11 @@ SymmetryGroup Symmetrizer::get_symmetry(const System& Mol)const{
                 atomI=atomJ;
                 break;
             }
-        Vector_t NatomI=math::Normalize(atomI);
+        Vector_t NatomI=Normalize(atomI);
         for(const Atom atomJ:PrinMol){
             if(atomI==atomJ)continue;
             if(are_equal(atomJ,0.0,SymTol))continue;
-            Vector_t NatomJ=math::Normalize(atomJ);
+            Vector_t NatomJ=Normalize(atomJ);
             if(!are_equal(fabs(Dot(NatomI,NatomJ)),1.0,0.001)){//Not linear
                 Vector_t Norm=Orient(Cross(NatomI,NatomJ));
                 MirrorPlane Sigma(Norm);
@@ -329,7 +329,7 @@ SymmetryGroup Symmetrizer::get_symmetry(const System& Mol)const{
     std::set<Axis_t> Axes=NewGetCns(PrinMol,SEAs,SymTol);
 
     for(const Axis_t& axis:Axes){
-        for(int k:math::factors((int)axis.second)){
+        for(int k:factors((int)axis.second)){
             if(k==1)continue;
             Rotation Cm(axis.first,k,1);
             size_t Old=Elems.size();
@@ -343,9 +343,9 @@ SymmetryGroup Symmetrizer::get_symmetry(const System& Mol)const{
     std::set<Vector_t> Planes;
     for(std::vector<Atom> SEA:SEAs){
         if(SEA.size()<2)continue;
-        math::CombItr<std::vector<Atom>>AtomPairs(SEA,2);
+        CombItr<std::vector<Atom>>AtomPairs(SEA,2);
         while(AtomPairs){
-            Vector_t Norm=math::Normalize((*AtomPairs)[0]-(*AtomPairs)[1]);
+            Vector_t Norm=Normalize((*AtomPairs)[0]-(*AtomPairs)[1]);
             Planes.insert(Orient(Norm));
             ++AtomPairs;
         }

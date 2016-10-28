@@ -1,6 +1,6 @@
 #include "TestCXX.hpp"
 #include <pulsar/system/System.hpp>
-using namespace pulsar::system;
+using namespace pulsar;
 using BSI = BasisShellInfo;
 
 TEST_CLASS(TestBasisInfo)

@@ -12,7 +12,6 @@
 #include <utility>
 
 namespace pulsar{
-namespace python {
 namespace detail {
 
 
@@ -29,7 +28,6 @@ std::pair<std::string, std::string> get_py_exception(void);
 
 
 } // close namespace detail
-} // close namespace python
 } // close namespace pulsar
 
 #endif

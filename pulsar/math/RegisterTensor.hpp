@@ -9,8 +9,6 @@
 #include "pulsar/math/Irrep.hpp"
 
 namespace pulsar {
-namespace math{
-
 
 
 //Function for exporting the abstract tensorimpl base class
@@ -31,6 +29,7 @@ void export_eigen_x_impl(pybind11::module& m,const char* Name)
 {
     pybind11::class_<TensorT,std::shared_ptr<TensorT>>(m,Name)
     .def(pybind11::init<const EigenType&>())
+    .def(pybind11::init<const TensorT&>())
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
     .def("my_hash",&TensorT::my_hash)
@@ -49,8 +48,8 @@ void export_eigen_x_impl(pybind11::module& m,const char* Name)
 template<typename TensorT,typename TensorI>
 void  export_irrep_spin_X(pybind11::module& m,const char* Name)
 {   
-    using get_sig=TensorI&(TensorT::*)(pulsar::math::Irrep,int);
-    using set_sig=void(TensorT::*)(pulsar::math::Irrep,int,const TensorI&);
+    using get_sig=TensorI&(TensorT::*)(pulsar::Irrep,int);
+    using set_sig=void(TensorT::*)(pulsar::Irrep,int,const TensorI&);
     pybind11::class_<TensorT,std::shared_ptr<TensorT>>(m,Name)
     .def(pybind11::init<>())
     .def(pybind11::init<const TensorT&>())
@@ -65,7 +64,7 @@ void  export_irrep_spin_X(pybind11::module& m,const char* Name)
      return t.same_structure(t2);
     })
     .def("__repr__",[](const TensorT& t){
-        pulsar::output::get_global_output()<<t;
+        pulsar::get_global_output()<<t;
         return "";
     })
     //.def("same_structure",&TensorT::same_structure)
@@ -77,6 +76,6 @@ void  export_irrep_spin_X(pybind11::module& m,const char* Name)
     .def(pybind11::self != pybind11::self)
     ;
 }
-}
+
 }//End namespace pulsar
 

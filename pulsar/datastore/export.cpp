@@ -16,20 +16,17 @@
 // the wavefunction struct
 PYBIND11_DECLARE_HOLDER_TYPE(_T_,std::shared_ptr<_T_>)
 
-using pulsar::system::System;
-using pulsar::datastore::Wavefunction;
+using pulsar::System;
+using pulsar::Wavefunction;
 
 
 namespace pulsar {
-namespace datastore {
-namespace export_python {
-
 
 // in testing_export.cpp
-void export_testing(pybind11::module & m);
+void export_testing_datastore(pybind11::module & m);
 
 
-void export_pybind11(pybind11::module & mtop)
+void export_datastore(pybind11::module & mtop)
 {
     pybind11::module m = mtop.def_submodule("datastore", "Data storage classes");
 
@@ -138,11 +135,8 @@ void export_pybind11(pybind11::module & mtop)
     ;
 
     // Export the testing stuff
-    export_testing(m);
+    export_testing_datastore(m);
 }
 
-
-} // close namespace export_python
-} // close namespace datastore
 } // close namespace pulsar
 

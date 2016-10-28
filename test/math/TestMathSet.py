@@ -90,9 +90,7 @@ partresults=[2.0]
 presults2=[i for i in NewS2]
 tester.test_value("partition works",partresults,presults2)
 
-Corr_Hash=[108,20,108,59,50,168,195,220,238,212,118,162,39,156,53,3]
+tester.test("hash works check 1",True,S2.my_hash(),S13.my_hash)
 
-tester.test("hash works check 1",True,Corr_Hash,S2.my_hash)
-tester.test("hash works check 2",True,Corr_Hash,S13.my_hash)
 
 tester.print_results()

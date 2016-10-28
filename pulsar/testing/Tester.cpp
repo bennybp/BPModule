@@ -10,14 +10,12 @@
 #include "pulsar/exception/Exceptions.hpp"
 #include <cmath>
 
-using pulsar::output::print_global_output;
-using pulsar::GeneralException;
 using std::to_string;
 
 namespace pulsar {
-namespace testing {
+
 //Some utility functions
-inline void print_line(){print_global_output(util::line('='));}
+inline void print_line(){print_global_output(line('='));}
 inline void print_buffer(){print_global_output("\n\n");}
 
 
@@ -34,8 +32,8 @@ void Tester::print_results()const
     print_buffer();
     print_line();
     const std::string msg="RESULTS: "+to_string(nfailed_)+" failed\n";
-    if(nfailed_>0)output::print_global_error(msg);
-    else output::print_global_success(msg);
+    if(nfailed_>0)print_global_error(msg);
+    else print_global_success(msg);
     print_line();
     print_buffer();
     if(nfailed_>0)
@@ -55,7 +53,5 @@ void Tester::test(const std::string& desc,double v1,double v2,double tol)
     test(desc,std::fabs(v1-v2)<tol);
 }
 
-
-}//End namespace testing 
 }//End namespace pulsar
 

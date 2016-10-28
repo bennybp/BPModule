@@ -6,11 +6,8 @@
 
 #include "pulsar/python/Call.hpp"
 
-using pulsar::psr_assert;
-using pulsar::GeneralException;
-
 namespace pulsar{
-namespace python {
+
 
 
 std::string get_py_class(const pybind11::object & obj)
@@ -41,6 +38,5 @@ bool has_callable_attr(const pybind11::object & obj, const std::string & attr)
 }
 
 
-} // close namespace python
 } // close namespace pulsar
 

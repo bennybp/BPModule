@@ -9,8 +9,6 @@
 #include "pulsar/util/Mangle.hpp"
 
 namespace pulsar{
-namespace util {
-
 
 std::string demangle_cpp(const char * typestr)
 {
@@ -39,6 +37,4 @@ std::string demangle_cpp(const std::string & typestr)
     return demangle_cpp(typestr.c_str());
 }
 
-
-} // close namespace util
 } // close namespace pulsar

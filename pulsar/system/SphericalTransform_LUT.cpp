@@ -20,7 +20,6 @@ CREATED: 2016-04-24 10:42:13.045989
 
 
 namespace pulsar {
-namespace system {
 namespace lut {
 
 
@@ -822,5 +821,4 @@ extern const SphericalTransformMap spherical_transform_map_{
 
 
 } // closing namespace lut
-} // closing namespace system
 } // closing namespace pulsar

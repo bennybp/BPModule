@@ -2,22 +2,13 @@
  *
  * \brief Checkpointing of a calculation (header)
  */
-
-
 #pragma once
 
 #include <memory>
 #include <vector>
 
 namespace pulsar {
-
-namespace datastore {
 class CacheData;
-}
-
-namespace modulemanager {
-
-
 class ModuleManager;
 class CheckpointIO;
 
@@ -66,8 +57,5 @@ class Checkpoint
                          std::function<bool(unsigned int)> policy_check);
 };
 
-
-
-} // close namespace modulemanager
 } // close namespace pulsar
 

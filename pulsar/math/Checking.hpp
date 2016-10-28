@@ -10,8 +10,6 @@
 #include "pulsar/pragma.h"
 
 namespace pulsar{
-namespace math {
-
 namespace detail {
 
 
@@ -72,8 +70,6 @@ bool are_equal(const T& array,const U& value, const U& Tol){
         if(!are_equal(elem,value,Tol))return false;
     return true;
 }
-
-} // close namespace math
 } // close namespace pulsar
 
 #endif

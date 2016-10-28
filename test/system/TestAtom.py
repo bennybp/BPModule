@@ -20,13 +20,9 @@ tester.test("copy constructor works",True,True,H.__eq__,H3)
 D=psr.system.create_atom([0.0,0.0,0.0],1,2)
 tester.test_value("Isotopes work",2,D.isotope)
 tester.test("Isotopes are different",True,True,D.__ne__,H)
-print(H.my_hash())
 
-atom_hash=[201, 64, 190, 135, 45, 149, 132, 34, 8, 248, 32, 150, 123,250,190,22]
-
-tester.test("hash works",True,atom_hash,H.my_hash)
-tester.test("hash works 1",True,atom_hash,H2.my_hash)
-tester.test("hash works 2",True,atom_hash,H3.my_hash)
+tester.test("hash works",True,H.my_hash(),H2.my_hash)
+tester.test("hash works 1",True,H.my_hash(),H3.my_hash)
     
 GH=psr.system.make_ghost_atom(H2)
 tester.test("ghost works",True,True,psr.system.is_ghost_atom,GH)

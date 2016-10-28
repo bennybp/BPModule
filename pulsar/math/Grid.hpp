@@ -5,7 +5,6 @@
 #include "pulsar/math/Point.hpp"
 
 namespace pulsar {
-namespace math {
 
 template<typename T>
 struct GridPointT
@@ -86,8 +85,6 @@ std::ostream& operator<<(std::ostream& os, const GridPointT<T>& P)
     return os;
 }
 
-
-} // close namespace math
 } // close namespace pulsar
 
 #endif

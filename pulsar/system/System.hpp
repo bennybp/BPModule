@@ -20,17 +20,15 @@
 
 
 // Instantiated in the cpp file
-extern template class pulsar::math::Universe<pulsar::system::Atom>;
-extern template class pulsar::math::MathSet<pulsar::system::Atom>;
+extern template class pulsar::Universe<pulsar::Atom>;
+extern template class pulsar::MathSet<pulsar::Atom>;
 
 
 
 namespace pulsar{
-namespace system {
-
 
 /*! \brief All atoms that may be used in a group of Systems */
-typedef math::Universe<Atom> AtomSetUniverse;
+typedef Universe<Atom> AtomSetUniverse;
 
 /*! \brief A collection of Atoms and the space around them
  * 
@@ -43,7 +41,7 @@ typedef math::Universe<Atom> AtomSetUniverse;
  */
 class System {
 private:    
-    using AtomSet=math::MathSet<Atom>;//!< Type of atom storage container
+    using AtomSet=MathSet<Atom>;//!< Type of atom storage container
     AtomSet atoms_;//!< Actual set of atoms
 
     /*! \brief Construct a system given a universe
@@ -323,10 +321,10 @@ public:
  * 
  * Uses atomic masses (abundance-weighted isotope masses)
  */
-math::Point center_of_mass(const System& sys);
+Point center_of_mass(const System& sys);
 
 /*! \brief Finds the center of nuclear charge of \p sys*/
-math::Point center_of_nuclear_charge(const System& sys);
+Point center_of_nuclear_charge(const System& sys);
 
 /*! \brief translate the system
  * 
@@ -335,7 +333,7 @@ math::Point center_of_nuclear_charge(const System& sys);
 template<typename VectorType>
 System translate(const System& Sys,const VectorType & vec)
 {
-    return Sys.transform(std::bind(math::translate_point_copy<Atom, VectorType>, 
+    return Sys.transform(std::bind(translate_point_copy<Atom, VectorType>, 
             std::placeholders::_1, vec));
 }
 
@@ -349,7 +347,7 @@ System translate(const System& Sys,const VectorType & vec)
 template<typename MatrixType>
 System rotate(const System& Sys,const MatrixType & mat)
 {
-    return Sys.transform(std::bind(math::rotate_point_copy<Atom, MatrixType>, 
+    return Sys.transform(std::bind(rotate_point_copy<Atom, MatrixType>, 
             std::placeholders::_1, mat));
 }
 
@@ -487,7 +485,6 @@ SYS_OP(bool,operator>,is_proper_superset_of)
 #undef SYS_OP
 #undef ASSIGN_OP
 
-} // close namespace system
 } // close namespace pulsar
 
 

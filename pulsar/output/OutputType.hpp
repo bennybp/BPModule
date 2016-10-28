@@ -9,8 +9,6 @@
 #define PULSAR_GUARD_OUTPUT__OUTPUTTYPE_HPP_
 
 namespace pulsar{
-namespace output {
-
 
 /*! The type of information being output
  */
@@ -24,8 +22,6 @@ enum class OutputType
     Debug    //!< For developers
 };
 
-
-} // close namespace output
 } // close namespace pulsar
 
 

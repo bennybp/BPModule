@@ -10,8 +10,6 @@
 #include <string>
 
 namespace pulsar{
-namespace system {
-
 
 /*! \brief Converts a string ("s", "p", etc) to an integer angular momentum
  *
@@ -31,9 +29,6 @@ int string_to_am(const std::string & s);
  */
 std::string am_to_string(int am);
 
-
-
-} // close namespace system
 } // close namespace pulsar
 
 #endif

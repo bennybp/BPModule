@@ -13,7 +13,6 @@
 
 
 namespace pulsar{
-namespace modulebase {
 
 /*! \brief Two-electron integral implementation
  *
@@ -38,11 +37,11 @@ class TwoElectronIntegral : public ModuleBase
          * \param [in] bs4 Basis set tag to use for the fourth center
          */
         void initialize(unsigned int deriv,
-                        const datastore::Wavefunction & wfn,
-                        const system::BasisSet & bs1,
-                        const system::BasisSet & bs2,
-                        const system::BasisSet & bs3,
-                        const system::BasisSet & bs4)
+                        const Wavefunction & wfn,
+                        const BasisSet & bs1,
+                        const BasisSet & bs2,
+                        const BasisSet & bs3,
+                        const BasisSet & bs4)
         {
             ModuleBase::call_function(&TwoElectronIntegral::uninitialized_or_throw_);
             ModuleBase::call_function(&TwoElectronIntegral::initialize_, deriv, wfn, bs1, bs2, bs3, bs4);
@@ -152,11 +151,11 @@ class TwoElectronIntegral : public ModuleBase
         /////////////////////////////////////////
         //! \copydoc initialize
         virtual void initialize_(unsigned int deriv,
-                                 const datastore::Wavefunction & wfn,
-                                 const system::BasisSet & bs1,
-                                 const system::BasisSet & bs2,
-                                 const system::BasisSet & bs3,
-                                 const system::BasisSet & bs4) = 0;
+                                 const Wavefunction & wfn,
+                                 const BasisSet & bs1,
+                                 const BasisSet & bs2,
+                                 const BasisSet & bs3,
+                                 const BasisSet & bs4) = 0;
 
 
         //! \copydoc n_components
@@ -228,11 +227,11 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
         virtual void initialize_(unsigned int deriv,
-                                 const datastore::Wavefunction & wfn,
-                                 const system::BasisSet & bs1,
-                                 const system::BasisSet & bs2,
-                                 const system::BasisSet & bs3,
-                                 const system::BasisSet & bs4)
+                                 const Wavefunction & wfn,
+                                 const BasisSet & bs1,
+                                 const BasisSet & bs2,
+                                 const BasisSet & bs3,
+                                 const BasisSet & bs4)
 
         {
             return call_py_override<void>(this, "initialize_", deriv, wfn, bs1, bs2, bs3, bs4);
@@ -292,7 +291,6 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
 
 };
 
-} // close namespace modulebase
 } // close namespace pulsar
 
 #endif

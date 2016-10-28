@@ -8,8 +8,6 @@
 #include "pulsar/util/Filesystem.hpp"
 
 namespace pulsar{
-namespace util {
-
 
 std::string add_trailing_slash(const std::string & path)
 {
@@ -68,6 +66,4 @@ std::string join_path(const std::string & base, const std::string & subpath)
     return ret + remove_trailing_slash(subpath);
 }
 
-
-} // close namespace util
 } // close namespace pulsar

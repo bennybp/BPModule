@@ -11,8 +11,6 @@
 
 
 namespace pulsar{
-namespace system {
-
 
 /*! \brief Standalone shell information
  *
@@ -141,8 +139,6 @@ class BasisShellInfo : public BasisShellBase
         ///@}
 };
 
-
-} // close namespace system
 } // close namespace pulsar
 
 

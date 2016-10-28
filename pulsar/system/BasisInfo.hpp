@@ -14,7 +14,6 @@
 #include <vector>
 
 namespace pulsar {
-namespace system {
 
 //! Information stored about the basis set on the atom
 struct BasisInfo
@@ -51,7 +50,6 @@ struct BasisInfo
 };
 
 } // close namespace pulsar
-} // close namespace system
 
 #endif
 

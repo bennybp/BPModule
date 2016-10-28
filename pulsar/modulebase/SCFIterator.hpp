@@ -12,7 +12,6 @@
 
 
 namespace pulsar{
-namespace modulebase {
 
 class SCFIterator : public ModuleBase
 {
@@ -23,13 +22,13 @@ class SCFIterator : public ModuleBase
 
         /*! \brief Form a new wavefunction based on the given wfn and fock matrix
          */
-        datastore::Wavefunction next(const datastore::Wavefunction & wfn, const math::IrrepSpinMatrixD & fmat)
+        Wavefunction next(const Wavefunction & wfn, const IrrepSpinMatrixD & fmat)
         {
             return ModuleBase::call_function(&SCFIterator::next_, wfn, fmat);
         }
 
 
-        virtual datastore::Wavefunction next_(const datastore::Wavefunction & wfn, const math::IrrepSpinMatrixD & fmat) = 0;
+        virtual Wavefunction next_(const Wavefunction & wfn, const IrrepSpinMatrixD & fmat) = 0;
 
 };
 
@@ -38,13 +37,12 @@ class SCFIterator_Py : public SCFIterator{
         using SCFIterator::SCFIterator;
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
-        virtual datastore::Wavefunction next_(const datastore::Wavefunction & wfn, const math::IrrepSpinMatrixD & fmat)
+        virtual Wavefunction next_(const Wavefunction & wfn, const IrrepSpinMatrixD & fmat)
         {
-            return call_py_override<datastore::Wavefunction>(this, "next_", wfn, fmat);
+            return call_py_override<Wavefunction>(this, "next_", wfn, fmat);
         }
 };
 
-} // close namespace modulebase
 } // close namespace pulsar
 
 #endif

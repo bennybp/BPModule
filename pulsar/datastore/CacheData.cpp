@@ -2,7 +2,6 @@
 
 
 namespace pulsar {
-namespace datastore {
 const unsigned int CacheData::NoPolicy         = CacheMap::NoPolicy;
 const unsigned int CacheData::CheckpointLocal  = CacheMap::CheckpointLocal;
 const unsigned int CacheData::CheckpointGlobal = CacheMap::CheckpointGlobal;
@@ -23,5 +22,4 @@ size_t CacheData::erase(const std::string & key)
     return parent_cmap_->erase(make_full_key_(key));
 }
 
-} // close namespace datastore
 } // close namespace pulsar

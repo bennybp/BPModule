@@ -12,7 +12,6 @@
 #include <limits>
 
 namespace pulsar{
-namespace modulemanager {
 
 
 // Forward declare the tree for the iterators
@@ -37,7 +36,7 @@ class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag,
      */
 
     private:
-        friend class pulsar::modulemanager::ModuleTree;
+        friend class pulsar::ModuleTree;
         static constexpr ID_t MAXVAL = std::numeric_limits<ID_t>::max();
 
         const ModuleTree * mtree_;       //!< The tree we are iterating over
@@ -117,7 +116,7 @@ class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag,
 class ConstModuleFlatTreeIter
 {
     private:
-        friend class pulsar::modulemanager::ModuleTree;
+        friend class pulsar::ModuleTree;
 
         typedef std::map<ID_t, ModuleTreeNode> MapType;
 
@@ -181,7 +180,6 @@ class ConstModuleFlatTreeIter
 
 
 } // close namespace detail
-} // close namespace modulemanager
 } // close namespace pulsar
 
 

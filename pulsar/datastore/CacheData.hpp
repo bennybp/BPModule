@@ -9,7 +9,6 @@
 #include "pulsar/datastore/CacheMap.hpp"
 
 namespace pulsar {
-namespace datastore {
 
 
 /*! Storage of cache data
@@ -135,6 +134,5 @@ class CacheData
 };
 
 
-} // close namespace datastore
 } // close namespace pulsar
 

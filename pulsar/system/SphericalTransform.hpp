@@ -15,9 +15,6 @@
 #include "pulsar/system/NFunction.hpp"
 
 namespace pulsar{
-namespace system {
-
-
 
 //! transformation coefficient of a cartesian gaussian
 struct SphericalTransformCoefficient
@@ -136,8 +133,6 @@ void spherical_transform(const BasisSet & bs,
     }
 }
 
-
-} // close namespace system
 } // close namespace pulsar
 
 

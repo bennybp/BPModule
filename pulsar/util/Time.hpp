@@ -11,15 +11,11 @@
 #include <string>
 
 namespace pulsar {
-namespace util {
-
 
 /*! \brief Obtains the current time as a nice, formatted string
  */
 std::string timestamp_string(void);
 
-
-} // close namespace util
 } // close namespace pulsar
 
 

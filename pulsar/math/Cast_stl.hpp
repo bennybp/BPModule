@@ -9,7 +9,6 @@
 
 
 namespace pulsar{
-namespace math {
 namespace detail {
 
 
@@ -64,7 +63,6 @@ struct ExactCast<std::set<Source>, std::set<Source>>
 
 
 } // close namespace detail
-} // close namespace math
 } // close namespace pulsar
 
 

@@ -10,7 +10,6 @@
 #include <cstdlib>
 
 namespace pulsar{
-namespace math{
 
 /** \brief Computes the beta function of a and b
  * 
@@ -51,6 +50,6 @@ double binomial_coefficient(size_t n, size_t k);
 
 
 
-}}//End namespaces
+}//End namespaces
 #endif /* BINOMIAL_HPP */
 

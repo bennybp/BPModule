@@ -12,7 +12,6 @@
 #include "pulsar/exception/Exceptions.hpp"
 
 namespace pulsar{
-namespace modulemanager {
 
 /*! \brief A C++ smart pointer containing a module
  *
@@ -180,9 +179,6 @@ class PyModulePtr
         pybind11::object obj_;
 };
 
-
-
-} // close namespace modulemanager
 } // close namespace pulsar
 
 

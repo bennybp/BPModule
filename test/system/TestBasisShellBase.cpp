@@ -2,7 +2,7 @@
 #include <pulsar/system/System.hpp>
 using std::bind;
 using namespace std::placeholders;
-using namespace pulsar::system;
+using namespace pulsar;
 using BSI = BasisShellInfo;
 using BSB = BasisShellBase;
 
@@ -86,8 +86,8 @@ TEST_CLASS(TestBasisShellBase)
     TEST_VOID("safe gen primitive invalid prim",false,FakeD.set_primitive(99,3.14,pi));
     TEST_VOID("safe invalid gen primitive",false,FakeD.set_primitive(0,3.14,c2));
     
-    const std::string right_hash="c1c6ca20c44e700828de5317cdcfb3b0";
-    TEST_FXN("hash", true, right_hash, bphash::hash_to_string(FakeD.my_hash()));
+    FakeD2=FakeD;
+    TEST_FXN("hash", true, FakeD.my_hash(), FakeD2.my_hash());
 
     tester.print_results();
 }

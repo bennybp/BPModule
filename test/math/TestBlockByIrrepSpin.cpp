@@ -1,7 +1,7 @@
 #include "TestCXX.hpp"
 #include <pulsar/math/EigenImpl.hpp>
 
-using namespace pulsar::math;
+using namespace pulsar;
 using EigenMat=Eigen::MatrixXd;
 using shared_eigen=std::shared_ptr<EigenMat>;
 using shared_matrix=std::shared_ptr<EigenMatrixImpl>;
@@ -54,10 +54,8 @@ TEST_CLASS(TestBlockByIrrepSpin){
     tester.test("Move set works",*Mat3,*M5.get(iB,sa));
     tester.test("Same structure different",false,M5.same_structure(M6));
     tester.test("Same structure same",true,M2.same_structure(M3));
-    const std::string hash="8d2ea346f055c3726ff70b565864d38c";
-    tester.test("Hash works 1",hash,bphash::hash_to_string(M2.my_hash()));
-    tester.test("Hash works 2",hash,bphash::hash_to_string(M3.my_hash()));
-    
+    tester.test("Hash works 1",M2.my_hash(),M3.my_hash());
+     
     tester.print_results();
 }
     

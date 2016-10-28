@@ -23,13 +23,11 @@
 
 
 namespace pulsar{
-namespace system {
-namespace export_python {
 
 // in testing_export.cpp
-void export_testing(pybind11::module & m);
+void export_testing_system(pybind11::module & m);
 
-void export_pybind11(pybind11::module & mtop)
+void export_system(pybind11::module & mtop)
 {
     pybind11::module m = mtop.def_submodule("system", "Molecular system specification");
 
@@ -112,8 +110,7 @@ void export_pybind11(pybind11::module & mtop)
               .def("set_primitive", static_cast<void (BasisShellBase::*)(size_t, double, double)>(&BasisShellBase::set_primitive))
               .def("set_primitive", static_cast<void (BasisShellBase::*)(size_t, double, const std::vector<double> &)>(&BasisShellBase::set_primitive))
     ;
-
-
+    
     // BasisShellInfo class
     pybind11::class_<BasisShellInfo> bshell(m, "BasisShellInfo", bshellbase);
     bshell.def(pybind11::init<ShellType, int, int, int>())
@@ -242,7 +239,7 @@ void export_pybind11(pybind11::module & mtop)
 
     // Atom structure
     // Atom class
-    pybind11::class_<Atom>(m, "Atom", pybind11::base<math::Point>())
+    pybind11::class_<Atom>(m, "Atom", pybind11::base<Point>())
     .def(pybind11::init<const Atom &>())
     .def_readwrite("Z", &Atom::Z)
     .def_readwrite("isotope", &Atom::isotope)
@@ -291,7 +288,7 @@ void export_pybind11(pybind11::module & mtop)
  
     // Export AtomSetUniverse
     // No need to export AtomSet (at the moment)
-    math::register_Universe<AtomSetUniverse>(m, "AtomSetUniverse");
+    register_Universe<AtomSetUniverse>(m, "AtomSetUniverse");
 
     pybind11::class_<System, std::shared_ptr<System>>(m,"System")
     .def(pybind11::init<const AtomSetUniverse&, bool>())
@@ -347,11 +344,8 @@ void export_pybind11(pybind11::module & mtop)
 
  
     // Export the testing stuff
-    export_testing(m);
+    export_testing_system(m);
 }
 
-
-} // close namespace export_python
-} // close namespace system 
 } // close namespace pulsar
 

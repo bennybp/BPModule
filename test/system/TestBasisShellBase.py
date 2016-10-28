@@ -1,4 +1,6 @@
 from TestFxns import *
+import time
+
 BSI = psr.system.BasisShellInfo
 BSB = psr.system.BasisShellBase
 cGTO = psr.system.ShellType.CartesianGaussian
@@ -59,8 +61,10 @@ tester.test("set gen primitive works alpha", True,3.14, FakeD2.get_alpha,0)
 tester.test("set gen primitive works coef",True, 3.14, FakeD2.get_coef,0,0)
 tester.test("safe gen primitive",False,None,FakeD.set_primitive,99,3.14,pi)
 tester.test("safe invalid gen primitive",False,None,FakeD.set_primitive,0,3.14,c2)
-right_hash=FakeD.my_hash()
-tester.test("hash", True, right_hash, FakeD.my_hash)
+FakeD2=FakeD
+tester.test("hash", True, FakeD.my_hash(), FakeD2.my_hash)
 
-tester.print_results();
+
+
+tester.print_results()
 

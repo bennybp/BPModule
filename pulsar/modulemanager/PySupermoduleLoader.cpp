@@ -13,12 +13,10 @@
 #include "pulsar/python/Call.hpp"
 
 
-using namespace pulsar::output;
+using namespace pulsar;
 
 
 namespace pulsar{
-namespace modulemanager {
-
 
 PySupermoduleLoader::~PySupermoduleLoader()
 {
@@ -31,10 +29,10 @@ PySupermoduleLoader::~PySupermoduleLoader()
     {
         print_global_output("Looking to close python supermodule %?\n", it.first);
 
-        if(python::has_callable_attr(it.second.mod, "finalize_supermodule"))
+        if(has_callable_attr(it.second.mod, "finalize_supermodule"))
         {
             print_global_debug("Running finalization function in %?\n", it.first);
-            python::call_py_func_attr<void>(it.second.mod, "finalize_supermodule");
+            call_py_func_attr<void>(it.second.mod, "finalize_supermodule");
         }
         else
             print_global_debug("Supermodule %? doesn't have finalization function. Skipping\n", it.first);
@@ -64,15 +62,15 @@ const ModuleCreationFuncs & PySupermoduleLoader::load_supermodule(const std::str
 
         // spath = full path to module
         // we need the directory above that
-        std::pair<std::string, std::string> splitpath = util::split_path(spath);
+        std::pair<std::string, std::string> splitpath = split_path(spath);
 
         print_global_debug("Importing %?  from  %?\n", splitpath.first, splitpath.second);
 
         // update the python search paths
         pybind11::object oldpaths = mod_sys.attr("path");
-        mod_sys.attr("path") = python::convert_to_py(splitpath.first);
+        mod_sys.attr("path") = convert_to_py(splitpath.first);
 
-        pybind11::module mod = python::call_py_func_attr<pybind11::module>(mod_importlib, "import_module", splitpath.second);
+        pybind11::module mod = call_py_func_attr<pybind11::module>(mod_importlib, "import_module", splitpath.second);
 
         // reset the python search paths
         mod_sys.attr("path") = oldpaths;
@@ -82,16 +80,16 @@ const ModuleCreationFuncs & PySupermoduleLoader::load_supermodule(const std::str
 
 
         // Check for the insert_supermodule function first (before initializing)
-        if(!python::has_callable_attr(mod, "insert_supermodule"))
+        if(!has_callable_attr(mod, "insert_supermodule"))
             throw ModuleLoadException("Cannot find insert_supermodule function in python module",
                                       "path", spath);
 
 
         // Now initialize if the function exists
-        if(python::has_callable_attr(mod, "initialize_supermodule"))
+        if(has_callable_attr(mod, "initialize_supermodule"))
         {
             print_global_debug("Running initialization function for supermodule %?\n", spath);
-            python::call_py_func_attr<void>(mod, "initialize_supermodule");
+            call_py_func_attr<void>(mod, "initialize_supermodule");
         }
         else
             print_global_debug("Supermodule %? doesn't have initialization function. Skipping\n", spath);
@@ -99,7 +97,7 @@ const ModuleCreationFuncs & PySupermoduleLoader::load_supermodule(const std::str
 
         // get the module creation functions
         // and put them right in the map
-        ModuleCreationFuncs creators = python::call_py_func_attr<ModuleCreationFuncs>(mod, "insert_supermodule");
+        ModuleCreationFuncs creators = call_py_func_attr<ModuleCreationFuncs>(mod, "insert_supermodule");
 
         objmap_.emplace(spath, PyModInfo{std::move(mod), std::move(creators)});
     }
@@ -110,6 +108,4 @@ const ModuleCreationFuncs & PySupermoduleLoader::load_supermodule(const std::str
     return objmap_.at(spath).creators;
 }
 
-
-} // close namespace modulemanager
 } // close namespace pulsar

@@ -10,9 +10,6 @@ using pulsar::ModuleManagerException;
 
 
 namespace pulsar{
-namespace modulemanager {
-
-
 
 ///////////////////////////////////////
 // Module Tree
@@ -89,7 +86,6 @@ void ModuleTree::clear(void)
     data_.clear();
 }
 
-} // close namespace modulemanager
 } // close namespace pulsar
 
 

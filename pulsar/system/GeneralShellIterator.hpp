@@ -8,7 +8,6 @@
 #include <functional>
 
 namespace pulsar {
-namespace system {
 
 /*! \brief Iterate over the general contractions in a collection of shells
  *
@@ -176,9 +175,6 @@ class GeneralShellIterator
         bool valid_;
 };
 
-
-
-} // close namespace pulsar
 } // close namespace system
 
 #endif

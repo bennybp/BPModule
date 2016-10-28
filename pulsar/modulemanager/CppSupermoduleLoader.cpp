@@ -14,12 +14,10 @@
 #include "pulsar/exception/Assert.hpp"
 
 
-using namespace pulsar::output;
+using namespace pulsar;
 
 
 namespace pulsar{
-namespace modulemanager {
-
 
 CppSupermoduleLoader::~CppSupermoduleLoader()
 {
@@ -129,6 +127,4 @@ const ModuleCreationFuncs & CppSupermoduleLoader::load_supermodule(const std::st
     return soinfo_.at(spath).creators;
 }
 
-
-} // close namespace modulemanager
 } // close namespace pulsar

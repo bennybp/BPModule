@@ -14,20 +14,17 @@
 #include "pulsar/modulemanager/checkpoint_backends/DummyCheckpointIO.hpp"
 #include "pulsar/modulemanager/checkpoint_backends/BDBCheckpointIO.hpp"
 
-PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>)
+PYBIND11_DECLARE_HOLDER_TYPE(T___,std::shared_ptr<T___>)
 
-using pulsar::modulemanager::detail::ConstModuleTreeIter;
-using pulsar::modulemanager::detail::ConstModuleFlatTreeIter;
+using pulsar::detail::ConstModuleTreeIter;
+using pulsar::detail::ConstModuleFlatTreeIter;
 
 namespace pulsar{
-namespace modulemanager {
-namespace export_python {
-
 
 // in testing_export.cpp
-void export_testing(pybind11::module & m);
+void export_testing_modulemanager(pybind11::module & m);
 
-void export_pybind11(pybind11::module & mtop)
+void export_modulemanager(pybind11::module & mtop)
 {
     pybind11::module m = mtop.def_submodule("modulemanager", "Module loading and location");
 
@@ -142,7 +139,8 @@ void export_pybind11(pybind11::module & mtop)
     // Checkpointing
     //////////////////////////////
     pybind11::class_<Checkpoint>(m, "Checkpoint")
-    .def(pybind11::init<const std::shared_ptr<CheckpointIO> &, const std::shared_ptr<CheckpointIO> &>())
+    .def(pybind11::init<const std::shared_ptr<CheckpointIO> &, 
+                        const std::shared_ptr<CheckpointIO> &>())
     .def("save_local_cache", &Checkpoint::save_local_cache)
     .def("load_local_cache", &Checkpoint::load_local_cache)
     .def("save_global_cache", &Checkpoint::save_global_cache)
@@ -150,11 +148,8 @@ void export_pybind11(pybind11::module & mtop)
     ;
 
     // Export the testing stuff
-    export_testing(m);
+    export_testing_modulemanager(m);
 }
 
-
-} // close namespace export_python
-} // close namespace modulemanager
 } // close namespace pulsar
 

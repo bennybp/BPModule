@@ -10,7 +10,6 @@
 
 
 namespace pulsar {
-namespace datastore {
 namespace detail {
 
 
@@ -55,21 +54,21 @@ class GenericHolder<SerializedGenericData> : public GenericBase
 
 
         template<typename T>
-        typename std::enable_if<util::SerializeCheck<T>::value,
+        typename std::enable_if<SerializeCheck<T>::value,
                                 std::unique_ptr<T>>::type
         unserialize(void) const
         {
             std::string desired_type = typeid(T).name();
             if(desired_type != obj->type)
                 throw GeneralException("Desired type does not match serialized data",
-                                                  "desired", util::demangle_cpp(desired_type),
-                                                  "stored", util::demangle_cpp(obj->type));
+                                                  "desired", demangle_cpp(desired_type),
+                                                  "stored", demangle_cpp(obj->type));
 
-            return util::new_from_byte_array<T>(obj->data);
+            return new_from_byte_array<T>(obj->data);
         }
 
         template<typename T>
-        typename std::enable_if<!util::SerializeCheck<T>::value,
+        typename std::enable_if<!SerializeCheck<T>::value,
                                 std::unique_ptr<T>>::type
         unserialize(void) const
         {
@@ -78,8 +77,8 @@ class GenericHolder<SerializedGenericData> : public GenericBase
             // (if that makes any sense, you have been programming in C++ for too long)
             std::string desired_type = typeid(T).name();
             throw GeneralException("Attempting to unserialize non-serializable data??",
-                                                  "desired", util::demangle_cpp(desired_type),
-                                                  "stored", util::demangle_cpp(obj->type));
+                                                  "desired", demangle_cpp(desired_type),
+                                                  "stored", demangle_cpp(obj->type));
         }
 
 
@@ -145,7 +144,7 @@ const char * GenericHolder<SerializedGenericData>::type(void) const noexcept
 inline
 std::string GenericHolder<SerializedGenericData>::demangled_type(void) const
 {
-    return util::demangle_cpp(obj->type);
+    return demangle_cpp(obj->type);
 }
 
 inline
@@ -179,6 +178,5 @@ bphash::HashValue GenericHolder<SerializedGenericData>::my_hash(void) const
 
 
 } //closing namespace detail
-} //closing namespace datastore
 } //closing namespace pulsar
 

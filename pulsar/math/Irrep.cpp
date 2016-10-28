@@ -7,7 +7,6 @@
 #include "pulsar/math/Irrep.hpp"
 
 namespace pulsar{
-namespace math{
 
 const std::map<Irrep,std::string> irrep_to_string={
     {Irrep::A,"A"},
@@ -44,5 +43,4 @@ const std::map<Spin,std::string> spin_to_string={
     {Spin::beta,"β"}
 };
 
-}
 }

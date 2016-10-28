@@ -14,8 +14,6 @@
 #include "pulsar/modulemanager/ModuleInfo.hpp"
 
 namespace pulsar{
-namespace modulemanager {
-
 
 /*! \brief Information stored on the tree for a module
  *
@@ -29,7 +27,7 @@ struct ModuleTreeNode
      * constructor, etc, should be OK
      */
     std::string modulekey;                //!< The key that this module was loaded with
-    modulemanager::ModuleInfo minfo;      //!< The information for the module
+    ModuleInfo minfo;      //!< The information for the module
     std::string output;                   //!< Output captured from the module
 
     ID_t id;                              //!< ID of the created module (also identifies this node)
@@ -159,8 +157,6 @@ class ModuleTree
 };
 
 
-
-} // close namespace modulemanager
 } // close namespace pulsar
 
 

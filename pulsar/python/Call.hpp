@@ -12,8 +12,6 @@
 #include "pulsar/python/Convert.hpp"
 
 namespace pulsar{
-namespace python {
-
 
 /*! \brief Calls a python object
  *
@@ -109,10 +107,6 @@ Ret call_py_func_attr(const pybind11::object & obj, const char * attribute, Targ
     return call_py_func<Ret>(objattr, std::forward<Targs>(Fargs)...); 
 }
 
-
-
-
-} // close namespace python
 } // close namespace pulsar
 
 #endif

@@ -14,7 +14,6 @@
 
 
 namespace pulsar{
-namespace system {
 
 /*! \brief A basis set for a QM calculation
  *
@@ -334,8 +333,6 @@ class BasisSet
 #define NULL_BASIS "NULL_BASIS"
 
 
-
-} // close namespace system
 } // close namespace pulsar
 
 

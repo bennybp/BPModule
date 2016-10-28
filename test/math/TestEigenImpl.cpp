@@ -1,8 +1,8 @@
 #include "TestCXX.hpp"
 #include <pulsar/math/EigenImpl.hpp>
 
-using Matrix_t=pulsar::math::EigenMatrixImpl;
-using Vector_t=pulsar::math::EigenVectorImpl;
+using Matrix_t=pulsar::EigenMatrixImpl;
+using Vector_t=pulsar::EigenVectorImpl;
 using std::bind;
 using namespace std::placeholders;
 
@@ -23,11 +23,9 @@ TEST_CLASS(TestEigenImpl){
     M3.set_value({0,2},55.0);
     tester.test("Matrix set_value works",55.0,M3.get_value({0,2}));
     tester.test("Matrix != works",true,M3!=M1);
-    auto Mat4=pulsar::math::convert_to_eigen(M1);
+    auto Mat4=pulsar::convert_to_eigen(M1);
     tester.test("Matrix convert to eigen works",*Mat1,*Mat4);
-    const std::string m_hash="2844c428d93543305ca764952c28570e";
-    tester.test("Matrix hash is right 1",m_hash,bphash::hash_to_string(M1.my_hash()));
-    tester.test("Matrix hash is right 2",m_hash,bphash::hash_to_string(M2.my_hash()));
+    tester.test("Matrix hash",M1.my_hash(),M2.my_hash());
     
     Vector_t::shared_vector Vec1=std::make_shared<Vector_t::vector_type>(4);
     Vector_t::vector_type Vec2(4);
@@ -43,11 +41,9 @@ TEST_CLASS(TestEigenImpl){
     V3.set_value({2},55.0);
     tester.test("Vector set_value works",55.0,V3.get_value({2}));
     tester.test("Vector != works",true,V3!=V1);
-    auto Vec4=pulsar::math::convert_to_eigen(V1);
+    auto Vec4=pulsar::convert_to_eigen(V1);
     tester.test("Vector convert to eigen works",*Vec1,*Vec4);
-    const std::string v_hash="ad6127d08f5fe6a7504bfd1c8dfd9cdb";
-    tester.test("Vector hash is correct 1",v_hash,bphash::hash_to_string(V1.my_hash()));
-    tester.test("Vector hash is correct 2",v_hash,bphash::hash_to_string(V2.my_hash()));
+    tester.test("Vector hash",V1.my_hash(),V2.my_hash());
 
     tester.print_results();
 }

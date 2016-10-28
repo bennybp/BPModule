@@ -2,7 +2,7 @@
 #include <pulsar/system/Space.hpp>
 #include <pulsar/constants.h>
 
-using namespace pulsar::system;
+using namespace pulsar;
 
 std::array<double,3> Infinite={Space::infinity,Space::infinity,Space::infinity},
                      Cubic={PI/2,PI/2,PI/2},

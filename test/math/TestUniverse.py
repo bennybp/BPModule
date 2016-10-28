@@ -20,10 +20,9 @@ tester.test("Size",True,3,U0.size)
 tester.test("Count",True,True,U0.count,1.0)
 tester.test("Get index",True,2,U3.idx,3.0)
 tester.test("Get non-existant index",False,2,U3.idx,5.0)
-right_hash=[44,174,178,231,94,184,68,192,162,137,119,212,23,47,65,229]
-tester.test("Get hash U0",True,right_hash,U0.my_hash)
-tester.test("Get hash U3",True,right_hash,U3.my_hash)
-tester.test("Get hash U4",True,right_hash,U4.my_hash)
+
+tester.test("Get hash U0",True,U0.my_hash(),U3.my_hash)
+tester.test("Get hash U3",True,U0.my_hash(),U4.my_hash)
     
 #Element access/modification
 tester.test("Subscript operator",True,3.0,U0.__getitem__,2)

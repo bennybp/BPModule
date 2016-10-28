@@ -11,15 +11,10 @@
 #include "pulsar/math/Point.hpp"
 #include "pulsar/modulebase/ModuleBase.hpp"
 
-using pulsar::datastore::OptionMap;
-
-using namespace pulsar::system;
-using namespace pulsar::math;
-using Frag_t=SystemMap::value_type;
+using Frag_t=pulsar::SystemMap::value_type;
 using Thresh_t=std::map<size_t,double>;
 
 namespace pulsar{
-namespace modulebase{
 
 //Recursive function for establishing the weight of each nmer
 //Note b/c we are possibly leaving some out we can't use the closed formulas
@@ -60,9 +55,9 @@ NMerSetType SystemFragmenter::make_nmers(const NMerSetType& Frags){
             DaNMer.Weight=0.0;
         }
         double RHS=0.0;
-        const Point CoM=system::center_of_mass(DaNMer.NMer);
+        const Point CoM=center_of_mass(DaNMer.NMer);
         for(const auto& Frag: *Comb){//We needed the CoM, hence the two loops
-            const double Dist=system::center_of_mass(Frag.second.NMer).distance(CoM);
+            const double Dist=center_of_mass(Frag.second.NMer).distance(CoM);
             RHS+=Dist*Dist;
         }
         if(Thresh>=RHS)NMers.insert({DaNMer.SN,DaNMer});
@@ -74,7 +69,7 @@ NMerSetType SystemFragmenter::make_nmers(const NMerSetType& Frags){
 }
 
 std::map<std::string,NMerInfo> SystemFragmenter_Py::
-    fragmentize_py(const system::System& mol){
+    fragmentize_py(const System& mol){
             NMerSetType Temp=fragmentize(mol);
             std::map<std::string,NMerInfo> RV;
             for(const auto& NMerI: Temp){
@@ -89,4 +84,4 @@ std::map<std::string,NMerInfo> SystemFragmenter_Py::
 }
 
 
-}}//end namespaces
+}//end namespaces

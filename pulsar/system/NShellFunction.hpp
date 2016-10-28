@@ -13,7 +13,6 @@
 
 
 namespace pulsar{
-namespace system {
 
 
 //////////////////////////////
@@ -64,8 +63,6 @@ inline size_t n_spherical_gaussian_for_shell_am(const BasisShellBase & bs)
     return n_spherical_gaussian(bs.am());
 }
 
-
-} // close namespace system
 } // close namespace pulsar
 
 

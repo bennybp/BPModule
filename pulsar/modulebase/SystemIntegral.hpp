@@ -12,7 +12,6 @@
 
 
 namespace pulsar{
-namespace modulebase {
 
 /*! \brief One-electron integral implementation
  *
@@ -32,7 +31,7 @@ class SystemIntegral : public ModuleBase
          * \param [in] deriv Derivative to calculate
          * \param [in] sys System for which we are calculating the integrals
          */
-        void initialize(unsigned int deriv, const system::System & sys)
+        void initialize(unsigned int deriv, const System & sys)
         {
             ModuleBase::call_function(&SystemIntegral::uninitialized_or_throw_);
             ModuleBase::call_function(&SystemIntegral::initialize_, deriv, sys);
@@ -77,7 +76,7 @@ class SystemIntegral : public ModuleBase
         /////////////////////////////////////////
 
         //! \copydoc initialize
-        virtual void initialize_(unsigned int deriv, const system::System & sys) = 0;
+        virtual void initialize_(unsigned int deriv, const System & sys) = 0;
 
         //! \copydoc calculate
         virtual uint64_t calculate_(double * outbuffer, size_t bufsize) = 0;
@@ -109,7 +108,7 @@ class SystemIntegral_Py : public SystemIntegral
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
-        virtual void initialize_(unsigned int deriv, const system::System & sys)
+        virtual void initialize_(unsigned int deriv, const System & sys)
         {
             return call_py_override<void>(this, "initialize_", deriv, sys);
         }
@@ -127,7 +126,6 @@ class SystemIntegral_Py : public SystemIntegral
         }
 };
 
-} // close namespace modulebase
 } // close namespace pulsar
 
 #endif

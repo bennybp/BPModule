@@ -14,14 +14,9 @@
 #include "bphash/types/memory.hpp"
 #include "bphash/types/map.hpp"
 
-
-using namespace pulsar::python;
-
-using namespace pulsar::output;
-
+using namespace pulsar;
 
 namespace pulsar {
-namespace datastore {
 
 
 ////////////////////////////////////////////////
@@ -328,6 +323,5 @@ void OptionMap::print(std::ostream & os) const
 
 
 
-} // close namespace datastore
 } // close namespace pulsar
 

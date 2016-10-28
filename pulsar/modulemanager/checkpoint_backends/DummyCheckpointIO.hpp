@@ -11,8 +11,6 @@
 #include "pulsar/exception/Exceptions.hpp"
 
 namespace pulsar {
-namespace modulemanager {
-
 
 /*! \brief Interface to an IO backend for checkpointing
  */
@@ -50,6 +48,5 @@ class DummyCheckpointIO : public CheckpointIO
         virtual void clear(void) { }
 };
 
-} // close namespace modulemanager
 } // close namespace pulsar
 

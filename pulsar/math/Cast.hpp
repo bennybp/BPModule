@@ -4,9 +4,6 @@
 #include "pulsar/math/ExactCast.hpp"
 
 namespace pulsar{
-namespace math {
-
-
 
 /*! \brief Perform a safe cast between integer types or between floating point types
  *
@@ -43,10 +40,6 @@ Target round_cast(Source s)
     return s;
 }
 
-
-
-
-} // close namespace math
 } // close namespace pulsar
 
 

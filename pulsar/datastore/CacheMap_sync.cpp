@@ -8,11 +8,14 @@
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/parallel/Parallel.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
+#include "pulsar/math/Cast.hpp"
 #include "pulsar/util/Serialization.hpp"
 
-using namespace pulsar::util;
-using namespace pulsar::output;
-using namespace pulsar::datastore::detail;
+using namespace pulsar::detail;
+
+using namespace pulsar;
+
+
 
 // Commands that are sent through MPI
 #define MM_SYNC_NACK     -1
@@ -55,7 +58,8 @@ int recv_int(int rank, int tag)
 
 void send_str(int rank, int tag, const std::string & s)
 {
-    MPI_Send(s.c_str(), s.size(), MPI_CHAR, rank, tag, MPI_COMM_WORLD);
+    MPI_Send(s.c_str(), pulsar::numeric_cast<int>(s.size()), MPI_CHAR, rank, tag, 
+            MPI_COMM_WORLD);
 }
 
 std::string recv_str(int rank, int tag)
@@ -76,7 +80,7 @@ std::string recv_str(int rank, int tag)
 
 void send_data(int rank, int tag, const ByteArray & ba)
 {
-    MPI_Send(ba.data(), ba.size(), MPI_BYTE, rank, tag, MPI_COMM_WORLD);
+    MPI_Send(ba.data(), pulsar::numeric_cast<int>(ba.size()), MPI_BYTE, rank, tag, MPI_COMM_WORLD);
 }
 
 ByteArray recv_data(int rank, int tag)
@@ -109,7 +113,6 @@ void send_nack(int rank, int tag)
 
 
 namespace pulsar {
-namespace datastore {
 
 
 void CacheMap::start_sync(int tag)
@@ -134,7 +137,7 @@ void CacheMap::stop_sync(void)
     if(sync_tag_ < 0)
         return; // not running
 
-    int my_rank = parallel::get_proc_id();
+    int my_rank = numeric_cast<int>(get_proc_id());
 
     send_int(my_rank, sync_tag_, MM_SYNC_STOP);
     send_str(my_rank, sync_tag_, "Called from CacheMap::stop_sync");
@@ -146,8 +149,8 @@ void CacheMap::stop_sync(void)
 void CacheMap::sync_thread_func_(void)
 {
 
-    const int my_rank = parallel::get_proc_id();
-    const int nproc = parallel::get_nproc();
+    const int my_rank = numeric_cast<int>(get_proc_id());
+    const int nproc = numeric_cast<int>(get_nproc());
 
     print_global_debug("Starting sync event loop for rank %? (using tag %?)\n",
                        my_rank, sync_tag_);
@@ -352,5 +355,4 @@ void CacheMap::obtain_from_distcache_(const std::string & key)
 
 
 
-} // close namespace datastore
 } // close namespace pulsar

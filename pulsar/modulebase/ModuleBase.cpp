@@ -9,21 +9,16 @@
 #include "pulsar/datastore/Wavefunction.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 
-using pulsar::modulemanager::ModuleManager;
-using pulsar::modulemanager::ModuleInfo;
-using pulsar::datastore::Wavefunction;
-using pulsar::modulemanager::ModuleTreeNode;
-using pulsar::datastore::CacheData;
-using pulsar::datastore::OptionMap;
-using pulsar::GeneralException;
+using pulsar::ModuleManager;
+using pulsar::ModuleInfo;
+using pulsar::ModuleTreeNode;
 
 
 namespace pulsar{
-namespace modulebase {
 
 
 ModuleBase::ModuleBase(ID_t id, const char * modtype)
-    : tbts_(output::get_global_output().rdbuf(), nullptr),
+    : tbts_(get_global_output().rdbuf(), nullptr),
       out(&tbts_),
       id_(id), modtype_(modtype), mlocator_(nullptr),
       treenode_(nullptr)
@@ -181,5 +176,4 @@ void ModuleBase::set_cache_(CacheData && cache)
     cache_ = std::unique_ptr<CacheData>(new CacheData(std::move(cache)));
 }
 
-} // close namespace modulebase
 } // close namespace pulsar

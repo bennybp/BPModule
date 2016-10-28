@@ -13,8 +13,6 @@
 
 
 namespace pulsar{
-namespace util {
-
 
 /*! \brief Adds a trailing slash to a path if it doesn't have one
  */
@@ -43,8 +41,6 @@ std::pair<std::string, std::string> split_path(const std::string & path);
  */
 std::string join_path(const std::string & base, const std::string & subpath);
 
-
-} // close namespace util
 } // close namespace pulsar
 
 

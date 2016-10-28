@@ -11,17 +11,14 @@
 #include "pulsar/output/GlobalOutput.hpp"
 #include "pulsar/math/PointManipulation.hpp"
 
-using pulsar::output::print_global_debug;
-using pulsar::SystemException;
 
 
 // Instantiate the MathSet, etc, templates
-template class pulsar::math::Universe<pulsar::system::Atom>;
-template class pulsar::math::MathSet<pulsar::system::Atom>;
+template class pulsar::Universe<pulsar::Atom>;
+template class pulsar::MathSet<pulsar::Atom>;
 
 
 namespace pulsar{
-namespace system {
 
 void System::SetDefaults_(void)
 {
@@ -205,14 +202,14 @@ void System::hash(bphash::Hasher & h) const
     h(charge, multiplicity, nelectrons,mass);
 }
 
-math::Point center_of_mass(const System& Sys)
+Point center_of_mass(const System& Sys)
 {
-    return math::weighted_points_center<math::Point>(Sys, &Atom::mass);
+    return weighted_points_center<Point>(Sys, &Atom::mass);
 }
 
-math::Point center_of_nuclear_charge(const System& Sys)
+Point center_of_nuclear_charge(const System& Sys)
 {
-    return math::weighted_points_center<math::Point>(Sys, &Atom::Z);
+    return weighted_points_center<Point>(Sys, &Atom::Z);
 }
 
 ///Returns the distance between each pair of atoms in sys
@@ -265,7 +262,7 @@ std::array<double,9> inertia_tensor(const System& Mol){
             for(size_t i=0;i<3;++i)
                 I[j*3+j]+=massI*AtomI[i]*AtomI[i];
     }
-    std::vector<double> TempI=math::moment<2>(Mol, &Atom::mass);
+    std::vector<double> TempI=moment<2>(Mol, &Atom::mass);
     for(size_t i=0;i<9;++i)I[i]-=mass*TempI[i];
     return I;
     
@@ -282,6 +279,5 @@ System system_to_angstroms(const System& Sys){
     });
 }
 
-} // close namespace system
 } // close namespace pulsar
 

@@ -24,10 +24,6 @@
 // forward declarations
 namespace pulsar{
 
-namespace datastore {
-struct Wavefunction;
-}
-
 namespace options {
 class OptionMap;
 }
@@ -39,9 +35,6 @@ class OptionMap;
 
 
 namespace pulsar{
-namespace modulebase {
-
-
 
 /*! \brief A base class for modules
  *
@@ -104,14 +97,14 @@ class ModuleBase
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        const datastore::OptionMap & options(void) const;
+        const OptionMap & options(void) const;
 
 
         /*! \brief Get the OptionMap object for this module
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        datastore::OptionMap & options(void);
+        OptionMap & options(void);
 
 
         /*! \brief Print the information for this module
@@ -136,7 +129,7 @@ class ModuleBase
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        const modulemanager::ModuleTreeNode & my_node(void) const;
+        const ModuleTreeNode & my_node(void) const;
 
 
         /*! \brief Get the output from this module's tree node
@@ -147,7 +140,7 @@ class ModuleBase
         /*! \brief Create a module that is a child of this one
          */
         template<typename T>
-        modulemanager::ModulePtr<T> create_child(const std::string & key) const
+        ModulePtr<T> create_child(const std::string & key) const
         {
             return mlocator_->get_module<T>(key, id_);
         }
@@ -157,7 +150,7 @@ class ModuleBase
          *         obtaining the modulekey from an option
          */
         template<typename T>
-        modulemanager::ModulePtr<T> create_child_from_option(const std::string & optionkey) const
+        ModulePtr<T> create_child_from_option(const std::string & optionkey) const
         {
             std::string modulekey = options().get<std::string>(optionkey);
             return mlocator_->get_module<T>(modulekey, id_);
@@ -182,25 +175,25 @@ class ModuleBase
     protected:
         /*! \brief Out tee string buffer
          */
-        output::TeeBufToString tbts_;
+        TeeBufToString tbts_;
 
         /*! \brief Our output stream
          */
-        output::OutputStream out;
+        OutputStream out;
 
 
         /*! \brief Get the internal ModuleManager that is in charge of this module
          *
          * \throw std::logic_error if it hasn't been set
          */
-        modulemanager::ModuleManager & module_manager(void) const;
+        ModuleManager & module_manager(void) const;
 
 
         /*! \brief Get the cache object for this module
          *
          * \throw std::logic_error if there is a severe developer error
          */
-        datastore::CacheData & cache(void) const noexcept;
+        CacheData & cache(void) const noexcept;
 
 
 
@@ -210,7 +203,7 @@ class ModuleBase
 
         std::string exception_desc(void) const
         {
-            return util::format_string("[%?] (%?) %? v%?", id(), key(), name(), version());
+            return format_string("[%?] (%?) %? v%?", id(), key(), name(), version());
         }
 
         /*! \brief Quickly call a function, catching exceptions
@@ -300,7 +293,7 @@ class ModuleBase
             pybind11::gil_scoped_acquire gil;
             pybind11::function overload = pybind11::get_overload(obj, name);
             if(overload)
-                return python::call_py_func<R>(overload, std::forward<Targs>(args)...);
+                return call_py_func<R>(overload, std::forward<Targs>(args)...);
             else
                 throw GeneralException("Cannot find overridden function", "vfunc", name);
         }
@@ -314,7 +307,7 @@ class ModuleBase
             pybind11::gil_scoped_acquire gil;
             pybind11::function overload = pybind11::get_overload(obj, name);
             if(overload)
-                return python::call_py_func<R>(overload, std::forward<Targs>(args)...);
+                return call_py_func<R>(overload, std::forward<Targs>(args)...);
             else
                 throw GeneralException("Cannot find overridden function", "vfunc", name);
         }
@@ -371,7 +364,7 @@ class ModuleBase
 
     private:
         // allow ModuleManager to set up the pointers
-        friend class modulemanager::ModuleManager;
+        friend class ModuleManager;
 
         //! The unique ID of this module
         const ID_t id_;
@@ -380,13 +373,13 @@ class ModuleBase
         const char * modtype_;
 
         //! The ModuleManager in charge of this module
-        modulemanager::ModuleManager * mlocator_;
+        ModuleManager * mlocator_;
 
         //! My tree node
-        modulemanager::ModuleTreeNode * treenode_;
+        ModuleTreeNode * treenode_;
 
         //! My cache
-        std::unique_ptr<datastore::CacheData> cache_;
+        std::unique_ptr<CacheData> cache_;
 
 
         ////////////////////
@@ -395,24 +388,24 @@ class ModuleBase
 
         /*! \brief Set the mlocator_ pointer
          */
-        void set_module_manager_(modulemanager::ModuleManager * mloc) noexcept;
+        void set_module_manager_(ModuleManager * mloc) noexcept;
 
 
         /*! \brief Set the tree node pointer
          */
-        void set_tree_node_(modulemanager::ModuleTreeNode * node) noexcept;
+        void set_tree_node_(ModuleTreeNode * node) noexcept;
 
 
         /*! \brief Get the tree node pointer
          *
          * non-const version is private
          */
-        modulemanager::ModuleTreeNode & my_node(void);
+        ModuleTreeNode & my_node(void);
 
 
         /*! \brief Move-Create my CacheData object
          */
-        void set_cache_(datastore::CacheData && cache);
+        void set_cache_(CacheData && cache);
 };
 
 
@@ -424,8 +417,6 @@ class ModuleBase
     using ModuleBase::module_manager; \
     using ModuleBase::out;
 
-
-} // close namespace modulebase
 } // close namespace pulsar
 
 #endif

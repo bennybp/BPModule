@@ -1,7 +1,7 @@
 #include "TestCXX.hpp"
 #include <pulsar/math/Universe.hpp>
 
-using Universe_t=pulsar::math::Universe<double>;
+using Universe_t=pulsar::Universe<double>;
 using std::bind;
 using namespace std::placeholders;
 
@@ -31,13 +31,11 @@ TEST_CLASS(TestUniverse){
     tester.test("Get index",true,2,bind(&Universe_t::idx,&U3,3.0));
     tester.test("Get non-existant index",false,2,
             bind(&Universe_t::idx,&U3,5.0));
-    const std::string right_hash("2caeb2e75eb844c0a28977d4172f41e5");
-    auto hash=bind(&bphash::hash_to_string,
-            bind(&Universe_t::my_hash,_1));
-    tester.test("Get hash U0",true,right_hash,hash,U0);
-    tester.test("Get hash U1",true,right_hash,hash,U1);
-    tester.test("Get hash U3",true,right_hash,hash,U3);
-    tester.test("Get hash U5",true,right_hash,hash,U5);
+
+    tester.test("Get hash U0",U0.my_hash(),U1.my_hash());
+    tester.test("Get hash U1",U0.my_hash(),U3.my_hash());
+    tester.test("Get hash U3",U0.my_hash(),U5.my_hash());
+
     
     //Element access/modification
     std::vector<double> elems(U0.begin(),U0.end()),right_elems={1.0,2.0,3.0};

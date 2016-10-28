@@ -1,6 +1,11 @@
 Testing                                                               {#testing}
 =======
 
+\note This page covers testing protocols for testing Pulsar and Pulsar's
+standard modules.  Ultimately, testing modules falls to module developers and
+although we encourage them to follow similar testing procedures they are in no
+way obligated to.
+
 In order to ensure that Pulsar is working well it is imparative to test it.
 These tests also allow us to determine if a check-in breaks something.  This is
 only possible if we have unit tests.  We also need what are called acceptance

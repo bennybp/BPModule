@@ -16,8 +16,6 @@
 
 
 namespace pulsar{
-namespace modulemanager {
-
 
 /*! \brief Loads python supermodules
  *
@@ -61,7 +59,6 @@ class PySupermoduleLoader : public SupermoduleLoaderBase
         std::unordered_map<std::string, PyModInfo> objmap_;
 };
 
-} // close namespace modulemanager
 } // close namespace pulsar
 
 

@@ -12,8 +12,6 @@
 
 
 namespace pulsar{
-namespace output {
-
 
 namespace detail {
     /*! \brief Print a string to a stream
@@ -43,7 +41,7 @@ namespace detail {
 template<typename ... Targs>
 void print_general_output(std::ostream & os, OutputType type, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::print_output_(os, type, util::format_string(fmt, Fargs...));
+    detail::print_output_(os, type, format_string(fmt, Fargs...));
 }
 
 
@@ -61,7 +59,7 @@ void print_general_output(std::ostream & os, OutputType type, const std::string 
 template<typename ... Targs>
 void print_output(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::print_output_(os, OutputType::Output, util::format_string(fmt, Fargs...));
+    detail::print_output_(os, OutputType::Output, format_string(fmt, Fargs...));
 }
 
 
@@ -71,7 +69,7 @@ void print_output(std::ostream & os, const std::string & fmt, const Targs&... Fa
 template<typename ... Targs>
 void print_changed(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::print_output_(os, OutputType::Changed, util::format_string(fmt, Fargs...));
+    detail::print_output_(os, OutputType::Changed, format_string(fmt, Fargs...));
 }
 
 
@@ -81,7 +79,7 @@ void print_changed(std::ostream & os, const std::string & fmt, const Targs&... F
 template<typename ... Targs>
 void print_error(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::print_output_(os, OutputType::Error, util::format_string(fmt, Fargs...));
+    detail::print_output_(os, OutputType::Error, format_string(fmt, Fargs...));
 }
 
 
@@ -91,7 +89,7 @@ void print_error(std::ostream & os, const std::string & fmt, const Targs&... Far
 template<typename ... Targs>
 void print_warning(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::print_output_(os, OutputType::Warning, util::format_string(fmt, Fargs...));
+    detail::print_output_(os, OutputType::Warning, format_string(fmt, Fargs...));
 }
 
 
@@ -101,7 +99,7 @@ void print_warning(std::ostream & os, const std::string & fmt, const Targs&... F
 template<typename ... Targs>
 void print_success(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::print_output_(os, OutputType::Success, util::format_string(fmt, Fargs...));
+    detail::print_output_(os, OutputType::Success, format_string(fmt, Fargs...));
 }
 
 
@@ -111,12 +109,9 @@ void print_success(std::ostream & os, const std::string & fmt, const Targs&... F
 template<typename ... Targs>
 void print_debug(std::ostream & os, const std::string & fmt, const Targs&... Fargs)
 {
-    detail::print_output_(os, OutputType::Debug, util::format_string(fmt, Fargs...));
+    detail::print_output_(os, OutputType::Debug, format_string(fmt, Fargs...));
 }
 
-
-
-} // close namespace output
 } // close namespace pulsar
 
 #endif

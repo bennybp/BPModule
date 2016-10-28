@@ -15,11 +15,9 @@
 
 
 namespace pulsar{
-namespace testing {
-
 
 template<typename T>
-void TestOptionMap_Get(const datastore::OptionMap & opt, const std::string & key)
+void TestOptionMap_Get(const OptionMap & opt, const std::string & key)
 {
     // ignore return value
     opt.get<T>(key);
@@ -27,16 +25,13 @@ void TestOptionMap_Get(const datastore::OptionMap & opt, const std::string & key
 
 
 template<typename T>
-void TestOptionMap_Change(datastore::OptionMap & opt, const std::string & key, pybind11::object value)
+void TestOptionMap_Change(OptionMap & opt, const std::string & key, pybind11::object value)
 {
     // ignore return value
-    const T tmp = python::convert_to_cpp<T>(value);
+    const T tmp = convert_to_cpp<T>(value);
     opt.change<T>(key, tmp);
 }
 
-
-
-} // close namespace testing
 } // close namespace pulsar
 
 

@@ -9,16 +9,15 @@
 #include "pulsar/util/Serialization.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
+#include "pulsar/math/Cast.hpp"
 
-
-using pulsar::util::to_byte_array;
-using pulsar::util::from_byte_array;
+using pulsar::to_byte_array;
+using pulsar::from_byte_array;
     
 #define SPECIAL_KEY "_%%__STORED_KEYS__%%_"
 
 
 namespace pulsar {
-namespace modulemanager {
         
 
 BDBCheckpointIO::BDBCheckpointIO(const std::string & path)
@@ -88,7 +87,7 @@ size_t BDBCheckpointIO::count(const std::string & key) const
 
     DBT dbt_key;
     dbt_key.data = key_str;
-    dbt_key.size = key.size()+1; // don't forget terminating \0
+    dbt_key.size = numeric_cast<unsigned int>(key.size())+1; // don't forget terminating \0
     dbt_key.flags = 0;
 
     if(db_->exists(db_, NULL, &dbt_key, 0) == 0)
@@ -117,12 +116,12 @@ void BDBCheckpointIO::write_(const std::string & key, const ByteArray & data,
 
     DBT dbt_key;
     dbt_key.data = key_ptr;
-    dbt_key.size = key.size()+1;
+    dbt_key.size = numeric_cast<unsigned int>(key.size())+1;
     dbt_key.flags = 0;
 
     DBT dbt_data;
     dbt_data.data = data_ptr;
-    dbt_data.size = data.size();
+    dbt_data.size = numeric_cast<unsigned int>(data.size());
     dbt_data.flags = 0;
 
     //! \todo errors & exceptions?
@@ -155,7 +154,7 @@ ByteArray BDBCheckpointIO::read(const std::string & key) const
 
     DBT dbt_key;
     dbt_key.data = key_ptr;
-    dbt_key.size = key.size()+1;
+    dbt_key.size = numeric_cast<unsigned int>(key.size())+1;
     dbt_key.flags = 0;
 
     DBT dbt_data;
@@ -173,7 +172,7 @@ ByteArray BDBCheckpointIO::read(const std::string & key) const
     {
         data_bytes.resize(dbt_data.size);        
         dbt_data.data = data_bytes.data();
-        dbt_data.ulen = data_bytes.size();
+        dbt_data.ulen = numeric_cast<unsigned int>(data_bytes.size());
     }
 
     if(ret != 0)
@@ -189,7 +188,7 @@ ByteArray BDBCheckpointIO::read(const std::string & key) const
     return data_bytes;
 }
 
-void BDBCheckpointIO::erase(const std::string & key)
+void BDBCheckpointIO::erase(const std::string & /*key*/)
 {
 }
 
@@ -197,7 +196,5 @@ void BDBCheckpointIO::clear(void)
 {
 }
 
-
-} // close namespace modulemanager
 } // close namespace pulsar
 

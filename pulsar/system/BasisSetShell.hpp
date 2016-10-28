@@ -13,7 +13,6 @@
 #include "bphash/Hasher.hpp"
 
 namespace pulsar{
-namespace system {
 
 // for friend
 class BasisSet;
@@ -227,8 +226,6 @@ class BasisSetShell : public BasisShellBase
     
 };
 
-
-} // close namespace system
 } // close namespace pulsar
 
 

@@ -24,7 +24,6 @@ CREATED: 2016-04-24 10:40:51.981111
 
 
 namespace pulsar {
-namespace math {
 namespace lut {
 
 
@@ -60,7 +59,6 @@ static const int DFAC_2NM1_DOUBLE_LUT_MAX_ = 150;      // Maximum index of dfac_
 
 
 } // closing namespace lut
-} // closing namespace math
 } // closing namespace pulsar
 
 

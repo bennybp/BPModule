@@ -12,8 +12,6 @@
 #include "pulsar/util/IterTools.hpp"
 
 namespace pulsar{
-namespace math {
-
 
 /////////////////////////////////////////
 // Translation
@@ -124,7 +122,7 @@ template<typename PointContainer>
 std::vector<double> ToDoubleStar(const PointContainer& pc){
     std::vector<double> RV;
     for(const auto& point: pc)
-        for(size_t i: util::Range<0,3>())
+        for(size_t i: Range<0,3>())
             RV.push_back(point[i]);
     return RV;
 }
@@ -232,8 +230,6 @@ Coord points_center(const PointContainer & cont)
     return weighted_points_center<Coord>(cont,
            [](const typename PointContainer::value_type&){return 1.0;});
 }
-
-} // close namespace math
 } // close namespace pulsar
 
 #endif

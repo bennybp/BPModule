@@ -44,7 +44,7 @@ tester.test("Get unique shell",True,Si,BS.unique_shell,1)
 tester.test("Get invalid unique shell",False,Si,BS.unique_shell,99)
 i=0
 for Sk in BS2:
-   tester.test("Iterator "+str(i),True, Sk,Si)
+   tester.test_value("Iterator "+str(i),Sk,Si if i%2==1 else Sj)
    i=i+1
 
 tester.test("Get valid shell info",True,FakeD,BS2.shell_info,0)
@@ -55,9 +55,6 @@ BS3.add_shell(FakeD,carts)
 tester.test("Shrink to fit",True,BS3,BS4.shrink_fit)
 tester.test("Add shell no fit",False,BS4.add_shell,FakeD2,carts)
 
-da_hash=[134, 74, 207, 201, 97, 136, 34, 110, 135, 179, 103, 254, 210,25,248,91]
-tester.test("Hash BS",True,da_hash,BS.my_hash)
-tester.test("Hash BS2",True,da_hash,BS2.my_hash)
-
+tester.test("Hash BS",True,BS.my_hash(),BS2.my_hash)
 
 tester.print_results()

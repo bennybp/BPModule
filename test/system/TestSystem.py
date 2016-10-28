@@ -93,11 +93,9 @@ tester.test("get universe works",True,MyU,H27.get_universe)
 tester.test("as universe works",True,MyU,H28.as_universe)
 
 #Despite the manipulations and different universes, the following sets are equal
-da_hash=[244, 31, 161, 162, 142, 250, 57, 175, 198, 142, 95, 140, 10, 22,85,120]
 
-tester.test("Hash is correct 1",True,da_hash,H2.my_hash)
-tester.test("Hash is correct 2",True,da_hash,H22.my_hash)
-tester.test("Hash is correct 3",True,da_hash,ChargedH2.my_hash)
-tester.test("Hash is correct 4",True,da_hash,H26.my_hash)
+tester.test("Hash is correct 1",True,H2.my_hash(),H22.my_hash)
+tester.test("Hash is correct 2",True,H2.my_hash(),ChargedH2.my_hash)
+tester.test("Hash is correct 3",True,H2.my_hash(),H26.my_hash)
         
 tester.print_results()

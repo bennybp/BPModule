@@ -9,8 +9,6 @@
 
 
 namespace pulsar{
-namespace output {
-
 
 // global function
 bool color_enabled(void) noexcept;
@@ -62,6 +60,4 @@ void print_output_(std::ostream & out, OutputType type, const std::string & str)
 
 }
 
-
-} // close namespace output
 } // close namespace pulsar

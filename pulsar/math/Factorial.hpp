@@ -12,9 +12,6 @@
 
 
 namespace pulsar{
-namespace math {
-
-
 
 /////////////////////////////////////////
 // Factorial
@@ -195,10 +192,6 @@ inline double double_2nm1_factorial_d(int n)
 
 //! \todo Wrapper that converts argument safely to integer type
 
-
-
-
-} // close namespace math
 } // close namespace pulsar
 
 

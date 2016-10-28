@@ -10,11 +10,8 @@
 namespace py = pybind11;
 
 namespace pulsar {
-namespace exception{
-namespace export_python {
 
-
-void export_pybind11(py::module & m)
+void export_exception(py::module & m)
 {
     using E=void(GeneralException::*)(const std::string &, const std::string &);
     
@@ -25,7 +22,5 @@ void export_pybind11(py::module & m)
     ;
 }
 
-
-} // close namespace export_python
-}} // close namespace pulsar
+} // close namespace pulsar
 

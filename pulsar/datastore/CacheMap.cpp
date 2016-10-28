@@ -1,9 +1,9 @@
 #include "pulsar/datastore/CacheMap.hpp"
 #include "pulsar/output/Output.hpp"
 
+using namespace pulsar;
 
 namespace pulsar {
-namespace datastore {
 
 CacheMap::CacheMap(void)
         : sync_tag_(-1)
@@ -43,7 +43,6 @@ void CacheMap::clear(void)
 
 void CacheMap::print(std::ostream & os) const
 {
-    using namespace pulsar::output;
 
     // We lock the mutex here. Therefore, we cannot call CacheMap::size(), etc.
     std::lock_guard<std::mutex> l(mutex_);
@@ -56,5 +55,4 @@ void CacheMap::print(std::ostream & os) const
                      it.second.value->demangled_type());
 }
 
-} // close namespace datastore
 } // close namespace pulsar

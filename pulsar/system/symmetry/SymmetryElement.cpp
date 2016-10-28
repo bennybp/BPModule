@@ -20,7 +20,7 @@ namespace system{
     
 bool SymmetryElement::operator==(const SymmetryElement& Other)const{
     double MaxVal=0.0;
-    for(size_t i=0;i<9;++i)MaxVal=math::max_abs(MaxVal,Other.element_matrix[i]);
+    for(size_t i=0;i<9;++i)MaxVal=max_abs(MaxVal,Other.element_matrix[i]);
     double Tol=0.1*MaxVal;
     bool MatSame=true;
     for(size_t i=0;i<9&&MatSame;++i)
@@ -54,14 +54,14 @@ inline std::string SSym(size_t n,size_t m){
 }
 
 Rotation::Rotation(const Vector_t& Axis,size_t n,size_t m):
-    SymmetryElement(math::rotation(Axis,ToDegrees(n,m)),"C_"+SSym(n,m),
+    SymmetryElement(rotation(Axis,ToDegrees(n,m)),"C_"+SSym(n,m),
                     to_string(n)){}                            
 
 MirrorPlane::MirrorPlane(const Vector_t& Norm):
-    SymmetryElement(math::reflection(Norm),"s","m"){}
+    SymmetryElement(reflection(Norm),"s","m"){}
 
 ImproperRotation::ImproperRotation(const Vector_t& Axis,size_t n,size_t m):
-    SymmetryElement(math::roto_reflection(Axis,ToDegrees(n,m)),"S_"+SSym(n,m),
+    SymmetryElement(roto_reflection(Axis,ToDegrees(n,m)),"S_"+SSym(n,m),
                     "["+to_string(n%2==1?n*2:(n%4==0?n:n/2))+"]"){}
     
 }}//End namespaces

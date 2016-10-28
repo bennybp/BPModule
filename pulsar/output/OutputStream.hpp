@@ -12,9 +12,6 @@
 
 
 namespace pulsar{
-namespace output {
-
-
 
 /*! \brief A stream object with some output helpers
  *
@@ -54,7 +51,7 @@ class OutputStream : public std::ostream
         {
             if(type == OutputType::Debug && !debug_)
                 return;
-            detail::print_output_(*this, type, util::format_string(fmt, Fargs...));
+            detail::print_output_(*this, type, format_string(fmt, Fargs...));
         }
 
 
@@ -71,7 +68,7 @@ class OutputStream : public std::ostream
         template<typename... Targs>
         void output(const std::string & fmt, const Targs&... Fargs)
         {
-            detail::print_output_(*this, OutputType::Output, util::format_string(fmt, Fargs...));
+            detail::print_output_(*this, OutputType::Output, format_string(fmt, Fargs...));
         }
 
 
@@ -81,7 +78,7 @@ class OutputStream : public std::ostream
         template<typename... Targs>
         void changed(const std::string & fmt, const Targs&... Fargs)
         {
-            detail::print_output_(*this, OutputType::Changed, util::format_string(fmt, Fargs...));
+            detail::print_output_(*this, OutputType::Changed, format_string(fmt, Fargs...));
         }
 
 
@@ -91,7 +88,7 @@ class OutputStream : public std::ostream
         template<typename... Targs>
         void error(const std::string & fmt, const Targs&... Fargs)
         {
-            detail::print_output_(*this, OutputType::Error, util::format_string(fmt, Fargs...));
+            detail::print_output_(*this, OutputType::Error, format_string(fmt, Fargs...));
         }
 
 
@@ -101,7 +98,7 @@ class OutputStream : public std::ostream
         template<typename... Targs>
         void warning(const std::string & fmt, const Targs&... Fargs)
         {
-            detail::print_output_(*this, OutputType::Warning, util::format_string(fmt, Fargs...));
+            detail::print_output_(*this, OutputType::Warning, format_string(fmt, Fargs...));
         }
 
 
@@ -111,7 +108,7 @@ class OutputStream : public std::ostream
         template<typename... Targs>
         void success(const std::string & fmt, const Targs&... Fargs)
         {
-            detail::print_output_(*this, OutputType::Success, util::format_string(fmt, Fargs...));
+            detail::print_output_(*this, OutputType::Success, format_string(fmt, Fargs...));
         }
 
 
@@ -125,7 +122,7 @@ class OutputStream : public std::ostream
         void debug(const std::string & fmt, const Targs&... Fargs)
         {
             if(debug_)
-                detail::print_output_(*this, OutputType::Debug, util::format_string(fmt, Fargs...));
+                detail::print_output_(*this, OutputType::Debug, format_string(fmt, Fargs...));
         }
 
 
@@ -151,8 +148,6 @@ class OutputStream : public std::ostream
         bool debug_; //!< Is debugging enabled for this stream
 };
 
-
-} // close namespace output
 } // close namespace pulsar
 
 

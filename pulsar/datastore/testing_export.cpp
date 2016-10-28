@@ -10,12 +10,9 @@
 
 
 namespace pulsar {
-namespace datastore {
-namespace export_python {
 
-void export_testing(pybind11::module & m)
+void export_testing_datastore(pybind11::module & m)
 {
-    using pulsar::testing::TestSerialization;
 
     /////////////////////////////////
     // Serialization
@@ -24,7 +21,4 @@ void export_testing(pybind11::module & m)
     m.def("TestSerialization_Wavefunction",   &TestSerialization<Wavefunction>);
 }
 
-
-} // close namespace export_python
-} // close namespace system 
 } // close namespace pulsar

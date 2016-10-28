@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /** \file Space.hpp
  *  \brief Write Me!!!!!!
  *  \author Ryan M. Richard
@@ -17,7 +11,6 @@
 #include <array>
 #include <limits>
 namespace pulsar {
-namespace system {
 
 ///Class describing the space around a molecule
 struct Space{
@@ -54,6 +47,6 @@ struct Space{
     }
 };
 
-}}//End namespace pulsar
+}//End namespace pulsar
 #endif /* PULSAR_GHUARD_SPACE_HPP */
 

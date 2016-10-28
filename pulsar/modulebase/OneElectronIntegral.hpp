@@ -12,7 +12,6 @@
 #include "pulsar/system/BasisSet.hpp"
 
 namespace pulsar{
-namespace modulebase {
 
 /*! \brief One-electron integral implementation
  */
@@ -34,9 +33,9 @@ class OneElectronIntegral : public ModuleBase
          * \param [in] bs2 Basis set tag to use on the second center
          */
         void initialize(unsigned int deriv,
-                        const datastore::Wavefunction & wfn,
-                        const system::BasisSet & bs1,
-                        const system::BasisSet & bs2)
+                        const Wavefunction & wfn,
+                        const BasisSet & bs1,
+                        const BasisSet & bs2)
         {
             ModuleBase::call_function(&OneElectronIntegral::uninitialized_or_throw_);
             ModuleBase::call_function(&OneElectronIntegral::initialize_, deriv, wfn, bs1, bs2);
@@ -135,9 +134,9 @@ class OneElectronIntegral : public ModuleBase
         /////////////////////////////////////////
         //! \copydoc initialize
         virtual void initialize_(unsigned int deriv,
-                                 const datastore::Wavefunction & wfn,
-                                 const system::BasisSet & bs1,
-                                 const system::BasisSet & bs2) = 0;
+                                 const Wavefunction & wfn,
+                                 const BasisSet & bs1,
+                                 const BasisSet & bs2) = 0;
 
 
         //! \copydoc n_components
@@ -203,9 +202,9 @@ class OneElectronIntegral_Py : public OneElectronIntegral
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
         virtual void initialize_(unsigned int deriv,
-                                 const datastore::Wavefunction & wfn,
-                                 const system::BasisSet & bs1,
-                                 const system::BasisSet & bs2)
+                                 const Wavefunction & wfn,
+                                 const BasisSet & bs1,
+                                 const BasisSet & bs2)
 
         {
             return call_py_override<void>(this, "initialize_", deriv, wfn, bs1, bs2);
@@ -259,7 +258,6 @@ class OneElectronIntegral_Py : public OneElectronIntegral
         }
 };
 
-} // close namespace modulebase
 } // close namespace pulsar
 
 #endif

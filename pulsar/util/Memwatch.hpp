@@ -9,8 +9,6 @@
 
 
 namespace pulsar{
-namespace util {
-
 
 /*! \brief See if memwatch is running (preloaded)
  */ 
@@ -35,9 +33,6 @@ size_t memwatch_setlimit(size_t limit) noexcept;
  */
 size_t memwatch_getlimit(void) noexcept;
 
-
-
-} // close namespace util
 } // close namespace pulsar
 
 #endif

@@ -12,15 +12,26 @@ is stuff you will likely want to know before reading further.
 \section main_sec Contents
 
   - Pulsar Basics
+    - [Obtaining and Building](@ building)
     - [Terminology](@ref terminology)
   - User notes
     - [Making Modules and Supermodules](@ref makemod)
     - [Printing Things Out](@ref printing)
     - [Making and Using Systems](@ref systems)
     - [Making and Using Basis Sets](@ref basisset)
+    - [Making and Using Wavefunctions](@ref wavefunction)
     - [Using and Setting Options](@ref Options)
     - [Interfacing Custom Tensors](@ref tensors)
     - [Understanding the Graph and the Cache](@ref graphcache)
+    - Module Base Types
+      - EnergyMethod
+      - FockBuilder
+      - OneElectronIntegral
+      - OneElectronMatrix
+      - PropertyCalculator
+      - SCFIterator
+      - SystemFragmenter
+      - TwoElectronIntegral
   - Developer notes
     - Good Practices
       - [Testing](@ref testing)

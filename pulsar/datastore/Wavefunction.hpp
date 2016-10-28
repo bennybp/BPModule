@@ -15,8 +15,6 @@
 #include "bphash/Hasher.hpp"
 
 namespace pulsar {
-namespace datastore {
-
 
 /*! \brief Stores the state of a system
  *
@@ -27,11 +25,11 @@ namespace datastore {
 class Wavefunction
 {
     public:
-        std::shared_ptr<const system::System> system;
-        std::shared_ptr<const math::IrrepSpinMatrixD> cmat;        //!< MO Coefficient Matrix
-        std::shared_ptr<const math::IrrepSpinMatrixD> opdm;        //!< One-particle density matrix
-        std::shared_ptr<const math::IrrepSpinVectorD> epsilon;     //!< Orbital energies
-        std::shared_ptr<const math::IrrepSpinVectorD> occupations; //!< Occupation of MOs
+        std::shared_ptr<const System> system;
+        std::shared_ptr<const IrrepSpinMatrixD> cmat;        //!< MO Coefficient Matrix
+        std::shared_ptr<const IrrepSpinMatrixD> opdm;        //!< One-particle density matrix
+        std::shared_ptr<const IrrepSpinVectorD> epsilon;     //!< Orbital energies
+        std::shared_ptr<const IrrepSpinVectorD> occupations; //!< Occupation of MOs
 
         void valid_check(void) const
         {
@@ -91,11 +89,11 @@ class Wavefunction
         template<class Archive>
         void load(Archive & ar)
         {
-            std::shared_ptr<system::System> newsystem;
-            std::shared_ptr<math::IrrepSpinMatrixD> newcmat;
-            std::shared_ptr<math::IrrepSpinVectorD> newepsilon;
-            std::shared_ptr<math::IrrepSpinMatrixD> newopdm;
-            std::shared_ptr<math::IrrepSpinVectorD> newocc;
+            std::shared_ptr<System> newsystem;
+            std::shared_ptr<IrrepSpinMatrixD> newcmat;
+            std::shared_ptr<IrrepSpinVectorD> newepsilon;
+            std::shared_ptr<IrrepSpinMatrixD> newopdm;
+            std::shared_ptr<IrrepSpinVectorD> newocc;
 
             ar(newsystem, newcmat, newepsilon, newocc, newopdm);
 
@@ -112,8 +110,6 @@ class Wavefunction
         ///@}
 };
 
-
-} // close namespace datastore
 } // close namespace system
 
 #endif

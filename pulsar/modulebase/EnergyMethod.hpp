@@ -15,10 +15,9 @@
 
 
 namespace pulsar{
-namespace modulebase {
 
-typedef std::pair<datastore::Wavefunction, double> EnergyReturnType;
-typedef std::pair<datastore::Wavefunction, std::vector<double>> DerivReturnType;
+typedef std::pair<Wavefunction, double> EnergyReturnType;
+typedef std::pair<Wavefunction, std::vector<double>> DerivReturnType;
 
 
 
@@ -41,7 +40,7 @@ class EnergyMethod : public ModuleBase
         EnergyMethod(ID_t id): ModuleBase(id,"EnergyMethod"){ }
 
         ///The call users use, tries to use available analytic derivatives
-        DerivReturnType deriv(size_t Order, const datastore::Wavefunction & wfn)
+        DerivReturnType deriv(size_t Order, const Wavefunction & wfn)
         {
             return ModuleBase::call_function(&EnergyMethod::split_deriv_, Order, wfn);
         }
@@ -63,7 +62,7 @@ class EnergyMethod : public ModuleBase
          *   calling Deriv until analytic derivatives are available.  Hence,
          *   setting MAX_DERIV controls the level of nesting
          */
-        DerivReturnType finite_difference(size_t Order, const datastore::Wavefunction & wfn)
+        DerivReturnType finite_difference(size_t Order, const Wavefunction & wfn)
         {
             return ModuleBase::call_function(&EnergyMethod::finite_difference_, Order, wfn);
         }
@@ -71,28 +70,28 @@ class EnergyMethod : public ModuleBase
         ///@{
         ///Convenience functions
         ///Returns the energy of this method
-        EnergyReturnType energy(const datastore::Wavefunction & wfn){
+        EnergyReturnType energy(const Wavefunction & wfn){
             DerivReturnType ret = deriv(0,wfn);
             return {ret.first, ret.second[0]};
         }
 
         ///Returns the nuclear gradient of this method
-        DerivReturnType gradient(const datastore::Wavefunction & wfn){return deriv(1,wfn);}
+        DerivReturnType gradient(const Wavefunction & wfn){return deriv(1,wfn);}
 
         ///Returns the nuclear Hessian of this method
-        DerivReturnType hessian(const datastore::Wavefunction & wfn){return deriv(2,wfn);}
+        DerivReturnType hessian(const Wavefunction & wfn){return deriv(2,wfn);}
         ///@}
 
 
         //////////////////////////////////////////////////
         // To be implemented by derived classes
         //////////////////////////////////////////////////
-        virtual DerivReturnType deriv_(size_t Order, const datastore::Wavefunction & wfn) = 0;
+        virtual DerivReturnType deriv_(size_t Order, const Wavefunction & wfn) = 0;
 
 
 
     private:
-        DerivReturnType split_deriv_(size_t Order, const datastore::Wavefunction & wfn)
+        DerivReturnType split_deriv_(size_t Order, const Wavefunction & wfn)
         {
             if(Order > max_deriv())
                 return finite_difference(Order, wfn);
@@ -102,7 +101,7 @@ class EnergyMethod : public ModuleBase
 
         size_t max_deriv_(void) const;
 
-        DerivReturnType finite_difference_(size_t Order, const datastore::Wavefunction & wfn);
+        DerivReturnType finite_difference_(size_t Order, const Wavefunction & wfn);
 };
 
 ///Specialization so that Python calls the right virtual function
@@ -111,12 +110,11 @@ class EnergyMethod_Py : public EnergyMethod{
         using EnergyMethod::EnergyMethod;
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
-        virtual DerivReturnType deriv_(size_t Order,const datastore::Wavefunction & wfn){
+        virtual DerivReturnType deriv_(size_t Order,const Wavefunction & wfn){
             return call_py_override<DerivReturnType>(this, "deriv_",Order,wfn);
         }
 };
 
-} // close namespace modulebase
 } // close namespace pulsar
 
 #endif /* PULSAR_GUARD_MODULEBASE__ENERGYMETHOD_HPP_ */

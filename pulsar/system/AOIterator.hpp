@@ -9,7 +9,6 @@
 #include <functional>
 
 namespace pulsar {
-namespace system {
 
 //! \todo python version
 template<int N>
@@ -196,6 +195,5 @@ class AOIterator
 
 
 } // close namespace pulsar
-} // close namespace system
 
 #endif

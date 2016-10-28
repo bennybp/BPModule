@@ -10,7 +10,6 @@
 
 
 namespace pulsar{
-namespace modulemanager {
 namespace detail {
 
 
@@ -23,9 +22,9 @@ PyModuleIMPLHolder::PyModuleIMPLHolder(const pybind11::object & mod)
         throw GeneralException("PyModuleIMPLHolder given a null object");
 }
 
-modulebase::ModuleBase * PyModuleIMPLHolder::CppPtr(void) const
+ModuleBase * PyModuleIMPLHolder::CppPtr(void) const
 {
-    return python::convert_to_cpp<modulebase::ModuleBase *>(mod_);
+    return convert_to_cpp<ModuleBase *>(mod_);
 }
 
 pybind11::object PyModuleIMPLHolder::PythonObject(void) const
@@ -36,5 +35,4 @@ pybind11::object PyModuleIMPLHolder::PythonObject(void) const
 
 
 } // close namespace detail
-} // close namespace modulemanager
 } // close namespace pulsar

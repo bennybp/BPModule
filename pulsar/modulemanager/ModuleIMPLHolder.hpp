@@ -13,15 +13,12 @@
 // Split into hpp and cpp files so we don't have to
 // include ModuleBase.hpp here
 namespace pulsar{
-namespace modulebase {
 class ModuleBase;
-}
 }
 
 
 
 namespace pulsar{
-namespace modulemanager {
 namespace detail {
 
 
@@ -46,7 +43,7 @@ class ModuleIMPLHolder
          *
          * Ownership remains the responsibility of thie IMPLHolder
          */
-        virtual modulebase::ModuleBase * CppPtr(void) const = 0;
+        virtual ModuleBase * CppPtr(void) const = 0;
 
 
         /*! \brief Return a python object representing the module
@@ -96,7 +93,7 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
              : mod_(std::move(mod)) { }
 
 
-        virtual modulebase::ModuleBase * CppPtr(void) const
+        virtual ModuleBase * CppPtr(void) const
         {
             
             if(!mod_)
@@ -111,7 +108,7 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
             if(!mod_)
               throw GeneralException("Null pointer in CppModuleIMPLHolder");
             T * ptr = mod_.get();
-            pybind11::object o = python::convert_to_py(ptr, pybind11::return_value_policy::reference);
+            pybind11::object o = convert_to_py(ptr, pybind11::return_value_policy::reference);
 
             if(!o)
                 throw GeneralException("Null python object in CppModuleIMPLHolder");
@@ -136,7 +133,7 @@ class PyModuleIMPLHolder : public ModuleIMPLHolder
          */
         PyModuleIMPLHolder(const pybind11::object & mod);
 
-        virtual modulebase::ModuleBase * CppPtr(void) const;
+        virtual ModuleBase * CppPtr(void) const;
 
         virtual pybind11::object PythonObject(void) const;
 
@@ -147,7 +144,6 @@ class PyModuleIMPLHolder : public ModuleIMPLHolder
 
 
 } // close namespace detail
-} // close namespace modulemanager
 } // close namespace pulsar
 
 #endif

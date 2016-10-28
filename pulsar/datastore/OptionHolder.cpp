@@ -16,13 +16,7 @@
 #include "bphash/types/map.hpp"
 #include "bphash/types/memory.hpp"
 
-using namespace pulsar::python;
-
-using namespace pulsar::util;
-
-
 namespace pulsar {
-namespace datastore {
 namespace detail {
 
 
@@ -101,6 +95,5 @@ CreateOptionHolder(std::string key, OptionType opttype, bool required,
 
 
 } // close namespace detail
-} // close namespace datastore
 } // close namespace pulsar
 
