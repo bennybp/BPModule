@@ -19,17 +19,17 @@ namespace pulsar{
 //Recursive function for establishing the weight of each nmer
 //Note b/c we are possibly leaving some out we can't use the closed formulas
 void GetCoef(bool Even,const SNType& SN,NMerSetType& NMers){
-    if(NMers.count(SN)==0)return;//We assumed this interaction is negligible
+  /*  if(NMers.count(SN)==0)return;//We assumed this interaction is negligible
     NMers[SN].Weight+=(Even?1.0:-1.0);
     PowerSetItr<SNType> Frags(SN,1,(int)SN.size()-1);
     while(Frags){
         GetCoef(!Even,*Frags,NMers);
         ++Frags;
-    }
+    }*/
 }
 
 NMerSetType SystemFragmenter::make_nmers(const NMerSetType& Frags){
-    const size_t NEnd=
+    /*const size_t NEnd=
         std::min(options().get<size_t>("TRUNCATION_ORDER"),Frags.size());
     Thresh_t Dists=options().get<Thresh_t>("DISTANCE_THRESHOLDS");
     NMerSetType NMers;
@@ -65,22 +65,7 @@ NMerSetType SystemFragmenter::make_nmers(const NMerSetType& Frags){
     }
     for(const typename NMerSetType::value_type& NMerI: NMers)
         GetCoef(true,NMerI.first,NMers);
-    return NMers;
-}
-
-std::map<std::string,NMerInfo> SystemFragmenter_Py::
-    fragmentize_py(const System& mol){
-            NMerSetType Temp=fragmentize(mol);
-            std::map<std::string,NMerInfo> RV;
-            for(const auto& NMerI: Temp){
-                std::string key;
-                for(const std::string& str:NMerI.first){
-                    key+=str;
-                    key+="_";
-                }
-                RV.emplace(key,NMerI.second);
-            }
-            return RV;
+    return NMers;*/
 }
 
 

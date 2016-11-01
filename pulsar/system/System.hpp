@@ -107,11 +107,23 @@ public:
     System & operator=(const System & rhs) = default;
     System & operator=(System && rhs) = default;
 
+    /** \brief Copies a system and optionally fills it
+     * 
+     * 
+     *  \warning This constructor with \p fill set to true is, in general, not 
+     *  the same as the copy constructor becasue rhs.atoms_ may include some
+     *  intermeidate set of atoms between empty and the universe
+     */
+    System(const System& rhs,bool fill)
+            :System(rhs.atoms_.get_universe(),fill)
+    {
+    }
 
     /*! \name General System properties
      */
     ///@{ 
-
+    void clear();///< Clears the atoms in this system, NOT universe
+    
     size_t size(void) const;///< Returns atoms in system NOT universe
 
     double get_sum_charge(void) const;///< Returns sum of charg on each atom

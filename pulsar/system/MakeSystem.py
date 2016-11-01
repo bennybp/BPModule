@@ -1,6 +1,7 @@
 import re
 import math
 from copy import deepcopy
+import pulsar as psr
 
 def make_system(SomeString):
     """This function turns a string into a system object, which it then returns
@@ -22,11 +23,6 @@ def make_system(SomeString):
         * Units can be specified by units keyword
       * angles are specified by 'angles alpha beta gamma'
         * Units are in degrees
-    * The following are currently supported in Psi4, but presently ignored:
-      * 'no_reorient' or 'noreorient' request that molecule not be reoriented
-      * 'no_com' or 'nocom' request that molecule not be translated to center of mass
-      * 'symmetry X' or 'symmetry=X' requests that molecule has symmetry 'X'
-      * Z-Mat currently not supported
     """
     #For the below comments, "any number" includes 0
     comment = re.compile(r'^\s*#')#Comment line
@@ -100,33 +96,33 @@ def make_system(SomeString):
                 if len(entries) == 4:
                     for i in range(1,4):
                         Carts.append(float(entries[i]))
-                Zs.append(psr.system.atomic_z_from_symbol(atomSym))
+                Zs.append(psr.atomic_z_from_symbol(atomSym))
                 Systems[NFrags()]+=1
                 
         else:
             raise GeneralException('make_system: Unidentifiable line in geometry specification: %s' % (line))
 
-    DaSpace=psr.system.Space()
+    DaSpace=psr.Space()
     Periodic=(len(Sides)==3 and len(Angles)==3)
     NewSides=[ToAU*i for i in Sides]
     if Periodic:
-        DaSpace=psr.system.Space(Angles,NewSides)
+        DaSpace=psr.Space(Angles,NewSides)
         ToAU=1.0
-    molu=psr.system.AtomSetUniverse()
+    molu=psr.AtomSetUniverse()
     for i in range(0,len(Zs)):
         TempCarts=[ToAU*Carts[3*i+j] for j in range(0,3)]
-        molu.insert(psr.system.create_atom(TempCarts,Zs[i]))
-    DaSys=psr.system.System(molu,True)
+        molu.insert(psr.create_atom(TempCarts,Zs[i]))
+    DaSys=psr.System(molu,True)
     if Periodic:
         Newu=psr.system.Frac2Cart(molu,DaSpace)
-        UC=psr.system.CarveUC(
-            psr.system.MakeSuperCell(Newu,[3,3,3],DaSpace.LatticeSides),
+        UC=psr.CarveUC(
+            psr.MakeSuperCell(Newu,[3,3,3],DaSpace.LatticeSides),
             DaSpace.LatticeSides)
-        molu=psr.system.CleanUC(UC,DaSpace.LatticeSides)
-    DaSys=psr.system.System(molu,True)
-    DaSys.set_space(DaSpace)
-    DaSys.set_charge(Charge[0])
-    DaSys.set_multiplicity(Mult[0])
+        molu=psr.CleanUC(UC,DaSpace.LatticeSides)
+    DaSys=psr.System(molu,True)
+    DaSys.space=DaSpace
+    DaSys.charge=Charge[0]
+    DaSys.multiplicity=Mult[0]
     return DaSys
 
 

@@ -17,6 +17,8 @@ Empty2=psr.System(MyU,False)
 tester.test("Different universes!=different systems",True,True,Empty.__eq__,Empty2)
 H22=psr.System(H2)
 tester.test("Copy constructor works",True,True,H2.__eq__,H22)
+H99=psr.System(H22,True)
+tester.test("Copy and fill works",True,True,H99.__eq__,H22)
 
 #At this point H2==H22={H,H1}
     
@@ -96,5 +98,9 @@ tester.test("as universe works",True,MyU,H28.as_universe)
 tester.test("Hash is correct 1",True,H2.my_hash(),H22.my_hash)
 tester.test("Hash is correct 2",True,H2.my_hash(),ChargedH2.my_hash)
 tester.test("Hash is correct 3",True,H2.my_hash(),H26.my_hash)
+
+H28.clear()
+tester.test("Clear works",True,0,H28.size)
+        
         
 tester.print_results()

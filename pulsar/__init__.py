@@ -79,7 +79,7 @@ def initialize(argv,
 
 
 def finalize():
-  print_global_output("Finalizing parallelization\n")
+  pulsar_core.print_global_output("Finalizing parallelization\n")
   pulsar_core.finalize()
 
   clear_cmdline()

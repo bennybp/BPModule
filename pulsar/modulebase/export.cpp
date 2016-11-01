@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-
+#include <pybind11/operators.h>
 #include "pulsar/modulebase/All.hpp"
 #include "pulsar/datastore/Wavefunction.hpp"
 #include "pulsar/modulemanager/ModuleManager.hpp"
@@ -54,9 +54,11 @@ void export_modulebase(pybind11::module & m)
     /////////////////////////
     pybind11::class_<NMerInfo> (m,"NMerInfo")
         .def(pybind11::init<>())
-        .def_readwrite("SN",&NMerInfo::SN)
-        .def_readwrite("NMer",&NMerInfo::NMer)
-        .def_readwrite("Weight",&NMerInfo::Weight)
+        .def_readwrite("sn",&NMerInfo::sn)
+        .def_readwrite("nmer",&NMerInfo::nmer)
+        .def_readwrite("weight",&NMerInfo::weight)
+        .def(pybind11::self==pybind11::self)
+        .def(pybind11::self!=pybind11::self)
         ;
 
     pybind11::class_<SystemFragmenter, std::unique_ptr<SystemFragmenter>, SystemFragmenter_Py> sysfrag(m, "SystemFragmenter", mbase);

@@ -128,6 +128,14 @@ public:
     MathSet(My_t&& RHS)
       :Universe_(std::move(RHS.Universe_)),Elems_(std::move(RHS.Elems_)){}
     
+    ///Copies universe and optionally fills it
+    MathSet(const My_t& RHS,bool fill):
+        MathSet(RHS.Universe_,fill)
+    {
+    }
+    
+    
+    
     /*! \brief For serialization only
      *
      * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
@@ -174,7 +182,10 @@ public:
 
     ///@{
     ///Basic accessors
-
+    
+    ///Clears Elems does not delete universe
+    void clear(void){Elems_.clear();}
+    
     ///Returns the number of elements in this set
     size_t size(void)const noexcept{return Elems_.size();}
 

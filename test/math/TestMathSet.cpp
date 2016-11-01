@@ -26,6 +26,8 @@ TEST_CLASS(TestMathSet){
     tester.test("Fill constructor works",S3,S5);
     MathSet_t S6(std::move(S5));
     tester.test("Move constructor work",S3,S6);
+    MathSet_t B2(S1,true),B3(U1,true);
+    tester.test("Copy universe and fill works",B3,B2);
     S4=S6;
     tester.test("Assignment constructor works",S4,S6);
     MathSet_t S7=std::move(S3);
@@ -122,5 +124,8 @@ TEST_CLASS(TestMathSet){
     
     tester.test("hash works",S2.my_hash(),S13.my_hash());
 
+    S2.clear();
+    tester.test("clear works",0,S2.size());
+    
     tester.print_results();
 }

@@ -11,9 +11,10 @@ S1=psr.DoubleSet(U1,{2});S2=psr.DoubleSet(S1)
 tester.test_value("Constructor 1 and copy constructor work",S1,S2)
 U1.insert(4.0);
 tester.test_value("Shallow copy of universe",S1,S2)
-S3=psr.DoubleSet(U2,True)
-S4=psr.DoubleSet(U2,False)
+S3,S4=psr.DoubleSet(U2,True),psr.DoubleSet(U2,False)
 tester.test("Constructor 2",True,False,S3.__eq__,S4)
+B2,B3=psr.DoubleSet(S1,True),psr.DoubleSet(U1,True)
+tester.test("Copy and fill works",True,True,B2.__eq__,B3)
 S5=psr.DoubleSet(U2,{0,1,2})
 tester.test_value("Fill constructor works",S3,S5);
 S8=psr.DoubleSet(S2.clone())
@@ -90,5 +91,6 @@ tester.test_value("partition works",partresults,presults2)
 
 tester.test("hash works check 1",True,S2.my_hash(),S13.my_hash)
 
-
+S2.clear()
+tester.test("clear works",True,0,S2.size)
 tester.print_results()

@@ -22,6 +22,8 @@ TEST_CLASS(TestSystem){
     tester.test("Move universe constructor works",2,H22.size());
     System H23(H22);
     tester.test("Copy constructor works",true,H23==H22);
+    System E2(H23,true);
+    tester.test("Copy atoms and fill works",true,E2==H23);
     System H24(std::move(H22));
     tester.test("Move constructor works",true,H23==H24);
     H2=H24;
@@ -112,7 +114,10 @@ TEST_CLASS(TestSystem){
     tester.test("Hash is correct 2",H22.my_hash(),H2.my_hash());
     tester.test("Hash is correct 3",H22.my_hash(),H27.my_hash());
     tester.test("Hash is correct 4",H22.my_hash(),H210.my_hash());
-        
+
+    H27.clear();
+    tester.test("Clear works",0,H27.size());
+
     tester.print_results();
     
 }

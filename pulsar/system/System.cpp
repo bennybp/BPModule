@@ -45,6 +45,8 @@ System::System(const AtomSetUniverse& universe,bool fill):
 {
 }
 
+void System::clear(){atoms_.clear();}
+
 //Macro for common code that adds stuff up
 #define SUM_STUFF(varname,fxn_name)\
 double System::fxn_name(void) const{\
