@@ -13,7 +13,6 @@
 #include <vector>
 #include "pulsar/modulebase/ModuleBase.hpp"
 
-
 namespace pulsar{
 
 typedef std::pair<Wavefunction, double> EnergyReturnType;

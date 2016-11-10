@@ -10,6 +10,7 @@
 
 #include "pulsar/modulebase/ModuleBase.hpp"
 #include "pulsar/system/System.hpp"
+#include "pulsar/pragma.h"
 
 namespace pulsar {
 
@@ -18,15 +19,17 @@ using SNType = std::set<size_t>; //< The type of the serial number
 ///A struct to hold info associated with an NMer
 struct NMerInfo {
 
-    NMerInfo() : sn(), nmer(), weight(1.0)
-    {
-    }
+    NMerInfo()=default;
+    NMerInfo(const NMerInfo&)=default;
     ///\todo Do we need the SN in this struct?
     SNType sn; ///< The serial number of the subsystem
     System nmer; ///< The actual subsystem
     double weight; ///< The weight of the nmer
     bool operator==(const NMerInfo& rhs)const{
+        PRAGMA_WARNING_PUSH
+        PRAGMA_WARNING_IGNORE_FP_EQUALITY
         return (weight==rhs.weight && sn==rhs.sn && nmer==rhs.nmer);
+        PRAGMA_WARNING_POP
     }
     bool operator!=(const NMerInfo& rhs)const{
         return !(*this==rhs);

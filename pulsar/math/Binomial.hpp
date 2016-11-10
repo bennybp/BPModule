@@ -1,9 +1,3 @@
-/* 
- * File:   Binomial.hpp
- *
- * Created on March 17, 2016, 6:42 PM
- */
-
 #ifndef PULSAR_GUARD_MATH__BINOMIAL_HPP_
 #define PULSAR_GUARD_MATH__BINOMIAL_HPP_
 

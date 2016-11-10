@@ -93,26 +93,41 @@ System System::difference(const System& RHS) const
 #define CALL_ATOMS(rv,fxn_name,arg,arg2)\
 rv System::fxn_name(arg)const{return atoms_.fxn_name(arg2);}
 
-CALL_ATOMS(size_t,size,void,)
-CALL_ATOMS(bool,count,const Atom& AnAtom,AnAtom)
-CALL_ATOMS(std::shared_ptr<const AtomSetUniverse>,get_universe,void,)
+size_t System::size()const{return atoms_.size();}
+
+bool System::count(const Atom& AnAtom)const{return atoms_.count(AnAtom);}
+
+std::shared_ptr<const AtomSetUniverse> System::get_universe()const{
+    return atoms_.get_universe();
+}
+
 CALL_ATOMS(AtomSetUniverse,as_universe,void,)
 CALL_ATOMS(bool,is_proper_subset_of,const System& RHS,RHS.atoms_)
 CALL_ATOMS(bool,is_subset_of,const System& RHS,RHS.atoms_)
 CALL_ATOMS(bool,is_proper_superset_of,const System& RHS,RHS.atoms_)
 CALL_ATOMS(bool,is_superset_of,const System& RHS,RHS.atoms_)
 
-//Similar to CALL_ATOMS except the result is used to make a new system
-#define WRAP_CALL(fxn_name,arg1,arg2)\
-System System::fxn_name(arg1)const{System temp(*this);\
-    temp.atoms_=atoms_.fxn_name(arg2);\
-    temp.SetDefaults_();return temp;}
+System System::complement()const{
+    System temp(*this);
+    temp.atoms_=atoms_.complement();
+    temp.SetDefaults_();
+    return temp;
+}
 
-WRAP_CALL(complement,void,)
-WRAP_CALL(partition,System::SelectorFunc selector,selector)
-WRAP_CALL(transform,System::TransformerFunc Transformer,Transformer)
+System System::partition(System::SelectorFunc Selec)const{
+    System temp(*this);
+    temp.atoms_=atoms_.partition(Selec);
+    temp.SetDefaults_();
+    return temp;
+}
 
-#undef WRAP_CALL
+System System::transform(System::TransformerFunc Trans)const{
+    System temp(*this);
+    temp.atoms_=atoms_.transform(Trans);
+    temp.SetDefaults_();
+    return temp;
+}
+
 #undef CALL_ATOMS
 
 

@@ -11,8 +11,8 @@ TEST_CLASS(TestMathSet){
     
     std::shared_ptr<Universe_t> U1=std::make_shared<Universe_t>(1.0,2.0,3.0),
             U2=std::make_shared<Universe_t>(3.0,4.0,5.0),
-            U3=std::make_shared<Universe_t>(3.0);
-    
+            U3=std::make_shared<Universe_t>(3.0),
+            U4=std::make_shared<Universe_t>(9.0,51.0,100.0);
     
     //Constructors and assignment
     MathSet_t S1(U1,std::set<size_t>({2}));
@@ -71,24 +71,25 @@ TEST_CLASS(TestMathSet){
     //Set operations
     MathSet_t S9(U1,{1,2,3}),S10(U1,{1,2,4}),S12(U1,{1,2}),
               S13(U1,std::set<size_t>({3}));
+    MathSet_t S99(U4,{1});
     auto un1=bind(&MathSet_t::union_assign,_1,_2);
     auto un2=bind(&MathSet_t::set_union,_1,_2);
     tester.test("union",true,S9,un2,S1,S12);
-    tester.test("union fail",false,S9,un2,S1,S4);
+    tester.test("union fail",false,S9,un2,S1,S99);
     tester.test("union assign",true,S9,un1,S1,S12);
-    tester.test("union assign fail",false,S9,un1,S1,S4);
+    tester.test("union assign fail",false,S9,un1,S1,S99);
     auto int1=bind(&MathSet_t::intersection_assign,_1,_2);
     auto int2=bind(&MathSet_t::intersection,_1,_2);
     tester.test("intersection",true,S12,int2,S1,S10);
-    tester.test("intersection fail",false,S2,int2,S1,S4);
+    tester.test("intersection fail",false,S2,int2,S1,S99);
     tester.test("intersection assign",true,S12,int1,S1,S10);
-    tester.test("intersection assign fail",false,S2,int1,S1,S4);
+    tester.test("intersection assign fail",false,S2,int1,S1,S99);
     auto diff1=bind(&MathSet_t::difference_assign,_1,_2);
     auto diff2=bind(&MathSet_t::difference,_1,_2);
     tester.test("difference",true,S13,diff2,S2,S12);
-    tester.test("difference fail",false,S13,diff2,S2,S4);
+    tester.test("difference fail",false,S13,diff2,S2,S99);
     tester.test("difference assign",true,S13,diff1,S2,S12);
-    tester.test("difference assign fail",false,S13,diff1,S2,S4);
+    tester.test("difference assign fail",false,S13,diff1,S2,S99);
     MathSet_t S14(U1,true);
     S14-=S2;
     tester.test("complement",S14,S2.complement());

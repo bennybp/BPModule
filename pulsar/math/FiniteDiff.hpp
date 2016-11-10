@@ -104,8 +104,8 @@ class FiniteDiff{
       My_t& operator=(const My_t&)=delete;///<One time use class
       
       ///Makes a new FDiff that can run in parallel on Comm
-      FiniteDiff(LibTaskForce::HybridComm&& Comm)
-        :Comm_(new LibTaskForce::HybridComm(std::move(Comm))){}
+      FiniteDiff(std::unique_ptr<LibTaskForce::HybridComm>&& Comm)
+        :Comm_(std::move(Comm)){}
       
       ///Normal FDiff, no parallel
       FiniteDiff(){}
@@ -204,7 +204,7 @@ std::vector<ResultType> FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
         for(size_t j=0;j<NCalcs(NPoints);++j){
             const double da_shift=Shift(j,NPoints);
             FDWrapper wrap(Fxn2Run,Coefs[j],Fxn2Run.shift(Old,H,da_shift),i);
-            Derivs.push_back(Comm_->add_task<ResultType>(wrap));
+            Derivs.push_back(std::move(Comm_->add_task<ResultType>(std::move(wrap))));
         }
     }
     

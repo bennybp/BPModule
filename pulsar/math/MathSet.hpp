@@ -360,7 +360,7 @@ public:
      */
     bool operator==(const My_t& RHS)const
     {
-        return (SameUniverse(RHS)
+        return ((Universe_==RHS.Universe_||*Universe_==*RHS.Universe_)
                 && Elems_ == RHS.Elems_);
     }
 
@@ -475,10 +475,19 @@ private:
             throw ValueOutOfRange("Requested element is not in the universe");
     }
 
-    ///Same universe iff same pointer or universes are identical elem by elem
+    /** \brief Determines if the universe of this and that of RHS are
+     *   compatible
+     *  
+     *   In order to use this set as the left side of a set operation like
+     *   union or intersection, the universe of this set must be the same as
+     *   that of \pRHS or every element in \pRHS must be in this's universe,
+     *   i.e. this's universe must be a superset of \pRHS's universe.
+     */
     bool SameUniverse(const My_t& RHS) const
     {
-       return Universe_==RHS.Universe_ || *Universe_== *RHS.Universe_;
+       return Universe_==RHS.Universe_ || 
+              Universe_->is_superset_of(*RHS.Universe_);
+               //->is_superset_of(*RHS.Universe_);
     }
 
     //! \name Serialization and Hashing
