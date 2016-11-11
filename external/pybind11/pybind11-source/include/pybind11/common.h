@@ -16,6 +16,18 @@
 #  define NAMESPACE_END(name) }
 #endif
 
+// Neither MSVC nor Intel support enough of C++14 yet (in particular, as of MSVC 2015 and ICC 17
+// beta, neither support extended constexpr, which we rely on in descr.h), so don't enable pybind
+// CPP14 features for them.
+#if !defined(_MSC_VER) && !defined(__INTEL_COMPILER)
+#  if __cplusplus >= 201402L
+#    define PYBIND11_CPP14
+#    if __cplusplus > 201402L /* Temporary: should be updated to >= the final C++17 value once known */
+#      define PYBIND11_CPP17
+#    endif
+#  endif
+#endif
+
 #if !defined(PYBIND11_EXPORT)
 #  if defined(WIN32) || defined(_WIN32)
 #    define PYBIND11_EXPORT __declspec(dllexport)
@@ -28,6 +40,16 @@
 #  define PYBIND11_NOINLINE __declspec(noinline)
 #else
 #  define PYBIND11_NOINLINE __attribute__ ((noinline))
+#endif
+
+#if defined(PYBIND11_CPP14)
+#  define PYBIND11_DEPRECATED(reason) [[deprecated(reason)]]
+#elif defined(__clang__)
+#  define PYBIND11_DEPRECATED(reason) __attribute__((deprecated(reason)))
+#elif defined(__GNUG__)
+#  define PYBIND11_DEPRECATED(reason) __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#  define PYBIND11_DEPRECATED(reason) __declspec(deprecated)
 #endif
 
 #define PYBIND11_VERSION_MAJOR 1
@@ -79,6 +101,7 @@
 #include <unordered_map>
 #include <memory>
 #include <typeindex>
+#include <type_traits>
 
 #if PY_MAJOR_VERSION >= 3 /// Compatibility macros for various Python versions
 #define PYBIND11_INSTANCE_METHOD_NEW(ptr, class_) PyInstanceMethod_New(ptr)
@@ -133,16 +156,28 @@ extern "C" {
 #define PYBIND11_INTERNALS_ID "__pybind11_" \
     PYBIND11_TOSTRING(PYBIND11_VERSION_MAJOR) "_" PYBIND11_TOSTRING(PYBIND11_VERSION_MINOR) "__"
 
-#define PYBIND11_PLUGIN(name) \
-    static PyObject *pybind11_init(); \
-    PYBIND11_PLUGIN_IMPL(name) { \
-        try { \
-            return pybind11_init(); \
-        } catch (const std::exception &e) { \
-            PyErr_SetString(PyExc_ImportError, e.what()); \
-            return nullptr; \
-        } \
-    } \
+#define PYBIND11_PLUGIN(name)                                                  \
+    static PyObject *pybind11_init();                                          \
+    PYBIND11_PLUGIN_IMPL(name) {                                               \
+        int major, minor;                                                      \
+        if (sscanf(Py_GetVersion(), "%i.%i", &major, &minor) != 2) {           \
+            PyErr_SetString(PyExc_ImportError, "Can't parse Python version."); \
+            return nullptr;                                                    \
+        } else if (major != PY_MAJOR_VERSION || minor != PY_MINOR_VERSION) {   \
+            PyErr_Format(PyExc_ImportError,                                    \
+                         "Python version mismatch: module was compiled for "   \
+                         "version %i.%i, while the interpreter is running "    \
+                         "version %i.%i.", PY_MAJOR_VERSION, PY_MINOR_VERSION, \
+                         major, minor);                                        \
+            return nullptr;                                                    \
+        }                                                                      \
+        try {                                                                  \
+            return pybind11_init();                                            \
+        } catch (const std::exception &e) {                                    \
+            PyErr_SetString(PyExc_ImportError, e.what());                      \
+            return nullptr;                                                    \
+        }                                                                      \
+    }                                                                          \
     PyObject *pybind11_init()
 
 NAMESPACE_BEGIN(pybind11)
@@ -225,7 +260,7 @@ struct buffer_info {
     : buffer_info(ptr, itemsize, format, 1, std::vector<size_t> { size },
                   std::vector<size_t> { itemsize }) { }
 
-    buffer_info(Py_buffer *view, bool ownview = true)
+    explicit buffer_info(Py_buffer *view, bool ownview = true)
         : ptr(view->buf), itemsize((size_t) view->itemsize), size(1), format(view->format),
           ndim((size_t) view->ndim), shape((size_t) view->ndim), strides((size_t) view->ndim), view(view), ownview(ownview) {
         for (size_t i = 0; i < (size_t) view->ndim; ++i) {
@@ -276,7 +311,7 @@ template <typename type> struct instance_essentials {
     type *value;
     PyObject *weakrefs;
     bool owned : 1;
-    bool constructed : 1;
+    bool holder_constructed : 1;
 };
 
 /// PyObject wrapper around generic types, includes a special holder type that is responsible for lifetime management
@@ -298,7 +333,9 @@ struct internals {
     std::unordered_map<const void *, void*> registered_types_py;       // PyTypeObject* -> type_info
     std::unordered_multimap<const void *, void*> registered_instances; // void * -> PyObject*
     std::unordered_set<std::pair<const PyObject *, const char *>, overload_hash> inactive_overload_cache;
+    std::unordered_map<std::type_index, std::vector<bool (*)(PyObject *, void *&)>> direct_conversions;
     std::forward_list<void (*) (std::exception_ptr)> registered_exception_translators;
+    std::unordered_map<std::string, void *> shared_data; // Custom data to be shared across extensions
 #if defined(WITH_THREAD)
     decltype(PyThread_create_key()) tstate = 0; // Usually an int but a long on Cygwin64 with Python 3.x
     PyInterpreterState *istate = nullptr;
@@ -379,27 +416,96 @@ template <template<class> class Predicate, class Default, class... T> using firs
 template <typename T, typename... /*Us*/> struct deferred_type { using type = T; };
 template <typename T, typename... Us> using deferred_t = typename deferred_type<T, Us...>::type;
 
+template <template<typename...> class Base>
+struct is_template_base_of_impl {
+    template <typename... Us> static std::true_type check(Base<Us...> *);
+    static std::false_type check(...);
+};
+
+/// Check if a template is the base of a type. For example:
+/// `is_template_base_of<Base, T>` is true if `struct T : Base<U> {}` where U can be anything
+template <template<typename...> class Base, typename T>
+#if !defined(_MSC_VER)
+using is_template_base_of = decltype(is_template_base_of_impl<Base>::check((T*)nullptr));
+#else // MSVC2015 has trouble with decltype in template aliases
+struct is_template_base_of : decltype(is_template_base_of_impl<Base>::check((T*)nullptr)) { };
+#endif
+
+/// Check if T is std::shared_ptr<U> where U can be anything
+template <typename T> struct is_shared_ptr : std::false_type { };
+template <typename U> struct is_shared_ptr<std::shared_ptr<U>> : std::true_type { };
+
 /// Ignore that a variable is unused in compiler warnings
 inline void ignore_unused(const int *) { }
 
 NAMESPACE_END(detail)
 
-#define PYBIND11_RUNTIME_EXCEPTION(name) \
-    class name : public std::runtime_error { public: \
-        name(const std::string &w) : std::runtime_error(w) { }; \
-        name(const char *s) : std::runtime_error(s) { }; \
-        name() : std::runtime_error("") { } \
+/// Returns a named pointer that is shared among all extension modules (using the same
+/// pybind11 version) running in the current interpreter. Names starting with underscores
+/// are reserved for internal usage. Returns `nullptr` if no matching entry was found.
+inline PYBIND11_NOINLINE void* get_shared_data(const std::string& name) {
+    auto& internals = detail::get_internals();
+    auto it = internals.shared_data.find(name);
+    return it != internals.shared_data.end() ? it->second : nullptr;
+}
+
+/// Set the shared data that can be later recovered by `get_shared_data()`.
+inline PYBIND11_NOINLINE void *set_shared_data(const std::string& name, void *data) {
+    detail::get_internals().shared_data[name] = data;
+    return data;
+}
+
+/// Returns a typed reference to a shared data entry (by using `get_shared_data()`) if
+/// such entry exists. Otherwise, a new object of default-constructible type `T` is
+/// added to the shared data under the given name and a reference to it is returned.
+template<typename T> T& get_or_create_shared_data(const std::string& name) {
+    auto& internals = detail::get_internals();
+    auto it = internals.shared_data.find(name);
+    T* ptr = (T*) (it != internals.shared_data.end() ? it->second : nullptr);
+    if (!ptr) {
+        ptr = new T();
+        internals.shared_data[name] = ptr;
+    }
+    return *ptr;
+}
+
+/// Fetch and hold an error which was already set in Python
+class error_already_set : public std::runtime_error {
+public:
+    error_already_set() : std::runtime_error(detail::error_string()) {
+        PyErr_Fetch(&type, &value, &trace);
+    }
+    ~error_already_set() { Py_XDECREF(type); Py_XDECREF(value); Py_XDECREF(trace); }
+
+    /// Give the error back to Python
+    void restore() { PyErr_Restore(type, value, trace); type = value = trace = nullptr; }
+
+private:
+    PyObject *type, *value, *trace;
+};
+
+/// C++ bindings of builtin Python exceptions
+class builtin_exception : public std::runtime_error {
+public:
+    using std::runtime_error::runtime_error;
+    virtual void set_error() const = 0; /// Set the error using the Python C API
+};
+
+#define PYBIND11_RUNTIME_EXCEPTION(name, type) \
+    class name : public builtin_exception { public: \
+        using builtin_exception::builtin_exception; \
+        name() : name("") { } \
+        void set_error() const override { PyErr_SetString(type, what()); } \
     };
 
-// C++ bindings of core Python exceptions
-class error_already_set : public std::runtime_error { public: error_already_set() : std::runtime_error(detail::error_string())  {} };
-PYBIND11_RUNTIME_EXCEPTION(stop_iteration)
-PYBIND11_RUNTIME_EXCEPTION(index_error)
-PYBIND11_RUNTIME_EXCEPTION(key_error)
-PYBIND11_RUNTIME_EXCEPTION(value_error)
-PYBIND11_RUNTIME_EXCEPTION(type_error)
-PYBIND11_RUNTIME_EXCEPTION(cast_error) /// Thrown when pybind11::cast or handle::call fail due to a type casting error
-PYBIND11_RUNTIME_EXCEPTION(reference_cast_error) /// Used internally
+PYBIND11_RUNTIME_EXCEPTION(stop_iteration, PyExc_StopIteration)
+PYBIND11_RUNTIME_EXCEPTION(index_error, PyExc_IndexError)
+PYBIND11_RUNTIME_EXCEPTION(key_error, PyExc_KeyError)
+PYBIND11_RUNTIME_EXCEPTION(value_error, PyExc_ValueError)
+PYBIND11_RUNTIME_EXCEPTION(import_error, PyExc_ImportError)
+PYBIND11_RUNTIME_EXCEPTION(type_error, PyExc_TypeError)
+PYBIND11_RUNTIME_EXCEPTION(cast_error, PyExc_RuntimeError) /// Thrown when pybind11::cast or handle::call fail due to a type casting error
+PYBIND11_RUNTIME_EXCEPTION(reference_cast_error, PyExc_RuntimeError) /// Used internally
 
 [[noreturn]] PYBIND11_NOINLINE inline void pybind11_fail(const char *reason) { throw std::runtime_error(reason); }
 [[noreturn]] PYBIND11_NOINLINE inline void pybind11_fail(const std::string &reason) { throw std::runtime_error(reason); }
@@ -411,14 +517,21 @@ PYBIND11_RUNTIME_EXCEPTION(reference_cast_error) /// Used internally
 
 template <typename T, typename SFINAE = void> struct format_descriptor { };
 
-template <typename T> struct format_descriptor<T, typename std::enable_if<std::is_integral<T>::value>::type> {
-    static constexpr const char value[2] =
-        { "bBhHiIqQ"[detail::log2(sizeof(T))*2 + (std::is_unsigned<T>::value ? 1 : 0)], '\0' };
-    static std::string format() { return value; }
+template <typename T> struct format_descriptor<T, detail::enable_if_t<std::is_integral<T>::value>> {
+    static constexpr const char c = "bBhHiIqQ"[detail::log2(sizeof(T))*2 + std::is_unsigned<T>::value];
+    static constexpr const char value[2] = { c, '\0' };
+    static std::string format() { return std::string(1, c); }
 };
 
 template <typename T> constexpr const char format_descriptor<
-    T, typename std::enable_if<std::is_integral<T>::value>::type>::value[2];
+    T, detail::enable_if_t<std::is_integral<T>::value>>::value[2];
+
+/// RAII wrapper that temporarily clears any Python error state
+struct error_scope {
+    PyObject *type, *value, *trace;
+    error_scope() { PyErr_Fetch(&type, &value, &trace); }
+    ~error_scope() { PyErr_Restore(type, value, trace); }
+};
 
 PYBIND11_DECL_FMT(float, "f");
 PYBIND11_DECL_FMT(double, "d");

@@ -22,6 +22,21 @@
 #pragma warning(disable: 4127) // warning C4127: Conditional expression is constant
 #endif
 
+#ifdef __has_include
+// std::optional (but including it in c++14 mode isn't allowed)
+#  if defined(PYBIND11_CPP17) && __has_include(<optional>)
+#    include <optional>
+#    define PYBIND11_HAS_OPTIONAL 1
+#  endif
+// std::experimental::optional (but not allowed in c++11 mode)
+#  if defined(PYBIND11_CPP14) && __has_include(<experimental/optional>)
+#    include <experimental/optional>
+#    if __cpp_lib_experimental_optional  // just in case
+#      define PYBIND11_HAS_EXP_OPTIONAL 1
+#    endif
+#  endif
+#endif
+
 NAMESPACE_BEGIN(pybind11)
 NAMESPACE_BEGIN(detail)
 
@@ -97,13 +112,13 @@ template <typename Type, typename Value> struct list_caster {
     using value_conv = make_caster<Value>;
 
     bool load(handle src, bool convert) {
-        list l(src, true);
-        if (!l.check())
+        sequence s(src, true);
+        if (!s.check())
             return false;
         value_conv conv;
         value.clear();
-        reserve_maybe(l, &value);
-        for (auto it : l) {
+        reserve_maybe(s, &value);
+        for (auto it : s) {
             if (!conv.load(it, convert))
                 return false;
             value.push_back((Value) conv);
@@ -112,9 +127,9 @@ template <typename Type, typename Value> struct list_caster {
     }
 
     template <typename T = Type,
-              typename std::enable_if<std::is_same<decltype(std::declval<T>().reserve(0)), void>::value, int>::type = 0>
-    void reserve_maybe(list l, Type *) { value.reserve(l.size()); }
-    void reserve_maybe(list, void *) { }
+              enable_if_t<std::is_same<decltype(std::declval<T>().reserve(0)), void>::value, int> = 0>
+    void reserve_maybe(sequence s, Type *) { value.reserve(s.size()); }
+    void reserve_maybe(sequence, void *) { }
 
     static handle cast(const Type &src, return_value_policy policy, handle parent) {
         list l(src.size());
@@ -182,6 +197,47 @@ template <typename Key, typename Value, typename Compare, typename Alloc> struct
 
 template <typename Key, typename Value, typename Hash, typename Equal, typename Alloc> struct type_caster<std::unordered_map<Key, Value, Hash, Equal, Alloc>>
   : map_caster<std::unordered_map<Key, Value, Hash, Equal, Alloc>, Key, Value> { };
+
+// This type caster is intended to be used for std::optional and std::experimental::optional
+template<typename T> struct optional_caster {
+    using value_type = typename intrinsic_type<typename T::value_type>::type;
+    using caster_type = type_caster<value_type>;
+
+    static handle cast(const T& src, return_value_policy policy, handle parent) {
+        if (!src)
+            return none();
+        return caster_type::cast(*src, policy, parent);
+    }
+
+    bool load(handle src, bool convert) {
+        if (!src) {
+            return false;
+        } else if (src.is_none()) {
+            value = {};  // nullopt
+            return true;
+        } else if (!inner.load(src, convert)) {
+            return false;
+        } else {
+            value.emplace(static_cast<const value_type&>(inner));
+            return true;
+        }
+    }
+
+    PYBIND11_TYPE_CASTER(T, _("Optional[") + caster_type::name() + _("]"));
+
+private:
+    caster_type inner;
+};
+
+#if PYBIND11_HAS_OPTIONAL
+template<typename T> struct type_caster<std::optional<T>>
+    : public optional_caster<std::optional<T>> {};
+#endif
+
+#if PYBIND11_HAS_EXP_OPTIONAL
+template<typename T> struct type_caster<std::experimental::optional<T>>
+    : public optional_caster<std::experimental::optional<T>> {};
+#endif
 
 NAMESPACE_END(detail)
 

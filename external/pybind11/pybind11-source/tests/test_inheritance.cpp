@@ -61,7 +61,7 @@ test_initializer inheritance([](py::module &m) {
         .def(py::init<std::string>());
 
     /* Another way of declaring a subclass relationship: reference parent's C++ type */
-    py::class_<Rabbit>(m, "Rabbit", py::base<Pet>())
+    py::class_<Rabbit, Pet>(m, "Rabbit")
         .def(py::init<std::string>());
 
     /* And another: list parent in class template arguments */
@@ -77,5 +77,10 @@ test_initializer inheritance([](py::module &m) {
 
     m.def("return_class_1", []() -> BaseClass* { return new DerivedClass1(); });
     m.def("return_class_2", []() -> BaseClass* { return new DerivedClass2(); });
+    m.def("return_class_n", [](int n) -> BaseClass* {
+        if (n == 1) return new DerivedClass1();
+        if (n == 2) return new DerivedClass2();
+        return new BaseClass();
+    });
     m.def("return_none", []() -> BaseClass* { return nullptr; });
 });

@@ -1,13 +1,18 @@
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting tests build type to MinSizeRel as none was specified")
-  set(CMAKE_BUILD_TYPE MinSizeRel CACHE STRING "Choose the type of build" FORCE)
+  set(CMAKE_BUILD_TYPE MinSizeRel CACHE STRING "Choose the type of build." FORCE)
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+    "MinSizeRel" "RelWithDebInfo")
 endif()
 
 set(PYBIND11_TEST_FILES
+  test_alias_initialization.cpp
   test_buffers.cpp
   test_callbacks.cpp
+  test_chrono.cpp
   test_class_args.cpp
   test_constants_and_functions.cpp
+  test_copy_move_policies.cpp
   test_eigen.cpp
   test_enum.cpp
   test_eval.cpp
@@ -18,6 +23,8 @@ set(PYBIND11_TEST_FILES
   test_kwargs_and_defaults.cpp
   test_methods_and_attributes.cpp
   test_modules.cpp
+  test_multiple_inheritance.cpp
+  test_numpy_array.cpp
   test_numpy_dtypes.cpp
   test_numpy_vectorize.cpp
   test_opaque_types.cpp
@@ -48,7 +55,9 @@ if(PYBIND11_TEST_FILES_EIGEN_I GREATER -1)
 endif()
 
 # Create the binding library
-pybind11_add_module(pybind11_tests pybind11_tests.cpp ${PYBIND11_TEST_FILES})
+pybind11_add_module(pybind11_tests pybind11_tests.cpp
+  ${PYBIND11_TEST_FILES} ${PYBIND11_HEADERS})
+
 pybind11_enable_warnings(pybind11_tests)
 
 if(EIGEN3_FOUND)
@@ -68,20 +77,20 @@ if(NOT CMAKE_LIBRARY_OUTPUT_DIRECTORY)
 endif()
 
 # Make sure pytest is found or produce a fatal error
-macro(pybind11_execute_python)
-  execute_process(COMMAND ${PYTHON_EXECUTABLE} -m ${ARGN} OUTPUT_QUIET ERROR_QUIET
-                  RESULT_VARIABLE pybind11_execute_python_error)
-endmacro()
-
 if(NOT PYBIND11_PYTEST_FOUND)
-  pybind11_execute_python(pytest --version --noconftest)
-  if(pybind11_execute_python_error)
+  execute_process(COMMAND ${PYTHON_EXECUTABLE} -m pytest --version --noconftest OUTPUT_QUIET ERROR_QUIET
+                  RESULT_VARIABLE PYBIND11_EXEC_PYTHON_ERR)
+  if(PYBIND11_EXEC_PYTHON_ERR)
     message(FATAL_ERROR "Running the tests requires pytest.  Please install it manually (try: ${PYTHON_EXECUTABLE} -m pip install pytest)")
   endif()
-
-  set(PYBIND11_PYTEST_FOUND TRUE CACHE INTERAL "")
+  set(PYBIND11_PYTEST_FOUND TRUE CACHE INTERNAL "")
 endif()
 
 # A single command to compile and run the tests
 add_custom_target(pytest COMMAND ${PYTHON_EXECUTABLE} -m pytest -rws ${PYBIND11_PYTEST_FILES}
                   DEPENDS pybind11_tests WORKING_DIRECTORY ${testdir})
+
+# And another to show the .so size and, if a previous size, compare it:
+add_custom_command(TARGET pybind11_tests POST_BUILD
+    COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/libsize.py
+        $<TARGET_FILE:pybind11_tests> ${CMAKE_CURRENT_BINARY_DIR}/sosize-$<TARGET_FILE_NAME:pybind11_tests>.txt)
