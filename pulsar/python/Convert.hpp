@@ -10,7 +10,6 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include "pulsar/python/Errors.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/util/Mangle.hpp"
@@ -62,7 +61,7 @@ T convert_to_cpp(const pybind11::object & obj)
  */
 template<typename T>
 pybind11::object convert_to_py(const T & obj,
-                             pybind11::return_value_policy pol = pybind11::return_value_policy::copy)
+                               pybind11::return_value_policy pol = pybind11::return_value_policy::copy)
 {
     using pulsar::PythonConvertException;
 
@@ -74,10 +73,7 @@ pybind11::object convert_to_py(const T & obj,
         //! \todo fix if this pybind11 is changed to throw an exception
         if(!pyobj)
         {
-            auto pyex = detail::get_py_exception();
-
-            throw PythonConvertException(pyex.first,
-                                         "when", "in converting from C++ to python",
+            throw PythonConvertException("Cannot convert from C++ to Python",
                                          "fromtype", demangle_cpp_type<T>(),
                                          "info", "Resulting object pointer is null");
         }
@@ -98,26 +94,6 @@ pybind11::object convert_to_py(const T & obj,
     }
 }
 
-
-
-/*! \brief Convert a plain array of C++ objects to a python object
- *
- * \throw PythonConvertException if the
- *        data could not be converted
- *
- * \tparam T The C++ type to convert from
- *
- * \param [in] obj An array of objects
- * \param [in] n Length of the array
- * \return Converted data as a python object
- */
-template<typename T>
-pybind11::object convert_to_py(const T * const obj, size_t n)
-{
-    std::vector<T> v(obj, obj+n);
-
-    return convert_to_py(v);
-}
 
 } // close namespace pulsar
 

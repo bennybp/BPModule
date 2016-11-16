@@ -43,18 +43,9 @@ Ret call_py_func(const pybind11::object & obj, Targs &&... Fargs)
     try {
         ret = obj(std::forward<Targs>(Fargs)...);
     }
-    catch(const std::exception &)
+    catch(const std::exception & ex) // may include pybind11::error_already_set
     {
-        auto what = detail::get_py_exception();
-
-        std::string from = what.second;
-
-        PythonCallException pyex(what.first);
-
-        if(from.size() != 0)
-            pyex.append_info("from", from);
-
-        throw pyex;
+        throw PythonCallException(ex.what());
     }
     catch(...)
     {
