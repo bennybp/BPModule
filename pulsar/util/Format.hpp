@@ -5,10 +5,9 @@
  */ 
 
 
-#ifndef PULSAR_GUARD_UTIL__FORMAT_HPP_
-#define PULSAR_GUARD_UTIL__FORMAT_HPP_
+#pragma once
 
-#include "pulsar/util/vprintfcpp/Format.hpp"
+#include <bpprint/Format.hpp>
 #include "pulsar/exception/Exceptions.hpp"
 
 
@@ -29,7 +28,7 @@ void format_stream(std::ostream & os, const std::string & fmt,
                   const Targs&... Fargs)
 {
     try {
-      vprintfcpp::format_stream(os, fmt, Fargs...);
+      bpprint::format_stream(os, fmt, Fargs...);
     }
     catch(std::exception & ex)
     {
@@ -55,7 +54,7 @@ template<typename... Targs>
 std::string format_string(const std::string & fmt, const Targs&... Fargs)
 {
     try {
-      return vprintfcpp::format_string(fmt, Fargs...);
+      return bpprint::format_string(fmt, Fargs...);
     }
     catch(std::exception & ex)
     {
@@ -125,5 +124,3 @@ DECLARE_EXTERN_TEMPLATE_FORMAT_2(double, double)
 
 } // close namespace pulsar
 
-
-#endif

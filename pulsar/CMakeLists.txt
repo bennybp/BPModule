@@ -23,8 +23,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../external/cmake")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/pybind11")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/memwatch")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/bphash")
+list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/bpprint")
 list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/libtaskforce")
-foreach(pkg pybind11 memwatch bphash libtaskforce Eigen3)
+foreach(pkg pybind11 memwatch bphash bpprint libtaskforce Eigen3)
     find_package(${pkg} REQUIRED)
 endforeach()
 
@@ -120,6 +121,7 @@ list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${EIGEN3_INCLUDE_DIR})
 list(APPEND PULSAR_CORE_LINK_FLAGS ${PULSAR_MATH_LIBS})  # Note - not PULSAR_CORE_MATH_LIBS
 list(APPEND PULSAR_CORE_LINK_FLAGS ${MEMWATCH_FLAGS})
 list(APPEND PULSAR_CORE_LINK_FLAGS bphash)
+list(APPEND PULSAR_CORE_LINK_FLAGS bpprint)
 list(APPEND PULSAR_CORE_LINK_FLAGS libtaskforce)
 
 list(APPEND PULSAR_CORE_LINK_FLAGS ${OpenMP_CXX_FLAGS})

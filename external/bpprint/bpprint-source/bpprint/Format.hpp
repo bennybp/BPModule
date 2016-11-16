@@ -1,26 +1,37 @@
-#ifndef PULSAR_GUARD_VPRINTFCPP__FORMAT_HPP_
-#define PULSAR_GUARD_VPRINTFCPP__FORMAT_HPP_
+#pragma once
 
 #include <sstream>
 #include <stdexcept>
 
-#include "pulsar/util/vprintfcpp/Printf_wrap.hpp"
+#include "bpprint/Printf_wrap.hpp"
 
-namespace vprintfcpp {
-
-
+namespace bpprint {
 namespace detail {
 
 
 /*! \brief Information about a single format specification
+ *
+ * This stores a piece of a format string (such as "%d" or "%12.8e"),
+ * as well as what came before it and what comes after it in the
+ * format string
  */
 struct FormatInfo
 {
-    std::string prefix; //!< The string before the format specification
-    std::string suffix; //!< The string after the format specification
-    std::string format; //!< The format specification itself, except for the length and type specifier characters
-    char length[3];     //!< The length specifier
-    char spec;          //!< The type specifier character
+    //! The string before the format specification
+    std::string prefix;
+
+    //! The string after the format specification
+    std::string suffix;
+
+    //! The format specification itself, except for
+    //    the length and type specifier characters
+    std::string format;
+
+    //! The length specifier
+    char length[3];
+
+    //! The type specifier character
+    char spec;
 };
 
 
@@ -28,8 +39,8 @@ struct FormatInfo
  *
  * If the function returns true, the members of \p fi are filled in.
  *
- * If the function returns false, the prefix member contains the string but
- * with some processing (such as replacing %% with %).
+ * If the function returns false, the prefix member contains the entire
+ * string but with some processing (such as replacing %% with %).
  *
  * \throw std::runtime_error if the format string is badly formatted
  *
@@ -38,8 +49,6 @@ struct FormatInfo
  * \return True if a format specification was found, otherwise false
  */
 bool get_next_format_(FormatInfo & fi, const std::string & str);
-
-
 
 
 /*! \brief Format a string into an ostream
@@ -52,9 +61,8 @@ bool get_next_format_(FormatInfo & fi, const std::string & str);
  * \param [in] os The ostream used to build the string
  * \param [in] fi Format info to use as a workspace
  * \param [in] str String (possibly with format string specification)
- */ 
+ */
 void format_(std::ostream & os, FormatInfo & fi, const std::string & str);
-
 
 
 /*! \brief Format a string into an ostream
@@ -65,23 +73,32 @@ void format_(std::ostream & os, FormatInfo & fi, const std::string & str);
  * \throw std::runtime_error if the correct number of arguments is not given or
  *        if the format string is badly formed
  *
- * \param [in] os The ostream used to build the string
+ * \param [in] os The ostream to output to
  * \param [in] fi The format information struct to use
  * \param [in] str String (possibly with format string specification)
  * \param [in] arg Substitution for the first format specification found
  * \param [in] args Additional arguments for later format specifications
- */ 
+ */
 template<typename T, typename... Targs>
 void format_(std::ostream & os, FormatInfo & fi,
-             const std::string & str, const T & arg, const Targs&... args)
+             const std::string & str, T arg, Targs... args)
 {
-    static_assert(detail::ValidPrintfArg<typename std::decay<T>::type>::value == true,
+    // just in case
+    typedef typename std::remove_cv<T>::type nocv_T;
+    typedef typename std::decay<nocv_T>::type decay_T;
+    typedef typename std::remove_reference<decay_T>::type actual_T;
+
+    static_assert(ValidPrintfArg<actual_T>::value == true,
                   "Invalid argument type passed to Format");
 
-    if(get_next_format_(fi, str)) 
+    // Obtain the next format in the string.
+    // If there aren't any, that is a problem - we were passed
+    // more arguments!
+
+    if(get_next_format_(fi, str))
     {
         // after this, fi.format has been overwritten
-        handle_printf_(fi.format, fi.length, fi.spec, arg);
+        handle_fmt_(fi.format, fi.length, fi.spec, arg);
 
         os << fi.prefix << fi.format;
         format_(os, fi, fi.suffix, args...);
@@ -93,22 +110,28 @@ void format_(std::ostream & os, FormatInfo & fi,
 } // close namespace detail
 
 
-/* \brief Apply formatting to a string, outputting it to a stream
+
+/* \brief Apply formatting to a string, outputting it to an ostream
  *
  * \throw std::runtime_error if the correct number of arguments is not given or
  *        if the format string is badly formed
+ *
+ * \param [in] os The ostream to output to
+ * \param [in] fmt The format string
+ * \param [in] args Arguments to the format string
  */
 template<typename... Targs>
-void format_stream(std::ostream & os, const std::string & str, const Targs&... args)
+void format_stream(std::ostream & os, const std::string & fmt, Targs... args)
 {
     detail::FormatInfo fi;
 
-    //reserve space in the strings
-    fi.prefix.reserve(32);
-    fi.suffix.reserve(32);
+    // Reserve space in the strings
+    // These are just guesses, and should hold most substitutions
+    fi.prefix.reserve(64);
+    fi.suffix.reserve(64);
     fi.format.reserve(16);
 
-    detail::format_(os, fi, str, args...);
+    detail::format_(os, fi, fmt, args...);
 }
 
 
@@ -119,7 +142,7 @@ void format_stream(std::ostream & os, const std::string & str, const Targs&... a
  *        if the format string is badly formed
  */
 template<typename... Targs>
-std::string format_string(const std::string & str, const Targs&... args)
+std::string format_string(const std::string & str, Targs... args)
 {
     std::stringstream ss;
     format_stream(ss, str, args...);
@@ -128,6 +151,5 @@ std::string format_string(const std::string & str, const Targs&... args)
 
 
 
-} // close namespace vprintfcpp
+} // close namespace bpprint
 
-#endif

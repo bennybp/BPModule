@@ -9,6 +9,7 @@ list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/pybind11")
 list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/memwatch")
 list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/libtaskforce")
 list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/bphash")
+list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/bpprint")
 
 # And the find macros
 list(APPEND CMAKE_MODULE_PATH "${PULSAR_EXTERNAL_DIR}/cmake")
@@ -18,6 +19,7 @@ list(APPEND CMAKE_MODULE_PATH "${PULSAR_EXTERNAL_DIR}/cmake")
 find_package(memwatch REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(bphash REQUIRED)
+find_package(bpprint REQUIRED)
 find_package(libtaskforce REQUIRED)
 
 
@@ -50,15 +52,14 @@ list(APPEND PULSAR_CXX_INCLUDES @MPI_CXX_INCLUDE_PATH@)
 list(APPEND PULSAR_CXX_INCLUDES @PULSAR_CORE_PYTHON_INCLUDE_DIRS@)
 list(APPEND PULSAR_CXX_INCLUDES ${PYBIND11_INCLUDE_DIR})
 list(APPEND PULSAR_CXX_INCLUDES ${MEMWATCH_INCLUDE_DIR})
-list(APPEND PULSAR_CXX_INCLUDES ${LIBTASKFORCE_INCLUDE_DIRS})
-list(APPEND PULSAR_CXX_INCLUDES ${BPHASH_INCLUDE_DIR})
 target_include_directories(pulsar SYSTEM INTERFACE ${PULSAR_CXX_INCLUDES})
 
 
 #######################################
 # Add interface libraries to link to
 #######################################
-target_link_libraries(pulsar INTERFACE bphash 
+target_link_libraries(pulsar INTERFACE bphash
+                                       bpprint
                                        libtaskforce 
                                        @OpenMP_CXX_FLAGS@
 )

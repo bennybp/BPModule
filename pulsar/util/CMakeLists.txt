@@ -8,8 +8,5 @@ set(PULSAR_UTIL_FILES
             Time.cpp
             export.cpp
 
-            vprintfcpp/Format.cpp
-            vprintfcpp/Printf_wrap.cpp
-
             PARENT_SCOPE
    )
