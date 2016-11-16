@@ -29,7 +29,7 @@ inline std::string DnhMHSym(size_t n){
 inline Elem_t GenCnElems(size_t n){
     Elem_t Results;
     for(size_t i=1;i<n;++i){
-        std::pair<size_t,size_t> Frac=math::reduce(i,n);
+        std::pair<size_t,size_t> Frac=reduce(i,n);
         Results.insert(Rotation({0.0,0.0,1.0},Frac.second,Frac.first));
     }
     return Results;
@@ -49,7 +49,7 @@ inline Elem_t GenSnElems(size_t n){
     Elem_t Results=GenCnElems(Even?n/2:n);
     const size_t Max=(Even?n:2*n);
     for(size_t i=1;i<Max;i+=2){
-        std::pair<size_t,size_t> Frac=math::reduce(i,n);
+        std::pair<size_t,size_t> Frac=reduce(i,n);
         if(Frac==std::make_pair<size_t,size_t>(1,2))Results.insert(CoI);
         else if(Frac==std::make_pair<size_t,size_t>(1,1))
             Results.insert(MirrorPlane({0.0,0.0,1.0}));
@@ -62,7 +62,7 @@ inline Elem_t GenSnElems(size_t n){
 inline Elem_t GenCnhElems(size_t n){
     Elem_t Results=GenSnElems(n);
     if(n%2==0){//Have to manually get other S groups and Cn
-        std::set<size_t> Fs=math::factors(n);
+        std::set<size_t> Fs=factors(n);
         for(size_t Fi:Fs){
             Elem_t Temp=GenSnElems(Fi);
             Results.insert(Temp.begin(),Temp.end());
@@ -186,12 +186,12 @@ std::array<double,3> get_principle_axis(const Elem_t& Elems,size_t n){
         }
     //Want right eigenvector with eigenvalue 1
     NonSymmDiagReturn_t EigenSys=
-            math::NonSymmetricDiagonalize(PrincipleAxis->element_matrix,3);
+            NonSymmetricDiagonalize(PrincipleAxis->element_matrix,3);
     size_t Axis=2;//Will usually be the last eigenvector, but not always
     std::vector<std::complex<double>> Evs=get<0>(EigenSys);
     for(size_t i=3;i>0;--i){
-        if(math::are_equal(Evs[i-1].real(),1.0,1e-3)&&
-           math::are_equal(Evs[i-1].imag(),0.0,1e-3)){
+        if(are_equal(Evs[i-1].real(),1.0,1e-3)&&
+           are_equal(Evs[i-1].imag(),0.0,1e-3)){
             Axis=i-1;
             break;
         }

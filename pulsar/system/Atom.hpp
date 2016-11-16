@@ -20,7 +20,6 @@
 
 
 namespace pulsar {
-namespace system {
 
 /*! \brief A center in a system
  *
@@ -34,9 +33,9 @@ namespace system {
  * Data is stored within the Atom object, therefore copying will not
  * create aliases.
  *
- * Follows PointConcept via derivation from math::Point
+ * Follows PointConcept via derivation from Point
  */
-struct Atom : public math::Point
+struct Atom : public Point
 {
     public:
 
@@ -114,7 +113,7 @@ struct Atom : public math::Point
         void serialize(Archive & ar)
         {
             // we aren't serializing the base class, so we do this manually
-            ar(cereal::base_class<math::Point>(this), Z, isotope,
+            ar(cereal::base_class<Point>(this), Z, isotope,
                                                 mass, isotope_mass,
                                                 charge, multiplicity,
                                                 nelectrons, cov_radius,
@@ -211,15 +210,13 @@ Atom make_dummy_atom(const Atom & atom);
 bool is_dummy_atom(const Atom & atom);
 ///@}
 
-
-} // close namespace system
 } // close namespace pulsar
 
 ///Allows atoms to be hashed
 namespace std{
-    template<> struct hash<pulsar::system::Atom>
+    template<> struct hash<pulsar::Atom>
     {
-        size_t operator()(const pulsar::system::Atom& atom)const{
+        size_t operator()(const pulsar::Atom& atom)const{
             return bphash::convert_hash<size_t>(atom.my_hash());
         }
     };

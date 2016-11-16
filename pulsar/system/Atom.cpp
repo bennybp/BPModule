@@ -14,30 +14,21 @@
 #include "bphash/types/map.hpp"
 #include "bphash/types/vector.hpp"
 
-using namespace pulsar::output;
-
 namespace pulsar{
 
-namespace system {
 
 
 /////////////////////////////////////////
 // BasisInfo
 /////////////////////////////////////////
 
-PRAGMA_WARNING_PUSH
-PRAGMA_WARNING_IGNORE_SHADOW_MEMBER
-
-Atom::Atom(CoordType xyz, int Z, int isotope, double mass,
-           double isotope_mass, double charge, double multiplicity,
-           double nelectrons,double cov_radius, double vdw_radius)
-    : math::Point(xyz), Z(Z), isotope(isotope), mass(mass),
-      isotope_mass(isotope_mass), charge(charge), multiplicity(multiplicity),
-      nelectrons(nelectrons), cov_radius(cov_radius), vdw_radius(vdw_radius)
+Atom::Atom(CoordType xyz_, int Z_, int isotope_, double mass_,
+           double isotope_mass_, double charge_, double multiplicity_,
+           double nelectrons_,double cov_radius_, double vdw_radius_)
+    : Point(xyz_), Z(Z_), isotope(isotope_), mass(mass_),
+      isotope_mass(isotope_mass_), charge(charge_), multiplicity(multiplicity_),
+      nelectrons(nelectrons_), cov_radius(cov_radius_), vdw_radius(vdw_radius_)
 { }
-
-PRAGMA_WARNING_POP
-
 
 bool Atom::operator==(const Atom & rhs) const
 {
@@ -47,7 +38,7 @@ bool Atom::operator==(const Atom & rhs) const
     // order by the parts that are most likely to be different, since
     //   this should short-circuit on the first false comparison
     return Z == rhs.Z &&
-           static_cast<const math::Point>(*this) == static_cast<const math::Point>(rhs) &&
+           static_cast<const Point>(*this) == static_cast<const Point>(rhs) &&
            basis_sets == rhs.basis_sets &&
            isotope == rhs.isotope &&
            mass == rhs.mass &&
@@ -81,7 +72,7 @@ bphash::HashValue Atom::my_hash(void) const
 
 void Atom::hash(bphash::Hasher & h) const
 {
-    h(static_cast<const math::Point &>(*this),
+    h(static_cast<const Point &>(*this),
            Z, isotope,
            mass, isotope_mass,
            charge, multiplicity,
@@ -115,8 +106,8 @@ Atom create_atom(CoordType xyz, int Z, int isotope)
                 atomic_mass_from_z(Z),
                 isotope_mass_from_z(Z, isotope),
                 0,  //! \todo default charge?
-                math::numeric_cast<double>(atomic_multiplicity_from_z(Z)),
-                math::numeric_cast<double>(Z), // nelectrons = Z
+                numeric_cast<double>(atomic_multiplicity_from_z(Z)),
+                numeric_cast<double>(Z), // nelectrons = Z
                 covalent_radius_from_z(Z),
                 vdw_radius_from_z(Z)
                 );
@@ -171,7 +162,5 @@ bool is_point_charge(const Atom & atom)
     return atom.Z == POINTCHARGE_ATOM_Z;
 }
 
-
-} // close namespace system
 } // close namespace pulsar
 

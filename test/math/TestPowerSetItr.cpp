@@ -2,7 +2,7 @@
 #include <pulsar/math/PowerSetItr.hpp>
 
 using Comb_t=std::vector<int>;
-using PSItr_t=pulsar::math::PowerSetItr<Comb_t>;
+using PSItr_t=pulsar::PowerSetItr<Comb_t>;
 
 TEST_CLASS(TestPowerSetItr){
     Tester tester("Testing PowerSetItr Class C++ Interface");

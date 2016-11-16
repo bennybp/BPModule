@@ -14,14 +14,9 @@
 #include "bphash/types/memory.hpp"
 #include "bphash/types/vector.hpp"
 
-using pulsar::psr_assert;
-using pulsar::BasisSetException;
-
 /*! \todo std::max_element requires that the container not be empty. Clean that up */
 
 namespace pulsar{
-namespace system {
-
 
 BasisSet::BasisSet(size_t nshells, size_t nprim, size_t ncoef, size_t nxyz)
 {
@@ -367,13 +362,13 @@ BasisSet::const_iterator BasisSet::end(void) const
     return shells_.end();
 }
 
-size_t BasisSet::max_property(std::function<size_t(const BasisSetShell &)> func) const
+/*size_t BasisSet::max_property(std::function<size_t(const BasisSetShell &)> func) const
 {
     size_t m = 0;
     for(const auto & it : shells_)
         m = std::max(m, func(it));
     return m;
-}
+}*/
 
 BasisSet BasisSet::transform(BasisSet::TransformerFunc Transformer) const
 {
@@ -424,7 +419,7 @@ BasisSet BasisSet::shrink_fit(void) const
 
 void BasisSet::print(std::ostream & os) const
 {
-    using namespace pulsar::output;
+    using namespace pulsar;
 
     size_t nshell = n_shell();
 
@@ -452,6 +447,4 @@ void BasisSet::print(std::ostream & os) const
     print_output(os, "\n");
 }
 
-
-} // close namespace system
 } // close namespace pulsar

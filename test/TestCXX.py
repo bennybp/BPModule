@@ -7,7 +7,7 @@ mod_path=os.path.dirname(os.path.realpath(__file__))
 mod_path=os.path.join(mod_path,Test_Name+".so")
 
 def run():
-    minfo = psr.modulemanager.ModuleInfo()
+    minfo = psr.ModuleInfo()
     minfo.name=Test_Name
     minfo.base="Test_Base"
     minfo.path=mod_path

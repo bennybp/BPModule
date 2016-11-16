@@ -17,7 +17,6 @@
 
 
 namespace pulsar{
-namespace math{
 
 
 /*! \brief A simple class representing a Point
@@ -262,7 +261,7 @@ typedef PointT<double> Point;
 
 
 
-}}//End namespaces
+}//End namespaces
 
 #endif /* PULSAR_GUARD_POINT_HPP_ */
 

@@ -10,7 +10,6 @@ using pulsar::ModuleManagerException;
 
 
 namespace pulsar{
-namespace modulemanager {
 namespace detail {
 
 ///////////////////////////////////////
@@ -192,7 +191,6 @@ void ConstModuleFlatTreeIter::advance(void)
 
 
 } // close namespace detail
-} // close namespace modulemanager
 } // close namespace pulsar
 
 

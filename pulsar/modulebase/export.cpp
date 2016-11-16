@@ -4,28 +4,15 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-
+#include <pybind11/operators.h>
 #include "pulsar/modulebase/All.hpp"
 #include "pulsar/datastore/Wavefunction.hpp"
 #include "pulsar/modulemanager/ModuleManager.hpp"
 
-
-using pulsar::modulemanager::ModuleManager;
-using pulsar::modulemanager::ModuleInfo;
-using pulsar::datastore::OptionMap;
-
-
-
 namespace pulsar{
-namespace modulebase {
-namespace export_python {
 
-
-
-void export_pybind11(pybind11::module & mtop)
+void export_modulebase(pybind11::module & m)
 {
-    pybind11::module m = mtop.def_submodule("modulebase", "Base classes for all modules");
-
     ///////////////////////
     // Module Base classes
     ///////////////////////
@@ -67,9 +54,12 @@ void export_pybind11(pybind11::module & mtop)
     /////////////////////////
     pybind11::class_<NMerInfo> (m,"NMerInfo")
         .def(pybind11::init<>())
-        .def_readwrite("SN",&NMerInfo::SN)
-        .def_readwrite("NMer",&NMerInfo::NMer)
-        .def_readwrite("Weight",&NMerInfo::Weight)
+        .def(pybind11::init<const NMerInfo&>())
+        .def_readwrite("sn",&NMerInfo::sn)
+        .def_readwrite("nmer",&NMerInfo::nmer)
+        .def_readwrite("weight",&NMerInfo::weight)
+        .def(pybind11::self==pybind11::self)
+        .def(pybind11::self!=pybind11::self)
         ;
 
     pybind11::class_<SystemFragmenter, std::unique_ptr<SystemFragmenter>, SystemFragmenter_Py> sysfrag(m, "SystemFragmenter", mbase);
@@ -180,7 +170,6 @@ void export_pybind11(pybind11::module & mtop)
                 .def("hessian",&EnergyMethod::hessian)
                 ;
 }
-} // close namespace export_python
-} // close namespace modulebase
+
 } // close namespace pulsar
 

@@ -15,8 +15,6 @@
 
 
 namespace pulsar{
-namespace testing {
-
 
 
 /*! \brief An class not exported to python
@@ -41,7 +39,7 @@ struct FailObject
 template<typename T>
 int Testconvert_to_cpp(pybind11::object obj)
 {
-    return TestFunc(pulsar::python::convert_to_cpp<T>, obj);
+    return TestFunc(pulsar::convert_to_cpp<T>, obj);
 }
 
 
@@ -55,7 +53,7 @@ int Testconvert_to_cpp(pybind11::object obj)
 template<typename T>
 int Testconvert_to_py(const T & obj)
 {
-    return TestFunc(pulsar::python::convert_to_py<T>, obj);
+    return TestFunc(pulsar::convert_to_py<T>, obj);
 }
 
 
@@ -69,8 +67,8 @@ int Testconvert_to_py(const T & obj)
 template<typename T>
 void PyCppPy(pybind11::object obj)
 {
-    T t = python::convert_to_cpp<T>(obj);
-    pybind11::object obj2 = python::convert_to_py<T>(t);
+    T t = convert_to_cpp<T>(obj);
+    pybind11::object obj2 = convert_to_py<T>(t);
 }
 
 
@@ -88,9 +86,9 @@ void PyCppPy(pybind11::object obj)
 template<typename T>
 void PyCppPy_Fail(pybind11::object obj)
 {
-    T t = python::convert_to_cpp<T>(obj);
+    T t = convert_to_cpp<T>(obj);
     FailObject<T> fo{t};
-    pybind11::object obj2 = python::convert_to_py<FailObject<T>>(fo);
+    pybind11::object obj2 = convert_to_py<FailObject<T>>(fo);
 }
 
 
@@ -122,8 +120,6 @@ int TestPyCppPy_Fail(pybind11::object obj)
     return TestFunc(PyCppPy_Fail<T>, obj);
 }
 
-
-} // close namespace testing
 } // close namespace pulsar
 
 

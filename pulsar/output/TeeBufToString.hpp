@@ -13,8 +13,6 @@
 #include <stdexcept>
 
 namespace pulsar{
-namespace output {
-
 
 /*! \brief Stream buffer that tees output to a string
  *
@@ -83,8 +81,6 @@ class TeeBufToString : public std::streambuf
         std::string * str_;
 };      
 
-
-} // close namespace output
 } // close namespace pulsar
 
 

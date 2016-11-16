@@ -1,6 +1,6 @@
 import pytest
 
-from pybind11_tests import ExamplePythonTypes, ConstructorStats
+from pybind11_tests import ExamplePythonTypes, ConstructorStats, has_optional
 
 
 def test_static():
@@ -67,6 +67,14 @@ def test_instance(capture):
         list_result = instance.get_list_2()
         list_result.append('value2')
         instance.print_list_2(list_result)
+    assert capture.unordered == """
+        list item 0: value
+        list item 1: value2
+    """
+    with capture:
+        list_result = instance.get_list_2()
+        list_result.append('value2')
+        instance.print_list_2(tuple(list_result))
     assert capture.unordered == """
         list item 0: value
         list item 1: value2
@@ -248,3 +256,55 @@ def test_dict_api():
     from pybind11_tests import test_dict_keyword_constructor
 
     assert test_dict_keyword_constructor() == {"x": 1, "y": 2, "z": 3}
+
+
+def test_accessors():
+    from pybind11_tests import test_accessor_api, test_tuple_accessor, test_accessor_assignment
+
+    class SubTestObject:
+        attr_obj = 1
+        attr_char = 2
+
+    class TestObject:
+        basic_attr = 1
+        begin_end = [1, 2, 3]
+        d = {"operator[object]": 1, "operator[char *]": 2}
+        sub = SubTestObject()
+
+        def func(self, x, *args):
+            return self.basic_attr + x + sum(args)
+
+    d = test_accessor_api(TestObject())
+    assert d["basic_attr"] == 1
+    assert d["begin_end"] == [1, 2, 3]
+    assert d["operator[object]"] == 1
+    assert d["operator[char *]"] == 2
+    assert d["attr(object)"] == 1
+    assert d["attr(char *)"] == 2
+    assert d["missing_attr_ptr"] == "raised"
+    assert d["missing_attr_chain"] == "raised"
+    assert d["is_none"] is False
+    assert d["operator()"] == 2
+    assert d["operator*"] == 7
+
+    assert test_tuple_accessor(tuple()) == (0, 1, 2)
+
+    d = test_accessor_assignment()
+    assert d["get"] == 0
+    assert d["deferred_get"] == 0
+    assert d["set"] == 1
+    assert d["deferred_set"] == 1
+    assert d["var"] == 99
+
+
+@pytest.mark.skipif(not has_optional, reason='no <experimental/optional>')
+def test_optional():
+    from pybind11_tests import double_or_zero, half_or_none
+
+    assert double_or_zero(None) == 0
+    assert double_or_zero(42) == 84
+    pytest.raises(TypeError, double_or_zero, 'foo')
+
+    assert half_or_none(0) is None
+    assert half_or_none(42) == 21
+    pytest.raises(TypeError, half_or_none, 'foo')

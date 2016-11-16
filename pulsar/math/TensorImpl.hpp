@@ -9,7 +9,6 @@
 #include<pulsar/util/Serialization.hpp>
 
 namespace pulsar{
-namespace math {
 
 ///Provides the minimal interface a tensor must implement to work with Pulsar
 template<size_t Rank, typename DataType>
@@ -93,13 +92,13 @@ std::ostream& TensorImpl<Rank,DataType>::print(std::ostream& os)const
           <<std::endl;
         return os;
     }
-    for(size_t i: pulsar::util::Range<0>(Rank==2?sizes[0]:1))
+    for(size_t i: pulsar::Range<0>(Rank==2?sizes[0]:1))
     {
         std::array<size_t,Rank> Idx;
         if(Rank==2)Idx[0]=i;
         os<<"{"<<std::endl;
         int counter=0;
-        for(size_t j: pulsar::util::Range<0>(sizes[Rank-1]))
+        for(size_t j: pulsar::Range<0>(sizes[Rank-1]))
         {
             Idx[Rank-1]=j;
             os<<std::setprecision(13)<<get_value(Idx);
@@ -125,7 +124,7 @@ typedef TensorImpl<2, double> MatrixDImpl;
 typedef TensorImpl<1, double> VectorDImpl;
 using PyMatrixDImpl=TensorImpl_Py<2,double>;
 using PyVectorDImpl=TensorImpl_Py<1,double>;
-} // close namespace math
+
 } // close namespace pulsar
 
 

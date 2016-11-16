@@ -13,7 +13,6 @@
 
 
 namespace pulsar {
-namespace datastore {
 namespace detail {
 
 
@@ -26,9 +25,9 @@ template<typename T>
 std::vector<std::string> OptToString(const T & opt)
 {
     if(std::is_integral<T>::value)
-        return {util::format_string("%-12?", opt)};
+        return {format_string("%-12?", opt)};
     else
-        return {util::format_string("%-12.8?", opt)};
+        return {format_string("%-12.8?", opt)};
 }
 
 /*! \brief Converts an option value to a string
@@ -94,6 +93,5 @@ std::vector<std::string> OptToString(const std::map<T, U> & opt)
 
 
 } // close namespace detail
-} // close namespace datastore
 } // close namespace pulsar
 

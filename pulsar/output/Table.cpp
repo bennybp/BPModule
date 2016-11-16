@@ -4,11 +4,11 @@
 #include<limits>
 #include "pulsar/output/Table.hpp"
 #include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/math/Cast.hpp"
 
-using pulsar::GeneralException;
 typedef std::vector<char> Border_t;
 namespace pulsar{
-    namespace output{
+
         typedef std::vector<Cell> Col_t;
         typedef std::vector<Col_t> Row_t;
 
@@ -80,7 +80,7 @@ namespace pulsar{
                 <<Data_
                     <<std::string((Pad-Pad%2)/2,' ');
             else if(Align_==LEFT||Align_==RIGHT)
-                Result<<std::setfill(' ')<<std::setw(Width)
+                Result<<std::setfill(' ')<<std::setw(numeric_cast<int>(Width))
                 <<(Align_==LEFT?std::left:std::right)<<Data_;
             return Result.str();
         }
@@ -159,9 +159,6 @@ namespace pulsar{
             return DaTable_[RowI][ColI];
         }
 
-
-
-    }
 }//End namespaces
 
 

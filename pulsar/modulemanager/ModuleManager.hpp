@@ -19,8 +19,6 @@
 
 
 namespace pulsar{
-namespace modulemanager {
-
 
 // forward declaration
 class SupermoduleLoaderBase;
@@ -127,7 +125,7 @@ class ModuleManager
             if(!umbptr->IsType<T>())
                 throw ModuleCreateException("Module for this key is not of the right type",
                                                        "modulekey", modulekey,
-                                                       "expectedtype", util::demangle_cpp_type<T>());
+                                                       "expectedtype", demangle_cpp_type<T>());
 
             // create the ModulePtr type
             ModulePtr<T> mod(std::move(umbptr));
@@ -341,7 +339,7 @@ class ModuleManager
 
 
         /*! \brief All of the cache data */
-        datastore::CacheMap cachemap_;
+        CacheMap cachemap_;
 
 
         /*! \brief Obtain stored internal info for a module (via module key)
@@ -392,7 +390,5 @@ pybind11::object copy_key_change_options_py(const std::string& modulekey,
     const std::map<std::string,pybind11::object>& options);
 
 
-
-} // close namespace modulemanager
 } // close namespace pulsar
 

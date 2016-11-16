@@ -12,7 +12,6 @@
 
 
 namespace pulsar {
-namespace util {
 
 std::string timestamp_string(void)
 {
@@ -29,7 +28,5 @@ std::string timestamp_string(void)
     return std::string(buf);
 }
 
-
-} // close namespace util
 } // close namespace pulsar
 

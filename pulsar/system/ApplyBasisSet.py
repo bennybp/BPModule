@@ -1,9 +1,5 @@
 import os
 import functools
-from . import BasisSetParsers
-import pulsar
-from pulsar.exception import GeneralException
-
 
 def transform_name(bsname):
     return bsname.replace("*", "s")

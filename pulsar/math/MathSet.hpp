@@ -5,15 +5,13 @@
  * Created on January 22, 2016, 11:11 AM
  */
 
-#ifndef PULSAR_GUARD_MATH__MATHSET_HPP_
-#define PULSAR_GUARD_MATH__MATHSET_HPP_
+#pragma once
 
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/math/Universe.hpp"
 #include "pulsar/util/IterTools.hpp"
 #include <iterator>
 namespace pulsar{
-namespace math {
 
 template<typename T,typename U> class MathSet;
 
@@ -120,13 +118,24 @@ public:
     explicit MathSet(std::shared_ptr<const Universe_t> AUniverse, bool fill)
           : Universe_(AUniverse)
     {
-            for(size_t i : util::Range<0>(fill?AUniverse->size():0))
+            for(size_t i : Range<0>(fill?AUniverse->size():0))
                 Elems_.insert(i);
     }
     
     MathSet(const My_t&) = default;///<copies indices, aliases universe
-    MathSet(My_t&&) = default;///<moves, but universe is still aliased
-
+    
+    ///Default, but compiler bug prevents using = default
+    MathSet(My_t&& RHS)
+      :Universe_(std::move(RHS.Universe_)),Elems_(std::move(RHS.Elems_)){}
+    
+    ///Copies universe and optionally fills it
+    MathSet(const My_t& RHS,bool fill):
+        MathSet(RHS.Universe_,fill)
+    {
+    }
+    
+    
+    
     /*! \brief For serialization only
      *
      * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
@@ -173,7 +182,10 @@ public:
 
     ///@{
     ///Basic accessors
-
+    
+    ///Clears Elems does not delete universe
+    void clear(void){Elems_.clear();}
+    
     ///Returns the number of elements in this set
     size_t size(void)const noexcept{return Elems_.size();}
 
@@ -225,7 +237,7 @@ public:
     ///Makes this the union of this and \p RHS
     My_t& union_assign(const My_t & RHS)
     {
-        SameUniverse(RHS);
+        if(!SameUniverse(RHS))throw MathException("Incompatible universes");
         Elems_.insert(RHS.Elems_.begin(), RHS.Elems_.end());
         return *this;
     }
@@ -293,7 +305,7 @@ public:
      */
     bool is_subset_of(const My_t& RHS)const
     {
-        if(Universe_ != RHS.Universe_) return false;
+        if(!SameUniverse(RHS)) return false;
         for(const auto & it : *this)
             if(!RHS.count(it))
                 return false;
@@ -348,7 +360,8 @@ public:
      */
     bool operator==(const My_t& RHS)const
     {
-        return (Universe_==RHS.Universe_ && Elems_ == RHS.Elems_);
+        return ((Universe_==RHS.Universe_||*Universe_==*RHS.Universe_)
+                && Elems_ == RHS.Elems_);
     }
 
     /** \brief Returns true if this does not equal other
@@ -462,12 +475,19 @@ private:
             throw ValueOutOfRange("Requested element is not in the universe");
     }
 
-    ///Same universe iff same pointer
+    /** \brief Determines if the universe of this and that of RHS are
+     *   compatible
+     *  
+     *   In order to use this set as the left side of a set operation like
+     *   union or intersection, the universe of this set must be the same as
+     *   that of \pRHS or every element in \pRHS must be in this's universe,
+     *   i.e. this's universe must be a superset of \pRHS's universe.
+     */
     bool SameUniverse(const My_t& RHS) const
     {
-        if(Universe_ != RHS.Universe_)
-            throw MathException("Sets have different universes");
-        return true;
+       return Universe_==RHS.Universe_ || 
+              Universe_->is_superset_of(*RHS.Universe_);
+               //->is_superset_of(*RHS.Universe_);
     }
 
     //! \name Serialization and Hashing
@@ -509,7 +529,7 @@ private:
 template<typename T,typename U>
 MathSet<T,U>& MathSet<T,U>::intersection_assign(const MathSet<T,U>& RHS)
 {
-        SameUniverse(RHS);
+        if(!SameUniverse(RHS))throw MathException("Universes are incompatible");
         if(&RHS==this)return *this;
         std::set<size_t> NewTemp;
         std::set_intersection(Elems_.begin(),Elems_.end(),
@@ -524,7 +544,7 @@ MathSet<T,U>& MathSet<T,U>::intersection_assign(const MathSet<T,U>& RHS)
 template<typename T,typename U>
 MathSet<T,U>& MathSet<T,U>::difference_assign(const MathSet<T,U>& RHS)
     {
-        SameUniverse(RHS);
+        if(!SameUniverse(RHS))throw MathException("Universes are incompatible");
         if(&RHS==this){
             Elems_=std::set<size_t>();
             return *this;
@@ -569,8 +589,5 @@ MATHSET_COMP(operator>=,is_superset_of)
 #undef MATHSET_OP2
 #undef MATHSET_OP
 
-}//End namespace math
 }//End namespace pulsar
-
-#endif /* PULSAR_GUARD_MATHSET_HPP_ */
 

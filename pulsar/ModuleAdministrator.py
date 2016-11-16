@@ -2,11 +2,10 @@ import sys
 import os
 import importlib
 
-from . import *
-
+from pulsar import *
 
 # TODO - document me
-class ModuleAdministrator(modulemanager.ModuleManager):
+class ModuleAdministrator(ModuleManager):
     """The Python interface to the ModuleManager.
 
     Attributes:
@@ -33,7 +32,7 @@ class ModuleAdministrator(modulemanager.ModuleManager):
 
 
     def load_module(self, supermodule, modulename, modulekey):
-        output.print_global_output("Importing {} module from supermodule {} under key {}\n".format(modulename, supermodule, modulekey))
+        print_global_output("Importing {} module from supermodule {} under key {}\n".format(modulename, supermodule, modulekey))
 
         if supermodule == "" or supermodule == None:
             raise exception.GeneralException("Empty supermodule given to LoadModule") 
@@ -65,31 +64,32 @@ class ModuleAdministrator(modulemanager.ModuleManager):
             # check options, etc
             check_supermodule(spath)
 
-        except exception.GeneralException as e:
+        except GeneralException as e:
             raise e
 
         except Exception as e:
-            raise exception.GeneralException("Unable to load supermodule",
+            raise GeneralException("Unable to load supermodule",
                                              "supermodule", supermodule,
                                              "exception", str(e)) from None
 
         # Check to see if this supermodule actually contains
         # the desired module
         if not modulename in m.minfo:
-            raise exception.GeneralException("Supermodule doesn't have module!",
+            raise GeneralException("Supermodule doesn't have module!",
                                              "supermodule", supermodule,
                                              "modulename", modulename)
 
 
+        
         # Extract the module info for the desired module
         minfo = m.minfo[modulename]
 
-        output.print_global_output("\n")
-        output.print_global_output("Loading module {} v{}\n".format(modulename, minfo["version"]))
+        print_global_output("\n")
+        print_global_output("Loading module {} v{}\n".format(modulename, minfo["version"]))
 
         # Create a c++ moduleinfo structure
         # And fill it
-        cppminfo = modulemanager.ModuleInfo()
+        cppminfo = ModuleInfo()
         cppminfo.name = modulename
         cppminfo.path = spath
         cppminfo.type = minfo["type"]
@@ -103,8 +103,8 @@ class ModuleAdministrator(modulemanager.ModuleManager):
             b = minfo["base"]
             cppminfo.base = b
 
-            if b in modulebase.base_options:
-                dtmp = modulebase.base_options[b].copy()
+            if b in base_options:
+                dtmp = base_options[b].copy()
 
                 # Update with the options in modinfo, which
                 # will overwrite the defaults if necessary
@@ -128,8 +128,8 @@ class ModuleAdministrator(modulemanager.ModuleManager):
         # Now we can actually load it
         super(ModuleAdministrator, self).load_module_from_minfo(cppminfo, modulekey)
 
-        output.print_global_debug("Imported module name {} from {} and associated key {}\n".format(modulename, supermodule, modulekey))
-        output.print_global_output("\n")
+        print_global_debug("Imported module name {} from {} and associated key {}\n".format(modulename, supermodule, modulekey))
+        print_global_output("\n")
 
 
     def sanity_check(self):

@@ -13,8 +13,6 @@
 
 
 namespace pulsar{
-namespace system {
-
 
 /*! \brief Type of basis shells */
 enum class ShellType
@@ -40,8 +38,6 @@ inline const char * ShellTypeString(ShellType type)
     }
 }
 
-
-} // close namespace system
 } // close namespace pulsar
 
 

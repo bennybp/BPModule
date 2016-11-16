@@ -23,7 +23,6 @@
 
 
 namespace pulsar{
-namespace math {
 
 /** \brief A class that implements a mathematical ordered set.
  * 
@@ -458,6 +457,6 @@ UNIVERSE_COMP(operator<,is_proper_subset_of)
 #undef UNIVERSE_COMP
 #undef UNIVERSE_OP
 #undef UNIVERSE_ASSIGN
-}
+
 }//End namespaces
 

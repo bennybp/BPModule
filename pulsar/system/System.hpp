@@ -1,6 +1,7 @@
 /*\file
  *
- * \brief The system class (header)
+ * \brief Declares the System class as well as a host of functions for
+ * performing common tasks associated with the system.
  */
 
 
@@ -11,6 +12,7 @@
 #include <unordered_set>
 #include "pulsar/system/Atom.hpp"
 #include "pulsar/system/Space.hpp"
+#include "pulsar/system/BasisSet.hpp"
 #include "pulsar/math/MathSet.hpp"
 #include "pulsar/math/PointManipulation.hpp"
 #include "bphash/Hasher.hpp"
@@ -18,66 +20,40 @@
 
 
 // Instantiated in the cpp file
-extern template class pulsar::math::Universe<pulsar::system::Atom>;
-extern template class pulsar::math::MathSet<pulsar::system::Atom>;
+extern template class pulsar::Universe<pulsar::Atom>;
+extern template class pulsar::MathSet<pulsar::Atom>;
 
-
-// forward declare
-namespace pulsar{
-namespace system {
-class BasisSet;
-class Space;
-}
-namespace util {
-class Hash;
-}
-}
 
 
 namespace pulsar{
-namespace system {
-
 
 /*! \brief All atoms that may be used in a group of Systems */
-typedef math::Universe<Atom> AtomSetUniverse;
+typedef Universe<Atom> AtomSetUniverse;
 
-/*! \brief A collection of Atoms
- *
- * Once atoms are placed in a System (or AtomSetUniverse), they
- * cannot be changed in any way. This allows for consistency when
- * atoms are shared among may System objects (via the universe).
- * Changing the Atoms themselves require making copies of the Atom.
- * This can be accomplished easily through the System::transform function,
- * which returns a new System containing a new universe. This new system
- * is completely divorced from the original and does not share any resources
- * with it.
- *
- * The only thing modifiable about a non-const System is which Atoms (from
- * of its universe) it contains.
- * Assignment and copy construction will result in Systems sharing the
- * universe, but with separate lists of atoms they contain.
- *
- * This System object will behave like a MathSet, allowing for
- * unions, intersections, complements, etc.
+/*! \brief A collection of Atoms and the space around them
+ * 
+ *  This class is described in detail in the page 
+ *  [How to Make and Use Systems](@ref systems).  The main
+ *  take away from a developer standpoint is that only the set of
+ *  atoms is private.  This is because adding/removing atoms modifies the
+ *  properties of the system as a whole (charge,mass, etc.).  Consequentially,
+ *  we need thin wrappers around the member functions of the MathSet class.
  */
 class System {
-private:
-    //! How atoms are actually stored in the System
-    typedef math::MathSet<Atom> AtomSet;
+private:    
+    using AtomSet=MathSet<Atom>;//!< Type of atom storage container
+    AtomSet atoms_;//!< Actual set of atoms
 
-    //! Actual storage of all the atoms
-    AtomSet atoms_;
+    /*! \brief Construct a system given a universe
+     *
+     * The universe will be shared with the data that was passed in
+     *
+     * \param [in] universe The universe this system should use 
+     * \param [in] fill If true system contains all the elements of the universe
+     */
+    explicit System(std::shared_ptr<const AtomSetUniverse> universe, bool fill);
 
-    double charge_; //!< Total charge on this system
-    double multiplicity_; //!< Total multiplicity of the system
-    double nelectrons_; //!< Total number of electrons in the system 
     
-    Space Space_;//!< The space this system lives in
-
-    // For use from transformations, etc
-    System(const AtomSet & atoms);
-
-
     /* \brief Sets charge, multiplicity, and nelectrons as determined from the Atoms in this set */
     void SetDefaults_(void);
 
@@ -91,50 +67,30 @@ private:
     template<class Archive>
     void serialize(Archive & ar)
     {
-        ar(atoms_, charge_, multiplicity_, nelectrons_);
+        ar(atoms_, mass, charge, multiplicity, nelectrons);
     }
 
     void hash(bphash::Hasher & h) const;
-
+    
     ///@}
 
 public:
     
+    using value_type=AtomSet::value_type;///< The type of an atom
+    using const_iterator=AtomSet::const_iterator;///< Iterator over atoms
+    using SelectorFunc=AtomSet::SelectorFunc;///<\copydoc MathSet::SelectorFunc
+    using TransformerFunc=AtomSet::TransformerFunc;///<\copydoc MathSet::TransformerFunc
+
+    double mass;   //!<Total mass of the system
+    double charge; //!< Total charge on this system
+    double multiplicity; //!< Total multiplicity of the system
+    double nelectrons; //!< Total number of electrons in the system 
+    Space space;//!< The space this system lives in
     
-    typedef AtomSet::value_type value_type;
-    typedef AtomSet::const_iterator const_iterator;
-
-    /*! A function or functor that selects Atoms from this System
-     * 
-     * Takes a `const Atom &` as an argument and returns true if it
-     * should be included in a new System
-     */
-    typedef AtomSet::SelectorFunc SelectorFunc;
-
-    /*! A function or functor that transforms Atoms from this System
-     * 
-     * Takes a `const Atom &` as an argument and returns a new Atom
-     */
-    typedef AtomSet::TransformerFunc TransformerFunc;
-
-
-    /*! \brief Construct a system given a universe
-     *
-     * The universe will be shared with the data that was passed in
-     *
-     * \param [in] universe The universe this system should use 
-     * \param [in] fill Make this system contain all the elements of the universe
-     */
-    explicit System(std::shared_ptr<const AtomSetUniverse> universe, bool fill);
-
-    /*! \brief Construct a system given a universe
-     * 
-     * The data from the universe will be copied.
-     *
-     * \param [in] universe The universe this system should use 
-     * \param [in] fill Make this system contain all the elements of the universe
-     */
+    ///Copies the atoms in \p universe and add the atoms if \p fill is true
     explicit System(const AtomSetUniverse& universe, bool fill);
+    ///Takes ownership of atoms in \p universe and adds them if \p fill is true
+    explicit System(AtomSetUniverse&& universe,bool fill);
 
     /*! \brief For serialization only
      * 
@@ -151,102 +107,48 @@ public:
     System & operator=(const System & rhs) = default;
     System & operator=(System && rhs) = default;
 
+    /** \brief Copies a system and optionally fills it
+     * 
+     * 
+     *  \warning This constructor with \p fill set to true is, in general, not 
+     *  the same as the copy constructor becasue rhs.atoms_ may include some
+     *  intermeidate set of atoms between empty and the universe
+     */
+    System(const System& rhs,bool fill)
+            :System(rhs.atoms_.get_universe(),fill)
+    {
+    }
 
     /*! \name General System properties
      */
     ///@{ 
-
-    /*! \brief Return the number of Atoms in the System (NOT the Universe) */
-    size_t size(void) const;
-
-    /*! \brief Get the charge of the system */
-    double get_charge(void) const;
+    void clear();///< Clears the atoms in this system, NOT universe
     
-    /*! \brief Set the charge of the system */
-    void set_charge(double charge);
+    size_t size(void) const;///< Returns atoms in system NOT universe
 
-    /*! \brief Get the charge of the system as determined by summing
-     *         the charges on all atoms */
-    double get_sum_charge(void) const;
+    double get_sum_charge(void) const;///< Returns sum of charg on each atom
 
-    /*! \brief Get the number of electrons in the system */
-    double get_n_electrons(void) const;
+    double get_sum_n_electrons(void) const;///< Returns sum of each atoms' electrons
     
-    /*! \brief Set the number of electrons in the system */
-    void set_n_electrons(double nelectrons);
+    double get_sum_mass(void) const;///< Returns the sum of the atoms' masses
 
-    /*! \brief Get the number of electrons in the system as
-     *         determined by summing the number of electrons for all atoms*/
-    double get_sum_n_electrons(void) const;
+    bool count(const Atom& AnAtom)const;///< Returns true if atom is in system
 
-    /*! \brief Get the multiplicity of the System */
-    double get_multiplicity(void) const;
+    bool compare_info(const System & RHS)const;///<Compares data not in Space or atoms
 
-    /*! \brief Set the multiplicity of the System */
-    void set_multiplicity(double m);
-    
-    /*! \brief Returns the space associated with the system*/
-    Space get_space(void) const;
-    
-    /*! \brief Sets the space associated with the system*/
-    void set_space(const Space& space);
-
-    ///Returns true if the system contains the atom
-    bool count(const Atom& AnAtom)const;
-
-    ///Compares the general information for the system (charge, etc)
-    bool compare_info(const System & RHS)const;
-
-
-    /*! \brief Obtain a hash of this system */
-    bphash::HashValue my_hash(void) const;
+    bphash::HashValue my_hash(void) const;///< Returns hash of System
 
     ///@}
 
+    std::ostream& print(std::ostream & os) const;
 
-    /* printing
-     * \todo What to do about printing
-     */
-    std::string to_string(void) const;
-
-
-    void print(std::ostream & os) const;
-
-
-    /*! \name Iteration over atoms
-     *  
-     *  As long as a system has not been modified (i.e. an atom added or
-     *  deleted) the iteration order is defined.  The atom that you get first
-     *  will always be first, the atom you get second, will be second, etc.
-     */
     ///@{
 
     /*! \brief Return an iterator to the beginning of this system (first atom) */
-    const_iterator begin(void) const
-    {
-        return atoms_.begin();
-    }
+    const_iterator begin(void) const{return atoms_.begin();}
 
     /*! \brief Return an iterator to the end of this system (just past the last atom) */
-    const_iterator end(void) const
-    {
-        return atoms_.end();
-    }
-
-    ///@}
-
-
-    /*! \name Calculated properties */
-    ///@{
-
-    /*! \brief Find the center of mass
-     * 
-     * Uses atomic masses (abundance-weighted isotope masses)
-     */
-    math::Point center_of_mass(void) const;
-
-    /*! \brief Find the center of nuclear charge */
-    math::Point center_of_nuclear_charge(void) const;
+    const_iterator end(void) const{return atoms_.end();}
 
     ///@}
 
@@ -290,15 +192,19 @@ public:
     ///For compatability with STL algorithms
     template<typename T>
     System & insert(const T&,Atom&& atom){
-        return this->insert(atom);
+        return this->insert(std::move(atom));
     }
     
-
+    ///This becomes union of this and RHS
     System & union_assign(const System& RHS);
-    System set_union(const System& RHS) const;
+    System set_union(const System& RHS) const;///<Returns union of this and RHS
+    ///This becomes intersection of this and RHS
     System & intersection_assign(const System& RHS);
+    ///Returns intersection of this and RHS
     System intersection(const System& RHS) const;
+    ///This becomes difference of this and RHS
     System & difference_assign(const System& RHS);
+    ///Returns the set difference of this and RHS
     System difference(const System& RHS) const;
     
     /*! \brief Return all atoms that are in the universe but not in this system */
@@ -352,41 +258,11 @@ public:
      */
     bool is_superset_of(const System& RHS) const;
 
-    /*! \brief Return a subset of atoms in the system */
-    System partition(SelectorFunc selector) const;
-
-    
-    ///@}
-
-    /** \name Operator overloads
-     */
-    System& operator+=(const System& rhs);
-    System operator+(const System& rhs)const;
-    System& operator/=(const System& rhs);
-    System operator/(const System& rhs)const;
-    System& operator-=(const System& rhs);
-    System operator-(const System& rhs)const;
-    bool operator<=(const System& rhs)const;
-    bool operator<(const System& rhs)const;
-    bool operator>=(const System& rhs)const;
-    bool operator>(const System& rhs)const;
-
-
-
-    /** \name System comparers
-     * 
-     *  Potential Gotcha:  Always compare for what you care about.  For example,
-     *  if you want to know if system A is a subset of another system B don't
-     *  negate B<A because "B is not a subset of A" does not imply that
-     *  "A is a subset of B" (they may have no relation)
-     *  
-     */
-    ///@{
-
     /** \brief Returns true if this set equals other
      * 
      *   We define equality as having the same atoms, the same charge,
-     *   the same multiplicity, and the same number of electrons
+     *   the same multiplicity, the same mass, and the same number of electrons.
+     *   We override MathSet's requirement for the same universes.
      * 
      *   \param[in] RHS The other System to compare to
      *   \return True if this set equals other
@@ -405,7 +281,10 @@ public:
     {
         return !(*this == RHS);
     }
-
+    
+    /*! \brief Return a subset of atoms in the system */
+    System partition(SelectorFunc selector) const;
+    
     ///@}
 
 
@@ -436,59 +315,65 @@ public:
     /*! \brief Perform a generic transformation to atoms in the system */
     System transform(TransformerFunc Transformer) const;
 
-    /*! \brief translate the system
-     * 
-     * \tparam VectorType A type corresponding to a VectorConcept
-     */
-    template<typename VectorType>
-    System translate(const VectorType & vec) const
-    {
-        return transform(std::bind(math::translate_point_copy<Atom, VectorType>, std::placeholders::_1, vec));
-    }
-
-    /*! \brief rotates the system point by point
-     * 
-     *  Given a rotation matrix R, this function takes the point from the
-     *  column space to the row space.
-     * 
-     * \tparam VectorType A type corresponding to a MatrixConcept
-     */
-    template<typename MatrixType>
-    System rotate(const MatrixType & mat) const
-    {
-        return transform(std::bind(math::rotate_point_copy<Atom, MatrixType>, std::placeholders::_1, mat));
-    }
-
-
     /*! \brief Obtain the universe in use by this system
      */
-    std::shared_ptr<const AtomSetUniverse> get_universe(void) const
-    {
-        return atoms_.get_universe();
-    }
+    std::shared_ptr<const AtomSetUniverse> get_universe(void) const;
 
     /*! \brief Obtain the atoms from this system as a new universe
      * 
      * The universe is not linked to this system in any way. Other information
      * (such as symmetry, etc) is obviously not copied.
      */
-    AtomSetUniverse as_universe(void) const
-    {
-        return atoms_.as_universe();
-    }
+    AtomSetUniverse as_universe(void) const;
 
     ///@}
 };
 
+/*! \brief Finds the center of mass of \p sys
+ * 
+ * Uses atomic masses (abundance-weighted isotope masses)
+ */
+Point center_of_mass(const System& sys);
+
+/*! \brief Finds the center of nuclear charge of \p sys*/
+Point center_of_nuclear_charge(const System& sys);
+
+/*! \brief translate the system
+ * 
+ * \tparam VectorType A type corresponding to a VectorConcept
+ */
+template<typename VectorType>
+System translate(const System& Sys,const VectorType & vec)
+{
+    return Sys.transform(std::bind(translate_point_copy<Atom, VectorType>, 
+            std::placeholders::_1, vec));
+}
+
+/*! \brief rotates the system point by point
+ * 
+ *  Given a rotation matrix R, this function takes the point from the
+ *  column space to the row space.
+ * 
+ * \tparam VectorType A type corresponding to a MatrixConcept
+ */
+template<typename MatrixType>
+System rotate(const System& Sys,const MatrixType & mat)
+{
+    return Sys.transform(std::bind(rotate_point_copy<Atom, MatrixType>, 
+            std::placeholders::_1, mat));
+}
+
+///Type of a distance matrix
 typedef std::unordered_map<std::pair<Atom,Atom>,double> DistMat_t;
 
 ///Returns the distance between each pair of atoms in sys
 DistMat_t get_distance(const System& sys);
 
-
+///Type of a connectivity table
 typedef std::unordered_map<Atom, std::unordered_set<Atom>> Conn_t;
+
 ///Returns connectivity data of sys, using covalent radii.  Atoms are considered
-///bonded if Tolerance*sum of covRaddii is greater than distance
+///bonded if Tolerance*(sum of covRaddii) is greater than distance
 Conn_t get_connectivity(const System& sys, double Tolerance = 1.20);
 
 /** \brief Given a molecule that has been translated to the center of mass
@@ -578,20 +463,40 @@ Conn_t get_connectivity(const System& sys, double Tolerance = 1.20);
 std::array<double,9> inertia_tensor(const System& Mol);
 
 
+///Allows a system to be printed with stream operators
 inline std::ostream& operator<<(std::ostream& os, const System& Mol)
 {
-    return os << Mol.to_string();
+    return Mol.print(os);
 }
 
 //! A map of systems (fragments, etc), MIM uses fact that this is ordered
 typedef std::map<std::string, System> SystemMap;
 
-///Helper function that converts a system to Angstroms
-//! \todo Unused?
+///Helper function that converts a system to Angstroms (for printing/debugging)
 System system_to_angstroms(const System& sys);
 
+///Operator overload of an assignment operation
+#define ASSIGN_OP(fxn,fxn2call)\
+inline System& fxn(System& lhs,const System& rhs){return lhs.fxn2call(rhs);}
 
-} // close namespace system
+///Operator overload of a const operation
+#define SYS_OP(rv,fxn,fxn2call)\
+inline rv fxn(const System& lhs,const System& rhs){return lhs.fxn2call(rhs);}
+
+ASSIGN_OP(operator+=,union_assign)
+ASSIGN_OP(operator/=,intersection_assign)
+ASSIGN_OP(operator-=,difference_assign)
+SYS_OP(System,operator+,set_union)
+SYS_OP(System,operator/,intersection)
+SYS_OP(System,operator-,difference)
+SYS_OP(bool,operator<=,is_subset_of)
+SYS_OP(bool,operator<,is_proper_subset_of)
+SYS_OP(bool,operator>=,is_superset_of)
+SYS_OP(bool,operator>,is_proper_superset_of)
+
+#undef SYS_OP
+#undef ASSIGN_OP
+
 } // close namespace pulsar
 
 

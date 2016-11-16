@@ -2,7 +2,7 @@
 #include <pulsar/math/CombItr.hpp>
 
 using Comb_t=std::vector<int>;
-using CombItr_t=pulsar::math::CombItr<Comb_t>;
+using CombItr_t=pulsar::CombItr<Comb_t>;
 
 TEST_CLASS(TestCombItr){
     Tester tester("Testing CombItr Class C++ Interface");

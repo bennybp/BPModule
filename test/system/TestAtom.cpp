@@ -1,7 +1,7 @@
 #include "TestCXX.hpp"
 #include <pulsar/system/Atom.hpp>
 
-using namespace pulsar::system;
+using namespace pulsar;
 
 TEST_CLASS(TestAtom){
     Tester tester("Testing the Atom class");
@@ -32,11 +32,11 @@ TEST_CLASS(TestAtom){
     Atom U=create_atom({0.0,0.0,0.0},92);
     U=std::move(H4);
     tester.test("move assignment works",U,H);
-    const std::string atom_hash="c940be872d95842208f820967bfabe16";
-    tester.test("hash works",atom_hash,bphash::hash_to_string(H.my_hash()));
-    tester.test("hash works 1",atom_hash,bphash::hash_to_string(U.my_hash()));
-    tester.test("hash works 2",atom_hash,bphash::hash_to_string(H2.my_hash()));
-    tester.test("hash works 3",atom_hash,bphash::hash_to_string(D.my_hash()));
+
+    tester.test("hash works",H.my_hash(),U.my_hash());
+    tester.test("hash works 1",H.my_hash(),H2.my_hash());
+    tester.test("hash works 2",H.my_hash(),D.my_hash());
+
     
     Atom GH=make_ghost_atom(H2);
     tester.test("ghost works",true,is_ghost_atom(GH));

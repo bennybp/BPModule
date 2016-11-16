@@ -22,7 +22,6 @@ template<typename T,size_t L> class array;
 }
 
 namespace pulsar {
-namespace system {
 
 ///Given a universe of atoms, \p DaU, in fractional coordinates and their space,
 ///\p DaSpace, converts the fractional coordinates to Cartesian coordinates
@@ -77,6 +76,6 @@ AtomSetUniverse CleanUC(const AtomSetUniverse& UC,
         const std::array<double,3>& Sides
       );
 
-}}//End namespace pulsar
+}//End namespace pulsar
 #endif /* PULSAR_GHUARD_CRYSTALFUNCTIONS_HPP */
 

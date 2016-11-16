@@ -26,14 +26,13 @@
 
 #define DECLARE_SERIALIZATION_FRIENDS \
     friend class cereal::access; \
-    template<typename NoShadowT> friend class pulsar::util::detail::StdStreamArchive;
+    template<typename NoShadowT> friend class pulsar::detail::StdStreamArchive;
 
 
 //! \todo There is an extra copy that in to_byte_array (ie, data -> sstream -> vector).
 //        This could be fixed with a custom stream buffer that writes to a std::vector
 
 namespace pulsar{
-namespace util {
 
 /*! \brief Convert a c++ object to a byte array
  *
@@ -128,9 +127,6 @@ struct SerializeCheck<std::map<T, V>> : public std::integral_constant<bool, Seri
                                                                              SerializeCheck<V>::value> { };
 
 
-
-
-} // close namespace util
 } // close namespace pulsar
 
 #endif

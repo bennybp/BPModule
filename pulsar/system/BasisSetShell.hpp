@@ -13,7 +13,6 @@
 #include "bphash/Hasher.hpp"
 
 namespace pulsar{
-namespace system {
 
 // for friend
 class BasisSet;
@@ -34,6 +33,10 @@ class BasisSetShell : public BasisShellBase
     /*
      * Since this class is meant to be paired with a basis set, it is not
      * meant to be serialized by itself
+     * 
+     * RMR- Should the main constructor be made protected/private ?  I'm under
+     * the impression noone besides the basis set should be making instances of
+     * this class
      */
     public:
 
@@ -88,14 +91,27 @@ class BasisSetShell : public BasisShellBase
             return CoordType{xyz_[0], xyz_[1], xyz_[2]};
         }
 
-        /// Set the coordinates of the shell
-        void set_coords(const CoordType coords) const
+        /* Set the coordinates of the shell
+         RMR-If you only get thes from BasisSets you can't change the coords
+         * 
+         void set_coords(const CoordType coords) const
         {
             xyz_[0] = coords[0];
             xyz_[1] = coords[1];
             xyz_[2] = coords[2];
         }
+         
+        /// Set a single coordinate of the shell
+        void set_coord(unsigned int i, double val)
+        {
+            assert_xyz_ptr_();
+            validate_xyz_idx_(i);
+            xyz_[i] = val;
+        } 
+          
+         
 
+        */ 
         /// Get a single coordinate of the shell
         double get_coord(unsigned int i) const
         {
@@ -104,13 +120,7 @@ class BasisSetShell : public BasisShellBase
             return xyz_[i];
         }
 
-        /// Set a single coordinate of the shell
-        void set_coord(unsigned int i, double val)
-        {
-            assert_xyz_ptr_();
-            validate_xyz_idx_(i);
-            xyz_[i] = val;
-        }
+
 
         ///@}
 
@@ -216,8 +226,6 @@ class BasisSetShell : public BasisShellBase
     
 };
 
-
-} // close namespace system
 } // close namespace pulsar
 
 

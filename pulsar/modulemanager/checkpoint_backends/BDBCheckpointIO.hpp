@@ -11,7 +11,6 @@
 #include <db.h> // BerkeleyDB C API
 
 namespace pulsar {
-namespace modulemanager {
 
 
 /*! \brief Interface to an IO backend for checkpointing
@@ -61,6 +60,5 @@ class BDBCheckpointIO : public CheckpointIO
                     bool add_key);
 };
 
-} // close namespace modulemanager
 } // close namespace pulsar
 

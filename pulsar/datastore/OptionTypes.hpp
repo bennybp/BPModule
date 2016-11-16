@@ -20,8 +20,6 @@
 #include "pulsar/math/Cast_stl.hpp"
 
 namespace pulsar {
-namespace datastore {
-
 
 ////////////////////////////////////////////////
 // Storage types for integral and floating point
@@ -230,7 +228,7 @@ template<typename Target, typename Source>
 struct OptionCast
 {
     // normally we just use numeric_cast
-    static Target cast(const Source & s)   {  return math::numeric_cast<Target, Source>(s);  }
+    static Target cast(const Source & s)   {  return numeric_cast<Target, Source>(s);  }
 };
 
 
@@ -304,8 +302,6 @@ struct OptionCast<std::map<K1, M1>, std::map<K2, M2>>
 };
 
 
-
-} // close namespace datastore
 } // close namespace pulsar
 
 #endif

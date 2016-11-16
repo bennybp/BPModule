@@ -13,12 +13,8 @@
 
 #include <algorithm> // std::reverse
 
-using pulsar::GeneralException;
-using pulsar::util::format_string;
-using pulsar::util::join;
 
 namespace pulsar {
-namespace python {
 namespace detail {
 
 /*! \brief Formats a traceback (breaks out line numbers and file names)
@@ -133,5 +129,4 @@ std::pair<std::string, std::string> get_py_exception(void)
 
 
 } // close namespace detail
-} // close namespace python
 } // close namespace pulsar

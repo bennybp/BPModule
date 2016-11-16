@@ -11,7 +11,6 @@
 
 
 namespace pulsar{
-namespace modulebase {
 
 /*! \brief One-electron integral implementation
  *
@@ -33,8 +32,8 @@ class FockBuilder : public ModuleBase
          * \param [in] bs1 Basis set to use
          */
         void initialize(unsigned int deriv,
-                        const datastore::Wavefunction & wfn,
-                        const system::BasisSet & bs)
+                        const Wavefunction & wfn,
+                        const BasisSet & bs)
         {
             return ModuleBase::call_function(&FockBuilder::initialize_, deriv, wfn, bs);
         }
@@ -49,7 +48,7 @@ class FockBuilder : public ModuleBase
          * \param [in] bufsize Size of \p outbuffer (as the number of doubles)
          * \return Number of integrals calculated
          */
-        math::IrrepSpinMatrixD calculate(const datastore::Wavefunction & wfn)
+        IrrepSpinMatrixD calculate(const Wavefunction & wfn)
         {
             return ModuleBase::call_function(&FockBuilder::calculate_, wfn);
         }
@@ -61,12 +60,12 @@ class FockBuilder : public ModuleBase
         /////////////////////////////////////////
         //! \copydoc initialize
         virtual void initialize_(unsigned int deriv,
-                                 const datastore::Wavefunction & wfn,
-                                 const system::BasisSet & bs) = 0;
+                                 const Wavefunction & wfn,
+                                 const BasisSet & bs) = 0;
 
 
         //! \copydoc calculate
-        virtual math::IrrepSpinMatrixD calculate_(const datastore::Wavefunction & wfn) = 0;
+        virtual IrrepSpinMatrixD calculate_(const Wavefunction & wfn) = 0;
 };
 
 
@@ -78,21 +77,20 @@ class FockBuilder_Py : public FockBuilder
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
         virtual void initialize_(unsigned int deriv,
-                                 const datastore::Wavefunction & wfn,
-                                 const system::BasisSet & bs)
+                                 const Wavefunction & wfn,
+                                 const BasisSet & bs)
 
         {
             return call_py_override<void>(this, "initialize_", deriv, wfn, bs);
         }
 
 
-        virtual math::IrrepSpinMatrixD calculate_(const datastore::Wavefunction & wfn)
+        virtual IrrepSpinMatrixD calculate_(const Wavefunction & wfn)
         {
-            return call_py_override<math::IrrepSpinMatrixD>(this, "calculate_", wfn);
+            return call_py_override<IrrepSpinMatrixD>(this, "calculate_", wfn);
         }
 };
 
-} // close namespace modulebase
 } // close namespace pulsar
 
 #endif

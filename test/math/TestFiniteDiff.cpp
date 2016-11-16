@@ -20,7 +20,7 @@ TEST_CLASS(TestFiniteDiff){
     
 
 //fxn is 1/3 r^3
-struct HOVisitor:public pulsar::math::FDiffVisitor<double,VectorD>{
+struct HOVisitor:public pulsar::FDiffVisitor<double,VectorD>{
     VectorD Coords_;
     double coord(size_t i)const{return Coords_[i];}
     double shift(cD& Old,cD& H,double Shift)const{return Old+H*Shift;}
@@ -52,10 +52,10 @@ MyVisitor.Coords_={1.0,2.0,3.0,4.0,5.0,6.0};
 //Deriv is x^2
 VectorD Deriv({1.0,4.0,9.0,16.0,25.0,36.0});
 
-using CDiff_t=pulsar::math::CentralDiff<double,VectorD>;
+using CDiff_t=pulsar::CentralDiff<double,VectorD>;
 CDiff_t CFD;
 Return_t Result;
-using CFD_run_t=Return_t(pulsar::math::FiniteDiff<double,VectorD>::*)
+using CFD_run_t=Return_t(pulsar::FiniteDiff<double,VectorD>::*)
         (HOVisitor,size_t,cD&,size_t);
 
 ///FDiff alogrithms are not designed to be moved/copied so we can't bind it
@@ -80,7 +80,7 @@ compare_deriv("C-Diff 5",Result,Deriv,tester);
 
 //For foward/backward n=2 only gets like two sig figs right
 
-pulsar::math::BackwardDiff<double,VectorD> BFD;
+pulsar::BackwardDiff<double,VectorD> BFD;
 Result=BFD.Run(MyVisitor,6,0.01,3);
 
 compare_deriv("B-Diff 3",Result,Deriv,tester);
@@ -88,7 +88,7 @@ compare_deriv("B-Diff 3",Result,Deriv,tester);
 Result=BFD.Run(MyVisitor,6,0.01,4);
 compare_deriv("B-Diff 4",Result,Deriv,tester);
 
-pulsar::math::ForwardDiff<double,VectorD> FFD;
+pulsar::ForwardDiff<double,VectorD> FFD;
 Result=FFD.Run(MyVisitor,6,0.01,3);
 compare_deriv("F-Diff 3",Result,Deriv,tester);
 

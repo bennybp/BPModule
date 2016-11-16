@@ -2,7 +2,6 @@ import sys
 import os
 import importlib
 
-
 ##########################################
 # Load all the core modules
 ##########################################
@@ -15,29 +14,23 @@ sys.setdlopenflags(os.RTLD_LAZY | os.RTLD_GLOBAL)
 # Import the main so file
 # Components remain part of pulsar_core namespace until
 # imported by the individual sub-packages below
-from . import pulsar_core
+from .pulsar_core import *
 
-# Each of these imports its namespace from pulsar_core
-# into the main pulsar namespace
-from . import exception
-from . import util
-from . import output
-from . import parallel
-from . import python
-from . import math
+from .datastore.OptionValidators import *
+from .exception.Exceptions import *
+from .modulebase.base_options import *
+from .modulemanager.ModuleTreePrinters import *
+from .system.BasisSetParsers import *
+from .system.ApplyBasisSet import *
+from .system.MakeSystem import *
+from .testing.TesterPy import *
 
-from . import system
-from . import datastore
-from . import modulebase
-from . import modulemanager
-
-from . import testing
-
+#Used to be in utl/__init__.py
+def line(char, n = 80):
+    return char * n + "\n" 
 
 # restore old DL flags
 sys.setdlopenflags(olddl)
-
-
 
 ##########################################
 # Load other python stuff from this directory
@@ -75,19 +68,19 @@ def initialize(argv,
   """
 
   # Output depends on MPI being initialized, so we do that first
-  util.set_cmdline(argv)
-  parallel.initialize(nthreads)
+  set_cmdline(argv)
+  pulsar_core.initialize(nthreads)
 
-  output.create_global_output(outpath, outbase, use_stdout)
-  output.enable_color(color)
+  create_global_output(outpath, outbase, use_stdout)
+  enable_color(color)
 
-  gout = output.get_global_output()
+  gout = get_global_output()
   gout.enable_debug(debug)
 
 
 def finalize():
-  output.print_global_output("Finalizing parallelization\n")
-  parallel.finalize()
+  pulsar_core.print_global_output("Finalizing parallelization\n")
+  pulsar_core.finalize()
 
-  util.clear_cmdline()
+  clear_cmdline()
 

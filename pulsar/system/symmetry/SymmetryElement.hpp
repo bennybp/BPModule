@@ -100,8 +100,8 @@ inline std::ostream& operator<<(std::ostream& os, const SymmetryElement& E){
 
 ///Allows Symmetry elements to be hashed, although not terribly uniquely
 namespace std{
-template<> struct hash<pulsar::system::SymmetryElement>{
-    size_t operator()(const pulsar::system::SymmetryElement& E)const{
+template<> struct hash<pulsar::SymmetryElement>{
+    size_t operator()(const pulsar::SymmetryElement& E)const{
         std::hash<std::string> h;
         return h(E.schoenflies_symbol);
     }

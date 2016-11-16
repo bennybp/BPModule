@@ -12,7 +12,6 @@
 
 
 namespace pulsar{
-namespace modulebase {
 
 /*! \brief One-electron integral implementation
  *
@@ -31,9 +30,9 @@ class PropertyCalculator : public ModuleBase
          *
          */
         std::vector<double> calculate(unsigned int deriv,
-                                      const datastore::Wavefunction & wfn,
-                                      const system::BasisSet & bs1,
-                                      const system::BasisSet & bs2)
+                                      const Wavefunction & wfn,
+                                      const BasisSet & bs1,
+                                      const BasisSet & bs2)
         {
             return ModuleBase::call_function(&PropertyCalculator::calculate_,
                                                 deriv, wfn, bs1, bs2);
@@ -45,9 +44,9 @@ class PropertyCalculator : public ModuleBase
         /////////////////////////////////////////
         //! \copydoc calculate
         virtual std::vector<double> calculate_(unsigned int deriv,
-                                               const datastore::Wavefunction & wfn,
-                                               const system::BasisSet & bs1,
-                                               const system::BasisSet & bs2) = 0;
+                                               const Wavefunction & wfn,
+                                               const BasisSet & bs1,
+                                               const BasisSet & bs2) = 0;
 };
 
 
@@ -59,15 +58,14 @@ class PropertyCalculator_Py : public PropertyCalculator
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
         virtual std::vector<double> calculate_(unsigned int deriv,
-                                               const datastore::Wavefunction & wfn,
-                                               const system::BasisSet & bs1,
-                                               const system::BasisSet & bs2)
+                                               const Wavefunction & wfn,
+                                               const BasisSet & bs1,
+                                               const BasisSet & bs2)
         {
             return call_py_override<std::vector<double>>(this, "calculate_", wfn, deriv, bs1, bs2);
         }
 };
 
-} // close namespace modulebase
 } // close namespace pulsar
 
 #endif

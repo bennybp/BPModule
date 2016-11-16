@@ -6,102 +6,86 @@
 
 #include "pulsar/modulebase/EnergyMethod.hpp"
 #include "pulsar/math/FiniteDiff.hpp"
-#include "pulsar/datastore/Wavefunction.hpp"
-#include "pulsar/system/System.hpp"
-#include "pulsar/exception/Exceptions.hpp"
-#include "pulsar/modulemanager/ModulePtr.hpp"
-#include "pulsar/modulemanager/ModuleManager.hpp"
 #include "pulsar/parallel/Parallel.hpp"
 #include <LibTaskForce/LibTaskForce.hpp>
 
-using std::vector;
-
-using pulsar::system::Atom;
-using pulsar::system::System;
-using pulsar::datastore::Wavefunction;
-using pulsar::system::AtomSetUniverse;
 using LibTaskForce::HybridComm;
-using pulsar::GeneralException;
-
-typedef vector<Atom> AtomV_t;
-typedef pulsar::modulemanager::ModuleManager MM_t;
-typedef vector<double> Return_t;
-
-
+using Return_t=std::vector<double>;
 namespace pulsar{
-namespace modulebase {
-
-class FDFunctor:public math::FDiffVisitor<double,Return_t>{
-    private:
-        typedef  math::FDiffVisitor<double,Return_t> Base_t;
-        typedef modulemanager::ModulePtr<EnergyMethod> Module_t;
-        size_t Order_;
-        const AtomV_t& Atoms_;
-        MM_t& MM_;
-        const datastore::Wavefunction & Wfn_;
-        std::string Key_;
-        ID_t ID_;
-    public:
-
-        //Returns the i-th Cartesian coordinate of our molecule
-        double coord(size_t i)const{return Atoms_[(i-i%3)/3][i%3];}
-
-        Return_t run(size_t i,const double& newcoord)const{
-            AtomSetUniverse NewU;
-            for(size_t j=0;j<Atoms_.size();++j){
-                if(j==(i-i%3)/3) { //does this coord index belong to this atom?
-                    Atom atmp(Atoms_[j]);
-                    atmp[i%3]=newcoord;
-                    NewU.insert(atmp);
-                }
-                else
-                    NewU.insert(Atoms_[j]);
-            }
-            Module_t NewModule=MM_.get_module<EnergyMethod>(Key_,ID_);
-            Wavefunction NewWfn(Wfn_);
-            NewWfn.system = std::make_shared<const System>(System(NewU,true));
-            return NewModule->deriv(Order_-1,NewWfn).second;
-        }
-
-        FDFunctor(size_t Order,const AtomV_t& Atoms,
-                  MM_t& MM,const datastore::Wavefunction & Wfn, std::string Key,ID_t ID):
-            Order_(Order),Atoms_(Atoms),MM_(MM),Wfn_(Wfn),Key_(Key),ID_(ID){}
-};
-
 
 size_t EnergyMethod::max_deriv_()const{
     return options().get<size_t>("MAX_DERIV");
 }
 
+class FDFunctor:public FDiffVisitor<double,Return_t>{
+private:
+    size_t Order_;
+    const std::vector<Atom>& Atoms_;
+    const Wavefunction & Wfn_;
+    ModulePtr<EnergyMethod> EMeth_;
+public:
+    double coord(size_t i)const{return Atoms_[(i-i%3)/3][i%3];}
+    double shift(const double& Old,const double& H,double Shift)const{
+        return Old+H*Shift;
+    }
+    Return_t run(size_t i,const double& newcoord)const{
+        const Atom& AtomI=Atoms_[(i-i%3)/3];
+        Atom AtomJ(AtomI);
+        AtomJ[i%3]=newcoord;
+        Wavefunction NewWfn(Wfn_);
+        NewWfn.system=std::make_shared<const System>(std::move(
+            Wfn_.system->transform(
+                [&](const Atom& ai){
+                    return ai!=AtomI?ai:AtomJ;
+                }
+            )
+        ));
+        auto temp=EMeth_->deriv(Order_-1,NewWfn).second;
+        return temp;
+    }
+    
+    void scale(Return_t& RV,double constant)const{
+        for(double& i:RV)i*=constant;
+    }
+
+    //Set element i of RV to Element/H
+    void update(Return_t& RV,Return_t& Element,size_t,double H)const{
+        if(RV.size()<Element.size())RV.resize(Element.size(),0.0);
+        for(size_t j=0;j<Element.size();j++)RV[j]+=Element[j]/H;
+    }
+
+    FDFunctor(size_t Order,const std::vector<Atom>& Atoms,
+              const Wavefunction & Wfn,ModulePtr<EnergyMethod>&& EMeth):
+        Order_(Order),Atoms_(Atoms),Wfn_(Wfn),EMeth_(std::move(EMeth)){}
+};
+
 
 DerivReturnType
-EnergyMethod::finite_difference_(size_t Order, const datastore::Wavefunction & Wfn){
+EnergyMethod::finite_difference_(size_t Order, const Wavefunction & Wfn){
     if(Order==0)
         throw GeneralException("I do not know how to obtain an energy via "
                                "finite difference.");
     const System& Mol=*(Wfn.system);
-    vector<Atom> Atoms;
-    vector<Return_t> TempDeriv;
+    std::vector<Atom> Atoms(Mol.begin(),Mol.end());
+    std::vector<Return_t> TempDeriv;
     //I don't know why the fill constructor is not working...
-    for(const Atom& AnAtom: Mol)Atoms.push_back(AnAtom);
+    //for(const Atom& AnAtom: Mol)Atoms.push_back(AnAtom);
     
-    const HybridComm& Comm=parallel::get_env().comm();
-    std::unique_ptr<HybridComm> NewComm=Comm.split(Comm.nprocs(),1);
+    const HybridComm& Comm=get_env().comm();
+    auto new_comm=Comm.split(Comm.nprocs(),1);
+    CentralDiff<double,Return_t> FD(std::move(new_comm));
+    auto EMeth=create_child<EnergyMethod>(key());
 
-    math::CentralDiff<double,Return_t> FD(std::move(*NewComm));
-
-    FDFunctor Thing2Run=FDFunctor(Order,Atoms,module_manager(),Wfn,key(),id());
-    TempDeriv=FD.Run(Thing2Run,3*Mol.size(),
+    TempDeriv=FD.Run(FDFunctor(Order,Atoms,Wfn,std::move(EMeth)),3*Mol.size(),
                      options().get<double>("FDIFF_DISPLACEMENT"),
                      options().get<size_t>("FDIFF_STENCIL_SIZE"));
+    
     //Flatten the array & abuse fact that TempDeriv[0] is the first comp
     for(size_t i=1;i<TempDeriv.size();++i)
-       for(double j :  TempDeriv[i])
-           TempDeriv[0].push_back(j);
+        TempDeriv[0].insert(TempDeriv[0].end(),TempDeriv[i].begin(),TempDeriv[i].end());
     
-    DerivReturnType CWfn=
-            create_child<EnergyMethod>(key())->deriv(Order-1,Wfn);
-    return {CWfn.first, TempDeriv[0]};
+    
+    return {Wfn, TempDeriv[0]};
 }
 
-}}
+}

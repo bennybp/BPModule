@@ -9,8 +9,6 @@
 #include "pulsar/util/Memwatch.hpp"
 
 namespace pulsar{
-namespace util {
-
 
 bool memwatch_running(void) noexcept
 {
@@ -33,7 +31,5 @@ size_t memwatch_getlimit(void) noexcept
     return ::memwatch_get_max_memory();
 }
 
-
-} // close namespace util
 } // close namespace pulsar
 

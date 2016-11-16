@@ -17,7 +17,6 @@
 
 
 namespace pulsar{
-namespace math{
 
 /* \brief Maps spin and spatial symmetry to data
  *
@@ -247,12 +246,12 @@ std::ostream& BlockByIrrepSpin<T>::print(std::ostream& os)const
 }
 
 template<typename T>
-std::ostream& operator<<(std::ostream& os,const BlockByIrrepSpin<T>& tensor)
+std::ostream& operator<<(std::ostream& os,const pulsar::BlockByIrrepSpin<T>& tensor)
 {
     return tensor.print(os);
 }
 
-} // close namespace math
 } // close namespace pulsar
+
 
 #endif

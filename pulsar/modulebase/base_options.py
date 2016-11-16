@@ -1,5 +1,5 @@
-from pulsar.datastore import OptionType
-from pulsar.datastore import RangeCheck, GreaterThan, LessThan
+from pulsar import OptionType
+from pulsar import RangeCheck, GreaterThan, LessThan
 
 base_options = {
 
@@ -9,21 +9,12 @@ base_options = {
 
   "SystemFragmenter" :
   {
-    "TRUNCATION_ORDER" : (OptionType.Int, 1, False, GreaterThan(0),
-                          'Unions of up to how many monomers should be taken'),
-    "DISTANCE_THRESHOLDS" : (OptionType.DictIntFloat,{},False,
-                    None,'A int->float dictionary where the int, call it n, is'\
-                    ' the n-mer and the float is the maximum distance '\
-                    'that the n monomers can be apart, e.g. {2:3.14} means '\
-                    'that dimers whose centers of mass are more than 3.14 '\
-                    'Angstroms apart are excluded.')
   },
 
   "EnergyMethod" :
   {
-    "MAX_DERIV"       :  (OptionType.Int, 255, False, RangeCheck(0, 255),
-                          'What order analytic derivatives are available (actually '\
-                          'have arbitrary order available)'),
+    "MAX_DERIV"       :  (OptionType.Int, 0, False, RangeCheck(0, 255),
+                          'Order of analytic derivatives available (default 0)'),
 
     "BASIS_SET"       :  (OptionType.String, "Primary", False, None,
                           'Tag representing the basis set in the system'),

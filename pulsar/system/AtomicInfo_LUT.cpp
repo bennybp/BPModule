@@ -22,7 +22,6 @@ CREATED: 2016-07-15 11:56:46.179226
 
 
 namespace pulsar {
-namespace system {
 namespace lut {
 
 
@@ -152,7 +151,7 @@ extern const std::map<int, std::string> atomic_Z_sym_{
 }; // close atomic_Z_sym_
 
 
-extern const std::map<std::string, int, util::CaseInsensitiveLess> atomic_sym_Z_{
+extern const std::map<std::string, int, CaseInsensitiveLess> atomic_sym_Z_{
   { "Dum" , -999 },
   { "Gho" , 0 },
   { "H" , 1 },
@@ -2401,5 +2400,4 @@ extern const std::map<int, AtomicData> atomic_Z_data_{
 
 
 } // closing namespace lut
-} // closing namespace system
 } // closing namespace pulsar

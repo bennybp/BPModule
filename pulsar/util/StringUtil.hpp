@@ -12,7 +12,6 @@
 
 
 namespace pulsar{
-namespace util {
 
 /*! \brief Joins each element of a container of strings
  *
@@ -153,8 +152,6 @@ struct CaseInsensitivetrimEquality
  */
 std::string line(char c, int n = 80);
 
-
-} // close namespace util
 } // close namespace pulsar
 
 #endif

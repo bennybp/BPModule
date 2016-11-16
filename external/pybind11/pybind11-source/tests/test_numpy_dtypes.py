@@ -1,11 +1,20 @@
+import re
 import pytest
+
 with pytest.suppress(ImportError):
     import numpy as np
 
-    simple_dtype = np.dtype({'names': ['x', 'y', 'z'],
-                             'formats': ['?', 'u4', 'f4'],
-                             'offsets': [0, 4, 8]})
-    packed_dtype = np.dtype([('x', '?'), ('y', 'u4'), ('z', 'f4')])
+
+@pytest.fixture(scope='module')
+def simple_dtype():
+    return np.dtype({'names': ['x', 'y', 'z'],
+                     'formats': ['?', 'u4', 'f4'],
+                     'offsets': [0, 4, 8]})
+
+
+@pytest.fixture(scope='module')
+def packed_dtype():
+    return np.dtype([('x', '?'), ('y', 'u4'), ('z', 'f4')])
 
 
 def assert_equal(actual, expected_data, expected_dtype):
@@ -18,7 +27,7 @@ def test_format_descriptors():
 
     with pytest.raises(RuntimeError) as excinfo:
         get_format_unbound()
-    assert 'unsupported buffer format' in str(excinfo.value)
+    assert re.match('^NumPy type info missing for .*UnboundStruct.*$', str(excinfo.value))
 
     assert print_format_descriptors() == [
         "T{=?:x:3x=I:y:=f:z:}",
@@ -26,12 +35,13 @@ def test_format_descriptors():
         "T{=T{=?:x:3x=I:y:=f:z:}:a:=T{=?:x:=I:y:=f:z:}:b:}",
         "T{=?:x:3x=I:y:=f:z:12x}",
         "T{8x=T{=?:x:3x=I:y:=f:z:12x}:a:8x}",
-        "T{=3s:a:=3s:b:}"
+        "T{=3s:a:=3s:b:}",
+        'T{=q:e1:=B:e2:}'
     ]
 
 
 @pytest.requires_numpy
-def test_dtype():
+def test_dtype(simple_dtype):
     from pybind11_tests import print_dtypes, test_dtype_ctors, test_dtype_methods
 
     assert print_dtypes() == [
@@ -40,7 +50,9 @@ def test_dtype():
         "[('a', {'names':['x','y','z'], 'formats':['?','<u4','<f4'], 'offsets':[0,4,8], 'itemsize':12}), ('b', [('x', '?'), ('y', '<u4'), ('z', '<f4')])]",
         "{'names':['x','y','z'], 'formats':['?','<u4','<f4'], 'offsets':[0,4,8], 'itemsize':24}",
         "{'names':['a'], 'formats':[{'names':['x','y','z'], 'formats':['?','<u4','<f4'], 'offsets':[0,4,8], 'itemsize':24}], 'offsets':[8], 'itemsize':40}",
-        "[('a', 'S3'), ('b', 'S3')]"
+        "[('a', 'S3'), ('b', 'S3')]",
+        "[('e1', '<i8'), ('e2', 'u1')]",
+        "[('x', 'i1'), ('y', '<u8')]"
     ]
 
     d1 = np.dtype({'names': ['a', 'b'], 'formats': ['int32', 'float64'],
@@ -54,7 +66,7 @@ def test_dtype():
 
 
 @pytest.requires_numpy
-def test_recarray():
+def test_recarray(simple_dtype, packed_dtype):
     from pybind11_tests import (create_rec_simple, create_rec_packed, create_rec_nested,
                                 print_rec_simple, print_rec_packed, print_rec_nested,
                                 create_rec_partial, create_rec_partial_nested)
@@ -151,7 +163,55 @@ def test_string_array():
 
 
 @pytest.requires_numpy
+def test_enum_array():
+    from pybind11_tests import create_enum_array, print_enum_array
+
+    arr = create_enum_array(3)
+    dtype = arr.dtype
+    assert dtype == np.dtype([('e1', '<i8'), ('e2', 'u1')])
+    assert print_enum_array(arr) == [
+        "e1=A,e2=X",
+        "e1=B,e2=Y",
+        "e1=A,e2=X"
+    ]
+    assert arr['e1'].tolist() == [-1, 1, -1]
+    assert arr['e2'].tolist() == [1, 2, 1]
+    assert create_enum_array(0).dtype == dtype
+
+
+@pytest.requires_numpy
 def test_signature(doc):
     from pybind11_tests import create_rec_nested
 
     assert doc(create_rec_nested) == "create_rec_nested(arg0: int) -> numpy.ndarray[NestedStruct]"
+
+
+@pytest.requires_numpy
+def test_scalar_conversion():
+    from pybind11_tests import (create_rec_simple, f_simple,
+                                create_rec_packed, f_packed,
+                                create_rec_nested, f_nested,
+                                create_enum_array)
+
+    n = 3
+    arrays = [create_rec_simple(n), create_rec_packed(n),
+              create_rec_nested(n), create_enum_array(n)]
+    funcs = [f_simple, f_packed, f_nested]
+
+    for i, func in enumerate(funcs):
+        for j, arr in enumerate(arrays):
+            if i == j and i < 2:
+                assert [func(arr[k]) for k in range(n)] == [k * 10 for k in range(n)]
+            else:
+                with pytest.raises(TypeError) as excinfo:
+                    func(arr[0])
+                assert 'incompatible function arguments' in str(excinfo.value)
+
+
+@pytest.requires_numpy
+def test_register_dtype():
+    from pybind11_tests import register_dtype
+
+    with pytest.raises(RuntimeError) as excinfo:
+        register_dtype()
+    assert 'dtype is already registered' in str(excinfo.value)

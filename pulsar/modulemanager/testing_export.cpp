@@ -9,12 +9,10 @@
 
 
 namespace pulsar{
-namespace modulemanager {
-namespace export_python {
 
-void export_testing(pybind11::module & m)
+void export_testing_modulemanager(pybind11::module & m)
 {
-    using pulsar::testing::TestSerialization;
+    using pulsar::TestSerialization;
 
     /////////////////////////////////
     // Serialization
@@ -23,6 +21,4 @@ void export_testing(pybind11::module & m)
 }
 
 
-} // close namespace export_python
-} // close namespace system 
 } // close namespace pulsar

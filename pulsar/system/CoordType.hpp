@@ -10,11 +10,9 @@
 #include "pulsar/math/Point.hpp"
 
 namespace pulsar{
-namespace system {
 
-typedef math::Point::CoordType CoordType;
+typedef Point::CoordType CoordType;
 
-}
 }
 
 #endif

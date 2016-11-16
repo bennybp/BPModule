@@ -18,8 +18,6 @@
 
 
 namespace pulsar {
-namespace datastore {
-
 
 //! Significant Options to compare
 typedef std::set<std::string> KeySet;
@@ -370,7 +368,7 @@ class OptionMap
         bool expert_;
 
         //! Holds the options
-        std::map<std::string, detail::OptionBasePtr, util::CaseInsensitiveLess> opmap_;
+        std::map<std::string, detail::OptionBasePtr, CaseInsensitiveLess> opmap_;
 
         //!< Validates the whole options container
         WholeOptionValidator wholevalid_;
@@ -491,8 +489,6 @@ class OptionMap
 };
 
 
-
-} // close namespace datastore
 } // close namespace pulsar
 
 

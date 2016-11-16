@@ -13,7 +13,6 @@
 #include <set>
 
 namespace pulsar {
-namespace modulemanager {
 
 /*! \brief Interface to an IO backend for checkpointing
  */
@@ -47,6 +46,5 @@ class CheckpointIO
         virtual void clear(void) = 0; 
 };
 
-} // close namespace modulemanager
 } // close namespace pulsar
 

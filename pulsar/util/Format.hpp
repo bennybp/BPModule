@@ -13,9 +13,6 @@
 
 
 namespace pulsar{
-namespace util {
-
-
 
 /*! \brief Output a formatted string to a stream
  *
@@ -126,8 +123,6 @@ DECLARE_EXTERN_TEMPLATE_FORMAT_2(double, double)
 #undef DECLARE_EXTERN_TEMPLATE_FORMAT_1
 #undef DECLARE_EXTERN_TEMPLATE_FORMAT_2
 
-
-} // close namespace util
 } // close namespace pulsar
 
 

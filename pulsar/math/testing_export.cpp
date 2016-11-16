@@ -15,9 +15,6 @@
 #include "bphash/types/string.hpp"
 
 namespace pulsar{
-namespace math {
-namespace export_python {
-
 
 // Compare two MathSets elementwise
 template<typename T>
@@ -42,9 +39,9 @@ std::vector<double> Test_Reorder(const std::vector<size_t> & neworder,
                               
 
 
-void export_testing(pybind11::module & m)
+void export_testing_math(pybind11::module & m)
 {
-    using pulsar::testing::TestSerialization;
+
 
     /////////////////////////
     // MathSet and Universe
@@ -77,7 +74,4 @@ void export_testing(pybind11::module & m)
     */
 }
 
-
-} // close namespace export_python
-} // close namespace math 
 } // close namespace pulsar

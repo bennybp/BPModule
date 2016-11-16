@@ -15,8 +15,6 @@
 
 
 namespace pulsar{
-namespace system {
-
 
 namespace lut {
     extern const AOOrderingMaps ao_ordering_;
@@ -121,7 +119,7 @@ BSReorderMap make_basis_reorder_map(const AOOrderingMaps & src,
         if(src.spherical_order.count(it.first)) // if src has this AM
         {
             const auto & srcord = src.spherical_order.at(it.first);
-            ret[ShellType::SphericalGaussian][it.first] = math::make_ordering(srcord, it.second);
+            ret[ShellType::SphericalGaussian][it.first] = make_ordering(srcord, it.second);
         }
     }
 
@@ -133,7 +131,7 @@ BSReorderMap make_basis_reorder_map(const AOOrderingMaps & src,
         if(src.cartesian_order.count(it.first)) // if src has this AM
         {
             const auto & srcord = src.cartesian_order.at(it.first);
-            ret[ShellType::CartesianGaussian][it.first] = math::make_ordering(srcord, it.second);
+            ret[ShellType::CartesianGaussian][it.first] = make_ordering(srcord, it.second);
         }
     }
 
@@ -186,7 +184,5 @@ std::vector<size_t> make_ao_basis_ordering(const BasisSet & bs, const BSReorderM
     return fullreorder;
 }
 
-
-} // close namespace system
 } // close namespace pulsar
 

@@ -13,8 +13,6 @@
 #include <stdexcept>
 
 namespace pulsar{
-namespace output {
-
 
 /*! \brief Stream buffer that tees output to two ostreams
  *
@@ -104,8 +102,6 @@ class TeeBuf : public std::streambuf
         std::streambuf * sb1_, * sb2_;
 };      
 
-
-} // close namespace output
 } // close namespace pulsar
 
 

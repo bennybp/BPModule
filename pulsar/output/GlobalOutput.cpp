@@ -17,7 +17,7 @@
 namespace {
 
 
-using namespace pulsar::output;
+using namespace pulsar;
 
 
 bool usecolor_ = false;
@@ -30,7 +30,6 @@ std::unique_ptr<TeeBuf> tbuf_;
 
 
 namespace pulsar{
-namespace output {
 
 
 OutputStream & get_global_output(void)
@@ -55,10 +54,10 @@ void create_global_output(const std::string & path,
     }
 
     // get my rank
-    auto rank = parallel::get_proc_id();
+    auto rank = get_proc_id();
 
     // create the output file
-    std::string fullpath = util::join_path(path, base);
+    std::string fullpath = join_path(path, base);
     fullpath += ".";
     fullpath += std::to_string(rank);
 
@@ -97,6 +96,4 @@ void enable_color(bool enabled) noexcept
     usecolor_ = enabled;
 }
 
-
-} // close namespace output
 } // close namespace pulsar

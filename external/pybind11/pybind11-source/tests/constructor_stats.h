@@ -56,7 +56,7 @@ from the ConstructorStats instance `.values()` method.
 In some cases, when you need to track instances of a C++ class not registered with pybind11, you
 need to add a function returning the ConstructorStats for the C++ class; this can be done with:
 
-    m.def("get_special_cstats", &ConstructorStats::get<SpecialClass>, py::return_value_policy::reference_internal)
+    m.def("get_special_cstats", &ConstructorStats::get<SpecialClass>, py::return_value_policy::reference)
 
 Finally, you can suppress the output messages, but keep the constructor tracking (for
 inspection/testing in python) by using the functions with `print_` replaced with `track_` (e.g.
@@ -103,7 +103,7 @@ public:
 
     int alive() {
         // Force garbage collection to ensure any pending destructors are invoked:
-        py::module::import("gc").attr("collect").operator py::object()();
+        py::module::import("gc").attr("collect")();
         int total = 0;
         for (const auto &p : _instances) if (p.second > 0) total += p.second;
         return total;

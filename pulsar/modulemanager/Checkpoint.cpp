@@ -10,9 +10,8 @@
 #include "pulsar/util/Serialization.hpp"
 #include "pulsar/parallel/Parallel.hpp"
 
-using namespace pulsar::datastore;
-using namespace pulsar::modulemanager;
-using namespace pulsar::output;
+using namespace pulsar;
+
 
 
 namespace {
@@ -80,7 +79,6 @@ split_cache_key(const std::string & key)
 
 
 namespace pulsar {
-namespace modulemanager {
 
 
 Checkpoint::Checkpoint(const std::shared_ptr<CheckpointIO> & backend_local,
@@ -100,8 +98,8 @@ Checkpoint::form_cache_save_list_(const ModuleManager & mm,
                                   CheckpointIO & backend,
                                   std::function<bool(unsigned int)> policy_check)
 {
-    using datastore::detail::GenericHolder;
-    using datastore::detail::SerializedGenericData;
+    using pulsar::detail::GenericHolder;
+    using pulsar::detail::SerializedGenericData;
 
     // modulemanager should be locked already!
     // print out some info and get what we should be checkpointing
@@ -132,7 +130,7 @@ Checkpoint::form_cache_save_list_(const ModuleManager & mm,
                 if(gb->is_hashable())
                 {
                     ByteArray ba_meta = backend.read(full_metakey);
-                    auto meta = util::from_byte_array<CacheEntryMetadata>(ba_meta);
+                    auto meta = from_byte_array<CacheEntryMetadata>(ba_meta);
 
                     auto newhash = gb->my_hash();
                     if(newhash != meta.hash)
@@ -178,7 +176,7 @@ void Checkpoint::save_cache_(const ModuleManager & mm,
                              CheckpointIO & backend,
                              std::function<bool(unsigned int)> policy_check)
 {
-    using namespace pulsar::util; // to/from_byte_array
+     // to/from_byte_array
 
     // Actually save the data
     backend.open();
@@ -212,7 +210,7 @@ void Checkpoint::save_cache_(const ModuleManager & mm,
                                     h,
                                     ba_data.size(),
                                     policy};
-            ByteArray ba_meta = util::to_byte_array(meta);
+            ByteArray ba_meta = to_byte_array(meta);
 
             print_global_output("Saving: (%10? bytes)   %?\n", ba_data.size(), cachekey);
 
@@ -233,8 +231,8 @@ void Checkpoint::save_cache_(const ModuleManager & mm,
 
 void Checkpoint::load_cache_(ModuleManager & mm, CheckpointIO & backend)
 {
-    using namespace pulsar::datastore::detail;
-    using namespace pulsar::util; // to/from_byte_array
+    using namespace pulsar::detail;
+     // to/from_byte_array
 
     // not sure if I really have to lock mm, byt why not
     std::lock_guard<std::mutex> l_mm(mm.mutex_);
@@ -282,8 +280,8 @@ void Checkpoint::load_cache_(ModuleManager & mm, CheckpointIO & backend)
 
 void Checkpoint::perform_on_all_ranks_(const std::string & description, std::function<void(void)> func)
 {
-    const long my_rank = parallel::get_proc_id();
-    const long nproc = parallel::get_nproc();
+    const long my_rank = get_proc_id();
+    const long nproc = get_nproc();
 
 
     for(long rank = 0; rank < nproc; rank++)
@@ -345,7 +343,5 @@ void Checkpoint::load_global_cache(ModuleManager & mm)
     perform_on_all_ranks_("Loading global cache", func);
 }
 
-
-} // close namespace modulemanager
 } // close namespace pulsar
 

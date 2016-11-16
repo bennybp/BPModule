@@ -16,7 +16,6 @@
 #include "bphash/types/string.hpp" // Includes Hasher
 
 namespace pulsar {
-namespace datastore {
 
 //! A collection of problems with an option
 typedef std::vector<std::string> OptionIssues;
@@ -326,7 +325,6 @@ class OptionBase
 
 
 } // close namespace detail
-} // close namespace datastore
 } // close namespace pulsar
 
 #endif

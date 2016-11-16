@@ -8,7 +8,6 @@
 #include "pulsar/util/Format.hpp"
 
 namespace pulsar{
-namespace util {
 
 // Instantiate some commonly-used templates
 // Zero arguments
@@ -66,5 +65,4 @@ DECLARE_TEMPLATE_FORMAT_2(double, double)
 #undef DECLARE_TEMPLATE_FORMAT_2
 
 
-} // close namespace util
 } // close namespace pulsar

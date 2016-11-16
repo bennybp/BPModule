@@ -3,7 +3,7 @@
  */
 
 #include "pulsar/exception/Exceptions.hpp"
-
+#include "pulsar/math/Cast.hpp"
 #include <iomanip>
 
 namespace pulsar {
@@ -31,7 +31,7 @@ void GeneralException::append_info_(const std::string & key,
     // Get the first line of the formatted output and
     // output it to the stream
     std::getline(sstr, str);
-    ss << std::setw(24) << key << std::setw(oldw) << " : " << str;
+    ss << std::setw(24) << key << std::setw(numeric_cast<int>(oldw)) << " : " << str;
 
     // For the rest of the lines, output the values aligned
     // with the first

@@ -103,7 +103,7 @@ dfac_2nm1_double = [ float(v) for v in dfac_2nm1 ]
 
 
 with psr_common.HeaderSourceFiles(outbase, "LUT for factorial and related functions", 
-                                 ["pulsar", "math", "lut"],
+                                 ["pulsar", "lut"],
                                  hincludes = ["<cstdint>"],
                                  srcincludes = ["<cstdint>"]) as src:
 

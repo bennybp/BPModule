@@ -1,6 +1,7 @@
 /*! \file
  *
- * \brief  Add me
+ * \brief  Contains the macro definition of a dummy class for testing Pulsar
+ *         C++ side
  */
 
 #pragma once
@@ -8,9 +9,9 @@
 #include<pulsar/testing/Tester.hpp>
 #include<pulsar/modulebase/Test_Base.hpp>
 
-using pulsar::testing::Tester;
-using pulsar::modulebase::Test_CXX_Base;
-using pulsar::modulemanager::ModuleCreationFuncs;
+using pulsar::Tester;
+using pulsar::Test_CXX_Base;
+using pulsar::ModuleCreationFuncs;
 #define TEST_CLASS(test_name)\
     class test_name : public Test_CXX_Base {\
 protected:\

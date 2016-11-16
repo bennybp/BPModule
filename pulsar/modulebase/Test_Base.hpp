@@ -12,7 +12,6 @@
 
 
 namespace pulsar{
-namespace modulebase {
 
 /*! \brief A test module
  *
@@ -223,8 +222,6 @@ class Test_Base_Py : public Test_Base
 
 };
 
-
-} // close namespace modulebase
 } // close namespace pulsar
 
 #endif

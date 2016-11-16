@@ -13,7 +13,6 @@
 #include "pulsar/system/GeneralShellIterator.hpp"
 
 namespace pulsar{
-namespace system {
 
 /* transformation of a generic batch of integrals
  *
@@ -32,10 +31,10 @@ namespace system {
  * Cartesian ordering is expected to be pulsar ordering.
  */
 template<int N>
-void CartesianToSpherical(std::array<std::reference_wrapper<const system::BasisShellBase>, N> shells,
+void CartesianToSpherical(std::array<std::reference_wrapper<const BasisShellBase>, N> shells,
                           double * source, double * dest, double * work, int ncomp)
 {
-    using namespace system;
+    
 
     std::array<bool, N> isspherical;
     size_t allncart = 1;  // Total number of cartesians in this container
@@ -43,7 +42,7 @@ void CartesianToSpherical(std::array<std::reference_wrapper<const system::BasisS
 
     for(int i = 0; i < N; i++)
     {
-        const system::BasisShellBase & sh = shells[i].get();
+        const BasisShellBase & sh = shells[i].get();
         const bool issph = isspherical[i] = (sh.get_type() == ShellType::SphericalGaussian);
 
         isspherical[i] = issph;
@@ -67,7 +66,7 @@ void CartesianToSpherical(std::array<std::reference_wrapper<const system::BasisS
         // iterator over the general contractions
         // We have the transformations for combined AM shells, so
         // no need to split them in the iterator.
-        system::GeneralShellIterator<N> gsi(shells, false);
+        GeneralShellIterator<N> gsi(shells, false);
 
         // this is equivalent to an N-level for loop over the combinations of
         // the general contractions
@@ -158,8 +157,8 @@ void CartesianToSpherical(std::array<std::reference_wrapper<const system::BasisS
  * Cartesian ordering is expected to be pulsar ordering.
  */
 inline
-void CartesianToSpherical_2Center(const system::BasisShellBase & sh1,
-                                  const system::BasisShellBase & sh2,
+void CartesianToSpherical_2Center(const BasisShellBase & sh1,
+                                  const BasisShellBase & sh2,
                                   double * source, double * dest, double * work,
                                   int ncomp)
 {
@@ -167,9 +166,9 @@ void CartesianToSpherical_2Center(const system::BasisShellBase & sh1,
 }
 
 inline
-void CartesianToSpherical_3Center(const system::BasisShellBase & sh1,
-                                  const system::BasisShellBase & sh2,
-                                  const system::BasisShellBase & sh3,
+void CartesianToSpherical_3Center(const BasisShellBase & sh1,
+                                  const BasisShellBase & sh2,
+                                  const BasisShellBase & sh3,
                                   double * source, double * dest, double * work,
                                   int ncomp)
 {
@@ -178,18 +177,16 @@ void CartesianToSpherical_3Center(const system::BasisShellBase & sh1,
 
 
 inline
-void CartesianToSpherical_4Center(const system::BasisShellBase & sh1,
-                                  const system::BasisShellBase & sh2,
-                                  const system::BasisShellBase & sh3,
-                                  const system::BasisShellBase & sh4,
+void CartesianToSpherical_4Center(const BasisShellBase & sh1,
+                                  const BasisShellBase & sh2,
+                                  const BasisShellBase & sh3,
+                                  const BasisShellBase & sh4,
                                   double * source, double * dest, double * work,
                                   int ncomp)
 {
     CartesianToSpherical<4>({{sh1, sh2, sh3, sh4}}, source, dest, work, ncomp);
 }
 
-
-} // close namespace system
 } // close namespace pulsar
 
 

@@ -50,10 +50,15 @@ list(APPEND PULSAR_CXX_INCLUDES @MPI_CXX_INCLUDE_PATH@)
 list(APPEND PULSAR_CXX_INCLUDES @PULSAR_CORE_PYTHON_INCLUDE_DIRS@)
 list(APPEND PULSAR_CXX_INCLUDES ${PYBIND11_INCLUDE_DIR})
 list(APPEND PULSAR_CXX_INCLUDES ${MEMWATCH_INCLUDE_DIR})
+list(APPEND PULSAR_CXX_INCLUDES ${LIBTASKFORCE_INCLUDE_DIRS})
+list(APPEND PULSAR_CXX_INCLUDES ${BPHASH_INCLUDE_DIR})
 target_include_directories(pulsar SYSTEM INTERFACE ${PULSAR_CXX_INCLUDES})
 
 
 #######################################
 # Add interface libraries to link to
 #######################################
-target_link_libraries(pulsar INTERFACE bphash libtaskforce)
+target_link_libraries(pulsar INTERFACE bphash 
+                                       libtaskforce 
+                                       @OpenMP_CXX_FLAGS@
+)

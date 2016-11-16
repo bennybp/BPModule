@@ -11,7 +11,6 @@
 #include <string>
 
 namespace pulsar{
-namespace system {
 
 /*! \brief Information about a particular elemental isotope */
 struct IsotopeData
@@ -253,9 +252,6 @@ static const int DUMMY_ATOM_Z = -999;
 //! Z-number representing a point charge
 static const int POINTCHARGE_ATOM_Z = 999;
 
-
-
-} // closing namespace system
 } // closing namespace pulsar
 
 

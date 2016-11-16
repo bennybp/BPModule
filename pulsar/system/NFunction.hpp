@@ -18,7 +18,6 @@
 
 
 namespace pulsar{
-namespace system {
 
 
 //////////////////////////////
@@ -120,8 +119,6 @@ int n_functions(ShellType type, const Container & amcont)
                           { return sum *= n_functions(type, am); });
 }
 
-
-} // close namespace system
 } // close namespace pulsar
 
 

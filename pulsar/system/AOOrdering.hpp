@@ -14,8 +14,6 @@
 
 
 namespace pulsar{
-namespace system {
-
 
 // forward declare
 class BasisSet;
@@ -39,7 +37,7 @@ struct AOOrderingMaps
 };
 
 
-//! A map of angular momentum to new ordering vectors (see math::MakeOrdering)
+//! A map of angular momentum to new ordering vectors (see MakeOrdering)
 typedef std::map<int, std::vector<size_t>> AMReorderMap;
 
 //! A map for changing one AO ordering to another for all shell types
@@ -157,10 +155,6 @@ BSReorderMap make_basis_reorder_map(const AOOrderingMaps & src,
  */
 std::vector<size_t> make_ao_basis_ordering(const BasisSet & bs, const BSReorderMap & bm);
 
-
-
-
-} // close namespace system
 } // close namespace pulsar
 
 

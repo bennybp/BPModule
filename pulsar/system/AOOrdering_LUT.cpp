@@ -20,7 +20,6 @@ CREATED: 2016-04-24 10:42:30.973707
 
 
 namespace pulsar {
-namespace system {
 namespace lut {
 
 
@@ -1977,5 +1976,4 @@ extern const AOOrderingMaps ao_ordering_{
 
 
 } // closing namespace lut
-} // closing namespace system
 } // closing namespace pulsar

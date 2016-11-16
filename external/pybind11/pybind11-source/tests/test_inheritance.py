@@ -24,15 +24,24 @@ def test_inheritance(msg):
     with pytest.raises(TypeError) as excinfo:
         dog_bark(polly)
     assert msg(excinfo.value) == """
-        Incompatible function arguments. The following argument types are supported:
+        dog_bark(): incompatible function arguments. The following argument types are supported:
             1. (arg0: m.Dog) -> str
-            Invoked with: <m.Pet object at 0>
+
+        Invoked with: <m.Pet object at 0>
     """
 
 
 def test_automatic_upcasting():
-    from pybind11_tests import return_class_1, return_class_2, return_none
+    from pybind11_tests import return_class_1, return_class_2, return_class_n, return_none
 
     assert type(return_class_1()).__name__ == "DerivedClass1"
     assert type(return_class_2()).__name__ == "DerivedClass2"
     assert type(return_none()).__name__ == "NoneType"
+    # Repeat these a few times in a random order to ensure no invalid caching is applied
+    assert type(return_class_n(1)).__name__ == "DerivedClass1"
+    assert type(return_class_n(2)).__name__ == "DerivedClass2"
+    assert type(return_class_n(0)).__name__ == "BaseClass"
+    assert type(return_class_n(2)).__name__ == "DerivedClass2"
+    assert type(return_class_n(2)).__name__ == "DerivedClass2"
+    assert type(return_class_n(0)).__name__ == "BaseClass"
+    assert type(return_class_n(1)).__name__ == "DerivedClass1"

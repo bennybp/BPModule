@@ -15,7 +15,6 @@
 #include "bphash/Hasher.hpp"
 
 namespace pulsar{
-namespace testing {
 
 /*! \brief serialize an object, then unserialize
  *
@@ -27,9 +26,9 @@ template<typename T, typename Equality = std::equal_to<T>>
 bool RoundTripSerialization(pybind11::object obj)
 {
     using namespace bphash;
-    using namespace pulsar::util;
+    
 
-    T & cppobj = pulsar::python::convert_to_cpp<T &>(obj);
+    T & cppobj = pulsar::convert_to_cpp<T &>(obj);
 
     // Initial hash
     HashValue hash1 = make_hash(HashType::Hash128, cppobj);
@@ -59,16 +58,16 @@ bool RoundTripSerialization(pybind11::object obj)
     Equality eq;
 
 
-    output::print_global_debug("Hash1: %s \n", hash_to_string(hash1));
-    output::print_global_debug("Hash2: %s \n", hash_to_string(hash2));
-    output::print_global_debug("Hash3: %s \n", hash_to_string(hash3));
-    output::print_global_debug("Hash4: %s \n", hash_to_string(hash4));
-    output::print_global_debug("Hash Eq 1: %? \n", hash1 == hash2);
-    output::print_global_debug("Hash Eq 2: %? \n", hash2 == hash3);
-    output::print_global_debug("Hash Eq 3: %? \n", hash3 == hash4);
-    output::print_global_debug("Equality 1: %s \n",  eq(cppobj, newobj) ? "True" : "False");
-    output::print_global_debug("Equality 2: %s \n",  eq(cppobj, newobj2) ? "True" : "False");
-    output::print_global_debug("Equality 3: %s \n",  eq(cppobj, *newobj3) ? "True" : "False");
+    print_global_debug("Hash1: %s \n", hash_to_string(hash1));
+    print_global_debug("Hash2: %s \n", hash_to_string(hash2));
+    print_global_debug("Hash3: %s \n", hash_to_string(hash3));
+    print_global_debug("Hash4: %s \n", hash_to_string(hash4));
+    print_global_debug("Hash Eq 1: %? \n", hash1 == hash2);
+    print_global_debug("Hash Eq 2: %? \n", hash2 == hash3);
+    print_global_debug("Hash Eq 3: %? \n", hash3 == hash4);
+    print_global_debug("Equality 1: %s \n",  eq(cppobj, newobj) ? "True" : "False");
+    print_global_debug("Equality 2: %s \n",  eq(cppobj, newobj2) ? "True" : "False");
+    print_global_debug("Equality 3: %s \n",  eq(cppobj, *newobj3) ? "True" : "False");
 
 
     // All hashes should match, and the two objects should
@@ -97,8 +96,6 @@ int TestSerialization(pybind11::object obj)
     return TestBoolFunc(RoundTripSerialization<T, Equality>, obj);
 }
 
-
-} // close namespace testing
 } // close namespace pulsar
 
 

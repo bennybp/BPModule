@@ -12,8 +12,6 @@
 #include "pulsar/python/Types.hpp"
 
 namespace pulsar{
-namespace util {
-
 
 /*! \brief Demangle a type string for a C++ object into something human-readable
  *
@@ -60,7 +58,7 @@ template<typename T>
 typename std::enable_if<std::is_base_of<pybind11::object, T>::value, std::string>::type
 demangle_cpp_or_py_type(const T & t)
 {
-    return python::get_py_class(t);
+    return get_py_class(t);
 }
 
 
@@ -74,12 +72,6 @@ std::string demangle_cpp_type(void)
     return demangle_cpp(typeid(T).name());
 }
 
-
-
-
-
-
-} // close namespace util
 } // close namespace pulsar
 
 #endif

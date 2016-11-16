@@ -1,5 +1,6 @@
 import pytest
 import gc
+from pybind11_tests import ConstructorStats
 
 
 def test_regressions():
@@ -59,50 +60,28 @@ def test_shared_ptr_gc():
         assert i == v.value()
 
 
-def test_no_id(capture, msg):
+def test_no_id(msg):
     from pybind11_tests.issues import get_element, expect_float, expect_int
 
     with pytest.raises(TypeError) as excinfo:
         get_element(None)
     assert msg(excinfo.value) == """
-        Incompatible function arguments. The following argument types are supported:
+        get_element(): incompatible function arguments. The following argument types are supported:
             1. (arg0: m.issues.ElementA) -> int
-            Invoked with: None
+
+        Invoked with: None
     """
 
     with pytest.raises(TypeError) as excinfo:
         expect_int(5.2)
     assert msg(excinfo.value) == """
-        Incompatible function arguments. The following argument types are supported:
+        expect_int(): incompatible function arguments. The following argument types are supported:
             1. (arg0: int) -> int
-            Invoked with: 5.2
+
+        Invoked with: 5.2
     """
     assert expect_float(12) == 12
 
-    from pybind11_tests.issues import A, call_f
-
-    class B(A):
-        def __init__(self):
-            super(B, self).__init__()
-
-        def f(self):
-            print("In python f()")
-
-    # C++ version
-    with capture:
-        a = A()
-        call_f(a)
-    assert capture == "A.f()"
-
-    # Python version
-    with capture:
-        b = B()
-        call_f(b)
-    assert capture == """
-        PyA.PyA()
-        PyA.f()
-        In python f()
-    """
 
 
 def test_str_issue(msg):
@@ -114,10 +93,11 @@ def test_str_issue(msg):
     with pytest.raises(TypeError) as excinfo:
         str(StrIssue("no", "such", "constructor"))
     assert msg(excinfo.value) == """
-        Incompatible constructor arguments. The following argument types are supported:
+        __init__(): incompatible constructor arguments. The following argument types are supported:
             1. m.issues.StrIssue(arg0: int)
             2. m.issues.StrIssue()
-            Invoked with: no, such, constructor
+
+        Invoked with: no, such, constructor
     """
 
 
@@ -167,6 +147,7 @@ def test_move_fallback():
     m1 = get_moveissue1(1)
     assert m1.value == 1
 
+
 def test_override_ref():
     from pybind11_tests.issues import OverrideTest
     o = OverrideTest("asdf")
@@ -182,6 +163,7 @@ def test_override_ref():
     a.value = "bye"
     assert a.value == "bye"
 
+
 def test_operators_notimplemented(capture):
     from pybind11_tests.issues import OpTest1, OpTest2
     with capture:
@@ -194,3 +176,64 @@ def test_operators_notimplemented(capture):
 Add OpTest2 with OpTest2
 Add OpTest2 with OpTest1
 Add OpTest2 with OpTest1"""
+
+
+def test_iterator_rvpolicy():
+    """ Issue 388: Can't make iterators via make_iterator() with different r/v policies """
+    from pybind11_tests.issues import make_iterator_1
+    from pybind11_tests.issues import make_iterator_2
+
+    assert list(make_iterator_1()) == [1, 2, 3]
+    assert list(make_iterator_2()) == [1, 2, 3]
+    assert(type(make_iterator_1()) != type(make_iterator_2()))
+
+
+def test_dupe_assignment():
+    """ Issue 461: overwriting a class with a function """
+    from pybind11_tests.issues import dupe_exception_failures
+    assert dupe_exception_failures() == []
+
+
+def test_enable_shared_from_this_with_reference_rvp():
+    """ Issue #471: shared pointer instance not dellocated """
+    from pybind11_tests import SharedParent, SharedChild
+
+    parent = SharedParent()
+    child = parent.get_child()
+
+    cstats = ConstructorStats.get(SharedChild)
+    assert cstats.alive() == 1
+    del child, parent
+    assert cstats.alive() == 0
+
+
+def test_non_destructed_holders():
+    """ Issue #478: unique ptrs constructed and freed without destruction """
+    from pybind11_tests import SpecialHolderObj
+
+    a = SpecialHolderObj(123)
+    b = a.child()
+
+    assert a.val == 123
+    assert b.val == 124
+
+    cstats = SpecialHolderObj.holder_cstats()
+    assert cstats.alive() == 1
+    del b
+    assert cstats.alive() == 1
+    del a
+    assert cstats.alive() == 0
+
+
+def test_complex_cast(capture):
+    """ Issue #484: number conversion generates unhandled exceptions """
+    from pybind11_tests.issues import test_complex
+
+    with capture:
+        test_complex(1)
+        test_complex(2j)
+
+    assert capture == """
+1.0
+(0.0, 2.0)
+"""

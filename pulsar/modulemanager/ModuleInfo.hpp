@@ -13,7 +13,6 @@
 
 
 namespace pulsar{
-namespace modulemanager {
 
 /*! \brief Structure that stores information about a module
  *
@@ -32,7 +31,7 @@ struct ModuleInfo
     std::string description;           //!< A description of the module
     std::vector<std::string> authors;  //!< Authors of the module
     std::vector<std::string> refs;     //!< References for the module (articles, web pages, etc)
-    datastore::OptionMap options;      //!< Options for the module
+    OptionMap options;      //!< Options for the module
 
 
     /*! \brief print out this info
@@ -72,8 +71,6 @@ struct ModuleInfo
         ///@}
 };
 
-
-} // close namespace modulemanager
 } // close namespace pulsar
 
 

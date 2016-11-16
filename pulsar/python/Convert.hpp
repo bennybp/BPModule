@@ -16,9 +16,6 @@
 #include "pulsar/util/Mangle.hpp"
 
 namespace pulsar{
-namespace python {
-
-
 
 /*! \brief Convert a python object to a C++ object
  *
@@ -42,13 +39,13 @@ T convert_to_cpp(const pybind11::object & obj)
     catch(const std::exception & ex)
     {
         throw PythonConvertException("Cannot convert from python to C++: Conversion failed",
-                                     "fromtype", get_py_class(obj), "totype", util::demangle_cpp_type<T>(),
+                                     "fromtype", get_py_class(obj), "totype", demangle_cpp_type<T>(),
                                      "what", ex.what());
     }
     catch(...)
     {
         throw PythonConvertException("Cannot convert from python to C++: Conversion failed",
-                                     "fromtype", get_py_class(obj), "totype", util::demangle_cpp_type<T>(),
+                                     "fromtype", get_py_class(obj), "totype", demangle_cpp_type<T>(),
                                      "what", "unknown exception type");
     }
 }
@@ -81,7 +78,7 @@ pybind11::object convert_to_py(const T & obj,
 
             throw PythonConvertException(pyex.first,
                                          "when", "in converting from C++ to python",
-                                         "fromtype", util::demangle_cpp_type<T>(),
+                                         "fromtype", demangle_cpp_type<T>(),
                                          "info", "Resulting object pointer is null");
         }
         else
@@ -91,13 +88,13 @@ pybind11::object convert_to_py(const T & obj,
     catch (const std::exception & ex)
     {
         throw PythonConvertException(ex.what(), 
-                                     "fromtype", util::demangle_cpp_type<T>(),
+                                     "fromtype", demangle_cpp_type<T>(),
                                      "when", "in converting from C++ to python");
     }
     catch(...)
     {
         throw PythonConvertException("Caught unknown exception in converting from C++ to python object", 
-                                     "from type", util::demangle_cpp_type<T>());
+                                     "from type", demangle_cpp_type<T>());
     }
 }
 
@@ -122,9 +119,6 @@ pybind11::object convert_to_py(const T * const obj, size_t n)
     return convert_to_py(v);
 }
 
-
-
-} // close namespace python
 } // close namespace pulsar
 
 #endif

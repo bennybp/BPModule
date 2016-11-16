@@ -14,8 +14,6 @@
 
 
 namespace pulsar{
-namespace python {
-
 
 /*! \brief Get the class of a python object as a string
  */
@@ -36,8 +34,6 @@ bool is_callable(const pybind11::object & obj);
  */
 bool has_callable_attr(const pybind11::object & obj, const std::string & attr);
 
-
-} // close namespace python
 } // close namespace pulsar
 
 #endif

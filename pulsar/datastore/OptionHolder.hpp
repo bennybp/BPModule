@@ -18,7 +18,6 @@
 
 
 namespace pulsar {
-namespace datastore {
 namespace detail {
 
 
@@ -54,7 +53,7 @@ static OptionIssues ValidatorWrapper_(pybind11::object & valobj,
     try {
         if(!valobj || valobj.is_none())
             return {};
-        return python::call_py_func_attr<OptionIssues>(valobj, "validate", value.get_py());
+        return call_py_func_attr<OptionIssues>(valobj, "validate", value.get_py());
     }
     catch(const std::exception & ex)
     {
@@ -131,7 +130,7 @@ class OptionHolder : public OptionBase
                      bool required, const pybind11::object & validator,
                      const std::string & help, const pybind11::object & def)
             : OptionHolder(key, required, validator, help,
-                           python::convert_to_cpp<stored_type>(def))
+                           convert_to_cpp<stored_type>(def))
         {
         }
 
@@ -277,8 +276,8 @@ class OptionHolder : public OptionBase
 
         virtual void print(std::ostream & os) const
         {
-            using namespace pulsar::output;
-            using namespace pulsar::util;
+            using namespace pulsar;
+            
 
             std::vector<std::string> val = {"(none)"};
             std::vector<std::string> def = {"(none)"};
@@ -369,7 +368,7 @@ class OptionHolder : public OptionBase
         virtual pybind11::object get_py(void) const
         {
             try {                                                     
-                return python::convert_to_py(get());                            
+                return convert_to_py(get());                            
             }                                                         
             catch(std::exception & ex)                                
             {                                                         
@@ -383,7 +382,7 @@ class OptionHolder : public OptionBase
             stored_type val;
 
             try {
-                val = python::convert_to_cpp<stored_type>(obj);
+                val = convert_to_cpp<stored_type>(obj);
             }
             catch(std::exception & ex)
             {
@@ -486,7 +485,6 @@ extern template class OptionHolder<OptionType::DictStringString>;
 
 
 } // close namespace detail
-} // close namespace datastore
 } // close namespace pulsar
 
 

@@ -13,10 +13,6 @@
 
 
 namespace pulsar{
-namespace output {
-
-
-
 
 /*! \brief Sets the global output to stdout
  */
@@ -137,7 +133,6 @@ void print_global_debug(const std::string & fmt, const Targs&... Fargs)
 }
 
 
-} // close namespace output
 } // close namespace pulsar
 
 

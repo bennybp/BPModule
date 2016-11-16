@@ -13,7 +13,7 @@
 #include <memory>
 
 namespace pulsar {
-namespace datastore {
+
 namespace detail {
 
 
@@ -99,7 +99,6 @@ class GenericBase
 
 
 
-} //closing namespace detail
 } //closing namespace datastore
 } //closing namespace pulsar
 

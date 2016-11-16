@@ -7,7 +7,6 @@
 #include <Eigen/Dense>
 
 namespace pulsar {
-namespace math {
 
 /** \brief Specialization of TensorImpl to Eigen's Matrix
  * 
@@ -15,7 +14,7 @@ namespace math {
  *        Eigen matrix?
  *  \todo A lot of duplicate code b/w this and EigenVectorImpl combine?
  */
-class EigenMatrixImpl : public pulsar::math::MatrixDImpl
+class EigenMatrixImpl : public MatrixDImpl
 {
     public:
         using matrix_type=Eigen::MatrixXd;
@@ -95,7 +94,7 @@ class EigenMatrixImpl : public pulsar::math::MatrixDImpl
         template<class Archive>
         void save(Archive & archive) const
         {
-            archive(cereal::base_class<pulsar::math::MatrixDImpl>(this));
+            archive(cereal::base_class<MatrixDImpl>(this));
             unsigned int nrow = (unsigned int) mat_->rows();
             unsigned int ncol = (unsigned int) mat_->cols();
 
@@ -110,7 +109,7 @@ class EigenMatrixImpl : public pulsar::math::MatrixDImpl
         template<class Archive>
         void load(Archive & archive)
         {
-            archive(cereal::base_class<pulsar::math::MatrixDImpl>(this));
+            archive(cereal::base_class<MatrixDImpl>(this));
 
             unsigned int nrow, ncol;
             archive(nrow, ncol);
@@ -131,7 +130,7 @@ class EigenMatrixImpl : public pulsar::math::MatrixDImpl
 
 
 ///Same as EigenMatrix except for vectors
-class EigenVectorImpl : public pulsar::math::VectorDImpl
+class EigenVectorImpl : public VectorDImpl
 {
     public:
         using vector_type=Eigen::VectorXd;///<Type of Eigen's vector class
@@ -208,7 +207,7 @@ class EigenVectorImpl : public pulsar::math::VectorDImpl
         template<class Archive>
         void save(Archive & archive) const
         {
-            archive(cereal::base_class<pulsar::math::VectorDImpl>(this));
+            archive(cereal::base_class<VectorDImpl>(this));
             unsigned int nrow = (unsigned int) mat_->rows();
             unsigned int ncol = (unsigned int) mat_->cols();
 
@@ -223,7 +222,7 @@ class EigenVectorImpl : public pulsar::math::VectorDImpl
         template<class Archive>
         void load(Archive & archive)
         {
-            archive(cereal::base_class<pulsar::math::VectorDImpl>(this));
+            archive(cereal::base_class<VectorDImpl>(this));
 
             unsigned int nrow, ncol;
             archive(nrow, ncol);
@@ -244,19 +243,18 @@ class EigenVectorImpl : public pulsar::math::VectorDImpl
 
 ///Converts a pulsar matrix to an Eigen matrix
 std::shared_ptr<const Eigen::MatrixXd>
-convert_to_eigen(const pulsar::math::MatrixDImpl & ten);
+convert_to_eigen(const MatrixDImpl & ten);
 
 ///Converts a pulsar vector to an Eigen vector
 std::shared_ptr<const Eigen::VectorXd>
-convert_to_eigen(const pulsar::math::VectorDImpl & ten);
+convert_to_eigen(const VectorDImpl & ten);
 
 ///Eigen Matrix suitable for use with symmetry and spin
-typedef pulsar::math::BlockByIrrepSpin<std::shared_ptr<EigenMatrixImpl>> BlockedEigenMatrix;
+typedef BlockByIrrepSpin<std::shared_ptr<EigenMatrixImpl>> BlockedEigenMatrix;
 
 ///Eigen vector suitable for use with symmetry and spin
-typedef pulsar::math::BlockByIrrepSpin<std::shared_ptr<EigenVectorImpl>> BlockedEigenVector;
+typedef BlockByIrrepSpin<std::shared_ptr<EigenVectorImpl>> BlockedEigenVector;
 
 
-} // close namespace math
 } // close namespace pulsar
 

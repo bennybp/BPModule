@@ -11,7 +11,6 @@
 #include "pulsar/exception/Exceptions.hpp"
 
 namespace pulsar{
-namespace system {
 
 // global LUT:
 // Maps Z to symbol
@@ -186,6 +185,5 @@ double vdw_radius_from_symbol(const std::string & sym)
     return atomic_info_from_symbol(sym).vdwradius;
 }
 
-} // closing namespace system
 } // closing namespace pulsar
 

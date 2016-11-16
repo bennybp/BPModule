@@ -1,7 +1,4 @@
 import re
-from pulsar.system import BasisShellInfo, ShellType, string_to_am, atomic_z_from_symbol
-from pulsar.exception import GeneralException
-
 
 # Break apart a list into blocks, where the original list
 # was separated by separator (regex). The first separator is included

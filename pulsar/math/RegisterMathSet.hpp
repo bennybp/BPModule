@@ -19,7 +19,6 @@ PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>)
 //! \todo Export exact casts? Or have the equivalent with python?
 
 namespace pulsar{
-namespace math {
 
 
 /*! \brief Registers a MathSet
@@ -42,8 +41,10 @@ void register_MathSet(pybind11::module & m,
     .def(pybind11::init<shared_universe, bool>())
     .def(pybind11::init<shared_universe,std::set<size_t>>())
     .def(pybind11::init<const T &>())
+    .def(pybind11::init<const T &,bool>())
     .def("clone",&T::clone)
     .def("my_hash", &T::my_hash)
+    .def("clear",&T::clear)
     .def("size", &T::size)
     .def("idx",  &T::idx)
     .def("as_universe", &T::as_universe)
@@ -145,7 +146,6 @@ void register_Universe(pybind11::module & m,
 }
 
 
-} // close namespace math 
 } // close namespace pulsar
 
 #endif

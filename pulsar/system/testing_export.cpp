@@ -12,9 +12,6 @@
 
 
 namespace pulsar{
-namespace system {
-namespace export_python {
-
 
 // Compare two Systems elementwise
 //! \todo Maybe replace if able to get universes from mathset. This is ugly
@@ -40,9 +37,9 @@ std::vector<double> Test_spherical_transform_block(const SphericalTransformCoefs
 }
 
 
-void export_testing(pybind11::module & m)
+void export_testing_system(pybind11::module & m)
 {
-    using pulsar::testing::TestSerialization;
+    using pulsar::TestSerialization;
 
     /////////////////////////////////
     // Serialization
@@ -59,7 +56,4 @@ void export_testing(pybind11::module & m)
     m.def("Test_spherical_transform_block", &Test_spherical_transform_block);
 }
 
-
-} // close namespace export_python
-} // close namespace system 
 } // close namespace pulsar

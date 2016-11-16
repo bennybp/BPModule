@@ -13,7 +13,6 @@
 
 
 namespace pulsar{
-namespace util {
 
 /*! Retrieves the number of arguments on the command line
  */
@@ -33,8 +32,6 @@ void set_cmdline(const std::vector<std::string> & argv);
  */
 void clear_cmdline(void);
 
-
-} // close namespace util
 } // close namespace pulsar
 
 

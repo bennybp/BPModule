@@ -14,7 +14,6 @@
 
 
 namespace pulsar {
-namespace parallel {
 
 //Returns the current environment
 const LibTaskForce::HybridEnv& get_env();    
@@ -47,8 +46,6 @@ long get_proc_id(void);
  */
 long get_nproc(void);
 
-
-} // close namespace parallel
 } // close namespace pulsar
 
 #endif

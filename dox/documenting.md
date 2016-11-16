@@ -1,7 +1,8 @@
 Documenting Pulsar                                                {#documenting}
 ==================
 This page describes documentation philosophy in Pulsar as well as conventions
-one should use while documenting features of the core library.
+one should use while documenting features of the core library.  The same
+documentation standards are used throughout Pulsar's standard modules as well.
 
 ## Documenation Program Decisions
 
@@ -41,6 +42,56 @@ program (less so with `Sphinx`).  The above comments reflect my experience with
 these programs and there may be ways around the shortcomings listed above that I
 could not find with Google searching.
 
+## General Documenation Considerations
+
+Good documentation has the following properties:
+- Classes:
+  
+- Functions:
+  - What a function does and briefly how it does it (for full details of
+    how a function does something users should look at the code)
+  - Describes incoming parameters and return value as well as assumptions about
+    them
+  - All template type and non-type parameters
+    - For variadic templates explain what is expected in the parameter pack
+  - Known limitations of the function
+  - Possible improvements and/or alternative functions to circumvent limitations
+  - Thread safety is addressed
+  - MPI "safety" (I don't think I've ever heard this term)
+    - By this we mean, do you call a blocking operation, is there file I/O, etc.
+  - Exception safety
+    - Strong exception safety
+      - If a function throws all data is as it was at the beginning of the call
+    - Weak exception safety
+      - Function will not leak resources if an exception occurs
+    - No exception
+      - Function does not throw at all
+    - No guarantee
+      - Function promises nothing (this is very bad and should be avoided at all
+        costs)
+- Attributes/member variables:
+  - What it is
+  - What are its units (if a quantity)
+  - What is the data layout (e.g. nrows by ncols)
+  - Documenting the type is the job of the class's documentation
+  
+
+## Adding Documentation Pages
+
+Rather than clutter the code with tons of examples of how to use it.  We
+recommend making a page for code that is likely to see lots of use and deserves
+a tutorial on its own.  For example we have the 
+[Making and Using Systems](@ref systems) page to describe making and using a
+System.  This avoids 100s of extra lines in the actual `System.hpp` file.  If
+you want to add a page:
+- Place the actual file in the `dox` folder
+   - The page should be written using markdown
+   - The extension should be `.md`
+   - You can also use Doxygen commands in it (and indeed sometimes you'll need
+     to as Doxygen sometimes stutters with markdown)
+- Add your file to `dox/developers.doxcfg` so Doxygen knows to use it
+- Add a link to your documentation in `mainpage.dox` (in an appropriate section)
+
 ## Documenting C++
 
 Basically follow normal Doxygen standards.  At the moment we suggest the
@@ -48,10 +99,6 @@ following conventions to help keep the documentation concise:
 
 - Use \verbatim\copydoc function_name\endverbatim when possible to avoid 
   duplicating documentation
-- Prefer after member documentation for very short documentation, e.g.
-   ~~~{.cpp}
-   int natoms_;///<The number of atoms
-   ~~~
 
 ## Documenting Python
 Documentation in Python goes in doc strings.  For example:
@@ -136,24 +183,6 @@ Basically the doc string is seperated into several parts:
   - Replaces `Returns:` for generators
 - You may use Doxygen commands such as \verbatim\f$\beta\f$\endverbatim to 
   generate the Greek letter beta
-
-## Adding Pages
-
-Rather than clutter the code with tons of examples of how to use it.  We
-recommend making a page for code that is likely to see lots of use and deserves
-a tutorial on its own.  For example we have the 
-[Making and Using Systems](@ref systems) page to describe making and using a
-System.  This avoids 100s of extra lines in the actual `System.hpp` file.  If
-you want to add a page:
-- Place the actual file in the `dox` folder
-   - The page should be written using markdown
-   - The extension should be `.md`
-   - You can also use Doxygen commands in it (and indeed sometimes you'll need
-     to as Doxygen sometimes stutters with markdown)
-- Add your file to `dox/developers.doxcfg` so Doxygen knows to use it
-- Add a link to your documentation in `mainpage.dox` (in an appropriate section)
-
-
 
 
 

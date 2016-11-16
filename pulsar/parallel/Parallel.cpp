@@ -12,7 +12,6 @@
 #include "pulsar/util/Cmdline.hpp"
 
 namespace pulsar{
-namespace parallel {
 
 using Env_t=LibTaskForce::HybridEnv;
 static std::unique_ptr<Env_t> Env_;
@@ -56,6 +55,4 @@ long get_nproc(void)
     return static_cast<long>(Env_->comm().nprocs());
 }
 
-
-} // close namespace parallel
 } // close namespace pulsar

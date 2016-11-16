@@ -15,8 +15,6 @@
 
 
 namespace pulsar{
-namespace modulemanager {
-
 
 /*! \brief Loader for C++ supermodules
  *
@@ -59,7 +57,6 @@ class CppSupermoduleLoader : public SupermoduleLoaderBase
         std::map<std::string, SOInfo> soinfo_;
 };
 
-} // close namespace modulemanager
 } // close namespace pulsar
 
 

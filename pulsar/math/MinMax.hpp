@@ -1,10 +1,8 @@
-#ifndef PULSAR_GUARD_MATH__MINMAX_HPP_
-#define PULSAR_GUARD_MATH__MINMAX_HPP_
+#pragma once
 
 #include <algorithm>
 
 namespace pulsar{
-namespace math {
 
 
 template<typename T>
@@ -59,10 +57,4 @@ T max_abs(T v, Targs && ... args)
     return std::max(std::abs(v), max_abs(std::forward<Targs>(args)...));
 }
 
-
-} // close namespace math
 } // close namespace pulsar
-
-
-
-#endif

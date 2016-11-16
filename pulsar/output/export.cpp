@@ -11,14 +11,9 @@
 
 
 namespace pulsar{
-namespace output {
-namespace export_python {
 
-
-void export_pybind11(pybind11::module & mtop)
+void export_output(pybind11::module & m)
 {
-    pybind11::module m = mtop.def_submodule("output", "Output functionality");
-
     // Enumeration for output types
     pybind11::enum_<OutputType>(m, "OutputType")
     .value("Output", OutputType::Output)
@@ -61,8 +56,5 @@ void export_pybind11(pybind11::module & mtop)
     m.def("print_global_debug",   print_global_debug<>);
 }
 
-
-} // close namespace export_python
-} // close namespace output
 } // close namespace pulsar
 

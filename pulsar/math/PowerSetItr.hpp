@@ -9,7 +9,7 @@
 #include <memory>
 #include "pulsar/math/CombItr.hpp"
 namespace pulsar{
-namespace math{
+
 /** \brief Class to facilitate iterating over the power set of a set
  *
  *  Let's start with what a power set is.  Given a set \f$S\f$, the
@@ -141,7 +141,7 @@ class PowerSetItr{
       size_t MinOrder_;
       ///The current order
       size_t Order_;
-      typedef typename pulsar::math::CombItr<T> CombItr_t;
+      typedef typename pulsar::CombItr<T> CombItr_t;
       typedef typename std::shared_ptr<CombItr_t> SharedItr_t;
       SharedItr_t CurrentIt_;
       ///Have we iterated over the entire range yet?
@@ -218,5 +218,5 @@ void PowerSetItr<T>::next(){
 }
 
 
-}}//End namespace
+}//End namespace
 

@@ -17,8 +17,6 @@ namespace {
 }
 
 namespace pulsar{
-namespace util {
-
 
 int * get_argc(void)
 {
@@ -74,6 +72,4 @@ void clear_cmdline(void)
     }
 }
 
-
-} // close namespace util
 } // close namespace pulsar

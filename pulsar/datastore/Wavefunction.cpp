@@ -10,7 +10,6 @@
 #include "pulsar/datastore/Wavefunction.hpp"
 
 namespace pulsar {
-namespace datastore {
 
 bool Wavefunction::operator==(const Wavefunction & rhs) const
 {
@@ -59,8 +58,5 @@ bphash::HashValue Wavefunction::my_hash(void) const
     return bphash::make_hash(bphash::HashType::Hash128, *this);
 }
 
-
-
-} // close namespace datastore
 } // close namespace system
 

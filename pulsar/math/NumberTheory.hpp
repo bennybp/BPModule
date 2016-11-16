@@ -22,7 +22,6 @@
 #include "pulsar/exception/Exceptions.hpp"
 
 namespace pulsar{
-namespace math{
 
 ///Computes and returns all factors of \p Num (including 1 and Num)
 template<typename T>
@@ -84,6 +83,6 @@ std::pair<T,T> reduce(T n,T d){
     return std::make_pair(n/LF,d/LF);
 }
 
-}}
+}
 #endif /* NUMBERTHEORY_HPP */
 

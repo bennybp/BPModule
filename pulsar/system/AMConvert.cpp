@@ -10,7 +10,7 @@
 #include "pulsar/util/StringUtil.hpp" // for case insensitive compare
 #include "pulsar/exception/Exceptions.hpp"
 
-using pulsar::util::CaseInsensitiveLess;
+using pulsar::CaseInsensitiveLess;
 
 static const std::map<std::string, int, CaseInsensitiveLess> toi_{ { "spdfgh", -5 },
                                                                    { "spdfg",  -4 },
@@ -70,7 +70,6 @@ static const std::map<int, std::string> tostr_{ { -5, "spdfgh"},
 
 
 namespace pulsar{
-namespace system {
 
 
 int string_to_am(const std::string & s)
@@ -90,8 +89,5 @@ std::string am_to_string(int am)
         throw BasisSetException("Cannot find string for this integer AM", "int", am);
 }
 
-
-
-} // close namespace system
 } // close namespace pulsar
 

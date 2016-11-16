@@ -102,7 +102,7 @@ for l in open(os.path.join(datadir, "NIST-ATOMICION.formatted.txt")).readlines()
 
 
 with psr_common.HeaderSourceFiles(outbase, "LUTs for Atomic Information", 
-                                 ["pulsar", "system", "lut"],
+                                 ["pulsar", "lut"],
                                  hincludes = ["<map>",
                                               "\"pulsar/system/AtomicInfo.hpp\"",
                                               "\"pulsar/util/StringUtil.hpp\""],

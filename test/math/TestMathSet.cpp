@@ -1,8 +1,8 @@
 #include "TestCXX.hpp"
 #include <pulsar/math/MathSet.hpp>
 
-using Universe_t=pulsar::math::Universe<double>;
-using MathSet_t=pulsar::math::MathSet<double>;
+using Universe_t=pulsar::Universe<double>;
+using MathSet_t=pulsar::MathSet<double>;
 using std::bind;
 using namespace std::placeholders;
 
@@ -11,8 +11,8 @@ TEST_CLASS(TestMathSet){
     
     std::shared_ptr<Universe_t> U1=std::make_shared<Universe_t>(1.0,2.0,3.0),
             U2=std::make_shared<Universe_t>(3.0,4.0,5.0),
-            U3=std::make_shared<Universe_t>(3.0);
-    
+            U3=std::make_shared<Universe_t>(3.0),
+            U4=std::make_shared<Universe_t>(9.0,51.0,100.0);
     
     //Constructors and assignment
     MathSet_t S1(U1,std::set<size_t>({2}));
@@ -26,6 +26,8 @@ TEST_CLASS(TestMathSet){
     tester.test("Fill constructor works",S3,S5);
     MathSet_t S6(std::move(S5));
     tester.test("Move constructor work",S3,S6);
+    MathSet_t B2(S1,true),B3(U1,true);
+    tester.test("Copy universe and fill works",B3,B2);
     S4=S6;
     tester.test("Assignment constructor works",S4,S6);
     MathSet_t S7=std::move(S3);
@@ -69,24 +71,25 @@ TEST_CLASS(TestMathSet){
     //Set operations
     MathSet_t S9(U1,{1,2,3}),S10(U1,{1,2,4}),S12(U1,{1,2}),
               S13(U1,std::set<size_t>({3}));
+    MathSet_t S99(U4,{1});
     auto un1=bind(&MathSet_t::union_assign,_1,_2);
     auto un2=bind(&MathSet_t::set_union,_1,_2);
     tester.test("union",true,S9,un2,S1,S12);
-    tester.test("union fail",false,S9,un2,S1,S4);
+    tester.test("union fail",false,S9,un2,S1,S99);
     tester.test("union assign",true,S9,un1,S1,S12);
-    tester.test("union assign fail",false,S9,un1,S1,S4);
+    tester.test("union assign fail",false,S9,un1,S1,S99);
     auto int1=bind(&MathSet_t::intersection_assign,_1,_2);
     auto int2=bind(&MathSet_t::intersection,_1,_2);
     tester.test("intersection",true,S12,int2,S1,S10);
-    tester.test("intersection fail",false,S2,int2,S1,S4);
+    tester.test("intersection fail",false,S2,int2,S1,S99);
     tester.test("intersection assign",true,S12,int1,S1,S10);
-    tester.test("intersection assign fail",false,S2,int1,S1,S4);
+    tester.test("intersection assign fail",false,S2,int1,S1,S99);
     auto diff1=bind(&MathSet_t::difference_assign,_1,_2);
     auto diff2=bind(&MathSet_t::difference,_1,_2);
     tester.test("difference",true,S13,diff2,S2,S12);
-    tester.test("difference fail",false,S13,diff2,S2,S4);
+    tester.test("difference fail",false,S13,diff2,S2,S99);
     tester.test("difference assign",true,S13,diff1,S2,S12);
-    tester.test("difference assign fail",false,S13,diff1,S2,S4);
+    tester.test("difference assign fail",false,S13,diff1,S2,S99);
     MathSet_t S14(U1,true);
     S14-=S2;
     tester.test("complement",S14,S2.complement());
@@ -108,7 +111,6 @@ TEST_CLASS(TestMathSet){
     tester.test("proper superset equal",true,false,sups2,S2,S13);
     tester.test("proper superset true",true,true,sups2,S9,S2);
     tester.test("proper superset false",true,false,sups2,S2,S9);
-    tester.test("not equal different universes",true,S2!=S4);
     tester.test("not equal",true,S2!=S14);
     
     
@@ -121,10 +123,10 @@ TEST_CLASS(TestMathSet){
     std::vector<double> partresults({2.0}),presults2(NewS2.begin(),NewS2.end());
     tester.test("partition works",partresults,presults2);
     
-    const std::string Corr_Hash="6c146c3b32a8c3dceed476a2279c3503";
-    auto hash=bind(&bphash::hash_to_string,bind(&MathSet_t::my_hash,_1));
-    tester.test("hash works check 1",true,Corr_Hash,hash,S2);
-    tester.test("hash works check 2",true,Corr_Hash,hash,S13);
+    tester.test("hash works",S2.my_hash(),S13.my_hash());
+
+    S2.clear();
+    tester.test("clear works",0,S2.size());
     
     tester.print_results();
 }

@@ -19,8 +19,6 @@
 
 
 namespace pulsar{
-namespace system {
-
 
 /*! \brief Base class for basis set shells
  *
@@ -98,7 +96,7 @@ class BasisShellBase
          *
          * \throw pulsar::BasisSetException on out-of-bounds access
          */
-        size_t general_n_functions(size_t n) const { return system::n_functions(type_, general_am(n)); }
+        size_t general_n_functions(size_t n) const { return pulsar::n_functions(type_, general_am(n)); }
 
 
         /*! \brief Is this shell a combined AM shell
@@ -557,9 +555,6 @@ class BasisShellBase
 };
 
 
-
-
-} // close namespace system
 } // close namespace pulsar
 
 

@@ -41,8 +41,9 @@ endfunction()
 #build directory for this project
 file(WRITE ${CMAKE_INSTALL_PREFIX}/CTestTestfile.cmake "subdirs(test)")
 
-add_subdirectory(math)
-add_subdirectory(system)
+foreach(dir math modulebase system)
+    add_subdirectory(${dir})
+endforeach()
 
 
 configure_file("TestFxns.py.in" "TestFxns.py" @ONLY)

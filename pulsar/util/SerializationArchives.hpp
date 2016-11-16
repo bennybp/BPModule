@@ -18,7 +18,6 @@
 
 
 namespace pulsar{
-namespace util {
 namespace detail {
 
 
@@ -308,9 +307,6 @@ class FileArchive : public detail::StdStreamArchive<std::fstream>
         }
 };
 
-
-
-} // close namespace util
 } // close namespace pulsar
 
 

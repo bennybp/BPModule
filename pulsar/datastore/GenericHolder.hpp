@@ -15,7 +15,6 @@
 
 
 namespace pulsar {
-namespace datastore {
 namespace detail {
 
 /*! \brief Storage of generic data
@@ -112,11 +111,11 @@ class GenericHolder : public GenericBase
         // are trying to do something invalid.
         // Only one function from each pair will be valid.
         template<typename U = T>
-        typename std::enable_if<util::SerializeCheck<U>::value, ByteArray>::type
+        typename std::enable_if<SerializeCheck<U>::value, ByteArray>::type
         to_byte_array_helper_(void) const;
 
         template<typename U = T>
-        typename std::enable_if<!util::SerializeCheck<U>::value, ByteArray>::type
+        typename std::enable_if<!SerializeCheck<U>::value, ByteArray>::type
 
         to_byte_array_helper_(void) const;
 
@@ -165,13 +164,13 @@ const char * GenericHolder<T>::type(void) const noexcept
 template<typename T>
 std::string GenericHolder<T>::demangled_type(void) const
 {
-    return util::demangle_cpp_or_py_type(*obj);
+    return demangle_cpp_or_py_type(*obj);
 }
 
 template<typename T>
 bool GenericHolder<T>::is_serializable(void) const noexcept
 {
-    return util::SerializeCheck<T>::value;
+    return SerializeCheck<T>::value;
 }
 
 template<typename T>
@@ -200,15 +199,15 @@ bphash::HashValue GenericHolder<T>::my_hash(void) const
 
 template<typename T>
 template<typename U>
-typename std::enable_if<util::SerializeCheck<U>::value, ByteArray>::type
+typename std::enable_if<SerializeCheck<U>::value, ByteArray>::type
 GenericHolder<T>::to_byte_array_helper_(void) const
 {
-    return util::to_byte_array(*obj);
+    return pulsar::to_byte_array(*obj);
 }
 
 template<typename T>
 template<typename U>
-typename std::enable_if<!util::SerializeCheck<U>::value, ByteArray>::type
+typename std::enable_if<!SerializeCheck<U>::value, ByteArray>::type
 GenericHolder<T>::to_byte_array_helper_(void) const
 {
     //! \todo can be static assert?
@@ -234,6 +233,5 @@ GenericHolder<T>::make_my_hash_(void)
 
 
 } //closing namespace detail
-} //closing namespace datastore
 } //closing namespace pulsar
 
