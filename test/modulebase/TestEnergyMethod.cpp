@@ -25,7 +25,7 @@ class TestEnergyMethod : public Test_CXX_Base {
 protected:
         virtual void run_test_(void);
 public:
-    using Test_CXX_Base::Test_CXX_Base;
+    TestEnergyMethod(ID_t id) : Test_CXX_Base(id) { }
 };
 
 void TestEnergyMethod::run_test_(){

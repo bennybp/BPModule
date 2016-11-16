@@ -238,7 +238,7 @@ void export_system(pybind11::module & m)
 
     // Atom structure
     // Atom class
-    pybind11::class_<Atom>(m, "Atom", pybind11::base<Point>())
+    pybind11::class_<Atom, Point>(m, "Atom")
     .def(pybind11::init<const Atom &>())
     .def_readwrite("Z", &Atom::Z)
     .def_readwrite("isotope", &Atom::isotope)

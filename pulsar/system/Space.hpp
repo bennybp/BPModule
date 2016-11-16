@@ -19,7 +19,7 @@ struct Space{
     ///Angles (radians) of our lattice
     std::array<double,3> lattice_angles;
     ///For your convenience this is the value of infinity
-    constexpr static const double infinity=std::numeric_limits<double>::infinity();
+    static constexpr double infinity=std::numeric_limits<double>::infinity();
     
     ///True if sides are not infinite
     bool is_periodic()const;
