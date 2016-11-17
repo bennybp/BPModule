@@ -241,8 +241,8 @@ TAB_SIZE               = 4
 ALIASES                = "throwno=@par Exceptions:\n" \
                          "exsafe_par=@par Exception Safety:\n" \
                          "exnone=\exsafe_par None (may leak. should probably be fixed)\n" \
-                         "exbasic=\exsafe_par Basic exception guarantee (will not leak)\n" \
-                         "exstrong=\exsafe_par Strong exception guarantee (if exception is thrown, object will be in original state)\n" \
+                         "exbasic=\exsafe_par Basic exception guarantee (will not leak memory)\n" \
+                         "exstrong=\exsafe_par Strong exception guarantee (if exception is thrown, all objects will be in their original state)\n" \
                          "exnothrow=\exsafe_par Will not throw or will not fail\n" \
                          "threadsafe_par=@par Thread Safety:\n" \
                          "threadsafe=\threadsafe_par Access from multiple threads is safe\n" \
@@ -1955,7 +1955,7 @@ ENABLE_PREPROCESSING   = YES
 # The default value is: NO.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-MACRO_EXPANSION        = NO
+MACRO_EXPANSION        = YES
 
 # If the EXPAND_ONLY_PREDEF and MACRO_EXPANSION tags are both set to YES then
 # the macro expansion is limited to the macros specified with the PREDEFINED and
@@ -2225,7 +2225,7 @@ INCLUDED_BY_GRAPH      = YES
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-CALL_GRAPH             = YES
+CALL_GRAPH             = NO
 
 # If the CALLER_GRAPH tag is set to YES then doxygen will generate a caller
 # dependency graph for every global function or class method.
@@ -2236,7 +2236,7 @@ CALL_GRAPH             = YES
 # The default value is: NO.
 # This tag requires that the tag HAVE_DOT is set to YES.
 
-CALLER_GRAPH           = YES
+CALLER_GRAPH           = NO
 
 # If the GRAPHICAL_HIERARCHY tag is set to YES then doxygen will graphical
 # hierarchy of all classes instead of a textual one.

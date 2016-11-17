@@ -3,14 +3,13 @@
  */
 
 #include "pulsar/exception/Exceptions.hpp"
-#include "pulsar/math/Cast.hpp"
 #include <iomanip>
 
 namespace pulsar {
 
-
-void GeneralException::append_info_(const std::string & key,
-                                    const std::string & value)
+void GeneralException::build_str_(std::string & outstr,
+                                  const std::string & key,
+                                  const std::string & value)
 {
     // NOTE: The formatting here is done manually so that
     //       it is completely independent of the rest of
@@ -31,7 +30,8 @@ void GeneralException::append_info_(const std::string & key,
     // Get the first line of the formatted output and
     // output it to the stream
     std::getline(sstr, str);
-    ss << std::setw(24) << key << std::setw(numeric_cast<int>(oldw)) << " : " << str;
+    ss << std::setw(24) << key << std::setw(oldw) << " : "
+       << str;
 
     // For the rest of the lines, output the values aligned
     // with the first
@@ -41,7 +41,7 @@ void GeneralException::append_info_(const std::string & key,
     // The resulting string may be output via printf() or the
     // pulsar output functions which use percent signs as escape
     // characters. So we must escape the percent signs here
-    std::string escaped;
+    std::string escaped("\n"); // start with a newline
 
     for(const auto & it : ss.str())
     {
@@ -52,16 +52,8 @@ void GeneralException::append_info_(const std::string & key,
     }
 
     // now add the information to my final string
-    whatstr_.append("\n");
-    whatstr_.append(escaped);
+    // std::string.append() has strong exception safety
+    outstr.append(escaped);
 }
-
-
-const char * GeneralException::what(void) const noexcept
-{
-    return whatstr_.c_str();
-}
-
 
 } // close namespace pulsar
-
