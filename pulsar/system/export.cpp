@@ -8,7 +8,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/functional.h>
 #include <pybind11/operators.h>
-#include "pulsar/python/Convert.hpp"
+#include "pulsar/util/PythonHelper.hpp"
 #include "pulsar/system/AMConvert.hpp"
 #include "pulsar/system/AtomicInfo.hpp"
 #include "pulsar/system/System.hpp"

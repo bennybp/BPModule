@@ -11,7 +11,7 @@
 #include <string>
 
 #include "pulsar/datastore/OptionMap.hpp"
-#include "pulsar/python/Convert.hpp"
+#include "pulsar/util/PythonHelper.hpp"
 
 
 namespace pulsar{

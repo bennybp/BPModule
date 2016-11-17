@@ -42,7 +42,7 @@ message(STATUS "Going to use python include dirs: ${PULSAR_CORE_PYTHON_INCLUDE_D
 #################################################
 # Obtain all the sources of the core submodules
 #################################################
-foreach(sub_dir python output util exception parallel math datastore modulebase
+foreach(sub_dir output util exception parallel math datastore modulebase
                 modulemanager system testing)
     add_subdirectory(${sub_dir})
 endforeach()
@@ -151,7 +151,7 @@ function(MakeFullPath FILELIST PREFIX)
 endfunction(MakeFullPath)
 
 foreach(sub_dir datastore exception math modulebase modulemanager output
-                parallel python system testing util
+                parallel system testing util
 )
     string(TOUPPER ${sub_dir} SUB_DIR)
     MakeFullPath(PULSAR_${SUB_DIR}_FILES_FULL ${sub_dir} ${PULSAR_${SUB_DIR}_FILES})

@@ -8,7 +8,7 @@
 #ifndef PULSAR_GUARD_MODULEMANAGER__MODULEIMPLHOLDER_HPP_
 #define PULSAR_GUARD_MODULEMANAGER__MODULEIMPLHOLDER_HPP_
 
-#include "pulsar/python/Convert.hpp"
+#include "pulsar/util/PythonHelper.hpp"
 
 // Split into hpp and cpp files so we don't have to
 // include ModuleBase.hpp here

@@ -17,7 +17,6 @@ void export_modulebase(pybind11::module &);
 void export_modulemanager(pybind11::module &);
 void export_output(pybind11::module &);
 void export_parallel(pybind11::module &);
-void export_python(pybind11::module &);
 void export_system(pybind11::module &);
 void export_testing(pybind11::module &);
 void export_util(pybind11::module &);
@@ -37,7 +36,6 @@ PYBIND11_PLUGIN(pulsar_core)
     export_modulemanager(mtop);
     export_output(mtop);
     export_parallel(mtop);
-    export_python(mtop);
     export_system(mtop);
     export_testing(mtop);
     export_util(mtop);

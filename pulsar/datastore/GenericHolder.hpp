@@ -10,6 +10,7 @@
 #include "pulsar/datastore/GenericBase.hpp"
 #include "pulsar/exception/Exceptions.hpp"
 #include "pulsar/util/Serialization.hpp"
+#include "pulsar/util/PythonHelper.hpp"
 
 #include <bphash/Hasher.hpp>
 
@@ -164,7 +165,10 @@ const char * GenericHolder<T>::type(void) const noexcept
 template<typename T>
 std::string GenericHolder<T>::demangled_type(void) const
 {
-    return demangle_cpp_or_py_type(*obj);
+    if(std::is_base_of<pybind11::object, T>::value)
+        return get_py_class(*obj);
+    else
+        return demangle_cpp_type<T>();
 }
 
 template<typename T>

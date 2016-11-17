@@ -9,7 +9,7 @@
 #define PULSAR_GUARD_TESTING__TESTSERIALIZATION_HPP_
 
 #include <string>
-#include "pulsar/python/Convert.hpp"
+#include "pulsar/util/PythonHelper.hpp"
 #include "pulsar/testing/TestingBase.hpp"
 #include "pulsar/util/Serialization.hpp"
 #include "bphash/Hasher.hpp"

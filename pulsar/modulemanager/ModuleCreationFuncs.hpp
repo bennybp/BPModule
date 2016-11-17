@@ -9,10 +9,11 @@
 #define PULSAR_GUARD_MODULEMANAGER__MODULECREATIONFUNCS_HPP_
 
 #include <functional>
+#include <map>
 
 #include "pulsar/types.h"
 #include "pulsar/modulemanager/ModuleIMPLHolder.hpp"
-#include "pulsar/python/Call.hpp"
+#include "pulsar/util/PythonHelper.hpp"
 
 
 namespace pulsar{
