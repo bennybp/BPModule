@@ -3,7 +3,7 @@
 
 #include "pulsar/system/BasisShellBase.hpp"
 #include "pulsar/exception/Assert.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 
 #include <functional>
 
@@ -54,7 +54,7 @@ class GeneralShellIterator
                         am_[i].push_back(sh.general_am(j));
                 }
 
-                psr_assert<GeneralException>(am_[i].size() > 0, "Zero angular momentum entries");
+                psr_assert(am_[i].size() > 0, "Zero angular momentum entries");
                 curam_[i] = am_[i][0];
 
                 totalnshell_ *= ngen_[i];
@@ -81,7 +81,7 @@ class GeneralShellIterator
         size_t n_general_contractionsShells(int n) const ASSERTIONS_ONLY
         {
             
-            psr_assert<GeneralException>(n < N, "Given index is beyond the number of shells I have"); 
+            psr_assert(n < N, "Given index is beyond the number of shells I have"); 
             return ngen_[n];
         }
 
@@ -110,7 +110,7 @@ class GeneralShellIterator
         size_t GeneralIdx(int n) const ASSERTIONS_ONLY
         {
             
-            psr_assert<GeneralException>(n < N, "Given index is beyond the number of shells I have"); 
+            psr_assert(n < N, "Given index is beyond the number of shells I have"); 
             return genidx_[n];
         }
 
@@ -123,7 +123,7 @@ class GeneralShellIterator
         int AM(int n) const ASSERTIONS_ONLY
         {
             
-            psr_assert<GeneralException>(n < N, "Given index is beyond the number of shells I have");
+            psr_assert(n < N, "Given index is beyond the number of shells I have");
             return curam_[n];
         }
 
@@ -142,7 +142,7 @@ class GeneralShellIterator
                 genidx_[i]++;
                 if(genidx_[i] < ngen_[i])
                 {
-                    psr_assert<GeneralException>(genidx_[i] < am_[i].size(), "Inconsistency in GeneralShellIterator");
+                    psr_assert(genidx_[i] < am_[i].size(), "Inconsistency in GeneralShellIterator");
                     curam_[i] = am_[i][genidx_[i]];
                     return true;
                 }
@@ -150,13 +150,13 @@ class GeneralShellIterator
                 {
                     genidx_[i] = 0; // and continue through the other shells
 
-                    psr_assert<GeneralException>(genidx_[i] < am_[i].size(), "Inconsistency in GeneralShellIterator");
+                    psr_assert(genidx_[i] < am_[i].size(), "Inconsistency in GeneralShellIterator");
                     curam_[i] = am_[i][0];
                 }
             }
 
             // if we get here, we've turned everything back to zero
-            psr_assert<GeneralException>(totalidx_ == totalnshell_, "Inconsistency in GeneralShellIterator");
+            psr_assert(totalidx_ == totalnshell_, "Inconsistency in GeneralShellIterator");
 
             valid_ = false;
             totalidx_ = 0;

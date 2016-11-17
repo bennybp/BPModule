@@ -4,7 +4,7 @@
 #include "pulsar/system/BasisShellBase.hpp"
 #include "pulsar/system/GeneralShellIterator.hpp"
 #include "pulsar/exception/Assert.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 
 #include <functional>
 
@@ -81,7 +81,7 @@ class AOIterator
         size_t general_idx(int n) const ASSERTIONS_ONLY
         {
             
-            psr_assert<GeneralException>(n < N, "Given index is beyond the number of shells I have"); 
+            psr_assert(n < N, "Given index is beyond the number of shells I have"); 
             return genidx_[n];
         }
 
@@ -98,7 +98,7 @@ class AOIterator
         size_t function_idx(int n) const ASSERTIONS_ONLY
         {
             
-            psr_assert<GeneralException>(n >= 0 && n < N, "Given index is beyond the number of shells I have");
+            psr_assert(n >= 0 && n < N, "Given index is beyond the number of shells I have");
             return funcidx_[n];
         }
 
@@ -114,7 +114,7 @@ class AOIterator
         size_t shell_function_idx(int n) const ASSERTIONS_ONLY
         {
             
-            psr_assert<GeneralException>(n >= 0 && n < N, "Given index is beyond the number of shells I have");
+            psr_assert(n >= 0 && n < N, "Given index is beyond the number of shells I have");
             return shellfuncidx_[n];
         }
 

@@ -39,25 +39,25 @@ class Wavefunction
             if(cmat)
             {
                 if(opdm && !cmat->same_structure(*opdm))
-                    throw GeneralException("Inconsistent shape: opdm and cmat");
+                    throw PulsarException("Inconsistent shape: opdm and cmat");
                 if(epsilon && !cmat->same_structure(*epsilon))
-                    throw GeneralException("Inconsistent shape: epsilon and cmat");
+                    throw PulsarException("Inconsistent shape: epsilon and cmat");
                 if(occupations && !cmat->same_structure(*occupations))
-                    throw GeneralException("Inconsistent shape: occupations and cmat");
+                    throw PulsarException("Inconsistent shape: occupations and cmat");
             }
 
             if(opdm)
             {
                 if(epsilon && !opdm->same_structure(*epsilon))
-                    throw GeneralException("Inconsistent shape: epsilon and opdm");
+                    throw PulsarException("Inconsistent shape: epsilon and opdm");
                 if(occupations && !opdm->same_structure(*occupations))
-                    throw GeneralException("Inconsistent shape: occupations and opdm");
+                    throw PulsarException("Inconsistent shape: occupations and opdm");
             }
 
             if(epsilon)
             {
                 if(occupations && !epsilon->same_structure(*occupations))
-                    throw GeneralException("Inconsistent shape: occupations and epsilon");
+                    throw PulsarException("Inconsistent shape: occupations and epsilon");
             }
         }
 

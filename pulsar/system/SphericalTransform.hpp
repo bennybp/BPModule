@@ -116,7 +116,7 @@ void spherical_transform(const BasisSet & bs,
             const int nsph = n_spherical_gaussian(am);
 
             if(!smap.count(am))
-                throw BasisSetException("AM not available in the spherical transform map", "am", am);
+                throw PulsarException("AM not available in the spherical transform map", "am", am);
 
             spherical_transform_block(smap.at(am), src + srcpos, dest + destpos, width);
 

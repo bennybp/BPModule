@@ -5,7 +5,7 @@
  */
 
 #include "pulsar/datastore/CacheMap.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/parallel/Parallel.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 #include "pulsar/math/Cast.hpp"
@@ -123,7 +123,7 @@ void CacheMap::start_sync(int tag)
         return; // already running
 
     if(tag < 0)
-        throw GeneralException("Attempting to use a negative tag number for the sync thread");
+        throw PulsarException("Attempting to use a negative tag number for the sync thread");
 
     sync_tag_ = tag;
     sync_thread_ = std::thread(&CacheMap::sync_thread_func_, this);

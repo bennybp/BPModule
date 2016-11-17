@@ -19,7 +19,7 @@
 #include<utility>
 #include "pulsar/math/Checking.hpp"
 #include "pulsar/math/Cast.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 
 namespace pulsar{
 
@@ -27,7 +27,7 @@ namespace pulsar{
 template<typename T>
 std::set<T> factors(T Num){
     if(!is_integer(Num))
-        throw pulsar::GeneralException("Integer required");
+        throw pulsar::PulsarException("Integer required");
     std::set<T> f;
     T max=(T)floor(sqrt(numeric_cast<double>(Num)));
     for(T i=1;i<=max;++i)

@@ -61,13 +61,13 @@ using CFD_run_t=Return_t(pulsar::FiniteDiff<double,VectorD>::*)
 ///FDiff alogrithms are not designed to be moved/copied so we can't bind it
 try{
     CFD.Run(MyVisitor,6,0.01,2);
-    throw pulsar::GeneralException("Central Diff should throw");
+    throw pulsar::PulsarException("Central Diff should throw");
 }
 catch(...){tester.test("C-Diff threw for even stencil size",true,true);}
 
 try{
     CFD.Run(MyVisitor,6,0.01,1);
-    throw pulsar::GeneralException("Central Diff should throw");
+    throw pulsar::PulsarException("Central Diff should throw");
 }
 catch(...){tester.test("C-Diff threw for a stencil size of 1",true,true);}
 

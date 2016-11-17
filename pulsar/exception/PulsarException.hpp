@@ -26,16 +26,15 @@ namespace pulsar {
  *
  * \threadunsafe
  */
-class GeneralException : public std::exception
+class PulsarException : public std::exception
 {
   public:
-    GeneralException() = delete;
-    GeneralException(const GeneralException &) = default;
-    GeneralException(GeneralException &&) = default;
-    GeneralException & operator=(GeneralException &&) = default;
-    GeneralException & operator=(const GeneralException &) = default;
-    virtual ~GeneralException() = default;
-
+    PulsarException() = delete;
+    PulsarException(const PulsarException &) = default;
+    PulsarException(PulsarException &&) = default;
+    PulsarException & operator=(PulsarException &&) = default;
+    PulsarException & operator=(const PulsarException &) = default;
+    virtual ~PulsarException() = default;
 
     /*! \brief Constructor
      *
@@ -50,12 +49,11 @@ class GeneralException : public std::exception
      * \param [in] exinfo Additional information to add to the exception
      */
     template<typename... Targs>
-    GeneralException(const std::string & whatstr, const Targs &... exinfo)
+    PulsarException(const std::string & whatstr, const Targs &... exinfo)
       : whatstr_(whatstr)
     {
         build_str_(whatstr_, exinfo...);
     }
-
 
     /*! \brief Constructor, using an std::exception as a base
      *
@@ -73,10 +71,10 @@ class GeneralException : public std::exception
      * \param [in] exinfo Additional information too add to the exception
      */
     template<typename... Targs>
-    GeneralException(const std::exception & ex, const Targs &... exinfo)
-      : GeneralException(ex.what(), exinfo...)
-    { }
-
+    PulsarException(const std::exception & ex, const Targs &... exinfo)
+      : PulsarException(ex.what(), exinfo...)
+    {
+    }
 
     /*! \brief Add information to this exception object
      *
@@ -100,7 +98,6 @@ class GeneralException : public std::exception
         build_str_(whatstr_, exinfo...);
     }
 
-
     /*! \brief Return all the information as a string
      *
      * The string will be formatted for output, with the description on
@@ -113,13 +110,11 @@ class GeneralException : public std::exception
         return whatstr_.c_str();
     }
 
-
   private:
     /*! A string representing all the information contained
         in this exception, formatted for output.
      */
     std::string whatstr_;
-
 
     /*! \brief Add information to this exception object
      *
@@ -128,8 +123,9 @@ class GeneralException : public std::exception
      * \note Used to terminate the parameter pack expansion
      *       in some instances
      */
-    void build_str_(std::string &) noexcept {}
-
+    void build_str_(std::string &) noexcept
+    {
+    }
 
     /*! \brief Add a single pair of information to a string
      *
@@ -143,7 +139,6 @@ class GeneralException : public std::exception
     static void build_str_(std::string & outstr,
                            const std::string & key,
                            const std::string & value);
-
 
     /*! \brief Add a single pair of information to a string
      *
@@ -166,7 +161,6 @@ class GeneralException : public std::exception
         ss << value;
         build_str_(outstr, key, ss.str());
     }
-
 
     /*! \brief Add information to this exception object
      *
@@ -193,7 +187,6 @@ class GeneralException : public std::exception
 
         outstr.append(out_tmp);
     }
-
 
     /*! \brief Add information to this exception object
      *
@@ -236,113 +229,5 @@ class GeneralException : public std::exception
         }
     }
 };
-
-
-#define PULSAR_EXCEPTION(cls) \
-class cls : public GeneralException \
-{\
-  public: \
-    using GeneralException::GeneralException;\
-};
-
-
-/*! \brief An exception thrown if something is called that
- *         hasn't been implemented yet.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(NotYetImplementedException)
-
-/*! \brief An exception thrown if a value is out of some range.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(ValueOutOfRange)
-
-/*! \brief An exception thrown when there is a problem with a
- *         basis set or basis functions.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(BasisSetException)
-
-/*! \brief An exception thrown when there is a problem with
- *         data storage classes.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(DataStore)
-
-/*! \brief An exception thrown when there is a problem with
- *         some math operations.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(MathException)
-
-/*! \brief An exception thrown when there is a problem with
- *         creating/instantiating a module.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(ModuleCreateException)
-
-/*! \brief An exception thrown when there is a problem with
- *         the module locator.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(ModuleManagerException)
-
-/*! \brief An exception thrown when there is a problem with
- *         loading/inserting a module.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(ModuleLoadException)
-
-/*! \brief An exception thrown when there is a problem with
- *         molecule/system operations.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(SystemException)
-
-/*! \brief An exception thrown when there is a problem with
- *         serialization/unserialization.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(SerializationException)
-
-/*! \brief An exception thrown when there is a problem with
- *         options.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(OptionException)
-
-/*! \brief An exception thrown when there is a problem with
- *         calling a python function from C++.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(PythonCallException)
-
-/*! \brief An exception thrown when there is a problem with
- *         converting to and from python data types.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(PythonConvertException)
-
-/*! \brief An exception thrown if there is a null pointer.
- *
- *  See \ref except
- */
-PULSAR_EXCEPTION(NullPointerException)
-
-#undef PULSAR_EXCEPTION
-
 
 } // close namespace pulsar

@@ -9,7 +9,7 @@
 
 #include <algorithm>
 #include <vector>
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 
 namespace pulsar{
 
@@ -115,7 +115,7 @@ void reorder_block(const std::vector<size_t> & neworder,
  * return a vector 3512460. Passing this vector
  * to reorder_block will transform \p src into \p dest 
  *
- * \throw pulsar::MathException if the element of \p dest
+ * \throw pulsar::PulsarException if the element of \p dest
  *        is not found in \p src
  */
 template<typename T>
@@ -129,7 +129,7 @@ std::vector<size_t> make_ordering(const std::vector<T> & src,
     {
         auto to_pos = std::find(src.begin(), src.end(), it);
         if(to_pos == src.end())
-            throw MathException("Cannot find element in source vector");
+            throw PulsarException("Cannot find element in source vector");
 
         ret.push_back(std::distance(src.begin(), to_pos));
     }

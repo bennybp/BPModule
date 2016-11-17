@@ -11,7 +11,7 @@
 #include <thread>
 
 #include "pulsar/datastore/CacheMap.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/modulemanager/ModuleCreationFuncs.hpp"
 #include "pulsar/modulemanager/ModuleTree.hpp"
 #include "pulsar/modulemanager/ModulePtr.hpp"
@@ -54,7 +54,7 @@ class ModuleManager
 
         /*! \brief Returns the information about a module with a given module key
          *
-         * \throw pulsar::ModuleManagerException
+         * \throw pulsar::PulsarException
          *        if the module key or its associated name doesn't exist in the database
          *
          * \param [in] modulekey A module key
@@ -80,7 +80,7 @@ class ModuleManager
          * This goes through and tests the module creation for all keys. It does
          * not attempt to cast them, though. This is a simple sanity check
          *
-         * \throw pulsar::ModuleCreateException if there is a problem
+         * \throw pulsar::PulsarException if there is a problem
          *
          * \exbasic
          * \todo make strong?
@@ -100,10 +100,10 @@ class ModuleManager
          * If the parent is not in use, the wavefunction is set to the final
          * wavefunction of the parent.
          *
-         * \throw pulsar::ModuleManagerException
+         * \throw pulsar::PulsarException
          *        if the key doesn't exist in the database
          *
-         * \throw pulsar::ModuleCreateException if there are other
+         * \throw pulsar::PulsarException if there are other
          *        problems creating the module
          *
          * \exbasic
@@ -123,7 +123,7 @@ class ModuleManager
             std::unique_ptr<detail::ModuleIMPLHolder> umbptr = create_module_(modulekey, parentid);
 
             if(!umbptr->IsType<T>())
-                throw ModuleCreateException("Module for this key is not of the right type",
+                throw PulsarException("Module for this key is not of the right type",
                                                        "modulekey", modulekey,
                                                        "expectedtype", demangle_cpp_type<T>());
 
@@ -145,10 +145,10 @@ class ModuleManager
          * If the parent is not in use, the wavefunction is set to the final
          * wavefunction of the parent.
          *
-         * \throw pulsar::ModuleManagerException
+         * \throw pulsar::PulsarException
          *        if the key doesn't exist in the database
          *
-         * \throw pulsar::ModuleCreateException if there are other
+         * \throw pulsar::PulsarException if there are other
          *        problems creating the module
          *
          * \exbasic
@@ -165,7 +165,7 @@ class ModuleManager
 
         /*! \brief Change an option for a module
          * 
-         * \throw pulsar::ModuleManagerException
+         * \throw pulsar::PulsarException
          *        if the key doesn't exist in the database or
          *        if options can't be changed since the module
          *        has been used.
@@ -184,12 +184,12 @@ class ModuleManager
             std::lock_guard<std::mutex> l(se.semutex);
 
             if(se.ncalled != 0)
-                throw ModuleManagerException("Attempting to change options for a previously-used module key",
+                throw PulsarException("Attempting to change options for a previously-used module key",
                                              "modulekey", modulekey, "optkey", optkey);
             try {
                 se.mi.options.change(optkey, value);
             }
-            catch(GeneralException & ex)
+            catch(PulsarException & ex)
             {
                 ex.append_info("modulekey", modulekey);
                 throw;
@@ -201,7 +201,7 @@ class ModuleManager
          *
          * Options, etc, are copied from the original key.
          *
-         * \throw pulsar::ModuleManagerException
+         * \throw pulsar::PulsarException
          *        if the key doesn't exist in the database
          *
          * \param [in] modulekey Existing module key to duplicate
@@ -224,7 +224,7 @@ class ModuleManager
 
         /*! \brief Change an option for a module (python version)
          * 
-         * \throw pulsar::ModuleManagerException
+         * \throw pulsar::PulsarException
          *        if the key doesn't exist in the database or
          *        if options can't be changed since the module
          *        has been used.
@@ -242,7 +242,7 @@ class ModuleManager
          * The supermodule is loaded via a handler, and then info
          * for the module is extracted from the supermodule information.
          *
-         * \throw pulsar::ModuleLoaderException if the key
+         * \throw pulsar::PulsarException if the key
          *        already exists in the database or if \p mc doesn't
          *        contain a creator for the given module name (in \p mi)
          *
@@ -345,7 +345,7 @@ class ModuleManager
         /*! \brief Obtain stored internal info for a module (via module key)
          *         or throw an exception
          *
-         * \throw pulsar::ModuleManagerException
+         * \throw pulsar::PulsarException
          *        if the key or name doesn't exist
          *
          * \param [in] modulekey A module key
@@ -360,10 +360,10 @@ class ModuleManager
 
         /*! \brief Create a module via its creator function
          *
-         * \throw pulsar::ModuleManagerException
+         * \throw pulsar::PulsarException
          *        if the key doesn't exist in the database
          *
-         * \throw pulsar::ModuleCreateException if there are other
+         * \throw pulsar::PulsarException if there are other
          *        problems creating the module
          *
          * \return A pair with the first member being a raw pointer and

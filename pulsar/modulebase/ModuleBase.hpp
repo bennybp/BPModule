@@ -11,7 +11,7 @@
 #include <string>
 
 #include "pulsar/types.h"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/modulemanager/ModuleManager.hpp"
 #include "pulsar/datastore/CacheData.hpp"
 #include "pulsar/output/OutputStream.hpp"
@@ -236,19 +236,19 @@ class ModuleBase
                 P * ptr = dynamic_cast<P *>(this);                     // cast this to type P
                 return ((*ptr).*func)(std::forward<Targs1>(args)...);  // call the function
             }
-            catch(GeneralException & ex)
+            catch(PulsarException & ex)
             {
                 ex.append_info("from", exception_desc());
                 throw;
             }
             catch(std::exception & ex)
             {
-                throw GeneralException(ex, "what", ex.what(),
+                throw PulsarException(ex, "what", ex.what(),
                                        "from", exception_desc());
             }
             catch(...)
             {
-                throw GeneralException("Caught unknown exception. Get your debugger warmed up.",
+                throw PulsarException("Caught unknown exception. Get your debugger warmed up.",
                                        "from", exception_desc());
             }
         }
@@ -265,19 +265,19 @@ class ModuleBase
                 const P * ptr = dynamic_cast<const P *>(this);         // cast this to type P
                 return ((*ptr).*func)(std::forward<Targs1>(args)...);  // call the function
             }
-            catch(GeneralException & ex)
+            catch(PulsarException & ex)
             {
                 ex.append_info("from", exception_desc());
                 throw;
             }
             catch(std::exception & ex)
             {
-                throw GeneralException(ex, "what", ex.what(),
+                throw PulsarException(ex, "what", ex.what(),
                                        "from", exception_desc());
             }
             catch(...)
             {
-                throw GeneralException("Caught unknown exception. Get your debugger warmed up.",
+                throw PulsarException("Caught unknown exception. Get your debugger warmed up.",
                                        "from", exception_desc());
             }
         }
@@ -295,7 +295,7 @@ class ModuleBase
             if(overload)
                 return call_py_func<R>(overload, std::forward<Targs>(args)...);
             else
-                throw GeneralException("Cannot find overridden function", "vfunc", name);
+                throw PulsarException("Cannot find overridden function", "vfunc", name);
         }
 
         /*! \copydocs call_py_override */
@@ -309,7 +309,7 @@ class ModuleBase
             if(overload)
                 return call_py_func<R>(overload, std::forward<Targs>(args)...);
             else
-                throw GeneralException("Cannot find overridden function", "vfunc", name);
+                throw PulsarException("Cannot find overridden function", "vfunc", name);
         }
 
 
@@ -330,7 +330,7 @@ class ModuleBase
         /*! \brief Checks a python buffer for appropriate types and dimensions and returns
          *         the internal pointer
          *
-         * \throw pulsar::GeneralException if the type or number of dimensions
+         * \throw pulsar::PulsarException if the type or number of dimensions
          *        doesn't match
          *
          * \tparam T The expected type stored
@@ -346,14 +346,14 @@ class ModuleBase
 
             pybind11::buffer_info info = buf.request();
             if (info.format != pybind11::format_descriptor<T>::format())
-                throw GeneralException("Bad format of python buffer",
+                throw PulsarException("Bad format of python buffer",
                                        "format", info.format,
                                        "desired format", pybind11::format_descriptor<T>::format(),
                                        "from", exception_desc());
 
 
             if ((int)info.ndim != ndim)
-                throw GeneralException("Bad number of dimensions for python buffer",
+                throw PulsarException("Bad number of dimensions for python buffer",
                                        "ndim", info.ndim,
                                        "desired ndim", ndim,
                                        "from", exception_desc());

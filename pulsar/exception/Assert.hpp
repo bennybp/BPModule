@@ -4,10 +4,9 @@
 
 #pragma once
 
+#include "pulsar/exception/PulsarException.hpp"
+
 #include <utility> // for std::forward
-
-#include "pulsar/exception/Exceptions.hpp"
-
 
 namespace pulsar {
 
@@ -31,33 +30,32 @@ namespace pulsar {
 
 /*! \brief Asserts that a condition is true, throwing an exception if it is not
  *
- * If \p condition is false, an exception of type \p EX is thrown.
+ * If \p condition is false, a PulsarException is thrown.
  * The remaining arguments are forwarded to the constructor of the exception.
  */
-template<typename EX, typename... Targs>
+template<typename... Targs>
 void psr_assert(bool condition, Targs &&... args)
 {
     if(!condition)
-        throw EX(std::forward<Targs>(args)...);
+        throw PulsarException(std::forward<Targs>(args)...);
 }
-
 
 /*! \brief Asserts that a pointer is not null
  *
- * If \p ptr is null, then a NullPointerException is thrown with
+ * If \p ptr is null, then a PulsarException is thrown with
  * the given message
  */
 inline void psr_assert_ptr(void * ptr, const char * message)
 {
     if(ptr == nullptr)
-        throw NullPointerException(message);    
+        throw PulsarException(message);
 }
 
 #else
 
 #define ASSERTIONS_ONLY noexcept
 
-template<typename EX, typename... Targs>
+template<typename... Targs>
 void psr_assert(bool, Targs &&...) noexcept
 {
 }

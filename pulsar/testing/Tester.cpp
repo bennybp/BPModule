@@ -7,7 +7,7 @@
 #include "pulsar/testing/Tester.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 #include "pulsar/util/StringUtil.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include <cmath>
 
 using std::to_string;
@@ -37,7 +37,7 @@ void Tester::print_results()const
     print_line();
     print_buffer();
     if(nfailed_>0)
-        throw GeneralException(to_string(nfailed_)+" tests failed");
+        throw PulsarException(to_string(nfailed_)+" tests failed");
 }
 
 void Tester::test(const std::string& desc, bool passed)

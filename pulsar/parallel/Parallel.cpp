@@ -7,7 +7,7 @@
 #include <iostream>
 #include <memory>
 #include <mpi.h>
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/parallel/Parallel.hpp"
 #include "pulsar/util/Cmdline.hpp"
 
@@ -26,7 +26,7 @@ void initialize(size_t NThreads)
     MPI_Init_thread(nullptr,nullptr,MPI_THREAD_MULTIPLE,&provided);
 
     if(provided!=MPI_THREAD_MULTIPLE)
-        throw pulsar::GeneralException("MPI does not support threading");
+        throw pulsar::PulsarException("MPI does not support threading");
 
     Env_=std::unique_ptr<Env_t>(new Env_t(MPI_COMM_WORLD,NThreads));
 

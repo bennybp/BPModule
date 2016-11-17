@@ -10,7 +10,7 @@
 #include "pulsar/math/NumberTheory.hpp"
 #include "pulsar/math/Checking.hpp"
 #include "pulsar/constants.h"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 
 namespace pulsar{
 namespace system{
@@ -121,7 +121,7 @@ bool SymmetryGroup::finite()const{
 
 size_t SymmetryGroup::order()const{
     if(!finite())
-        throw GeneralException("Group is infinite order");
+        throw PulsarException("Group is infinite order");
     return symmetry_elements.size();
 }
 
@@ -236,7 +236,7 @@ SymmetryGroup assign_group(const Elem_t& Elems){
                    acos((Ei.element_matrix[0]+Ei.element_matrix[4]+Ei.element_matrix[8]-1.0)/2.0));
     }
     size_t n= (size_t)(std::round(2*PI/MinTheta));
-    if(n==0)throw GeneralException(
+    if(n==0)throw PulsarException(
        "Your symmetry elements do not constitute a point group");
     MirrorPlane Sigmah(get_principle_axis(Elems,n)); 
     if(contains(Elems,"C_2",n)){

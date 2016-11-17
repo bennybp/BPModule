@@ -163,7 +163,7 @@ bool System::has_basis_set(const std::string & basislabel) const
 BasisSet System::get_basis_set(const std::string & basislabel) const
 {
     if(!has_basis_set(basislabel))
-        throw SystemException("Attempted to get missing basis label", "label", basislabel);
+        throw PulsarException("Attempted to get missing basis label", "label", basislabel);
 
     // get the number of primitives and storage needed in basis set
     size_t nprim=0;

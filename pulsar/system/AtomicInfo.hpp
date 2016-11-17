@@ -50,7 +50,7 @@ struct AtomicData
 
 /*! \brief Get atomic data by Z number
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        data does not exist for this Z number
  */
 const AtomicData & atomic_info_from_z(int Z);
@@ -60,7 +60,7 @@ const AtomicData & atomic_info_from_z(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        data does not exist for this symbol
  */
 const AtomicData & atomic_info_from_symbol(const std::string & sym);
@@ -69,7 +69,7 @@ const AtomicData & atomic_info_from_symbol(const std::string & sym);
 
 /*! \brief Get isotope data by Z number and isotope number
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        data does not exist for this Z number and isotope number.
  */
 const IsotopeData & isotope_info_from_z(int Z, int isonum);
@@ -80,7 +80,7 @@ const IsotopeData & isotope_info_from_z(int Z, int isonum);
  *
  * Symbol is not case sensitive
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        data does not exist for this symbol and isotope number.
  */
 const IsotopeData & isotope_info_from_symbol(const std::string & sym, int isonum);
@@ -89,7 +89,7 @@ const IsotopeData & isotope_info_from_symbol(const std::string & sym, int isonum
 
 /*! \brief Get the most common isotope by Z number
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        data does not exist for this Z number and isotope number.
  */
 int most_common_isotope_from_z(int Z); 
@@ -100,7 +100,7 @@ int most_common_isotope_from_z(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        data does not exist for this symbol and isotope number.
  */
 int most_common_isotope_from_symbol(const std::string & sym); 
@@ -109,7 +109,7 @@ int most_common_isotope_from_symbol(const std::string & sym);
 
 /*! \brief Look up an atomic mass by Z number
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        data does not exist for this Z number
  */
 double atomic_mass_from_z(int Z);
@@ -120,7 +120,7 @@ double atomic_mass_from_z(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        data does not exist for this symbol
  */
 double atomic_mass_from_symbol(const std::string & sym);
@@ -129,7 +129,7 @@ double atomic_mass_from_symbol(const std::string & sym);
 
 /*! \brief Look up an isotope mass by Z number and isotope number
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        data does not exist for this Z number and isotope number.
  */
 double isotope_mass_from_z(int Z, int isonum);
@@ -140,7 +140,7 @@ double isotope_mass_from_z(int Z, int isonum);
  *
  * Symbol is not case sensitive
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        data does not exist for this symbol and isotope number
  */
 double isotope_mass_from_symbol(const std::string & sym, int isonum);
@@ -149,7 +149,7 @@ double isotope_mass_from_symbol(const std::string & sym, int isonum);
 
 /*! \brief Look up a atomic symbol by Z number 
  *
- *  \throw pulsar::SystemException if the
+ *  \throw pulsar::PulsarException if the
  *         data does not exist for this symbol
  */
 std::string atomic_symbol_from_z(int Z);
@@ -160,7 +160,7 @@ std::string atomic_symbol_from_z(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        symbol is not defined for this Z number
  */
 int atomic_z_from_symbol(const std::string & sym);
@@ -169,7 +169,7 @@ int atomic_z_from_symbol(const std::string & sym);
 
 /*! Look up an atomic name by Z number
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        name is not defined for this Z number
  */
 std::string atomic_name_from_z(int Z);
@@ -180,7 +180,7 @@ std::string atomic_name_from_z(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        name is not defined for this symbol
  */
 std::string atomic_name_from_symbol(const std::string & sym);
@@ -189,7 +189,7 @@ std::string atomic_name_from_symbol(const std::string & sym);
 
 /*! \brief Look up an atomic ground-state multiplicity by Z number
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        name is not defined for this Z number
  */
 int atomic_multiplicity_from_z(int Z);
@@ -200,7 +200,7 @@ int atomic_multiplicity_from_z(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        name is not defined for this symbol
  */
 int atomic_multiplicity_from_symbol(const std::string & sym);
@@ -208,7 +208,7 @@ int atomic_multiplicity_from_symbol(const std::string & sym);
 
 /*! \brief Look up the covalent radius by Z number
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        name is not defined for this symbol
  */
 double covalent_radius_from_z(int Z);
@@ -218,14 +218,14 @@ double covalent_radius_from_z(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        name is not defined for this symbol
  */
 double covalent_radius_from_symbol(const std::string & sym);
 
 /*! \brief Look up the Van der Waals radius by Z number
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        name is not defined for this symbol
  */
 double vdw_radius_from_z(int Z);
@@ -235,7 +235,7 @@ double vdw_radius_from_z(int Z);
  *
  * Symbol is not case sensitive
  *
- * \throw pulsar::SystemException if the
+ * \throw pulsar::PulsarException if the
  *        name is not defined for this symbol
  */
 double vdw_radius_from_symbol(const std::string & sym);

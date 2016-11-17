@@ -28,7 +28,7 @@ namespace detail {
 
 /*! \brief Print formatted text to a stream
  *
- * \throw pulsar::GeneralException with malformed formats,
+ * \throw pulsar::PulsarException with malformed formats,
  *        improper number of arguments, etc.
  *
  * \tparam Targs The types of the arguments to print
@@ -47,7 +47,7 @@ void print_general_output(std::ostream & os, OutputType type, const std::string 
 
 /*! \brief Print formatted general output to a stream
  * 
- * \throw pulsar::GeneralException with malformed formats,
+ * \throw pulsar::PulsarException with malformed formats,
  *        improper number of arguments, etc.
  *
  * \tparam Targs The types of the arguments to print

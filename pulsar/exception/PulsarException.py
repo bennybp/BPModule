@@ -3,20 +3,20 @@ from pulsar import *
 ###############################################################
 # General Notes
 #
-# We import the C++ GeneralException as GeneralException_
+# We import the C++ PulsarException as PulsarException_
 # and then create a new python class which contains a
-# GeneralException_ as a member.
+# PulsarException_ as a member.
 #
-# This is done so that GeneralException (the python version)
+# This is done so that PulsarException (the python version)
 # can derive from (python) Exception. This class cannot
-# derive from both GeneralException_ and Exception because
+# derive from both PulsarException_ and Exception because
 # of some intrinsic limitation of python (cannot multiply-inherit
 # from a python class and a C++ class).
 #
 # Either way, this is somewhat elegant as it stands
 ###############################################################
 
-class GeneralException(Exception):
+class PulsarException(Exception):
   """A base exception for Pulsar (python version)
 
      An exception in Pulsar is basically a string with some fancy formatting.
@@ -27,7 +27,7 @@ class GeneralException(Exception):
   """
 
   def __init__(self, whatstr, *exinfo):
-    """Construct a GeneralException
+    """Construct a PulsarException
 
        The extra information passed to this function via \p exinfo must be
        in the form "key1, value1, key2, value2, ...". Both the keys
@@ -40,7 +40,7 @@ class GeneralException(Exception):
         None
     """
 
-    self.__gex = GeneralException_(whatstr)
+    self.__psrex = PulsarException_(whatstr)
     self.append_info(*exinfo)
 
 
@@ -68,10 +68,10 @@ class GeneralException(Exception):
       lst.append("ERROR: I WAS NOT PASSED AN EVEN NUMBER OF EXTRA INFO")
 
     # Split the star-args/list into pairs and give it to my
-    # (C++) GeneralException_
+    # (C++) PulsarException_
     plist = [ lst[i:i+2] for i in range(0, len(lst), 2) ]
     for i in plist:
-      self.__gex.append_info(str(i[0]), str(i[1]))
+      self.__psrex.append_info(str(i[0]), str(i[1]))
 
 
   def what(self):
@@ -80,7 +80,7 @@ class GeneralException(Exception):
        The string will be formatted for output, with the description on
        its own line and each key,value pair on its own line.
     """
-    return self.__gex.what()
+    return self.__psrex.what()
 
 
   def __str__(self):
@@ -89,5 +89,5 @@ class GeneralException(Exception):
        The string will be formatted for output, with the description on
        its own line and each key,value pair on its own line.
     """
-    return self.__gex.what()
+    return self.__psrex.what()
 

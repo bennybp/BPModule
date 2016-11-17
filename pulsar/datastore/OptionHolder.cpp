@@ -7,7 +7,7 @@
 
 #include "pulsar/datastore/OptionHolder.hpp"
 #include "pulsar/util/PythonHelper.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/output/Output.hpp"
 
 #include "bphash/types/string.hpp"

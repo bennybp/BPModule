@@ -67,7 +67,7 @@ std::string
 split_cache_key(const std::string & key)
 {
     if(!is_cache_key(key))
-        throw pulsar::GeneralException("Unknown key format: not a cache key",
+        throw pulsar::PulsarException("Unknown key format: not a cache key",
                                "key", key);
 
     return key.substr(13); // remove "CHKPT_CACHE__"
@@ -87,7 +87,7 @@ Checkpoint::Checkpoint(const std::shared_ptr<CheckpointIO> & backend_local,
       backend_global_(backend_global)
 {
     if(backend_local == backend_global)
-        throw GeneralException("Local and Global backends are the same! This will lead to problems");
+        throw PulsarException("Local and Global backends are the same! This will lead to problems");
 }
 
 
@@ -302,7 +302,7 @@ void Checkpoint::perform_on_all_ranks_(const std::string & description, std::fun
 void Checkpoint::save_local_cache(const ModuleManager & mm)
 {
     if(!backend_local_ || !backend_global_)
-        throw GeneralException("Nullptr for backend in Checkpoint");
+        throw PulsarException("Nullptr for backend in Checkpoint");
 
     print_global_output("Saving local cache\n");
     save_cache_(mm, *backend_local_, 
@@ -312,7 +312,7 @@ void Checkpoint::save_local_cache(const ModuleManager & mm)
 void Checkpoint::load_local_cache(ModuleManager & mm)
 {
     if(!backend_local_ || !backend_global_)
-        throw GeneralException("Nullptr for backend in Checkpoint");
+        throw PulsarException("Nullptr for backend in Checkpoint");
 
     print_global_output("Loading local cache\n");
     load_cache_(mm, *backend_local_);
@@ -323,7 +323,7 @@ void Checkpoint::load_local_cache(ModuleManager & mm)
 void Checkpoint::save_global_cache(const ModuleManager & mm)
 {
     if(!backend_local_ || !backend_global_)
-        throw GeneralException("Nullptr for backend in Checkpoint");
+        throw PulsarException("Nullptr for backend in Checkpoint");
 
     std::function<void(void)> func = std::bind(&Checkpoint::save_cache_, this,
                                                std::ref(mm), std::ref(*backend_global_),
@@ -335,7 +335,7 @@ void Checkpoint::save_global_cache(const ModuleManager & mm)
 void Checkpoint::load_global_cache(ModuleManager & mm)
 {
     if(!backend_local_ || !backend_global_)
-        throw GeneralException("Nullptr for backend in Checkpoint");
+        throw PulsarException("Nullptr for backend in Checkpoint");
 
     std::function<void(void)> func = std::bind(&Checkpoint::load_cache_, this,
                                                std::ref(mm), std::ref(*backend_global_));

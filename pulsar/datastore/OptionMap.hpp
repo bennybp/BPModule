@@ -12,7 +12,7 @@
 
 #include "pulsar/datastore/OptionTypes.hpp"
 #include "pulsar/datastore/OptionHolder.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/util/StringUtil.hpp"
 #include "bphash/Hasher.hpp"
 
@@ -127,7 +127,7 @@ class OptionMap
 
         /*! \brief Check if the option is currently set to the default
          *
-         * \throw pulsar::OptionException if
+         * \throw pulsar::PulsarException if
          *        the key doesn't exist
          */
         bool is_default(const std::string & key) const;
@@ -146,7 +146,7 @@ class OptionMap
 
         /*! \brief Sets an option to its default
          *
-         * \throw pulsar::OptionException if
+         * \throw pulsar::PulsarException if
          *        the key doesn't exist
          *
          * \exstrong
@@ -175,7 +175,7 @@ class OptionMap
          *
          * \note This is not meant to be called from python
          *
-         * \throw pulsar::PythonCallException if there is a problem
+         * \throw pulsar::PulsarException if there is a problem
          *        with calling a validation function
          */
         OptionMapIssues get_issues(void) const;
@@ -184,7 +184,7 @@ class OptionMap
 
         /*! \brief See if there are any issues with this OptionMap
          *
-         * \throw pulsar::PythonCallException if there is a problem
+         * \throw pulsar::PulsarException if there is a problem
          *        with validation.
          */
         bool has_issues(void) const;
@@ -217,7 +217,7 @@ class OptionMap
          * Will attempt some safe conversions between integer types
          * or between floating point types.
          *
-         * \throw pulsar::OptionException if the
+         * \throw pulsar::PulsarException if the
          *        option does not have a value or if the
          *        key does not exist or if the value cannot be
          *        cast to the appropriate type
@@ -237,7 +237,7 @@ class OptionMap
             }
             catch(const std::exception & ex)
             {
-                throw OptionException(ex, "optionkey", key);
+                throw PulsarException(ex, "optionkey", key);
             }
         }
 
@@ -247,7 +247,7 @@ class OptionMap
          *
          * The data is copied.
          *
-         * \throw pulsar::OptionException if
+         * \throw pulsar::PulsarException if
          *        the value is invalid (and not expert),
          *        if the key does not exist, or the
          *        data cannot be cast to the appropriate type
@@ -269,8 +269,8 @@ class OptionMap
             }
             catch(const std::exception & ex)
             {
-                // convert to an OptionException and add the key
-                throw OptionException(ex, "optionkey", key);
+                // convert to an PulsarException and add the key
+                throw PulsarException(ex, "optionkey", key);
             }
 
             get_or_throw_cast_<opt_type>(key)->change(convval);
@@ -320,7 +320,7 @@ class OptionMap
          * This hashes only the keys and values of options. It does
          * not take into account where that value comes from.
          *
-         * \throw pulsar::OptionException if
+         * \throw pulsar::PulsarException if
          *        the key does not exist
          */ 
         bphash::HashValue hash_values(const std::set<std::string> & keys) const;
@@ -339,10 +339,10 @@ class OptionMap
         /////////////////////////////
         /*! \brief Change an option by passing a python object
          *
-         * \throw pulsar::OptionException if there is
+         * \throw pulsar::PulsarException if there is
          *        a problem with the option (nonexistant key, validation, conversion, etc)
          *
-         * \throw pulsar::PythonCallException if there is a problem
+         * \throw pulsar::PulsarException if there is a problem
          *        with the validation itself.
          *
          * \exstrong
@@ -353,7 +353,7 @@ class OptionMap
 
         /*! \brief Return the option's value as a python object
          *
-         * \throw pulsar::OptionException if there is
+         * \throw pulsar::PulsarException if there is
          *        a problem with the option (nonexistant key, validation, conversion, etc)
          */
         pybind11::object get_py(const std::string & key) const;
@@ -383,7 +383,7 @@ class OptionMap
          *
          * \note Key should already have been transformed to lowercase
          *
-         * \throw pulsar::OptionException
+         * \throw pulsar::PulsarException
          *        if a key doesn't exist
          */
         const detail::OptionBase * get_or_throw_(const std::string & key) const;
@@ -398,7 +398,7 @@ class OptionMap
          *
          * \note Key should already have been transformed to lowercase
          *
-         * \throw pulsar::OptionException
+         * \throw pulsar::PulsarException
          *        if a key doesn't exist or cannot
          *        be cast to the desired type
          */
@@ -408,7 +408,7 @@ class OptionMap
             const detail::OptionBase * ptr = get_or_throw_(key);
             const detail::OptionHolder<OPTTYPE> * oh = dynamic_cast<const detail::OptionHolder<OPTTYPE> *>(ptr);
             if(oh == nullptr)
-                throw OptionException("Bad option cast", "optionkey", key,
+                throw PulsarException("Bad option cast", "optionkey", key,
                                                  "fromtype", ptr->type_string(),
                                                  "totype", OptionTypeToString(OPTTYPE)); 
 
@@ -424,7 +424,7 @@ class OptionMap
             detail::OptionBase * ptr = get_or_throw_(key);
             detail::OptionHolder<OPTTYPE> * oh = dynamic_cast<detail::OptionHolder<OPTTYPE> *>(ptr);
             if(oh == nullptr)
-                throw OptionException("Bad option cast", "optionkey", key,
+                throw PulsarException("Bad option cast", "optionkey", key,
                                                  "fromtype", ptr->type_string(),
                                                  "totype", OptionTypeToString(OPTTYPE)); 
 

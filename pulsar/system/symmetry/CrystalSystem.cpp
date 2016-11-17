@@ -5,7 +5,7 @@
  */
 #include "pulsar/math/Checking.hpp"
 #include "pulsar/math/MinMax.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/system/symmetry/CrystalSystem.hpp"
 
 namespace pulsar{
@@ -42,7 +42,7 @@ CrystalSystem AssignCrystalSystem(const Vector_t& As,
         if(UniqueSides==2&&N120==1)return Hexagonal(As,Ss);
         else return Monoclinic(As,Ss);
     }    
-    throw GeneralException("Your angle/sides do not correspond to any of the"
+    throw PulsarException("Your angle/sides do not correspond to any of the"
                            "7 possible crystal systems to within the"
                            "specified tolerance.",
                            "Alpha",As[0],"Beta",As[1],"Gamma",As[2],

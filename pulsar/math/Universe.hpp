@@ -13,7 +13,7 @@
 #include <sstream> //For printing
 #include <vector> //For default set container
 
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/util/Serialization.hpp"
 #include "bphash/Hasher.hpp"
 #include "bphash/types/set.hpp"
@@ -151,7 +151,7 @@ public:
     const T& at(size_t EI) const
     {
         if(EI>=Storage_.size())
-            throw ValueOutOfRange("Requested element is out of range","EI",EI);
+            throw PulsarException("Requested element is out of range","EI",EI);
         return Storage_.at(EI);
     }
       
@@ -416,7 +416,7 @@ size_t Universe<T,U>::idx(const T& Elem)const
     if(it != end())
         return std::distance(begin(), it);
     else 
-        throw ValueOutOfRange("Element is not part of this universe");
+        throw PulsarException("Element is not part of this universe");
 }
 
 template<typename T, typename U>

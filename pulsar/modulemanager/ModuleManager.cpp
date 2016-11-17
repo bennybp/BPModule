@@ -98,7 +98,7 @@ void ModuleManager::duplicate_key(const std::string & modulekey, const std::stri
 {
     std::lock_guard<std::mutex> l(mutex_);
     if(store_.count(newkey))
-        throw ModuleLoadException("Cannot duplicate key: new key already exists",
+        throw PulsarException("Cannot duplicate key: new key already exists",
                                   "modulekey", modulekey, "newkey", newkey);
 
     // copy
@@ -167,7 +167,7 @@ void ModuleManager::test_all(void)
         catch(std::exception & ex)
         {
             print_global_error("Error - module %? [key %?]\" failed test loading!\n", it.second.mi.name, it.first);
-            throw GeneralException(ex, "location", "test_all");
+            throw PulsarException(ex, "location", "test_all");
         }
     }
 
@@ -181,7 +181,7 @@ ModuleManager::StoreEntry & ModuleManager::get_or_throw_(const std::string & mod
     if(store_.count(modulekey))
         return store_.at(modulekey);
     else
-        throw ModuleManagerException("Missing module key in ModuleManager", "modulekey", modulekey);
+        throw PulsarException("Missing module key in ModuleManager", "modulekey", modulekey);
 }
 
 
@@ -191,7 +191,7 @@ const ModuleManager::StoreEntry & ModuleManager::get_or_throw_(const std::string
     if(store_.count(modulekey))
         return store_.at(modulekey);
     else
-        throw ModuleManagerException("Missing module key in ModuleManager", "modulekey", modulekey);
+        throw PulsarException("Missing module key in ModuleManager", "modulekey", modulekey);
 }
 
 
@@ -221,26 +221,26 @@ void ModuleManager::load_module_from_minfo(const ModuleInfo & minfo, const std::
 
     // path set in the module info?
     if(minfo.path.size() == 0)
-        throw ModuleLoadException("Cannot load module: Empty path",
+        throw PulsarException("Cannot load module: Empty path",
                                   "modulepath", minfo.path, "modulename", minfo.name);
 
     // check for duplicates
     if(store_.count(modulekey))
-        throw ModuleLoadException("Cannot load module: duplicate key",
+        throw PulsarException("Cannot load module: duplicate key",
                                   "modulepath", minfo.path, "modulename", minfo.name,
                                   "modulekey", modulekey);
 
     // Using the handler, load the module
     if(!loadhandlers_.count(minfo.type))
-        throw ModuleLoadException("Cannot load module: unknown module type",
+        throw PulsarException("Cannot load module: unknown module type",
                                   "modulepath", minfo.path, "modulename", minfo.name, "type", minfo.type);
 
-    // may throw an exception. Exception should be a ModuleLoadException
+    // may throw an exception. Exception should be a PulsarException
     const ModuleCreationFuncs & mcf = loadhandlers_.at(minfo.type)->load_supermodule(minfo.path);
 
     // See if this supermodule actually create a module with this name
     if(!mcf.has_creator(minfo.name))
-        throw ModuleLoadException("Creators from this supermodule cannot create a module with this name",
+        throw PulsarException("Creators from this supermodule cannot create a module with this name",
                                   "path", minfo.path, "modulename", minfo.name);
 
 
@@ -286,7 +286,7 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
 
 
     if(parentid != 0 && !mtree_.has_id(parentid))
-        throw ModuleCreateException("Parent does not exist on map", "parentid", parentid);
+        throw PulsarException("Parent does not exist on map", "parentid", parentid);
 
 
     // obtain the options and validate them.
@@ -305,7 +305,7 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
         {
             std::stringstream ss;
             iss.print(ss);
-            throw OptionException("Options for module are not valid", "modulekey", modulekey,
+            throw PulsarException("Options for module are not valid", "modulekey", modulekey,
                                   "issues", ss.str());
         }
     }
@@ -330,14 +330,14 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
     }
     catch(const std::exception & ex)
     {
-        throw ModuleCreateException(ex,
+        throw PulsarException(ex,
                                                "path", se.mi.path,
                                                "modulekey", modulekey,
                                                "modulename", se.mi.name);
     }
 
     if(!umbptr)
-        throw ModuleCreateException("Module function returned a null pointer",
+        throw PulsarException("Module function returned a null pointer",
                                                "path", se.mi.path,
                                                "modulekey", modulekey,
                                                "modulename", se.mi.name);
@@ -403,12 +403,12 @@ void ModuleManager::change_option_py(const std::string & modulekey, const std::s
 
     std::lock_guard<std::mutex> l(se.semutex);
     if(se.ncalled != 0)
-        throw ModuleManagerException("Attempting to change options for a previously-used module key", "modulekey", modulekey, "optkey", optkey);
+        throw PulsarException("Attempting to change options for a previously-used module key", "modulekey", modulekey, "optkey", optkey);
 
     try {
         se.mi.options.change_py(optkey, value);
     }
-    catch(GeneralException & ex)
+    catch(PulsarException & ex)
     {
         ex.append_info("modulekey", modulekey);
         throw;

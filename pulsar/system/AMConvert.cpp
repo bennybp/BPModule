@@ -8,7 +8,7 @@
 
 #include "pulsar/system/AMConvert.hpp"
 #include "pulsar/util/StringUtil.hpp" // for case insensitive compare
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 
 using pulsar::CaseInsensitiveLess;
 
@@ -77,7 +77,7 @@ int string_to_am(const std::string & s)
     if(toi_.count(s))
         return toi_.at(s);
     else
-        throw BasisSetException("Cannot find integer AM for this string", "str", s);
+        throw PulsarException("Cannot find integer AM for this string", "str", s);
 }
 
 
@@ -86,7 +86,7 @@ std::string am_to_string(int am)
     if(tostr_.count(am))
         return tostr_.at(am);
     else
-        throw BasisSetException("Cannot find string for this integer AM", "int", am);
+        throw PulsarException("Cannot find string for this integer AM", "int", am);
 }
 
 } // close namespace pulsar

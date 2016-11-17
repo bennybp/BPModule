@@ -63,7 +63,7 @@ public:
 DerivReturnType
 EnergyMethod::finite_difference_(size_t Order, const Wavefunction & Wfn){
     if(Order==0)
-        throw GeneralException("I do not know how to obtain an energy via "
+        throw PulsarException("I do not know how to obtain an energy via "
                                "finite difference.");
     const System& Mol=*(Wfn.system);
     std::vector<Atom> Atoms(Mol.begin(),Mol.end());

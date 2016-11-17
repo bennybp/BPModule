@@ -10,7 +10,7 @@
 #include "pulsar/system/AOOrdering.hpp"
 #include "pulsar/system/NFunction.hpp"
 #include "pulsar/system/BasisSet.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 
 
 
@@ -33,7 +33,7 @@ const std::vector<int8_t> & spherical_ordering(int am)
     const auto & order = all_ao_orderings().spherical_order;
 
     if(!order.count(am))
-        throw GeneralException("Angular momentum out of range", "am", am);
+        throw PulsarException("Angular momentum out of range", "am", am);
 
     return order.at(am);
 }
@@ -45,7 +45,7 @@ const std::vector<IJK> & cartesian_ordering(int am)
     const auto & order = all_ao_orderings().cartesian_order;
 
     if(!order.count(am))
-        throw GeneralException("Angular momentum out of range", "am", am);
+        throw PulsarException("Angular momentum out of range", "am", am);
 
     return order.at(am);
 }
@@ -56,7 +56,7 @@ size_t cartesian_index(int am, IJK ijk)
     const auto & ijkvec = cartesian_ordering(am);
     const auto it = std::find(ijkvec.begin(), ijkvec.end(), ijk);
     if(it == ijkvec.end())
-        throw GeneralException("Value of IJK not found for this am", "am", am,
+        throw PulsarException("Value of IJK not found for this am", "am", am,
                                "i", ijk[0], "j", ijk[1], "k", ijk[2]);
     else
         return std::distance(ijkvec.begin(), it);
@@ -93,7 +93,7 @@ size_t spherical_index(int am, int m)
     const auto & svec = spherical_ordering(am);
     const auto it = std::find(svec.begin(), svec.end(), m);
     if(it == svec.end())
-        throw GeneralException("Value of m not found for this am", "am", am,
+        throw PulsarException("Value of m not found for this am", "am", am,
                                "m", m);
     else
         return std::distance(svec.begin(), it);
@@ -157,11 +157,11 @@ std::vector<size_t> make_ao_basis_ordering(const BasisSet & bs, const BSReorderM
         int am = shell.am();
 
         if(bm.count(type) == 0)
-            throw BasisSetException("Missing shell type in BSReorderMap",
+            throw PulsarException("Missing shell type in BSReorderMap",
                                     "type", ShellTypeString(type));
 
         if(bm.at(type).count(am) == 0)
-            throw BasisSetException("Missing AM in BSReorderMap for this shell type",
+            throw PulsarException("Missing AM in BSReorderMap for this shell type",
                                     "type", ShellTypeString(type),
                                     "am", am);
 
@@ -178,7 +178,7 @@ std::vector<size_t> make_ao_basis_ordering(const BasisSet & bs, const BSReorderM
     // basis set ordering to another. So it should be of the same
     // number of functions...
     if(fullreorder.size() != bs.n_functions())
-        throw BasisSetException("Basis set reordering inconsistency. size is incorrect",
+        throw PulsarException("Basis set reordering inconsistency. size is incorrect",
                                 "nfunc", bs.n_functions(), "fullreorder", fullreorder.size());
     
     return fullreorder;

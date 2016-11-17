@@ -44,5 +44,3 @@ PYBIND11_PLUGIN(pulsar_core)
 }
 } // close namespace pulsar
 
-
-#undef EXPORT_SUBMODULE

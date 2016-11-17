@@ -249,5 +249,5 @@ def check_supermodule(supermodule):
     if allok:
         print_global_debug(indent1 + "Supermodule {} looks ok to me!\n".format(supermodule))
     else:
-        raise GeneralException("Problem in initial check of a supermodule", "supermodule", supermodule)
+        raise PulsarException("Problem in initial check of a supermodule", "supermodule", supermodule)
 

@@ -237,7 +237,7 @@ public:
     ///Makes this the union of this and \p RHS
     My_t& union_assign(const My_t & RHS)
     {
-        if(!SameUniverse(RHS))throw MathException("Incompatible universes");
+        if(!SameUniverse(RHS))throw PulsarException("Incompatible universes");
         Elems_.insert(RHS.Elems_.begin(), RHS.Elems_.end());
         return *this;
     }
@@ -465,14 +465,14 @@ private:
     void universe_contains(const T& Elem)const
     {
         if (!Universe_->count(Elem))
-            throw ValueOutOfRange("Requested element is not in the universe");
+            throw PulsarException("Requested element is not in the universe");
     }
     
     ///Does the universe contain the index
     void universe_contains_idx(size_t Elem)const
     {
         if (Elem>=Universe_->size())
-            throw ValueOutOfRange("Requested element is not in the universe");
+            throw PulsarException("Requested element is not in the universe");
     }
 
     /** \brief Determines if the universe of this and that of RHS are
@@ -529,7 +529,7 @@ private:
 template<typename T,typename U>
 MathSet<T,U>& MathSet<T,U>::intersection_assign(const MathSet<T,U>& RHS)
 {
-        if(!SameUniverse(RHS))throw MathException("Universes are incompatible");
+        if(!SameUniverse(RHS))throw PulsarException("Universes are incompatible");
         if(&RHS==this)return *this;
         std::set<size_t> NewTemp;
         std::set_intersection(Elems_.begin(),Elems_.end(),
@@ -544,7 +544,7 @@ MathSet<T,U>& MathSet<T,U>::intersection_assign(const MathSet<T,U>& RHS)
 template<typename T,typename U>
 MathSet<T,U>& MathSet<T,U>::difference_assign(const MathSet<T,U>& RHS)
     {
-        if(!SameUniverse(RHS))throw MathException("Universes are incompatible");
+        if(!SameUniverse(RHS))throw PulsarException("Universes are incompatible");
         if(&RHS==this){
             Elems_=std::set<size_t>();
             return *this;

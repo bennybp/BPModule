@@ -8,7 +8,7 @@
 
 #include <pybind11/pybind11.h>
 
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/util/Mangle.hpp"
 
@@ -20,7 +20,7 @@ namespace pulsar {
  */
 inline std::string get_py_class(const pybind11::object & obj)
 {
-    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert(obj.ptr() != nullptr, "Python object pointer is null");
 
     pybind11::object cls = obj.attr("__class__");
     pybind11::object name = cls.attr("__name__");
@@ -32,7 +32,7 @@ inline std::string get_py_class(const pybind11::object & obj)
  */
 inline bool has_attr(const pybind11::object & obj, const char * attr)
 {
-    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert(obj.ptr() != nullptr, "Python object pointer is null");
     return PyObject_HasAttrString(obj.ptr(), attr);
 }
 
@@ -41,7 +41,7 @@ inline bool has_attr(const pybind11::object & obj, const char * attr)
  */ 
 inline bool is_callable(const pybind11::object & obj)
 {
-    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert(obj.ptr() != nullptr, "Python object pointer is null");
     return PyCallable_Check(obj.ptr());
 }
 
@@ -50,7 +50,7 @@ inline bool is_callable(const pybind11::object & obj)
  */
 inline bool has_callable_attr(const pybind11::object & obj, const char * attr)
 {
-    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert(obj.ptr() != nullptr, "Python object pointer is null");
     return has_attr(obj, attr) && is_callable(obj.attr(attr));
 }
 
@@ -58,7 +58,7 @@ inline bool has_callable_attr(const pybind11::object & obj, const char * attr)
 
 /*! \brief Convert a python object to a C++ object
  *
- * \throw pulsar::PythonConvertException on error
+ * \throw pulsar::PulsarException on error
  *
  * \tparam T The C++ type to convert to
  * \param [in] obj The python object to convert
@@ -66,20 +66,20 @@ inline bool has_callable_attr(const pybind11::object & obj, const char * attr)
 template<typename T>
 T convert_to_cpp(const pybind11::object & obj)
 {
-    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert(obj.ptr() != nullptr, "Python object pointer is null");
 
     try {
         return obj.cast<T>();
     }
     catch(const std::exception & ex)
     {
-        throw PythonConvertException("Cannot convert from python to C++: Conversion failed",
+        throw PulsarException("Cannot convert from python to C++: Conversion failed",
                                      "fromtype", get_py_class(obj), "totype", demangle_cpp_type<T>(),
                                      "what", ex.what());
     }
     catch(...)
     {
-        throw PythonConvertException("Cannot convert from python to C++: Conversion failed",
+        throw PulsarException("Cannot convert from python to C++: Conversion failed",
                                      "fromtype", get_py_class(obj), "totype", demangle_cpp_type<T>(),
                                      "what", "unknown exception type");
     }
@@ -89,7 +89,7 @@ T convert_to_cpp(const pybind11::object & obj)
 
 /*! \brief Convert a C++ object to a python object
  *
- * \throw pulsar::PythonConvertException on error
+ * \throw pulsar::PulsarException on error
  *
  * \tparam T The C++ type to convert from
  * \param [in] obj The python object to convert
@@ -106,7 +106,7 @@ pybind11::object convert_to_py(const T & obj,
         //! \todo fix if this pybind11 is changed to throw an exception
         if(!pyobj)
         {
-            throw PythonConvertException("Cannot convert from C++ to Python",
+            throw PulsarException("Cannot convert from C++ to Python",
                                          "fromtype", demangle_cpp_type<T>(),
                                          "info", "Resulting object pointer is null");
         }
@@ -116,13 +116,13 @@ pybind11::object convert_to_py(const T & obj,
     }
     catch (const std::exception & ex)
     {
-        throw PythonConvertException(ex.what(), 
+        throw PulsarException(ex.what(), 
                                      "fromtype", demangle_cpp_type<T>(),
                                      "when", "in converting from C++ to python");
     }
     catch(...)
     {
-        throw PythonConvertException("Caught unknown exception in converting from C++ to python object", 
+        throw PulsarException("Caught unknown exception in converting from C++ to python object", 
                                      "from type", demangle_cpp_type<T>());
     }
 }
@@ -130,7 +130,7 @@ pybind11::object convert_to_py(const T & obj,
 
 /*! \brief Calls a python object
  *
- * \throw pulsar::PythonCallException if there is an error (including conversion error)
+ * \throw pulsar::PulsarException if there is an error (including conversion error)
  *
  * \param [in] obj The python object to call
  * \param [in] Fargs Arguments to call the function with
@@ -138,19 +138,19 @@ pybind11::object convert_to_py(const T & obj,
 template<typename Ret, typename... Targs>
 Ret call_py_func(const pybind11::object & obj, Targs &&... Fargs)
 {
-    using pulsar::PythonCallException;
-    using pulsar::PythonConvertException;
-    using pulsar::GeneralException;
+    using pulsar::PulsarException;
+    using pulsar::PulsarException;
+    using pulsar::PulsarException;
     using pulsar::psr_assert;
 
-    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert(obj.ptr() != nullptr, "Python object pointer is null");
 
     int nargs = static_cast<int>(sizeof...(Fargs));
 
     // don't check for nargs, since this may be a class method
     // and Fargs... doesn't include self
     if(!is_callable(obj))  
-        throw PythonCallException("Object is not callable!", "nargs", nargs);
+        throw PulsarException("Object is not callable!", "nargs", nargs);
 
     pybind11::object ret;
 
@@ -160,11 +160,11 @@ Ret call_py_func(const pybind11::object & obj, Targs &&... Fargs)
     }
     catch(const std::exception & ex) // may include pybind11::error_already_set
     {
-        throw PythonCallException(ex.what());
+        throw PulsarException(ex.what());
     }
     catch(...)
     {
-        throw PythonCallException("Caught unknown exception when calling a python function");
+        throw PulsarException("Caught unknown exception when calling a python function");
     }
 
 
@@ -174,7 +174,7 @@ Ret call_py_func(const pybind11::object & obj, Targs &&... Fargs)
     }
     catch(const std::exception & ex)
     {
-        throw PythonCallException(ex,
+        throw PulsarException(ex,
                                   "desc", "Unable to convert return value from python function");
     }
 }
@@ -185,7 +185,7 @@ Ret call_py_func(const pybind11::object & obj, Targs &&... Fargs)
 
 /*! \brief Calls a function that is an attribute a python object
  *
- * \throw pulsar::PythonCallException if there is an error, including
+ * \throw pulsar::PulsarException if there is an error, including
  *        if the object does not have the given attribute or if there is a conversion
  *        error
  *
@@ -196,16 +196,16 @@ Ret call_py_func(const pybind11::object & obj, Targs &&... Fargs)
 template<typename Ret, typename... Targs>
 Ret call_py_func_attr(const pybind11::object & obj, const char * attribute, Targs &&... Fargs)
 {
-    using pulsar::PythonCallException;
-    using pulsar::GeneralException;
+    using pulsar::PulsarException;
+    using pulsar::PulsarException;
     using pulsar::psr_assert;
 
-    psr_assert<GeneralException>(obj.ptr() != nullptr, "Python object pointer is null");
+    psr_assert(obj.ptr() != nullptr, "Python object pointer is null");
 
     int nargs = static_cast<int>(sizeof...(Fargs));
 
     if(!has_callable_attr(obj, attribute))
-        throw PythonCallException("Python object does not have callable attribute!",
+        throw PulsarException("Python object does not have callable attribute!",
                                   "function", attribute,
                                   "nargs", nargs);
     

@@ -7,7 +7,7 @@
 #include "pulsar/util/PythonHelper.hpp"
 #include "pulsar/datastore/OptionMap.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "bphash/types/string.hpp"
 #include "bphash/types/memory.hpp"
 #include "bphash/types/map.hpp"
@@ -167,7 +167,7 @@ const detail::OptionBase * OptionMap::get_or_throw_(const std::string & key) con
     if(opmap_.count(key))
         return opmap_.at(key).get();
     else
-        throw OptionException("Option key not found", "optionkey", key);
+        throw PulsarException("Option key not found", "optionkey", key);
 }
 
 detail::OptionBase * OptionMap::get_or_throw_(const std::string & key)
@@ -175,7 +175,7 @@ detail::OptionBase * OptionMap::get_or_throw_(const std::string & key)
     if(opmap_.count(key))
         return opmap_.at(key).get();
     else
-        throw OptionException("Option key not found", "optionkey", key);
+        throw PulsarException("Option key not found", "optionkey", key);
 }
 
 
@@ -234,7 +234,7 @@ void OptionMap::add_option(std::string key, OptionType opttype, bool required,
                            const pybind11::object & def)
 {
     if(has_key(key))
-        throw OptionException("Attempting to add duplicate option key",
+        throw PulsarException("Attempting to add duplicate option key",
                               "optionkey", key);
 
     detail::OptionBasePtr oph = detail::CreateOptionHolder(key, opttype, required,

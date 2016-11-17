@@ -8,7 +8,7 @@
 #include "pulsar/modulemanager/PySupermoduleLoader.hpp"
 #include "pulsar/util/Filesystem.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/util/PythonHelper.hpp"
 
@@ -47,7 +47,7 @@ PySupermoduleLoader::~PySupermoduleLoader()
 const ModuleCreationFuncs & PySupermoduleLoader::load_supermodule(const std::string & spath)
 {
     if(spath.size() == 0)
-        throw ModuleLoadException("Cannot open python supermodule - path not given");
+        throw PulsarException("Cannot open python supermodule - path not given");
 
     print_global_debug("Loading python supermodule %?\n", spath);
 
@@ -81,7 +81,7 @@ const ModuleCreationFuncs & PySupermoduleLoader::load_supermodule(const std::str
 
         // Check for the insert_supermodule function first (before initializing)
         if(!has_callable_attr(mod, "insert_supermodule"))
-            throw ModuleLoadException("Cannot find insert_supermodule function in python module",
+            throw PulsarException("Cannot find insert_supermodule function in python module",
                                       "path", spath);
 
 
@@ -103,7 +103,7 @@ const ModuleCreationFuncs & PySupermoduleLoader::load_supermodule(const std::str
     }
 
     // just to be safe
-    psr_assert<ModuleLoadException>(objmap_.count(spath) == 1, "PySupermoduleLoader PyModInfo doesn't have this information...");
+    psr_assert(objmap_.count(spath) == 1, "PySupermoduleLoader PyModInfo doesn't have this information...");
 
     return objmap_.at(spath).creators;
 }

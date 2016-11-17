@@ -79,7 +79,7 @@ class ModuleCreationFuncs
 
         /*! \brief Get the creator function for a module
          *
-         * \throw pulsar::GeneralException if there isn't a
+         * \throw pulsar::PulsarException if there isn't a
          *        creator for that module name.
          *
          * \param [in] modulename The name of the module
@@ -88,7 +88,7 @@ class ModuleCreationFuncs
         const Func & get_creator(const std::string & modulename) const
         {
             if(!has_creator(modulename))
-                throw GeneralException("I don't have a creator for this module",
+                throw PulsarException("I don't have a creator for this module",
                                        "modulename", modulename);
 
             return creators_.at(modulename);

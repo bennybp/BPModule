@@ -7,7 +7,7 @@
 
 #include "pulsar/modulemanager/checkpoint_backends/BDBCheckpointIO.hpp"
 #include "pulsar/util/Serialization.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 #include "pulsar/math/Cast.hpp"
 
@@ -39,7 +39,7 @@ void BDBCheckpointIO::open(void)
 
     ret = db_create(&db_, NULL, 0);
     if(ret != 0)
-        throw GeneralException("Error while creating Berkeley DB",
+        throw PulsarException("Error while creating Berkeley DB",
                                "what", db_strerror(ret),
                                "path", path_);
 
@@ -54,7 +54,7 @@ void BDBCheckpointIO::open(void)
                     0);             // File create mode (using defaults)
 
     if(ret != 0)
-        throw GeneralException("Error while opening Berkeley DB",
+        throw PulsarException("Error while opening Berkeley DB",
                                "what", db_strerror(ret),
                                "path", path_);
 
@@ -127,7 +127,7 @@ void BDBCheckpointIO::write_(const std::string & key, const ByteArray & data,
     //! \todo errors & exceptions?
     int ret = db_->put(db_, NULL, &dbt_key, &dbt_data, 0);
     if(ret != 0)
-        throw GeneralException("Error while writing to Berkeley DB",
+        throw PulsarException("Error while writing to Berkeley DB",
                                "what", db_strerror(ret),
                                "path", path_,
                                "key", key);
@@ -145,7 +145,7 @@ void BDBCheckpointIO::write_(const std::string & key, const ByteArray & data,
 ByteArray BDBCheckpointIO::read(const std::string & key) const
 {
     if(count(key) == 0)
-        throw GeneralException("Cannot read data from checkpoint file - key doesn't exist",
+        throw PulsarException("Cannot read data from checkpoint file - key doesn't exist",
                                "key", key);
 
     // we need to const cast, since the C api for DBT 
@@ -176,7 +176,7 @@ ByteArray BDBCheckpointIO::read(const std::string & key) const
     }
 
     if(ret != 0)
-        throw GeneralException("Error while reading from Berkeley DB",
+        throw PulsarException("Error while reading from Berkeley DB",
                                "what", db_strerror(ret),
                                "path", path_,
                                "key", key);

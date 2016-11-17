@@ -8,14 +8,14 @@
 #pragma once
 
 #include <bpprint/Format.hpp>
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 
 
 namespace pulsar{
 
 /*! \brief Output a formatted string to a stream
  *
- * \throw pulsar::GeneralException for malformed inputs, etc
+ * \throw pulsar::PulsarException for malformed inputs, etc
  *
  * \tparam Targs The types of the arguments to print
  *
@@ -32,7 +32,7 @@ void format_stream(std::ostream & os, const std::string & fmt,
     }
     catch(std::exception & ex)
     {
-        throw GeneralException("Error in formatting a string or stream",
+        throw PulsarException("Error in formatting a string or stream",
                                           "error", ex.what(),
                                           "fmt", fmt, "nargs", sizeof...(Fargs));
     }
@@ -42,7 +42,7 @@ void format_stream(std::ostream & os, const std::string & fmt,
 
 /*! \brief Create a formatted string
  *
- * \throw pulsar::GeneralException for malformed inputs, etc
+ * \throw pulsar::PulsarException for malformed inputs, etc
  *
  * \tparam Targs The types of the arguments to print
  *
@@ -58,7 +58,7 @@ std::string format_string(const std::string & fmt, const Targs&... Fargs)
     }
     catch(std::exception & ex)
     {
-        throw GeneralException("Error in formatting a string or stream",
+        throw PulsarException("Error in formatting a string or stream",
                                           "error", ex.what(),
                                           "fmt", fmt, "nargs", sizeof...(Fargs));
     }

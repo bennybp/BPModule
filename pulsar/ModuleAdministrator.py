@@ -35,11 +35,11 @@ class ModuleAdministrator(ModuleManager):
         print_global_output("Importing {} module from supermodule {} under key {}\n".format(modulename, supermodule, modulekey))
 
         if supermodule == "" or supermodule == None:
-            raise exception.GeneralException("Empty supermodule given to LoadModule") 
+            raise PulsarException("Empty supermodule given to LoadModule") 
         if modulename == "" or modulename == None:
-            raise exception.GeneralException("Empty modulename given to LoadModule") 
+            raise PulsarException("Empty modulename given to LoadModule") 
         if modulekey == "" or modulekey == None:
-            raise exception.GeneralException("Empty modulekey given to LoadModule") 
+            raise PulsarException("Empty modulekey given to LoadModule") 
 
         try:
             # update the paths
@@ -64,18 +64,18 @@ class ModuleAdministrator(ModuleManager):
             # check options, etc
             check_supermodule(spath)
 
-        except GeneralException as e:
+        except PulsarException as e:
             raise e
 
         except Exception as e:
-            raise GeneralException("Unable to load supermodule",
+            raise PulsarException("Unable to load supermodule",
                                              "supermodule", supermodule,
                                              "exception", str(e)) from None
 
         # Check to see if this supermodule actually contains
         # the desired module
         if not modulename in m.minfo:
-            raise GeneralException("Supermodule doesn't have module!",
+            raise PulsarException("Supermodule doesn't have module!",
                                              "supermodule", supermodule,
                                              "modulename", modulename)
 

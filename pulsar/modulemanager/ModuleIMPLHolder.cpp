@@ -19,7 +19,7 @@ PyModuleIMPLHolder::PyModuleIMPLHolder(const pybind11::object & mod)
     
 
     if(!mod)
-        throw GeneralException("PyModuleIMPLHolder given a null object");
+        throw PulsarException("PyModuleIMPLHolder given a null object");
 }
 
 ModuleBase * PyModuleIMPLHolder::CppPtr(void) const

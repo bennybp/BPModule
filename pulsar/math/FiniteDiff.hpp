@@ -3,7 +3,7 @@
 #include <vector>
 #include <cstdlib>
 #include <LibTaskForce/LibTaskForce.hpp>
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 
 namespace pulsar{
 
@@ -148,7 +148,7 @@ class CentralDiff:public FiniteDiff<VarType,ReturnType>{
      ///\copydoc FiniteDiff::NCalcs
      size_t NCalcs(size_t NPoints)const{
          if(NPoints%2!=1||NPoints==1)
-             throw GeneralException("Central difference requires an odd number"
+             throw PulsarException("Central difference requires an odd number"
                                     " of points > 1");
          return NPoints-1;
      }

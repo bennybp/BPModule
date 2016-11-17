@@ -14,7 +14,7 @@
 #include "pulsar/util/Serialization.hpp"
 #include "bphash/Hasher.hpp"
 #include "pulsar/exception/Assert.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/pragma.h"
 
 
@@ -58,7 +58,7 @@ class BasisShellBase
 
         /*! Get the AM of a specific general contraction
          *
-         * \throw pulsar::BasisSetException on out-of-bounds access
+         * \throw pulsar::PulsarException on out-of-bounds access
          */
         int general_am(size_t n) const
         {
@@ -94,7 +94,7 @@ class BasisShellBase
 
         /*! Get the number of functions for a given general contraction
          *
-         * \throw pulsar::BasisSetException on out-of-bounds access
+         * \throw pulsar::PulsarException on out-of-bounds access
          */
         size_t general_n_functions(size_t n) const { return pulsar::n_functions(type_, general_am(n)); }
 
@@ -209,7 +209,7 @@ class BasisShellBase
 
         /*! \brief Get a single value for alpha (exponent)
          *
-         * \throw pulsar::BasisSetException on out-of-bounds access
+         * \throw pulsar::PulsarException on out-of-bounds access
          *
          * \param [in] i Index of the primitive to get
          */
@@ -224,7 +224,7 @@ class BasisShellBase
         
         /*! \brief Set a single value for alpha (exponent)
          *
-         * \throw pulsar::BasisSetException on out-of-bounds access
+         * \throw pulsar::PulsarException on out-of-bounds access
          *
          * \param [in] i Index of the primitive to set
          * \param [in] alpha The value to set the exponent to
@@ -240,7 +240,7 @@ class BasisShellBase
 
         /*! \brief Get a single value of a coefficient
          *
-         * \throw pulsar::BasisSetException on out-of-bounds access
+         * \throw pulsar::PulsarException on out-of-bounds access
          *
          * \param [in] n Index of the general contraction
          * \param [in] i Index in the segmented contraction
@@ -257,7 +257,7 @@ class BasisShellBase
 
         /*! \brief Set a single value of a coefficient
          *
-         * \throw pulsar::BasisSetException on out-of-bounds access
+         * \throw pulsar::PulsarException on out-of-bounds access
          *
          * \param [in] n Index of the general contraction
          * \param [in] i Index in the segmented contraction
@@ -282,7 +282,7 @@ class BasisShellBase
 
         /*! \brief Set all exponents via a vector
          *
-         * \throw pulsar::BasisSetException if the vector is not of the right length
+         * \throw pulsar::PulsarException if the vector is not of the right length
          */ 
         void set_alphas(const std::vector<double> & alphas)
         {
@@ -290,7 +290,7 @@ class BasisShellBase
             assert_ptrs_();
 
             if(alphas.size() != nprim_)
-                throw BasisSetException("Incompatible dimensions for alphas", "nprim", nprim_, "given", alphas.size());
+                throw PulsarException("Incompatible dimensions for alphas", "nprim", nprim_, "given", alphas.size());
 
             std::copy(alphas.begin(), alphas.end(), alphas_);
         }
@@ -312,7 +312,7 @@ class BasisShellBase
 
         /*! \brief Set all coefficients for a general contraction via a vector
          * 
-         * \throw pulsar::BasisSetException if the vector is not of the right length
+         * \throw pulsar::PulsarException if the vector is not of the right length
          */
         void set_coefs(size_t n, const std::vector<double> & coefs)
         {
@@ -321,7 +321,7 @@ class BasisShellBase
             validate_gen_idx_(n);
 
             if(coefs.size() != nprim_)
-                throw BasisSetException("Incompatible dimensions for coefficients",
+                throw PulsarException("Incompatible dimensions for coefficients",
                                         "nprim", nprim_, "given", coefs.size());
 
             std::copy(coefs.begin(), coefs.end(), coefs_ + n*nprim_);
@@ -337,14 +337,14 @@ class BasisShellBase
 
         /*! \brief Set all coefficients for all general contractions via a vector
          * 
-         * \throw pulsar::BasisSetException if the vector is not of the right length
+         * \throw pulsar::PulsarException if the vector is not of the right length
          */
         void set_all_coefs(const std::vector<double> & coefs)
         {
             
             assert_ptrs_();
             if(coefs.size() != n_coefficients())
-                throw BasisSetException("Incompatible dimensions for coefficients",
+                throw PulsarException("Incompatible dimensions for coefficients",
                                         "nprim", nprim_, "ngen", ngen_, "given", coefs.size());
 
             std::copy(coefs.begin(), coefs.end(), coefs_);
@@ -353,7 +353,7 @@ class BasisShellBase
 
         /*! \brief Set a primitive for a shell with no general contractions
          * 
-         * \throw pulsar::BasisSetException if the shell has more than
+         * \throw pulsar::PulsarException if the shell has more than
          *        one general contraction or if there is out-of-bounds access
          * 
          * \param [in] i Index of the primitive
@@ -368,7 +368,7 @@ class BasisShellBase
 
         /*! \brief Set all information for a primitive
          * 
-         * \throw pulsar::BasisSetException if \p coefs is not the right length
+         * \throw pulsar::PulsarException if \p coefs is not the right length
          *        or if there is out-of-bounds access
          *
          * \param [in] i Index of the primitive
@@ -384,7 +384,7 @@ class BasisShellBase
             const size_t ncoefs = coefs.size();
 
             if(ncoefs != ngen_)
-                throw BasisSetException("Incompatible dimensions for coefficients",
+                throw PulsarException("Incompatible dimensions for coefficients",
                                         "ngeneral", ngen_, "given", ncoefs);
 
             alphas_[i] = alpha;
@@ -419,7 +419,7 @@ class BasisShellBase
             // If this is sp, spd, spdf, etc, then ngen
             // must be exactly 2, 3, 4 respectively
             if(am < 0 && ((-am)+1) != (int)ngen)
-                throw BasisSetException("Invalid number of general contractions for special AM",
+                throw PulsarException("Invalid number of general contractions for special AM",
                                                    "am", am, "expected_ngen", ((-am)+1));
 
             // calculate the number of functions
@@ -492,7 +492,7 @@ class BasisShellBase
         {
             
             if(i >= nprim_)
-                throw BasisSetException("Attempt to access primitive that does not exist",
+                throw PulsarException("Attempt to access primitive that does not exist",
                                         "iprim", i, "nprim", nprim_);
         }
 
@@ -500,28 +500,28 @@ class BasisShellBase
         {
             
             if(n >= ngen_)
-                throw BasisSetException("Attempt to access general contraction that does not exist",
+                throw PulsarException("Attempt to access general contraction that does not exist",
                                         "igen", n, "ngen", ngen_);
         }
 
         void assert_prim_idx_(size_t i) const
         {
             
-            psr_assert<BasisSetException>(i < nprim_, "Attempt to access primitive that does not exist",
+            psr_assert(i < nprim_, "Attempt to access primitive that does not exist",
                                                   "iprim", i, "nprim", nprim_);
         }
 
         void assert_gen_idx_(size_t n) const
         {
             
-            psr_assert<BasisSetException>(n < ngen_, "Attempt to access general contraction that does not exist",
+            psr_assert(n < ngen_, "Attempt to access general contraction that does not exist",
                                                  "igen", n, "ngen", ngen_);
         }
 
         void assert_ptrs_(void) const
         {
             
-            psr_assert<BasisSetException>(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
+            psr_assert(alphas_ != nullptr && coefs_ != nullptr, "Null pointers in BasisShellBase");
         }
 
 

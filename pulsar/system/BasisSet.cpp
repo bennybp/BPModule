@@ -8,7 +8,7 @@
 #include "pulsar/system/NFunction.hpp"
 #include "pulsar/output/Output.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/exception/Assert.hpp"
 
 #include "bphash/types/memory.hpp"
@@ -55,7 +55,7 @@ BasisSet::BasisSet(const BasisSet & rhs)
     }
 
     // double check
-    psr_assert<BasisSetException>(shells_ == rhs.shells_, "Developer error. Inconsistent basis set copying");
+    psr_assert(shells_ == rhs.shells_, "Developer error. Inconsistent basis set copying");
 }
 
 
@@ -134,14 +134,14 @@ std::set<ShellType> BasisSet::get_types(void) const
 
 size_t BasisSet::shell_start(size_t i) const
 {
-    psr_assert<BasisSetException>(shells_.size() == shellstart_.size(),
+    psr_assert(shells_.size() == shellstart_.size(),
                               "Developer error. nshells != length of shellstart",
                               "nshells", shells_.size(), "nshellstart", shellstart_.size());
 
     if(i < shellstart_.size())
         return shellstart_[i];
     else
-        throw BasisSetException("Shell index out of range",
+        throw PulsarException("Shell index out of range",
                                 "index", i, "nshells", shellstart_.size());
 }
 
@@ -162,7 +162,7 @@ void BasisSet::add_shell_(const BasisShellBase & bshell,
     {
         // do we have enough room for xyz
         if(xyz_pos_ + 3 > max_nxyz_)
-            throw BasisSetException("Not enough storage for this shell: too many coordinates to store",
+            throw PulsarException("Not enough storage for this shell: too many coordinates to store",
                                     "max", max_nxyz_,
                                     "current", xyz_pos_, "toadd", 1);
 
@@ -190,12 +190,12 @@ void BasisSet::add_shell_(const BasisShellBase & bshell,
     else
     {
         if(alpha_pos_ + bshell.n_primitives() > max_nalpha_)
-            throw BasisSetException("Not enough storage for this shell: too may primitives",
+            throw PulsarException("Not enough storage for this shell: too may primitives",
                                                "max", max_nalpha_,
                                                "current", alpha_pos_, "toadd", bshell.n_primitives());  
 
         if(coef_pos_ + bshell.n_coefficients() > max_ncoef_)
-            throw BasisSetException("Not enough storage for this shell: too many coefficients",
+            throw PulsarException("Not enough storage for this shell: too many coefficients",
                                                "max", max_ncoef_,
                                                "current", coef_pos_, "toadd", bshell.n_coefficients());  
 
@@ -261,14 +261,14 @@ size_t BasisSet::n_unique_shell(void) const noexcept
 
 const BasisSetShell & BasisSet::shell(size_t i) const
 {
-    psr_assert<BasisSetException>(shells_.size() == shellstart_.size(),
+    psr_assert(shells_.size() == shellstart_.size(),
                               "Developer error. nshells != length of shellstart",
                               "nshells", shells_.size(), "nshellstart", shellstart_.size());
 
     if(i < shells_.size())
         return shells_[i];
     else
-        throw BasisSetException("Shell index out of range",
+        throw PulsarException("Shell index out of range",
                                 "index", i, "nshells", shells_.size());
 }
 
@@ -277,7 +277,7 @@ const BasisSetShell & BasisSet::unique_shell(size_t i) const
     if(i < unique_shells_.size())
         return shell(unique_shells_.at(i));
     else
-        throw BasisSetException("Unique shell index out of range",
+        throw PulsarException("Unique shell index out of range",
                                 "index", i, "nshells", unique_shells_.size());
 }
 
@@ -392,13 +392,13 @@ BasisSet BasisSet::shrink_fit(void) const
     // We check <= , since the *_pos variables represent where we would put
     // the next one. If pos_ == max_n, then it is full. If it is greater, then
     // one was already placed where it wasn't supposed to go...
-    psr_assert<BasisSetException>(xyz_pos_ <= max_nxyz_,
+    psr_assert(xyz_pos_ <= max_nxyz_,
                               "Developer error. Too many xyz in basis set",
                               "pos", xyz_pos_, "max", max_nxyz_);
-    psr_assert<BasisSetException>(alpha_pos_ <= max_nalpha_,
+    psr_assert(alpha_pos_ <= max_nalpha_,
                               "Developer error. Too many alpha in basis set",
                               "pos", alpha_pos_, "max", max_nalpha_);
-    psr_assert<BasisSetException>(coef_pos_ <= max_ncoef_,
+    psr_assert(coef_pos_ <= max_ncoef_,
                               "Developer error. Too many coefficients in basis set",
                               "pos", coef_pos_, "max", max_ncoef_);
 

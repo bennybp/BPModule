@@ -7,7 +7,7 @@
 #include <cstring>
 
 #include "pulsar/util/Cmdline.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 
 
 namespace {
@@ -21,7 +21,7 @@ namespace pulsar{
 int * get_argc(void)
 {
     if(!set_)
-        throw GeneralException("Command line has not been set! Definite developer error");
+        throw PulsarException("Command line has not been set! Definite developer error");
 
     return &argc_;
 }
@@ -29,7 +29,7 @@ int * get_argc(void)
 char *** get_argv(void)
 {
     if(!set_)
-        throw GeneralException("Command line has not been set! Definite developer error");
+        throw PulsarException("Command line has not been set! Definite developer error");
 
     return &argv_;
 }

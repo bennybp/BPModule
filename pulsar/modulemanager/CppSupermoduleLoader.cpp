@@ -10,7 +10,7 @@
 
 #include "pulsar/modulemanager/CppSupermoduleLoader.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/exception/Assert.hpp"
 
 
@@ -67,7 +67,7 @@ const ModuleCreationFuncs & CppSupermoduleLoader::load_supermodule(const std::st
     typedef ModuleCreationFuncs (*GeneratorFunc)(void);
 
     if(spath.size() == 0)
-        throw ModuleLoadException("Cannot open supermodule SO file - path not given");
+        throw PulsarException("Cannot open supermodule SO file - path not given");
 
     print_global_debug("Loading supermodule %?\n", spath);
 
@@ -84,7 +84,7 @@ const ModuleCreationFuncs & CppSupermoduleLoader::load_supermodule(const std::st
 
         // open the module
         if(!handle)
-            throw ModuleLoadException("Cannot open supermodule SO file - dlopen error",
+            throw PulsarException("Cannot open supermodule SO file - dlopen error",
                                       "path", spath,
                                       "dlerror", std::string(dlerror()));
 
@@ -95,7 +95,7 @@ const ModuleCreationFuncs & CppSupermoduleLoader::load_supermodule(const std::st
         if((error = dlerror()) != NULL)
         {
             dlclose(handle);
-            throw ModuleLoadException("Cannot find insert_supermodule function in SO file",
+            throw PulsarException("Cannot find insert_supermodule function in SO file",
                                       "path", spath, "dlerror", error);
         }
 
@@ -122,7 +122,7 @@ const ModuleCreationFuncs & CppSupermoduleLoader::load_supermodule(const std::st
         print_global_debug("Supermodule %? has already been loaded\n", spath);
 
     // just to be safe
-    psr_assert<ModuleManagerException>(soinfo_.count(spath) == 1, "CppSupermoduleLoader SOInfo doesn't this information...");
+    psr_assert(soinfo_.count(spath) == 1, "CppSupermoduleLoader SOInfo doesn't this information...");
 
     return soinfo_.at(spath).creators;
 }

@@ -10,10 +10,10 @@
 #include <fenv.h>       /* feclearexcept, fetestexcept, FE_ALL_EXCEPT, FE_INVALID */
 #include "pulsar/math/Binomial.hpp"
 #include "pulsar/math/Factorial_LUT.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/math/Cast.hpp"
 
-using pulsar::GeneralException;
+using pulsar::PulsarException;
 
 namespace pulsar{
 
@@ -27,13 +27,13 @@ double beta(double a,double b){
     //Check for errors in gamma function access:
     if(math_errhandling &MATH_ERREXCEPT){
         if(fetestexcept(FE_OVERFLOW))
-            throw GeneralException("Beta function has overflowed");
+            throw PulsarException("Beta function has overflowed");
         else if(fetestexcept(FE_DIVBYZERO))
-            throw GeneralException("Beta function is at a pole");
+            throw PulsarException("Beta function is at a pole");
     }
     else if(math_errhandling & MATH_ERRNO)
         if(errno==EDOM)
-            throw GeneralException("Beta function error");
+            throw PulsarException("Beta function error");
     
     //Result is good
     return exp(result);

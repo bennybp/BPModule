@@ -7,7 +7,7 @@
 #pragma once
 
 #include <vector>
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 
 namespace pulsar{
 
@@ -144,7 +144,7 @@ CombItr<T>::CombItr(const T& Set, size_t K) :
 template<typename T>
 void CombItr<T>::initialize(){
     if (Set_.size()<K_)
-    throw pulsar::GeneralException(
+    throw pulsar::PulsarException(
            "I don't know how to generate combinations with"
            " more items than you gave me....",
            "NObjects",Set_.size(),"Requested K",K_);

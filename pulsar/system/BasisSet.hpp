@@ -123,7 +123,7 @@ class BasisSet
 
         /* \brief Obtain information about a shell
          * 
-         * \throw pulsar::BasisSetException if the
+         * \throw pulsar::PulsarException if the
          *        shell index is out of range
          *
          * \param [in] i Index of the shell to obtain
@@ -138,7 +138,7 @@ class BasisSet
          * The coordinates, center, and ID are not well-defined
          * and belong to an arbitrary shell.
          *
-         * \throw pulsar::BasisSetException if the
+         * \throw pulsar::PulsarException if the
          *        shell index is out of range
          *
          * \param [in] i Index of the shell to obtain
@@ -157,7 +157,7 @@ class BasisSet
          * The shell_info will not contain information about the center or
          * the unique ID of the shell.
          *
-         * \throw pulsar::BasisSetException if the
+         * \throw pulsar::PulsarException if the
          *        shell index is out of range
          *
          * \param [in] i Index of the shell to obtain
@@ -170,7 +170,7 @@ class BasisSet
          * Will determine if this shell has data in common with another
          * stored shell
          *
-         * \throw pulsar::BasisSetException if the
+         * \throw pulsar::PulsarException if the
          *        shell information will not fit in what has been
          *        allocated already.
          * 

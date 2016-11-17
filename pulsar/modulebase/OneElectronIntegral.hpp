@@ -182,13 +182,13 @@ class OneElectronIntegral : public ModuleBase
         void initialized_or_throw_(void) const
         {
             if(!initialized_)
-                throw GeneralException("Module is not yet initialized");
+                throw PulsarException("Module is not yet initialized");
         }
 
         void uninitialized_or_throw_(void) const
         {
             if(initialized_)
-                throw GeneralException("Module has already been initialized");
+                throw PulsarException("Module has already been initialized");
         }
 
 };

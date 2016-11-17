@@ -10,7 +10,7 @@
 #include <map>
 #include <iostream>
 #include "pulsar/util/Serialization.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/math/Irrep.hpp"
 
 #include "bphash/types/map.hpp"
@@ -95,7 +95,7 @@ class BlockByIrrepSpin
         T & get(Irrep irrep, int spin)
         {
             if(!has(irrep, spin))
-               throw MathException("No matrix with this irrep/spin",
+               throw PulsarException("No matrix with this irrep/spin",
                                    "irrep", irrep_to_string.at(irrep), 
                                    "spin", spin);    
 
@@ -106,7 +106,7 @@ class BlockByIrrepSpin
         const T & get(Irrep irrep, int spin) const
         {
             if(!has(irrep, spin))
-                throw MathException("No matrix with this irrep/spin",
+                throw PulsarException("No matrix with this irrep/spin",
                                     "irrep", irrep_to_string.at(irrep),
                                     "spin", spin);    
 

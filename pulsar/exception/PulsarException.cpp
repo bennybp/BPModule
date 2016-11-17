@@ -2,15 +2,20 @@
  * \brief Exceptions thrown by Pulsar (source)
  */
 
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
+
 #include <iomanip>
 
 namespace pulsar {
 
-void GeneralException::build_str_(std::string & outstr,
-                                  const std::string & key,
-                                  const std::string & value)
+void PulsarException::build_str_(std::string & outstr,
+                                 const std::string & key,
+                                 const std::string & value)
 {
+    // The value string that is passed in may contain multiple
+    // lines (via inclusion of newlines). So we go over all the
+    // lines and indent them so that they look nice.
+
     // NOTE: The formatting here is done manually so that
     //       it is completely independent of the rest of
     //       Pulsar
@@ -24,14 +29,13 @@ void GeneralException::build_str_(std::string & outstr,
     // The value parameter as a string
     std::string str;
 
-    // Convert the value to a string
+    // Convert the value to a stringstream
     std::stringstream sstr(value);
 
     // Get the first line of the formatted output and
     // output it to the stream
     std::getline(sstr, str);
-    ss << std::setw(24) << key << std::setw(oldw) << " : "
-       << str;
+    ss << std::setw(24) << key << std::setw(oldw) << " : " << str;
 
     // For the rest of the lines, output the values aligned
     // with the first

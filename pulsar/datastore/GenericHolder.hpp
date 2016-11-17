@@ -8,7 +8,7 @@
 
 #include "pulsar/util/Mangle.hpp"
 #include "pulsar/datastore/GenericBase.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/util/Serialization.hpp"
 #include "pulsar/util/PythonHelper.hpp"
 
@@ -196,7 +196,7 @@ bphash::HashValue GenericHolder<T>::my_hash(void) const
     if(is_hashable())
         return hash_;
     else
-        throw GeneralException("hash called for unhashable cache data");
+        throw PulsarException("hash called for unhashable cache data");
 }
 
 
@@ -215,7 +215,7 @@ typename std::enable_if<!SerializeCheck<U>::value, ByteArray>::type
 GenericHolder<T>::to_byte_array_helper_(void) const
 {
     //! \todo can be static assert?
-    throw GeneralException("to_byte_array called for non-serializable cache data");
+    throw PulsarException("to_byte_array called for non-serializable cache data");
 }
 
 template<typename T>
@@ -232,7 +232,7 @@ typename std::enable_if<!bphash::is_hashable<U>::value, void>::type
 GenericHolder<T>::make_my_hash_(void)
 {
     //! \todo can be static assert?
-    throw GeneralException("hash called for unhashable cache data");
+    throw PulsarException("hash called for unhashable cache data");
 }
 
 

@@ -34,7 +34,7 @@ def apply_single_basis(bslabel, bsname, syst):
             break
           
     if bspath == None:
-        ge = GeneralException("File for basis set does not exist", "bsname", bsname)
+        ge = PulsarException("File for basis set does not exist", "bsname", bsname)
         for p in pulsar.pulsar_paths["basis"]:
             ge.append_info("path", p)
         raise ge

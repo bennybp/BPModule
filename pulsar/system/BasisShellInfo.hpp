@@ -51,11 +51,11 @@ class BasisShellInfo : public BasisShellBase
             
 
             if(alphas_.size() != n_primitives())
-                throw BasisSetException("Incompatible dimensions for alphas", "nprim", n_primitives(),
+                throw PulsarException("Incompatible dimensions for alphas", "nprim", n_primitives(),
                                         "given", alphas_.size());
 
             if(coefs_.size() != n_coefficients())
-                throw BasisSetException("Incompatible dimensions for coefficients",
+                throw PulsarException("Incompatible dimensions for coefficients",
                                          "nprim", n_primitives(), "ngen", n_general_contractions(), "given", coefs_.size());
 
             BasisShellBase::set_ptrs_(alphas_.data(), coefs_.data());

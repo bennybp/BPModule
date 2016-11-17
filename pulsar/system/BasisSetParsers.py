@@ -39,7 +39,7 @@ def read_basis_file(path):
     # Get the type from the first line
     cart = lines[0].lower()
     if not cart in validcart:
-        raise GeneralException("Unknown shell type in basis set",
+        raise PulsarException("Unknown shell type in basis set",
                                "file", path, "type", cart)
 
     iscart = (cart == "cartesian")
@@ -59,7 +59,7 @@ def read_basis_file(path):
             rawprims = [ l.split() for l in shelllines[1:] ]
             prims = [  [ p[0], p[1:] ] for p in rawprims ]
             if len(prims) != nprim:
-                raise GeneralException("Problem parsing basis set: nprim not equal to the actual number of primitives",
+                raise PulsarException("Problem parsing basis set: nprim not equal to the actual number of primitives",
                                        "element", element, "file", path, "nprim", nprim, "actual", len(prims))
 
             # Check to see if all primitives have the same number of
@@ -67,7 +67,7 @@ def read_basis_file(path):
             for p in prims:
                 ngen = len(prims[0][1])
                 if len(p[1]) != ngen:
-                    raise GeneralException("Ragged number of general contractions",
+                    raise PulsarException("Ragged number of general contractions",
                                            "element", element, "file", path, "nprim", nprim,
                                            "expected", ngen, "actual", len(p[1]))
 

@@ -19,7 +19,7 @@
 #include "pulsar/math/BLAS.hpp"
 #include "pulsar/math/Checking.hpp"
 #include "pulsar/constants.h"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/math/CombItr.hpp"
 
 
@@ -31,7 +31,7 @@ using pulsar::Point;
 using pulsar::are_equal;
 using pulsar::Dot;
 using pulsar::Cross;
-using pulsar::GeneralException;
+using pulsar::PulsarException;
 typedef std::unordered_set<Atom> AtomSet_t;
 typedef std::array<double,3> Vector_t;
 typedef std::array<double,9> Matrix_t;

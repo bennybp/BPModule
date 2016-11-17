@@ -100,7 +100,7 @@ def make_system(SomeString):
                 Systems[NFrags()]+=1
                 
         else:
-            raise GeneralException('make_system: Unidentifiable line in geometry specification: %s' % (line))
+            raise PulsarException('make_system: Unidentifiable line in geometry specification: %s' % (line))
 
     DaSpace=psr.Space()
     Periodic=(len(Sides)==3 and len(Angles)==3)

@@ -59,7 +59,7 @@ class CacheData
 
         /*! \brief Return the underlying data
          *
-         * \throw pulsar::DataStoreException if key
+         * \throw pulsar::PulsarException if key
          *        doesn't exist or is of the wrong type
          *
          * \tparam T The type of the data

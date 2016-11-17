@@ -29,7 +29,7 @@ public:
      * if any test fails.  This exception is the sign to CTest that the
      * test failed, please don't catch it.
      * 
-     * \throw GeneralException If one or more tests fails
+     * \throw PulsarException If one or more tests fails
      */
     void print_results()const;
     

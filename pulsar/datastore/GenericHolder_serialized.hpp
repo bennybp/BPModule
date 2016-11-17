@@ -60,7 +60,7 @@ class GenericHolder<SerializedGenericData> : public GenericBase
         {
             std::string desired_type = typeid(T).name();
             if(desired_type != obj->type)
-                throw GeneralException("Desired type does not match serialized data",
+                throw PulsarException("Desired type does not match serialized data",
                                                   "desired", demangle_cpp(desired_type),
                                                   "stored", demangle_cpp(obj->type));
 
@@ -76,7 +76,7 @@ class GenericHolder<SerializedGenericData> : public GenericBase
             // unserialize() cannot be optimized out
             // (if that makes any sense, you have been programming in C++ for too long)
             std::string desired_type = typeid(T).name();
-            throw GeneralException("Attempting to unserialize non-serializable data??",
+            throw PulsarException("Attempting to unserialize non-serializable data??",
                                                   "desired", demangle_cpp(desired_type),
                                                   "stored", demangle_cpp(obj->type));
         }
@@ -173,7 +173,7 @@ bphash::HashValue GenericHolder<SerializedGenericData>::my_hash(void) const
     if(is_hashable())
         return obj->hash;
     else
-        throw GeneralException("hash called for unhashable cache data");
+        throw PulsarException("hash called for unhashable cache data");
 }
 
 

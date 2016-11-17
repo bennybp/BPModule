@@ -6,7 +6,7 @@
 
 #include "pulsar/modulemanager/ModuleTree.hpp"
 
-using pulsar::ModuleManagerException;
+using pulsar::PulsarException;
 
 
 namespace pulsar{
@@ -20,9 +20,9 @@ ConstModuleTreeIter::ConstModuleTreeIter(const ModuleTree * mtree,
     : mtree_(mtree), startid_(startid), curid_(startid), curnode_(nullptr)
 {
     if(mtree == nullptr)
-        throw ModuleManagerException("Nullptr given to ConstModuleTreeIter");
+        throw PulsarException("Nullptr given to ConstModuleTreeIter");
     if(!mtree->has_id(startid))
-        throw ModuleManagerException("Starting ID given to ConstModuleTreeIter does not exist in the tree");
+        throw PulsarException("Starting ID given to ConstModuleTreeIter does not exist in the tree");
 
     // don't do the lookup if this is being constructed for "end"
     if(curid_ != MAXVAL)
@@ -109,7 +109,7 @@ const ModuleTreeNode * ConstModuleTreeIter::operator->()const
 const ModuleTreeNode & ConstModuleTreeIter::get_ref()const
 {
     if(curnode_ == nullptr)
-        throw ModuleManagerException("Nullptr dereference in ConstModuleTreeIter");
+        throw PulsarException("Nullptr dereference in ConstModuleTreeIter");
 
     return *curnode_;
 }
@@ -168,7 +168,7 @@ ConstModuleFlatTreeIter ConstModuleFlatTreeIter::operator++(int)
 const ModuleTreeNode & ConstModuleFlatTreeIter::get_ref()const
 {
     if(curit_ == map_->end())
-        throw ModuleManagerException("Attempting to dereference invalid iterator in ConstModuleFlatTreeIter");
+        throw PulsarException("Attempting to dereference invalid iterator in ConstModuleFlatTreeIter");
 
     return curit_->second;
 }

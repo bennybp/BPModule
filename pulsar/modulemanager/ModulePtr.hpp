@@ -9,7 +9,7 @@
 #define PULSAR_GUARD_MODULEMANAGER__MODULEPTR_HPP_
 
 #include "pulsar/modulemanager/ModuleIMPLHolder.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 
 namespace pulsar{
 
@@ -41,13 +41,13 @@ class ModulePtr
 
             // check before getting Cpp pointer
             if(!holder_)
-                throw GeneralException("ModulePtr given a null pointer");
+                throw PulsarException("ModulePtr given a null pointer");
 
             // Attempt to convert to the proper pointer type
             ptr_ = dynamic_cast<T *>(holder_->CppPtr());
 
             if(ptr_ == nullptr)
-                throw GeneralException("ModulePtr not given a holder of the right type");
+                throw PulsarException("ModulePtr not given a holder of the right type");
         }
 
 
@@ -65,7 +65,7 @@ class ModulePtr
          *
          * Used to call functions of the contained module object
          *
-         * \throw pulsar::GeneralException if there is a null pointer
+         * \throw pulsar::PulsarException if there is a null pointer
          *        in this object (ie, has been deleted)
          */
         T * operator->() const
@@ -73,9 +73,9 @@ class ModulePtr
             
 
             if(!holder_)
-                throw GeneralException("ModulePtr has an empty unique pointer");
+                throw PulsarException("ModulePtr has an empty unique pointer");
             if(ptr_ == nullptr)
-                throw GeneralException("ModulePtr has a null pointer");
+                throw PulsarException("ModulePtr has a null pointer");
             return ptr_;
         }
 
@@ -84,7 +84,7 @@ class ModulePtr
          *
          * Used to call functions of the contained module object
          *
-         * \throw pulsar::GeneralException if there is a null pointer
+         * \throw pulsar::PulsarException if there is a null pointer
          *        in this object (ie, has been deleted)
          */
         T & operator*() const
@@ -92,9 +92,9 @@ class ModulePtr
             
             
             if(!holder_)
-                throw GeneralException("ModulePtr has an empty unique pointer");
+                throw PulsarException("ModulePtr has an empty unique pointer");
             if(ptr_ == nullptr)
-                throw GeneralException("ModulePtr has a null pointer");
+                throw PulsarException("ModulePtr has a null pointer");
             return *ptr_;
         }
 
@@ -134,11 +134,11 @@ class PyModulePtr
 
             // check before getting the python object
             if(!holder_)
-                throw GeneralException("PyModulePtr given a null pointer");
+                throw PulsarException("PyModulePtr given a null pointer");
             obj_ = holder_->PythonObject();
 
             if(!obj_)
-                throw GeneralException("Module given to PyModulePtr could not be converted to python object");
+                throw PulsarException("Module given to PyModulePtr could not be converted to python object");
         }
 
         PyModulePtr(PyModulePtr &&) = default;
@@ -153,7 +153,7 @@ class PyModulePtr
          *
          * See \ref python_smart_pointer
          *
-         * \throw pulsar::GeneralException if there is a null pointer
+         * \throw pulsar::PulsarException if there is a null pointer
          *        or empty object in this object (ie, has been deleted)
          *
          * \param [in] name The attribute to get from the module
@@ -164,9 +164,9 @@ class PyModulePtr
 
             // check before getting the python object
             if(!holder_)
-                throw GeneralException("PyModulePtr has a null pointer");
+                throw PulsarException("PyModulePtr has a null pointer");
             if(!obj_)
-                throw GeneralException("PyModulePtr python object is empty");
+                throw PulsarException("PyModulePtr python object is empty");
             return obj_.attr(name.c_str());
         }
 

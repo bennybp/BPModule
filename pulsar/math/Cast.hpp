@@ -12,7 +12,7 @@ namespace pulsar{
  *
  * Cannot be used to convert integer <-> floating point. Use round_cast instead.
  *
- * \throw pulsar::MathException if there is a problem (overflow, underflow, etc)
+ * \throw pulsar::PulsarException if there is a problem (overflow, underflow, etc)
  */
 //template<typename Target, typename Source>
 //typename std::enable_if<std::is_arithmetic<Source>::value && std::is_arithmetic<Target>::value, Target>::type

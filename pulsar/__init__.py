@@ -17,7 +17,7 @@ sys.setdlopenflags(os.RTLD_LAZY | os.RTLD_GLOBAL)
 from .pulsar_core import *
 
 from .datastore.OptionValidators import *
-from .exception.Exceptions import *
+from .exception.PulsarException import *
 from .modulebase.base_options import *
 from .modulemanager.ModuleTreePrinters import *
 from .system.BasisSetParsers import *

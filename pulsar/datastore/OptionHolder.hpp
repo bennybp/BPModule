@@ -41,7 +41,7 @@ CreateOptionHolder(std::string key, OptionType opttype, bool required,
  *
  * Will call the python function \p func and give it \p val as its only argument
  *
- * \throw pulsar::PythonCallException if there is a problem calling
+ * \throw pulsar::PulsarException if there is a problem calling
  *        the python function or if the return type can't be converted
  *
  */
@@ -57,7 +57,7 @@ static OptionIssues ValidatorWrapper_(pybind11::object & valobj,
     }
     catch(const std::exception & ex)
     {
-        throw OptionException(ex, "optionkey", key,
+        throw PulsarException(ex, "optionkey", key,
                                          "when", "Attempting to validate an option");
     }
 }
@@ -90,11 +90,11 @@ class OptionHolder : public OptionBase
          *
          * The value is not set on construction, only the default
          *
-         * \throw pulsar::OptionException
+         * \throw pulsar::PulsarException
          *        If the default value is invalid, or
          *        there is a default argument supplied for a 'required' option.
          *
-         * \throw pulsar::PythonCallException
+         * \throw pulsar::PulsarException
          *       If there is a problem calling the validation function
          *
          * \param [in] key The key of this option
@@ -115,13 +115,13 @@ class OptionHolder : public OptionBase
             : OptionHolder(key, required, validator, help, new stored_type(def))
         {
             if(required)
-                throw OptionException("Default value supplied for required option",
+                throw PulsarException("Default value supplied for required option",
                                       "optionkey", key);
 
             // check the default using the validator
             OptionIssues iss = get_issues();
             if(iss.size())
-                throw OptionException("Default value for this option does not pass validation",
+                throw PulsarException("Default value for this option does not pass validation",
                                       "optionkey", key, "issues", iss);
 
         }
@@ -186,7 +186,7 @@ class OptionHolder : public OptionBase
          *
          * If the value is not set, but a default exists, the default is returned.
          *
-         * \throw pulsar::OptionException
+         * \throw pulsar::PulsarException
          *        If the option does not have a value or a default
          */
         const stored_type & get(void) const
@@ -196,7 +196,7 @@ class OptionHolder : public OptionBase
             else if(default_)
                 return *default_;
             else
-                throw OptionException("Option does not have a value",
+                throw PulsarException("Option does not have a value",
                                                  "optionkey", key());
         }
 
@@ -204,7 +204,7 @@ class OptionHolder : public OptionBase
 
         /*! \brief Get the default value
          *
-         * \throw pulsar::OptionException
+         * \throw pulsar::PulsarException
          *        If the option does not have a default
          */
         const stored_type & get_default(void) const
@@ -212,7 +212,7 @@ class OptionHolder : public OptionBase
             if(default_)
                 return *default_;
             else
-                throw OptionException("Option does not have a default",
+                throw PulsarException("Option does not have a default",
                                                  "optionkey", key());
         }
 
@@ -372,7 +372,7 @@ class OptionHolder : public OptionBase
             }                                                         
             catch(std::exception & ex)                                
             {                                                         
-                throw OptionException(ex, "optionkey", key());        
+                throw PulsarException(ex, "optionkey", key());        
             }                                                         
 
         }
@@ -386,7 +386,7 @@ class OptionHolder : public OptionBase
             }
             catch(std::exception & ex)
             {
-                throw OptionException(ex, "optionkey", key());
+                throw PulsarException(ex, "optionkey", key());
             }
 
             change(val);

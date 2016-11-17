@@ -65,7 +65,7 @@ class ModuleIMPLHolder
             
 
             if(CppPtr() == nullptr)
-                throw GeneralException("Null pointer in ModuleIMPLHolder");
+                throw PulsarException("Null pointer in ModuleIMPLHolder");
 
             T * ptr = dynamic_cast<T *>(CppPtr());
 
@@ -97,7 +97,7 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
         {
             
             if(!mod_)
-                throw GeneralException("Null pointer in CppModuleIMPLHolder");
+                throw PulsarException("Null pointer in CppModuleIMPLHolder");
             return mod_.get();
         }
 
@@ -106,12 +106,12 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
         {
             
             if(!mod_)
-              throw GeneralException("Null pointer in CppModuleIMPLHolder");
+              throw PulsarException("Null pointer in CppModuleIMPLHolder");
             T * ptr = mod_.get();
             pybind11::object o = convert_to_py(ptr, pybind11::return_value_policy::reference);
 
             if(!o)
-                throw GeneralException("Null python object in CppModuleIMPLHolder");
+                throw PulsarException("Null python object in CppModuleIMPLHolder");
 
             return o;
         }

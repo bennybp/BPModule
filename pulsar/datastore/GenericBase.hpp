@@ -83,7 +83,7 @@ class GenericBase
 
         /*! \brief Serialize the data as a byte array
          *
-         * \throw pulsar::GeneralException if the type is not
+         * \throw pulsar::PulsarException if the type is not
          *        serializable
          */
         virtual ByteArray to_byte_array(void) const = 0;
@@ -91,7 +91,7 @@ class GenericBase
 
         /*! \brief Obtain the hash of the data
          *
-         * \throw pulsar::GeneralException if the type is not
+         * \throw pulsar::PulsarException if the type is not
          *        hashable
          */
         virtual bphash::HashValue my_hash(void) const = 0;

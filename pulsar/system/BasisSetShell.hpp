@@ -177,21 +177,21 @@ class BasisSetShell : public BasisShellBase
         void assert_xyz_ptr_(void) const
         {
             
-            psr_assert<BasisSetException>(xyz_ != nullptr, "Null pointers in BasisSetShell");
+            psr_assert(xyz_ != nullptr, "Null pointers in BasisSetShell");
         }
 
         void validate_xyz_idx_(unsigned int i) const
         {
             
             if(i > 2)
-                throw BasisSetException("Attempt to access coordinate direction that does not exist",
+                throw PulsarException("Attempt to access coordinate direction that does not exist",
                                         "i", i);
         }
 
         void assert_xyz_idx_(unsigned int i) const
         {
             
-            psr_assert<BasisSetException>(i < 3, "Attempt to access coordinate direction that does not exist",
+            psr_assert(i < 3, "Attempt to access coordinate direction that does not exist",
                                              "i", i);
         }
 

@@ -1,5 +1,5 @@
 set(PULSAR_EXCEPTION_FILES
-            Exceptions.cpp
+            PulsarException.cpp
             export.cpp
 
             PARENT_SCOPE

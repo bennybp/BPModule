@@ -3,7 +3,7 @@
 #include<iomanip>
 #include<limits>
 #include "pulsar/output/Table.hpp"
-#include "pulsar/exception/Exceptions.hpp"
+#include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/math/Cast.hpp"
 
 typedef std::vector<char> Border_t;
@@ -73,7 +73,7 @@ namespace pulsar{
             size_t length=Data_.length();
             if(Width<length)
                 throw 
-                    GeneralException("The column is not wide enough for this string: ");
+                    PulsarException("The column is not wide enough for this string: ");
                 size_t Pad=Width-length;
             if(Align_==CENTER)
                 Result<<std::string((Pad+Pad%2)/2,' ')

@@ -48,7 +48,7 @@ class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag,
          *
          * Only accessible by other objects of this class and by a ModuleTree
          *
-         * \throw pulsar::ModuleManagerException if mtree
+         * \throw pulsar::PulsarException if mtree
          *        is a nullptr or the starting id doesn't exist
          *
          * \param [in] mtree The tree to interate over
@@ -65,14 +65,14 @@ class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag,
 
         /*! \brief Dereference the iterator
          *
-         * \throw pulsar::ModuleManagerException if the current
+         * \throw pulsar::PulsarException if the current
          *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode & operator*()const;
 
         /*! \brief Dereference the iterator
          *
-         * \throw pulsar::ModuleManagerException if the current
+         * \throw pulsar::PulsarException if the current
          *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode * operator->()const;
@@ -94,7 +94,7 @@ class ConstModuleTreeIter : public std::iterator<std::input_iterator_tag,
          *
          * Similar to dereferencing. Mostly for use from python
          *
-         * \throw pulsar::ModuleManagerException if the current
+         * \throw pulsar::PulsarException if the current
          *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode & get_ref(void) const;
@@ -140,14 +140,14 @@ class ConstModuleFlatTreeIter
 
         /*! \brief Dereference the iterator
          *
-         * \throw pulsar::ModuleManagerException if the current
+         * \throw pulsar::PulsarException if the current
          *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode & operator*()const;
 
         /*! \brief Dereference the iterator
          *
-         * \throw pulsar::ModuleManagerException if the current
+         * \throw pulsar::PulsarException if the current
          *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode * operator->()const;
@@ -168,7 +168,7 @@ class ConstModuleFlatTreeIter
          *
          * Similar to dereferencing. Mostly for use from python
          *
-         * \throw pulsar::ModuleManagerException if the current
+         * \throw pulsar::PulsarException if the current
          *        node does not exist (ie, we are past the end)
          */
         const ModuleTreeNode & get_ref(void) const;
