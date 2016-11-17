@@ -1,15 +1,12 @@
 /*! \file
  *
  * \brief Mangling/Demangling helpers (header) 
- * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#ifndef PULSAR_GUARD_UTIL__MANGLE_HPP_
-#define PULSAR_GUARD_UTIL__MANGLE_HPP_
+#pragma once
 
 #include <typeinfo>
-
-#include "pulsar/python/Types.hpp"
+#include <string>
 
 namespace pulsar{
 
@@ -41,30 +38,6 @@ std::string demangle_cpp_type(const T & t)
 /*! \brief Demangle the type of an object
  *
  * \tparam The type to demangle
- *
- * For a c++ type, same as demangle_cpp_type.
- * For a python object, will return the class name
- */
-template<typename T>
-typename std::enable_if<!std::is_base_of<pybind11::object, T>::value, std::string>::type
-demangle_cpp_or_py_type(const T & t)
-{
-    return demangle_cpp(typeid(t).name());
-}
-
-
-
-template<typename T>
-typename std::enable_if<std::is_base_of<pybind11::object, T>::value, std::string>::type
-demangle_cpp_or_py_type(const T & t)
-{
-    return get_py_class(t);
-}
-
-
-/*! \brief Demangle the type of an object
- *
- * \tparam The type to demangle
  */
 template<typename T>
 std::string demangle_cpp_type(void)
@@ -74,4 +47,3 @@ std::string demangle_cpp_type(void)
 
 } // close namespace pulsar
 
-#endif

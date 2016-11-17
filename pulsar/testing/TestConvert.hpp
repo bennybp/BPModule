@@ -10,7 +10,7 @@
 
 #include <string>
 
-#include "pulsar/python/Convert.hpp"
+#include "pulsar/util/PythonHelper.hpp"
 #include "pulsar/testing/TestingBase.hpp"
 
 

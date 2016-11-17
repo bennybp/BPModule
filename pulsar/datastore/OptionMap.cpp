@@ -4,9 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include "pulsar/python/Call.hpp"
-
-
+#include "pulsar/util/PythonHelper.hpp"
 #include "pulsar/datastore/OptionMap.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
 #include "pulsar/exception/Exceptions.hpp"

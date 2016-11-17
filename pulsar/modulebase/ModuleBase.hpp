@@ -17,7 +17,7 @@
 #include "pulsar/output/OutputStream.hpp"
 #include "pulsar/output/TeeBufToString.hpp"
 #include "pulsar/util/Format.hpp"
-#include "pulsar/python/Call.hpp"
+#include "pulsar/util/PythonHelper.hpp"
 #include "pulsar/datastore/Wavefunction.hpp" // needed by basically all derived classes
 
 
