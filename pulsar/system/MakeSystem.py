@@ -1,7 +1,7 @@
 import re
 import math
 from copy import deepcopy
-import pulsar as psr
+from .. import *
 
 def make_system(SomeString):
     """This function turns a string into a system object, which it then returns

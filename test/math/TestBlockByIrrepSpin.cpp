@@ -1,4 +1,4 @@
-#include "CXXTest.hpp"
+#include "CppTest.hpp"
 #include <pulsar/math/EigenImpl.hpp>
 
 using namespace pulsar;
@@ -8,7 +8,7 @@ using shared_matrix=std::shared_ptr<EigenMatrixImpl>;
 using Matrix_t=BlockedEigenMatrix;
 
 TEST_SIMPLE(TestBlockByIrrepSpin){
-    Tester tester("Testing BlockByIrrepSpin with BlockedEigenMatrix.");
+    CppTester tester("Testing BlockByIrrepSpin with BlockedEigenMatrix.");
     
     shared_eigen Mat1_=std::make_shared<EigenMat>(3,3),
                  Mat2_=std::make_shared<EigenMat>(3,3);
@@ -28,19 +28,19 @@ TEST_SIMPLE(TestBlockByIrrepSpin){
     M4.set(iB,sb,Mat2);
     TEST_FXN("Set/Get elements works",true,Mat1,M1.get(iA,sa));
     Matrix_t M2(M1);
-    tester.test("Copy constructor works",M1,M2);
+    tester.test_equal("Copy constructor works",M1,M2);
     Matrix_t M3(std::move(M1));
-    tester.test("Move constructor works",M2,M3);
+    tester.test_equal("Move constructor works",M2,M3);
     M5=M4;
-    tester.test("Copy assignment works",M4,M5);
+    tester.test_equal("Copy assignment works",M4,M5);
     M6=std::move(M4);
-    tester.test("Move assignment works",M5,M6);
-    tester.test("Not equal works",true,M5!=M1);
+    tester.test_equal("Move assignment works",M5,M6);
+    tester.test_equal("Not equal works",true,M5!=M1);
     TEST_FXN("Has works true",true,true,M5.has(iB,sb));
     TEST_FXN("Has works false",true,false,M5.has(iA,sb));
     TEST_FXN("Get valid irreps works",true,std::set<Irrep>({iA}),M2.get_irreps());
     TEST_FXN("Get valid spin works",true,std::set<int>({sb}),M5.get_spins(iB));
-    tester.test("Get invalid spin works",std::set<int>({}),M5.get_spins(iA));
+    tester.test_equal("Get invalid spin works",std::set<int>({}),M5.get_spins(iA));
     TEST_FXN("Get invalid element throws",false,Mat1,M5.get(iA,sb));
     const Matrix_t& M2c=M2;
     TEST_FXN("Const get works",true,Mat1,M2c.get(iA,sa));
@@ -52,6 +52,7 @@ TEST_SIMPLE(TestBlockByIrrepSpin){
     TEST_FXN("Hash works 1",true,M2.my_hash(),M3.my_hash());
      
     tester.print_results();
+    return tester.nfailed();
 }
     
     

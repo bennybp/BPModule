@@ -1,27 +1,33 @@
-from ..pulsar_core import TesterBase
+from .. import *
 
-class TesterPy(TesterBase):
+class PyTester(TesterBase):
     """Adds duck-typed test function and gets around no overloads."""
 
     def __init__(self, desc):
-        super(TesterPy,self).__init__(desc)
+        super(PyTester, self).__init__(desc)
 
-    def test(self, desc, should_pass, expected, func, *args):
-        """Same as Tester's templated test function."""
+    def test_equal(self, desc, v1, v2):
+        self.test(desc, v1 == v2)
+
+    def test_inot_equal(self, desc, v1, v2):
+        self.test(desc, (v1 != v2))
+
+    def test_function(self, desc, should_pass, expected, func, *args):
         try:
             success = (expected==func(*args) and should_pass)
         except Exception as e:
             success = not should_pass
-        self.test_bool(desc,success)
+        self.test(desc,success)
 
-    def test_value(self,desc,v1,v2,tol=0.0001):
+    def test_double(self,desc,v1,v2,tol=0.0001):
         """Same as Tester's test with two values."""
         if type(v1)==float and type(v2)==float:
            self.test_float(desc,v1,v2,tol)
         else:
-            self.test_bool(desc,v1==v2)
-            
-#RMR-these used to be in the __init__.py file
+            self.test(desc,v1==v2)
+
+
+
 ##################
 # For testing on the python side
 ##################
@@ -29,7 +35,7 @@ def py_test_function(func, *args):
     try:
        func(*args)
     except Exception as e:
-        psr.print_global_debug(str(e) + "\n")
+        print_global_debug(str(e) + "\n")
         return 0
     except:
         return 0
@@ -43,7 +49,7 @@ def py_test_bool_function(func, *args):
         return func(*args)
 
     except Exception as e:
-        psr.print_global_debug(str(e) + "\n")
+        print_global_debug(str(e) + "\n")
         return 0
 
     except:

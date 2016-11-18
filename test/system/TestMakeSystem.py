@@ -1,6 +1,6 @@
 from TestFxns import *
 
-tester=Tester("Testing Make System Python Function")
+tester=PyTester("Testing Make System Python Function")
 carts=[
 -2.0449536949999998,    -1.6898322539999999,     0.0354707364500000,
 -2.3427132454308994,    -2.1474611062791298,     0.8216939386571565,
@@ -44,7 +44,7 @@ mol1="""
 #H     3.0311125996609807    -0.9551186438629339     0.8216935421441762
 """
 
-tester.test("Comments work",True,corr_mol1,psr.make_system,mol1)
+tester.test_function("Comments work",True,corr_mol1,psr.make_system,mol1)
 
 mol2="""
 0 1
@@ -56,7 +56,7 @@ H     2.2689370278862486    -0.0000001286725659    -0.0720246525395077
 H     3.0311125996609807    -0.9551186438629339     0.8216935421441762
 """
 
-tester.test("Normal molecule works",True,corr_mol2,psr.make_system,mol2)
+tester.test_function("Normal molecule works",True,corr_mol2,psr.make_system,mol2)
 
 mol3="""
 0 1
@@ -68,7 +68,7 @@ H     2.2689370278862486    -0.0000001286725659    -0.0720246525395077
 H     3.0311125996609807    -0.9551186438629339     0.8216935421441762
 """
 
-#tester.test("@ for ghost works",True,corr_mol3,psr.make_system,mol3)
+#tester.test_function("@ for ghost works",True,corr_mol3,psr.make_system,mol3)
 
 mol4="""
 0 1
@@ -80,6 +80,7 @@ H     2.2689370278862486    -0.0000001286725659    -0.0720246525395077
 H     3.0311125996609807    -0.9551186438629339     0.8216935421441762
 """
 
-#tester.test("Gh(X) for ghosts works",True,corr_mol3,psr.make_system,mol4)
+#tester.test_function("Gh(X) for ghosts works",True,corr_mol3,psr.make_system,mol4)
 
 tester.print_results()
+exit(tester.nfailed())

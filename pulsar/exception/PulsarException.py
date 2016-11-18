@@ -1,4 +1,4 @@
-from pulsar import *
+from .. import PulsarException_
 
 ###############################################################
 # General Notes

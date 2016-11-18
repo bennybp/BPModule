@@ -1,6 +1,6 @@
 from TestFxns import *
 
-tester = Tester("Testing the BasisShellInfo class")
+tester = PyTester("Testing the BasisShellInfo class")
 BSI=psr.BasisShellInfo
 cGTO = psr.ShellType.CartesianGaussian
 
@@ -13,12 +13,14 @@ try:
     s6=BSI(cGTO, 0, 3, 1, alpha2, c)
 except Exception as e:
     threw = True
-tester.test_value("BSI : Constructor check passed", True, threw)
+tester.test_equal("BSI : Constructor check passed", True, threw)
 
 s1=BSI(cGTO, 0, 3, 1)
 s2=BSI(cGTO, 0, 3, 1, alpha, c)
-tester.test("BSI : Inequality works", True, True, s1.__ne__,s2)
+tester.test_function("BSI : Inequality works", True, True, s1.__ne__,s2)
 s3=BSI(s2)
-tester.test_value("BSI : Copy constructor and copying data works", s2, s3)
+tester.test_equal("BSI : Copy constructor and copying data works", s2, s3)
 
 tester.print_results()
+exit(tester.nfailed())
+

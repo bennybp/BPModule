@@ -1,4 +1,4 @@
-#include "CXXTest.hpp"
+#include "CppTest.hpp"
 #include <pulsar/system/System.hpp>
 
 using namespace pulsar;
@@ -9,7 +9,7 @@ TEST_SIMPLE(TestBasisSet){
     ShellType cGTO = ShellType::CartesianGaussian;
     ShellType sGTO = ShellType::SphericalGaussian;
     //RMR- It is my understanding that BSS is really only going to be made by BS
-    Tester tester("Testing BasisSet and BasisSetShell");
+    CppTester tester("Testing BasisSet and BasisSetShell");
 
     std::vector<double> alpha({3.42525091, 0.62391373, 0.16885540}),
     c({0.15432897, 0.53532814, 0.44463454});
@@ -25,14 +25,14 @@ TEST_SIMPLE(TestBasisSet){
     System Mol(Atoms,true);
     BasisSet BS(std::move(Mol.get_basis_set("PRIMARY")));
     BasisSet BS2(BS);   
-    tester.test("Move and copy constructors work",BS,BS2);
+    tester.test_equal("Move and copy constructors work",BS,BS2);
     
     BasisSet BS3(2,6,6,6);
-    tester.test("Inequality works",true,BS3!=BS2);
+    tester.test_equal("Inequality works",true,BS3!=BS2);
     BS3=std::move(BS2);
-    tester.test("Move assignment works",BS3,BS);
+    tester.test_equal("Move assignment works",BS3,BS);
     BS2=BS3;
-    tester.test("Copy assignment works",BS2,BS);
+    tester.test_equal("Copy assignment works",BS2,BS);
     
     //All basis sets up to BS3 should be equal at this point
     
@@ -59,9 +59,9 @@ TEST_SIMPLE(TestBasisSet){
     size_t counter=0;
     for(const BasisSetShell& Sk: BS2){
         //if(counter%2)//No ternary b/c of its stupid return type
-            tester.test("Iterator "+std::to_string(counter),true, Sk==(counter%2?Si:Sj));
+            tester.test_equal("Iterator "+std::to_string(counter),true, Sk==(counter%2?Si:Sj));
         //else
-       //     tester.test("Iterator "+std::to_string(counter),true,Sk==Sj);
+       //     tester.test_equal("Iterator "+std::to_string(counter),true,Sk==Sj);
         ++counter;
     }
     
@@ -78,5 +78,6 @@ TEST_SIMPLE(TestBasisSet){
     TEST_FXN("Hash BS2",true,BS.my_hash(),BS3.my_hash());   
     
     tester.print_results();
+    return tester.nfailed();
 }
 

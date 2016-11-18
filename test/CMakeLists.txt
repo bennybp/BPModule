@@ -22,7 +22,7 @@ add_library(${test_name} MODULE ${test_name}.cpp)
 target_include_directories(${test_name} PRIVATE ${PROJECT_SOURCE_DIR} pulsar)
 target_link_libraries(${test_name} PRIVATE pulsar)
 add_test(NAME ${test_name}_CXX
-         COMMAND ${PYTHON_EXECUTABLE} RunCXXTest.py ${test_name}
+         COMMAND ${PYTHON_EXECUTABLE} RunCppTest.py ${test_name}
          WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}/test
 )
 install(TARGETS ${test_name}
@@ -41,7 +41,7 @@ endfunction()
 #build directory for this project
 file(WRITE ${CMAKE_INSTALL_PREFIX}/CTestTestfile.cmake "subdirs(test)")
 
-foreach(dir math modulebase system)
+foreach(dir math system)
     add_subdirectory(${dir})
 endforeach()
 
@@ -49,5 +49,5 @@ endforeach()
 configure_file("TestFxns.py.in" "TestFxns.py" @ONLY)
 install(FILES ${CMAKE_BINARY_DIR}/TestFxns.py
         DESTINATION ${CMAKE_INSTALL_PREFIX}/test)
-install(FILES RunCXXTest.py
+install(FILES RunCppTest.py
         DESTINATION ${CMAKE_INSTALL_PREFIX}/test)
