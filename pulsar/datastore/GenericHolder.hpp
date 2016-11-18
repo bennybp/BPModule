@@ -127,6 +127,14 @@ class GenericHolder : public GenericBase
         template<typename U = T>
         typename std::enable_if<!bphash::is_hashable<U>::value, void>::type
         make_my_hash_(void);
+
+        template<typename U = T>
+        typename std::enable_if<std::is_base_of<pybind11::object, U>::value, std::string>::type
+        demangled_type_helper_(void) const;
+
+        template<typename U = T>
+        typename std::enable_if<!std::is_base_of<pybind11::object, U>::value, std::string>::type
+        demangled_type_helper_(void) const;
 };
 
 
@@ -165,10 +173,7 @@ const char * GenericHolder<T>::type(void) const noexcept
 template<typename T>
 std::string GenericHolder<T>::demangled_type(void) const
 {
-    if(std::is_base_of<pybind11::object, T>::value)
-        return get_py_class(*obj);
-    else
-        return demangle_cpp_type<T>();
+    return demangled_type_helper_();
 }
 
 template<typename T>
@@ -233,6 +238,22 @@ GenericHolder<T>::make_my_hash_(void)
 {
     //! \todo can be static assert?
     throw PulsarException("hash called for unhashable cache data");
+}
+
+template<typename T>
+template<typename U>
+typename std::enable_if<std::is_base_of<pybind11::object, U>::value, std::string>::type
+GenericHolder<T>::demangled_type_helper_(void) const
+{
+    return get_py_class(*obj);
+}
+
+template<typename T>
+template<typename U>
+typename std::enable_if<!std::is_base_of<pybind11::object, U>::value, std::string>::type
+GenericHolder<T>::demangled_type_helper_(void) const
+{
+    return demangle_cpp_type<T>();
 }
 
 
