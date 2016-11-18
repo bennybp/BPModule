@@ -32,9 +32,6 @@
 
 namespace pulsar{
 
-// in testing_export.cpp
-void export_testing_math(pybind11::module & m);
-
 
 void export_math(pybind11::module & m)
 {
@@ -135,9 +132,6 @@ void export_math(pybind11::module & m)
     export_irrep_spin_X<BlockedEigenMatrix,SharedMatrix>(m,"BlockedEigenMatrix");
     export_irrep_spin_X<BlockedEigenVector,SharedVector>(m,"BlockedEigenVector");                      
      
-    
-    // Export the testing stuff
-    export_testing_math(m);
 }
 
 } // close namespace pulsar

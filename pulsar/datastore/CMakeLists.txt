@@ -10,7 +10,6 @@ set(PULSAR_DATASTORE_FILES
             CacheMap_sync.cpp
 
             export.cpp
-            testing_export.cpp
 
             PARENT_SCOPE
    )

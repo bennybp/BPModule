@@ -63,9 +63,10 @@ public:
     
     
     ///Test that compares two, non-double, values
-    template<typename T1,typename T2>
-    void test(const std::string& desc,T1 v1, T2 v2){
-        test(desc,v1==v2);
+    template<typename T1, typename T2>
+    void test(const std::string& desc, const T1 & v1, const T2 & v2)
+    {
+        test(desc, v1 == v2);
     }
     
     ///Tests if boolean is true (all test commands reduce to this test)

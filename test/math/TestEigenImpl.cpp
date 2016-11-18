@@ -1,10 +1,10 @@
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/math/EigenImpl.hpp>
 
 using Matrix_t=pulsar::EigenMatrixImpl;
 using Vector_t=pulsar::EigenVectorImpl;
 
-TEST_CLASS(TestEigenImpl){
+TEST_SIMPLE(TestEigenImpl){
     Tester tester("Testing Eigen Matrix and Vector Implementations.");
     Matrix_t::shared_matrix Mat1=std::make_shared<Matrix_t::matrix_type>(2,4);
     Matrix_t::matrix_type Mat2(2,4);

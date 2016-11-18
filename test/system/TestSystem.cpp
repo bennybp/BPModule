@@ -1,9 +1,9 @@
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/system/System.hpp>
 using namespace pulsar;
 using shared_universe=std::shared_ptr<const AtomSetUniverse>;
 
-TEST_CLASS(TestSystem){
+TEST_SIMPLE(TestSystem){
     Tester tester("Testing the System class");
     
     AtomSetUniverse MyU,MyU2;

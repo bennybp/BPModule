@@ -1,9 +1,9 @@
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/system/System.hpp>
 using namespace pulsar;
 using BSI = BasisShellInfo;
 
-TEST_CLASS(TestBasisInfo)
+TEST_SIMPLE(TestBasisInfo)
 {
 
     ShellType cGTO = ShellType::CartesianGaussian;

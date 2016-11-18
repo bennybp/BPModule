@@ -1,11 +1,11 @@
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/math/Universe.hpp>
 
 using Universe_t=pulsar::Universe<double>;
 using std::bind;
 using namespace std::placeholders;
 
-TEST_CLASS(TestUniverse){
+TEST_SIMPLE(TestUniverse){
     
     Tester tester("Testing Universe Class C++ Interface");
     

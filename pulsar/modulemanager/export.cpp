@@ -21,9 +21,6 @@ using pulsar::detail::ConstModuleFlatTreeIter;
 
 namespace pulsar{
 
-// in testing_export.cpp
-void export_testing_modulemanager(pybind11::module & m);
-
 void export_modulemanager(pybind11::module & m)
 {
     //////////////////////
@@ -145,8 +142,6 @@ void export_modulemanager(pybind11::module & m)
     .def("load_global_cache", &Checkpoint::load_global_cache)
     ;
 
-    // Export the testing stuff
-    export_testing_modulemanager(m);
 }
 
 } // close namespace pulsar

@@ -24,9 +24,6 @@
 
 namespace pulsar{
 
-// in testing_export.cpp
-void export_testing_system(pybind11::module & m);
-
 void export_system(pybind11::module & m)
 {
 
@@ -345,9 +342,6 @@ void export_system(pybind11::module & m)
                      pybind11::keep_alive<0, 1>() )
     ;
 
- 
-    // Export the testing stuff
-    export_testing_system(m);
 }
 
 } // close namespace pulsar

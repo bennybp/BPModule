@@ -1,9 +1,9 @@
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/system/Atom.hpp>
 
 using namespace pulsar;
 
-TEST_CLASS(TestAtom){
+TEST_SIMPLE(TestAtom){
     Tester tester("Testing the Atom class");
     
     Atom H=create_atom({0.0,0.0,0.0},1);

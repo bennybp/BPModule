@@ -1,4 +1,4 @@
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/math/MathSet.hpp>
 
 using Universe_t=pulsar::Universe<double>;
@@ -6,7 +6,7 @@ using MathSet_t=pulsar::MathSet<double>;
 using std::bind;
 using namespace std::placeholders;
 
-TEST_CLASS(TestMathSet){
+TEST_SIMPLE(TestMathSet){
     Tester tester("Testing MathSet and MathSet Iterator C++ Interface");
     
     std::shared_ptr<Universe_t> U1=std::make_shared<Universe_t>(1.0,2.0,3.0),

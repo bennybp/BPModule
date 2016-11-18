@@ -1,10 +1,10 @@
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/math/PowerSetItr.hpp>
 
 using Comb_t=std::vector<int>;
 using PSItr_t=pulsar::PowerSetItr<Comb_t>;
 
-TEST_CLASS(TestPowerSetItr){
+TEST_SIMPLE(TestPowerSetItr){
     Tester tester("Testing PowerSetItr Class C++ Interface");
     
     Comb_t Com1={1,2,3},Com2;

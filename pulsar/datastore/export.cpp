@@ -22,9 +22,6 @@ using pulsar::Wavefunction;
 
 namespace pulsar {
 
-// in testing_export.cpp
-void export_testing_datastore(pybind11::module & m);
-
 
 void export_datastore(pybind11::module & m)
 {
@@ -132,8 +129,6 @@ void export_datastore(pybind11::module & m)
       .def_readonly_static("DistributeGlobal", &CacheData::DistributeGlobal)
     ;
 
-    // Export the testing stuff
-    export_testing_datastore(m);
 }
 
 } // close namespace pulsar

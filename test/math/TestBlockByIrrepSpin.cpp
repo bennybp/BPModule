@@ -1,4 +1,4 @@
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/math/EigenImpl.hpp>
 
 using namespace pulsar;
@@ -7,7 +7,7 @@ using shared_eigen=std::shared_ptr<EigenMat>;
 using shared_matrix=std::shared_ptr<EigenMatrixImpl>;
 using Matrix_t=BlockedEigenMatrix;
 
-TEST_CLASS(TestBlockByIrrepSpin){
+TEST_SIMPLE(TestBlockByIrrepSpin){
     Tester tester("Testing BlockByIrrepSpin with BlockedEigenMatrix.");
     
     shared_eigen Mat1_=std::make_shared<EigenMat>(3,3),

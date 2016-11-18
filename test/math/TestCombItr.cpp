@@ -1,10 +1,10 @@
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/math/CombItr.hpp>
 
 using Comb_t=std::vector<int>;
 using CombItr_t=pulsar::CombItr<Comb_t>;
 
-TEST_CLASS(TestCombItr){
+TEST_SIMPLE(TestCombItr){
     Tester tester("Testing CombItr Class C++ Interface");
     
     Comb_t Com1={1,2,3},Com2;

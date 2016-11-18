@@ -5,7 +5,7 @@ S 3 1.00
     0.62391373 0.53532814
     0.16885540 0.44463454 
  */
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/system/System.hpp>
 using std::bind;
 using std::move;
@@ -13,7 +13,7 @@ using namespace std::placeholders;
 using namespace pulsar;
 using BSI = BasisShellInfo;
 
-TEST_CLASS(TestBasisShellInfo)
+TEST_SIMPLE(TestBasisShellInfo)
 {
 
     ShellType cGTO = ShellType::CartesianGaussian;

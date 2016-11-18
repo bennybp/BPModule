@@ -12,7 +12,6 @@ set(PULSAR_SYSTEM_FILES
     SphericalTransform.cpp
     SphericalTransform_LUT.cpp
     export.cpp
-    testing_export.cpp
 
     #symmetry/CrystalSystem.cpp
     #symmetry/Symmetrizer.cpp

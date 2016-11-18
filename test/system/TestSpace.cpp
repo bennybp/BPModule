@@ -1,4 +1,4 @@
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/system/Space.hpp>
 #include <pulsar/constants.h>
 
@@ -9,7 +9,7 @@ std::array<double,3> Infinite={Space::infinity,Space::infinity,Space::infinity},
                      Sides={2.0,2.0,2.0},
                      Hexagonal={PI/2,PI/2,120/36*PI};
 
-TEST_CLASS(TestSpace){
+TEST_SIMPLE(TestSpace){
     Tester tester("Testing the Space class");
     
     Space InfiniteVaccuum;

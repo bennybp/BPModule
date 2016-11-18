@@ -1,10 +1,10 @@
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/system/System.hpp>
 
 using namespace pulsar;
 using ShellSet=std::set<ShellType>;
 
-TEST_CLASS(TestBasisSet){
+TEST_SIMPLE(TestBasisSet){
 
     ShellType cGTO = ShellType::CartesianGaussian;
     ShellType sGTO = ShellType::SphericalGaussian;

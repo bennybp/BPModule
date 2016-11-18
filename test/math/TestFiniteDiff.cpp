@@ -1,4 +1,4 @@
-#include "TestCXX.hpp"
+#include "CXXTest.hpp"
 #include <pulsar/math/FiniteDiff.hpp>
 #include <cmath>
 
@@ -14,7 +14,7 @@ void compare_deriv(const std::string& msg,const Return_t& Result,
     }
 }
 
-TEST_CLASS(TestFiniteDiff){
+TEST_SIMPLE(TestFiniteDiff){
 
     Tester tester("Testing the finite difference class.");
     
