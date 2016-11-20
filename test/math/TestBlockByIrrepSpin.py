@@ -1,8 +1,8 @@
-from TestFxns import *
+import pulsar as psr
 import numpy as np
 
 def run_test():
-    tester = PyTester("Testing Blocked Eigen Matrix Python Interface")
+    tester = psr.PyTester("Testing Blocked Eigen Matrix Python Interface")
     
     Mat1_=np.array([[1.0,2.0,3.0],[4.0,5.0,6.0],[7.0,8.0,9.0]])
     Mat2_=np.array([[2.0,4.0,6.0],[8.0,10.0,12.0],[14.0,16.0,18.0]])

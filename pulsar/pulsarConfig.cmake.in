@@ -63,3 +63,9 @@ target_link_libraries(pulsar INTERFACE bphash
                                        libtaskforce 
                                        @OpenMP_CXX_FLAGS@
 )
+
+#######################################
+# Other helpful variables
+#######################################
+set(PULSAR_TESTING_PATH ${PULSAR_INSTALL_ROOT}/modules/pulsar/testing)
+set(PULSAR_RUNTEST ${PULSAR_TESTING_PATH}/RunTest.py)

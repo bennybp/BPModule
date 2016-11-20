@@ -1,8 +1,8 @@
-from TestFxns import *
+import pulsar as psr
 import math
 
 def run_test():
-    tester=PyTester("Testing the System class")
+    tester=psr.PyTester("Testing the System class")
         
     MyU, MyU2=psr.AtomSetUniverse(), psr.AtomSetUniverse()
     H, H1 = psr.create_atom([0.0,0.0,0.0],1), psr.create_atom([0.0,0.0,0.89],1)

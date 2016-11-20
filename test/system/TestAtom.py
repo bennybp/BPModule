@@ -1,7 +1,7 @@
-from TestFxns import *
+import pulsar as psr
 
 def run_test():
-    tester=PyTester("Testing the Atom class")
+    tester=psr.PyTester("Testing the Atom class")
 
     H, H2=psr.create_atom([0.0,0.0,0.0],1), psr.create_atom([0.0,0.0,0.0],1,1)
     tester.test_function("create_atom works",True,True,H.__eq__,H2)

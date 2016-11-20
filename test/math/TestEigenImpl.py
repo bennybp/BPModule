@@ -1,8 +1,8 @@
-from TestFxns import *
+import pulsar as psr
 import numpy as np
 
 def run_test():
-    tester = PyTester("Testing Eigen Matrix Vector Python Interface")
+    tester = psr.PyTester("Testing Eigen Matrix Vector Python Interface")
     
     Mat1=np.array([[1.0,2.0,3.0,4.0],[5.0,6.0,7.0,8.0]])
     Mat2=np.array([[2.0,3.0,4.0,5.0],[6.0,7.0,8.0,9.0]])

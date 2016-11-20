@@ -1,7 +1,7 @@
-from TestFxns import *
+import pulsar as psr
     
 def run_test():
-    tester=PyTester("Testing MathSet and MathSet Iterator C++ Interface")
+    tester=psr.PyTester("Testing MathSet and MathSet Iterator C++ Interface")
     
     U1=psr.DoubleUniverse([1.0,2.0,3.0])
     U2, U3=psr.DoubleUniverse([3.0,4.0,5.0]),psr.DoubleUniverse([3.0])

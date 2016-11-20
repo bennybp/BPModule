@@ -1,4 +1,4 @@
-from TestFxns import *
+import pulsar as psr
 import time
 
 def run_test():
@@ -6,7 +6,7 @@ def run_test():
     BSB = psr.BasisShellBase
     cGTO = psr.ShellType.CartesianGaussian
     sGTO = psr.ShellType.SphericalGaussian
-    tester = PyTester("Testing BasisShellBase (BSB)")
+    tester = psr.PyTester("Testing BasisShellBase (BSB)")
 
     alpha =[3.42525091, 0.62391373, 0.16885540]
     c=[0.15432897, 0.53532814, 0.44463454]

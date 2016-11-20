@@ -1,7 +1,7 @@
-from TestFxns import *
+import pulsar as psr
 
 def run_test():
-    tester = PyTester("Testing the BasisShellInfo class")
+    tester = psr.PyTester("Testing the BasisShellInfo class")
     BSI=psr.BasisShellInfo
     cGTO = psr.ShellType.CartesianGaussian
 

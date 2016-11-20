@@ -1,8 +1,8 @@
-from TestFxns import *
+import pulsar as psr
 import math
 
 def run_test():
-    tester=PyTester("Testing the Space class")
+    tester=psr.PyTester("Testing the Space class")
     
     InfiniteVaccuum=psr.Space()
     Infinite=[psr.Space.infinity for i in range(0,3)]

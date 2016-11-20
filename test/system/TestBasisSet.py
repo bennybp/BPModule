@@ -1,7 +1,7 @@
-from TestFxns import *
+import pulsar as psr
 
 def run_test():
-    tester = PyTester("Testing the BasisSet and BasisSetShell")
+    tester = psr.PyTester("Testing the BasisSet and BasisSetShell")
     cGTO = psr.ShellType.CartesianGaussian
     sGTO = psr.ShellType.SphericalGaussian
     alpha=[3.42525091, 0.62391373, 0.16885540]

@@ -1,8 +1,7 @@
-from TestFxns import *
-
+import pulsar as psr
 
 def run_test():
-    tester = PyTester("Testing Universe Python Interface")
+    tester = psr.PyTester("Testing Universe Python Interface")
 
     #Constructors and assignment
     U0, U1=psr.DoubleUniverse(),psr.DoubleUniverse()

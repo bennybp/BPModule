@@ -1,8 +1,8 @@
-from TestFxns import *
+import pulsar as psr
 
 def run_test():
 
-    tester=PyTester("Testing Make System Python Function")
+    tester=psr.PyTester("Testing Make System Python Function")
     carts=[
     -2.0449536949999998,    -1.6898322539999999,     0.0354707364500000,
     -2.3427132454308994,    -2.1474611062791298,     0.8216939386571565,
