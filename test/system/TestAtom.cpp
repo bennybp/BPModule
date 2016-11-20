@@ -1,4 +1,4 @@
-#include "CppTest.hpp"
+#include <pulsar/testing/CppTest.hpp>
 #include <pulsar/system/Atom.hpp>
 
 using namespace pulsar;

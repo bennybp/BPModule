@@ -1,6 +1,7 @@
-#include "CppTest.hpp"
+#include <pulsar/testing/CppTest.hpp>
 #include <pulsar/math/CombItr.hpp>
 
+using namespace pulsar;
 using Comb_t=std::vector<int>;
 using CombItr_t=pulsar::CombItr<Comb_t>;
 

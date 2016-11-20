@@ -1,4 +1,4 @@
-#include "CppTest.hpp"
+#include <pulsar/testing/CppTest.hpp>
 #include <pulsar/system/Space.hpp>
 #include <pulsar/constants.h>
 

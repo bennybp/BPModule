@@ -1,6 +1,7 @@
-#include "CppTest.hpp"
+#include <pulsar/testing/CppTest.hpp>
 #include <pulsar/math/Universe.hpp>
 
+using namespace pulsar;
 using Universe_t=pulsar::Universe<double>;
 using std::bind;
 using namespace std::placeholders;

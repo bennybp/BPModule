@@ -1,7 +1,8 @@
-#include "CppTest.hpp"
+#include <pulsar/testing/CppTest.hpp>
 #include <pulsar/math/FiniteDiff.hpp>
 #include <cmath>
 
+using namespace pulsar;
 using VectorD=std::vector<double>;
 using Return_t=std::vector<VectorD>;
 using cD=const double;

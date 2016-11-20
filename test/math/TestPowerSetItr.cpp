@@ -1,6 +1,7 @@
-#include "CppTest.hpp"
+#include <pulsar/testing/CppTest.hpp>
 #include <pulsar/math/PowerSetItr.hpp>
 
+using namespace pulsar;
 using Comb_t=std::vector<int>;
 using PSItr_t=pulsar::PowerSetItr<Comb_t>;
 

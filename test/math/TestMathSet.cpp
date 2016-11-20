@@ -1,6 +1,7 @@
-#include "CppTest.hpp"
+#include <pulsar/testing/CppTest.hpp>
 #include <pulsar/math/MathSet.hpp>
 
+using namespace pulsar;
 using Universe_t=pulsar::Universe<double>;
 using MathSet_t=pulsar::MathSet<double>;
 using std::bind;

@@ -1,6 +1,7 @@
-#include "CppTest.hpp"
+#include <pulsar/testing/CppTest.hpp>
 #include <pulsar/math/EigenImpl.hpp>
 
+using namespace pulsar;
 using Matrix_t=pulsar::EigenMatrixImpl;
 using Vector_t=pulsar::EigenVectorImpl;
 
