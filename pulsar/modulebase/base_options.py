@@ -3,7 +3,7 @@ from .. import RangeCheck, GreaterThan, LessThan
 
 base_options = {
 
-  "Test_Base" :
+  "TestModule" :
   {
   },
 

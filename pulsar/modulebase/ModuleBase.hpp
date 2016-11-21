@@ -88,7 +88,7 @@ class ModuleBase
 
         /*! \brief Get the module type
          *
-         * ie, Test_Base, TwoElectronIntegral, etc
+         * ie, TestModule, TwoElectronIntegral, etc
          */
         std::string module_type(void) const;
 
