@@ -51,7 +51,7 @@ file(WRITE ${CMAKE_INSTALL_PREFIX}/CTestTestfile.cmake "subdirs(test)")
 ########################
 # Core pulsar tests
 ########################
-foreach(dir math system)
+foreach(dir math system modules)
   add_subdirectory(${dir})
 endforeach()
 
