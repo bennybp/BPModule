@@ -66,12 +66,14 @@ add_subdirectory(external)
 #################################
 set(STAGE_DIR ${CMAKE_BINARY_DIR}/stage)
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/cmake)
+list(APPEND PULSAR_PREFIX_PATH ${STAGE_DIR}/${CMAKE_INSTALL_PREFIX}/external)
+list(APPEND PULSAR_PREFIX_PATH ${CMAKE_PREFIX_PATH})
+
 ExternalProject_Add(pulsar_core
    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pulsar
    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
               -DCMAKE_BUILD_TYPE=${PULSAR_BUILD_TYPE}
               -DDESTDIR=${STAGE_DIR} # Pass in for searching for dependencies 
-              -DCMAKE_PREFIX_PATH=${STAGE_DIR}/${CMAKE_INSTALL_PREFIX}/external
               -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
               -DMPI_C_COMPILER=${MPI_C_COMPILER}
               -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
@@ -80,24 +82,29 @@ ExternalProject_Add(pulsar_core
               -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
    CMAKE_CACHE_ARGS -DPULSAR_CORE_PYTHON_LIBRARIES:LIST=${PYTHON_LIBRARIES}
                     -DPULSAR_CORE_PYTHON_INCLUDE_DIRS:LIST=${PYTHON_INCLUDE_DIRS}
-                    -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH}
+                    -DCMAKE_PREFIX_PATH:LIST=${PULSAR_PREFIX_PATH}
                     -DCMAKE_MODULE_PATH:STRING=${CMAKE_MODULE_PATH}
                     -DPULSAR_MATH_LIBS:LIST=${PULSAR_MATH_LIBS}
                     -DEIGEN3_INCLUDE_DIR:LIST=${EIGEN3_INCLUDE_DIR}
-   BUILD_COMMAND $(MAKE)
    BUILD_ALWAYS 1
    INSTALL_COMMAND $(MAKE) install DESTDIR=${STAGE_DIR}
 )
 add_dependencies(pulsar_core memwatch_external
                              bphash_external
+                             bpprint_external
                              pybind11_external
                              libtaskforce_external
                )
+
+####################
+# Pulsar core tests
+####################
+list(APPEND PULSAR_TEST_PREFIX_PATH ${STAGE_DIR}/${CMAKE_INSTALL_PREFIX})
+list(APPEND PULSAR_TEST_PREFIX_PATH ${CMAKE_PREFIX_PATH})
 ExternalProject_Add(pulsar_test
    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test
-   BINARY_DIR ${CMAKE_BINARY_DIR}/test   
-   CMAKE_ARGS -DCMAKE_BUILD_TYPE=${PULSAR_BUILD_TYPE}
-              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
+   CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/test_stage
+              -DCMAKE_BUILD_TYPE=${PULSAR_BUILD_TYPE}
               -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
               -DMPI_C_COMPILER=${MPI_C_COMPILER}
               -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
@@ -105,14 +112,18 @@ ExternalProject_Add(pulsar_test
               -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
               -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
               -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
-   CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:STRING=${CMAKE_PREFIX_PATH};
-                                            ${STAGE_DIR}/${CMAKE_INSTALL_PREFIX}
-                    -DCMAKE_MODULE_PATH:STRING=${CMAKE_MODULE_PATH}
-   BUILD_COMMAND $(MAKE)
+   CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${PULSAR_TEST_PREFIX_PATH}
+                    -DCMAKE_MODULE_PATH:LIST=${CMAKE_MODULE_PATH}
    BUILD_ALWAYS 1
-   INSTALL_COMMAND $(MAKE) install
 )
 add_dependencies(pulsar_test pulsar_core)
+
+
+#This file will allow us to run ctest in the top-level build dir
+#Basically it just defers to the actual top-level CTestTestfile.cmake in the
+#build directory for this project
+file(WRITE ${CMAKE_BINARY_DIR}/CTestTestfile.cmake "subdirs(test_stage)")
+
 #################################
 # Installation
 #################################
@@ -121,5 +132,5 @@ add_dependencies(pulsar_test pulsar_core)
 install(DIRECTORY ${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/ 
         DESTINATION ${CMAKE_INSTALL_PREFIX} USE_SOURCE_PERMISSIONS)
 
-# Install some random stuff
+# Install other files, such as basis set
 install(DIRECTORY basis DESTINATION ${CMAKE_INSTALL_PREFIX})
