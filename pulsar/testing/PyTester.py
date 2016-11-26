@@ -6,18 +6,33 @@ class PyTester(TesterBase):
     def __init__(self, desc):
         super(PyTester, self).__init__(desc)
 
+    def test_function(self, desc, should_pass, expected, func, *args):
+        try:
+            r = func(*args)
+            success = (expected == r) and should_pass
+        except Exception as ex:
+            print_global_debug("Caught expected exception in test\n"); 
+            print_global_debug(str(ex) + "\n"); 
+            success = not should_pass
+        self.test(desc,success)
+
+    def test_throw(self, desc, func, *args):
+        success = False
+        try:
+            func(*args)
+        except Exception as ex:
+            print_global_debug("Caught expected exception in test\n"); 
+            print_global_debug(str(ex) + "\n"); 
+            success = True
+        self.test(desc,success)
+        
+
     def test_equal(self, desc, v1, v2):
         self.test(desc, v1 == v2)
 
-    def test_inot_equal(self, desc, v1, v2):
+    def test_not_equal(self, desc, v1, v2):
         self.test(desc, (v1 != v2))
 
-    def test_function(self, desc, should_pass, expected, func, *args):
-        try:
-            success = (expected==func(*args) and should_pass)
-        except Exception as e:
-            success = not should_pass
-        self.test(desc,success)
 
     def test_double(self,desc,v1,v2,tol=0.0001):
         """Same as Tester's test with two values."""

@@ -5,7 +5,7 @@ S 3 1.00
     0.62391373 0.53532814
     0.16885540 0.44463454 
  */
-#include <pulsar/testing/CppTest.hpp>
+#include <pulsar/testing/CppTester.hpp>
 #include <pulsar/system/System.hpp>
 using std::bind;
 using std::move;

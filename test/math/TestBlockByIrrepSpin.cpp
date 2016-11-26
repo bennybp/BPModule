@@ -1,4 +1,4 @@
-#include <pulsar/testing/CppTest.hpp>
+#include <pulsar/testing/CppTester.hpp>
 #include <pulsar/math/EigenImpl.hpp>
 
 using namespace pulsar;

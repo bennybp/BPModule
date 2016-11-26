@@ -7,6 +7,7 @@
 #pragma once
 
 #include "pulsar/testing/TesterBase.hpp"
+#include "pulsar/output/GlobalOutput.hpp"
 #include <pybind11/pybind11.h>
 #include <cmath>
 
@@ -43,14 +44,56 @@ public:
                        Func func,
                        Args&&...args)
     {
-        bool success=false;
-        try{
+        bool success;
+
+        try {
             R r = func(std::forward<Args>(args)...);
             success = (expected == r) && should_pass;
         }
+        catch(std::exception & ex)
+        {
+            print_global_debug("Caught exception in test\n"); 
+            print_global_debug(ex.what()); 
+        }
         catch(...)
         {
+            print_global_debug("Caught unknown exception in test\n"); 
             success = !should_pass;
+        }
+
+        test(desc, success);
+    }
+
+
+    /**\brief Tests if a function throws an exception
+     * 
+     * Success is marked when the function passed as \p func throws
+     * an exception. If the function call succeeds, that is considered
+     * a failure.
+     * 
+     * \param[in] desc description of the test we are running 
+     * \param[in] func A callable object to test
+     * \param[in] args The arguments to pass to func
+     */
+    template<typename R, typename Func, typename...Args>
+    void test_throw(const std::string & desc,
+                    Func func,
+                    Args&&...args)
+    {
+        bool success = false;
+
+        try{
+            func(std::forward<Args>(args)...);
+        }
+        catch(std::exception & ex)
+        {
+            print_global_debug("Caught expected exception in test\n"); 
+            print_global_debug(ex.what()); 
+        }
+        catch(...)
+        {
+            print_global_debug("Caught expected (but unknown) exception in test\n"); 
+            success = true;
         }
 
         test(desc, success);

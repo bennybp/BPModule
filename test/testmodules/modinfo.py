@@ -13,6 +13,18 @@ minfo = {
     "refs"        : [],
     "options"     : { }
   },
+  
+  "TestCppModule2" :
+  {
+    "type"        : "c_module",
+    "base"        : "TestModule",
+    "modpath"     : "testmodules.so",
+    "version"     : "0.1a",
+    "description" : "C++ module for testing exceptions",
+    "authors"     : ["Benjamin Pritchard"],
+    "refs"        : [],
+    "options"     : { }
+  },
 
 
  "TestPyModule1" :
@@ -26,6 +38,16 @@ minfo = {
     "options"     : { }
   },
 
+ "TestPyModule2" :
+  {
+    "type"        : "python_module",
+    "base"        : "TestModule",
+    "version"     : "0.1a",
+    "description" : "Python module for testing exceptions",
+    "authors"     : ["Benjamin Pritchard"],
+    "refs"        : [""],
+    "options"     : { }
+  },
 }
 
 
