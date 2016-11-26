@@ -15,7 +15,7 @@ def run_test():
     tester.test_equal("Description is set","My Description",BI.description)
     tester.test_equal("Shells are set",shells,BI2.shells)
     tester.test_equal("Copy constructor works",BI,BI2)
-    tester.test_function("Inequality works",True,False,BI.__ne__,BI2)
+    tester.test_return("Inequality works",True,False,BI.__ne__,BI2)
 
     tester.print_results()
     return tester.nfailed()

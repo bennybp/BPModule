@@ -6,26 +6,27 @@ class PyTester(TesterBase):
     def __init__(self, desc):
         super(PyTester, self).__init__(desc)
 
-    def test_function(self, desc, should_pass, expected, func, *args):
+    def test_return(self, desc, should_pass, expected, func, *args):
         try:
             r = func(*args)
             success = (expected == r) and should_pass
         except Exception as ex:
-            print_global_debug("Caught expected exception in test\n"); 
+            print_global_debug("Caught exception in test\n"); 
             print_global_debug(str(ex) + "\n"); 
-            success = not should_pass
+            success = False
         self.test(desc,success)
 
-    def test_throw(self, desc, func, *args):
-        success = False
+    def test_call(self, desc, should_pass, func, *args):
         try:
             func(*args)
+            success = should_pass
         except Exception as ex:
-            print_global_debug("Caught expected exception in test\n"); 
+            print_global_debug("Caught exception in test\n"); 
             print_global_debug(str(ex) + "\n"); 
-            success = True
+            success = not should_pass
+
         self.test(desc,success)
-        
+
 
     def test_equal(self, desc, v1, v2):
         self.test(desc, v1 == v2)

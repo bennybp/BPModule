@@ -1,7 +1,5 @@
 /*! \file
- *
- * \brief  Add me
- * \author Ryan Richard (ryanmrichard1<at>gmail.com)
+ * \brief Base class for testing of Pulsar (header)
  */
 
 #pragma once
@@ -10,11 +8,18 @@
 
 namespace pulsar {
 
-/** \brief Class designed to assist in testing Pulsar's core
+/** \brief Class designed to assist in testing of Pulsar
  *
- 
+ * Individual tests are run via member functions of the derived
+ * classes, and the the results are accumulated internally. 
+ *
+ * The results of individual tests are printed as they are run.
+ * When finished, the final results can then be queried or printed.
+ *
+ * \threadunsafe
  */
-class TesterBase{
+class TesterBase
+{
 private:
     size_t nfailed_=0; ///< The number of failed tests
     size_t ntest_=0;///<The number of tests run
@@ -23,21 +28,36 @@ public:
     ///Initializes a tester for a set of tests described by \p desc
     TesterBase(const std::string& desc);
     
-    /**\brief Ends our series of tests.
-     *
-     * Prints the results of the series of tests and raises an exception
-     * if any test fails.  This exception is the sign to CTest that the
-     * test failed, please don't catch it.
+    /**\brief Prints the final results of the series of tests
      * 
-     * \throw PulsarException If one or more tests fails
+     * \exstrong
      */
     void print_results()const;
 
-    size_t nfailed() const noexcept;
-
+    /*! \brief Obtain the total number of tests that we ran
+     * 
+     * \exnothrow
+     */
     size_t ntest() const noexcept;
+
+    /*! \brief Obtain the number of tests that failed
+     * 
+     * \exnothrow
+     */
+    size_t nfailed() const noexcept;
     
-    ///Tests if boolean is true (all test commands should reduce to this test)
+    /*! \brief Tests if boolean is true and increments the appropriate counters
+     * 
+     * Also prints a line with the result of the test.
+     *
+     * \exstrong
+     *
+     * \note All test commands should reduce to this test
+     *
+     * \param [in] desc A description of the test
+     * \param [in] success True if the test passed, false if it failed
+     *
+     */
     void test(const std::string& desc, bool success);
 };
 

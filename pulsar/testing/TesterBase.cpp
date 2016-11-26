@@ -1,7 +1,6 @@
 /*! \file
  *
- * \brief Definition of the TesterBase class
- * \author Ryan Richard (ryanmrichard1 <at> gmail.com)
+ * \brief Base class for testing of Pulsar (source)
  */
 
 #include "pulsar/testing/TesterBase.hpp"
@@ -54,6 +53,7 @@ void TesterBase::test(const std::string& desc, bool passed)
     std::string l = format_string("\n%3? : %? : %?\n", ntest_+1, res, desc);
     print_global_output(l);
 
+    // none of the following can throw an exception
     if(!passed)
         ++nfailed_;
 

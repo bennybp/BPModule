@@ -18,7 +18,7 @@ def run_test():
 
     s1=BSI(cGTO, 0, 3, 1)
     s2=BSI(cGTO, 0, 3, 1, alpha, c)
-    tester.test_function("BSI : Inequality works", True, True, s1.__ne__,s2)
+    tester.test_return("BSI : Inequality works", True, True, s1.__ne__,s2)
     s3=BSI(s2)
     tester.test_equal("BSI : Copy constructor and copying data works", s2, s3)
 

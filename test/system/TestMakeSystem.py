@@ -46,7 +46,7 @@ def run_test():
     #H     3.0311125996609807    -0.9551186438629339     0.8216935421441762
     """
 
-    tester.test_function("Comments work",True,corr_mol1,psr.make_system,mol1)
+    tester.test_return("Comments work",True,corr_mol1,psr.make_system,mol1)
 
     mol2="""
     0 1
@@ -58,7 +58,7 @@ def run_test():
     H     3.0311125996609807    -0.9551186438629339     0.8216935421441762
     """
 
-    tester.test_function("Normal molecule works",True,corr_mol2,psr.make_system,mol2)
+    tester.test_return("Normal molecule works",True,corr_mol2,psr.make_system,mol2)
 
     mol3="""
     0 1
@@ -70,7 +70,7 @@ def run_test():
     H     3.0311125996609807    -0.9551186438629339     0.8216935421441762
     """
 
-    #tester.test_function("@ for ghost works",True,corr_mol3,psr.make_system,mol3)
+    #tester.test_return("@ for ghost works",True,corr_mol3,psr.make_system,mol3)
 
     mol4="""
     0 1
@@ -82,7 +82,7 @@ def run_test():
     H     3.0311125996609807    -0.9551186438629339     0.8216935421441762
     """
 
-    #tester.test_function("Gh(X) for ghosts works",True,corr_mol3,psr.make_system,mol4)
+    #tester.test_return("Gh(X) for ghosts works",True,corr_mol3,psr.make_system,mol4)
 
     tester.print_results()
     return tester.nfailed()

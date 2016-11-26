@@ -19,17 +19,17 @@ def run_test_inner(tester, ma):
         mpy1 = ma.get_module("TEST_PY_MOD1", 0)
         mpy2 = ma.get_module("TEST_PY_MOD2", 0)
         
-        tester.test_function("Test simple C++ module function",
-                             True, None, mcpp1.run_test)
+        tester.test_call("Test simple C++ module function",
+                         True, mcpp1.run_test)
 
-        tester.test_function("Test simple Python module function",
-                             True, None, mpy1.run_test)
+        tester.test_call("Test simple Python module function",
+                         True, mpy1.run_test)
 
-        tester.test_throw("Test throwing an exception in a C++ module",
-                          mcpp2.run_test)
+        tester.test_call("Test throwing an exception in a C++ module",
+                         False, mcpp2.run_test)
 
-        tester.test_throw("Test throwing an exception in a Python module",
-                          mpy2.run_test)
+        tester.test_call("Test throwing an exception in a Python module",
+                         False, mpy2.run_test)
 
 
 def run_test():

@@ -1,3 +1,18 @@
+#!/usr/bin/env python3
+
+# This script runs a test for Pulsar. Its only argument it a path
+# to a script that actually does the testing.
+#
+# The purpose of this script is to import pulsar from the appropriate
+# path (relative to this file) and also do some common initialization
+# of the core. It also handles cleanup of the core as well.
+#
+# The return value is zero if everything runs ok and the test script
+# returns zero. Otherwise, if there is a problem with this script
+# (bad arguments, etc), or if an unhandled exception escapes the test script,
+# the return value is negative. If there are failing tests, the return value
+# of the test script (and therefore this script) should be greater than zero.
+
 import os
 import sys
 import traceback
@@ -13,9 +28,21 @@ sys.path.insert(0, gparent)
 
 import pulsar
 
+
+# Check for the right arguments
+if len(sys.argv) != 2:
+  print("Usage: RunTest.py testfile")
+  raise RuntimeError("Error - one (and only one) argument is required")
+  quit(-1)
+
 # Manually import the test file via the full path
 # Add the file's directory to the python path
 full_path = sys.argv[1]
+
+if not os.path.isfile(full_path):
+  raise RuntimeError("Error - path \"{}\" is not a file".format(full_path))
+  quit(-2)
+
 test_path, test_file = os.path.split(full_path)
 test_name, test_ext = os.path.splitext(test_file)
 
