@@ -9,7 +9,7 @@ minfo = {
     "modpath"     : "testmodules.so",
     "version"     : "0.1a",
     "description" : "Simple C++ test module",
-    "authors"     : ["Benjamin Pritchard"],
+    "authors"     : ["Pulsar Core Developers"],
     "refs"        : [],
     "options"     : { }
   },
@@ -21,9 +21,23 @@ minfo = {
     "modpath"     : "testmodules.so",
     "version"     : "0.1a",
     "description" : "C++ module for testing exceptions",
-    "authors"     : ["Benjamin Pritchard"],
+    "authors"     : ["Pulsar Core Developers"],
     "refs"        : [],
     "options"     : { }
+  },
+
+  "TestCppModule3" :
+  {
+    "type"        : "c_module",
+    "base"        : "TestModule",
+    "modpath"     : "testmodules.so",
+    "version"     : "0.1a",
+    "description" : "C++ module for testing nested module calls",
+    "authors"     : ["Pulsar Core Developers"],
+    "refs"        : [],
+    "options"     : {
+                        "OTHER_MODULE" : ( OptionType.String, None, False, None, "Other module to call") 
+                    }
   },
 
 
@@ -33,7 +47,7 @@ minfo = {
     "base"        : "TestModule",
     "version"     : "0.1a",
     "description" : "Simple python test module",
-    "authors"     : ["Benjamin Pritchard"],
+    "authors"     : ["Pulsar Core Developers"],
     "refs"        : [""],
     "options"     : { }
   },
@@ -44,9 +58,22 @@ minfo = {
     "base"        : "TestModule",
     "version"     : "0.1a",
     "description" : "Python module for testing exceptions",
-    "authors"     : ["Benjamin Pritchard"],
+    "authors"     : ["Pulsar Core Developers"],
     "refs"        : [""],
     "options"     : { }
+  },
+
+ "TestPyModule3" :
+  {
+    "type"        : "python_module",
+    "base"        : "TestModule",
+    "version"     : "0.1a",
+    "description" : "Python module for testing nested module calls",
+    "authors"     : ["Pulsar Core Developers"],
+    "refs"        : [""],
+    "options"     : {
+                        "OTHER_MODULE" : ( OptionType.String, None, False, None, "Other module to call") 
+                    }
   },
 }
 
