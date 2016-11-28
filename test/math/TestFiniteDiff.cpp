@@ -11,7 +11,7 @@ void compare_deriv(const std::string& msg,const Return_t& Result,
                    const VectorD& Corr,CppTester& tester){
     for(size_t i=0;i<Result.size();i++){
         const std::string test_msg=msg+" component "+std::to_string(i);
-        tester.test_equal(test_msg,Result[i][0],Corr[i]);
+        tester.test_double(test_msg,Result[i][0],Corr[i]);
     }
 }
 
