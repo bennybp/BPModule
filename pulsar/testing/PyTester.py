@@ -13,7 +13,7 @@ class PyTester(TesterBase):
         except Exception as ex:
             print_global_debug("Caught exception in test\n"); 
             print_global_debug(str(ex) + "\n"); 
-            success = not should_pass
+            success = False
         self.test(desc,success)
 
     def test_call(self, desc, should_pass, func, *args):
