@@ -100,9 +100,10 @@ void register_Universe(pybind11::module & m,
     pybind11::class_<T,std::shared_ptr<T>>(m, universename)
     .def(pybind11::init<>())
     .def(pybind11::init<const T &>())
-    .def("__init__",[](T& unv,std::vector<value_type> args){
+    .def("__init__",[](T& unv,const pybind11::list args){
         new (&unv) T;
-        unv.insert(args.begin(),args.end());
+        for(auto i:args)
+            unv.insert(pybind11::cast<value_type>(i));
     })
     .def("size", &T::size)
     .def("my_hash", &T::my_hash)
