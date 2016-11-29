@@ -1,9 +1,9 @@
-from pulsar import OptionType
-from pulsar import RangeCheck, GreaterThan, LessThan
+from .. import OptionType
+from .. import RangeCheck, GreaterThan, LessThan
 
 base_options = {
 
-  "Test_Base" :
+  "TestModule" :
   {
   },
 

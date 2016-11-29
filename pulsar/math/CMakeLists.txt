@@ -4,7 +4,7 @@ set(PULSAR_MATH_FILES
             Factorial_LUT.cpp
             FiniteDiff.cpp
             export.cpp
-            testing_export.cpp
             Irrep.cpp
+
             PARENT_SCOPE
    )

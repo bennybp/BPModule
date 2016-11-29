@@ -1,4 +1,4 @@
-#include "TestCXX.hpp"
+#include <pulsar/testing/CppTester.hpp>
 #include <pulsar/system/System.hpp>
 using std::bind;
 using namespace std::placeholders;
@@ -6,12 +6,12 @@ using namespace pulsar;
 using BSI = BasisShellInfo;
 using BSB = BasisShellBase;
 
-TEST_CLASS(TestBasisShellBase)
+TEST_SIMPLE(TestBasisShellBase)
 {
 
     ShellType cGTO = ShellType::CartesianGaussian;
     ShellType sGTO = ShellType::SphericalGaussian;
-    Tester tester("Testing BasisShellBase (BSB)");
+    CppTester tester("Testing BasisShellBase (BSB)");
 
     std::vector<double> alpha({3.42525091, 0.62391373, 0.16885540}),
     c({0.15432897, 0.53532814, 0.44463454}),c2;
@@ -90,4 +90,5 @@ TEST_CLASS(TestBasisShellBase)
     TEST_FXN("hash", true, FakeD.my_hash(), FakeD2.my_hash());
 
     tester.print_results();
+    return tester.nfailed();
 }

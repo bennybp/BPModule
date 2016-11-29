@@ -1,4 +1,4 @@
-#include<pulsar/testing/Tester.hpp>
+#include<pulsar/testing/CppTester.hpp>
 #include<pulsar/modulebase/Test_Base.hpp>
 #include <pulsar/modulebase/EnergyMethod.hpp>
 
@@ -23,13 +23,13 @@ class FakeEnergyMethod : public EnergyMethod{
 
 class TestEnergyMethod : public Test_CXX_Base {
 protected:
-        virtual void run_test_(void);
+        virtual size_t run_test_(void);
 public:
     TestEnergyMethod(ID_t id) : Test_CXX_Base(id) { }
 };
 
-void TestEnergyMethod::run_test_(){
-    Tester tester("Testing EnergyMethod module base type");
+size_t TestEnergyMethod::run_test_(){
+    CppTester tester("Testing EnergyMethod module base type");
  
     ModuleManager& mm=module_manager();
     OptionMap om;
@@ -58,19 +58,20 @@ void TestEnergyMethod::run_test_(){
     hess[0]=hess[7]=hess[14]=hess[21]=hess[28]=hess[35]=1.0;
     
     auto deriv=egy_mod->deriv(0,wfn);
-    tester.test("Energy works",egy,deriv.second);
+    tester.test_equal("Energy works",egy,deriv.second);
     
     deriv=egy_mod->deriv(1,wfn);
-    tester.test("Grad has right dimensions",grad.size(),deriv.second.size());
+    tester.test_equal("Grad has right dimensions",grad.size(),deriv.second.size());
     for(size_t i=0;i<grad.size();++i)
-        tester.test("FDiff grad comp "+to_string(i),grad[i],deriv.second[i]);
+        tester.test_equal("FDiff grad comp "+to_string(i),grad[i],deriv.second[i]);
     
     deriv=egy_mod->deriv(2,wfn);
-    tester.test("Hessian has right dimensions",hess.size(),deriv.second.size());
+    tester.test_equal("Hessian has right dimensions",hess.size(),deriv.second.size());
     for(size_t i=0;i<hess.size();++i)
-        tester.test("FDiff Hessian comp "+to_string(i),hess[i],deriv.second[i]);
+        tester.test_equal("FDiff Hessian comp "+to_string(i),hess[i],deriv.second[i]);
     
     tester.print_results();
+    return tester.nfailed();
 }
 
 extern "C" {

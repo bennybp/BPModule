@@ -8,7 +8,6 @@ set(PULSAR_MODULEMANAGER_FILES
             ModuleTree_iterators.cpp
             Checkpoint.cpp
             export.cpp
-            testing_export.cpp
 
             checkpoint_backends/BDBCheckpointIO.cpp
 

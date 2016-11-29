@@ -12,10 +12,9 @@ olddl = sys.getdlopenflags()
 sys.setdlopenflags(os.RTLD_LAZY | os.RTLD_GLOBAL)
 
 # Import the main so file
-# Components remain part of pulsar_core namespace until
-# imported by the individual sub-packages below
 from .pulsar_core import *
 
+# Import other python files
 from .datastore.OptionValidators import *
 from .exception.PulsarException import *
 from .modulebase.base_options import *
@@ -23,7 +22,7 @@ from .modulemanager.ModuleTreePrinters import *
 from .system.BasisSetParsers import *
 from .system.ApplyBasisSet import *
 from .system.MakeSystem import *
-from .testing.TesterPy import *
+from .testing.PyTester import *
 
 #Used to be in utl/__init__.py
 def line(char, n = 80):

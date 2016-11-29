@@ -9,7 +9,7 @@
 #define PULSAR_GUARD_MODULEBASE__ALL_HPP_
 
 //#include "pulsar/modulebase/ModuleBase.hpp"
-#include "pulsar/modulebase/Test_Base.hpp"
+#include "pulsar/modulebase/TestModule.hpp"
 
 // System stuff
 #include "pulsar/modulebase/SystemFragmenter.hpp"

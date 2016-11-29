@@ -7,6 +7,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/functional.h>
 #include <pybind11/operators.h>
+#include <pybind11/stl.h>
 #include "pulsar/modulemanager/ModuleManager.hpp"
 #include "pulsar/modulemanager/Checkpoint.hpp"
 #include "pulsar/modulemanager/CheckpointIO.hpp"
@@ -20,9 +21,6 @@ using pulsar::detail::ConstModuleTreeIter;
 using pulsar::detail::ConstModuleFlatTreeIter;
 
 namespace pulsar{
-
-// in testing_export.cpp
-void export_testing_modulemanager(pybind11::module & m);
 
 void export_modulemanager(pybind11::module & m)
 {
@@ -145,8 +143,6 @@ void export_modulemanager(pybind11::module & m)
     .def("load_global_cache", &Checkpoint::load_global_cache)
     ;
 
-    // Export the testing stuff
-    export_testing_modulemanager(m);
 }
 
 } // close namespace pulsar

@@ -1,6 +1,6 @@
 from TestFxns import *
 
-tester=Tester("Testing the EnergyMethod module base type")
+tester=PyTester("Testing the EnergyMethod module base type")
 
 class FakeEnergyMethod(psr.EnergyMethod):
     def __init__(self,myid):

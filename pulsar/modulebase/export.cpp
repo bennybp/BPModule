@@ -34,18 +34,12 @@ void export_modulebase(pybind11::module & m)
     /////////////////////////
     // Test class
     /////////////////////////
-    pybind11::class_<Test_Base, std::unique_ptr<Test_Base>, Test_Base_Py> testbase(m, "Test_Base", mbase);
+    pybind11::class_<TestModule, std::unique_ptr<TestModule>, TestModule_Py> testbase(m, "TestModule", mbase);
     testbase.def(pybind11::init<ID_t>())
-            .def_readonly("out", &Test_Base_Py::out, pybind11::return_value_policy::reference_internal)
-            .def("cache", &Test_Base_Py::cache, pybind11::return_value_policy::reference_internal)
-            .def("module_manager", &Test_Base_Py::module_manager, pybind11::return_value_policy::reference_internal)
-            .def("run_test", &Test_Base::run_test)
-            .def("call_run_test", &Test_Base::call_run_test)
-            .def("call_run_test2", &Test_Base::call_run_test2)
-            .def("test_throw", &Test_Base::test_throw)
-            .def("call_throw", &Test_Base::call_throw)
-            .def("add_to_cache", &Test_Base::add_to_cache)
-            .def("get_from_cache", &Test_Base::get_from_cache)
+            .def_readonly("out", &TestModule_Py::out, pybind11::return_value_policy::reference_internal)
+            .def("cache", &TestModule_Py::cache, pybind11::return_value_policy::reference_internal)
+            .def("module_manager", &TestModule_Py::module_manager, pybind11::return_value_policy::reference_internal)
+            .def("run_test", &TestModule::run_test)
             ;
 
 

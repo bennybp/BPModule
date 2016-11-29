@@ -144,6 +144,8 @@ class OutputStream : public std::ostream
             debug_ = do_debug;
         }
 
+        using std::ostream::flush;
+
     private:
         bool debug_; //!< Is debugging enabled for this stream
 };

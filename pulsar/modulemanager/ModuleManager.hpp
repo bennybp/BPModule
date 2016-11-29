@@ -97,6 +97,8 @@ class ModuleManager
          * are set to the initial wavefunction of the parent, since it is assumed
          * that it has not completed yet.
          *
+         * \todo rename to create_module to match other nomenclature?
+         *
          * If the parent is not in use, the wavefunction is set to the final
          * wavefunction of the parent.
          *

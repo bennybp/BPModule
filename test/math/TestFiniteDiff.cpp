@@ -1,22 +1,23 @@
-#include "TestCXX.hpp"
+#include <pulsar/testing/CppTester.hpp>
 #include <pulsar/math/FiniteDiff.hpp>
 #include <cmath>
 
+using namespace pulsar;
 using VectorD=std::vector<double>;
 using Return_t=std::vector<VectorD>;
 using cD=const double;
 
 void compare_deriv(const std::string& msg,const Return_t& Result,
-                   const VectorD& Corr,Tester& tester){
+                   const VectorD& Corr,CppTester& tester){
     for(size_t i=0;i<Result.size();i++){
         const std::string test_msg=msg+" component "+std::to_string(i);
-        tester.test(test_msg,Result[i][0],Corr[i]);
+        tester.test_double(test_msg,Result[i][0],Corr[i]);
     }
 }
 
-TEST_CLASS(TestFiniteDiff){
+TEST_SIMPLE(TestFiniteDiff){
 
-    Tester tester("Testing the finite difference class.");
+    CppTester tester("Testing the finite difference class.");
     
 
 //fxn is 1/3 r^3
@@ -63,13 +64,13 @@ try{
     CFD.Run(MyVisitor,6,0.01,2);
     throw pulsar::PulsarException("Central Diff should throw");
 }
-catch(...){tester.test("C-Diff threw for even stencil size",true,true);}
+catch(...){tester.test_equal("C-Diff threw for even stencil size",true,true);}
 
 try{
     CFD.Run(MyVisitor,6,0.01,1);
     throw pulsar::PulsarException("Central Diff should throw");
 }
-catch(...){tester.test("C-Diff threw for a stencil size of 1",true,true);}
+catch(...){tester.test_equal("C-Diff threw for a stencil size of 1",true,true);}
 
 
 Result=CFD.Run(MyVisitor,6,0.01,3);
@@ -96,5 +97,6 @@ Result=FFD.Run(MyVisitor,6,0.01,4);
 compare_deriv("F-Diff 4",Result,Deriv,tester);
 
 tester.print_results();
+return tester.nfailed();
 
 }

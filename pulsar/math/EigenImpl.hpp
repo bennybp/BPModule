@@ -3,6 +3,7 @@
 #include "pulsar/math/EigenHash.hpp"
 #include "pulsar/math/BlockByIrrepSpin.hpp"
 #include "pulsar/math/TensorImpl.hpp"
+#include <bphash/types/memory.hpp>
 
 #include <Eigen/Dense>
 

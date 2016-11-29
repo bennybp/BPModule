@@ -29,6 +29,7 @@ void export_output(pybind11::module & m)
     pybind11::class_<std::ostream> os(m, "OSTREAM_INTERNAL");
 
     pybind11::class_<OutputStream>(m, "OutputStream", os)
+    .def("flush", &OutputStream::flush)
     .def("general_output", &OutputStream::output<>)
     .def("output",         &OutputStream::output<>)
     .def("changed",        &OutputStream::changed<>)
