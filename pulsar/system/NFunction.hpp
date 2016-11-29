@@ -9,6 +9,7 @@
 
 #include <array>
 #include <algorithm>
+#include <numeric>
 
 #include "pulsar/system/ShellType.hpp"
 
