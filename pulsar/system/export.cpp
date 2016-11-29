@@ -24,6 +24,21 @@
 
 namespace pulsar{
 
+std::vector<double> list_to_vector(const pybind11::list& ls){
+    std::vector<double> v;
+    for(auto i:ls)v.push_back(pybind11::cast<double>(i));
+    return v;
+}
+void set_all_coefs(BasisShellBase& bs,pybind11::list cs){
+                  bs.set_all_coefs(list_to_vector(cs));
+}
+void set_coefs(BasisShellBase& bs,int n,pybind11::list cs){
+                   bs.set_coefs(n,list_to_vector(cs));
+}
+void set_alphas(BasisShellBase& bs,pybind11::list as){
+    bs.set_alphas(list_to_vector(as));
+}
+
 void export_system(pybind11::module & m)
 {
 
@@ -78,7 +93,6 @@ void export_system(pybind11::module & m)
     .value("Slater", ShellType::Slater)
     ;
 
-
     // BasisShellBase class
     pybind11::class_<BasisShellBase> bshellbase(m, "BasisShellBase");
     bshellbase.def("get_type", &BasisShellBase::get_type)
@@ -98,11 +112,14 @@ void export_system(pybind11::module & m)
               .def("get_coef", &BasisShellBase::get_coef)
               .def("set_coef", &BasisShellBase::set_coef)
               .def("get_alphas", &BasisShellBase::get_alphas)
-              .def("set_alphas", &BasisShellBase::set_alphas)
+              .def("set_alphas",&set_alphas)
+              //.def("set_alphas", &BasisShellBase::set_alphas)
               .def("get_coefs", &BasisShellBase::get_coefs)
-              .def("set_coefs", &BasisShellBase::set_coefs)
+              .def("set_coefs",&set_coefs)
+              //.def("set_coefs", &BasisShellBase::set_coefs)
               .def("get_all_coefs", &BasisShellBase::get_all_coefs)
-              .def("set_all_coefs", &BasisShellBase::set_all_coefs)
+              .def("set_all_coefs",&set_all_coefs)
+              //.def("set_all_coefs", &BasisShellBase::set_all_coefs)
               .def("set_primitive", static_cast<void (BasisShellBase::*)(size_t, double, double)>(&BasisShellBase::set_primitive))
               .def("set_primitive", static_cast<void (BasisShellBase::*)(size_t, double, const std::vector<double> &)>(&BasisShellBase::set_primitive))
     ;
@@ -110,7 +127,14 @@ void export_system(pybind11::module & m)
     // BasisShellInfo class
     pybind11::class_<BasisShellInfo> bshell(m, "BasisShellInfo", bshellbase);
     bshell.def(pybind11::init<ShellType, int, int, int>())
-          .def(pybind11::init<ShellType, int, int, int, const std::vector<double> &, const std::vector<double> &>())
+          //RMR-Once Pybind11 conversions work again get rid of this...
+          .def("__init__",
+             [](BasisShellInfo& bs,ShellType type,int am,int nprim,int ngen,
+                pybind11::list as,pybind11::list cs){
+                  new (&bs) BasisShellInfo(type,am,nprim,ngen,list_to_vector(as),list_to_vector(cs));
+            })
+          //...for this
+          //.def(pybind11::init<ShellType,int,int,int,const std::vector<double>&,const std::vector<double>&>())
           .def(pybind11::init<const BasisShellInfo&>())
           .def(pybind11::self == pybind11::self)
           .def(pybind11::self != pybind11::self)
