@@ -60,7 +60,7 @@ void psr_assert(bool, Targs &&...) noexcept
 {
 }
 
-inline void psr_assert_ptr(void * ptr, const char * msg)
+inline void psr_assert_ptr(void *, const char *)
 {
 }
 
