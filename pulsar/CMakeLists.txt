@@ -115,6 +115,7 @@ list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${PULSAR_CORE_PYTHON_INCLUDE_DIRS}
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${MPI_CXX_INCLUDE_PATH})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${PYBIND11_INCLUDE_DIR})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${EIGEN3_INCLUDE_DIR})
+list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUES ${DB_INCLUDE_DIR})
 #############################################################
 # Libraries and link flags (including interface libraries)
 #############################################################
