@@ -11,7 +11,7 @@
 #include <mutex>
 #include <thread>
 
-#include <pybind11/pybind11.h>
+#include "pulsar/util/Pybind11.hpp"
 
 #include "pulsar/datastore/GenericHolder.hpp"
 #include "pulsar/datastore/GenericHolder_serialized.hpp"

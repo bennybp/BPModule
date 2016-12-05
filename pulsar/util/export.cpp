@@ -4,9 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-#include <pybind11/operators.h>
+#include "pulsar/util/Pybind11.hpp"
 #include "pulsar/util/Cmdline.hpp"
 #include "pulsar/util/Memwatch.hpp"
 

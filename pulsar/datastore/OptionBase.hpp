@@ -10,7 +10,7 @@
 
 #include <ostream>
 
-#include <pybind11/pybind11.h>
+#include "pulsar/util/Pybind11.hpp"
 #include "pulsar/util/Serialization.hpp"
 
 #include "bphash/types/string.hpp" // Includes Hasher

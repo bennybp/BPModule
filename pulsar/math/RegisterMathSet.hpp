@@ -7,10 +7,7 @@
 #ifndef PULSAR_GUARD_MATH__REGISTERMATHSET_HPP_
 #define PULSAR_GUARD_MATH__REGISTERMATHSET_HPP_
 
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-#include <pybind11/functional.h>
-#include <pybind11/operators.h>
+#include "pulsar/util/Pybind11.hpp"
 #include "pulsar/math/Universe.hpp"
 #include "pulsar/math/MathSet.hpp"
 
@@ -100,10 +97,9 @@ void register_Universe(pybind11::module & m,
     pybind11::class_<T,std::shared_ptr<T>>(m, universename)
     .def(pybind11::init<>())
     .def(pybind11::init<const T &>())
-    .def("__init__",[](T& unv,const pybind11::list args){
+    .def("__init__",[](T& unv,const std::vector<value_type>& args){
         new (&unv) T;
-        for(auto i:args)
-            unv.insert(pybind11::cast<value_type>(i));
+        unv.insert(args.begin(),args.end());
     })
     .def("size", &T::size)
     .def("my_hash", &T::my_hash)

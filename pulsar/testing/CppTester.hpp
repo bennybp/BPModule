@@ -6,7 +6,7 @@
 
 #include "pulsar/testing/TesterBase.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
-#include <pybind11/pybind11.h>
+#include "pulsar/util/Pybind11.hpp"
 #include <cmath>
 
 namespace pulsar {

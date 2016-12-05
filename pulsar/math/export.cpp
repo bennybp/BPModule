@@ -5,11 +5,7 @@
  */ 
 
 
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
-#include <pybind11/complex.h>
-#include <pybind11/functional.h>
-#include <pybind11/operators.h>
+#include "pulsar/util/Pybind11.hpp"
 #include "pulsar/math/Factorial.hpp"
 #include "pulsar/math/Universe.hpp"
 #include "pulsar/math/Point.hpp"

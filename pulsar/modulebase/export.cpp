@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include <pybind11/operators.h>
+#include "pulsar/util/Pybind11.hpp"
 #include "pulsar/modulebase/All.hpp"
 #include "pulsar/datastore/Wavefunction.hpp"
 #include "pulsar/modulemanager/ModuleManager.hpp"
