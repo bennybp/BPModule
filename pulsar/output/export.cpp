@@ -7,7 +7,7 @@
 #include <vector>
 #include "pulsar/output/OutputStream.hpp"
 #include "pulsar/output/GlobalOutput.hpp"
-#include <pybind11/pybind11.h>
+#include "pulsar/util/Pybind11.hpp"
 
 
 namespace pulsar{

@@ -4,7 +4,7 @@
  */
 
 #include "pulsar/exception/PulsarException.hpp"
-#include <pybind11/pybind11.h>
+#include "pulsar/util/Pybind11.hpp"
 
 namespace py = pybind11;
 

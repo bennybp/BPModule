@@ -4,7 +4,7 @@
  */ 
 
 #include "pulsar/testing/TesterBase.hpp"
-#include <pybind11/pybind11.h>
+#include "pulsar/util/Pybind11.hpp"
 
 
 namespace pulsar {

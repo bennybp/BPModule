@@ -4,10 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */
 
-#include <pybind11/pybind11.h>
-#include <pybind11/functional.h>
-#include <pybind11/operators.h>
-#include <pybind11/stl.h>
+#include "pulsar/util/Pybind11.hpp"
 #include "pulsar/modulemanager/ModuleManager.hpp"
 #include "pulsar/modulemanager/Checkpoint.hpp"
 #include "pulsar/modulemanager/CheckpointIO.hpp"

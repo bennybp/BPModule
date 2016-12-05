@@ -4,7 +4,7 @@
 #include<array>
 #include<iostream>
 #include<iomanip>
-#include<pybind11/pybind11.h>
+#include "pulsar/util/Pybind11.hpp"
 #include<pulsar/util/IterTools.hpp>
 #include<pulsar/util/Serialization.hpp>
 

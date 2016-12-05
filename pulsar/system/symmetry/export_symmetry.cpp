@@ -3,9 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-#include "pybind11/stl.h"
-#include "pybind11/functional.h"
-#include "pybind11/operators.h"
+#include "pulsar/util/Pybind11.hpp"
 #include "pulsar/system/symmetry/Symmetrizer.hpp"
 #include "pulsar/system/symmetry/SymmetryElement.hpp"
 #include "pulsar/system/symmetry/SymmetryGroup.hpp"

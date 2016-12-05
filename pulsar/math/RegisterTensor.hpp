@@ -4,7 +4,7 @@
  */
 
 #pragma once
-#include <pybind11/eigen.h>
+#include "pulsar/util/Pybind11.hpp"
 #include <bphash/types/memory.hpp>
 #include "pulsar/math/Irrep.hpp"
 

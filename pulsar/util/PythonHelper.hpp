@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include <pybind11/pybind11.h>
+#include "pulsar/util/Pybind11.hpp"
 
 #include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/exception/Assert.hpp"

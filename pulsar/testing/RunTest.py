@@ -30,14 +30,17 @@ import pulsar
 
 
 # Check for the right arguments
-if len(sys.argv) != 2:
-  print("Usage: RunTest.py testfile")
-  raise RuntimeError("Error - one (and only one) argument is required")
+if len(sys.argv) != 2 and len(sys.argv) != 3:
+  print("Usage: RunTest.py testfile [additional python paths]")
+  raise RuntimeError("Error - one (or optionally 2) arguments are required")
   quit(-1)
 
 # Manually import the test file via the full path
 # Add the file's directory to the python path
 full_path = sys.argv[1]
+
+if len(sys.argv)==3:
+    sys.path.insert(0,sys.argv[2])
 
 if not os.path.isfile(full_path):
   raise RuntimeError("Error - path \"{}\" is not a file".format(full_path))
