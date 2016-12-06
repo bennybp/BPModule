@@ -42,13 +42,13 @@ void export_modulebase(pybind11::module & m)
             .def("run_test", &TestModule::run_test)
             ;
 
-
     /////////////////////////
     // System Fragmenters
     /////////////////////////
     pybind11::class_<NMerInfo> (m,"NMerInfo")
         .def(pybind11::init<>())
         .def(pybind11::init<const NMerInfo&>())
+        .def("get_nmer",[](NMerInfo& nmi){return nmi.nmer;})
         .def_readwrite("sn",&NMerInfo::sn)
         .def_readwrite("nmer",&NMerInfo::nmer)
         .def_readwrite("weight",&NMerInfo::weight)

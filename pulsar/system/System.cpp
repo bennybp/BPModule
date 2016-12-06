@@ -47,28 +47,53 @@ System::System(const AtomSetUniverse& universe,bool fill):
 
 void System::clear(){atoms_.clear();}
 
-//Macro for common code that adds stuff up
-#define SUM_STUFF(varname,fxn_name)\
-double System::fxn_name(void) const{\
-    return std::accumulate(this->begin(),this->end(),static_cast<double>(0.0),\
-                        [](double sum,const Atom& a){ return sum+a.varname; });}
+double System::get_sum_charge(void) const{
+    return std::accumulate(this->begin(),this->end(),static_cast<double>(0.0),
+              [](double sum,const Atom& a){ return sum+a.charge;});}
 
-SUM_STUFF(charge,get_sum_charge)
-SUM_STUFF(nelectrons,get_sum_n_electrons)
-SUM_STUFF(mass,get_sum_mass)
+double System::get_sum_n_electrons(void) const{
+    return std::accumulate(this->begin(),this->end(),static_cast<double>(0.0),
+              [](double sum,const Atom& a){ return sum+a.nelectrons;});}
 
-#undef SUM_STUFF
+double System::get_sum_mass(void) const{
+    return std::accumulate(this->begin(),this->end(),static_cast<double>(0.0),
+              [](double sum,const Atom& a){ return sum+a.mass;});}
 
-//Macro for adding atoms and then calling SetDefaults_
-#define ADD_ATOM(rv,fxn_name,lv,lvname)\
-rv System::fxn_name(lv){\
-   atoms_.fxn_name(lvname);SetDefaults_();return *this;}
-ADD_ATOM(System&,insert,const Atom& atom,atom)
-ADD_ATOM(System&,insert,Atom&& atom,std::move(atom))
-ADD_ATOM(System&,union_assign,const System& RHS,RHS.atoms_)
-ADD_ATOM(System&,intersection_assign,const System& RHS,RHS.atoms_)
-ADD_ATOM(System&,difference_assign,const System& RHS,RHS.atoms_)
-#undef ADD_ATOM
+System& System::insert(const Atom& atom)
+{
+    atoms_.insert(atom);
+    SetDefaults_();
+    return *this;
+}
+
+System& System::insert(Atom&& atom)
+{
+    atoms_.insert(std::move(atom));
+    SetDefaults_();
+    return *this;
+}
+
+System& System::union_assign(const System& RHS)
+{
+   atoms_.union_assign(RHS.atoms_);
+   SetDefaults_();
+   return *this;
+}
+
+System& System::intersection_assign(const System& RHS)
+{
+   atoms_.intersection_assign(RHS.atoms_);
+   SetDefaults_();
+   return *this;
+}
+
+System& System::difference_assign(const System& RHS)
+{
+   atoms_.difference_assign(RHS.atoms_);
+   SetDefaults_();
+   return *this;
+}
+
 
 System System::set_union(const System& RHS) const
 {
@@ -89,9 +114,6 @@ System System::difference(const System& RHS) const
     return System(*this).difference_assign(RHS);
 }
 
-//Macro for forwarding a call to the MathSet
-#define CALL_ATOMS(rv,fxn_name,arg,arg2)\
-rv System::fxn_name(arg)const{return atoms_.fxn_name(arg2);}
 
 size_t System::size()const{return atoms_.size();}
 
@@ -101,11 +123,31 @@ std::shared_ptr<const AtomSetUniverse> System::get_universe()const{
     return atoms_.get_universe();
 }
 
-CALL_ATOMS(AtomSetUniverse,as_universe,void,)
-CALL_ATOMS(bool,is_proper_subset_of,const System& RHS,RHS.atoms_)
-CALL_ATOMS(bool,is_subset_of,const System& RHS,RHS.atoms_)
-CALL_ATOMS(bool,is_proper_superset_of,const System& RHS,RHS.atoms_)
-CALL_ATOMS(bool,is_superset_of,const System& RHS,RHS.atoms_)
+AtomSetUniverse System::as_universe(void)const
+{
+    return atoms_.as_universe();
+}
+
+bool System::is_proper_subset_of(const System& RHS)const
+{
+    return atoms_.is_proper_subset_of(RHS.atoms_);
+}
+
+bool System::is_subset_of(const System& RHS)const
+{
+    return atoms_.is_subset_of(RHS.atoms_);
+}
+
+bool System::is_proper_superset_of(const System& RHS)const
+{
+    return atoms_.is_proper_superset_of(RHS.atoms_);
+}
+
+bool System::is_superset_of(const System& RHS)const
+{
+    return atoms_.is_superset_of(RHS.atoms_);
+}
+
 
 System System::complement()const{
     System temp(*this);

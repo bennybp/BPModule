@@ -38,7 +38,7 @@ class PyTester(TesterBase):
     def test_double(self,desc,v1,v2,tol=0.0001):
         """Same as Tester's test with two values."""
         if type(v1)==float and type(v2)==float:
-           self.test_float(desc,v1,v2,tol)
+           self.test(desc,abs(v1-v2)<tol)
         else:
             self.test(desc,v1==v2)
 
