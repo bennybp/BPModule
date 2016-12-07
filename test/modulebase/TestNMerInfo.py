@@ -15,11 +15,11 @@ def run_test():
     NI1.weight=2.0
 
     tester.test_equal("Serial number set",NI1.sn,SN)
-    tester.test_equal("System is set",NI1.get_nmer(),H2)
+    tester.test_equal("System is set",NI1.nmer,H2)
     tester.test_double("Weight is set",NI1.weight,2.0)
     NI2=psr.NMerInfo(NI1)
     tester.test_equal("Serial number is copied",NI2.sn,SN)
-    tester.test_equal("System is copied",NI2.get_nmer(),H2)
+    tester.test_equal("System is copied",NI2.nmer,H2)
     tester.test_double("Weight is copied",NI2.weight,2.0)
     tester.test_equal("Equality works",NI1,NI2)
     tester.test_not_equal("Inequlaity works",NI1,NI3)
