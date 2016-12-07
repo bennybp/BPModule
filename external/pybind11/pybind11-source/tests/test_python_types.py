@@ -1,6 +1,6 @@
 import pytest
 
-from pybind11_tests import ExamplePythonTypes, ConstructorStats, has_optional
+from pybind11_tests import ExamplePythonTypes, ConstructorStats, has_optional, has_exp_optional
 
 
 def test_static():
@@ -93,6 +93,9 @@ def test_instance(capture):
 
     assert instance.pair_passthrough((True, "test")) == ("test", True)
     assert instance.tuple_passthrough((True, "test", 5)) == (5, "test", True)
+    # Any sequence can be cast to a std::pair or std::tuple
+    assert instance.pair_passthrough([True, "test"]) == ("test", True)
+    assert instance.tuple_passthrough([True, "test", 5]) == (5, "test", True)
 
     assert instance.get_bytes_from_string().decode() == "foo"
     assert instance.get_bytes_from_str().decode() == "bar"
@@ -297,9 +300,9 @@ def test_accessors():
     assert d["var"] == 99
 
 
-@pytest.mark.skipif(not has_optional, reason='no <experimental/optional>')
+@pytest.mark.skipif(not has_optional, reason='no <optional>')
 def test_optional():
-    from pybind11_tests import double_or_zero, half_or_none
+    from pybind11_tests import double_or_zero, half_or_none, test_nullopt
 
     assert double_or_zero(None) == 0
     assert double_or_zero(42) == 84
@@ -308,3 +311,64 @@ def test_optional():
     assert half_or_none(0) is None
     assert half_or_none(42) == 21
     pytest.raises(TypeError, half_or_none, 'foo')
+
+    assert test_nullopt() == 42
+    assert test_nullopt(None) == 42
+    assert test_nullopt(42) == 42
+    assert test_nullopt(43) == 43
+
+
+@pytest.mark.skipif(not has_exp_optional, reason='no <experimental/optional>')
+def test_exp_optional():
+    from pybind11_tests import double_or_zero_exp, half_or_none_exp, test_nullopt_exp
+
+    assert double_or_zero_exp(None) == 0
+    assert double_or_zero_exp(42) == 84
+    pytest.raises(TypeError, double_or_zero_exp, 'foo')
+
+    assert half_or_none_exp(0) is None
+    assert half_or_none_exp(42) == 21
+    pytest.raises(TypeError, half_or_none_exp, 'foo')
+
+    assert test_nullopt_exp() == 42
+    assert test_nullopt_exp(None) == 42
+    assert test_nullopt_exp(42) == 42
+    assert test_nullopt_exp(43) == 43
+
+
+def test_constructors():
+    """C++ default and converting constructors are equivalent to type calls in Python"""
+    from pybind11_tests import (test_default_constructors, test_converting_constructors,
+                                test_cast_functions)
+
+    types = [str, bool, int, float, tuple, list, dict, set]
+    expected = {t.__name__: t() for t in types}
+    assert test_default_constructors() == expected
+
+    data = {
+        str: 42,
+        bool: "Not empty",
+        int: "42",
+        float: "+1e3",
+        tuple: range(3),
+        list: range(3),
+        dict: [("two", 2), ("one", 1), ("three", 3)],
+        set: [4, 4, 5, 6, 6, 6],
+        memoryview: b'abc'
+    }
+    inputs = {k.__name__: v for k, v in data.items()}
+    expected = {k.__name__: k(v) for k, v in data.items()}
+    assert test_converting_constructors(inputs) == expected
+    assert test_cast_functions(inputs) == expected
+
+
+def test_move_out_container():
+    """Properties use the `reference_internal` policy by default. If the underlying function
+    returns an rvalue, the policy is automatically changed to `move` to avoid referencing
+    a temporary. In case the return value is a container of user-defined types, the policy
+    also needs to be applied to the elements, not just the container."""
+    from pybind11_tests import MoveOutContainer
+
+    c = MoveOutContainer()
+    moved_out_list = c.move_list
+    assert [x.value for x in moved_out_list] == [0, 1, 2]

@@ -48,7 +48,9 @@ add_subdirectory(testmodules)
 ########################
 # Core pulsar tests
 ########################
-foreach(dir math system modulebase modules)
+
+foreach(dir datastore math system modulebase modules)
+
   add_subdirectory(${dir})
   install(FILES ${CMAKE_BINARY_DIR}/${dir}/CTestTestfile.cmake DESTINATION ${dir})
 endforeach()

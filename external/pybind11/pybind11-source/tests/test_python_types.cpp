@@ -153,8 +153,8 @@ public:
     }
 
     void test_print(const py::object& obj) {
-        py::print(obj.str());
-        py::print(obj.repr());
+        py::print(py::str(obj));
+        py::print(py::repr(obj));
     }
 
     static int value;
@@ -163,6 +163,13 @@ public:
 
 int ExamplePythonTypes::value = 0;
 const int ExamplePythonTypes::value2 = 5;
+
+struct MoveOutContainer {
+    struct Value { int value; };
+
+    std::list<Value> move_list() const { return {{0}, {1}, {2}}; }
+};
+
 
 test_initializer python_types([](py::module &m) {
     /* No constructor is explicitly defined below. An exception is raised when
@@ -290,17 +297,84 @@ test_initializer python_types([](py::module &m) {
         return d;
     });
 
-    // this only tests std::experimental::optional for now
-    bool has_optional = false;
-#ifdef PYBIND11_HAS_EXP_OPTIONAL
+    bool has_optional = false, has_exp_optional = false;
+#ifdef PYBIND11_HAS_OPTIONAL
     has_optional = true;
-    using opt_int = std::experimental::optional<int>;
+    using opt_int = std::optional<int>;
     m.def("double_or_zero", [](const opt_int& x) -> int {
         return x.value_or(0) * 2;
     });
     m.def("half_or_none", [](int x) -> opt_int {
         return x ? opt_int(x / 2) : opt_int();
     });
+    m.def("test_nullopt", [](opt_int x) {
+        return x.value_or(42);
+    }, py::arg_v("x", std::nullopt, "None"));
 #endif
+
+#ifdef PYBIND11_HAS_EXP_OPTIONAL
+    has_exp_optional = true;
+    using opt_int = std::experimental::optional<int>;
+    m.def("double_or_zero_exp", [](const opt_int& x) -> int {
+        return x.value_or(0) * 2;
+    });
+    m.def("half_or_none_exp", [](int x) -> opt_int {
+        return x ? opt_int(x / 2) : opt_int();
+    });
+    m.def("test_nullopt_exp", [](opt_int x) {
+        return x.value_or(42);
+    }, py::arg_v("x", std::experimental::nullopt, "None"));
+#endif
+
     m.attr("has_optional") = py::cast(has_optional);
+    m.attr("has_exp_optional") = py::cast(has_exp_optional);
+
+    m.def("test_default_constructors", []() {
+        return py::dict(
+            "str"_a=py::str(),
+            "bool"_a=py::bool_(),
+            "int"_a=py::int_(),
+            "float"_a=py::float_(),
+            "tuple"_a=py::tuple(),
+            "list"_a=py::list(),
+            "dict"_a=py::dict(),
+            "set"_a=py::set()
+        );
+    });
+
+    m.def("test_converting_constructors", [](py::dict d) {
+        return py::dict(
+            "str"_a=py::str(d["str"]),
+            "bool"_a=py::bool_(d["bool"]),
+            "int"_a=py::int_(d["int"]),
+            "float"_a=py::float_(d["float"]),
+            "tuple"_a=py::tuple(d["tuple"]),
+            "list"_a=py::list(d["list"]),
+            "dict"_a=py::dict(d["dict"]),
+            "set"_a=py::set(d["set"]),
+            "memoryview"_a=py::memoryview(d["memoryview"])
+        );
+    });
+
+    m.def("test_cast_functions", [](py::dict d) {
+        // When converting between Python types, obj.cast<T>() should be the same as T(obj)
+        return py::dict(
+            "str"_a=d["str"].cast<py::str>(),
+            "bool"_a=d["bool"].cast<py::bool_>(),
+            "int"_a=d["int"].cast<py::int_>(),
+            "float"_a=d["float"].cast<py::float_>(),
+            "tuple"_a=d["tuple"].cast<py::tuple>(),
+            "list"_a=d["list"].cast<py::list>(),
+            "dict"_a=d["dict"].cast<py::dict>(),
+            "set"_a=d["set"].cast<py::set>(),
+            "memoryview"_a=d["memoryview"].cast<py::memoryview>()
+        );
+    });
+
+    py::class_<MoveOutContainer::Value>(m, "MoveOutContainerValue")
+        .def_readonly("value", &MoveOutContainer::Value::value);
+
+    py::class_<MoveOutContainer>(m, "MoveOutContainer")
+        .def(py::init<>())
+        .def_property_readonly("move_list", &MoveOutContainer::move_list);
 });
