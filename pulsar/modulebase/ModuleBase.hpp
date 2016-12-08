@@ -373,7 +373,7 @@ class ModuleBase
         const char * modtype_;
 
         //! The ModuleManager in charge of this module
-        ModuleManager * mlocator_;
+        std::shared_ptr<ModuleManager> mlocator_;
 
         //! My tree node
         ModuleTreeNode * treenode_;
@@ -388,7 +388,7 @@ class ModuleBase
 
         /*! \brief Set the mlocator_ pointer
          */
-        void set_module_manager_(ModuleManager * mloc) noexcept;
+        void set_module_manager_(std::shared_ptr<ModuleManager> mloc) noexcept;
 
 
         /*! \brief Set the tree node pointer

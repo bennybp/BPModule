@@ -35,7 +35,6 @@ ModuleBase::~ModuleBase()
     {
         out.debug("Module [%?] : Output size: %?\n", id(), get_output().size());
         out.debug("Destructed module [%?] : %? v%?\n", id(), name(), version());
-        mlocator_->notify_destruction(id());
     }
 }
 
@@ -148,9 +147,9 @@ CacheData & ModuleBase::cache(void) const noexcept
 // Private functions
 ////////////////////////////////
 
-void ModuleBase::set_module_manager_(ModuleManager * mloc) noexcept
+void ModuleBase::set_module_manager_(std::shared_ptr<ModuleManager> mloc) noexcept
 {
-    mlocator_ = mloc;
+    mlocator_ = std::move(mloc);
 }
 
 void ModuleBase::set_tree_node_(ModuleTreeNode * node) noexcept

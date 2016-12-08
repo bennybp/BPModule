@@ -73,7 +73,7 @@ void export_modulemanager(pybind11::module & m)
     //////////////////////////
     // Main ModuleManager
     //////////////////////////
-    pybind11::class_<ModuleManager>(m, "ModuleManager")
+    pybind11::class_<ModuleManager, std::shared_ptr<ModuleManager>>(m, "ModuleManager")
     .def(pybind11::init<>())
     .def("size", &ModuleManager::size)
     .def("module_key_info", &ModuleManager::module_key_info)
@@ -83,7 +83,6 @@ void export_modulemanager(pybind11::module & m)
     .def("generate_unique_key",&ModuleManager::generate_unique_key)
     .def("test_all", &ModuleManager::test_all)
     .def("get_module", &ModuleManager::get_module_py)
-    .def("module_in_use", &ModuleManager::module_in_use)
     .def("change_option", &ModuleManager::change_option_py)
     .def("load_module_from_minfo", &ModuleManager::load_module_from_minfo)
     .def("enable_debug", &ModuleManager::enable_debug)

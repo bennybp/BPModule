@@ -1,5 +1,6 @@
 import sys
 import os
+import atexit
 import importlib
 
 ##########################################
@@ -77,9 +78,10 @@ def initialize(argv,
   gout.enable_debug(debug)
 
 
-def finalize():
-  pulsar_core.print_global_output("Finalizing parallelization\n")
-  pulsar_core.finalize()
 
+@atexit.register
+def finalize():
+  pulsar_core.print_global_output("Finalizing pulsar core\n")
+  pulsar_core.finalize()
   clear_cmdline()
 
