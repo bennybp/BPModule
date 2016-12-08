@@ -13,7 +13,9 @@ TEST_SIMPLE(TestOptionMapIssues){
  tester.test_member_return("Adding Whole Issue",true,false,&OptionMapIssues::ok,&OMI);
  OMI1.optissues["Option"]={"Option's Issue"};
  tester.test_member_return("Adding local1 issue",true,false,&OptionMapIssues::ok,&OMI1);
-
+ std::stringstream ss;
+ //tester.test_member_call("Testing print function",true,&OptionMapIssues::print,&OMI1,ss);
+std::cout<<ss.str()<<"*****"<<std::endl;
  std::string mssg=
  "OptionMap has some issues\n"
  "    OptionMap top level issues:\n"
