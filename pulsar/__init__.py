@@ -1,6 +1,5 @@
 import sys
 import os
-import atexit
 import importlib
 
 ##########################################
@@ -69,7 +68,7 @@ def initialize(argv,
 
   # Output depends on MPI being initialized, so we do that first
   set_cmdline(argv)
-  pulsar_core.initialize(nthreads)
+  pulsar_core.parallel_initialize(nthreads)
 
   create_global_output(outpath, outbase, use_stdout)
   enable_color(color)
@@ -79,9 +78,7 @@ def initialize(argv,
 
 
 
-@atexit.register
 def finalize():
   pulsar_core.print_global_output("Finalizing pulsar core\n")
-  pulsar_core.finalize()
-  clear_cmdline()
+  # nothing else to do. All the rest handled in the SO file constructor
 

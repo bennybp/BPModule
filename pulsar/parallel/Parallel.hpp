@@ -27,14 +27,15 @@ const LibTaskForce::HybridEnv& get_env();
  * 
  * \todo Make an overload that takes an MPI_COMM instance
  */
-void initialize(size_t NThreads);
+void parallel_initialize(size_t NThreads);
 
 
 /*! \brief Finalize parallelization functionality
  *
- * This is meant to be called from python
+ * \warning This is never meant to be called from python. Instead,
+ *          it is called by the .so file destructor
  */
-void finalize(void);
+void parallel_finalize(void);
 
 
 /*! \brief Return the ID (rank) associated with this process
