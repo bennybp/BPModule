@@ -24,10 +24,10 @@ void export_tensor_impl(pybind11::module& m,const char* Name)
 }
 
 //Function for exporting our eigen adapted tensors
-template<typename TensorT,typename EigenType>
+template<typename TensorT,typename EigenType,typename BaseType>
 void export_eigen_x_impl(pybind11::module& m,const char* Name)
 {
-    pybind11::class_<TensorT,std::shared_ptr<TensorT>>(m,Name)
+    pybind11::class_<TensorT,BaseType,std::shared_ptr<TensorT>>(m,Name)
     .def(pybind11::init<const EigenType&>())
     .def(pybind11::init<const TensorT&>())
     .def(pybind11::self == pybind11::self)
