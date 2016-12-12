@@ -12,7 +12,7 @@ is stuff you will likely want to know before reading further.
 \section main_sec Contents
 
   - Pulsar Basics
-    - [Obtaining and Building](@ building)
+    - [Obtaining and Building](@ref building)
     - [Terminology](@ref terminology)
   - User notes
     - [Making Modules and Supermodules](@ref makemod)
@@ -30,7 +30,7 @@ is stuff you will likely want to know before reading further.
       - OneElectronMatrix
       - PropertyCalculator
       - SCFIterator
-      - SystemFragmenter
+      - [SystemFragmenter](@ref system_fragger)
       - TwoElectronIntegral
   - Developer notes
     - Good Practices
@@ -39,6 +39,7 @@ is stuff you will likely want to know before reading further.
       - [Exceptions and Error Handeling](@ref except)
     - Background
       - [Understanding Shared Libraries](@ref shared)
+      - [Molecular Symmetry](@ref symmetry)
     - Pulsar Conventions
       - [Basic Filesystem Layout](@ref basic)
     - [Finite Difference](@ref fdiff)

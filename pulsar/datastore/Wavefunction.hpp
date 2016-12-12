@@ -10,6 +10,8 @@
 #include <memory>
 
 #include "pulsar/math/IrrepSpinMatrix.hpp"
+//If we plan on these tensors usually being Eigen instances should have this:
+#include "pulsar/math/EigenImpl.hpp"
 #include "pulsar/system/System.hpp"
 #include "pulsar/util/Serialization.hpp"
 #include "bphash/Hasher.hpp"

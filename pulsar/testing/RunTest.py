@@ -59,6 +59,14 @@ print("   test_ext: {}".format(test_ext))
 print("---------------------------------------------------")
 sys.stdout.flush()
 
+
+# set up pulsar (needs to be before the module load in case the module tries to
+# print while loading)
+pulsar.initialize(sys.argv,
+                  color = False,
+                  debug = True,
+                  outbase = "psr_output_" + test_name)
+
 # We can't do the normal import. Some tests may have the
 # same name, which leads to a test_name.py and test_name.so
 # So we have to do it manually, given the full path
@@ -70,11 +78,7 @@ else:
   m = ExtensionFileLoader(test_name, full_path).load_module()
 
 
-# set up pulsar
-pulsar.initialize(sys.argv,
-                  color = False,
-                  debug = True,
-                  outbase = "psr_output_" + test_name)
+
 
 # Actually run the test, watching for exceptions
 try:

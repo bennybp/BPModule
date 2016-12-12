@@ -97,7 +97,8 @@ to downcast the TensorImpl we get back, but before that an obligatory warning.
 
 \warning Downcasting (casting away from the base class) although allowed by the 
 C++ language is considered bad practice as it usually signals a poorly designed
-interface.  Serialization/messaging is usually considered the exception and is
+interface and if done incorrectly can lead to subtle issues related to slicing.
+Serialization/messaging is usually considered the exception and is
 why we need to do it here.  If I just opened Pandora's box for you by revealing
 its existence, please promptly forget it after you register your tensor class.
 
@@ -202,7 +203,43 @@ quantities that have symmetry and spin components.  To this end Pulsar provides
 the `BlockByIrrepSpin` class.  This allows you to assign to each irrep,spin
 pair a tensor.
 \note This tensor is not contigious across spin or irrep dimensions if you need
-that sort of functionality look elsewhere
+that sort of functionality look elsewhere.
+
+Within C++ there is a little gotcha.  Consider the tensor found in the
+`Wavefunction` class:
+
+~~~.cpp
+//Note that MatrixDImpl is a typedef of TensorImpl<2,double>
+
+//This gets the MO coefficients and shows off their type
+const BlockByIrrepSpin<shared_ptr<MatrixDImpl>>& cmat=*wfn.cmat;
+
+//Assuming we are using Eigen, we first make...
+using SharedEigen=std::shared_ptr<EigenMatrixImpl>;
+SharedEigen eigen_mat=std::make_shared<EigenMatrixImpl>();
+
+//Next we make a blocked matrix
+BlockByIrrepSpin<SharedEigen> new_cmat;
+new_cmat.set(Irrep::A,Spin::alpha,eigen_mat);
+
+//Given that EigenMatrixImpl derives from MatrixDImpl we expect
+//*wfn.cmat=new_cmat;
+//to work, but it doesn't because
+//BlockByIrrepSpin<shared_ptr<MatrixDImpl>> is not a direct base class
+//of BlockByIrrepSpin<shared_ptr<EigenMatrixImpl>> even though MatrixDImpl is a
+//direct base class of EigenMatrixImpl
+
+//The solution is to declare new_cmat this way:
+BlockByIrrepSpin<std::shared_ptr<MatrixDImpl>> new_cmat;
+
+//This works b/c MatrixDImpl is direct base class of EigenMatrixImpl
+new_cmat.set(Irrep::A,Spin::alpha,eigen_mat);
+
+//This now works
+*wfn.cmat=new_cmat;
+~~~
+
+Obviously a similar scenario exists for other registered tensor classes.
 
 ## List of Tensors in Pulsar Core
 

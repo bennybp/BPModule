@@ -1,1 +1,2 @@
 pulsar_cxx_test(datastore TestOptionMapIssues)
+pulsar_cxx_test(datastore TestWavefunction)
