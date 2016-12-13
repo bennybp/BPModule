@@ -46,8 +46,10 @@ CppSupermoduleLoader::~CppSupermoduleLoader()
             ffn();
         }
 
-        // close the so
-        dlclose(handle);
+        // We don't close the SO file, since there may be objects
+        // still out which were created from it. They still will be
+        // destructed, although they hopefully won't be used.
+        // dlclose(handle);
 
         print_global_output("Closed supermodule %?\n", it.first);
     }

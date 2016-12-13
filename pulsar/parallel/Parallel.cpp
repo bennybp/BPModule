@@ -20,7 +20,7 @@ const Env_t& get_env(){return *Env_;}
  
 
 
-void initialize(size_t NThreads)
+void parallel_initialize(size_t NThreads)
 {
     int provided;
     MPI_Init_thread(nullptr,nullptr,MPI_THREAD_MULTIPLE,&provided);
@@ -34,13 +34,32 @@ void initialize(size_t NThreads)
 }
 
 
-void finalize(void)
+void parallel_finalize(void)
 {
-    std::cout << "Finalizing process " << get_proc_id() << " of " << get_nproc() << "\n";
+    ////////////////////////////////////////////////////////
+    // this may rarely be called if initialize hasn't been. But
+    // it is possible
+    ////////////////////////////////////////////////////////
 
-    //! \todo shouldn't be needed?
-    MPI_Barrier(MPI_COMM_WORLD);
-    Env_.reset();
+    // WARNING: Note that we can't do anything with Env_, etc. This is being
+    //          called from the dynamic module destructor, so those things might
+    //          not be around
+    //
+    //          We should be able to safely reset the environment though. The unique_ptr
+    //          should exist, but what it points to might not
+
+    int flag;
+    MPI_Initialized(&flag);
+    if(flag)
+    {
+        // Pulsar called MPI_Init, so it has to call MPI_Finalize
+        std::cout << "Finalizing pulsar MPI\n";
+        Env_.reset();
+        MPI_Finalize();
+    }
+    else
+        std::cout << "Not finalizing, since we haven't been initialized\n";
+
 }
 
 

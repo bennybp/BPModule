@@ -39,16 +39,6 @@ ModuleManager::~ModuleManager()
     stop_cache_sync();
 
     /*
-     * Warn of any in-use modules
-     */
-    size_t ninuse = modules_inuse_.size();;
-    if(ninuse)
-        print_global_warning("ModuleManager is destructing with %? modules in use\n", ninuse);
-    else
-        print_global_success("ModuleManager has no modules in use\n");
-
-
-    /*
        WARNING WARNING WARNING WARNING WARNING
        Clearing the cache and store MUST be done BEFORE unloading
        the modules or else deleting elements will cause a segfault.
@@ -254,19 +244,6 @@ void ModuleManager::load_module_from_minfo(const ModuleInfo & minfo, const std::
 }
 
 
-void ModuleManager::notify_destruction(ID_t id)
-{
-    modules_inuse_.erase(id);
-}
-
-
-bool ModuleManager::module_in_use(ID_t id) const
-{
-    std::lock_guard<std::mutex> l(mutex_);
-    return(modules_inuse_.count(id));
-}
-
-
 
 /////////////////////////////////////////
 // Module Creation
@@ -354,16 +331,13 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
     // set the info for the module
     // (set via C++ functions)
     ModuleBase * p = umbptr->CppPtr();
-    p->set_module_manager_(this);
+    p->set_module_manager_(shared_from_this());
     p->set_tree_node_(&mtn); // also sets up output tee
 
 
     // Debugging enabled for this module?
     if(debugall_ || keydebug_.count(modulekey))
         p->enable_debug(true);
-
-    // Mark the id as in use
-    modules_inuse_.emplace(curid_);
 
     // create a CacheData for this module
     const std::string ckey = se.mi.name + "_v" + se.mi.version;

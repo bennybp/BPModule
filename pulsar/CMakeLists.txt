@@ -159,7 +159,7 @@ foreach(sub_dir datastore exception math modulebase modulemanager output
     list(APPEND PULSAR_CORE_FILE_LIST ${PULSAR_${SUB_DIR}_FILES_FULL})
 endforeach()
 
-list(APPEND PULSAR_CORE_FILE_LIST export.cpp)
+list(APPEND PULSAR_CORE_FILE_LIST export.cpp init.cpp)
 
 
 # Actual module library

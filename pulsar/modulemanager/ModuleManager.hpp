@@ -31,7 +31,7 @@ class Checkpoint;
  * manage the module names and keys, and to create modules via those
  * names and keys.
  */
-class ModuleManager
+class ModuleManager : public std::enable_shared_from_this<ModuleManager>
 {
     public:
         ModuleManager();
@@ -160,9 +160,6 @@ class ModuleManager
          */
         pybind11::object get_module_py(const std::string & modulekey, ID_t parentid);
 
-        /*! \brief Check to see if a module is currently in use
-         */
-        bool module_in_use(ID_t id) const;
 
 
         /*! \brief Change an option for a module
@@ -269,10 +266,6 @@ class ModuleManager
         void enable_debug_all(bool debug) noexcept;
 
 
-        /*! \brief Notify the module manager that a module ID is no longer in use */
-        void notify_destruction(ID_t id);
-
-
         /*! \brief Start syncronizing this module manager's cache
          *         across all ranks
          */
@@ -334,10 +327,6 @@ class ModuleManager
 
         //! The id to assign to the next created module
         std::atomic<ID_t> curid_;
-
-
-        //! Modules currently in use
-        std::set<ID_t> modules_inuse_;
 
 
         /*! \brief All of the cache data */
