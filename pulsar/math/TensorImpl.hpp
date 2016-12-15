@@ -5,8 +5,9 @@
 #include<iostream>
 #include<iomanip>
 #include "pulsar/util/Pybind11.hpp"
-#include<pulsar/util/IterTools.hpp>
-#include<pulsar/util/Serialization.hpp>
+#include "pulsar/util/IterTools.hpp"
+#include "pulsar/util/Serialization.hpp"
+#include <bphash/types/memory.hpp>
 
 namespace pulsar{
 
@@ -38,7 +39,8 @@ class TensorImpl
         ///Prints the tensor by calling get_value many times (i.e. this is slow)
         std::ostream & print(std::ostream& os) const;
 
-    private:
+    protected:
+        BPHASH_DECLARE_HASHING_FRIENDS
         DECLARE_SERIALIZATION_FRIENDS
 
         template<class Archive>
@@ -51,6 +53,11 @@ class TensorImpl
         void load(Archive & )
         {
             // reserved for future use
+        }
+
+        virtual void hash(bphash::Hasher &) const
+        {
+
         }
 };
 

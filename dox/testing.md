@@ -23,128 +23,92 @@ All of Pulsar's tests should run through CMake's CTest module.  To facilitate
 this we have defined the following CMake macros that you can use to register
 your tests:
 
-- `pulsar_py_test(name)` : This adds a test for the Python interface of a class
+- `pulsar_py_test(folder name)` : This adds a test for the Python interface of a class
   The test should be in a file named `name.py`
-- `pulsar_cpp_test(name)` : This adds a test for the C++ interface of a class.
+- `pulsar_cpp_test(folder name)` : This adds a test for the C++ interface of a class.
   The actual test should be in a file `name.cpp`. 
-- `pulsar_test(name)` : This adds a test called name that is contained in a
+- `pulsar_test(folder name)` : This adds a test called name that is contained in a
    Python file called `name.py`
 
 For all tests one should use the Pulsar testing Tester.  This is an object
 designed to simplify and unify the testing procedure.  The Tester has both a
-C++ and a Python interface.
+C++ and a Python interface accessed throug CppTester and PyTester respectively.
 
 ### Testing in C++
 
 Testing the C++ interface of a class requires a bit of explanation.  Pulsar
 itself is a dynamically loadable library and must be "dlopen-ed".  To make this
-easier we have created a simple Python script `TestCpp.py` that will start a
-module manager and load the test as a module.  Within this module is where the
-tests need to run.  You will then have to define this module and compile it.
-Thankfully, there's a macro `TEST_CLASS` that does all this for you.
+easier we have created a macro to wrap C++ tests.
 
 A basic C++ test setup will look like this:
 ~~~{.cpp}
 #include <pulsar/class/I/am/testing>
-#include "TestCXX.hpp"//Loads the Tester object and defines the TEST_CLASS macro
+#include <pulsar/testing/CppTester.hpp>
 
-TEST_CLASS(TheNameOfMyTest){
+TEST_SIMPLE(TheNameOfMyTest){
 
     //Make a Tester instance
-    Tester my_tester("Description of the tests to run");
+    CppTester my_tester("Description of the tests to run");
 
     //Test that A_fxn returns true when given the arguments 1,2, and 3
-    my_tester.test("A_fxn(1,2,3)",true,true,A_fxn,1,2,3);
+    my_tester.test_return("A_fxn(1,2,3)",true,true,A_fxn,1,2,3);
 
     //Test that A_fxn throws when given the arguments 1,2, and 4
-    my_tester.test("A_fxn(1,2,4)",false,true,A_fxn,1,2,4);
+    my_tester.test_return("A_fxn(1,2,4)",false,true,A_fxn,1,2,4);
 
     //Test that two values are equal
-    my_tester.test("Is 3==3?",3,3);
+    my_tester.test_equal("Is 3==3?",3,3);
 
     //Test that two floats are equal to within 0.0001 (this is the default 
     //tolerance and can be omitted)
-    my_tester.test("Is 2.123==2.123",2.123,2.123,0.0001);
+    my_tester.test_double("Is 2.123==2.123",2.123,2.123,0.0001);
 
-    //Print the result will also throw if any test failed
+    //Test a member function
+    MyClass A;
+    tester.test_member_return("Is 2.0==A.value(1)?",true,2.0,&MyClass::value,&A,1);
+
+    //Test a void function
+    tester.test("testing void",true,void_fxn,param1);
+
+    //Test a void member function
+    tester.test_member_call("A.void_fxn(1) works",true,&MyClass::void_fxn,&A,1);
+
+
+    //Print the result
     my_tester.print_result();
+    return tester.nfailed();
 
 }//End test
 ~~~
 
-Here's a couple of hints for C++ testing:
-- Call your Tester instance "tester" so you can use the macros
-  - Could pass the tester in, but then most tests don't fit within 80 characters
-- To test a member function use `std::bind` it looks something like:
-    ~~~{.cpp}
-    MyClass A;
-    //Makes a functor that calls A.fxn() 
-    auto Afxn=std::bind(&MyClass::fxn,A,std::placeholder::_1,std::placeholder::_2);
-    
-    //Pass the functor to the test method
-    my_tester.test("Test A.fxn that returns 1 when given 2",true,1,Afxn,2);
-    ~~~
-  - You need to include a placeholder for each argument that will be passed to
-    your function (including the MyClass instance)
-  - Testing overloaded methods is possible by casting the function pointer
-    ~~~{.cpp}
-    MyClass A;
-
-    //Assume A.fxn() returns an int 1 when given either 2 or 2.0, thus
-    //fxn has two overloads: one for int and one for double
-    //This is the double overload's type
-    using DoubleOvl_t=int(MyClass::*)(double);
-    
-    //This is then a functor to it
-    auto doubleovl=std::bind(static_cast<DoubleOvl_t>(&MyClass::fxn),
-        std::placeholder::_1,std::placeholder::_2);
-
-    //And finally the test
-    my_tester.test("Testing double overload",true,1,doubleovl,A,2.0);
-    ~~~
-    - This is the "proper" way to do this and super annoying, I have defined a
-      macro `TEST_FXN` that takes the test description, true/false if it should
-      pass, the expected value, the function, and assumes your Tester instance
-      is called "tester"
-      ~~~{.cpp}
-      TEST_FXN("This Fxn works",true,3.14,FxnThatMakesPi(3,5,9));
-      ~~~
-  - The Tester needs some work if it's going to work with constructors or 
-    functions without returns
-    - In the meantime I have defined a macro `TEST_VOID` that takes the test
-      description, true/false if it should pass, the function, and assumes your
-      Tester instance is called "tester"
-      ~~~{.cpp}
-      TEST_VOID("This function works",true,FxnWithNoReturn(Arg1,Arg2),tester);
-      ~~~
-
 ### Testing Python
 
-Testing Python side is much easier because we don't have to worry about the
-types of the function; however, we can't overload functions so the
- Tester's methods change name.  Aside from that not much else has changed:
-
+Testing Python side is nearly identical except that we
+don't have to distinguish between member and non-meber
+functions
 ~~~{.py}
-from TestFxns.py import * #Gives us the Tester class and sets up Pulsar
+import pulsar as psr
 
-#Make a tester instance
-my_tester=Tester("Description of the tests to run")
+def run_test(): #All Python tests should be in a function with this name (similar to macro idea from C++)
+    #Make a tester instance
+    my_tester=psr.PyTester("Description of the tests to run")
 
-#Test that A_fxn returns true when given the arguments 1,2, and 3
-my_tester.test("A_fxn(1,2,3)",true,true,A_fxn,1,2,3)
+    #Test that A_fxn returns true when given the arguments 1,2, and 3
+    my_tester.test_return("A_fxn(1,2,3)",true,true,A_fxn,1,2,3)
 
-#Test that A_fxn throws when given the arguments 1,2, and 4
-my_tester.test("A_fxn(1,2,4)",false,true,A_fxn,1,2,4)
+    #Test that A_fxn throws when given the arguments 1,2, and 4
+    my_tester.test_return("A_fxn(1,2,4)",false,true,A_fxn,1,2,4)
 
-#Test that two values are equal
-my_tester.test_value("Is 3==3?",3,3)
+    #Test that two values are equal
+    my_tester.test_equal("Is 3==3?",3,3)
 
-#Test that two floats are equal to within 0.0001 (this is the default and can be
-#omitted)
-my_tester.test_value("Is 2.123==2.123",2.123,2.123,0.0001)
+    #Test that two floats are equal to within 0.0001 (this is the default and can be
+    #omitted)
+    my_tester.test_double("Is 2.123==2.123",2.123,2.123,0.0001)
 
-#Print the result will also throw if any test failed
-my_tester.print_result()
+    #Print the result
+    my_tester.print_result()
+    return my_tester.nfailed()
 ~~~
 
 ## Unit Testing
@@ -170,7 +134,6 @@ Unit tests should:
 - Try to minimize includes/imports in a test to better ensure you are testing
   what you think you are testing
 
-\todo Go back and use macros in old C++ tests for readability
 
 ## Acceptance Testing
 

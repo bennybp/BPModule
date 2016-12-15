@@ -1,9 +1,9 @@
 INPUT+=  dox/basic.md \
          dox/basisset.md \
          dox/building.md \
+         dox/documenting.md \
          dox/exceptions.md \
          dox/finitediff.md \
-         dox/documenting.md \
          dox/graphcache.md \
          dox/makingamodule.md \
          dox/modulebasics.md \
@@ -11,6 +11,10 @@ INPUT+=  dox/basic.md \
          dox/philosophy.md \
          dox/shared.md \
          dox/printing.md \
+         dox/python_wrapping.md \
+         dox/shared.md \
+         dox/symmetry.md \
+         dox/system_fragger.md \
          dox/systems.md \
          dox/tensor.md \
          dox/terminology.md \

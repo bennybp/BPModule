@@ -11,11 +11,11 @@ class RangeCheck:
 
     def validate(self, value):
         if (value > self.min) and (value < self.max):
-            return [""]
+            return []
         elif (self.includemin == True) and (value == self.min):
-            return [""]
+            return []
         elif (self.includemax == True) and (value == self.max):
-            return [""]
+            return []
         else:
             err = [ "Value \"{}\" is not valid.".format(value) + self.errstr ]
             err.append(self.errstr)
@@ -32,9 +32,9 @@ class GreaterThan:
 
     def validate(self, value):
         if (value > self.min):
-            return [""]
+            return []
         elif (self.includemin == True) and (value == self.min):
-            return [""]
+            return []
         else:
             err = [ "Value \"{}\" is not valid.".format(value) + self.errstr ]
             err.append(self.errstr)
@@ -51,9 +51,9 @@ class LessThan:
 
     def validate(self, value):
         if (value < self.max):
-            return [""]
+            return []
         elif (self.includemax == True) and (value == self.max):
-            return [""]
+            return []
         else:
             err = [ "Value \"{}\" is not valid.".format(value) + self.errstr ]
             err.append(self.errstr)
