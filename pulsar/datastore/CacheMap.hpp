@@ -83,6 +83,7 @@ class CacheMap
          * \tparam T The type of the data
          *
          * \param [in] key The key to the data
+         * \param [in] use_distcache If not found locally should the global cache be searched?
          * \return A const referance to the data
          */
         template<typename T>
