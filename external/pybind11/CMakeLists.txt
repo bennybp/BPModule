@@ -1,10 +1,10 @@
 include(ExternalProject)
 
 # Find if it already exists? (it's not required yet)
-find_package(pybind11 QUIET)                                
+find_package(pybind11 CONFIG QUIET)                                
 
 # If not found, build it
-if(NOT PYBIND11_FOUND)
+if(NOT pybind11_FOUND)
   message(STATUS "We will build pybind11 for you")
   ExternalProject_Add(pybind11_external
                       SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pybind11-source

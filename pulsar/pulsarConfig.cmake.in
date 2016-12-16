@@ -17,7 +17,7 @@ list(APPEND CMAKE_MODULE_PATH "${PULSAR_EXTERNAL_DIR}/cmake")
 
 # Find external projects
 find_package(memwatch REQUIRED)
-find_package(pybind11 REQUIRED)
+find_package(pybind11 CONFIG REQUIRED)
 find_package(bphash REQUIRED)
 find_package(bpprint REQUIRED)
 find_package(libtaskforce REQUIRED)
@@ -50,7 +50,7 @@ target_include_directories(pulsar INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
 list(APPEND PULSAR_CXX_INCLUDES @EIGEN3_INCLUDE_DIR@)
 list(APPEND PULSAR_CXX_INCLUDES @MPI_CXX_INCLUDE_PATH@)
 list(APPEND PULSAR_CXX_INCLUDES @PULSAR_CORE_PYTHON_INCLUDE_DIRS@)
-list(APPEND PULSAR_CXX_INCLUDES ${PYBIND11_INCLUDE_DIR})
+list(APPEND PULSAR_CXX_INCLUDES ${pybind11_INCLUDE_DIR})
 list(APPEND PULSAR_CXX_INCLUDES ${MEMWATCH_INCLUDE_DIR})
 target_include_directories(pulsar SYSTEM INTERFACE ${PULSAR_CXX_INCLUDES})
 

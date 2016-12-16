@@ -61,6 +61,7 @@ sys.stdout.flush()
 
 # Initialize pulsar
 # From now on, output should go through pulsar
+# (needs to be before the load in case the module tries to print while loading)
 pulsar.initialize(sys.argv,
                   color = False,
                   debug = True,
@@ -75,8 +76,6 @@ if test_ext == ".py":
   m = SourceFileLoader(test_name, full_path).load_module()
 else:
   m = ExtensionFileLoader(test_name, full_path).load_module()
-
-
 
 
 # Actually run the test, watching for exceptions

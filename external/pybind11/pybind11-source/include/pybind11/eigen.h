@@ -17,18 +17,17 @@
 #  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wconversion"
 #  pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#  if __GNUC__ >= 7
+#    pragma GCC diagnostic ignored "-Wint-in-bool-context"
+#  endif
 #endif
 
 #include <Eigen/Core>
 #include <Eigen/SparseCore>
 
-#if defined(__GNUG__) || defined(__clang__)
-#  pragma GCC diagnostic pop
-#endif
-
 #if defined(_MSC_VER)
-#pragma warning(push)
-#pragma warning(disable: 4127) // warning C4127: Conditional expression is constant
+#  pragma warning(push)
+#  pragma warning(disable: 4127) // warning C4127: Conditional expression is constant
 #endif
 
 NAMESPACE_BEGIN(pybind11)
@@ -42,9 +41,10 @@ template <typename T> using is_eigen_ref = is_template_base_of<Eigen::RefBase, T
 // basically covers anything that can be assigned to a dense matrix but that don't have a typical
 // matrix data layout that can be copied from their .data().  For example, DiagonalMatrix and
 // SelfAdjointView fall into this category.
-template <typename T> using is_eigen_base = bool_constant<
-    is_template_base_of<Eigen::EigenBase, T>::value
-    && !is_eigen_dense<T>::value && !is_eigen_sparse<T>::value
+template <typename T> using is_eigen_base = all_of<
+    is_template_base_of<Eigen::EigenBase, T>,
+    negation<is_eigen_dense<T>>,
+    negation<is_eigen_sparse<T>>
 >;
 
 template<typename Type>
@@ -234,6 +234,8 @@ struct type_caster<Type, enable_if_t<is_eigen_sparse<Type>::value>> {
 NAMESPACE_END(detail)
 NAMESPACE_END(pybind11)
 
-#if defined(_MSC_VER)
-#pragma warning(pop)
+#if defined(__GNUG__) || defined(__clang__)
+#  pragma GCC diagnostic pop
+#elif defined(_MSC_VER)
+#  pragma warning(pop)
 #endif
