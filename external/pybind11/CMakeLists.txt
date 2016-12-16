@@ -7,7 +7,8 @@ find_package(pybind11 QUIET)
 if(NOT PYBIND11_FOUND)
   message(STATUS "We will build pybind11 for you")
   ExternalProject_Add(pybind11_external
-                      SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pybind11-source
+                      GIT_REPOSITORY https://github.com/pybind/pybind11.git
+                      GIT_TAG 1d1f81b278d956445287b3c491125caa11b925bd
                       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/pybind11
                                  -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                                  -DPYTHON_LIBRARY=${PYTHON_LIBRARY}
@@ -15,7 +16,6 @@ if(NOT PYBIND11_FOUND)
                                  -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
                                  -DPYBIND11_PYTHON_VERSION=${PYTHONLIBS_VERSION_STRING}
                                  -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                                 -DCMAKE_CXX_FLAGS="-std=c++11"
                                  -DPYBIND11_INSTALL=True
                                  -DPYBIND11_TEST=False
                       INSTALL_COMMAND make install DESTDIR=${CMAKE_BINARY_DIR}/stage

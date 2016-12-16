@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1.3)
 
 
 ##########################
@@ -7,6 +7,15 @@ cmake_minimum_required(VERSION 3.0)
 set(PULSAR_CORE_PYTHON_LIBRARIES "" CACHE STRING "Python libraries to link to")
 set(PULSAR_CORE_PYTHON_INCLUDE_DIRS "" CACHE STRING "Include directories for python")
 
+set(CMAKE_CXX_EXTENSIONS False CACHE BOOL "Enable/Disable compiler-specific C++ extensions")
+set(CMAKE_CXX_STANDARD 14 CACHE STRING "Which C++ standard to use")
+
+# CMake doesn't support Intel CXX standard until cmake 3.6
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
+  if("${CMAKE_VERSION}" VERSION_LESS "3.6")
+      list(APPEND PULSAR_CORE_CXX_FLAGS -std=c++${CMAKE_CXX_STANDARD})
+  endif()
+endif()
 
 ##########################
 # Dependencies
@@ -56,9 +65,7 @@ endforeach()
 # Compilation flags
 ####################
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
-    list(APPEND PULSAR_CORE_CXX_FLAGS "-std=c++11")
     list(APPEND PULSAR_CORE_CXX_FLAGS "-w3")
-    list(APPEND PULSAR_CORE_CXX_FLAGS "-restrict;-DRESTRICT=restrict")
 
     #  2338  : switch statement does not have a default clause
     #list(APPEND PULSAR_CORE_CXX_FLAGS "-ww2338")
@@ -83,8 +90,6 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
     list(APPEND PULSAR_CORE_CXX_FLAGS "-wd11076")
     list(APPEND PULSAR_CORE_CXX_FLAGS "-wd444")
 elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
-    list(APPEND PULSAR_CORE_CXX_FLAGS "-std=c++11")
-    list(APPEND PULSAR_CORE_CXX_FLAGS "-DRESTRICT=__restrict__")
     list(APPEND PULSAR_CORE_CXX_FLAGS "-Wall;-Wextra;-pedantic")
     list(APPEND PULSAR_CORE_CXX_FLAGS "-Wfloat-equal;-Wshadow")
     list(APPEND PULSAR_CORE_CXX_FLAGS "-Wswitch-default")

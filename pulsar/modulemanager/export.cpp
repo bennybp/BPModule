@@ -12,8 +12,6 @@
 #include "pulsar/modulemanager/checkpoint_backends/DummyCheckpointIO.hpp"
 #include "pulsar/modulemanager/checkpoint_backends/BDBCheckpointIO.hpp"
 
-PYBIND11_DECLARE_HOLDER_TYPE(T___,std::shared_ptr<T___>)
-
 using pulsar::detail::ConstModuleTreeIter;
 using pulsar::detail::ConstModuleFlatTreeIter;
 

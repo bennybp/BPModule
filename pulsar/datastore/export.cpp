@@ -11,10 +11,6 @@
 #include "pulsar/datastore/OptionMap.hpp"
 
 
-// This is needed for the member data of
-// the wavefunction struct
-PYBIND11_DECLARE_HOLDER_TYPE(_T_,std::shared_ptr<_T_>)
-
 using pulsar::System;
 using pulsar::Wavefunction;
 
@@ -102,8 +98,8 @@ void export_datastore(pybind11::module & m)
     // Can just store python object
     // NOTE: We are purposely not exporting CacheMap
     ////////////////////////////////////////
-    pybind11::class_<CacheData>(m, "CacheData")
-      .def("size", &CacheData::size)
+    pybind11::class_<CacheData> cd(m, "CacheData");
+    cd.def("size", &CacheData::size)
       .def("get_keys", &CacheData::get_keys)
       .def("erase", &CacheData::erase)
       .def("get", [](CacheData & cd, const std::string & key, bool use_distcache) 
@@ -122,10 +118,14 @@ void export_datastore(pybind11::module & m)
                   pybind11::arg("key"), 
                   pybind11::arg("obj"),
                   pybind11::arg("policy"))
-      .def_readonly_static("NoPolicy", &CacheData::NoPolicy)
-      .def_readonly_static("CheckpointLocal", &CacheData::CheckpointLocal)
-      .def_readonly_static("CheckpointGlobal", &CacheData::CheckpointGlobal)
-      .def_readonly_static("DistributeGlobal", &CacheData::DistributeGlobal)
+      ;
+
+      pybind11::enum_<CacheData::CachePolicy>(cd, "CachePolicy", pybind11::arithmetic())
+      .value("NoPolicy",         CacheData::CachePolicy::NoPolicy)
+      .value("CheckpointLocal",  CacheData::CachePolicy::CheckpointLocal) 
+      .value("CheckpointGlobal", CacheData::CachePolicy::CheckpointGlobal)
+      .value("DistributeGlobal", CacheData::CachePolicy::DistributeGlobal)
+      .export_values()
     ;
 
 }

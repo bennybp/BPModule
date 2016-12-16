@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <vector>
 #include "pulsar/exception/PulsarException.hpp"
+#include "pulsar/pragma.h"
 
 namespace pulsar{
 

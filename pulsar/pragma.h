@@ -29,6 +29,7 @@ extern "C" {
     #define PRAGMA_WARNING_IGNORE_NONVIRTUAL_DTOR              _Pragma("warning(disable:444")
     #define PRAGMA_WARNING_IGNORE_UNUSED_FUNCTION              //! \todo add me
     #define PRAGMA_WARNING_IGNORE_UNRECOGNIZED_PRAGMA          _Pragma("warning(disable:161")
+    #define RESTRICT __restrict__
 
 #elif defined(__GNUC__) || defined(__GNUG__)
 
@@ -52,6 +53,8 @@ extern "C" {
     #define PRAGMA_WARNING_IGNORE_NONVIRTUAL_DTOR              // Doesn't seem to warn in GCC
     #define PRAGMA_WARNING_IGNORE_UNUSED_FUNCTION              _Pragma("GCC diagnostic ignored \"-Wunused-function\"")
     #define PRAGMA_WARNING_IGNORE_UNRECOGNIZED_PRAGMA          _Pragma("GCC diagnostic ignored \"-Wunknown-pragmas\"")
+
+    #define RESTRICT __restrict__
 #endif
 
 
