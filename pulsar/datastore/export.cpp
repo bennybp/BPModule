@@ -102,7 +102,7 @@ void export_datastore(pybind11::module & m)
     // Can just store python object
     // NOTE: We are purposely not exporting CacheMap
     ////////////////////////////////////////
-    pybind11::class_<CacheData>(m, "CacheData")
+    pybind11::class_<CacheData>(m, "CacheData",pybind11::metaclass())
       .def("size", &CacheData::size)
       .def("get_keys", &CacheData::get_keys)
       .def("erase", &CacheData::erase)
