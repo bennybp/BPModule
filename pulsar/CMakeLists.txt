@@ -20,7 +20,6 @@ endif()
 ##########################
 # Dependencies
 ##########################
-find_package(OpenMP REQUIRED)
 find_package(MPI REQUIRED)
 find_package(BerkeleyDB REQUIRED)
 
@@ -28,12 +27,6 @@ find_package(BerkeleyDB REQUIRED)
 ##########################
 # Dependencies in external
 ##########################
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../external/cmake")
-list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/pybind11")
-list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/memwatch")
-list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/bphash")
-list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/bpprint")
-list(APPEND CMAKE_PREFIX_PATH "${DESTDIR}/${CMAKE_INSTALL_PREFIX}/external/libtaskforce")
 foreach(pkg pybind11 memwatch bphash bpprint libtaskforce Eigen3)
     find_package(${pkg} REQUIRED)
 endforeach()
@@ -103,7 +96,6 @@ endif()
 ###################
 # Other flags
 ###################
-list(APPEND PULSAR_CORE_CXX_FLAGS ${OpenMP_CXX_FLAGS})
 list(APPEND PULSAR_CORE_CXX_FLAGS ${MPI_CXX_COMPILE_FLAGS})
 
 
@@ -130,7 +122,6 @@ list(APPEND PULSAR_CORE_LINK_FLAGS bphash)
 list(APPEND PULSAR_CORE_LINK_FLAGS bpprint)
 list(APPEND PULSAR_CORE_LINK_FLAGS libtaskforce)
 
-list(APPEND PULSAR_CORE_LINK_FLAGS ${OpenMP_CXX_FLAGS})
 list(APPEND PULSAR_CORE_LINK_FLAGS ${PULSAR_CORE_PYTHON_LIBRARIES})
 list(APPEND PULSAR_CORE_LINK_FLAGS ${MPI_CXX_LINK_FLAGS})
 list(APPEND PULSAR_CORE_LINK_FLAGS ${MPI_CXX_FLAGS})

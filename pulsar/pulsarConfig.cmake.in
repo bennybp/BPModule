@@ -26,9 +26,6 @@ find_package(libtaskforce REQUIRED)
 # Create the target to link against
 add_library(pulsar INTERFACE)
 
-# Required options
-target_compile_options(pulsar INTERFACE @OpenMP_CXX_FLAGS@)
-
 #######################################
 # Add the various include directories
 #######################################
@@ -50,7 +47,6 @@ target_include_directories(pulsar SYSTEM INTERFACE ${PULSAR_CXX_INCLUDES})
 target_link_libraries(pulsar INTERFACE bphash
                                        bpprint
                                        libtaskforce 
-                                       @OpenMP_CXX_FLAGS@
 )
 
 #######################################

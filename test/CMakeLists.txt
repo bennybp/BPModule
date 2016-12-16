@@ -4,6 +4,20 @@ cmake_minimum_required(VERSION 3.0)
 #This sets PULSAR_RUNTEST variable
 find_package(pulsar REQUIRED)
 
+
+############################
+# C++14 by default
+############################
+set(CMAKE_CXX_EXTENSIONS False CACHE BOOL "Enable/Disable compiler-specific C++ extensions")
+set(CMAKE_CXX_STANDARD 14 CACHE STRING "Which C++ standard to use")
+
+# CMake doesn't support Intel CXX standard until cmake 3.6
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
+  if("${CMAKE_VERSION}" VERSION_LESS "3.6")
+      add_definitions(-std=c++${CMAKE_CXX_STANDARD})
+  endif()
+endif()
+
 include(CTestMacros)
 
 ##############################

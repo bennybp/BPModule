@@ -8,7 +8,7 @@ if(NOT PYBIND11_FOUND)
   message(STATUS "We will build pybind11 for you")
   ExternalProject_Add(pybind11_external
                       GIT_REPOSITORY https://github.com/pybind/pybind11.git
-                      GIT_TAG 1d1f81b278d956445287b3c491125caa11b925bd
+                      GIT_TAG c79e435e00fd4fb49817a87c3c2b2647482c077b
                       CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}/external/pybind11
                                  -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                                  -DPYTHON_LIBRARY=${PYTHON_LIBRARY}

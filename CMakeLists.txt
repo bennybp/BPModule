@@ -18,6 +18,22 @@ if(NOT PULSAR_BUILD_TYPE)
     set(PULSAR_BUILD_TYPE ${CMAKE_BUILD_TYPE})
 endif()
 
+
+############################
+# C++14 by default
+############################
+set(CMAKE_CXX_EXTENSIONS False CACHE BOOL "Enable/Disable compiler-specific C++ extensions")
+set(CMAKE_CXX_STANDARD 14 CACHE STRING "Which C++ standard to use")
+
+# CMake doesn't support Intel CXX standard until cmake 3.6
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
+  if("${CMAKE_VERSION}" VERSION_LESS "3.6")
+      list(APPEND PULSAR_CORE_CXX_FLAGS -std=c++${CMAKE_CXX_STANDARD})
+  endif()
+endif()
+
+
+
 ############################
 # Find some base libraries
 ############################
@@ -59,31 +75,45 @@ message(STATUS "Python executable: ${PYTHON_EXECUTABLE}")
 #################################
 add_subdirectory(external)
 
+##################################################
+# Where stuff will be installed. This is passed
+# To other external projects
+##################################################
+# Note that CMAKE_INSTALL_PREFIX is always absolute
+# (cmake makes it that way). Therefore it always begins
+# with a slash
+set(STAGE_DIR         ${CMAKE_BINARY_DIR}/stage)
+set(INSTALL_STAGE_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX}) 
+set(EXT_STAGE_DIR     ${INSTALL_STAGE_DIR}/external)
 
 
 #################################
 # Core Pulsar
 #################################
-set(STAGE_DIR ${CMAKE_BINARY_DIR}/stage)
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/cmake)
-list(APPEND PULSAR_PREFIX_PATH ${STAGE_DIR}/${CMAKE_INSTALL_PREFIX}/external)
-list(APPEND PULSAR_PREFIX_PATH ${CMAKE_PREFIX_PATH})
+list(APPEND PULSAR_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/cmake)
+list(APPEND PULSAR_PREFIX_PATH ${EXT_STAGE_DIR}/pybind11
+                               ${EXT_STAGE_DIR}/memwatch
+                               ${EXT_STAGE_DIR}/bphash
+                               ${EXT_STAGE_DIR}/bpprint
+                               ${EXT_STAGE_DIR}/libtaskforce
+                               ${CMAKE_PREFIX_PATH})
 
 ExternalProject_Add(pulsar_core
    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pulsar
    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
               -DCMAKE_BUILD_TYPE=${PULSAR_BUILD_TYPE}
-              -DDESTDIR=${STAGE_DIR} # Pass in for searching for dependencies 
               -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
               -DMPI_C_COMPILER=${MPI_C_COMPILER}
               -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
               -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
               -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
               -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+              -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
+              -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
    CMAKE_CACHE_ARGS -DPULSAR_CORE_PYTHON_LIBRARIES:LIST=${PYTHON_LIBRARIES}
                     -DPULSAR_CORE_PYTHON_INCLUDE_DIRS:LIST=${PYTHON_INCLUDE_DIRS}
                     -DCMAKE_PREFIX_PATH:LIST=${PULSAR_PREFIX_PATH}
-                    -DCMAKE_MODULE_PATH:STRING=${CMAKE_MODULE_PATH}
+                    -DCMAKE_MODULE_PATH:LIST=${PULSAR_MODULE_PATH}
                     -DPULSAR_MATH_LIBS:LIST=${PULSAR_MATH_LIBS}
                     -DEIGEN3_INCLUDE_DIR:LIST=${EIGEN3_INCLUDE_DIR}
    BUILD_ALWAYS 1
@@ -109,9 +139,11 @@ ExternalProject_Add(pulsar_test
               -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
               -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
               -DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}
+              -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
+              -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
               -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
    CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${PULSAR_TEST_PREFIX_PATH}
-                    -DCMAKE_MODULE_PATH:LIST=${CMAKE_MODULE_PATH}
+                    -DCMAKE_MODULE_PATH:LIST=${PULSAR_MODULE_PATH}
    BUILD_ALWAYS 1
 )
 add_dependencies(pulsar_test pulsar_core)
