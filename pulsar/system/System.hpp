@@ -436,7 +436,7 @@ Conn_t get_connectivity(const System& sys, double Tolerance = 1.20);
  *  \f{eqnarray}{
  *     I_{xx}=&\sum_i^N m_i\left(r^2_{iy}+r^2_{iz}\right)\\
  *     I_{xy}=&-\sum_i^N m_ir_{ix}r_{iy}\\
- *     I_{xz}=&-\sum_i^N m_ir_{ix}r_[iz}\\
+ *     I_{xz}=&-\sum_i^N m_ir_{ix}r_{iz}\\
  *     I_{yy}=&\sum_i^N m_i\left(r^2_{ix}+r^2_{iz}\right)\\
  *     I_{yz}=&-\sum_i^N m_ir_{iy}r_{iz}\\
  *     I_{zz}=&\sum_i^Nm_i\left(r^2_{ix}+r^2_{iy}\right)
