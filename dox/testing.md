@@ -30,9 +30,23 @@ your tests:
 - `pulsar_test(folder name)` : This adds a test called name that is contained in a
    Python file called `name.py`
 
+Where `folder` is the directory within the `test_stage` directory that the
+test will be included under.
+
 For all tests one should use the Pulsar testing Tester.  This is an object
 designed to simplify and unify the testing procedure.  The Tester has both a
 C++ and a Python interface accessed throug CppTester and PyTester respectively.
+
+When designing and debugging tests to use the `ctest` command it is useful to
+keep the following command in mind:
+
+~~~{.cmake}
+ctest -R<test_name> -V
+~~~
+
+which will run all tests that have `test_name` somewhere in the name and will
+output the output to the screen as well as the file
+`<build_directory>/Testing/Temporary/LastTest.log`
 
 ### Testing in C++
 
