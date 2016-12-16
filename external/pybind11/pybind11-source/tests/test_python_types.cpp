@@ -37,7 +37,8 @@ public:
     py::set get_set() {
         py::set set;
         set.add(py::str("key1"));
-        set.add(py::str("key2"));
+        set.add("key2");
+        set.add(std::string("key3"));
         return set;
     }
 
@@ -59,7 +60,7 @@ public:
     /* Create, manipulate, and return a Python list */
     py::list get_list() {
         py::list list;
-        list.append(py::str("value"));
+        list.append("value");
         py::print("Entry at position 0:", list[0]);
         list[0] = py::str("overwritten");
         return list;
@@ -75,6 +76,10 @@ public:
     /* C++ STL data types are automatically casted */
     std::array<std::string, 2> get_array() {
         return std::array<std::string, 2> {{ "array entry 1" , "array entry 2"}};
+    }
+
+    std::valarray<int> get_valarray() {
+        return std::valarray<int>({ 1, 4, 9 });
     }
 
     /* Easily iterate over a dictionary using a C++11 range-based for loop */
@@ -132,6 +137,12 @@ public:
             py::print("array item {}: {}"_s.format(index++, item));
     }
 
+    void print_valarray(std::valarray<int> &varray) {
+        int index = 0;
+        for (auto item : varray)
+            py::print("valarray item {}: {}"_s.format(index++, item));
+    }
+
     void throw_exception() {
         throw std::runtime_error("This exception was intentionally thrown.");
     }
@@ -174,7 +185,7 @@ struct MoveOutContainer {
 test_initializer python_types([](py::module &m) {
     /* No constructor is explicitly defined below. An exception is raised when
        trying to construct it directly from Python */
-    py::class_<ExamplePythonTypes>(m, "ExamplePythonTypes", "Example 2 documentation")
+    py::class_<ExamplePythonTypes>(m, "ExamplePythonTypes", "Example 2 documentation", py::metaclass())
         .def("get_dict", &ExamplePythonTypes::get_dict, "Return a Python dictionary")
         .def("get_dict_2", &ExamplePythonTypes::get_dict_2, "Return a C++ dictionary")
         .def("get_list", &ExamplePythonTypes::get_list, "Return a Python list")
@@ -182,6 +193,7 @@ test_initializer python_types([](py::module &m) {
         .def("get_set", &ExamplePythonTypes::get_set, "Return a Python set")
         .def("get_set2", &ExamplePythonTypes::get_set_2, "Return a C++ set")
         .def("get_array", &ExamplePythonTypes::get_array, "Return a C++ array")
+        .def("get_valarray", &ExamplePythonTypes::get_valarray, "Return a C++ valarray")
         .def("print_dict", &ExamplePythonTypes::print_dict, "Print entries of a Python dictionary")
         .def("print_dict_2", &ExamplePythonTypes::print_dict_2, "Print entries of a C++ dictionary")
         .def("print_set", &ExamplePythonTypes::print_set, "Print entries of a Python set")
@@ -189,6 +201,7 @@ test_initializer python_types([](py::module &m) {
         .def("print_list", &ExamplePythonTypes::print_list, "Print entries of a Python list")
         .def("print_list_2", &ExamplePythonTypes::print_list_2, "Print entries of a C++ list")
         .def("print_array", &ExamplePythonTypes::print_array, "Print entries of a C++ array")
+        .def("print_valarray", &ExamplePythonTypes::print_valarray, "Print entries of a C++ valarray")
         .def("pair_passthrough", &ExamplePythonTypes::pair_passthrough, "Return a pair in reversed order")
         .def("tuple_passthrough", &ExamplePythonTypes::tuple_passthrough, "Return a triple in reversed order")
         .def("throw_exception", &ExamplePythonTypes::throw_exception, "Throw an exception")
@@ -199,8 +212,7 @@ test_initializer python_types([](py::module &m) {
         .def("test_print", &ExamplePythonTypes::test_print, "test the print function")
         .def_static("new_instance", &ExamplePythonTypes::new_instance, "Return an instance")
         .def_readwrite_static("value", &ExamplePythonTypes::value, "Static value member")
-        .def_readonly_static("value2", &ExamplePythonTypes::value2, "Static value member (readonly)")
-        ;
+        .def_readonly_static("value2", &ExamplePythonTypes::value2, "Static value member (readonly)");
 
     m.def("test_print_function", []() {
         py::print("Hello, World!");
@@ -257,7 +269,7 @@ test_initializer python_types([](py::module &m) {
             d["missing_attr_chain"] = "raised"_s;
         }
 
-        d["is_none"] = py::cast(o.attr("basic_attr").is_none());
+        d["is_none"] = o.attr("basic_attr").is_none();
 
         d["operator()"] = o.attr("func")(1);
         d["operator*"] = o.attr("func")(*o.attr("begin_end"));
@@ -267,13 +279,13 @@ test_initializer python_types([](py::module &m) {
 
     m.def("test_tuple_accessor", [](py::tuple existing_t) {
         try {
-            existing_t[0] = py::cast(1);
+            existing_t[0] = 1;
         } catch (const py::error_already_set &) {
             // --> Python system error
             // Only new tuples (refcount == 1) are mutable
             auto new_t = py::tuple(3);
             for (size_t i = 0; i < new_t.size(); ++i) {
-                new_t[i] = py::cast(i);
+                new_t[i] = i;
             }
             return new_t;
         }
@@ -282,15 +294,15 @@ test_initializer python_types([](py::module &m) {
 
     m.def("test_accessor_assignment", []() {
         auto l = py::list(1);
-        l[0] = py::cast(0);
+        l[0] = 0;
 
         auto d = py::dict();
         d["get"] = l[0];
         auto var = l[0];
         d["deferred_get"] = var;
-        l[0] = py::cast(1);
+        l[0] = 1;
         d["set"] = l[0];
-        var = py::cast(99); // this assignment should not overwrite l[0]
+        var = 99; // this assignment should not overwrite l[0]
         d["deferred_set"] = l[0];
         d["var"] = var;
 
@@ -314,20 +326,20 @@ test_initializer python_types([](py::module &m) {
 
 #ifdef PYBIND11_HAS_EXP_OPTIONAL
     has_exp_optional = true;
-    using opt_int = std::experimental::optional<int>;
-    m.def("double_or_zero_exp", [](const opt_int& x) -> int {
+    using exp_opt_int = std::experimental::optional<int>;
+    m.def("double_or_zero_exp", [](const exp_opt_int& x) -> int {
         return x.value_or(0) * 2;
     });
-    m.def("half_or_none_exp", [](int x) -> opt_int {
-        return x ? opt_int(x / 2) : opt_int();
+    m.def("half_or_none_exp", [](int x) -> exp_opt_int {
+        return x ? exp_opt_int(x / 2) : exp_opt_int();
     });
-    m.def("test_nullopt_exp", [](opt_int x) {
+    m.def("test_nullopt_exp", [](exp_opt_int x) {
         return x.value_or(42);
     }, py::arg_v("x", std::experimental::nullopt, "None"));
 #endif
 
-    m.attr("has_optional") = py::cast(has_optional);
-    m.attr("has_exp_optional") = py::cast(has_exp_optional);
+    m.attr("has_optional") = has_optional;
+    m.attr("has_exp_optional") = has_exp_optional;
 
     m.def("test_default_constructors", []() {
         return py::dict(
@@ -377,4 +389,41 @@ test_initializer python_types([](py::module &m) {
     py::class_<MoveOutContainer>(m, "MoveOutContainer")
         .def(py::init<>())
         .def_property_readonly("move_list", &MoveOutContainer::move_list);
+
+    m.def("get_implicit_casting", []() {
+        py::dict d;
+        d["char*_i1"] = "abc";
+        const char *c2 = "abc";
+        d["char*_i2"] = c2;
+        d["char*_e"] = py::cast(c2);
+        d["char*_p"] = py::str(c2);
+
+        d["int_i1"] = 42;
+        int i = 42;
+        d["int_i2"] = i;
+        i++;
+        d["int_e"] = py::cast(i);
+        i++;
+        d["int_p"] = py::int_(i);
+
+        d["str_i1"] = std::string("str");
+        std::string s2("str1");
+        d["str_i2"] = s2;
+        s2[3] = '2';
+        d["str_e"] = py::cast(s2);
+        s2[3] = '3';
+        d["str_p"] = py::str(s2);
+
+        py::list l(2);
+        l[0] = 3;
+        l[1] = py::cast(6);
+        l.append(9);
+        l.append(py::cast(12));
+        l.append(py::int_(15));
+
+        return py::dict(
+            "d"_a=d,
+            "l"_a=l
+        );
+    });
 });
