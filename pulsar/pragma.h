@@ -58,11 +58,6 @@ extern "C" {
 #endif
 
 
-
-#define PULSAR_PLUGIN_CONSTRUCTOR(name) void __attribute__ ((constructor)) name(void)
-#define PULSAR_PLUGIN_DESTRUCTOR(name) void __attribute__ ((destructor)) name(void)
-
-
 #ifdef __cplusplus
 }
 #endif

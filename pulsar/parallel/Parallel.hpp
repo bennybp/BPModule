@@ -22,12 +22,12 @@ const LibTaskForce::HybridEnv& get_env();
  *
  * This is meant to be called from python at the start of the program
  * 
- * \param[in] NThreads The maximum number of threads the program may use
+ * \param[in] nthreads The maximum number of threads the program may use
  * 
  * 
  * \todo Make an overload that takes an MPI_COMM instance
  */
-void parallel_initialize(size_t NThreads);
+void parallel_initialize(size_t nthreads);
 
 
 /*! \brief Finalize parallelization functionality

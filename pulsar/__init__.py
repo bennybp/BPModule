@@ -67,7 +67,6 @@ def initialize(argv,
   """
 
   # Output depends on MPI being initialized, so we do that first
-  set_cmdline(argv)
   pulsar_core.parallel_initialize(nthreads)
 
   create_global_output(outpath, outbase, use_stdout)

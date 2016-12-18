@@ -17,4 +17,6 @@ target_compile_options(memwatch PRIVATE ${MEMWATCH_C_FLAGS})
 target_link_libraries(memwatch PUBLIC dl)
 
 install(TARGETS memwatch LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+configure_file("memwatchConfig.cmake.in" "memwatchConfig.cmake" @ONLY)
 install(FILES memwatch.h DESTINATION include/memwatch)
+install(FILES ${CMAKE_BINARY_DIR}/memwatchConfig.cmake DESTINATION share/cmake/memwatch)

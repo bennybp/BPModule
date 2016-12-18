@@ -107,17 +107,17 @@ get_filename_component(PULSAR_CORE_PARENT_DIR ${CMAKE_SOURCE_DIR} DIRECTORY)
 list(APPEND PULSAR_CORE_CXX_INCLUDES ${PULSAR_CORE_PARENT_DIR})
 
 # External dependencies (mark as system includes)
-list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${MEMWATCH_INCLUDE_DIR})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${PULSAR_CORE_PYTHON_INCLUDE_DIRS})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${MPI_CXX_INCLUDE_PATH})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${pybind11_INCLUDE_DIR})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUDES ${EIGEN3_INCLUDE_DIR})
 list(APPEND PULSAR_CORE_CXX_EXTERNAL_INCLUES ${DB_INCLUDE_DIR})
+
 #############################################################
 # Libraries and link flags (including interface libraries)
 #############################################################
 list(APPEND PULSAR_CORE_LINK_FLAGS ${PULSAR_MATH_LIBS})  # Note - not PULSAR_CORE_MATH_LIBS
-list(APPEND PULSAR_CORE_LINK_FLAGS ${MEMWATCH_FLAGS})
+list(APPEND PULSAR_CORE_LINK_FLAGS memwatch)
 list(APPEND PULSAR_CORE_LINK_FLAGS bphash)
 list(APPEND PULSAR_CORE_LINK_FLAGS bpprint)
 list(APPEND PULSAR_CORE_LINK_FLAGS libtaskforce)
@@ -154,7 +154,7 @@ foreach(sub_dir datastore exception math modulebase modulemanager output
     list(APPEND PULSAR_CORE_FILE_LIST ${PULSAR_${SUB_DIR}_FILES_FULL})
 endforeach()
 
-list(APPEND PULSAR_CORE_FILE_LIST export.cpp init.cpp)
+list(APPEND PULSAR_CORE_FILE_LIST export.cpp)
 
 
 # Actual module library
