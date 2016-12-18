@@ -84,19 +84,13 @@ add_subdirectory(external)
 # with a slash
 set(STAGE_DIR         ${CMAKE_BINARY_DIR}/stage)
 set(INSTALL_STAGE_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX}) 
-set(EXT_STAGE_DIR     ${INSTALL_STAGE_DIR}/external)
 
 
 #################################
 # Core Pulsar
 #################################
 list(APPEND PULSAR_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/cmake)
-list(APPEND PULSAR_PREFIX_PATH ${EXT_STAGE_DIR}/pybind11
-                               ${EXT_STAGE_DIR}/memwatch
-                               ${EXT_STAGE_DIR}/bphash
-                               ${EXT_STAGE_DIR}/bpprint
-                               ${EXT_STAGE_DIR}/libtaskforce
-                               ${CMAKE_PREFIX_PATH})
+list(APPEND PULSAR_PREFIX_PATH ${INSTALL_STAGE_DIR} ${CMAKE_PREFIX_PATH})
 
 ExternalProject_Add(pulsar_core
    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pulsar

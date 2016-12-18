@@ -132,8 +132,7 @@ list(APPEND PULSAR_CORE_LINK_FLAGS ${DB_LIBRARY})
 ###########################
 # Fiddle with some rpaths
 ###########################
-list(APPEND PULSAR_CORE_RPATH ${CMAKE_INSTALL_PREFIX}/external/libtaskforce/lib)
-list(APPEND PULSAR_CORE_RPATH ${CMAKE_INSTALL_PREFIX}/external/memwatch/lib)
+list(APPEND PULSAR_CORE_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 
 
 #######################
