@@ -4,15 +4,14 @@ set(CMAKE_SHARED_MODULE_PREFIX "")
 # Find the dependencies for pulsar
 # Add the install path for pulsar to the search path
 set(PULSAR_INSTALL_ROOT ${CMAKE_CURRENT_LIST_DIR})
-set(PULSAR_EXTERNAL_DIR "${PULSAR_INSTALL_ROOT}/external")
-list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/pybind11")
-list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/memwatch")
-list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/libtaskforce")
-list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/bphash")
-list(APPEND CMAKE_PREFIX_PATH "${PULSAR_EXTERNAL_DIR}/bpprint")
+get_filename_component(PULSAR_INSTALL_ROOT ${PULSAR_INSTALL_ROOT} DIRECTORY)
+get_filename_component(PULSAR_INSTALL_ROOT ${PULSAR_INSTALL_ROOT} DIRECTORY)
+get_filename_component(PULSAR_INSTALL_ROOT ${PULSAR_INSTALL_ROOT} DIRECTORY)
+
+list(APPEND CMAKE_PREFIX_PATH "${PULSAR_INSTALL_ROOT}")
 
 # And the find macros
-list(APPEND CMAKE_MODULE_PATH "${PULSAR_EXTERNAL_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${PULSAR_INSTALL_ROOT}/cmake")
 
 
 # Find external projects
@@ -54,3 +53,9 @@ target_link_libraries(pulsar INTERFACE bphash
 #######################################
 set(PULSAR_TESTING_PATH ${PULSAR_INSTALL_ROOT}/modules/pulsar/testing)
 set(PULSAR_RUNTEST ${PULSAR_TESTING_PATH}/RunTest.py)
+
+#######################################
+# Include the macros for testing
+# (should be in this directory)
+#######################################
+include(${CMAKE_CURRENT_LIST_DIR}/CTestMacros.cmake)

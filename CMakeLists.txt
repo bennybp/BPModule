@@ -5,6 +5,11 @@ enable_language(C)
 
 include(ExternalProject)
 
+############################
+# Some custom Find* modules
+############################
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/pulsar/cmake")
+
 
 set(PULSAR_MATH_LIBS "" CACHE STRING "Linker flags/libraries for math libraries")
 set(PULSAR_BUILD_TYPE "" CACHE STRING "Build type for Pulsar (as opposed to all the external dependencies)")
@@ -89,7 +94,7 @@ set(INSTALL_STAGE_DIR ${STAGE_DIR}${CMAKE_INSTALL_PREFIX})
 #################################
 # Core Pulsar
 #################################
-list(APPEND PULSAR_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/external/cmake)
+list(APPEND PULSAR_MODULE_PATH ${CMAKE_MODULE_PATH})
 list(APPEND PULSAR_PREFIX_PATH ${INSTALL_STAGE_DIR} ${CMAKE_PREFIX_PATH})
 
 ExternalProject_Add(pulsar_core
@@ -143,9 +148,9 @@ ExternalProject_Add(pulsar_test
 add_dependencies(pulsar_test pulsar_core)
 
 
-#This file will allow us to run ctest in the top-level build dir
-#Basically it just defers to the actual top-level CTestTestfile.cmake in the
-#build directory for this project
+# This file will allow us to run ctest in the top-level build dir
+# Basically it just defers to the actual top-level CTestTestfile.cmake in the
+# build directory for this project
 file(WRITE ${CMAKE_BINARY_DIR}/CTestTestfile.cmake "subdirs(test_stage)")
 
 #################################

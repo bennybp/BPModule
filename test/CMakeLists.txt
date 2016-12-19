@@ -18,7 +18,6 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
   endif()
 endif()
 
-include(CTestMacros)
 
 ##############################
 # Modules used by core tests

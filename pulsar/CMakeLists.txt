@@ -129,10 +129,6 @@ list(APPEND PULSAR_CORE_LINK_FLAGS ${MPI_CXX_FLAGS})
 list(APPEND PULSAR_CORE_LINK_FLAGS ${DB_LIBRARY})
 
 
-###########################
-# Fiddle with some rpaths
-###########################
-list(APPEND PULSAR_CORE_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
 
 
 #######################
@@ -164,7 +160,13 @@ target_include_directories(pulsar_core PRIVATE ${PULSAR_CORE_CXX_INCLUDES})
 target_include_directories(pulsar_core SYSTEM PRIVATE ${PULSAR_CORE_CXX_EXTERNAL_INCLUDES})
 target_link_libraries(pulsar_core PRIVATE ${PULSAR_CORE_LINK_FLAGS})
 
-set_target_properties(pulsar_core PROPERTIES INSTALL_RPATH "${PULSAR_CORE_RPATH}")
+#########################################
+# Fiddle with some rpaths
+# These will set the rpath to both the
+# install path and the stage/install path
+##########################################
+set_target_properties(pulsar_core PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib}")
+set_target_properties(pulsar_core PROPERTIES INSTALL_RPATH_USE_LINK_PATH True)
 
 
 ########################
@@ -179,7 +181,7 @@ install(TARGETS pulsar_core
 ##################################################################
 # Install the config file
 configure_file("pulsarConfig.cmake.in" "pulsarConfig.cmake" @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/pulsarConfig.cmake DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(FILES ${CMAKE_BINARY_DIR}/pulsarConfig.cmake DESTINATION share/cmake/pulsar)
 
 # Install all python files (for all core modules)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION modules FILES_MATCHING PATTERN "*.py")
@@ -187,3 +189,6 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION modules FILES_MATCHI
 # Install all headers (for all core modules)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION include FILES_MATCHING PATTERN "*.h")
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION include FILES_MATCHING PATTERN "*.hpp")
+
+# Install helper cmake scripts
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/cmake/" DESTINATION share/cmake/pulsar)
