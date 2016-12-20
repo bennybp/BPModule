@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.2)
 
-#Should find the Pulsar in the staging area
-#This sets PULSAR_RUNTEST variable
-find_package(pulsar REQUIRED)
-
+# Find the pulsar package
+# This may be in a superbuild staging area
+find_package(pulsar CONFIG REQUIRED)
 
 ############################
 # C++14 by default
@@ -18,7 +17,6 @@ if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
   endif()
 endif()
 
-
 ##############################
 # Modules used by core tests
 ##############################
@@ -27,7 +25,6 @@ add_subdirectory(testmodules)
 ########################
 # Core pulsar tests
 ########################
-
 foreach(dir datastore math system modulebase modules)
   add_subdirectory(${dir})
   install(FILES ${CMAKE_BINARY_DIR}/${dir}/CTestTestfile.cmake DESTINATION ${dir})

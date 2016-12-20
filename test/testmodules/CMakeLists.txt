@@ -1,8 +1,6 @@
 # Create test libraries for static/shared linking
 add_library(testmodules_dynlib SHARED dynlib.cpp)
 add_library(testmodules_staticlib STATIC staticlib.cpp)
-set_target_properties(testmodules_staticlib PROPERTIES COMPILE_FLAGS "-fPIC")
-
 
 set(TESTMODULES_FILES creator.cpp)
 
@@ -11,11 +9,11 @@ set (TESTMODULES_PYFILES creator.py TestPyModules.py)
 
 # We only need this cpp file - all the rest is in the header
 add_library(testmodules MODULE creator.cpp)
-target_compile_options(testmodules PRIVATE "-std=c++11")
 target_link_libraries(testmodules testmodules_dynlib
                                   testmodules_staticlib
                                   pulsar
                      )
+set_target_properties(testmodules PROPERTIES INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/testmodules)
 
 install(TARGETS testmodules LIBRARY DESTINATION testmodules
                             RUNTIME DESTINATION testmodules)
@@ -24,7 +22,6 @@ install(FILES "__init__.py" DESTINATION testmodules)
 install(FILES "modinfo.py"  DESTINATION testmodules)
 install(FILES creator.py TestPyModules.py DESTINATION testmodules)
                             
-set_target_properties(testmodules PROPERTIES INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/testmodules)
 
 # install the dynamic library
 install(TARGETS testmodules_dynlib LIBRARY DESTINATION testmodules

@@ -13,14 +13,11 @@ if(NOT pybind11_FOUND)
         CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
                    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                    -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-                   -DPYTHON_LIBRARY=${PYTHON_LIBRARY}
-                   -DPYTHON_INCLUDE_DIR=${PYTHON_INCLUDE_DIR}
-                   -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
-                   -DPYBIND11_PYTHON_VERSION=${PYTHONLIBS_VERSION_STRING}
-                   -DPYBIND11_INSTALL=True
                    -DPYBIND11_TEST=False
-        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${CMAKE_BINARY_DIR}/stage
-)
+                   -DPYBIND11_INSTALL=True
+        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
+    )
+
 else()
     message(STATUS "Found existing pybind11")
     message(STATUS "pybind11 config: ${pybind11_CONFIG}")

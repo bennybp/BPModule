@@ -3,59 +3,88 @@ set(CMAKE_SHARED_MODULE_PREFIX "")
 
 # Find the dependencies for pulsar
 # Add the install path for pulsar to the search path
-set(PULSAR_INSTALL_ROOT ${CMAKE_CURRENT_LIST_DIR})
-get_filename_component(PULSAR_INSTALL_ROOT ${PULSAR_INSTALL_ROOT} DIRECTORY)
-get_filename_component(PULSAR_INSTALL_ROOT ${PULSAR_INSTALL_ROOT} DIRECTORY)
-get_filename_component(PULSAR_INSTALL_ROOT ${PULSAR_INSTALL_ROOT} DIRECTORY)
+set(PULSAR_PREFIX "${CMAKE_CURRENT_LIST_DIR}")
+get_filename_component(PULSAR_PREFIX "${PULSAR_PREFIX}" DIRECTORY)
+get_filename_component(PULSAR_PREFIX "${PULSAR_PREFIX}" DIRECTORY)
+get_filename_component(PULSAR_PREFIX "${PULSAR_PREFIX}" DIRECTORY)
 
-list(APPEND CMAKE_PREFIX_PATH "${PULSAR_INSTALL_ROOT}")
+# Custom cmake Find* modules
+list(APPEND CMAKE_MODULE_PATH "${PULSAR_PREFIX}/share/cmake/pulsar")
 
-# And the find macros
-list(APPEND CMAKE_MODULE_PATH "${PULSAR_INSTALL_ROOT}/cmake")
+# Find the dependencies
+set(PULSAR_CORE_DEPS "@PULSAR_CORE_DEPS@")
+foreach(pkg ${PULSAR_CORE_DEPS})
+    find_package(${pkg} REQUIRED)
+endforeach()
+
+# For some reason, this has a leading whitespace
+string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 
 
-# Find external projects
-find_package(memwatch REQUIRED)
-find_package(pybind11 REQUIRED)
-find_package(bphash REQUIRED)
-find_package(bpprint REQUIRED)
-find_package(libtaskforce REQUIRED)
+# Print out lots of info for the user
+message(STATUS "MPI C Compiler:         ${MPI_C_COMPILER}")
+message(STATUS "MPI CXX Compiler:       ${MPI_CXX_COMPILER}")
+message(STATUS "MPI CXX Compile Flags:  ${MPI_CXX_COMPILE_FLAGS}")
+message(STATUS "MPI CXX Link Flags:     ${MPI_CXX_LINK_FLAGS}")
+message(STATUS "Eigen3 includes:        ${EIGEN3_INCLUDE_DIR}")
+message(STATUS "BerkeleyDB includes:    ${BerkeleyDB_INCLUDE_DIRS}")
+message(STATUS "BerkeleyDB libraries    ${BerkeleyDB_LIBRARIES}")
+message(STATUS "Python executable:      ${PYTHON_EXECUTABLE}")
+message(STATUS "Python version:         ${PYTHONLIBS_VERSION_STRING}")
+message(STATUS "Pybind11 path:          ${pybind11_DIR}")
+message(STATUS "LibTaskForce path:      ${libtaskforce_DIR}")
+message(STATUS "BPHash path:            ${bphash_DIR}")
+message(STATUS "BPPrint path:           ${bpprint_DIR}")
+message(STATUS "Memwatch:               ${memwatch_DIR}")
+message(STATUS "CMake prefix path:      ${CMAKE_PREFIX_PATH}")
 
 
 # Create the target to link against
-add_library(pulsar INTERFACE)
+add_library(pulsar INTERFACE IMPORTED)
 
 #######################################
 # Add the various include directories
 #######################################
 # Main pulsar headers
-target_include_directories(pulsar INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
+set_target_properties(pulsar PROPERTIES
+     INTERFACE_INCLUDE_DIRECTORIES "${PULSAR_PREFIX}/include")
 
 # Main dependencies (mark as system includes)
-list(APPEND PULSAR_CXX_INCLUDES @EIGEN3_INCLUDE_DIR@)
-list(APPEND PULSAR_CXX_INCLUDES @MPI_CXX_INCLUDE_PATH@)
-list(APPEND PULSAR_CXX_INCLUDES @PULSAR_CORE_PYTHON_INCLUDE_DIRS@)
-list(APPEND PULSAR_CXX_INCLUDES ${pybind11_INCLUDE_DIR})
-list(APPEND PULSAR_CXX_INCLUDES ${MEMWATCH_INCLUDE_DIR})
-target_include_directories(pulsar SYSTEM INTERFACE ${PULSAR_CXX_INCLUDES})
+list(APPEND PULSAR_CXX_INCLUDES "${EIGEN3_INCLUDE_DIR}" "${MPI_CXX_INCLUDE_PATH}")
 
+# INTERFACE_SYSTEM_INCLUDE_DIRECTORIES only marks them as system, wo
+# we have to have to add it as a normal include directory, too
+set_target_properties(pulsar PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES "${PULSAR_CXX_INCLUDES}")
+set_target_properties(pulsar PROPERTIES
+    INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${PULSAR_CXX_INCLUDES}")
 
 #######################################
-# Add interface libraries to link to
+# Interface libraries to link to
 #######################################
-target_link_libraries(pulsar INTERFACE bphash
-                                       bpprint
-                                       libtaskforce 
+list(APPEND PULSAR_LINK_LIBRARIES bphash
+                                  bpprint
+                                  memwatch
+                                  pybind11::pybind11
+                                  libtaskforce 
+                                  ${MPI_CXX_LINK_FLAGS}
 )
+
+set_target_properties(pulsar PROPERTIES
+    INTERFACE_LINK_LIBRARIES "${PULSAR_LINK_LIBRARIES}")
 
 #######################################
 # Other helpful variables
 #######################################
-set(PULSAR_TESTING_PATH ${PULSAR_INSTALL_ROOT}/modules/pulsar/testing)
-set(PULSAR_RUNTEST ${PULSAR_TESTING_PATH}/RunTest.py)
+set(PULSAR_TESTING_PATH "${PULSAR_PREFIX}/lib/pulsar/modules/pulsar/testing")
+set(PULSAR_BIN_PATH "${PULSAR_PREFIX}/bin")
+
+set(PULSAR_RUNTEST "${PULSAR_TESTING_PATH}/RunTest.py")
+set(PULSAR_RUN "${PULSAR_BIN_PATH}/run_pulsar.sh")
 
 #######################################
 # Include the macros for testing
 # (should be in this directory)
 #######################################
 include(${CMAKE_CURRENT_LIST_DIR}/CTestMacros.cmake)
+

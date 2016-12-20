@@ -17,8 +17,9 @@ if(NOT libtaskforce_FOUND)
                    -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
                    -DCMAKE_POSITION_INDEPENDENT_CODE=True
         CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${CMAKE_PREFIX_PATH}
-        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${CMAKE_BINARY_DIR}/stage
+        INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
     )
+
 else()
     message(STATUS "Found existing libtaskforce")
     message(STATUS "libtaskforce config: ${libtaskforce_CONFIG}")
