@@ -1,10 +1,10 @@
 #####################################
-# Projects in the external directory
+# Projects in this directory
 #####################################
 
-add_subdirectory(memwatch)
-add_subdirectory(bphash)
-add_subdirectory(bpprint)
-add_subdirectory(pybind11)
-add_subdirectory(libtaskforce)
+include(memwatch.cmake)
+include(bphash.cmake)
+include(bpprint.cmake)
+include(pybind11.cmake)
+include(libtaskforce.cmake)
 
