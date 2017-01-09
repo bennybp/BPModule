@@ -18,6 +18,9 @@ foreach(pkg ${PULSAR_CORE_DEPS})
     find_package(${pkg} REQUIRED)
 endforeach()
 
+# And the find macros
+list(APPEND CMAKE_MODULE_PATH "${PULSAR_INSTALL_ROOT}/share/cmake")
+
 # For some reason, this has a leading whitespace
 string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 
