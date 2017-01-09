@@ -290,7 +290,7 @@ void export_system(pybind11::module & m)
 
 
     // Space
-    pybind11::class_<Space>(m,"Space")
+    pybind11::class_<Space>(m,"Space",pybind11::metaclass())
       .def(pybind11::init<>())
       .def(pybind11::init<const Space&>())
       .def(pybind11::init<const std::array<double,3>&,

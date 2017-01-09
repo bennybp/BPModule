@@ -102,9 +102,9 @@ void export_datastore(pybind11::module & m)
     cd.def("size", &CacheData::size)
       .def("get_keys", &CacheData::get_keys)
       .def("erase", &CacheData::erase)
-      .def("get", [](CacheData & cd, const std::string & key, bool use_distcache) 
+      .def("get", [](CacheData & cdin, const std::string & key, bool use_distcache)
                   { 
-                      auto r = cd.get<pybind11::object>(key, use_distcache);
+                      auto r = cdin.get<pybind11::object>(key, use_distcache);
                       if(r)
                         return *r;
                       else
