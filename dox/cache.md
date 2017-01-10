@@ -44,7 +44,7 @@ CacheMap Class in Pulsar
 The cache is an instance of type CacheMap.  Each module type whose information
 is stored in the ModuleManager/ModuleAdministrator has a cache assigned to it.
 Again the cache is assigned on a module type basis **not** on a module key
-bais.  Thus a CacheMap instance is accessible from all instances of a module
+basis.  Thus a CacheMap instance is accessible from all instances of a module
 type and can be used to pass data among them.  However, because each module
 type has a different cache, the CacheMap class can **not** be used to pass data
 among different module types.  Put another way, each module type's cache is
@@ -57,7 +57,7 @@ std::string SomeKey;//Generate a key unique to input
 
 CacheData& MyCache=this->cache();//Get your cache
 
-//Try to get the data (ignore use_distcache for now)
+//Try to get the data, which is of type CoolDataType (ignore use_distcache for now)
 std::shared_ptr<CoolDataType> Data=MyCache.get<CoolDataType>(SomeKey,use_distcache);
 
 //One of two things happend
@@ -65,11 +65,10 @@ if(Data){//The cache had the data
    return *Data;//or do whatever it is you have to do with the data
 }
 else{//The cache did not have the data, generate it
+   CoolDataType TheData;//Assume this is the generated data
 
-CoolDataType TheData;//Assume this is the generated data
-
-MyCache.set(MyHash,TheData,Policy);//Save it (ignore Policy for now)
-return TheData;//or again do whatever it is you have to do with the data
+   MyCache.set(MyHash,TheData,Policy);//Save it (ignore Policy for now)
+   return TheData;//or again do whatever it is you have to do with the data
 }
 ~~~
 
@@ -114,7 +113,7 @@ common problem in electronic structure packages where particularly for small
 systems, an algorithm always writes what are presumed to be large intermediates
 to disk, even if they actually fit in memory.  Hence you should not worry too
 much about putting large tensors in the cache (although it may be prudent to
-put them in in blocks to aid in dumping to disk).
+put them into the cache in blocks to aid in dumping to disk).
 
 Indexing in the cache
 ---------------------
@@ -135,11 +134,12 @@ a hash representation of itself (the standard name is `my_hash()`), so simply
 concatenate the hashes to form the index.
 
 One notable complication to this, however, is that many of the options in the
-OptionMap may have no effect on the data (ie, printing, etc). Therefore, only
- \b significant options should be hashed. These significant options take
+OptionMap may have no effect on the data [*e.g.*, printing, max number of
+iterations (assuming the quantity converges before then), etc.]. Therefore, only
+**significant** options should be hashed. These significant options take
 the form of a set of strings which specify which option keys are to be
 compared. The OptionMap has a function `hash_values` which takes a vector of
-option keys to hash and returns a hash derived only from those keys.
+option keys, to hash, and returns a hash derived only from those keys.
 
 CacheMap Internals and Policies
 -------------------------------
@@ -153,8 +153,10 @@ said to be local if it is available to the current process without the need for
 an MPI call.  Global data starts as only local to the process that generated it,
 but is additionally registered with a root process so that if another process
 wants it, they can get it via MPI calls.  The MPI calls all happen transparently
-to the user of the CacheMap class.  Note that after obtaining data via an MPI
-call that data is still considered global.
+to the user of the CacheMap class.
+
+\note After obtaining data via an MPI call that data is still considered global
+even though it is now local to your process.
 
 The various policies are:
 
@@ -163,13 +165,13 @@ The various policies are:
   will be checkpointed
 - CheckpointGlobal: When a user calls `Checkpoint.checkpoint_global()` the data
 will be checkpointed
-- DistributeGlobally: Data with this policy is made available to whatever
-process wants it
+- DistributeGlobally: Data with this policy is registered with the root process
+and made available to any process that wants it (will require MPI calls if the
+data is not local to the asking process)
 
-
-Policies are bit flags, what this means is you can set many policies at once by
-using bit-wise or `|` .  To see if a policy is set you use bit-wise and `&`.
-Bit-wise operators are the same in Python and C++.
+\note Policies are bit flags, what this means is you can set many policies at
+once by using bit-wise or `|` .  To see if a policy is set you use bit-wise and
+`&`.  Bit-wise operators are the same in Python and C++.
 
 Checkpointing the Cache
 -----------------------
@@ -186,6 +188,7 @@ the global backend.  At the moment you have two choices:
   ~~~{.cpp}
   BDBCheckpointIO MyBackend("place/to/checkpoint");
   ~~~
+
 Notes on file locations:
 - The local checkpoint file is expected to be on a local file system, *i.e.* on
   the computer that the current process is running on
@@ -196,8 +199,8 @@ Notes on file locations:
 
 The Checkpoint class is then made like:
 ~~~{.cpp}
-Checkpoint mychk(std::make_shared<BDBCheckpointIO>("local"),
-                 std::make_shared<BDBCheckpointIO>("global"));
+Checkpoint mychk(std::make_shared<BDBCheckpointIO>("path/to/local/cache"),
+                 std::make_shared<BDBCheckpointIO>("path/to/global/cache"));
 ~~~
 
 and is the used to checkpoint like:

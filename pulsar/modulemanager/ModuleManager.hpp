@@ -369,17 +369,5 @@ class ModuleManager : public std::enable_shared_from_this<ModuleManager>
         create_module_(const std::string & modulekey, ID_t parentid);
 };
 
-
-/** \brief Given an existing module, the ID of the new module's parent, a module manager, and a
- *  map (option_key to value) of options to change.  This function will copy the module into a
- *  unique key, change the options, and return the module implementation.
- *
- *  \todo Make a C++ version
- */
-pybind11::object copy_key_change_options_py(const std::string& modulekey, 
-                                            ID_t parentid,ModuleManager& mm,
-    const std::map<std::string,pybind11::object>& options);
-
-
 } // close namespace pulsar
 
