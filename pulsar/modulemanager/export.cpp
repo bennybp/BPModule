@@ -89,8 +89,6 @@ void export_modulemanager(pybind11::module & m)
     .def("stop_cache_sync", &ModuleManager::stop_cache_sync)
     ;
 
-    m.def("copy_key_change_options",&copy_key_change_options_py);
-
     ////////////////////////////////
     // Pointers, etc
     ////////////////////////////////
