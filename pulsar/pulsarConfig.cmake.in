@@ -22,7 +22,6 @@ string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 
 
 # Print out lots of info for the user
-message(STATUS "MPI C Compiler:         ${MPI_C_COMPILER}")
 message(STATUS "MPI CXX Compiler:       ${MPI_CXX_COMPILER}")
 message(STATUS "MPI CXX Compile Flags:  ${MPI_CXX_COMPILE_FLAGS}")
 message(STATUS "MPI CXX Link Flags:     ${MPI_CXX_LINK_FLAGS}")
@@ -50,7 +49,7 @@ set_target_properties(pulsar PROPERTIES
      INTERFACE_INCLUDE_DIRECTORIES "${PULSAR_PREFIX}/include")
 
 # Main dependencies (mark as system includes)
-list(APPEND PULSAR_CXX_INCLUDES "${EIGEN3_INCLUDE_DIR}" "${MPI_CXX_INCLUDE_PATH}")
+list(APPEND PULSAR_CXX_INCLUDES "${EIGEN3_INCLUDE_DIR}" "${MPI_CXX_INCLUDE_PATH}" "${PULSAR_PREFIX}/include")
 
 # INTERFACE_SYSTEM_INCLUDE_DIRECTORIES only marks them as system, wo
 # we have to have to add it as a normal include directory, too
@@ -80,7 +79,6 @@ set(PULSAR_TESTING_PATH "${PULSAR_PREFIX}/lib/pulsar/modules/pulsar/testing")
 set(PULSAR_BIN_PATH "${PULSAR_PREFIX}/bin")
 
 set(PULSAR_RUNTEST "${PULSAR_TESTING_PATH}/RunTest.py")
-set(PULSAR_RUN "${PULSAR_BIN_PATH}/run_pulsar.sh")
 
 #######################################
 # Include the macros for testing

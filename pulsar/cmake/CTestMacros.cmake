@@ -4,9 +4,9 @@ SET(CTEST_BINARY_DIRECTORY "${CMAKE_INSTALL_DIR}")
 #Macro for running a test via Pulsar's RunTest script
 function(pulsar_runtest test_name test_path)
   add_test(NAME ${test_name}
-      COMMAND ${PULSAR_RUN} ${PYTHON_EXECUTABLE} ${PULSAR_RUNTEST} ${test_path} ${STAGE_DIR}/modules
-        WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}
-        )
+      COMMAND ${PYTHON_EXECUTABLE} ${PULSAR_RUNTEST} ${test_path} ${STAGE_DIR}/modules
+      WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}
+  )
 
 endfunction()
 

@@ -104,6 +104,7 @@ list(APPEND PULSAR_CORE_FLAGS ${MPI_CXX_COMPILE_FLAGS})
 # Libraries and link flags (including interface libraries)
 list(APPEND PULSAR_CORE_LINK_FLAGS
             ${MPI_CXX_LINK_FLAGS}
+            ${MPI_CXX_LIBRARIES}
             ${BerkeleyDB_LIBRARIES}
             pybind11::pybind11
             memwatch
@@ -115,9 +116,10 @@ list(APPEND PULSAR_CORE_LINK_FLAGS
 # Print out lots of info for the user
 message(STATUS "CMake build type:       ${CMAKE_BUILD_TYPE}")
 message(STATUS "CMake prefix path:      ${CMAKE_PREFIX_PATH}")
-message(STATUS "MPI CXX compiler:       ${MPI_CXX_COMPILER}")
-message(STATUS "MPI CXX compile flags:  ${MPI_CXX_COMPILE_FLAGS}")
-message(STATUS "MPI CXX link flags:     ${MPI_CXX_LINK_FLAGS}")
+message(STATUS "MPI compiler:           ${MPI_CXX_COMPILER}")
+message(STATUS "MPI compile flags:      ${MPI_CXX_COMPILE_FLAGS}")
+message(STATUS "MPI link flags:         ${MPI_CXX_LINK_FLAGS}")
+message(STATUS "MPI libraries:          ${MPI_CXX_LIBRARIES}")
 message(STATUS "Eigen3 includes:        ${EIGEN3_INCLUDE_DIR}")
 message(STATUS "BerkeleyDB includes:    ${BerkeleyDB_INCLUDE_DIRS}")
 message(STATUS "BerkeleyDB libraries    ${BerkeleyDB_LIBRARIES}")
@@ -158,6 +160,8 @@ add_library(pulsar_core MODULE ${PULSAR_CORE_FILE_LIST})
 target_compile_options(pulsar_core PRIVATE ${PULSAR_CORE_FLAGS})
 target_include_directories(pulsar_core PRIVATE ${PULSAR_CORE_INCLUDES})
 target_include_directories(pulsar_core SYSTEM PRIVATE ${PULSAR_CORE_SYSTEM_INCLUDES})
+set_property(TARGET pulsar_core PROPERTY SKIP_BUILD_RPATH True)
+set_property(TARGET pulsar_core PROPERTY SKIP_INSTALL_RPATH True)
 target_link_libraries(pulsar_core PRIVATE ${PULSAR_CORE_LINK_FLAGS})
 
 
@@ -174,9 +178,6 @@ install(FILES ${CMAKE_BINARY_DIR}/pulsarConfig.cmake DESTINATION share/cmake/pul
 
 # Install all python files (for all core modules)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION lib/pulsar/modules FILES_MATCHING PATTERN "*.py")
-
-# Helper binaries/scripts
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin/" DESTINATION bin USE_SOURCE_PERMISSIONS)
 
 # Install all headers (for all core modules)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION include FILES_MATCHING PATTERN "*.h")

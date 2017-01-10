@@ -1,14 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
-project(Pulsar CXX)
-enable_language(C) # For memwatch
-
+project(pulsar-superbuild CXX)
 
 include(ExternalProject)
-
-#####################################################
-# OPTIONS
-#####################################################
-set(PULSAR_BUILD_TYPE "" CACHE STRING "Build type for Pulsar (as opposed to all the external dependencies)")
 
 #####################################################
 # Some custom cmake Find* modules
@@ -27,24 +20,11 @@ set(CMAKE_CXX_STANDARD 14 CACHE STRING "Which C++ standard to use")
 
 
 ############################
-# Compiler
-############################
-# Find the MPI compiler by default and pass that to subprojects
-# This is because passing an empty MPI_CXX_COMPILER seems to disable
-# auto detection
-find_package(MPI REQUIRED)
-
-############################
 # Build type
 ############################
 # Default to Release if build type not specified
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
-endif()
-
-if(NOT PULSAR_BUILD_TYPE)
-    message(STATUS "PULSAR_BUILD_TYPE not specified. Using CMAKE_BUILD_TYPE (=${CMAKE_BUILD_TYPE})")
-    set(PULSAR_BUILD_TYPE ${CMAKE_BUILD_TYPE})
 endif()
 
 
@@ -56,21 +36,7 @@ endif()
 # (cmake makes it that way). Therefore it always begins
 # with a slash
 set(STAGE_DIR            "${CMAKE_BINARY_DIR}/stage")
-set(STAGE_INSTALL_PREFIX "${STAGE_DIR}${CMAKE_INSTALL_PREFIX}") 
-
-###############################################
-# Dependencies that we are capable of building
-###############################################
-include("external/pybind11.cmake")
-include("external/libtaskforce.cmake")
-include("external/bphash.cmake")
-include("external/bpprint.cmake")
-include("external/memwatch.cmake")
-
-# Where the core project should search for dependencies
-# We are installing the dependencies that we build ourselves in the
-# stage directory, so add that to the prefix path
-list(APPEND PULSAR_PREFIX_PATH ${STAGE_INSTALL_PREFIX} ${CMAKE_PREFIX_PATH}) 
+set(STAGE_INSTALL_PREFIX "${STAGE_DIR}${CMAKE_INSTALL_PREFIX}")
 
 #################################
 # Core Pulsar
@@ -78,45 +44,43 @@ list(APPEND PULSAR_PREFIX_PATH ${STAGE_INSTALL_PREFIX} ${CMAKE_PREFIX_PATH})
 ExternalProject_Add(pulsar
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pulsar
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-               -DCMAKE_BUILD_TYPE=${PULSAR_BUILD_TYPE}
+               -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
                -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
                -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
                -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
-               -DCMAKE_PREFIX_PATH=${PULSAR_PREFIX_PATH}
                -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
                -DEIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
                -Dpybind11_DIR=${pybind11_DIR}
                -Dlibtaskforce_DIR=${libtaskforce_DIR}
     BUILD_ALWAYS 1
     INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
-)
-add_dependencies(pulsar memwatch_external
-                        bphash_external
-                        bpprint_external
-                        pybind11_external
-                        libtaskforce_external
+    CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${CMAKE_PREFIX_PATH}
 )
 
 ####################
 # Pulsar core tests
 ####################
+# Where the core testing project should search for dependencies
+# Ie, the original CMAKE_PREFIX_PATH, plus the installation stage
+list(APPEND PULSAR_PREFIX_PATH ${STAGE_INSTALL_PREFIX} ${CMAKE_PREFIX_PATH})
+
 ExternalProject_Add(pulsar_test
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/test
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/test_stage
-               -DCMAKE_BUILD_TYPE=${PULSAR_BUILD_TYPE}
+               -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
                -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
                -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
                -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
                -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
-               -DCMAKE_PREFIX_PATH=${PULSAR_PREFIX_PATH}
                -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
                -DEIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
                -Dpybind11_DIR=${pybind11_DIR}
                -Dlibtaskforce_DIR=${libtaskforce_DIR}
     BUILD_ALWAYS 1
+    CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${PULSAR_PREFIX_PATH}
 )
 add_dependencies(pulsar_test pulsar)
 
