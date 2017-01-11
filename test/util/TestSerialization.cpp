@@ -51,12 +51,12 @@ TEST_SIMPLE(TestSerialization){
 
     pybind11::list a_list;
     a_list.append(pybind11::int_(1));
-    a_list.append(pybind11::float_(2.1));
-    pybind11::list copy_of_a_list(a_list);
+    a_list.append(pybind11::int_(2));
+    list<int> c_list=a_list.cast<list<int>>();
     ByteArray serialized_python=to_byte_array(a_list);
-    using from_byte_t=pybind11::list(*)(const ByteArray&);
-    tester.test_return("Python serialized/deserialized correctly",true,copy_of_a_list,
-        static_cast<from_byte_t>(from_byte_array<pybind11::list>),serialized_python);
+    pybind11::list b_list=from_byte_array<pybind11::list>(serialized_python);
+
+    tester.test_equal("Python serialized/deserialized correctly",c_list,b_list.cast<list<int>>());
 
     tester.test_equal("Can serialize a pybind11 object",true,SerializeCheck<pybind11::object>::value);
     tester.test_equal("Can serialize shared_ptr",true,SerializeCheck<shared_ptr<double>>::value);
