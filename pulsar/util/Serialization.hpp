@@ -23,6 +23,7 @@
 
 #include "pulsar/util/Serialization_fwd.hpp" // for ByteArray
 #include "pulsar/util/SerializationArchives.hpp"
+#include "pulsar/util/Pybind11.hpp"
 
 #define DECLARE_SERIALIZATION_FRIENDS \
     friend class cereal::access; \
@@ -31,6 +32,36 @@
 
 //! \todo There is an extra copy that in to_byte_array (ie, data -> sstream -> vector).
 //        This could be fixed with a custom stream buffer that writes to a std::vector
+
+namespace pybind11{
+
+///Serializes a pybind11 object via the PyObject* pointer
+template<typename Archive>
+void save(Archive& ar, const pybind11::object & pyob)
+{
+  pybind11::object pickle=pybind11::module::import("pickle");
+  pybind11::function dumps=pybind11::getattr(pickle,"dumps");
+  pybind11::object as_string=dumps(pyob);
+  std::string real_string=as_string.cast<std::string>();
+  ar(real_string);
+}
+
+///Deserializes a pybind11 object via the PyObject* pointer
+template<typename Archive>
+void load(Archive & ar,pybind11::object & pyob)
+{
+    std::string real_string;
+    {
+        ar(real_string);
+    }
+    pybind11::object pickle=pybind11::module::import("pickle");
+    pybind11::function loads=getattr(pickle,"loads");
+    pybind11::bytes py_bytes(real_string);
+    pyob=loads(py_bytes);
+}
+
+}//End namespace pybind11
+
 
 namespace pulsar{
 
@@ -125,7 +156,6 @@ struct SerializeCheck<std::set<T>> : public SerializeCheck<T> { };
 template<typename T, typename V>
 struct SerializeCheck<std::map<T, V>> : public std::integral_constant<bool, SerializeCheck<T>::value &&
                                                                              SerializeCheck<V>::value> { };
-
 
 } // close namespace pulsar
 

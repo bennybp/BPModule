@@ -55,10 +55,11 @@ class CacheMap
         virtual ~CacheMap(void) = default;
 
 
+        //std::mutex has no default move or copy operator so can't default
         CacheMap(const CacheMap &)             = delete;
-        CacheMap(CacheMap &&)                  = default;
+        CacheMap(CacheMap &&)                  = delete;
         CacheMap & operator=(const CacheMap &) = delete;
-        CacheMap & operator=(CacheMap &&)      = default;
+        CacheMap & operator=(CacheMap &&)      = delete;
 
 
         /*! \brief Obtain all of the unique keys contained in this object

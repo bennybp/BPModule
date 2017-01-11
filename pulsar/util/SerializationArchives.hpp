@@ -25,8 +25,17 @@ namespace detail {
  *
  * This provides the common functionality for data storage in Pulsar.
  * Data can be serialized to/unserialized from objects derived from this
+ *
+ * The class is templated on the archive type in case we want to ever use some
+ * of Cereal's other archives (such as JSON or XML).
+ *
+ * \param[in] STREAM the type of std stream to use as the buffer
+ * \param[in] InArchive the cereal input archive type (default: BinaryInputArchive)
+ * \param[in] OutArchive the cereal output archive type (default: BinaryOutputArchive)
  */
-template<typename STREAM>
+template<typename STREAM,
+         typename InArchive=cereal::BinaryInputArchive,
+         typename OutArchive=cereal::BinaryOutputArchive>
 class StdStreamArchive
 {
     public:
@@ -47,7 +56,7 @@ class StdStreamArchive
             serializing_ = true;
             Reset_();
 
-            oarchive_ = std::unique_ptr<cereal::BinaryOutputArchive>(new cereal::BinaryOutputArchive(stream_));
+            oarchive_ = std::unique_ptr<OutArchive>(new OutArchive(stream_));
         }
 
 
@@ -111,7 +120,7 @@ class StdStreamArchive
             unserializing_ = true;
             Reset_();
 
-            iarchive_ = std::unique_ptr<cereal::BinaryInputArchive>(new cereal::BinaryInputArchive(stream_));
+            iarchive_ = std::unique_ptr<InArchive>(new InArchive(stream_));
         }
 
 
@@ -228,8 +237,8 @@ class StdStreamArchive
 
 
     private:
-        std::unique_ptr<cereal::BinaryInputArchive> iarchive_;
-        std::unique_ptr<cereal::BinaryOutputArchive> oarchive_;
+        std::unique_ptr<InArchive> iarchive_;
+        std::unique_ptr<OutArchive> oarchive_;
 
         void Reset_(void)
         {

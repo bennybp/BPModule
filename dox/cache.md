@@ -231,6 +231,39 @@ mychk.load_local_cache(mm)
 mychk.load_global_cache(mm)
 ~~~
 
+## Deep-Dark Internals of the Cache (*i.e.* How it actually works)
+
+The innerworkings of the cache rely on a mixture of templates and
+serialization to deal with objects of arbitrary type.  When an object is
+inserted into the cache it is converted into a `CacheMapEntry_` (which is just
+a wrapper around a `GenericHolder<T>` instance and its associated policy).
+`GenericHolder<T>` derives from `GenericBase`, which defines an interface that
+will interact with the data in the holder in a serialized manner (*i.e.* if the
+data is not serializable much of this interface is not available to it and
+calling many of these functions will yield runtime errors).  When a user calls
+`CacheMap::get` the `GenericBase` pointer is dynamically cast to
+`GenericHolder<T>` if the cast succeeds the data is still in its input type
+(*i.e.* it has not been serialized) and returns.  If the cast fails, the data is
+presumed to be serialized and a dynamic cast to the serialized form is
+attempted.  If that cast succeeds the data is deserialized and returned to the
+user, if it fails you get a null pointer.
+
+So that's all (relatively) straightforward the magic comes in with the
+serialization.  There's two scenarios in which your data gets serialized.  The
+first arises when your data is globally available, but not in your local cache.
+In this case, the data is serialized so that it can be sent via MPI.  It then
+arrives in your local cache serialized (and is only unserialized if you ask for
+it to be).  The other scenario arises when data is checkpointed.  To checkpoint
+data the data is serialized and dumped to disk, when the cache is reloaded the
+serialized data is then stored in the cache in a serialized form (again it is
+only unserialized with a `CacheMap::get` call).
+
+As the last paragraph suggests serialization is the key to the two cool features
+of Pulsar.  Both features will ignore non-serializable data (checkpointing will
+not write it to disk and the distributed cache will not send it, forcing you to
+recompute it).  Check out [this](@ref serialization) article on serialization
+for more details, particularly as it relates to Pulsar.
+
 
 
 
