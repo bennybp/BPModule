@@ -9,6 +9,7 @@ INPUT+=  dox/basic.md \
          dox/modulebasics.md \
          dox/options.md \
          dox/philosophy.md \
+         dox/serialization.md \
          dox/shared.md \
          dox/printing.md \
          dox/python_wrapping.md \
