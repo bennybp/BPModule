@@ -40,8 +40,8 @@ template<typename Archive>
 void save(Archive& ar, const pybind11::object & pyob)
 {
   pybind11::object pickle=pybind11::module::import("pickle");
-  pybind11::function dumps=pybind11::getattr(pickle,"dumps");
-  pybind11::object as_string=dumps(pyob);
+  pybind11::object dumps=pybind11::getattr(pickle,"dumps");
+  pybind11::object as_string=dumps(pyob,2);
   std::string real_string=as_string.cast<std::string>();
   ar(real_string);
 }
@@ -55,7 +55,7 @@ void load(Archive & ar,pybind11::object & pyob)
         ar(real_string);
     }
     pybind11::object pickle=pybind11::module::import("pickle");
-    pybind11::function loads=getattr(pickle,"loads");
+    pybind11::object loads=getattr(pickle,"loads");
     pybind11::bytes py_bytes(real_string);
     pyob=loads(py_bytes);
 }
