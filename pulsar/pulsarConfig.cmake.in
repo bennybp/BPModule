@@ -21,64 +21,77 @@ endforeach()
 string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 
 
-# Print out lots of info for the user
-message(STATUS "MPI CXX Compiler:       ${MPI_CXX_COMPILER}")
-message(STATUS "MPI CXX Compile Flags:  ${MPI_CXX_COMPILE_FLAGS}")
-message(STATUS "MPI CXX Link Flags:     ${MPI_CXX_LINK_FLAGS}")
-message(STATUS "Eigen3 includes:        ${EIGEN3_INCLUDE_DIR}")
-message(STATUS "BerkeleyDB includes:    ${BerkeleyDB_INCLUDE_DIRS}")
-message(STATUS "BerkeleyDB libraries    ${BerkeleyDB_LIBRARIES}")
-message(STATUS "Python executable:      ${PYTHON_EXECUTABLE}")
-message(STATUS "Python version:         ${PYTHONLIBS_VERSION_STRING}")
-message(STATUS "Pybind11 path:          ${pybind11_DIR}")
-message(STATUS "LibTaskForce path:      ${libtaskforce_DIR}")
-message(STATUS "BPHash path:            ${bphash_DIR}")
-message(STATUS "BPPrint path:           ${bpprint_DIR}")
-message(STATUS "Memwatch:               ${memwatch_DIR}")
-message(STATUS "CMake prefix path:      ${CMAKE_PREFIX_PATH}")
-
-
 # Create the target to link against
 add_library(pulsar INTERFACE IMPORTED)
 
 #######################################
 # Add the various include directories
 #######################################
+
 # Main pulsar headers
-set_target_properties(pulsar PROPERTIES
-     INTERFACE_INCLUDE_DIRECTORIES "${PULSAR_PREFIX}/include")
+list(APPEND PULSAR_CORE_INCLUDES "${PULSAR_PREFIX}/include")
 
-# Main dependencies (mark as system includes)
-list(APPEND PULSAR_CXX_INCLUDES "${EIGEN3_INCLUDE_DIR}" "${MPI_CXX_INCLUDE_PATH}" "${PULSAR_PREFIX}/include")
+# Include directories of dependencies (marked as system includes)
+list(APPEND PULSAR_CORE_SYSTEM_INCLUDES
+            ${MPI_CXX_INCLUDE_PATH}
+            ${EIGEN3_INCLUDE_DIR}
+            ${BerkeleyDB_INCLUDE_DIR}
+)
 
-# INTERFACE_SYSTEM_INCLUDE_DIRECTORIES only marks them as system, wo
-# we have to have to add it as a normal include directory, too
-set_target_properties(pulsar PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${PULSAR_CXX_INCLUDES}")
-set_target_properties(pulsar PROPERTIES
-    INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${PULSAR_CXX_INCLUDES}")
+
+
 
 #######################################
 # Interface libraries to link to
 #######################################
-list(APPEND PULSAR_LINK_LIBRARIES bphash
-                                  bpprint
-                                  memwatch
-                                  pybind11::pybind11
-                                  libtaskforce 
-                                  ${MPI_CXX_LINK_FLAGS}
+list(APPEND PULSAR_CORE_LINK_FLAGS
+            bphash
+            bpprint
+            memwatch
+            pybind11::pybind11
+            libtaskforce
+            ${MPI_CXX_LINK_FLAGS}
 )
 
+
+# Print out lots of info for the user
+message(STATUS "MPI compiler:           ${MPI_CXX_COMPILER}")
+message(STATUS "MPI compile flags:      ${MPI_CXX_COMPILE_FLAGS}")
+message(STATUS "MPI link flags:         ${MPI_CXX_LINK_FLAGS}")
+message(STATUS "MPI libraries:          ${MPI_CXX_LIBRARIES}")
+message(STATUS "Eigen3 includes:        ${EIGEN3_INCLUDE_DIR}")
+message(STATUS "BerkeleyDB includes:    ${BerkeleyDB_INCLUDE_DIRS}")
+message(STATUS "BerkeleyDB libraries    ${BerkeleyDB_LIBRARIES}")
+message(STATUS "Python executable:      ${PYTHON_EXECUTABLE}")
+message(STATUS "Python version:         ${PYTHON_VERSION_STRING}")
+message(STATUS "Pybind11 path:          ${pybind11_DIR}")
+message(STATUS "LibTaskForce path:      ${libtaskforce_DIR}")
+message(STATUS "BPHash path:            ${bphash_DIR}")
+message(STATUS "BPPrint path:           ${bpprint_DIR}")
+message(STATUS "Memwatch path:          ${memwatch_DIR}")
+message(STATUS "Pulsar includes:        ${PULSAR_CORE_INCLUDES}")
+message(STATUS "Pulsar system includes: ${PULSAR_CORE_SYSTEM_INCLUDES}")
+message(STATUS "Pulsar link flags:      ${PULSAR_CORE_LINK_FLAGS}")
+
+
+######################################################
+# Actually set the pulsar core interface properties
+######################################################
+# NOTE: INTERFACE_SYSTEM_INCLUDE_DIRECTORIES only marks them as system, so
+# we have to have to add it as a normal include directory, too
+list(APPEND PULSAR_CORE_INCLUDES ${PULSAR_CORE_SYSTEM_INCLUDES})
 set_target_properties(pulsar PROPERTIES
-    INTERFACE_LINK_LIBRARIES "${PULSAR_LINK_LIBRARIES}")
+    INTERFACE_INCLUDE_DIRECTORIES "${PULSAR_CORE_INCLUDES}")
+set_target_properties(pulsar PROPERTIES
+    INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${PULSAR_CORE_SYSTEM_INCLUDES}")
+set_target_properties(pulsar PROPERTIES
+    INTERFACE_LINK_LIBRARIES "${PULSAR_CORE_LINK_FLAGS}")
 
 #######################################
 # Other helpful variables
 #######################################
-set(PULSAR_TESTING_PATH "${PULSAR_PREFIX}/lib/pulsar/modules/pulsar/testing")
 set(PULSAR_BIN_PATH "${PULSAR_PREFIX}/bin")
-
-set(PULSAR_RUNTEST "${PULSAR_TESTING_PATH}/RunTest.py")
+set(PULSAR_RUNTEST "${PULSAR_BIN_PATH}/pulsar_runtest.py")
 
 #######################################
 # Include the macros for testing

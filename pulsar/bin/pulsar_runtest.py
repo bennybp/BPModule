@@ -19,28 +19,29 @@ import traceback
 from importlib.machinery import SourceFileLoader, ExtensionFileLoader
 
 # Import pulsar - slightly tricky
-# This file resides in <install_path>/modules/pulsar/testing.
-# So we add our grandparent to the python path so we can import pulsar
+# This file resides in <install_path>/bin
+# So we add the corresponding lib path to the python path
+# so we can import the pulsar core package
 thispath = os.path.dirname(os.path.realpath(__file__))
 parent = os.path.dirname(thispath)
-gparent = os.path.dirname(parent)
-sys.path.insert(0, gparent)
+libpath = os.path.join(parent, "lib", "pulsar", "modules")
+sys.path.insert(0, libpath)
 
 import pulsar
 
 
 # Check for the right arguments
-if len(sys.argv) != 2 and len(sys.argv) != 3:
+if len(sys.argv) < 2:
   print("Usage: RunTest.py testfile [additional python paths]")
-  raise RuntimeError("Error - one (or optionally 2) arguments are required")
+  raise RuntimeError("Error - at least one argument required")
   quit(-1)
 
 # Manually import the test file via the full path
 # Add the file's directory to the python path
 full_path = sys.argv[1]
 
-if len(sys.argv)==3:
-    sys.path.insert(0,sys.argv[2])
+if len(sys.argv) > 2:
+    sys.path = sys.argv + sys.path
 
 if not os.path.isfile(full_path):
   raise RuntimeError("Error - path \"{}\" is not a file".format(full_path))
@@ -51,11 +52,12 @@ test_name, test_ext = os.path.splitext(test_file)
 
 print("---------------------------------------------------")
 print(" Test information")
-print("  full_path: {}".format(full_path))
-print("  test_path: {}".format(test_path))
-print("  test_file: {}".format(test_file))
-print("  test_name: {}".format(test_name))
-print("   test_ext: {}".format(test_ext))
+print("     full_path: {}".format(full_path))
+print("     test_path: {}".format(test_path))
+print("     test_file: {}".format(test_file))
+print("     test_name: {}".format(test_name))
+print("      test_ext: {}".format(test_ext))
+print("  python paths: {}".format(" ".join(sys.path)))
 print("---------------------------------------------------")
 sys.stdout.flush()
 
@@ -75,8 +77,6 @@ if test_ext == ".py":
   m = SourceFileLoader(test_name, full_path).load_module()
 else:
   m = ExtensionFileLoader(test_name, full_path).load_module()
-
-
 
 
 # Actually run the test, watching for exceptions

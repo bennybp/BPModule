@@ -45,6 +45,7 @@ endforeach()
 # For some reason, this sometimes has a leading whitespace
 string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 
+
 ###################################################################
 # Compilation flags
 # Compile with many warnings enabled, but selectively
@@ -92,7 +93,6 @@ list(APPEND PULSAR_CORE_INCLUDES ${PULSAR_CORE_PARENT_DIR})
 
 # External dependencies (mark as system includes)
 list(APPEND PULSAR_CORE_SYSTEM_INCLUDES
-            ${PULSAR_CORE_PYTHON_INCLUDE_DIRS}
             ${MPI_CXX_INCLUDE_PATH}
             ${EIGEN3_INCLUDE_DIR}
             ${BerkeleyDB_INCLUDE_DIR}
@@ -116,6 +116,7 @@ list(APPEND PULSAR_CORE_LINK_FLAGS
 # Print out lots of info for the user
 message(STATUS "CMake build type:       ${CMAKE_BUILD_TYPE}")
 message(STATUS "CMake prefix path:      ${CMAKE_PREFIX_PATH}")
+message(STATUS "CMake install rpath:    ${CMAKE_INSTALL_RPATH}")
 message(STATUS "MPI compiler:           ${MPI_CXX_COMPILER}")
 message(STATUS "MPI compile flags:      ${MPI_CXX_COMPILE_FLAGS}")
 message(STATUS "MPI link flags:         ${MPI_CXX_LINK_FLAGS}")
@@ -160,8 +161,6 @@ add_library(pulsar_core MODULE ${PULSAR_CORE_FILE_LIST})
 target_compile_options(pulsar_core PRIVATE ${PULSAR_CORE_FLAGS})
 target_include_directories(pulsar_core PRIVATE ${PULSAR_CORE_INCLUDES})
 target_include_directories(pulsar_core SYSTEM PRIVATE ${PULSAR_CORE_SYSTEM_INCLUDES})
-set_property(TARGET pulsar_core PROPERTY SKIP_BUILD_RPATH True)
-set_property(TARGET pulsar_core PROPERTY SKIP_INSTALL_RPATH True)
 target_link_libraries(pulsar_core PRIVATE ${PULSAR_CORE_LINK_FLAGS})
 
 
@@ -174,14 +173,26 @@ install(TARGETS pulsar_core
 
 # The CMake configuration file
 configure_file("pulsarConfig.cmake.in" pulsarConfig.cmake @ONLY)
-install(FILES ${CMAKE_BINARY_DIR}/pulsarConfig.cmake DESTINATION share/cmake/pulsar)
+install(FILES ${CMAKE_BINARY_DIR}/pulsarConfig.cmake
+        DESTINATION share/cmake/pulsar)
 
-# Install all python files (for all core modules)
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION lib/pulsar/modules FILES_MATCHING PATTERN "*.py")
+# Install the bin directory (helper scripts, etc)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin/"
+        DESTINATION bin)
+
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        DESTINATION lib/pulsar/modules
+        FILES_MATCHING
+        REGEX ".*\.py$"
+        PATTERN bin EXCLUDE)
 
 # Install all headers (for all core modules)
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION include FILES_MATCHING PATTERN "*.h")
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" DESTINATION include FILES_MATCHING PATTERN "*.hpp")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        DESTINATION include
+        FILES_MATCHING
+        REGEX ".*\.h(pp)?$"
+        PATTERN bin EXCLUDE)
 
 # Install helper cmake scripts
-install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/cmake/" DESTINATION share/cmake/pulsar)
+install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/cmake/"
+        DESTINATION share/cmake/pulsar)

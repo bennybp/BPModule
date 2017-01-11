@@ -6,14 +6,16 @@ set(TESTMODULES_FILES creator.cpp)
 
 set (TESTMODULES_PYFILES creator.py TestPyModules.py)
 
-
 # We only need this cpp file - all the rest is in the header
 add_library(testmodules MODULE creator.cpp)
 target_link_libraries(testmodules testmodules_dynlib
                                   testmodules_staticlib
                                   pulsar
                      )
-set_target_properties(testmodules PROPERTIES INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/testmodules)
+
+# Make sure testmodules can find the dynlib library
+set_property(TARGET testmodules
+             PROPERTY INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/testmodules)
 
 install(TARGETS testmodules LIBRARY DESTINATION testmodules
                             RUNTIME DESTINATION testmodules)

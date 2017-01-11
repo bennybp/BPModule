@@ -51,12 +51,10 @@ ExternalProject_Add(pulsar
                -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
                -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
                -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
-               -DEIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
-               -Dpybind11_DIR=${pybind11_DIR}
-               -Dlibtaskforce_DIR=${libtaskforce_DIR}
     BUILD_ALWAYS 1
     INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
     CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${CMAKE_PREFIX_PATH}
+                     -DCMAKE_INSTALL_RPATH:LIST=${CMAKE_INSTALL_RPATH}
 )
 
 ####################
@@ -76,11 +74,9 @@ ExternalProject_Add(pulsar_test
                -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
                -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
                -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
-               -DEIGEN3_INCLUDE_DIR=${EIGEN3_INCLUDE_DIR}
-               -Dpybind11_DIR=${pybind11_DIR}
-               -Dlibtaskforce_DIR=${libtaskforce_DIR}
     BUILD_ALWAYS 1
     CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${PULSAR_PREFIX_PATH}
+                     -DCMAKE_INSTALL_RPATH:LIST=${CMAKE_INSTALL_RPATH}
 )
 add_dependencies(pulsar_test pulsar)
 
