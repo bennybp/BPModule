@@ -63,12 +63,12 @@ public:
         {
             print_global_debug("Caught exception in test\n");
             print_global_debug(ex.what());
-            success = false;
+            success = !should_pass;
         }
         catch(...)
         {
             print_global_debug("Caught unknown exception in test\n");
-            success = false;
+            success = !should_pass;
         }
 
         test(desc, success);

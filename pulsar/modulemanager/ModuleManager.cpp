@@ -202,6 +202,7 @@ void ModuleManager::enable_debug_all(bool debug) noexcept
 }
 
 
+
 /////////////////////////////////////////
 // Module Loading
 /////////////////////////////////////////
@@ -227,7 +228,11 @@ void ModuleManager::load_module_from_minfo(const ModuleInfo & minfo, const std::
 
     // may throw an exception. Exception should be a PulsarException
     const ModuleCreationFuncs & mcf = loadhandlers_.at(minfo.type)->load_supermodule(minfo.path);
+    load_module_from_mcf(minfo,modulekey,mcf);
+}
 
+void ModuleManager::load_module_from_mcf(const ModuleInfo& minfo, const std::string& modulekey, const ModuleCreationFuncs& mcf)
+{
     // See if this supermodule actually create a module with this name
     if(!mcf.has_creator(minfo.name))
         throw PulsarException("Creators from this supermodule cannot create a module with this name",
@@ -242,8 +247,6 @@ void ModuleManager::load_module_from_minfo(const ModuleInfo & minfo, const std::
     se.ncalled = 0;
     store_.emplace(modulekey, std::move(se));
 }
-
-
 
 /////////////////////////////////////////
 // Module Creation
@@ -387,16 +390,6 @@ void ModuleManager::change_option_py(const std::string & modulekey, const std::s
         ex.append_info("modulekey", modulekey);
         throw;
     }
-}
-
-
-pybind11::object copy_key_change_options_py(
-        const std::string& modulekey, ID_t parentid,ModuleManager& mm,
-        const std::map<std::string,pybind11::object>& options){
-    std::string temp_name=mm.generate_unique_key();
-    mm.duplicate_key(modulekey,temp_name);
-    for(auto i:options)mm.change_option_py(temp_name,i.first,i.second);
-    return mm.get_module_py(temp_name,parentid);
 }
 
 
