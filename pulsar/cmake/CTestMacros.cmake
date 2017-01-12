@@ -10,7 +10,15 @@ function(pulsar_runtest test_name test_path)
 
 endfunction()
 
-# Macro for defining a python test
+#Macro for building a library that will be used for testing
+function(testing_library dir lib_name)
+    add_library(${lib_name} MODULE ${lib_name}.cpp)
+    target_include_directories(${lib_name} PRIVATE ${PROJECT_SOURCE_DIR})
+    target_link_libraries(${lib_name} PRIVATE pulsar)
+    install(TARGETS ${lib_name} DESTINATION ${dir})
+endfunction()
+
+#Macro for defining a python test
 function(pulsar_py_test dir test_name)
   install(FILES ${test_name}.py DESTINATION ${dir})
   set(${test_name}_PY_PATH ${CMAKE_INSTALL_PREFIX}/${dir}/${test_name}.py)
@@ -19,12 +27,8 @@ endfunction()
 
 # Macro for defining a C++ test
 function(pulsar_cxx_test dir test_name)
-  add_library(${test_name} MODULE ${test_name}.cpp)
-  target_include_directories(${test_name} PRIVATE ${PROJECT_SOURCE_DIR})
-  target_link_libraries(${test_name} PRIVATE pulsar)
-  install(TARGETS ${test_name} DESTINATION ${dir})
-  set(${test_name}_CPP_PATH ${CMAKE_INSTALL_PREFIX}/${dir}/$<TARGET_FILE_NAME:${test_name}>)
-  pulsar_runtest(${test_name}_CPP ${${test_name}_CPP_PATH} ${ARGN})
+  testing_library(${dir} ${test_name})
+  pulsar_runtest(${test_name}_CPP $<TARGET_FILE:${test_name}>)
 endfunction()
 
 # Macro for defining both a Python and C++ test

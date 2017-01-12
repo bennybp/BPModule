@@ -24,8 +24,15 @@ TEST_SIMPLE(TestCacheData){
     cd1.set(key,v2,policy);
     pv1=cd1.get<Vector>(key,false);
     tester.test_equal("set overwrites",v2,*pv1);
+    CacheData cd2(move(cd1));
+    pv1=cd2.get<Vector>(key,false);
+    tester.test_equal("move constructor works",v2,*pv1);
+    cd1=move(cd2);
+    pv1=cd1.get<Vector>(key,false);
+    tester.test_equal("move assignment works",v2,*pv1);
     tester.test_member_call("erase",true,&CacheData::erase,&cd1,key);
     tester.test_member_return("erase works",true,0,&CacheData::size,&cd1);
+
 
     tester.print_results();
     return tester.nfailed();
