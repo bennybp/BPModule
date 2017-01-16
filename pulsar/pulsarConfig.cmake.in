@@ -12,6 +12,7 @@ get_filename_component(PULSAR_PREFIX "${PULSAR_PREFIX}" DIRECTORY)
 list(APPEND CMAKE_MODULE_PATH "${PULSAR_PREFIX}/share/cmake/pulsar")
 
 # Find the dependencies
+set(PYTHON_EXECUTABLE "@PYTHON_EXECUTABLE@")
 set(PULSAR_CORE_DEPS "@PULSAR_CORE_DEPS@")
 foreach(pkg ${PULSAR_CORE_DEPS})
     find_package(${pkg} REQUIRED)

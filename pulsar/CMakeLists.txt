@@ -35,6 +35,12 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 ######################################################
 # Dependencies
 ######################################################
+# Python (we make sure we have a recent enough version
+# here so we can bail early)
+set(Python_ADDITIONAL_VERSIONS "3.7;3.6;3.5;3.4;3.3")
+find_package(PythonInterp 3.3 REQUIRED)
+
+# Others
 list(APPEND PULSAR_CORE_DEPS 
             MPI BerkeleyDB Eigen3
             pybind11 memwatch bphash bpprint libtaskforce)

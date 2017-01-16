@@ -41,6 +41,16 @@ set(STAGE_INSTALL_PREFIX "${STAGE_DIR}${CMAKE_INSTALL_PREFIX}")
 #################################
 # Core Pulsar
 #################################
+# Some arguments to pass to the core project ExternalProject_Add
+# We do it this way since some find_package may have problems if
+# a variable is set, but only to a blank string
+# For example, find_package(PythonInterp) will fail
+# if PYTHON_EXECUTABLE is a blank string
+if(PYTHON_EXECUTABLE)
+    set(PULSAR_EXTRA_ARGS ${PULSAR_EXTRA_ARGS}
+                          -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE})
+endif()
+
 ExternalProject_Add(pulsar
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pulsar
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
@@ -50,7 +60,7 @@ ExternalProject_Add(pulsar
                -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
                -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
                -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
-               -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
+               ${PULSAR_EXTRA_ARGS} 
     BUILD_ALWAYS 1
     INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
     CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${CMAKE_PREFIX_PATH}
@@ -73,7 +83,6 @@ ExternalProject_Add(pulsar_test
                -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
                -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
                -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
-               -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
     BUILD_ALWAYS 1
     CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${PULSAR_PREFIX_PATH}
                      -DCMAKE_INSTALL_RPATH:LIST=${CMAKE_INSTALL_RPATH}
