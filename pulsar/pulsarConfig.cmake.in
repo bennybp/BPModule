@@ -39,9 +39,6 @@ list(APPEND PULSAR_CORE_SYSTEM_INCLUDES
             ${BerkeleyDB_INCLUDE_DIR}
 )
 
-
-
-
 #######################################
 # Interface libraries to link to
 #######################################

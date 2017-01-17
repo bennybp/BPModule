@@ -1,23 +1,19 @@
 cmake_minimum_required(VERSION 3.2)
 project(pulsar-test CXX)
 
-# Find the pulsar package
-# This may be in a superbuild staging area
-find_package(pulsar CONFIG REQUIRED)
-
-############################
-# C++14 by default
-############################
-set(CMAKE_CXX_EXTENSIONS False CACHE BOOL "Enable/Disable compiler-specific C++ extensions")
-set(CMAKE_CXX_STANDARD 14 CACHE STRING "Which C++ standard to use")
-
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_EXTENSIONS False)
 
 # CMake doesn't support Intel CXX standard until cmake 3.6
 if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
   if("${CMAKE_VERSION}" VERSION_LESS "3.6")
-      add_definitions(-std=c++${CMAKE_CXX_STANDARD})
+      add_compile_options(-std=c++${CMAKE_CXX_STANDARD})
   endif()
 endif()
+
+# Find the pulsar package
+# This may be in a superbuild staging area
+find_package(pulsar CONFIG REQUIRED)
 
 ##############################
 # Modules used by core tests

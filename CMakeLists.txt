@@ -11,20 +11,42 @@ include(ExternalProject)
 #####################################################
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/pulsar/cmake")
 
-
-############################
-# C++14 by default
-############################
-set(CMAKE_CXX_EXTENSIONS False CACHE BOOL "Enable/Disable compiler-specific C++ extensions")
-set(CMAKE_CXX_STANDARD 14 CACHE STRING "Which C++ standard to use")
-
-
 ############################
 # Build type
 ############################
 # Default to Release if build type not specified
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
+endif()
+
+###################################################################
+# Compilation flags
+# Compile with many warnings enabled, but selectively
+# disable useless ones
+###################################################################
+if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Intel")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w3")
+
+    #  2338  : switch statement does not have a default clause
+    #list(APPEND CMAKE_CXX_FLAGS "-ww2338")
+
+    # some useless remarks
+    #  1418  : external function definition with no prior declaration
+    #  1419  : external declaration in primary source file 
+    #   383  : value copied to temporary, reference to temporary used (generally ok in c++)
+    #   981  : operands are evaluated in unspecified order (generally ok in c++)
+    #   869  : parameter "XXX" was never referenced.
+    #          This is due to a bug in Intel before Intel 16 that causes this
+    #          remark to be printed for variadic templates
+    # 11074  : Inlining inhibited by limit max-size (etc)
+    # 11076  : To get full report use -qopt-report=4 -qopt-report-phase ipo
+    #   444  : destructor for base class .. not virtual (even warns for classes without virtual functions)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd1418 -wd1419 -wd383 -wd981 -wd869")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -wd11074 -wd11076 -wd444")
+elseif("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wfloat-equal -Wshadow")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wswitch-default -Wconversion")
 endif()
 
 
@@ -57,14 +79,12 @@ ExternalProject_Add(pulsar
                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
                -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-               -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-               -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
-               -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
                ${PULSAR_EXTRA_ARGS} 
     BUILD_ALWAYS 1
     INSTALL_COMMAND ${CMAKE_MAKE_PROGRAM} install DESTDIR=${STAGE_DIR}
     CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${CMAKE_PREFIX_PATH}
                      -DCMAKE_INSTALL_RPATH:LIST=${CMAKE_INSTALL_RPATH}
+                     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
 )
 
 ####################
@@ -80,12 +100,10 @@ ExternalProject_Add(pulsar_test
                -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
                -DMPI_CXX_COMPILER=${MPI_CXX_COMPILER}
                -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
-               -DCMAKE_CXX_FLAGS=${CMAKE_CXX_FLAGS}
-               -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
-               -DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}
     BUILD_ALWAYS 1
     CMAKE_CACHE_ARGS -DCMAKE_PREFIX_PATH:LIST=${PULSAR_PREFIX_PATH}
                      -DCMAKE_INSTALL_RPATH:LIST=${CMAKE_INSTALL_RPATH}
+                     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
 )
 add_dependencies(pulsar_test pulsar)
 
