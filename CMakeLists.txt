@@ -68,10 +68,15 @@ set(STAGE_INSTALL_PREFIX "${STAGE_DIR}${CMAKE_INSTALL_PREFIX}")
 # a variable is set, but only to a blank string
 # For example, find_package(PythonInterp) will fail
 # if PYTHON_EXECUTABLE is a blank string
-if(PYTHON_EXECUTABLE)
-    set(PULSAR_EXTRA_ARGS ${PULSAR_EXTRA_ARGS}
-                          -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE})
-endif()
+macro(ADD_EXTRA_ARG extra_arg arg_name)
+    if(${arg_name})
+        set(${extra_arg} ${${extra_arg}}
+                         -D${arg_name}=${${arg_name}})
+    endif()
+endmacro()
+
+ADD_EXTRA_ARG(PULSAR_EXTRA_ARGS PYTHON_EXECUTABLE)
+ADD_EXTRA_ARG(PULSAR_EXTRA_ARGS EIGEN3_INCLUDE_DIR)
 
 ExternalProject_Add(pulsar
     SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pulsar
