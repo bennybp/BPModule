@@ -70,7 +70,7 @@ list(APPEND PULSAR_CORE_LINK_FLAGS
             ${MPI_CXX_LINK_FLAGS}
             ${MPI_CXX_LIBRARIES}
             ${BerkeleyDB_LIBRARIES}
-            pybind11::pybind11
+            pybind11::module
             memwatch
             bphash
             bpprint
