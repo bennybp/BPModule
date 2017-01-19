@@ -3,7 +3,7 @@ import os
 
 class MyPyBase(psr.TestModule):
     def __init__(self,myid):
-        super(psr.TestModule,self).__init__(myid,"MyPyBase")
+        super(MyPyBase,self).__init__(myid)
     def run_test_(self):
         return
 
@@ -57,6 +57,9 @@ def run_test():
     cf.add_py_creator("Py Module",MyPyBase)
     minfo.name="Py Module"
     tester.test_call("add module from creation funcs",True,
-        mm.load_module_from_mcf,minfo,unq_key,cf)
+    mm.load_module_from_mcf,minfo,unq_key,cf)
+    mm.change_option(unq_key,opt_key,opt)
+    tester.test_call("can get module from creation funcs",True,mm.get_module,
+        unq_key,0)
     tester.print_results()
     return tester.nfailed()
