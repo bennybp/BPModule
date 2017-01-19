@@ -125,9 +125,11 @@ class ModuleManager : public std::enable_shared_from_this<ModuleManager>
             std::unique_ptr<detail::ModuleIMPLHolder> umbptr = create_module_(modulekey, parentid);
 
             if(!umbptr->IsType<T>())
+
                 throw PulsarException("Module for this key is not of the right type",
                                                        "modulekey", modulekey,
                                                        "expectedtype", demangle_cpp_type<T>());
+
 
             // create the ModulePtr type
             ModulePtr<T> mod(std::move(umbptr));
