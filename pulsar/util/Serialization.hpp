@@ -23,7 +23,7 @@
 
 #include "pulsar/util/Serialization_fwd.hpp" // for ByteArray
 #include "pulsar/util/SerializationArchives.hpp"
-#include "pulsar/util/Pybind11.hpp"
+#include "pulsar/util/PythonHelper.hpp"
 
 #define DECLARE_SERIALIZATION_FRIENDS \
     friend class cereal::access; \
@@ -37,27 +37,29 @@ namespace pybind11{
 
 ///Serializes a pybind11 object via the PyObject* pointer
 template<typename Archive>
-void save(Archive& ar, const pybind11::object & pyob)
+void save(Archive& ar, const object & pyob)
 {
-  pybind11::object pickle=pybind11::module::import("pickle");
-  pybind11::object dumps=pybind11::getattr(pickle,"dumps");
-  pybind11::object as_string=dumps(pyob,2);
+  if(!pulsar::is_pickleable(pyob))
+        throw pulsar::PulsarException("Object is not pickleable");
+  object pickle=module::import("pickle");
+  object dumps=getattr(pickle,"dumps");
+  object as_string=pulsar::call_py_func<object>(dumps,pyob,2);
   std::string real_string=as_string.cast<std::string>();
   ar(real_string);
 }
 
 ///Deserializes a pybind11 object via the PyObject* pointer
 template<typename Archive>
-void load(Archive & ar,pybind11::object & pyob)
+void load(Archive & ar,object & pyob)
 {
     std::string real_string;
     {
         ar(real_string);
     }
-    pybind11::object pickle=pybind11::module::import("pickle");
-    pybind11::object loads=getattr(pickle,"loads");
-    pybind11::bytes py_bytes(real_string);
-    pyob=loads(py_bytes);
+    object pickle=module::import("pickle");
+    object loads=getattr(pickle,"loads");
+    bytes py_bytes(real_string);
+    pyob=pulsar::call_py_func<object>(loads,py_bytes);
 }
 
 }//End namespace pybind11
