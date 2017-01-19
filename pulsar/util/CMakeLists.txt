@@ -6,6 +6,7 @@ set(PULSAR_UTIL_FILES
             Filesystem.cpp
             Time.cpp
             export.cpp
+            PythonHelper.cpp
 
             PARENT_SCOPE
    )
