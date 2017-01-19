@@ -24,10 +24,14 @@ namespace pulsar {
 class CacheData
 {
     public:
-        static const unsigned int NoPolicy;
-        static const unsigned int CheckpointLocal;
-        static const unsigned int CheckpointGlobal;
-        static const unsigned int DistributeGlobal;
+        enum CachePolicy : unsigned int
+        {
+            NoPolicy         = CacheMap::NoPolicy,
+            CheckpointLocal  = CacheMap::CheckpointLocal,
+            CheckpointGlobal = CacheMap::CheckpointGlobal,
+            DistributeGlobal = CacheMap::DistributeGlobal
+        };
+
 
         CacheData(CacheMap * parent_cmap, std::string module_key)
             : module_key_(module_key + "%%"),  // use %% as a separator

@@ -9,69 +9,96 @@
 #include <mpi.h>
 #include "pulsar/exception/PulsarException.hpp"
 #include "pulsar/parallel/Parallel.hpp"
-#include "pulsar/util/Cmdline.hpp"
+
+namespace {
+
+    /*! \brief This class adds RAII semantics to the MPI environment
+     *
+     * On destruction, an object of this class will clean up the
+     * MPI environment and call MPI_Finalize. It will only do this
+     * if it was responsible for calling MPI_Init, however.
+     */
+    struct EnvManager_
+    {
+        std::unique_ptr<LibTaskForce::HybridEnv> env;
+        bool initialized_by_me = false;
+
+        void initialize(size_t nthreads)
+        {
+            using namespace pulsar;
+
+            // is MPI already initialized?
+            int initialized;
+            MPI_Initialized(&initialized);
+
+            if(!initialized)
+            {
+                int provided;
+                MPI_Init_thread(nullptr, nullptr,
+                                MPI_THREAD_MULTIPLE, &provided);
+
+                if(provided!=MPI_THREAD_MULTIPLE)
+                    throw PulsarException("MPI does not support threading");
+
+                initialized_by_me = true;
+            }
+
+            env = std::make_unique<LibTaskForce::HybridEnv>(MPI_COMM_WORLD, nthreads);
+        }
+
+        void finalize(void)
+        {
+            env.reset();
+
+            // is MPI already initialized?
+            int initialized;
+            MPI_Initialized(&initialized);
+            if(initialized && initialized_by_me)
+            {
+                initialized_by_me = false;
+                MPI_Finalize();
+            }
+        }
+        
+        ~EnvManager_()
+        {
+            finalize();
+        }
+    };
+  
+    //! Global object for managing the MPI environment in Pulsar 
+    EnvManager_ envmanager_; 
+
+} // close anonymous namespace
 
 namespace pulsar{
 
-using Env_t=LibTaskForce::HybridEnv;
-static std::unique_ptr<Env_t> Env_;
- 
-const Env_t& get_env(){return *Env_;}
- 
 
-
-void parallel_initialize(size_t NThreads)
+const LibTaskForce::HybridEnv & get_env(void)
 {
-    int provided;
-    MPI_Init_thread(nullptr,nullptr,MPI_THREAD_MULTIPLE,&provided);
-
-    if(provided!=MPI_THREAD_MULTIPLE)
-        throw pulsar::PulsarException("MPI does not support threading");
-
-    Env_=std::unique_ptr<Env_t>(new Env_t(MPI_COMM_WORLD,NThreads));
-
-    std::cout << "Initialized process " << get_proc_id() << " of " << get_nproc() << "\n";
+    if(!envmanager_.env)
+        throw pulsar::PulsarException("Parallel environment not initialized");
+    return *(envmanager_.env);
 }
+ 
 
-
-void parallel_finalize(void)
+void parallel_initialize(size_t nthreads)
 {
-    ////////////////////////////////////////////////////////
-    // this may rarely be called if initialize hasn't been. But
-    // it is possible
-    ////////////////////////////////////////////////////////
-
-    // WARNING: Note that we can't do anything with Env_, etc. This is being
-    //          called from the dynamic module destructor, so those things might
-    //          not be around
-    //
-    //          We should be able to safely reset the environment though. The unique_ptr
-    //          should exist, but what it points to might not
-
-    int flag;
-    MPI_Initialized(&flag);
-    if(flag)
-    {
-        // Pulsar called MPI_Init, so it has to call MPI_Finalize
-        std::cout << "Finalizing pulsar MPI\n";
-        Env_.reset();
-        MPI_Finalize();
-    }
-    else
-        std::cout << "Not finalizing, since we haven't been initialized\n";
-
+    envmanager_.initialize(nthreads);
+    std::cout << "Initialized process " << get_proc_id()
+              << " of " << get_nproc() << "\n";
 }
 
 
 long get_proc_id(void)
 {
-    return static_cast<long>(Env_->comm().rank());
+    return static_cast<long>(get_env().comm().rank());
 }
 
 
 long get_nproc(void)
 {
-    return static_cast<long>(Env_->comm().nprocs());
+    return static_cast<long>(get_env().comm().nprocs());
 }
 
 } // close namespace pulsar

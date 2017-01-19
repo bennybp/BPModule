@@ -67,7 +67,6 @@ def initialize(argv,
   """
 
   # Output depends on MPI being initialized, so we do that first
-  set_cmdline(argv)
   pulsar_core.parallel_initialize(nthreads)
 
   create_global_output(outpath, outbase, use_stdout)
@@ -76,6 +75,14 @@ def initialize(argv,
   gout = get_global_output()
   gout.enable_debug(debug)
 
+  # Print startup info
+  memwatch_running = pulsar_core.memwatch_running()
+  if memwatch_running:
+      s = "Running"
+  else:
+      s = "NOT Running"
+
+  pulsar_core.print_global_output("Memwatch status: {}\n".format(s))
 
 
 def finalize():

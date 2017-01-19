@@ -1,3 +1,0 @@
-[submodule "external/libtaskforce/libtaskforce-source"]
-	path = external/libtaskforce/libtaskforce-source
-	url = https://github.com/ryanmrichard/LibTaskForce.git

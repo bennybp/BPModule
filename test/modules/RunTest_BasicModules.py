@@ -2,12 +2,6 @@ import os
 import sys
 import pulsar as psr
 
-# So we can find "testmodules"
-thispath = os.path.dirname(os.path.realpath(__file__))
-modpath = os.path.dirname(thispath)
-sys.path.insert(0, modpath)
-
-
 def run_test():
 
     tester = psr.PyTester("Basic Module Loading/Calling")

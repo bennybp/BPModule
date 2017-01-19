@@ -24,6 +24,7 @@ class Checkpoint;
 namespace pulsar {
 
 
+
 /*! Storage of cache data
  *
  * This contains all cache data for all modules. The key given to
@@ -40,14 +41,13 @@ class CacheMap
 {
     public:
 
-        //! \todo these are unsigned int rather than enum, since
-        //        we need to be able to combine them in python
-        //        (pybind11 won't be able to do bitwise OR, etc,
-        //        unless they are integers)
-        static constexpr const unsigned int NoPolicy         = 0;
-        static constexpr const unsigned int CheckpointLocal  = 1;
-        static constexpr const unsigned int CheckpointGlobal = 2;
-        static constexpr const unsigned int DistributeGlobal = 4;
+        enum CachePolicy : unsigned int
+        {
+             NoPolicy         = 0,
+             CheckpointLocal  = 1,
+             CheckpointGlobal = 2,
+             DistributeGlobal = 4
+        };
 
 
         CacheMap(void);
@@ -83,6 +83,7 @@ class CacheMap
          * \tparam T The type of the data
          *
          * \param [in] key The key to the data
+         * \param [in] use_distcache If not found locally should the global cache be searched?
          * \return A const referance to the data
          */
         template<typename T>

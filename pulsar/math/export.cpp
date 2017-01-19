@@ -18,12 +18,6 @@
 #include "pulsar/math/RegisterTensor.hpp"
 
 
-//declared in RegisterMathSet
-//!\todo - fix multiple definitions of this in pybind11
-//PYBIND11_DECLARE_HOLDER_TYPE(T,std::shared_ptr<T>);
-
-
-
 //! \todo Export exact casts? Or have the equivalent with python?
 
 namespace pulsar{

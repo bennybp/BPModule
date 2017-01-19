@@ -5,7 +5,6 @@
  */ 
 
 #include "pulsar/util/Pybind11.hpp"
-#include "pulsar/util/Cmdline.hpp"
 #include "pulsar/util/Memwatch.hpp"
 
 
@@ -13,10 +12,6 @@ namespace pulsar{
 
 void export_util(pybind11::module & m)
 {
-    // command line
-    m.def("set_cmdline", set_cmdline);
-    m.def("clear_cmdline", clear_cmdline);
-
     //////////////////////////
     // Memwatch
     //////////////////////////

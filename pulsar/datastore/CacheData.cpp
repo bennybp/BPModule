@@ -2,10 +2,6 @@
 
 
 namespace pulsar {
-const unsigned int CacheData::NoPolicy         = CacheMap::NoPolicy;
-const unsigned int CacheData::CheckpointLocal  = CacheMap::CheckpointLocal;
-const unsigned int CacheData::CheckpointGlobal = CacheMap::CheckpointGlobal;
-const unsigned int CacheData::DistributeGlobal = CacheMap::DistributeGlobal;
 
 std::set<std::string> CacheData::get_keys(void) const
 {

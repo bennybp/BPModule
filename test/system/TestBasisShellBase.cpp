@@ -33,21 +33,21 @@ TEST_SIMPLE(TestBasisShellBase)
     TEST_FXN("general n fxns valid", true, 6, FakeD.general_n_functions(0));
     TEST_FXN("general n fxns invalid", false, 6, FakeD.general_n_functions(99));
     TEST_FXN("get valid alpha", true, alpha[1], FakeD.alpha(1));
-    TEST_FXN("get invalid alpha", false, 0.4, FakeD.alpha(99));
+    //TEST_FXN("get invalid alpha", false, 0.4, FakeD.alpha(99));
     TEST_FXN("get valid coef", true, c[1], FakeD2.coef(0, 1));
-    TEST_FXN("get invalid coef", false, 0.2, FakeD2.coef(0, 99));
-    TEST_FXN("get invalid gen coef", false, 0.2, FakeD2.coef(99, 1));
+    //TEST_FXN("get invalid coef", false, 0.2, FakeD2.coef(0, 99));
+    //TEST_FXN("get invalid gen coef", false, 0.2, FakeD2.coef(99, 1));
     TEST_FXN("get non-const alpha ptr", true,alpha[1], FakeD.alpha_ptr()[1]);
     TEST_FXN("get const alpha ptr", true, alpha[1],
             static_cast<const BSI*>(&FakeD2)->alpha_ptr()[1]);
      
 
     TEST_FXN("get valid coef ptr", true, c[1], FakeD2.coef_ptr(0)[1]);
-    TEST_FXN("get invalid coef ptr", false, nullptr, FakeD2.coef_ptr(99));
+    //TEST_FXN("get invalid coef ptr", false, nullptr, FakeD2.coef_ptr(99));
     TEST_FXN("get valid const coef ptr", true, c[1], 
             static_cast<const BSI*>(&FakeD)->coef_ptr(0)[1]);
-    TEST_FXN("get invalid const coef ptr", false, nullptr, 
-            static_cast<const BSI*>(&FakeD)->coef_ptr(99));
+    //TEST_FXN("get invalid const coef ptr", false, nullptr, 
+    //        static_cast<const BSI*>(&FakeD)->coef_ptr(99));
     
     TEST_FXN("get all valid coef ptr", true, c[1], FakeD.all_coefs_ptr()[1]);
     TEST_FXN("get all valid const coef ptr", true,c[1], 

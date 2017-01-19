@@ -96,12 +96,27 @@ operations that we denote \f$G_i\mathcal{U}\f$, *i.e* the left coset of
 
 We now define a series of operators for the \f$\mu\f$-th irreducible
 representation of \f$\mathcal{G}\f$ as:
-\f$\widehat{P}^{\mu}=\frac{n_\mu}{g}\sum_{i=1}^{g}D^\mu(G_i)^{*}G_i\f$.  Because
+\f$\widehat{P}^{\mu}=\frac{n_\mu}{g}\sum_{i=1}^{g}\Gamma^\mu(G_i)^{*}G_i\f$.  Because
 the various \f$G_i\f$ are nothing more than rotations combined possibly with
-inversion it follows that \f$D^\mu_{ij}(G_k)=D^\mu_{ji}(G^{-1}_k)^*\f$, *i.e.*
+inversion it follows that \f$\Gamma^\mu_{ij}(G_k)=\Gamma^\mu_{ji}(G^{-1}_k)^*\f$, *i.e.*
 that the matrices are unitary.  Consequentially:
 \f[
-\widehat{P}^{\mu}_{ij}=\frac{n_\mu}{g}\sum_{k=1}^{g}D^\mu(G_k)^{*}_{ij}G_k
- =\frac{n_\mu}{g}\sum_{k=1}^{g}D^\mu(G_k^{-1})_{ji}\left(G_k^{-1}\right)^\dagger
+\widehat{P}^{\mu}_{ij}=\frac{n_\mu}{g}\sum_{k=1}^{g}\Gamma^\mu(G_k)^{*}_{ij}G_k
+ =\frac{n_\mu}{g}\sum_{k=1}^{g}\Gamma^\mu(G_k^{-1})_{ji}\left(G_k^\dagger\right)^\dagger
+ =\frac{n_\mu}{g}\sum_{k=1}^{g}\Gamma^\mu(G_k^\dagger)^{*}_{ji}\left(G_k^\dagger\right)^\dagger
  =\left(\widehat{P}^{\mu}_{ji}\right)^\dagger
 \f]
+
+
+The great orthogonality theorem tells us:
+\f[
+\sum_{i=1}^g\Gamma^{(\mu)}(G_i)_{kl}^*\Gamma^{(\nu)}(G_i)_{mn}=\delta_{\mu,\nu}\delta_{k,m}\delta_{l,n}\frac{g}{n_\mu}
+\f]
+where \f$n_\mu\f$ is the dimension of the \f$\mu\f$-th irrep.  Therefore:
+\f{eqnarray*}{
+\widehat{P}^{\mu}_{kl}\widehat{P}^{\nu}_{mn}=&\left[\frac{n_\mu}{g}\sum_{i=1}^{g}\Gamma^\mu(G_i)^{*}_{kl}G_i\right]
+                                              \left[\frac{n_\nu}{g}\sum_{j=1}^{g}\Gamma^\nu(G_j)^{*}_{mn}G_j\right]\\
+=&\frac{n_\mu n_\nu}{g^2}\sum_{i,j=1}^{g}\Gamma^\mu(G_i)^{*}_{kl}\Gamma^\mu(G_j)^{*}_{kl}G_iG_j\\
+=&\delta_{\mu,\nu}\delta_{l,m}\widehat{P}^{\mu}_{kn}
+\f}
+

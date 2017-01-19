@@ -4,7 +4,7 @@ INPUT+=  dox/basic.md \
          dox/documenting.md \
          dox/exceptions.md \
          dox/finitediff.md \
-         dox/graphcache.md \
+         dox/cache.md \
          dox/makingamodule.md \
          dox/modulebasics.md \
          dox/options.md \
