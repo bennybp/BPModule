@@ -103,7 +103,7 @@ void ModuleManager::duplicate_key(const std::string & modulekey, const std::stri
 
 std::string ModuleManager::generate_unique_key() const
 {
-    //! \todo still not guarenteed in multi-threaded contexts
+    //! \todo still not guaranteed in multi-threaded contexts
     std::lock_guard<std::mutex> l(mutex_);
     std::random_device r;
     std::default_random_engine e(r());
