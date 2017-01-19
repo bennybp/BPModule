@@ -24,9 +24,7 @@ TEST_SIMPLE(TestModuleManager){
     ModuleInfo minfo;
     string mod_name="my module",not_name="Not a module",opt_key="Option1";
     double opt=2.0;
-    void add_option(std::string key, OptionType opttype, bool required,
-                    const pybind11::object & validator, std::string help,
-                    const pybind11::object & def);
+
     minfo.options.add_option(opt_key,OptionType::Float,true,pybind11::none(),
                              "",pybind11::none());
     auto load_module=&ModuleManager::load_module_from_minfo;

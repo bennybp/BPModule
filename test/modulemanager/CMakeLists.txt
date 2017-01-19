@@ -1,3 +1,3 @@
 testing_library(modulemanager CXXModule)
 pulsar_test(modulemanager TestModuleCreationFuncs)
-pulsar_cxx_test(modulemanager TestModuleManager)
+pulsar_test(modulemanager TestModuleManager)
