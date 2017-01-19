@@ -38,7 +38,7 @@ TEST_SIMPLE(TestModuleManager){
     tester.test_member_call("Not a path",false,load_module,&mm,minfo,mod_name);
     char cwd[1026];
     getcwd(cwd, sizeof(cwd));
-    minfo.path=string(cwd)+"/test_stage/modulemanager/CXXModule.so";
+    minfo.path=string(cwd)+"/modulemanager/CXXModule.so";
     tester.test_member_call("No name",false,load_module,&mm,minfo,mod_name);
     minfo.name="C++ Module";
     tester.test_member_call("load_module",true,load_module,&mm,minfo,mod_name);
@@ -86,6 +86,9 @@ TEST_SIMPLE(TestModuleManager){
     minfo.name="C++ Module2";
     tester.test_member_call("add module from creation funcs",true,
                      &ModuleManager::load_module_from_mcf,&mm,minfo,unq_key,cf);
+    mm.change_option(unq_key,opt_key,opt);
+    tester.test_member_call("can get module from creation funcs",true,
+                     &ModuleManager::get_module<TestModule>,&mm,unq_key,0);
 
     tester.print_results();
     return tester.nfailed();

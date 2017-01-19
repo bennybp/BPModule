@@ -2,7 +2,7 @@ import pulsar as psr
 
 class MyPyBase(psr.ModuleBase):
     def __init__(self,myid):
-        super(psr.ModuleBase,self).__init__(myid,"MyPyBase")
+        super(MyPyBase,self).__init__(myid,"MyPyBase")
 
 
 def run_test():
