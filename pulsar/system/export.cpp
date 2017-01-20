@@ -7,6 +7,7 @@
 
 #include "pulsar/util/Pybind11.hpp"
 #include "pulsar/util/PythonHelper.hpp"
+#include "pulsar/util/Serialization.hpp"
 #include "pulsar/system/AMConvert.hpp"
 #include "pulsar/system/AtomicInfo.hpp"
 #include "pulsar/system/System.hpp"
@@ -273,6 +274,8 @@ void export_system(pybind11::module & m)
     .def("print", &Atom::print)
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
+    .def("__getstate__",[](const Atom &a){return __getstate__(a);})
+    .def("__setstate__",[](Atom &a,const pybind11::str& b){__setstate__(a,b);})
     ;
    
 

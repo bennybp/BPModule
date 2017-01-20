@@ -8,7 +8,7 @@ bool container_pickleable(const object& obj)
 {
     T tmp=obj.cast<T>();
     for(const auto& i:tmp)
-        if(!pulsar::is_pickleable(reinterpret_steal<object>(i)))
+        if(!pulsar::is_pickleable(reinterpret_borrow<object>(i)))
             return false;
     return true;
 }
@@ -47,14 +47,18 @@ bool is_pickleable(const object& obj)
         dict tmp=obj.cast<dict>();
         for(const auto& i:tmp)
         {
-            object o1=reinterpret_steal<object>(i.first),
-                   o2=reinterpret_steal<object>(i.second);
+            object o1=reinterpret_borrow<object>(i.first),
+                   o2=reinterpret_borrow<object>(i.second);
             if(!(is_pickleable(o1)||is_pickleable(o2)))
                 return false;
         }
         return true;
     }
-    return(has_attr(obj,"__getstate__") && has_attr(obj,"__setstate__"));
+    if(has_attr(obj,"__getstate__") && has_attr(obj,"__setstate__"))
+        return is_pickleable(call_py_func_attr<object>(obj,"__getstate__"));
+//    if(has_attr(obj,"__dict__"))
+//        return is_pickleable(call_py_func_attr<object>(obj,"__dict__"));
+    return false;
 }
 
 }//End namespace pulsar
