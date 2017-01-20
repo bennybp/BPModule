@@ -12,7 +12,6 @@
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/util/Mangle.hpp"
 
-
 namespace pulsar {
 
 

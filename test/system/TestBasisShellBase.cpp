@@ -17,77 +17,79 @@ TEST_SIMPLE(TestBasisShellBase)
     c({0.15432897, 0.53532814, 0.44463454}),c2;
     
     //Use tested BSI to test BSB class
-    BSI FakeD(cGTO, 2, 3, 1, alpha, c), 
-       FakeD2(sGTO, 2, 3, 1, alpha, c);
+    std::shared_ptr<BSB> pFakeD=std::make_shared<BSI>(cGTO, 2, 3, 1, alpha, c),
+                    pFakeD2=std::make_shared<BSI>(sGTO, 2, 3, 1, alpha, c);
+    BSB* FakeD=pFakeD.get(), *FakeD2=pFakeD2.get();
 
-    TEST_FXN("get type works", true, cGTO, FakeD.get_type());
-    TEST_FXN("get am works", true, 2, FakeD2.am());
-    TEST_FXN("number of prims", true, 3, FakeD2.n_primitives());
-    TEST_FXN("number of ceofs", true, 3, FakeD.n_coefficients());
-    TEST_FXN("number of gen contract", true, 1,FakeD2.n_general_contractions());
-    TEST_FXN("number of functions Cart", true, 6, FakeD.n_functions());
-    TEST_FXN("number of functions Spherical", true,5, FakeD2.n_functions());
-    TEST_FXN("is combined am", true, false, FakeD2.is_combined_am());
-    TEST_FXN("get valid general am", true, 2, FakeD.general_am(0));
-    TEST_FXN("get invalid general am", false, 3, FakeD.general_am(99));
-    TEST_FXN("general n fxns valid", true, 6, FakeD.general_n_functions(0));
-    TEST_FXN("general n fxns invalid", false, 6, FakeD.general_n_functions(99));
-    TEST_FXN("get valid alpha", true, alpha[1], FakeD.alpha(1));
-    //TEST_FXN("get invalid alpha", false, 0.4, FakeD.alpha(99));
-    TEST_FXN("get valid coef", true, c[1], FakeD2.coef(0, 1));
-    //TEST_FXN("get invalid coef", false, 0.2, FakeD2.coef(0, 99));
-    //TEST_FXN("get invalid gen coef", false, 0.2, FakeD2.coef(99, 1));
-    TEST_FXN("get non-const alpha ptr", true,alpha[1], FakeD.alpha_ptr()[1]);
-    TEST_FXN("get const alpha ptr", true, alpha[1],
-            static_cast<const BSI*>(&FakeD2)->alpha_ptr()[1]);
-     
+    tester.test_member_return("get type works", true, cGTO, &BSB::get_type,FakeD);
+    tester.test_member_return("get am works", true, 2, &BSB::am,FakeD2);
+    tester.test_member_return("number of prims", true, 3, &BSB::n_primitives,FakeD2);
+    tester.test_member_return("number of ceofs", true, 3, &BSB::n_coefficients,FakeD);
+    tester.test_member_return("number of gen contract", true, 1,&BSB::n_general_contractions,FakeD2);
+    tester.test_member_return("number of functions Cart", true, 6, &BSB::n_functions,FakeD);
+    tester.test_member_return("number of functions Spherical", true,5, &BSB::n_functions,FakeD2);
+    tester.test_member_return("is combined am", true, false, &BSB::is_combined_am,FakeD2);
+    tester.test_member_return("get valid general am", true, 2, &BSB::general_am,FakeD,0);
+    tester.test_member_call("get invalid general am", false, &BSB::general_am,FakeD,99);
+    tester.test_member_return("general n fxns valid", true, 6, &BSB::general_n_functions,FakeD,0);
+    tester.test_member_call("general n fxns invalid", false, &BSB::general_n_functions,FakeD,99);
+    tester.test_member_return("get valid alpha", true, alpha[1], &BSB::alpha, FakeD,1);
+    tester.test_member_return("get valid coef", true, c[1], &BSB::coef,FakeD2,0,1);
+    tester.test_equal("get non-const alpha ptr", alpha[1], FakeD2->alpha_ptr()[1]);
+    tester.test_equal("get const alpha ptr",  alpha[1],
+            static_cast<const BSB*>(FakeD2)->alpha_ptr()[1]);
 
-    TEST_FXN("get valid coef ptr", true, c[1], FakeD2.coef_ptr(0)[1]);
-    //TEST_FXN("get invalid coef ptr", false, nullptr, FakeD2.coef_ptr(99));
-    TEST_FXN("get valid const coef ptr", true, c[1], 
-            static_cast<const BSI*>(&FakeD)->coef_ptr(0)[1]);
-    //TEST_FXN("get invalid const coef ptr", false, nullptr, 
-    //        static_cast<const BSI*>(&FakeD)->coef_ptr(99));
+    tester.test_equal("get valid coef ptr", c[1], FakeD2->coef_ptr(0)[1]);
+    tester.test_equal("get valid const coef ptr", c[1],static_cast<const BSB*>(FakeD)->coef_ptr(0)[1]);
     
-    TEST_FXN("get all valid coef ptr", true, c[1], FakeD.all_coefs_ptr()[1]);
-    TEST_FXN("get all valid const coef ptr", true,c[1], 
-            static_cast<const BSI*>(&FakeD)->all_coefs_ptr()[1]);
+    tester.test_equal("get all valid coef ptr", c[1], FakeD->all_coefs_ptr()[1]);
+    tester.test_equal("get all valid const coef ptr", c[1],
+            static_cast<const BSB*>(FakeD)->all_coefs_ptr()[1]);
     
-    TEST_FXN("get valid alpha safe", true, alpha[1], FakeD2.get_alpha(1));
-    TEST_FXN("get invalid alpha safe", false, 0.0, FakeD2.get_alpha(99));
-    TEST_VOID("set valid alpha safe",true,FakeD.set_alpha(0, 3.14));
-    TEST_FXN("set valid alpha safe right val", true,3.14, FakeD.get_alpha(0));
-    TEST_VOID("set invalid alpha safe",false,FakeD.set_alpha(99,3.14));
-    TEST_FXN("get valid coef safe", true, c[1], FakeD2.get_coef(0, 1));
-    TEST_FXN("get invalid gen coef safe", false, 0.0, FakeD2.get_coef(99,1));
-    TEST_FXN("get invalid coef safe", false, 0.0, FakeD2.get_coef(0, 99));
-    TEST_VOID("set valid coef safe",true,FakeD.set_coef(0, 0, 3.14));
-    TEST_FXN("set valid coef safe right val", true, 3.14, FakeD.get_coef(0,0));
-    TEST_VOID("set invalid gen coef safe",false,FakeD.set_coef(99,1,3.14));
-    TEST_VOID("set invalid coef safe",false,FakeD.set_coef(0,99,3.14));
-    TEST_VOID("safe set all alpha",true,FakeD.set_alphas(alpha));
-    TEST_FXN("safe get all alpha",true,alpha,FakeD.get_alphas());
-    TEST_VOID("safe set all coefs",true,FakeD.set_coefs(0,c));
-    TEST_FXN("safe get/set all coef",true,c,FakeD.get_coefs(0));
-    TEST_VOID("safe set all invalid coefs",false,FakeD.set_coefs(99,c));
-    TEST_VOID("safe set all gen coefs",true,FakeD2.set_all_coefs(c));
-    TEST_FXN("safe get/set all gen coefs",true,c,FakeD2.get_all_coefs());
-    TEST_VOID("safe set all invalid coefs",false,FakeD.set_all_coefs(c2));
-    TEST_VOID("set primitive works",true,FakeD2.set_primitive(0,3.14,3.14));
-    TEST_FXN("set primitive works alpha",true,3.14,FakeD2.get_alpha(0));
-    TEST_FXN("set primitive works coef",true,3.14,FakeD2.get_coef(0,0));
-    TEST_VOID("safe invalid primitive",false,FakeD.set_primitive(99,3.14,3.14));
+    tester.test_member_return("get valid alpha safe", true, alpha[1], &BSB::get_alpha,FakeD2,1);
+    tester.test_member_call("get invalid alpha safe", false, &BSB::get_alpha,FakeD2,99);
+    tester.test_member_call("set valid alpha safe",true,&BSB::set_alpha,FakeD,0, 3.14);
+    tester.test_member_return("set valid alpha safe right val", true,3.14, &BSB::get_alpha,FakeD,0);
+    tester.test_member_call("set invalid alpha safe",false,&BSB::set_alpha,FakeD,99,3.14);
+    tester.test_member_return("get valid coef safe", true, c[1], &BSB::get_coef,FakeD2,0, 1);
+    tester.test_member_call("get invalid gen coef safe", false, &BSB::get_coef,FakeD2,99,1);
+    tester.test_member_call("get invalid coef safe", false,  &BSB::get_coef,FakeD2,0, 99);
+    tester.test_member_call("set valid coef safe",true, &BSB::set_coef,FakeD,0, 0, 3.14);
+    tester.test_member_return("set valid coef safe right val", true, 3.14, &BSB::get_coef,FakeD,0,0);
+    tester.test_member_call("set invalid gen coef safe",false,&BSB::set_coef,FakeD,99,1,3.14);
+    tester.test_member_call("set invalid coef safe",false,&BSB::set_coef,FakeD,0,99,3.14);
+    tester.test_member_call("safe set all alpha",true,&BSB::set_alphas,FakeD,alpha);
+    tester.test_member_return("safe get all alpha",true,alpha,&BSB::get_alphas,FakeD);
+    tester.test_member_call("safe set all coefs",true,&BSB::set_coefs,FakeD,0,c);
+    tester.test_member_return("safe get/set all coef",true,c,&BSB::get_coefs,FakeD,0);
+    tester.test_member_call("safe set all invalid coefs",false,&BSB::set_coefs,FakeD,99,c);
+    tester.test_member_call("safe set all gen coefs",true,&BSB::set_all_coefs,FakeD2,c);
+    tester.test_member_return("safe get/set all gen coefs",true,c,&BSB::get_all_coefs,FakeD2);
+    tester.test_member_call("safe set all invalid coefs",false,&BSB::set_all_coefs,FakeD,c2);
+    using setprim1=void(BSB::*)(size_t,double,double);
+    using setprim2=void(BSB::*)(size_t,double,const std::vector<double>&);
+    tester.test_member_call("set primitive works",true,
+                 static_cast<setprim1>(&BSB::set_primitive),FakeD2,0,3.14,3.14);
+    tester.test_member_return("set primitive works alpha",true,3.14,&BSB::get_alpha,FakeD2,0);
+    tester.test_member_return("set primitive works coef",true,3.14,&BSB::get_coef,FakeD2,0,0);
+    tester.test_member_call("safe invalid primitive",false,
+                 static_cast<setprim1>(&BSB::set_primitive),FakeD,99,3.14,3.14);
     
     std::vector<double> pi({3.14});
-    TEST_VOID("set gen primitive works",true,FakeD2.set_primitive(0,3.14,pi));
-    TEST_FXN("set gen primitive works alpha", true,3.14, FakeD2.get_alpha(0));
-    TEST_FXN("set gen primitive works coef", true, 3.14, FakeD2.get_coef(0,0));
+    tester.test_member_call("set gen primitive works",true,
+                   static_cast<setprim2>(&BSB::set_primitive),FakeD2,0,3.14,pi);
+    tester.test_member_return("set gen primitive works alpha", true,3.14,
+                              &BSB::get_alpha,FakeD2,0);
+    tester.test_member_return("set gen primitive works coef", true, 3.14,
+                              &BSB::get_coef,FakeD2,0,0);
     
-    TEST_VOID("safe gen primitive invalid prim",false,FakeD.set_primitive(99,3.14,pi));
-    TEST_VOID("safe invalid gen primitive",false,FakeD.set_primitive(0,3.14,c2));
+    tester.test_member_call("safe gen primitive invalid prim",false,
+                    static_cast<setprim2>(&BSB::set_primitive),FakeD,99,3.14,pi);
+    tester.test_member_call("safe invalid gen primitive",false,
+                    static_cast<setprim2>(&BSB::set_primitive),FakeD,0,3.14,c2);
     
-    FakeD2=FakeD;
-    TEST_FXN("hash", true, FakeD.my_hash(), FakeD2.my_hash());
+//    *FakeD2=*FakeD;
+//    tester.test_equal("hash",FakeD->my_hash(), FakeD2->my_hash());
 
     tester.print_results();
     return tester.nfailed();

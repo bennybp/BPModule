@@ -4,7 +4,7 @@
  * \author Benjamin Pritchard (ben@bennyp.org)
  */ 
 
-#include "pulsar/util/Pybind11.hpp"
+#include "pulsar/util/Serialization.hpp"
 
 #include "pulsar/datastore/CacheData.hpp"
 #include "pulsar/datastore/Wavefunction.hpp"
@@ -90,6 +90,8 @@ void export_datastore(pybind11::module & m)
     .def_readwrite("opdm", &Wavefunction::opdm)
     .def_readwrite("occupations", &Wavefunction::occupations)
     .def_readwrite("epsilon", &Wavefunction::epsilon)
+    .def("__getstate__",[](const Wavefunction &a){return __getstate__(a);})
+    .def("__setstate__",[](Wavefunction &a,const pybind11::str& b){__setstate__(a,b);})
     ;
   
 
