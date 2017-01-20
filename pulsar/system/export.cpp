@@ -365,6 +365,8 @@ void export_system(pybind11::module & m)
     .def("__contains__",    &System::count)
     .def("__iter__", [](const System & t) { return pybind11::make_iterator(t.begin(), t.end()); },
                      pybind11::keep_alive<0, 1>() )
+    .def("__getstate__",[](const System &a){return __getstate__(a);})
+    .def("__setstate__",[](System &a,const pybind11::str& b){__setstate__(a,b);})
     ;
 
 }
