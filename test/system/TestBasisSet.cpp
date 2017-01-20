@@ -36,46 +36,58 @@ TEST_SIMPLE(TestBasisSet){
     
     //All basis sets up to BS3 should be equal at this point
     
-    TEST_FXN("Get types works",true,ShellSet({cGTO,sGTO}),BS.get_types());
-    TEST_FXN("Get n shells",true,4,BS2.n_shell());
-    TEST_FXN("Get n unique shells",true,2,BS.n_unique_shell());
-    TEST_FXN("Get n primitives",true,12,BS3.n_primitives());
-    TEST_FXN("Get n coeficients",true,12,BS2.n_coefficients());
-    TEST_FXN("Get number of functions",true,22,BS.n_functions());
-    TEST_FXN("Maximum number of primitivs",true,3,BS3.max_n_primitives());
-    TEST_FXN("Max angular momentum",true,2,BS2.max_am());
+    tester.test_member_return("Get types works",true,ShellSet({cGTO,sGTO}),
+                              &BasisSet::get_types,&BS);
+    tester.test_member_return("Get n shells",true,4,&BasisSet::n_shell,&BS2);
+    tester.test_member_return("Get n unique shells",true,2,
+                              &BasisSet::n_unique_shell,&BS);
+    tester.test_member_return("Get n primitives",true,12,
+                              &BasisSet::n_primitives,&BS3);
+    tester.test_member_return("Get n coeficients",true,12,
+                              &BasisSet::n_coefficients,&BS2);
+    tester.test_member_return("Get number of functions",true,22,
+                              &BasisSet::n_functions,&BS);
+    tester.test_member_return("Maximum number of primitivs",true,3,
+                              &BasisSet::max_n_primitives,&BS3);
+    tester.test_member_return("Max angular momentum",true,2,&BasisSet::max_am,&BS2);
     std::set<int> am({2});
-    TEST_FXN("All angular momentum",true,am,BS.all_am());
-    TEST_FXN("Max n functions in a shell",true,6,BS3.max_n_functions());
-    TEST_FXN("Shell start",true,6,BS2.shell_start(1));
-    TEST_FXN("Invalid shell start",false,6,BS2.shell_start(99));
+    tester.test_member_return("All angular momentum",true,am,&BasisSet::all_am,&BS);
+    tester.test_member_return("Max n functions in a shell",true,6,
+                              &BasisSet::max_n_functions,&BS3);
+    tester.test_member_return("Shell start",true,6,&BasisSet::shell_start,&BS2,1);
+    tester.test_member_call("Invalid shell start",false,&BasisSet::shell_start,
+                            &BS2,99);
     const BasisSetShell& Si=BS.shell(3);
     const BasisSetShell& Sj=BS.shell(2);
-    TEST_FXN("Shell has right coordinates",true,carts,Si.get_coords());
-    TEST_FXN("Shell has right coordinate",true,carts[1],Si.get_coord(1));
-    TEST_FXN("Get invalid shell",false,Si,BS.shell(99));
-    TEST_FXN("Get unique shell",true,Si,BS.unique_shell(1));
-    TEST_FXN("Get invalid unique shell",false,Si,BS.unique_shell(99));
+    tester.test_member_return("Shell has right coordinates",true,carts,
+                              &BasisSetShell::get_coords,&Si);
+    tester.test_member_return("Shell has right coordinate",true,carts[1],
+        &BasisSetShell::get_coord,&Si,1);
+    tester.test_member_call("Get invalid shell",false,&BasisSet::shell,&BS,99);
+    tester.test_member_call("Get unique shell",true,&BasisSet::unique_shell,&BS,1);
+    tester.test_member_call("Get invalid unique shell",false,&BasisSet::unique_shell,&BS,99);
     size_t counter=0;
-    for(const BasisSetShell& Sk: BS2){
-        //if(counter%2)//No ternary b/c of its stupid return type
-            tester.test_equal("Iterator "+std::to_string(counter),true, Sk==(counter%2?Si:Sj));
-        //else
-       //     tester.test_equal("Iterator "+std::to_string(counter),true,Sk==Sj);
-        ++counter;
+    for(const BasisSetShell& Sk: BS2)
+    {
+       tester.test_equal("Iterator "+std::to_string(counter),true, Sk==(counter%2?Si:Sj));
+       ++counter;
     }
     
     
-    TEST_FXN("Get valid shell info",true,FakeD,BS3.shell_info(0));
-    TEST_FXN("Get invalid shell info",false,FakeD,BS3.shell_info(99));
+    tester.test_member_return("Get valid shell info",true,FakeD,
+                              &BasisSet::shell_info,&BS3,0);
+    tester.test_member_call("Get invalid shell info",false,
+                            &BasisSet::shell_info,&BS3,99);
     BasisSet BS4(1,3,3,3),BS5(1,3,3,3);
-    TEST_VOID("Add shell that fits",true,BS4.add_shell(FakeD,carts));
+    tester.test_member_call("Add shell that fits",true,&BasisSet::add_shell,
+                            &BS4,FakeD,carts);
     BS5.add_shell(FakeD,carts);
-    TEST_FXN("Shrink to fit",true,BS5,BS4.shrink_fit());
-    TEST_VOID("Add shell no fit",false,BS4.add_shell(FakeD2,carts));
+    tester.test_member_return("Shrink to fit",true,BS5,&BasisSet::shrink_fit,&BS4);
+    tester.test_member_call("Add shell no fit",false,&BasisSet::add_shell,&BS4,
+                            FakeD2,carts);
 
-    TEST_FXN("Hash BS",true,BS.my_hash(),BS2.my_hash());
-    TEST_FXN("Hash BS2",true,BS.my_hash(),BS3.my_hash());   
+    tester.test_equal("Hash BS",BS.my_hash(),BS2.my_hash());
+    tester.test_equal("Hash BS2",BS.my_hash(),BS3.my_hash());
     
     tester.print_results();
     return tester.nfailed();

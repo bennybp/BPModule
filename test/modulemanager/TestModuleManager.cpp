@@ -38,7 +38,7 @@ TEST_SIMPLE(TestModuleManager){
     tester.test_member_call("Not a path",false,load_module,&mm,minfo,mod_name);
     char cwd[1026];
     getcwd(cwd, sizeof(cwd));
-    minfo.path=string(cwd)+"/modulemanager/CXXModule.so";
+    minfo.path=string(cwd)+"/CXXModule.so";
     tester.test_member_call("No name",false,load_module,&mm,minfo,mod_name);
     minfo.name="C++ Module";
     tester.test_member_call("load_module",true,load_module,&mm,minfo,mod_name);

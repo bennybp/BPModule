@@ -56,8 +56,6 @@ VectorD Deriv({1.0,4.0,9.0,16.0,25.0,36.0});
 using CDiff_t=pulsar::CentralDiff<double,VectorD>;
 CDiff_t CFD;
 Return_t Result;
-using CFD_run_t=Return_t(pulsar::FiniteDiff<double,VectorD>::*)
-        (HOVisitor,size_t,cD&,size_t);
 
 ///FDiff alogrithms are not designed to be moved/copied so we can't bind it
 try{
