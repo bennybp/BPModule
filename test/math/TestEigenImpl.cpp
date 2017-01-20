@@ -18,10 +18,13 @@ TEST_SIMPLE(TestEigenImpl){
     tester.test_equal("Matrix copy constructor works",M1,M2);
     tester.test_equal("Matrix move constructor works",M1,M3);
     std::array<size_t,2> twofour({2,4}),zerotwo({0,2});
-    TEST_FXN("Matrix sizes works",true,twofour,M1.sizes());
-    TEST_FXN("Matrix get_value works",true,3.0,M2.get_value(zerotwo));
-    TEST_VOID("Matrix set_value works",true,M3.set_value(zerotwo,55.0));
-    TEST_FXN("Matrix set_value is correct",true,55.0,M3.get_value(zerotwo));
+    tester.test_member_return("Matrix sizes works",true,twofour,&Matrix_t::sizes,&M1);
+    tester.test_member_return("Matrix get_value works",true,3.0,
+                              &Matrix_t::get_value,&M2,zerotwo);
+    tester.test_member_call("Matrix set_value works",true,&Matrix_t::set_value,
+                            &M3,zerotwo,55.0);
+    tester.test_member_return("Matrix set_value is correct",true,55.0,
+                              &Matrix_t::get_value,&M3,zerotwo);
     tester.test_equal("Matrix != works",true,M3!=M1);
     auto Mat4=pulsar::convert_to_eigen(M1);
     tester.test_equal("Matrix convert to eigen works",*Mat1,*Mat4);
@@ -37,10 +40,14 @@ TEST_SIMPLE(TestEigenImpl){
     tester.test_equal("Vector copy constructor works",V1,V2);
     tester.test_equal("Vector move constructor works",V1,V3);
     std::array<size_t,1> four({4}),two({2});
-    TEST_FXN("Vector sizes works",true,four,V1.sizes());
-    TEST_FXN("Vector get_value works",true,3.0,V2.get_value(two));
-    TEST_VOID("Vector set_value works",true,V3.set_value(two,55.0));
-    TEST_FXN("Vector set_value is correct",true,55.0,V3.get_value(two));
+    tester.test_member_return("Vector sizes works",true,four,
+                              &Vector_t::sizes,&V1);
+    tester.test_member_return("Vector get_value works",true,3.0,
+                              &Vector_t::get_value,&V2,two);
+    tester.test_member_call("Vector set_value works",true,&Vector_t::set_value,
+                            &V3,two,55.0);
+    tester.test_member_return("Vector set_value is correct",true,55.0,
+                              &Vector_t::get_value,&V3,two);
     tester.test_equal("Vector != works",true,V3!=V1);
     auto Vec4=pulsar::convert_to_eigen(V1);
     tester.test_equal("Vector convert to eigen works",*Vec1,*Vec4);

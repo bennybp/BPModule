@@ -120,7 +120,8 @@ TEST_SIMPLE(TestMathSet){
     std::vector<double> tresults2(NewS.begin(),NewS.end());
     tester.test_equal("transform works",transresults,tresults2);
     
-    MathSet_t NewS2=S1.partition([](const double& in){return in==2.0;});
+    MathSet_t NewS2=S1.partition([](const double& in){
+        return std::fabs(in-2.0)<1e-5;});
     std::vector<double> partresults({2.0}),presults2(NewS2.begin(),NewS2.end());
     tester.test_equal("partition works",partresults,presults2);
     
