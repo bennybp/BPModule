@@ -26,7 +26,8 @@
 #include "pulsar/util/PythonHelper.hpp"
 #define DECLARE_SERIALIZATION_FRIENDS \
     friend class cereal::access; \
-    template<typename NoShadowT> friend class pulsar::detail::StdStreamArchive;
+    template<typename NoShadowT,typename NoShadowT1, typename NoShadowT2> \
+    friend class pulsar::detail::StdStreamArchive;
 
 
 //! \todo There is an extra copy that in to_byte_array (ie, data -> sstream -> vector).
