@@ -28,11 +28,7 @@ def run_test():
         mychk=psr.Checkpoint(psr.BDBCheckpointIO("local"),
                              psr.BDBCheckpointIO("global"))
         mm=psr.ModuleManager()
-        minfo=psr.ModuleInfo()
-        minfo.name="MyPyBase"
-        mcf=psr.ModuleCreationFuncs()
-        mcf.add_py_creator(minfo.name,MyPyBase)
-        mm.load_module_from_mcf(minfo,"Module",mcf)
+        mm.load_lambda_module(MyPyBase,"MyPyBase","Module")
         if i==1:mychk.load_local_cache(mm)
         my_mod=mm.get_module("Module",0)
         msg="Checkpointing data" if i==0 else "Uncheckpointing data"

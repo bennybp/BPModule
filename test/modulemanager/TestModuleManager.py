@@ -53,12 +53,7 @@ def run_test():
     tester.test_call("duplicate key",True,mm.duplicate_key,"my module",new_name)
     unq_key=mm.generate_unique_key()
     tester.test_return("unique key",True,False,mm.has_key,unq_key)
-    cf=psr.ModuleCreationFuncs()
-    cf.add_py_creator("Py Module",MyPyBase)
-    minfo.name="Py Module"
-    tester.test_call("add module from creation funcs",True,
-    mm.load_module_from_mcf,minfo,unq_key,cf)
-    mm.change_option(unq_key,opt_key,opt)
+    tester.test_call("add lambda module",True,mm.load_lambda_module,MyPyBase,"Py Module",unq_key)
     tester.test_call("can get module from creation funcs",True,mm.get_module,
         unq_key,0)
     tester.print_results()

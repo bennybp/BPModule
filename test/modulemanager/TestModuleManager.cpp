@@ -81,12 +81,10 @@ TEST_SIMPLE(TestModuleManager){
     string unq_key=mm.generate_unique_key();
     tester.test_member_return("unique key",true,false,
                           &ModuleManager::has_key,&mm,unq_key);
-    ModuleCreationFuncs cf;
-    cf.add_cpp_creator<CXXModule2>("C++ Module2");
-    minfo.name="C++ Module2";
-    tester.test_member_call("add module from creation funcs",true,
-                     &ModuleManager::load_module_from_mcf,&mm,minfo,unq_key,cf);
-    mm.change_option(unq_key,opt_key,opt);
+    std::string mod2_name="C++ Module2";
+    tester.test_member_call("add lambda module",true,
+                     &ModuleManager::load_lambda_module<CXXModule2>,&mm,
+                    mod2_name,unq_key);
     tester.test_member_call("can get module from creation funcs",true,
                      &ModuleManager::get_module<TestModule>,&mm,unq_key,0);
 

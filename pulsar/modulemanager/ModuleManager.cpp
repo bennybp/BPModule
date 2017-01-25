@@ -228,10 +228,10 @@ void ModuleManager::load_module_from_minfo(const ModuleInfo & minfo, const std::
 
     // may throw an exception. Exception should be a PulsarException
     const ModuleCreationFuncs & mcf = loadhandlers_.at(minfo.type)->load_supermodule(minfo.path);
-    load_module_from_mcf(minfo,modulekey,mcf);
+    load_module_from_mcf_(minfo,modulekey,mcf);
 }
 
-void ModuleManager::load_module_from_mcf(const ModuleInfo& minfo, const std::string& modulekey, const ModuleCreationFuncs& mcf)
+void ModuleManager::load_module_from_mcf_(const ModuleInfo& minfo, const std::string& modulekey, const ModuleCreationFuncs& mcf)
 {
     // See if this supermodule actually create a module with this name
     if(!mcf.has_creator(minfo.name))
@@ -390,6 +390,17 @@ void ModuleManager::change_option_py(const std::string & modulekey, const std::s
         ex.append_info("modulekey", modulekey);
         throw;
     }
+}
+
+void ModuleManager::load_lambda_module_py(const pybind11::object& module_type,
+                           const std::string& module_name,
+                           const std::string& module_key)
+{
+    ModuleInfo minfo;
+    minfo.name=module_name;
+    ModuleCreationFuncs mcf;
+    mcf.add_py_creator(module_name,module_type);
+    load_module_from_mcf_(minfo,module_key,mcf);
 }
 
 

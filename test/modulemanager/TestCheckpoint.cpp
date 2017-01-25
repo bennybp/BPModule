@@ -50,12 +50,7 @@ TEST_SIMPLE(TestCheckpoint){
                          make_shared<BDBCheckpointIO>("global"));
         auto pmm=make_shared<ModuleManager>();
         ModuleManager& mm=*pmm;
-        ModuleInfo minfo;
-        minfo.name="C++ Module";
-
-        ModuleCreationFuncs mcf;
-        mcf.add_cpp_creator<CXXModule>(minfo.name);
-        mm.load_module_from_mcf(minfo,"Module",mcf);
+        mm.load_lambda_module<CXXModule>("C++ Module","Module");
         if(i==1)mychk.load_local_cache(mm);
         auto my_mod=mm.get_module<TestModule>("Module",0);
         auto msg=(i==0?"Checkpointing results":"Reading checkpoint");

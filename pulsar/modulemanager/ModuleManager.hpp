@@ -256,18 +256,33 @@ class ModuleManager : public std::enable_shared_from_this<ModuleManager>
          */
         void load_module_from_minfo(const ModuleInfo & minfo, const std::string & modulekey);
 
-        /*! \brief Adds/inserts modules from an anonymous supermodule into the
-         *  database
+        /*! \brief Adds/inserts a lambda module
          *
-         *  \param [in] minfo Information about the module, only name needs set
-         *  \param [in] modulekey The module key to associate with the module
-         *  \param [in] mcfs The functions used to create the module type
-         *                corresponding to minfo.name
-         *
-         *  \throw pulsar::PulsarException if \p mcfs doesn't contain a creator
-         *  for the module type
+         *  \param [in] module_name The name of the module to load
+         *  \param [in] module_key The key to load it under
+         *  \param [in] T The class type you called the module
          */
-        void load_module_from_mcf(const ModuleInfo & minfo, const std::string& modulekey, const ModuleCreationFuncs& mcfs);
+        template<typename T>
+        void load_lambda_module(const std::string& module_name,
+                                const std::string& module_key)
+        {
+            ModuleInfo minfo;
+            minfo.name=module_name;
+            ModuleCreationFuncs mcf;
+            mcf.add_cpp_creator<T>(module_name);
+            load_module_from_mcf_(minfo,module_key,mcf);
+        }
+
+
+        /*! \brief Adds/inserts a lambda module (python binding)
+         *
+         *  \param [in] module_type The Python class
+         *  \param [in] module_name The name of the module to load
+         *  \param [in] module_key The key to load it under
+         */
+        void load_lambda_module_py(const pybind11::object& module_type,
+                                   const std::string& module_name,
+                                   const std::string& module_key);
 
         /*! \brief Enable debugging for a specific key
          *
@@ -382,7 +397,22 @@ class ModuleManager : public std::enable_shared_from_this<ModuleManager>
          */
         std::unique_ptr<detail::ModuleIMPLHolder>
         create_module_(const std::string & modulekey, ID_t parentid);
+
+        /*! \brief Adds/inserts modules from an anonymous supermodule into the
+         *  database
+         *
+         *  \param [in] minfo Information about the module, only name needs set
+         *  \param [in] modulekey The module key to associate with the module
+         *  \param [in] mcfs The functions used to create the module type
+         *                corresponding to minfo.name
+         *
+         *  \throw pulsar::PulsarException if \p mcfs doesn't contain a creator
+         *  for the module type
+         */
+        void load_module_from_mcf_(const ModuleInfo & minfo, const std::string& modulekey, const ModuleCreationFuncs& mcfs);
 };
+
+
 
 } // close namespace pulsar
 
