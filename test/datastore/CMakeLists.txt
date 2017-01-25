@@ -1,2 +1,5 @@
+testing_library(datastore testing_datastore)
+pulsar_test(datastore TestCacheData)
+pulsar_cxx_test(datastore TestCacheMap)
 pulsar_cxx_test(datastore TestOptionMapIssues)
 pulsar_cxx_test(datastore TestWavefunction)

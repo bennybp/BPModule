@@ -4,12 +4,12 @@
  */
 #pragma once
 
+#include "pulsar/modulemanager/ModuleManager.hpp"
 #include <memory>
 #include <vector>
 
+
 namespace pulsar {
-class CacheData;
-class ModuleManager;
 class CheckpointIO;
 
 

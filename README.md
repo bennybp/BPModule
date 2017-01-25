@@ -1,13 +1,6 @@
-# Contents
-  1. [Purpose and Overview](#purpose-and-overview)
-     - [What is a Module?](#what-is-a-module?)
-     - [Why a Framework?](#why-a-framework?)
-     - [Benefits](#benefits)
-  2. [Compiling](#compiliation-instructions)
-     - [Requirements](#requirements)
-     - [Compiling The Core](#compile-the-core)
-     - [Compiling Modules](#compiling-modules)
-     - [Running Tests](#running-tests)
+# Pulsar Computational Chemistry Framework
+
+TODO: CI badge and code coverage badge
 
 # Purpose and Overview
 In our opinion Pulsar represents quite the departure from conventional chemistry
@@ -71,6 +64,9 @@ We see the main reasons to use Pulsar as:
   - Modules associated with one package can be used with another
   - Our interface is designed to be non-invasive, i.e. your code is likely fine
     as is and simply requires a simple function wrapper
+- Multi coding language support for your code
+  - Pulsar's bindings are exported in C++, and Python and are designed in such a
+    way that data flows seemlessly across language interfaces
 - Support for coarse and fine-grained parallelism
   - Tools for writing task-based and data-based parallelism that scales to 
     thousands of cores, in an easy and intuitive manner
@@ -83,8 +79,6 @@ We see the main reasons to use Pulsar as:
     and we'll save it for you in the event of crash
 - Standards/ Best Practices/ Developer's Manual
   - We strive to make our code practices transparent and readily available
-
-To learn more about Pulsar we encourage you to build the documentation, which can be done by cloning this repo and running `doxygen` in the top-level directory of the resulting clone.  The documentation contains detailed explanations of how to do common tasks in Pulsar, APIs for all classes (Python APIs require you to install doxypypy, which can be done by running `pip install doxypypy`), etc.
 
 # Compilation Instructions
 
@@ -106,7 +100,7 @@ You must have the following already compiled and available:
   * CMake version 3.0 or higher
   * GCC or Intel compiler with C++11 support
     * GCC recommended for now, but Intel is regularly tested too
-  * Eigen matrix library
+  * Eigen matrix library (header only and readily available in most Linux repos)
   * BerkeleyDB (it's on almost every Linux box by default).
 
 The following are our current dependencies (and their dependencies).  If we can
@@ -122,72 +116,4 @@ provided to the main project.
 
 ## Compile the core
 
-The Pulsar project is comprised of two components: the core framework and the
- modules.
-The core is the framework that keeps all the modules playing nicely with one
-another and we will compile that first.  You should only have to compile the
-framework once unless you are developing for it. Note that Pulsar uses git
-submodules, which are a bit touchy sometimes.  Make sure you clone the
-source code with:
-```git
-git clone --recursive git@github.com:pulsar-chem/Pulsar-Core.git
-```
-If you forget to do that in the Pulsar home directory run:
-```git
-git submodule update --init --recursive
-```
-which will then checkout all of the submodules for you.
-
-
-Once you have the source code (and the submodules), compilation of the core 
-should be as simple as (on an ideally setup Linux box):
-
-```Bash
-#In the Pulsar root directory
-cmake -H. -Bbuild
-cd build && make
-make install
-```
-
-If your compilers, libraries, etc. are not in common locations you may want/need
- to set some or all of the following CMake variables:
-
-```Bash
-
-#The below tune what I'll call Compiler/System dependencies:
-
-CMAKE_C_COMPILER=<Path to C compiler>
-MPI_C_COMPILER=<Path to the MPI wrapper around CMAKE_C_COMPILER>
-CMAKE_CXX_COMPILER=<Path to C++ compiler>
-MPI_CXX_COMPILER=<Path to the MPI wrapper around CMAKE_CXX_COMPILER>
-#Note the capitalization on the next two
-CMAKE_Fortran_COMPILER=<Path to Fortran compiler>
-MPI_Fortran_COMPILER=<Path to the MPI wrapper around CMAKE_Fortran_COMPILER>
-PYTHON_LIBRARY=<path to the Python libraries>
-PYTHON_INCLUDE_DIR=<path to Python's header files>
-PYTHON_EXECUTABLE=<path to the Python interpreter associated with the above>
-PULSAR_MATH_LIBS=<-mkl or other linking flags>
-
-# These are more fine-granined control
-CMAKE_PREFIX_PATH=<Paths that CMake should search when looking for dependencies>
-CMAKE_BUILD_TYPE=<Debug or Release>
-CMAKE_INSTALL_PREFIX=<Path where the Pulsar gets installed>
-```
-
-## Compiling modules
-
-Modules are installed into the same top-level directory as the core.
-(For now).
-
-    cmake -DPULSAR_PATH=core/install/path \
-          -DCMAKE_INSTALL_PREFIX=core/install/path \
-          -DCMAKE_BUILD_TYPE=Debug \
-          ../
-    make install
-
-
-
-## Running tests
-
-Tests can be run from the `test` subdirectory of the install directory. All paths should
-be determined automatically.
+TODO: Update with new instructions

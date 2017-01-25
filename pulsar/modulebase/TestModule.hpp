@@ -17,9 +17,6 @@ namespace pulsar{
  *
  * This module serves to provide a means of testing module-module interactions.
  * It is also used as a base for C++ tests of the various Pulsar classes.
- * Through the derived class: Test_CXX_Base
- * 
- * \todo Is it OK to make all but run_test_ null functions in this class?
  */
 class TestModule : public ModuleBase
 {

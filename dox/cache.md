@@ -38,26 +38,27 @@ dictionary/map between a computation and its results.  However, as implemented
 in Pulsar, the cache is quite a bit more powerful.  This page is designed to
 familiarize you with the basics of the cache and how to use it effeciently.
 
-CacheMap Class in Pulsar
------------------------
+CacheData Class in Pulsar
+-------------------------
 
-The cache is an instance of type CacheMap.  Each module type whose information
-is stored in the ModuleManager/ModuleAdministrator has a cache assigned to it.
-Again the cache is assigned on a module type basis **not** on a module key
-bais.  Thus a CacheMap instance is accessible from all instances of a module
-type and can be used to pass data among them.  However, because each module
-type has a different cache, the CacheMap class can **not** be used to pass data
-among different module types.  Put another way, each module type's cache is
-global data for that type, but is not global for the program as a whole.
-
-Basic operations with the CacheMap are along the lines of:
+Within your module you will interact with the cache via an instance of the
+CacheData class.  This is a thin wrapper around the CacheMap class detailed
+below.  Each module type whose information is stored in the ModuleManager /
+ModuleAdministrator has an entry in the cache assigned to it. Again these cache
+entries are assigned on a module type basis **not** on a module key
+basis.  Thus data obtained via the CacheData API is accessible to all instances
+of a module type and **can** be used to pass data among them.  However, because
+each different module type has a different cache, the CacheData API can **not**
+be used to pass data among different module types.  Put another way, each module
+type's cache is global data for that type, but is not global for the program as
+a whole.  Basic operations with the CacheData type are:
 
 ~~~{.cpp}
 std::string SomeKey;//Generate a key unique to input
 
 CacheData& MyCache=this->cache();//Get your cache
 
-//Try to get the data (ignore use_distcache for now)
+//Try to get the data, which is of type CoolDataType (ignore use_distcache for now)
 std::shared_ptr<CoolDataType> Data=MyCache.get<CoolDataType>(SomeKey,use_distcache);
 
 //One of two things happend
@@ -65,11 +66,10 @@ if(Data){//The cache had the data
    return *Data;//or do whatever it is you have to do with the data
 }
 else{//The cache did not have the data, generate it
+   CoolDataType TheData;//Assume this is the generated data
 
-CoolDataType TheData;//Assume this is the generated data
-
-MyCache.set(MyHash,TheData,Policy);//Save it (ignore Policy for now)
-return TheData;//or again do whatever it is you have to do with the data
+   MyCache.set(MyHash,TheData,Policy);//Save it (ignore Policy for now)
+   return TheData;//or again do whatever it is you have to do with the data
 }
 ~~~
 
@@ -103,8 +103,9 @@ make sense to store that intermdiate as well.  This can be used to provide
 primitive restart capabilities by allowing you to pick up on an interation
 rather than having to start over.
 
-TODO: Add documentation regarding data ownership and the use of pointers in
-the cache.
+\warning Once data is in the cache it should be considered immutable and constant.
+Given the nature of Python this can not be rigourously enforced Py-side, but
+failing to heade this warning will most likely lead to undefined behavior.
 
 Another unique (planned) aspect of the CacheMap class is its ability to move
 data from RAM to disk depending on
@@ -114,7 +115,7 @@ common problem in electronic structure packages where particularly for small
 systems, an algorithm always writes what are presumed to be large intermediates
 to disk, even if they actually fit in memory.  Hence you should not worry too
 much about putting large tensors in the cache (although it may be prudent to
-put them in in blocks to aid in dumping to disk).
+put them into the cache in blocks to aid in dumping to disk).
 
 Indexing in the cache
 ---------------------
@@ -135,17 +136,18 @@ a hash representation of itself (the standard name is `my_hash()`), so simply
 concatenate the hashes to form the index.
 
 One notable complication to this, however, is that many of the options in the
-OptionMap may have no effect on the data (ie, printing, etc). Therefore, only
- \b significant options should be hashed. These significant options take
+OptionMap may have no effect on the data [*e.g.*, printing, max number of
+iterations (assuming the quantity converges before then), etc.]. Therefore, only
+**significant** options should be hashed. These significant options take
 the form of a set of strings which specify which option keys are to be
 compared. The OptionMap has a function `hash_values` which takes a vector of
-option keys to hash and returns a hash derived only from those keys.
+option keys, to hash, and returns a hash derived only from those keys.
 
-CacheMap Internals and Policies
--------------------------------
+Policies
+--------
 
-In order to use the CacheMap effectively it helps to know a bit about the
-internals.  The CacheMap is designed to work under distributed workflows (and
+In order to use the cache effectively it helps to know a bit about the
+internals.  The cache is designed to work under distributed workflows (and
 can be used to easily, but likely not effeciently, implement distributed
 computing).  What this means is that there is a distinction between local and
 global data (with the two being identical if Pulsar is run serially).  Data is
@@ -153,8 +155,10 @@ said to be local if it is available to the current process without the need for
 an MPI call.  Global data starts as only local to the process that generated it,
 but is additionally registered with a root process so that if another process
 wants it, they can get it via MPI calls.  The MPI calls all happen transparently
-to the user of the CacheMap class.  Note that after obtaining data via an MPI
-call that data is still considered global.
+to the user of the CacheData class.
+
+\note After obtaining data via an MPI call that data is still considered global
+even though it is now local to your process.
 
 The various policies are:
 
@@ -163,13 +167,13 @@ The various policies are:
   will be checkpointed
 - CheckpointGlobal: When a user calls `Checkpoint.checkpoint_global()` the data
 will be checkpointed
-- DistributeGlobally: Data with this policy is made available to whatever
-process wants it
+- DistributeGlobally: Data with this policy is registered with the root process
+and made available to any process that wants it (will require MPI calls if the
+data is not local to the asking process)
 
-
-Policies are bit flags, what this means is you can set many policies at once by
-using bit-wise or `|` .  To see if a policy is set you use bit-wise and `&`.
-Bit-wise operators are the same in Python and C++.
+\note Policies are bit flags, what this means is you can set many policies at
+once by using bit-wise or `|` .  To see if a policy is set you use bit-wise and
+`&`.  Bit-wise operators are the same in Python and C++.
 
 Checkpointing the Cache
 -----------------------
@@ -186,6 +190,7 @@ the global backend.  At the moment you have two choices:
   ~~~{.cpp}
   BDBCheckpointIO MyBackend("place/to/checkpoint");
   ~~~
+
 Notes on file locations:
 - The local checkpoint file is expected to be on a local file system, *i.e.* on
   the computer that the current process is running on
@@ -196,8 +201,8 @@ Notes on file locations:
 
 The Checkpoint class is then made like:
 ~~~{.cpp}
-Checkpoint mychk(std::make_shared<BDBCheckpointIO>("local"),
-                 std::make_shared<BDBCheckpointIO>("global"));
+Checkpoint mychk(std::make_shared<BDBCheckpointIO>("path/to/local/cache"),
+                 std::make_shared<BDBCheckpointIO>("path/to/global/cache"));
 ~~~
 
 and is the used to checkpoint like:
@@ -227,6 +232,49 @@ mychk.save_global_cache(mm)
 mychk.load_local_cache(mm)
 mychk.load_global_cache(mm)
 ~~~
+
+## Deep-Dark Internals of the Cache (*i.e.* How it actually works)
+
+The CacheData class is a thin wrapper around the CacheMap class. It serves two
+purposes, first it separaetes the interface from the implementation (the design
+pattern is basically pimpl), making it hard for users to use the cache
+ineffeciently.  Second it serves as the mechanism for namespace protecting a
+module type's cach by prepending a prefix unique to a given module type, to all
+keys generated by that type.  This in turn allows us to have only one cache, but
+give the illusion of having many (behind the scenes that makes management
+easier).  The innerworkings of the cache are thus better described as how the
+CacheMap class works.
+
+The CacheMap relies on a mixture of templates and
+serialization to deal with objects of arbitrary type.  When an object is
+inserted into the cache it is converted into a `CacheMapEntry_` (which is just
+a wrapper around a `GenericHolder<T>` instance and its associated policy).
+`GenericHolder<T>` derives from `GenericBase`, which defines an interface that
+will interact with the data in the holder in a serialized manner (*i.e.* if the
+data is not serializable much of this interface is not available to it and
+calling many of these functions will yield runtime errors).  When a user calls
+`CacheMap::get` the `GenericBase` pointer is dynamically cast to
+`GenericHolder<T>` if the cast succeeds the data is still in its input type
+(*i.e.* it has not been serialized) and returns.  If the cast fails, the data is
+presumed to be serialized and a dynamic cast to the serialized form is
+attempted.  If that cast succeeds the data is deserialized and returned to the
+user, if it fails you get a null pointer.
+
+So that's all (relatively) straightforward the magic comes in with the
+serialization.  There's two scenarios in which your data gets serialized.  The
+first arises when your data is globally available, but not in your local cache.
+In this case, the data is serialized so that it can be sent via MPI.  It then
+arrives in your local cache serialized (and is only unserialized if you ask for
+it to be).  The other scenario arises when data is checkpointed.  To checkpoint
+data the data is serialized and dumped to disk, when the cache is reloaded the
+serialized data is then stored in the cache in a serialized form (again it is
+only unserialized with a `CacheMap::get` call).
+
+As the last paragraph suggests serialization is the key to the two cool features
+of Pulsar.  Both features will ignore non-serializable data (checkpointing will
+not write it to disk and the distributed cache will not send it, forcing you to
+recompute it).  Check out [this](@ref serialization) article on serialization
+for more details, particularly as it relates to Pulsar.
 
 
 

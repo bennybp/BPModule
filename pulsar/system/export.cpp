@@ -7,6 +7,7 @@
 
 #include "pulsar/util/Pybind11.hpp"
 #include "pulsar/util/PythonHelper.hpp"
+#include "pulsar/util/Serialization.hpp"
 #include "pulsar/system/AMConvert.hpp"
 #include "pulsar/system/AtomicInfo.hpp"
 #include "pulsar/system/System.hpp"
@@ -273,6 +274,8 @@ void export_system(pybind11::module & m)
     .def("print", &Atom::print)
     .def(pybind11::self == pybind11::self)
     .def(pybind11::self != pybind11::self)
+    .def("__getstate__",[](const Atom &a){return __getstate__(a);})
+    .def("__setstate__",[](Atom &a,const pybind11::str& b){__setstate__(a,b);})
     ;
    
 
@@ -290,7 +293,7 @@ void export_system(pybind11::module & m)
 
 
     // Space
-    pybind11::class_<Space>(m,"Space")
+    pybind11::class_<Space>(m,"Space",pybind11::metaclass())
       .def(pybind11::init<>())
       .def(pybind11::init<const Space&>())
       .def(pybind11::init<const std::array<double,3>&,
@@ -362,6 +365,8 @@ void export_system(pybind11::module & m)
     .def("__contains__",    &System::count)
     .def("__iter__", [](const System & t) { return pybind11::make_iterator(t.begin(), t.end()); },
                      pybind11::keep_alive<0, 1>() )
+    .def("__getstate__",[](const System &a){return __getstate__(a);})
+    .def("__setstate__",[](System &a,const pybind11::str& b){__setstate__(a,b);})
     ;
 
 }

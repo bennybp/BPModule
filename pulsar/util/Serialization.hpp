@@ -23,14 +23,45 @@
 
 #include "pulsar/util/Serialization_fwd.hpp" // for ByteArray
 #include "pulsar/util/SerializationArchives.hpp"
-
+#include "pulsar/util/PythonHelper.hpp"
 #define DECLARE_SERIALIZATION_FRIENDS \
     friend class cereal::access; \
-    template<typename NoShadowT> friend class pulsar::detail::StdStreamArchive;
+    template<typename NoShadowT,typename NoShadowT1, typename NoShadowT2> \
+    friend class pulsar::detail::StdStreamArchive;
 
 
 //! \todo There is an extra copy that in to_byte_array (ie, data -> sstream -> vector).
 //        This could be fixed with a custom stream buffer that writes to a std::vector
+
+namespace pybind11{
+
+///Serializes a pybind11 object via the PyObject* pointer
+template<typename Archive>
+void save(Archive& ar, const object & pyob)
+{
+  if(!pulsar::is_pickleable(pyob))
+        throw pulsar::PulsarException("Object is not pickleable");
+  object pickle=module::import("pickle");
+  object dumps=getattr(pickle,"dumps");
+  object as_string=dumps(pyob,2);
+  std::string real_string=as_string.cast<std::string>();
+  ar(real_string);
+}
+
+///Deserializes a pybind11 object via the PyObject* pointer
+template<typename Archive>
+void load(Archive & ar,object & pyob)
+{
+    std::string real_string;
+    {
+        ar(real_string);
+    }
+    object pickle=module::import("pickle");
+    object loads=getattr(pickle,"loads");
+    bytes py_bytes(real_string);
+    pyob=loads(py_bytes);
+}
+}//End namespace pybind11
 
 namespace pulsar{
 
@@ -123,9 +154,29 @@ template<typename T>
 struct SerializeCheck<std::set<T>> : public SerializeCheck<T> { };
 
 template<typename T, typename V>
-struct SerializeCheck<std::map<T, V>> : public std::integral_constant<bool, SerializeCheck<T>::value &&
-                                                                             SerializeCheck<V>::value> { };
+struct SerializeCheck<std::map<T, V>> :
+        public std::integral_constant<bool, SerializeCheck<T>::value &&
+                                            SerializeCheck<V>::value> { };
 
+/*! \brief Template function suitable for pickle-ing C++ classes that Cereal can
+ *  serialize
+ */
+template<typename T>
+pybind11::bytes __getstate__(const T& obj)
+{
+    auto temp=to_byte_array(obj);
+    return pybind11::bytes(temp.data(),temp.size());
+}
+
+/*! \brief Template function suitable for de-pickle-ing C++ classes that Cereal
+ *  can de-serialize
+ */
+template<typename T>
+void __setstate__(T& obj,const pybind11::bytes& data)
+{
+    std::string buffer(data);
+    new (&obj) T(from_byte_array<T>(buffer.c_str(),buffer.size()));
+}
 
 } // close namespace pulsar
 

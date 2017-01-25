@@ -128,3 +128,4 @@ install(DIRECTORY ${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/
 
 # Install other files, such as basis set
 install(DIRECTORY basis DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pulsar)
+install(DIRECTORY systems DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pulsar)

@@ -18,6 +18,9 @@ foreach(pkg ${PULSAR_CORE_DEPS})
     find_package(${pkg} REQUIRED)
 endforeach()
 
+# And the find macros
+list(APPEND CMAKE_MODULE_PATH "${PULSAR_INSTALL_ROOT}/share/cmake")
+
 # For some reason, this has a leading whitespace
 string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
 
@@ -46,7 +49,7 @@ list(APPEND PULSAR_CORE_LINK_FLAGS
             bphash
             bpprint
             memwatch
-            pybind11::pybind11
+            pybind11::module
             libtaskforce
             ${MPI_CXX_LINK_FLAGS}
 )
@@ -90,7 +93,7 @@ set_target_properties(pulsar PROPERTIES
 #######################################
 set(PULSAR_BIN_PATH "${PULSAR_PREFIX}/bin")
 set(PULSAR_RUNTEST "${PULSAR_BIN_PATH}/pulsar_runtest.py")
-
+set(PULSAR_MODULE_DIR "${PULSAR_PREFIX}/lib/pulsar/modules")
 #######################################
 # Include the macros for testing
 # (should be in this directory)

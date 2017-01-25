@@ -12,7 +12,6 @@
 #include "pulsar/exception/Assert.hpp"
 #include "pulsar/util/Mangle.hpp"
 
-
 namespace pulsar {
 
 
@@ -180,9 +179,6 @@ Ret call_py_func(const pybind11::object & obj, Targs &&... Fargs)
 }
 
 
-
-
-
 /*! \brief Calls a function that is an attribute a python object
  *
  * \throw pulsar::PulsarException if there is an error, including
@@ -212,6 +208,9 @@ Ret call_py_func_attr(const pybind11::object & obj, const char * attribute, Targ
     pybind11::object objattr = obj.attr(attribute);
     return call_py_func<Ret>(objattr, std::forward<Targs>(Fargs)...); 
 }
+
+/*! \brief Determines if a pybind11 object is pickleable*/
+bool is_pickleable(const pybind11::object& obj);
 
 } // close namespace pulsar
 

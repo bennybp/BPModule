@@ -38,11 +38,11 @@ class ModuleManager : public std::enable_shared_from_this<ModuleManager>
         ~ModuleManager();
 
 
-        // no copy construction or assignment
+        // no copy/move construction or assignment b/c of std mutex
         ModuleManager(const ModuleManager & rhs)             = delete;
-        ModuleManager(ModuleManager && rhs)                  = default;
+        ModuleManager(ModuleManager && rhs)                  = delete;
         ModuleManager & operator=(const ModuleManager & rhs) = delete;
-        ModuleManager & operator=(ModuleManager && rhs)      = default;
+        ModuleManager & operator=(ModuleManager && rhs)      = delete;
 
 
         /*! \brief Returns the number of modules in the database
@@ -125,9 +125,11 @@ class ModuleManager : public std::enable_shared_from_this<ModuleManager>
             std::unique_ptr<detail::ModuleIMPLHolder> umbptr = create_module_(modulekey, parentid);
 
             if(!umbptr->IsType<T>())
+
                 throw PulsarException("Module for this key is not of the right type",
                                                        "modulekey", modulekey,
                                                        "expectedtype", demangle_cpp_type<T>());
+
 
             // create the ModulePtr type
             ModulePtr<T> mod(std::move(umbptr));
@@ -236,7 +238,7 @@ class ModuleManager : public std::enable_shared_from_this<ModuleManager>
 
 
 
-        /*! \brief Adds/inserts a module creator to the database
+        /*! \brief Adds/inserts a module from a supermodule to the database
          *
          * The supermodule is loaded via a handler, and then info
          * for the module is extracted from the supermodule information.
@@ -248,11 +250,39 @@ class ModuleManager : public std::enable_shared_from_this<ModuleManager>
          *  \note We pass all module creation funcs. This is so we
          *        don't need to export IMPL holders to pybind11
          *
-         * \param [in] minfo Information about the module
+         * \param [in] minfo Information about the module.  Minimally, name,
+         *               type, and path need to be set.
          * \param [in] modulekey The key to associate with the module
          */
         void load_module_from_minfo(const ModuleInfo & minfo, const std::string & modulekey);
 
+        /*! \brief Adds/inserts a lambda module
+         *
+         *  \param [in] module_name The name of the module to load
+         *  \param [in] module_key The key to load it under
+         *  \param [in] T The class type you called the module
+         */
+        template<typename T>
+        void load_lambda_module(const std::string& module_name,
+                                const std::string& module_key)
+        {
+            ModuleInfo minfo;
+            minfo.name=module_name;
+            ModuleCreationFuncs mcf;
+            mcf.add_cpp_creator<T>(module_name);
+            load_module_from_mcf_(minfo,module_key,mcf);
+        }
+
+
+        /*! \brief Adds/inserts a lambda module (python binding)
+         *
+         *  \param [in] module_type The Python class
+         *  \param [in] module_name The name of the module to load
+         *  \param [in] module_key The key to load it under
+         */
+        void load_lambda_module_py(const pybind11::object& module_type,
+                                   const std::string& module_name,
+                                   const std::string& module_key);
 
         /*! \brief Enable debugging for a specific key
          *
@@ -367,18 +397,21 @@ class ModuleManager : public std::enable_shared_from_this<ModuleManager>
          */
         std::unique_ptr<detail::ModuleIMPLHolder>
         create_module_(const std::string & modulekey, ID_t parentid);
+
+        /*! \brief Adds/inserts modules from an anonymous supermodule into the
+         *  database
+         *
+         *  \param [in] minfo Information about the module, only name needs set
+         *  \param [in] modulekey The module key to associate with the module
+         *  \param [in] mcfs The functions used to create the module type
+         *                corresponding to minfo.name
+         *
+         *  \throw pulsar::PulsarException if \p mcfs doesn't contain a creator
+         *  for the module type
+         */
+        void load_module_from_mcf_(const ModuleInfo & minfo, const std::string& modulekey, const ModuleCreationFuncs& mcfs);
 };
 
-
-/** \brief Given an existing module, the ID of the new module's parent, a module manager, and a
- *  map (option_key to value) of options to change.  This function will copy the module into a
- *  unique key, change the options, and return the module implementation.
- *
- *  \todo Make a C++ version
- */
-pybind11::object copy_key_change_options_py(const std::string& modulekey, 
-                                            ID_t parentid,ModuleManager& mm,
-    const std::map<std::string,pybind11::object>& options);
 
 
 } // close namespace pulsar
