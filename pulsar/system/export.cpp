@@ -247,7 +247,7 @@ void export_system(pybind11::module & m)
     m.def("rotate", rotate<std::array<double, 9>>);
     m.def("center_of_mass", center_of_mass);
     m.def("center_of_nuclear_charge", center_of_nuclear_charge);
-    
+    m.def("system_to_angstroms",system_to_angstroms);
     m.def("Frac2Cart",Frac2Cart);
     m.def("MakeSuperCell",MakeSuperCell);
     m.def("CarveUC",CarveUC,pybind11::arg("SC"),pybind11::arg("Sides"),
