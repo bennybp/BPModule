@@ -329,16 +329,23 @@ public:
     ///@}
 };
 
-/*! \brief Finds the center of mass of \p sys
+/*! \relates System
+ *
+ * \brief Finds the center of mass of \p sys
  * 
  * Uses atomic masses (abundance-weighted isotope masses)
  */
 Point center_of_mass(const System& sys);
 
-/*! \brief Finds the center of nuclear charge of \p sys*/
+/*! \relates System
+ *
+ *  \brief Finds the center of nuclear charge of \p sys
+ */
 Point center_of_nuclear_charge(const System& sys);
 
-/*! \brief translate the system
+/*! \relates System
+ *
+ *  \brief translate \p Sys by \p vec
  * 
  * \tparam VectorType A type corresponding to a VectorConcept
  */
@@ -349,7 +356,9 @@ System translate(const System& Sys,const VectorType & vec)
             std::placeholders::_1, vec));
 }
 
-/*! \brief rotates the system point by point
+/*! \relates System
+ *
+ * \brief rotates the system point by point
  * 
  *  Given a rotation matrix R, this function takes the point from the
  *  column space to the row space.
@@ -366,17 +375,26 @@ System rotate(const System& Sys,const MatrixType & mat)
 ///Type of a distance matrix
 typedef std::unordered_map<std::pair<Atom,Atom>,double> DistMat_t;
 
-///Returns the distance between each pair of atoms in sys
+/*! \relates System
+ *
+ * \brief Returns the distance between each pair of atoms in \p sys
+ */
 DistMat_t get_distance(const System& sys);
 
 ///Type of a connectivity table
 typedef std::unordered_map<Atom, std::unordered_set<Atom>> Conn_t;
 
-///Returns connectivity data of sys, using covalent radii.  Atoms are considered
-///bonded if Tolerance*(sum of covRaddii) is greater than distance
+/*! \relates System
+ * \brief Returns connectivity data of \p sys, using covalent radii.
+ *
+ * Atoms are considered bonded if Tolerance*(sum of covRaddii) is greater than
+ * distance
+ */
 Conn_t get_connectivity(const System& sys, double Tolerance = 1.20);
 
-/** \brief Given a molecule that has been translated to the center of mass
+/** \relates System
+ *
+ * \brief Given a molecule that has been translated to the center of mass
  *         this function computes the inertia tensor for that system
  * 
  *  The moment of inertia of a rigid rotating body comprised of \f$N\f$
@@ -463,39 +481,108 @@ Conn_t get_connectivity(const System& sys, double Tolerance = 1.20);
 std::array<double,9> inertia_tensor(const System& Mol);
 
 
-///Allows a system to be printed with stream operators
+/** \relates System
+ *  Prints a \mol to the ostream \p os
+ *  \return the modified stream
+ */
 inline std::ostream& operator<<(std::ostream& os, const System& Mol)
 {
     return Mol.print(os);
 }
 
-//! A map of systems (fragments, etc), MIM uses fact that this is ordered
+//! A map of systems (fragments, etc)
 typedef std::map<std::string, System> SystemMap;
 
-///Helper function that converts a system to Angstroms (for printing/debugging)
+/** \relates System
+ * Helper function that converts a system to Angstroms (for printing/debugging)
+ *
+ * \param [in] sys The System instance to convert to Angstroms
+ * \return The same system, but in Angstroms
+ */
 System system_to_angstroms(const System& sys);
 
-///Operator overload of an assignment operation
-#define ASSIGN_OP(fxn,fxn2call)\
-inline System& fxn(System& lhs,const System& rhs){return lhs.fxn2call(rhs);}
+///\name Operator overloads
+///@{
+/** \relates System
+ *  \brief Makes \p lhs the union of itself and \p rhs.
+ */
+inline System& operator+=(System& lhs,const System& rhs)
+{
+    return lhs.union_assign(rhs);
+}
 
-///Operator overload of a const operation
-#define SYS_OP(rv,fxn,fxn2call)\
-inline rv fxn(const System& lhs,const System& rhs){return lhs.fxn2call(rhs);}
+/** \relates System
+ *  \brief Makes \p lhs the intersection of itself and \p rhs.
+ */
+inline System& operator/=(System& lhs,const System& rhs)
+{
+    return lhs.intersection_assign(rhs);
+}
 
-ASSIGN_OP(operator+=,union_assign)
-ASSIGN_OP(operator/=,intersection_assign)
-ASSIGN_OP(operator-=,difference_assign)
-SYS_OP(System,operator+,set_union)
-SYS_OP(System,operator/,intersection)
-SYS_OP(System,operator-,difference)
-SYS_OP(bool,operator<=,is_subset_of)
-SYS_OP(bool,operator<,is_proper_subset_of)
-SYS_OP(bool,operator>=,is_superset_of)
-SYS_OP(bool,operator>,is_proper_superset_of)
+/** \relates System
+ *  \brief Makes \p lhs the set difference of itself and \p rhs.
+ */
+inline System& operator-=(System& lhs,const System& rhs)
+{
+    return lhs.difference_assign(rhs);
+}
 
-#undef SYS_OP
-#undef ASSIGN_OP
+/** \relates System
+ *  \brief returns the union of \p lhs and \p rhs.
+ */
+inline System operator+(const System& lhs,const System& rhs)
+{
+    return lhs.set_union(rhs);
+}
+
+/** \relates System
+ *  \brief returns the intersection of \p lhs and \p rhs.
+ */
+inline System operator/(const System& lhs,const System& rhs)
+{
+    return lhs.intersection(rhs);
+}
+
+/** \relates System
+ *  \brief returns the set difference of \p lhs and \p rhs.
+ */
+inline System operator-(const System& lhs,const System& rhs)
+{
+    return lhs.difference(rhs);
+}
+
+/** \relates System
+ *  \brief returns true if \p lhs is a subset of \p rhs.
+ */
+inline bool operator<=(const System& lhs,const System& rhs)
+{
+    return lhs.is_subset_of(rhs);
+}
+
+/** \relates System
+ *  \brief returns true if \p lhs is a proper subset of \p rhs.
+ */
+inline bool operator<(const System& lhs,const System& rhs)
+{
+    return lhs.is_proper_subset_of(rhs);
+}
+
+/** \relates System
+ *  \brief returns true if \p lhs is a superset of \p rhs.
+ */
+inline bool operator>=(const System& lhs,const System& rhs)
+{
+    return lhs.is_superset_of(rhs);
+}
+
+/** \relates System
+ *  \brief returns true if \p lhs is a proper superset of \p rhs.
+ */
+inline bool operator>(const System& lhs,const System& rhs)
+{
+    return lhs.is_proper_superset_of(rhs);
+}
+///@}
 
 } // close namespace pulsar
 

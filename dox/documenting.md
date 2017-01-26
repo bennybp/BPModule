@@ -99,6 +99,15 @@ following conventions to help keep the documentation concise:
 
 - Use \verbatim\copydoc function_name\endverbatim when possible to avoid 
   duplicating documentation
+- For free-functions strongly coupled to a class use
+  \verbatim\relates <class>\endverbatim, *e.g.* to document a function that
+  rotates a system:
+  ```.cpp
+  /** \relates System
+   * Rotates \p sys by the 3 x 3 matrix \p r
+   */
+  System rotate(const System& sys,const double* r);
+  ```
 
 ## Documenting Python
 Documentation in Python goes in doc strings.  For example:
