@@ -161,7 +161,7 @@ Checkpoint::form_cache_save_list_(const ModuleManager & mm,
             }
         }
 
-        print_global_output("        %?  %?\n", stat, data.first);
+        print_global_debug("        %?  %?\n", stat, data.first);
 
         if(save)
             to_save.push_back(data.first);
@@ -212,7 +212,7 @@ void Checkpoint::save_cache_(const ModuleManager & mm,
                                     policy};
             ByteArray ba_meta = to_byte_array(meta);
 
-            print_global_output("Saving: (%10? bytes)   %?\n", ba_data.size(), cachekey);
+            print_global_debug("Saving: (%10? bytes)   %?\n", ba_data.size(), cachekey);
 
             // write to the backend
             backend.write(full_key, ba_data); 
@@ -243,9 +243,9 @@ void Checkpoint::load_cache_(ModuleManager & mm, CheckpointIO & backend)
     try {
         auto all_keys = backend.all_keys();
 
-        print_global_output("Checkpoint keys:\n");
+        print_global_debug("Checkpoint keys:\n");
         for(const auto & key : all_keys)
-            print_global_output("    %?\n", key);
+            print_global_debug("    %?\n", key);
 
         // load the data
         for(const auto & it : all_keys)
@@ -255,7 +255,7 @@ void Checkpoint::load_cache_(ModuleManager & mm, CheckpointIO & backend)
                 const std::string metakey = it + "##META";
 
                 std::string cachekey = split_cache_key(it);
-                print_global_output("Loading %?\n", cachekey);
+                print_global_debug("Loading %?\n", cachekey);
 
                 ByteArray data = backend.read(it);
                 ByteArray metadata = backend.read(metakey);
