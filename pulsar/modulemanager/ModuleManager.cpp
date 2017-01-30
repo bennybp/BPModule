@@ -333,7 +333,7 @@ ModuleManager::create_module_(const std::string & modulekey, ID_t parentid)
 
     // set the info for the module
     // (set via C++ functions)
-    ModuleBase * p = umbptr->CppPtr();
+    ModuleBase * p = umbptr->as_cpp_ptr();
     p->set_module_manager_(shared_from_this());
     p->set_tree_node_(&mtn); // also sets up output tee
 
@@ -367,11 +367,13 @@ pybind11::object ModuleManager::get_module_py(const std::string & modulekey,
     // mutex locking handled in create_module_
     std::unique_ptr<detail::ModuleIMPLHolder> umbptr = create_module_(modulekey, parentid);
 
-    // we use a pointer so that the python object
-    // can take ownership and we can avoid having
-    // a copy constructor for PyModulePtr
-
-    return convert_to_py(new PyModulePtr(std::move(umbptr)), pybind11::return_value_policy::take_ownership);
+    // use return value policy "move" since PyModulePtr doesn't have
+    // a copy constructor
+    //
+    // After release_py_object, umbptr should still be safe to delete
+    // (via ~unique_ptr)
+    PyModulePtr pptr(umbptr->release_py_object());
+    return convert_to_py(std::move(pptr), pybind11::return_value_policy::move);
 }
 
 void ModuleManager::change_option_py(const std::string & modulekey, const std::string & optkey, const pybind11::object & value)
