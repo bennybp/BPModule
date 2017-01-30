@@ -16,20 +16,20 @@ namespace detail {
 PyModuleIMPLHolder::PyModuleIMPLHolder(const pybind11::object & mod)
     : mod_(mod)
 {
-    
-
     if(!mod)
         throw PulsarException("PyModuleIMPLHolder given a null object");
 }
 
-ModuleBase * PyModuleIMPLHolder::CppPtr(void) const
+ModuleBase * PyModuleIMPLHolder::as_cpp_ptr(void) const
 {
     return convert_to_cpp<ModuleBase *>(mod_);
 }
 
-pybind11::object PyModuleIMPLHolder::PythonObject(void) const
+pybind11::object PyModuleIMPLHolder::release_py_object(void)
 {
-    return mod_;
+    pybind11::object o(mod_);
+    mod_.release();
+    return o;
 }
 
 

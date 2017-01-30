@@ -44,7 +44,7 @@ class ModulePtr
                 throw PulsarException("ModulePtr given a null pointer");
 
             // Attempt to convert to the proper pointer type
-            ptr_ = dynamic_cast<T *>(holder_->CppPtr());
+            ptr_ = dynamic_cast<T *>(holder_->as_cpp_ptr());
 
             if(ptr_ == nullptr)
                 throw PulsarException("ModulePtr not given a holder of the right type");
@@ -70,8 +70,6 @@ class ModulePtr
          */
         T * operator->() const
         {
-            
-
             if(!holder_)
                 throw PulsarException("ModulePtr has an empty unique pointer");
             if(ptr_ == nullptr)
@@ -89,8 +87,6 @@ class ModulePtr
          */
         T & operator*() const
         {
-            
-            
             if(!holder_)
                 throw PulsarException("ModulePtr has an empty unique pointer");
             if(ptr_ == nullptr)
@@ -124,20 +120,12 @@ class PyModulePtr
          *
          * Moves the held module from the unique pointer
          *
-         * \param [in] holder The holder of the module to be contained in
-         *                    this object
+         * \param [in] holder Module to store in this object
          */
-        PyModulePtr(std::unique_ptr<detail::ModuleIMPLHolder> && holder)
-                  : holder_(std::move(holder))
+        PyModulePtr(pybind11::object && mod)
+                  : mod_(mod)
         {
-            
-
-            // check before getting the python object
-            if(!holder_)
-                throw PulsarException("PyModulePtr given a null pointer");
-            obj_ = holder_->PythonObject();
-
-            if(!obj_)
+            if(!mod_)
                 throw PulsarException("Module given to PyModulePtr could not be converted to python object");
         }
 
@@ -160,23 +148,16 @@ class PyModulePtr
          */
         pybind11::object py__getattr__(const std::string & name)
         {
-            
-
             // check before getting the python object
-            if(!holder_)
-                throw PulsarException("PyModulePtr has a null pointer");
-            if(!obj_)
+            if(!mod_)
                 throw PulsarException("PyModulePtr python object is empty");
-            return obj_.attr(name.c_str());
+            return mod_.attr(name.c_str());
         }
 
 
     private:
-        //! The actual held module
-        std::unique_ptr<detail::ModuleIMPLHolder> holder_;
-
-        //! Held module converted to a pybind11::object
-        pybind11::object obj_;
+        //! Module converted to a pybind11::object
+        pybind11::object mod_;
 };
 
 } // close namespace pulsar
