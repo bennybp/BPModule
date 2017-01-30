@@ -43,15 +43,14 @@ class ModuleIMPLHolder
          *
          * Ownership remains the responsibility of thie IMPLHolder
          */
-        virtual ModuleBase * CppPtr(void) const = 0;
+        virtual ModuleBase * as_cpp_ptr(void) const = 0;
 
 
         /*! \brief Return a python object representing the module
          *
-         * The python object will share ownership of the module
-         * with this IMPL object.
+         * The python object will take ownership
          */
-        virtual pybind11::object PythonObject(void) const = 0;
+        virtual pybind11::object release_py_object(void) = 0;
 
 
         /*! \brief Determine if the held module is a given type
@@ -62,12 +61,10 @@ class ModuleIMPLHolder
         template<typename T>
         bool IsType(void) const
         {
-            
-
-            if(CppPtr() == nullptr)
+            if(as_cpp_ptr() == nullptr)
                 throw PulsarException("Null pointer in ModuleIMPLHolder");
 
-            T * ptr = dynamic_cast<T *>(CppPtr());
+            T * ptr = dynamic_cast<T *>(as_cpp_ptr());
 
             return(ptr != nullptr);
         }
@@ -93,22 +90,20 @@ class CppModuleIMPLHolder : public ModuleIMPLHolder
              : mod_(std::move(mod)) { }
 
 
-        virtual ModuleBase * CppPtr(void) const
+        virtual ModuleBase * as_cpp_ptr(void) const
         {
-            
             if(!mod_)
                 throw PulsarException("Null pointer in CppModuleIMPLHolder");
             return mod_.get();
         }
 
 
-        virtual pybind11::object PythonObject(void) const
+        virtual pybind11::object release_py_object(void)
         {
-            
             if(!mod_)
               throw PulsarException("Null pointer in CppModuleIMPLHolder");
-            T * ptr = mod_.get();
-            pybind11::object o = convert_to_py(ptr, pybind11::return_value_policy::reference);
+
+            pybind11::object o = convert_to_py(mod_.release(), pybind11::return_value_policy::take_ownership);
 
             if(!o)
                 throw PulsarException("Null python object in CppModuleIMPLHolder");
@@ -133,9 +128,9 @@ class PyModuleIMPLHolder : public ModuleIMPLHolder
          */
         PyModuleIMPLHolder(const pybind11::object & mod);
 
-        virtual ModuleBase * CppPtr(void) const;
+        virtual ModuleBase * as_cpp_ptr(void) const;
 
-        virtual pybind11::object PythonObject(void) const;
+        virtual pybind11::object release_py_object(void);
 
     private:
         pybind11::object mod_;
