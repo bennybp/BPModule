@@ -1,5 +1,5 @@
 import pulsar as psr
-def make_system():
+def load_ref_system():
     """ Returns the tentitive global minimum geometry of the water dimer
     according to the TIP5P potential.
 

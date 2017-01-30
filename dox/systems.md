@@ -15,19 +15,19 @@ electrons.  The majority of the class is autopopulated for you if you use one of
 the factory functions provided.  These are functions like:
 ~~~{.cpp}
 //Makes a hydrogen atom at the origin
-Atom H=pulsar::system::create_atom({0.0,0.0,0.0},1);
+pulsar::Atom H=pulsar::create_atom({0.0,0.0,0.0},1);
 
 //Makes a deuterium atom at the origin
-Atom D=pulsar::system::create_atom({0.0,0.0,0.0},1,2);
+pulsar::Atom D=pulsar::create_atom({0.0,0.0,0.0},1,2);
 ~~~
 
 They are mirrored in Python:
 ~~~{.py}
 #Makes a hydrogen atom at the origin
-H=psr.system.create_atom([0.0,0.0,0.0],1)
+H=psr.create_atom([0.0,0.0,0.0],1)
 
 #Makes a deuterium atom at the origin
-D=psr.system.create_atom([0.0,0.0,0.0],1,2)
+D=psr.create_atom([0.0,0.0,0.0],1,2)
 ~~~
 
 When you use these functions the mass, charge, multiplicity, number of elctrons,
@@ -51,44 +51,44 @@ Like actual atoms, each pseduo atom has a factory function associated with it.
 Such as:
 ~~~{.cpp}
 //Make an atom
-Atom AnAtom=pulsar::system::create_atom({0.0,1.0,0.0},6);
+pulsar::Atom AnAtom=pulsar::create_atom({0.0,1.0,0.0},6);
 
 //"Ghost" it
-Atom GH=pulsar::system::make_ghost_atom(AnAtom);
+pulsar::Atom GH=pulsar::make_ghost_atom(AnAtom);
 
 //Put a charge at its location
-Atom q=pulsar::system::make_point_charge(AnAtom,Charge);
+pulsar::Atom q=pulsar::make_point_charge(AnAtom,Charge);
 
 //or...
-Atom q2=pulsar::system::make_point_charge({0.0,1.0,0.0},Charge);
+pulsar::Atom q2=pulsar::make_point_charge({0.0,1.0,0.0},Charge);
 
 //Put a dummy atom at its location
-Atom Dm=pulsar::system::make_dummy_atom(AnAtom);
+pulsar::Atom Dm=pulsar::make_dummy_atom(AnAtom);
 
 //or...
-Atom Dm2=pulsar::system::make_dummy_atom({0.0,1.0,0.0});
+pulsar::Atom Dm2=pulsar::make_dummy_atom({0.0,1.0,0.0});
 ~~~
 
 Again, mirrord Python bindings are available:
 
 ~~~{.py}
 #Make an atom
-AnAtom=psr.system.create_atom([0.0,1.0,0.0],6)
+AnAtom=psr.create_atom([0.0,1.0,0.0],6)
 
 #"Ghost" it
-GH=psr.system.make_ghost_atom(AnAtom)
+GH=psr.make_ghost_atom(AnAtom)
 
 #Put a charge at its location
-q=psr.system.make_point_charge(AnAtom,Charge)
+q=psr.make_point_charge(AnAtom,Charge)
 
 #or...
-q2=psr.system.make_point_charge([0.0,1.0,0.0],Charge)
+q2=psr.make_point_charge([0.0,1.0,0.0],Charge)
 
 #Put a dummy atom at its location
-Dm=psr.system.make_dummy_atom(AnAtom)
+Dm=psr.make_dummy_atom(AnAtom)
 
 #or...
-Dm2=psr.system.make_dummy_atom([0.0,1.0,0.0])
+Dm2=psr.make_dummy_atom([0.0,1.0,0.0])
 ~~~
 
 In order to hide the user from the details of how Pulsar determines when an atom
@@ -98,26 +98,26 @@ ever change.  They are:
 
 ~~~{.cpp}
 //True if AnAtom is a ghost atom
-bool IsGhost=pulsar::system::is_ghost_atom(AnAtom);
+bool IsGhost=pulsar::is_ghost_atom(AnAtom);
 
 //True if AnAtom is a point charge
-bool IsCharge=pulsar::system::is_point_charge(AnAtom);
+bool IsCharge=pulsar::is_point_charge(AnAtom);
 
 //True if AnAtom is a dummy atom
-bool IsDummy=pulsar::system::is_dummy_atom(AnAtom);
+bool IsDummy=pulsar::is_dummy_atom(AnAtom);
 ~~~
 
 and yet again these are mirrored in Python:
 
 ~~~{.py}
 #True if AnAtom is a ghost atom
-IsGhost=psr.system.is_ghost_atom(AnAtom)
+IsGhost=psr.is_ghost_atom(AnAtom)
 
 #True if AnAtom is a point charge
-IsCharge=psr.system.is_point_charge(AnAtom)
+IsCharge=psr.is_point_charge(AnAtom)
 
 #True if AnAtom is a dummy atom
-IsDummy=psr.system.is_dummy_atom(AnAtom)
+IsDummy=psr.is_dummy_atom(AnAtom)
 ~~~
 
 I suspect in most cases you will not want to deal the pseduoatoms, for example
@@ -146,11 +146,12 @@ specifying the input of your problem aside from just what atoms are there.
 Right now you can do the following:
 ~~~{.cpp}
 #include "pulsar/constants.h"//For PI
-Space MySpace;//Not endoresed by the antiquated website...
+pulsar::Space MySpace;//Not endoresed by the antiquated website...
 
 bool IsPeriodic=MySpace.is_periodic();//By default no, but
 
-Space MyUnitCell({1.0,1.0,1.0},{PI/2,PI/2,PI/2});//A cubic cell that is 1 bohr^3
+//A cubic cell that is 1 bohr^3
+pulsar::Space MyUnitCell({1.0,1.0,1.0},{PI/2,PI/2,PI/2});
 
 bool IsPeriodic2=MyUnitCell.is_periodic();//Now it's true
 
@@ -171,12 +172,12 @@ You guessed it, this is mirrored in Python:
 
 ~~~{.py}
 import math
-
-MySpace=Space()#Not endoresed by the antiquated website...
+import pulsar as psr
+MySpace=psr.Space()#Not endoresed by the antiquated website...
 
 IsPeriodic=MySpace.is_periodic()#By default no
 
-MyUnitCell=Space([1.0,1.0,1.0],[PI/2,PI/2,PI/2])#A cubic cell that is 1 bohr^3
+MyUnitCell=psr.Space([1.0,1.0,1.0],[PI/2,PI/2,PI/2])#A cubic cell that is 1 bohr^3
 
 IsPeriodic2=MyUnitCell.is_periodic()#This is true
 
@@ -192,8 +193,6 @@ angles=MySpace.lattice_angles#I decided infinite space is cubic
 #Angles are still [1.57,1.57,1.57]
 angles=MyUnitCell.lattice_angles
 ~~~
-
-\todo Export Pulsar constants to Python
 
 ## System Class
 
