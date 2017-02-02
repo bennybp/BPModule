@@ -19,11 +19,10 @@ private:
 TEST_SIMPLE(TestSystemFragmenter){
     CppTester tester("Testing SystemFragmenter base class");
 
-    ModuleManager mm;
-    mm.load_lambda_module<TestFragger>("TestFragger","Test_fragger");
+    auto mm=make_shared<ModuleManager>();
+    mm->load_lambda_module<TestFragger>("TestFragger","Test_fragger");
 
-    auto fragger=mm.get_module<SystemFragmenter>("Test_fragger",0);
-    std::cout<<"hi"<<std::endl;
+    auto fragger=mm->get_module<SystemFragmenter>("Test_fragger",0);
     AtomSetUniverse MyU;
     Atom H=create_atom({0.0,0.0,0.0},1),H1=create_atom({0.0,0.0,0.89},1);
     MyU.insert(H);
