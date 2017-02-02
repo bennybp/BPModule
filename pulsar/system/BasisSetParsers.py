@@ -1,4 +1,5 @@
 import re
+import pulsar as psr
 
 # Break apart a list into blocks, where the original list
 # was separated by separator (regex). The first separator is included
@@ -43,7 +44,7 @@ def read_basis_file(path):
                                "file", path, "type", cart)
 
     iscart = (cart == "cartesian")
-    bstype = ShellType.CartesianGaussian if iscart else ShellType.SphericalGaussian
+    bstype = psr.ShellType.CartesianGaussian if iscart else psr.ShellType.SphericalGaussian
 
     atomblocks = block_list(lines[1:], r"\*\*\*\*", True) 
 
@@ -67,20 +68,20 @@ def read_basis_file(path):
             for p in prims:
                 ngen = len(prims[0][1])
                 if len(p[1]) != ngen:
-                    raise PulsarException("Ragged number of general contractions",
+                    raise psr.PulsarException("Ragged number of general contractions",
                                            "element", element, "file", path, "nprim", nprim,
                                            "expected", ngen, "actual", len(p[1]))
 
             # We have all the information to create a shell now
-            amint = string_to_am(am)
-            bsi = BasisShellInfo(bstype, amint, nprim, ngen) 
+            amint = psr.string_to_am(am)
+            bsi = psr.BasisShellInfo(bstype, amint, nprim, ngen)
             for i in range(0, len(prims)):
                 bsi.set_primitive(i, float(prims[i][0]),
                                     [ float(d) for d in prims[i][1] ])
 
             shellvec.append(bsi)
 
-        element_Z = atomic_z_from_symbol(element)
+        element_Z = psr.atomic_z_from_symbol(element)
         basismap[element_Z] = shellvec
                 
  

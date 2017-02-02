@@ -1,14 +1,15 @@
 import os
 import functools
+import pulsar as psr
 
 def transform_name(bsname):
     return bsname.replace("*", "s")
 
 
 def add_shells_to_atom(label, desc, bsmap, atom):
-    atom2 = pulsar.system.Atom(atom)
+    atom2 = psr.Atom(atom)
 
-    binfo = pulsar.system.BasisInfo()
+    binfo = psr.BasisInfo()
     binfo.description = desc
     binfo.shells = bsmap[atom2.Z]
     
@@ -27,20 +28,20 @@ def apply_single_basis(bslabel, bsname, syst):
 
     bspath = None
 
-    for p in pulsar.pulsar_paths["basis"]:
+    for p in psr.pulsar_paths["basis"]:
         testpath = os.path.join(p, transform_name(bsname)) + ".gbs"
         if os.path.isfile(testpath):
             bspath = testpath
             break
           
     if bspath == None:
-        ge = PulsarException("File for basis set does not exist", "bsname", bsname)
-        for p in pulsar.pulsar_paths["basis"]:
+        ge = psr.PulsarException("File for basis set does not exist", "bsname", bsname)
+        for p in psr.pulsar_paths["basis"]:
             ge.append_info("path", p)
         raise ge
 
     # read the map
-    bsmap = BasisSetParsers.read_basis_file(bspath)
+    bsmap = psr.read_basis_file(bspath)
 
     # Apply to all atoms
     f = functools.partial(add_shells_to_atom, bslabel, bsname, bsmap)
