@@ -1,1 +1,2 @@
 pulsar_test(modulebase TestNMerInfo)
+pulsar_test(modulebase TestSystemFragmenter)

@@ -58,7 +58,7 @@ int recv_int(int rank, int tag)
 
 void send_str(int rank, int tag, const std::string & s)
 {
-    MPI_Send(s.c_str(), pulsar::numeric_cast<int>(s.size()), MPI_CHAR, rank, tag, 
+    MPI_Send(const_cast<char*>(s.c_str()), pulsar::numeric_cast<int>(s.size()), MPI_CHAR, rank, tag, 
             MPI_COMM_WORLD);
 }
 
@@ -80,7 +80,7 @@ std::string recv_str(int rank, int tag)
 
 void send_data(int rank, int tag, const ByteArray & ba)
 {
-    MPI_Send(ba.data(), pulsar::numeric_cast<int>(ba.size()), MPI_BYTE, rank, tag, MPI_COMM_WORLD);
+    MPI_Send(const_cast<char*>(ba.data()), pulsar::numeric_cast<int>(ba.size()), MPI_BYTE, rank, tag, MPI_COMM_WORLD);
 }
 
 ByteArray recv_data(int rank, int tag)

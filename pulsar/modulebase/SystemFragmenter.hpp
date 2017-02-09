@@ -97,7 +97,18 @@ public:
 
     virtual NMerSetType fragmentize_(const System & mol)
     {
-        return call_py_override<NMerSetType>(this, "fragmentize_", mol);
+        using pyNMerSetType=std::map<std::string,NMerInfo>;
+        pyNMerSetType fragset=
+                call_py_override<pyNMerSetType>(this, "fragmentize_", mol);
+        NMerSetType rv;
+        for(auto dict_item: fragset)
+        {
+            std::istringstream iss(dict_item.first);
+            std::set<size_t> new_sn;
+            for(std::string s; iss>>s;)new_sn.insert(atoi(s.c_str()));
+            rv.emplace(std::make_pair(new_sn,dict_item.second));
+        }
+        return rv;
     }
     
     ///Python won't allow sets to be keys so we stringify it
