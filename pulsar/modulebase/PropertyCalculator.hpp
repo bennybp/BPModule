@@ -13,7 +13,7 @@
 
 namespace pulsar{
 
-/*! \brief One-electron integral implementation
+/*! \brief One-electron property
  *
  */
 class PropertyCalculator : public ModuleBase
@@ -30,12 +30,10 @@ class PropertyCalculator : public ModuleBase
          *
          */
         std::vector<double> calculate(unsigned int deriv,
-                                      const Wavefunction & wfn,
-                                      const BasisSet & bs1,
-                                      const BasisSet & bs2)
+                                      const Wavefunction & wfn)
         {
             return ModuleBase::call_function(&PropertyCalculator::calculate_,
-                                                deriv, wfn, bs1, bs2);
+                                                deriv, wfn);
         }
 
 
@@ -44,9 +42,7 @@ class PropertyCalculator : public ModuleBase
         /////////////////////////////////////////
         //! \copydoc calculate
         virtual std::vector<double> calculate_(unsigned int deriv,
-                                               const Wavefunction & wfn,
-                                               const BasisSet & bs1,
-                                               const BasisSet & bs2) = 0;
+                                               const Wavefunction & wfn) = 0;
 };
 
 
@@ -58,11 +54,9 @@ class PropertyCalculator_Py : public PropertyCalculator
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
         virtual std::vector<double> calculate_(unsigned int deriv,
-                                               const Wavefunction & wfn,
-                                               const BasisSet & bs1,
-                                               const BasisSet & bs2)
+                                               const Wavefunction & wfn)
         {
-            return call_py_override<std::vector<double>>(this, "calculate_", wfn, deriv, bs1, bs2);
+            return call_py_override<std::vector<double>>(this, "calculate_", wfn, deriv);
         }
 };
 

@@ -133,7 +133,8 @@ std::ostream& operator<<(std::ostream& os,const Atom& A);
 
 
 
-/* \brief Create an atom given an ID, coordinates, and atomic number
+/* \relates Atom
+ * \brief Create an atom given an ID, coordinates, and atomic number
  *
  * The rest of the data is filled in automatically
  */
@@ -145,7 +146,8 @@ Atom create_atom(CoordType xyz, int Z);
 
 
 
-/* \brief Create an atom given an ID, coordinates, atomic number, and isotope number
+/* \relates Atom
+ * \brief Create an atom given an ID, coordinates, atomic number, and isotope number
  *
  * The rest of the data is filled in automatically
  */
