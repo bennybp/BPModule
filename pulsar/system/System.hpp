@@ -5,8 +5,7 @@
  */
 
 
-#ifndef PULSAR_GUARD_SYSTEM__SYSTEM_HPP_
-#define PULSAR_GUARD_SYSTEM__SYSTEM_HPP_
+#pragma once
 
 #include <unordered_map>
 #include <unordered_set>
@@ -501,6 +500,29 @@ typedef std::map<std::string, System> SystemMap;
  */
 System system_to_angstroms(const System& sys);
 
+/** \relates System
+ *
+ *  We often want to move/manipulate one part of a system, this function is
+ *  designed to facilitate that.  Given the \p full_system, the
+ *  \p original_subsystem, and the \p new_subsystem this function returns a new
+ *  full system where the original subsystem has been replaced by the new
+ *  subsytem.  The returned system has a new Universe and is not affiliated with
+ *  the any of the original systems.
+ */
+ inline System update_subsystem(const System& full_system,
+         const System& original_subsystem,
+         const System& new_subsystem)
+ {
+     size_t counter=0;
+     return full_system.transform([&](const Atom& ai)
+     {
+         if(original_subsystem.count(ai))
+             return *std::next(new_subsystem.begin(),counter++);
+         else
+             return ai;
+     });
+ }
+
 ///\name Operator overloads
 ///@{
 /** \relates System
@@ -586,5 +608,3 @@ inline bool operator>(const System& lhs,const System& rhs)
 
 } // close namespace pulsar
 
-
-#endif
