@@ -67,16 +67,14 @@ class TwoElectronIntegral : public ModuleBase
          * \param [in] shell4 Shell index on the fourth center
          * \param [in] outbuffer Where to place the completed integrals
          * \param [in] bufsize Size of \p outbuffer (as the number of doubles)
-         * \return Number of integrals calculated
+         * \return A pointer to the beginning of the integral buffer
          */
-        uint64_t calculate(uint64_t shell1, uint64_t shell2,
-                           uint64_t shell3, uint64_t shell4,
-                           double * outbuffer, size_t bufsize)
+        const double* calculate(uint64_t shell1, uint64_t shell2,
+                           uint64_t shell3, uint64_t shell4)
         {
             ModuleBase::call_function(&TwoElectronIntegral::initialized_or_throw_);
             return ModuleBase::call_function(&TwoElectronIntegral::calculate_,
-                                                shell1, shell2, shell3, shell4,
-                                                outbuffer, bufsize);
+                                                shell1, shell2, shell3, shell4);
         }
 
         /*! \brief calculate an integral (for use from python)
@@ -88,15 +86,13 @@ class TwoElectronIntegral : public ModuleBase
          * \param [in] outbuffer Where to place the completed integrals
          * \return Number of integrals calculated
          */
-        uint64_t calculate_py(uint64_t shell1, uint64_t shell2,
-                              uint64_t shell3, uint64_t shell4,
-                              pybind11::buffer outbuffer)
+        pybind11::buffer calculate_py(uint64_t shell1, uint64_t shell2,
+                              uint64_t shell3, uint64_t shell4)
         {
             auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
-            return ModuleBase::call_function(&TwoElectronIntegral::calculate_,
-                                                shell1, shell2, shell3, shell4,
-                                                ptrinfo.first, ptrinfo.second[0]);
+            //return ModuleBase::call_function(&TwoElectronIntegral::calculate_,
+            //                                    shell1, shell2, shell3, shell4);
         }
 
 
@@ -110,16 +106,14 @@ class TwoElectronIntegral : public ModuleBase
          * \param [in] bufsize Size of \p outbuffer (as the number of doubles)
          * \return Number of integrals calculated
          */
-        uint64_t calculate_multi(const std::vector<uint64_t> & shells1,
+        const double* calculate_multi(const std::vector<uint64_t> & shells1,
                                  const std::vector<uint64_t> & shells2,
                                  const std::vector<uint64_t> & shells3,
-                                 const std::vector<uint64_t> & shells4,
-                                 double * outbuffer, size_t bufsize)
+                                 const std::vector<uint64_t> & shells4)
         {
             ModuleBase::call_function(&TwoElectronIntegral::initialized_or_throw_);
             return ModuleBase::call_function(&TwoElectronIntegral::calculate_multi_,
-                                                  shells1, shells2, shells3, shells4,
-                                                  outbuffer, bufsize);
+                                                  shells1, shells2, shells3, shells4);
         }
 
 
@@ -138,11 +132,11 @@ class TwoElectronIntegral : public ModuleBase
                                     const std::vector<uint64_t> & shells4,
                                     pybind11::buffer outbuffer)
         {
-            auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
+            //auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
 
-            return ModuleBase::call_function(&TwoElectronIntegral::calculate_multi_,
-                                                shells1, shells2, shells3, shells4,
-                                                ptrinfo.first, ptrinfo.second[0]);
+            //return ModuleBase::call_function(&TwoElectronIntegral::calculate_multi_,
+            //                                    shells1, shells2, shells3, shells4,
+            //                                    ptrinfo.first, ptrinfo.second[0]);
         }
 
 
@@ -166,29 +160,27 @@ class TwoElectronIntegral : public ModuleBase
 
 
         //! \copydoc calculate
-        virtual uint64_t calculate_(uint64_t shell1, uint64_t shell2,
-                                    uint64_t shell3, uint64_t shell4,
-                                    double * outbuffer, size_t bufsize) = 0;
+        virtual const double* calculate_(uint64_t shell1, uint64_t shell2,
+                                    uint64_t shell3, uint64_t shell4) = 0;
 
         //! \copydoc calculate_multi
-        virtual uint64_t calculate_multi_(const std::vector<uint64_t> & shells1,
+        virtual const double* calculate_multi_(const std::vector<uint64_t> & shells1,
                                           const std::vector<uint64_t> & shells2,
                                           const std::vector<uint64_t> & shells3,
-                                          const std::vector<uint64_t> & shells4,
-                                          double * outbuffer, size_t bufsize)
+                                          const std::vector<uint64_t> & shells4)
         {
             //////////////////////////////////////////////////////////
             // default implementation - just loop over and do them all
             //////////////////////////////////////////////////////////
 
-            uint64_t ntotal = 0;
+            /*uint64_t ntotal = 0;
 
             for(uint64_t s1 : shells1)
             for(uint64_t s2 : shells2)
             for(uint64_t s3 : shells3)
             for(uint64_t s4 : shells4)
             {
-                uint64_t nbatch = calculate_(s1, s2, s3, s4, outbuffer, bufsize);
+                uint64_t nbatch = calculate_(s1, s2, s3, s4);
                 ntotal += nbatch;
                 outbuffer += nbatch;
 
@@ -196,7 +188,7 @@ class TwoElectronIntegral : public ModuleBase
                 bufsize = ( (nbatch >= bufsize) ? 0 : (bufsize - nbatch) );
             }
 
-            return ntotal;
+            return ntotal;*/
         }
 
 
@@ -248,45 +240,43 @@ class TwoElectronIntegral_Py : public TwoElectronIntegral
 
 
         virtual uint64_t calculate_(uint64_t shell1, uint64_t shell2,
-                                    uint64_t shell3, uint64_t shell4,
-                                    double * outbuffer, size_t bufsize)
+                                    uint64_t shell3, uint64_t shell4)
         {
-            //! \todo untested
+//            //! \todo untested
 
-            pybind11::buffer_info buf(outbuffer,
-                                      sizeof(double),
-                                      pybind11::format_descriptor<double>::format(),
-                                      1, { bufsize },
-                                      { sizeof(double) });
+//            pybind11::buffer_info buf(outbuffer,
+//                                      sizeof(double),
+//                                      pybind11::format_descriptor<double>::format(),
+//                                      1, { bufsize },
+//                                      { sizeof(double) });
 
-            return call_py_override<uint64_t>(this, "calculate_", shell1, shell2, shell3, shell4,
-                                              buf, bufsize);
+//            return call_py_override<uint64_t>(this, "calculate_", shell1, shell2, shell3, shell4,
+//                                              buf, bufsize);
         }
 
 
         virtual uint64_t calculate_multi_(const std::vector<uint64_t> & shells1,
                                           const std::vector<uint64_t> & shells2,
                                           const std::vector<uint64_t> & shells3,
-                                          const std::vector<uint64_t> & shells4,
-                                          double * outbuffer, size_t bufsize)
+                                          const std::vector<uint64_t> & shells4)
         {
 
-            if(has_py_override<TwoElectronIntegral>(this, "calculate_multi_"))
-            {
-                //! \todo untested
+//            if(has_py_override<TwoElectronIntegral>(this, "calculate_multi_"))
+//            {
+//                //! \todo untested
 
-                pybind11::buffer_info pybuf(outbuffer,
-                                            sizeof(double),
-                                            pybind11::format_descriptor<double>::format(),
-                                            1, { bufsize },
-                                            { sizeof(double) });
+//                pybind11::buffer_info pybuf(outbuffer,
+//                                            sizeof(double),
+//                                            pybind11::format_descriptor<double>::format(),
+//                                            1, { bufsize },
+//                                            { sizeof(double) });
 
-                return call_py_override<uint64_t>(this, "calculate_multi_",
-                                                shells1, shells2, shells3, shells4, pybuf, bufsize);
-            }
-            else
-                return TwoElectronIntegral::calculate_multi_(shells1, shells2, shells3, shells4,
-                                                                outbuffer, bufsize);
+//                return call_py_override<uint64_t>(this, "calculate_multi_",
+//                                                shells1, shells2, shells3, shells4, pybuf, bufsize);
+//            }
+//            else
+//                return TwoElectronIntegral::calculate_multi_(shells1, shells2, shells3, shells4,
+//                                                                outbuffer, bufsize);
         }
 
 };
