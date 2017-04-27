@@ -42,6 +42,14 @@ class PyTester(TesterBase):
         else:
             self.test(desc,v1==v2)
 
+    def test_double_vector(self,desc,v1,v2,tol=0.0001):
+        is_good=True
+        for i,j in zip(v1,v2):
+            if abs(i-j)>tol:
+                is_good=False
+                break
+        self.test(desc,is_good)
+
 
 
 ##################

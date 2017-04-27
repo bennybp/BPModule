@@ -15,13 +15,13 @@ namespace pulsar{
 
 /*! \brief One-electron integral implementation
  */
-class OneElectronIntegral : public ModuleBase
+class TwoCenterIntegral : public ModuleBase
 {
     public:
-        typedef OneElectronIntegral BaseType;
+        typedef TwoCenterIntegral BaseType;
 
-        OneElectronIntegral(ID_t id)
-            : ModuleBase(id, "OneElectronIntegral"), initialized_(false)
+        TwoCenterIntegral(ID_t id)
+            : ModuleBase(id, "TwoCenterIntegral"), initialized_(false)
         { }
 
 
@@ -37,8 +37,8 @@ class OneElectronIntegral : public ModuleBase
                         const BasisSet & bs1,
                         const BasisSet & bs2)
         {
-            ModuleBase::call_function(&OneElectronIntegral::uninitialized_or_throw_);
-            ModuleBase::call_function(&OneElectronIntegral::initialize_, deriv, wfn, bs1, bs2);
+            ModuleBase::call_function(&TwoCenterIntegral::uninitialized_or_throw_);
+            ModuleBase::call_function(&TwoCenterIntegral::initialize_, deriv, wfn, bs1, bs2);
             initialized_ = true; 
         }
 
@@ -50,7 +50,7 @@ class OneElectronIntegral : public ModuleBase
          */
         unsigned int n_components(void) const
         {
-            return ModuleBase::call_function(&OneElectronIntegral::n_components_);
+            return ModuleBase::call_function(&TwoCenterIntegral::n_components_);
         }
 
 
@@ -64,9 +64,9 @@ class OneElectronIntegral : public ModuleBase
          */
         const double* calculate(uint64_t shell1, uint64_t shell2)
         {
-            ModuleBase::call_function(&OneElectronIntegral::initialized_or_throw_);
+            ModuleBase::call_function(&TwoCenterIntegral::initialized_or_throw_);
 
-            return ModuleBase::call_function(&OneElectronIntegral::calculate_,
+            return ModuleBase::call_function(&TwoCenterIntegral::calculate_,
                                               shell1, shell2);
         }
 
@@ -99,9 +99,9 @@ class OneElectronIntegral : public ModuleBase
         const double* calculate_multi(const std::vector<uint64_t> & shells1,
                                  const std::vector<uint64_t> & shells2)
         {
-            ModuleBase::call_function(&OneElectronIntegral::initialized_or_throw_);
+            ModuleBase::call_function(&TwoCenterIntegral::initialized_or_throw_);
 
-            return ModuleBase::call_function(&OneElectronIntegral::calculate_multi_,
+            return ModuleBase::call_function(&TwoCenterIntegral::calculate_multi_,
                                                   shells1, shells2);
         }
 
@@ -142,32 +142,30 @@ class OneElectronIntegral : public ModuleBase
         }
 
         //! \copydoc calculate
-        virtual uint64_t calculate_(uint64_t shell1, uint64_t shell2,
-                                    double * outbuffer, size_t bufsize) = 0;
+        virtual const double* calculate_(uint64_t shell1, uint64_t shell2) = 0;
 
         //! \copydoc calculate_multi
-        virtual uint64_t calculate_multi_(const std::vector<uint64_t> & shells1,
-                                          const std::vector<uint64_t> & shells2,
-                                          double * outbuffer, size_t bufsize)
+        virtual const double* calculate_multi_(const std::vector<uint64_t> & shells1,
+                                          const std::vector<uint64_t> & shells2)
         {
-            //////////////////////////////////////////////////////////
-            // default implementation - just loop over and do them all
-            //////////////////////////////////////////////////////////
+//            //////////////////////////////////////////////////////////
+//            // default implementation - just loop over and do them all
+//            //////////////////////////////////////////////////////////
 
-            uint64_t ntotal = 0;
+//            uint64_t ntotal = 0;
 
-            for(uint64_t s1 : shells1)
-            for(uint64_t s2 : shells2)
-            {
-                uint64_t nbatch = calculate_(s1, s2, outbuffer, bufsize);
-                ntotal += nbatch;
-                outbuffer += nbatch;
+//            for(uint64_t s1 : shells1)
+//            for(uint64_t s2 : shells2)
+//            {
+//                uint64_t nbatch = calculate_(s1, s2, outbuffer, bufsize);
+//                ntotal += nbatch;
+//                outbuffer += nbatch;
 
-                // be safe with unsigned types
-                bufsize = ( (nbatch >= bufsize) ? 0 : (bufsize - nbatch) );
-            }
+//                // be safe with unsigned types
+//                bufsize = ( (nbatch >= bufsize) ? 0 : (bufsize - nbatch) );
+//            }
 
-            return ntotal;
+//            return ntotal;
         }
 
 
@@ -190,10 +188,10 @@ class OneElectronIntegral : public ModuleBase
 };
 
 
-class OneElectronIntegral_Py : public OneElectronIntegral
+class TwoCenterIntegral_Py : public TwoCenterIntegral
 {
     public:
-        using OneElectronIntegral::OneElectronIntegral;
+        using TwoCenterIntegral::TwoCenterIntegral;
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
@@ -212,11 +210,11 @@ class OneElectronIntegral_Py : public OneElectronIntegral
             if(has_py_override(this, "n_components_"))
                 return call_py_override<unsigned int>(this, "n_components_");
             else
-                return OneElectronIntegral::n_components_();
+                return TwoCenterIntegral::n_components_();
         }
 
 
-        virtual uint64_t calculate_(uint64_t shell1, uint64_t shell2)
+        virtual const double* calculate_(uint64_t shell1, uint64_t shell2)
         {
             //! \todo untested
 
@@ -230,7 +228,7 @@ class OneElectronIntegral_Py : public OneElectronIntegral
         }
 
 
-        virtual uint64_t calculate_multi_(const std::vector<uint64_t> & shells1,
+        virtual const double* calculate_multi_(const std::vector<uint64_t> & shells1,
                                           const std::vector<uint64_t> & shells2)
         {
 //            if(has_py_override(this, "calculate_multi_"))

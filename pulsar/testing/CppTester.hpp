@@ -292,6 +292,20 @@ public:
     {
         test(desc,std::fabs(v1-v2)<tol);
     }
+
+    /*! \brief Overload of test that compares containers of doubles to a tolerance
+     *
+     * \exstrong
+     */
+    template<typename T1,typename T2>
+    void test_double_vector(const std::string& desc,const T1& v1, const T2& v2, double tol=0.0001)
+    {
+        bool is_good=true;
+        is_good = std::inner_product(v1.begin(),v1.end(),v2.begin(),is_good,
+                     std::logical_and<double>(),
+                     [=](double v1x,double v2x){return std::fabs(v1x-v2x)<tol;});
+        test(desc,is_good);
+    }
 };
 
 }
