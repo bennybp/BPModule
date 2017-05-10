@@ -20,10 +20,9 @@ namespace {
      */
     struct EnvManager_
     {
-        std::unique_ptr<LibTaskForce::HybridEnv> env;
         bool initialized_by_me = false;
 
-        void initialize(size_t nthreads)
+        void initialize(size_t )
         {
             using namespace pulsar;
 
@@ -43,12 +42,24 @@ namespace {
                 initialized_by_me = true;
             }
 
-            env = std::make_unique<LibTaskForce::HybridEnv>(MPI_COMM_WORLD, nthreads);
+        }
+
+        int rank(void)const
+        {
+            int my_rank;
+            MPI_Comm_rank(MPI_COMM_WORLD,&my_rank);
+            return my_rank;
+        }
+
+        int n_procs(void)const
+        {
+            int my_size;
+            MPI_Comm_size(MPI_COMM_WORLD,&my_size);
+            return my_size;
         }
 
         void finalize(void)
         {
-            env.reset();
 
             // is MPI already initialized?
             int initialized;
@@ -74,14 +85,6 @@ namespace {
 namespace pulsar{
 
 
-const LibTaskForce::HybridEnv & get_env(void)
-{
-    if(!envmanager_.env)
-        throw pulsar::PulsarException("Parallel environment not initialized");
-    return *(envmanager_.env);
-}
- 
-
 void parallel_initialize(size_t nthreads)
 {
     envmanager_.initialize(nthreads);
@@ -92,13 +95,13 @@ void parallel_initialize(size_t nthreads)
 
 long get_proc_id(void)
 {
-    return static_cast<long>(get_env().comm().rank());
+    return static_cast<long>(envmanager_.rank());
 }
 
 
 long get_nproc(void)
 {
-    return static_cast<long>(get_env().comm().nprocs());
+    return static_cast<long>(envmanager_.n_procs());
 }
 
 } // close namespace pulsar

@@ -71,9 +71,7 @@ EnergyMethod::finite_difference_(size_t Order, const Wavefunction & Wfn){
     //I don't know why the fill constructor is not working...
     //for(const Atom& AnAtom: Mol)Atoms.push_back(AnAtom);
     
-    const HybridComm& Comm=get_env().comm();
-    auto new_comm=Comm.split(Comm.nprocs(),1);
-    CentralDiff<double,Return_t> FD(std::move(new_comm));
+    CentralDiff<double,Return_t> FD;
     auto EMeth=create_child<EnergyMethod>(key());
 
     TempDeriv=FD.Run(FDFunctor(Order,Atoms,Wfn,std::move(EMeth)),3*Mol.size(),

@@ -50,7 +50,6 @@ list(APPEND PULSAR_CORE_LINK_FLAGS
             bpprint
             memwatch
             pybind11::module
-            libtaskforce
             ${MPI_CXX_LINK_FLAGS}
 )
 
@@ -66,7 +65,6 @@ message(STATUS "BerkeleyDB libraries    ${BerkeleyDB_LIBRARIES}")
 message(STATUS "Python executable:      ${PYTHON_EXECUTABLE}")
 message(STATUS "Python version:         ${PYTHON_VERSION_STRING}")
 message(STATUS "Pybind11 path:          ${pybind11_DIR}")
-message(STATUS "LibTaskForce path:      ${libtaskforce_DIR}")
 message(STATUS "BPHash path:            ${bphash_DIR}")
 message(STATUS "BPPrint path:           ${bpprint_DIR}")
 message(STATUS "Memwatch path:          ${memwatch_DIR}")
