@@ -7,9 +7,7 @@
 #include "pulsar/modulebase/EnergyMethod.hpp"
 #include "pulsar/math/FiniteDiff.hpp"
 #include "pulsar/parallel/Parallel.hpp"
-#include <LibTaskForce/LibTaskForce.hpp>
 
-using LibTaskForce::HybridComm;
 using Return_t=std::vector<double>;
 namespace pulsar{
 
