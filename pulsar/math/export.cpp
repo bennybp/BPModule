@@ -115,10 +115,12 @@ void export_math(pybind11::module & m)
     using SharedMatrix=std::shared_ptr<MatrixDImpl>;
     using SharedVector=std::shared_ptr<VectorDImpl>;
 
+    export_tensor_impl<Rank3DImpl,PyRank3DImpl>(m,"Rank3DImpl");
     export_tensor_impl<MatrixDImpl,PyMatrixDImpl>(m,"MatrixImplD");
     export_tensor_impl<VectorDImpl,PyVectorDImpl>(m,"VectorImplD");  
     export_eigen_x_impl<EigenMatrixImpl,Eigen::MatrixXd,MatrixDImpl>(m,"EigenMatrixImpl");
     export_eigen_x_impl<EigenVectorImpl,Eigen::VectorXd,VectorDImpl>(m,"EigenVectorImpl");
+    export_eigen_x_impl<EigenTensorImpl<3>,Eigen::Tensor<double,3>,Rank3DImpl>(m,"EigenTensorImpl");
     export_irrep_spin_X<IrrepSpinMatrixD,SharedMatrix>(m,"BlockedEigenMatrix");
     export_irrep_spin_X<IrrepSpinVectorD,SharedVector>(m,"BlockedEigenVector");
      

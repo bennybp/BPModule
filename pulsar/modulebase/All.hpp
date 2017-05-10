@@ -17,12 +17,13 @@
 // Integrals
 #include "pulsar/modulebase/SystemIntegral.hpp"
 #include "pulsar/modulebase/TwoCenterIntegral.hpp"
-#include "pulsar/modulebase/OneElectronMatrix.hpp"
+#include "pulsar/modulebase/MatrixBuilder.hpp"
 #include "pulsar/modulebase/ThreeCenterIntegral.hpp"
 #include "pulsar/modulebase/FourCenterIntegral.hpp"
 #include "pulsar/modulebase/SCFIterator.hpp"
 #include "pulsar/modulebase/EnergyMethod.hpp"
 #include "pulsar/modulebase/FockBuilder.hpp"
 #include "pulsar/modulebase/PropertyCalculator.hpp"
+#include "pulsar/modulebase/Rank3Builder.hpp"
 
 #endif

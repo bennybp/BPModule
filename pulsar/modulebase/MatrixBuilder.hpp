@@ -16,13 +16,13 @@ namespace pulsar{
 /*! \brief One-electron integral implementation
  *
  */
-class OneElectronMatrix : public ModuleBase
+class MatrixBuilder : public ModuleBase
 {
     public:
-        typedef OneElectronMatrix BaseType;
+        typedef MatrixBuilder BaseType;
         typedef std::vector<std::shared_ptr<const MatrixDImpl>> ReturnType;
 
-        OneElectronMatrix(ID_t id)
+        MatrixBuilder(ID_t id)
             : ModuleBase(id, "OneElectronMatrix")
         { }
 
@@ -39,7 +39,7 @@ class OneElectronMatrix : public ModuleBase
                              unsigned int deriv, const Wavefunction & wfn,
                              const BasisSet & bs1, const BasisSet & bs2)
         {
-            return ModuleBase::call_function(&OneElectronMatrix::calculate_,
+            return ModuleBase::call_function(&MatrixBuilder::calculate_,
                                                 key, deriv, wfn, bs1, bs2);
         }
 
@@ -56,10 +56,10 @@ class OneElectronMatrix : public ModuleBase
 };
 
 
-class OneElectronMatrix_Py : public OneElectronMatrix
+class MatrixBuilder_Py : public MatrixBuilder
 {
     public:
-        using OneElectronMatrix::OneElectronMatrix;
+        using MatrixBuilder::MatrixBuilder;
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 

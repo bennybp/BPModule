@@ -107,13 +107,26 @@ void export_modulebase(pybind11::module & m)
     ///////////////////////////
     // One electron cacher
     ///////////////////////////
-    pybind11::class_<OneElectronMatrix, std::unique_ptr<OneElectronMatrix>, OneElectronMatrix_Py> oneelcache(m, "OneElectronMatrix", mbase);
+    pybind11::class_<MatrixBuilder, std::unique_ptr<MatrixBuilder>, MatrixBuilder_Py> oneelcache(m, "MatrixBuilder", mbase);
     oneelcache.def(pybind11::init<ID_t>())
-              .def_readonly("out", &OneElectronMatrix_Py::out, pybind11::return_value_policy::reference_internal)
-              .def("cache", &OneElectronMatrix_Py::cache, pybind11::return_value_policy::reference_internal)
-              .def("module_manager", &OneElectronMatrix_Py::module_manager, pybind11::return_value_policy::reference_internal)
-              .def("calculate", &OneElectronMatrix::calculate)
+              .def_readonly("out", &MatrixBuilder_Py::out, pybind11::return_value_policy::reference_internal)
+              .def("cache", &MatrixBuilder_Py::cache, pybind11::return_value_policy::reference_internal)
+              .def("module_manager", &MatrixBuilder_Py::module_manager, pybind11::return_value_policy::reference_internal)
+              .def("calculate", &MatrixBuilder::calculate)
          ;
+
+    ///////////////////////////
+    // Rank 3 Tensor Builder
+    ///////////////////////////
+    pybind11::class_<Rank3Builder,std::unique_ptr<Rank3Builder>, Rank3Builder_Py>(m, "Rank3Builder", mbase)
+              .def(pybind11::init<ID_t>())
+              .def_readonly("out", &Rank3Builder_Py::out, pybind11::return_value_policy::reference_internal)
+              .def("cache", &Rank3Builder_Py::cache, pybind11::return_value_policy::reference_internal)
+              .def("module_manager", &Rank3Builder_Py::module_manager, pybind11::return_value_policy::reference_internal)
+              .def("calculate", &Rank3Builder::calculate)
+         ;
+
+
 
     /////////////////////////
     // Two electron integral implementation

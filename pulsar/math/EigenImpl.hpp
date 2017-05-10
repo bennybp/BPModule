@@ -6,7 +6,7 @@
 #include <bphash/types/memory.hpp>
 
 #include <Eigen/Dense>
-
+#include <unsupported/Eigen/CXX11/Tensor>
 namespace pulsar {
 
 /** \brief Specialization of TensorImpl to Eigen's Matrix
@@ -129,6 +129,104 @@ class EigenMatrixImpl : public MatrixDImpl
         }
 };
 
+template<size_t rank>
+class EigenTensorImpl : public TensorImpl<rank,double>
+{
+    public:
+        using tensor_type=Eigen::Tensor<double,rank>;
+        using shared_tensor=std::shared_ptr<tensor_type>;
+        /*! \brief For serialization only
+         *
+         * \warning NOT FOR USE OUTSIDE OF SERIALIZATION
+         * \todo Replace if cereal fixes this
+         */
+        EigenTensorImpl() = default;
+
+        ///Aliases this Eigen Tensor to \p mat
+        EigenTensorImpl(const shared_tensor& mat)
+            : mat_(mat) { }
+
+        ///Copies Eigen Tensor from \p mat
+        EigenTensorImpl(const tensor_type & mat)
+            : mat_(std::make_shared<tensor_type>(mat)) { }
+
+        ///Moves Eigen Tensor from \p mat
+        EigenTensorImpl(tensor_type && mat)
+            : mat_(std::make_shared<tensor_type>(std::move(mat))) { }
+
+        ///True if the underlying Eigen matrices are the same
+        bool operator==(const EigenTensorImpl<rank>& rhs)const
+        {
+            return mat_==mat_;
+        }
+
+        ///True if the underlying Eigen matrices are not the same
+        bool operator!=(const EigenTensorImpl& rhs)const
+        {
+            return !((*this)==rhs);
+        }
+
+        /*! \brief Obtain a hash of the data
+         *
+         * Details depend on what kind of data is stored.
+         * See the hashing functions of the stored type
+         * for details.
+         */
+        bphash::HashValue my_hash(void) const
+        {
+            return bphash::make_hash(bphash::HashType::Hash128, *this);
+        }
+
+        ///\copydoc TensorImpl::sizes
+        virtual std::array<size_t, rank> sizes(void) const
+        {
+            auto dim=mat_->dimensions();
+            std::array<size_t,rank> temp;
+            for(size_t i=0;i<rank;++i)temp[i]=dim[i];
+            return temp;
+        }
+
+        ///\copydoc TensorImpl::get_value
+        virtual double get_value(std::array<size_t, rank> idx) const
+        {
+            return (*mat_)(idx);
+        }
+
+        ///\copydoc TensorImpl::set_Value
+        virtual void set_value(std::array<size_t, rank> idx, double val)
+        {
+            (*mat_)(idx) = val;
+        }
+
+        ///Allows you to get the actual Tensor (in constant form)
+        std::shared_ptr<const tensor_type> get_matrix(void) const
+        {
+            return mat_;
+        }
+
+    private:
+        shared_tensor mat_;///<The actual Tensor
+
+        DECLARE_SERIALIZATION_FRIENDS
+        BPHASH_DECLARE_HASHING_FRIENDS
+        template<class Archive>
+        void save(Archive & archive) const
+        {
+            archive(cereal::base_class<TensorImpl<rank,double>>(this));
+            //archive(nrow, ncol);
+        }
+
+        template<class Archive>
+        void load(Archive & archive)
+        {
+            archive(cereal::base_class<TensorImpl<rank,double>>(this));
+        }
+
+        void hash(bphash::Hasher & h) const
+        {
+           // h(*mat_);
+        }
+};
 
 ///Same as EigenMatrix except for vectors
 class EigenVectorImpl : public VectorDImpl
@@ -249,6 +347,18 @@ convert_to_eigen(const MatrixDImpl & ten);
 ///Converts a pulsar vector to an Eigen vector
 std::shared_ptr<const Eigen::VectorXd>
 convert_to_eigen(const VectorDImpl & ten);
+
+///Converts a pulsar tensor to an Eigen tensor
+template<size_t rank>
+std::shared_ptr<const Eigen::Tensor<double,rank>>
+convert_to_eigen(const TensorImpl<rank,double>& ten)
+{
+    auto test = dynamic_cast<const EigenTensorImpl<rank>*>(&ten);
+    if(test)
+        return test->get_matrix();
+    else
+        throw pulsar::PulsarException("Not an Eigen Tensor and conversion not coded");
+}
 
 ///Eigen Matrix suitable for use with symmetry and spin
 typedef BlockByIrrepSpin<std::shared_ptr<EigenMatrixImpl>> BlockedEigenMatrix;

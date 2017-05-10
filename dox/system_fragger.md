@@ -9,6 +9,9 @@ base type allows users and develpers to implement their own algorithms for
 fragmenting systems.  Then any algorithm that requires fragments simply asks
 for a module key to a system fragmenter and uses the resulting module.
 
+\note This also means a user can do a somewhat arbitrary assignment of atoms
+to fragments via a lambda module.
+
 Many of the methods that depend on fragments also depend on pairs of fragments
 (i.e. dimers), triples of fragments (i.e. trimers), etc. to improve their
 descriptions.  Although, these additional dimers, trimers are usually discussed
