@@ -1,10 +1,3 @@
-/*! \file
- *
- * \brief Caching implementation of one-electron integrals (header)
- * \author Ben Pritchard (ben@bennyp.org)
- */
-
-
 #pragma once
 
 #include "pulsar/modulebase/ModuleBase.hpp"

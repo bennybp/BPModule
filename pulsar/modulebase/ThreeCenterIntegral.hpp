@@ -77,17 +77,15 @@ class ThreeCenterIntegral : public ModuleBase
          * \param [in] shell1 Shell index on the first center
          * \param [in] shell2 Shell index on the second center
          * \param [in] shell3 Shell index on the third center
-         * \param [in] outbuffer Where to place the completed integrals
-         * \return Number of integrals calculated
+         * \return The integral buffer
          */
-        const double* calculate_py(uint64_t shell1, uint64_t shell2,
-                              uint64_t shell3)
-        {
-            //auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
-
-            //return ModuleBase::call_function(&ThreeCenterIntegral::calculate_,
-            //                                    shell1, shell2, shell3, shell4);
-        }
+         pybind11::memoryview calculate_py(uint64_t shell1, uint64_t shell2, uint64_t shell3)
+         {
+                const double* ints =
+                 ModuleBase::call_function(&ThreeCenterIntegral::calculate_,
+                                               shell1, shell2, shell3);
+                return memoryview_cast(ints,10000);
+         }
 
 
         /*! \brief calculate multiple integrals
@@ -226,19 +224,12 @@ class ThreeCenterIntegral_Py : public ThreeCenterIntegral
         }
 
 
-        virtual const double* calculate_(uint64_t shell1, uint64_t shell2,
-                                    uint64_t shell3)
+        virtual const double* calculate_(uint64_t shell1, uint64_t shell2, uint64_t shell3)
         {
-//            //! \todo untested
+            pybind11::buffer_info info =
+                call_py_override<pybind11::buffer>(this,"calculate_",shell1,shell2,shell3).request();
 
-//            pybind11::buffer_info buf(outbuffer,
-//                                      sizeof(double),
-//                                      pybind11::format_descriptor<double>::format(),
-//                                      1, { bufsize },
-//                                      { sizeof(double) });
-
-//            return call_py_override<uint64_t>(this, "calculate_", shell1, shell2, shell3, shell4,
-//                                              buf, bufsize);
+            return static_cast<const double*>(info.ptr);
         }
 
 

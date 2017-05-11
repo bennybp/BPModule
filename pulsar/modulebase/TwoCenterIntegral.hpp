@@ -75,16 +75,15 @@ class TwoCenterIntegral : public ModuleBase
          *
          * \param [in] shell1 Shell index on the first center
          * \param [in] shell2 Shell index on the second center
-         * \param [in] outbuffer Where to place the completed integrals
-         * \return Number of integrals calculated
+         * \return the completed integrals in a python buffer
+         *
+         * \warning This segfaults if I go above 10,000
          */
-        uint64_t calculate_py(uint64_t shell1, uint64_t shell2)
+        pybind11::memoryview calculate_py(uint64_t shell1, uint64_t shell2)
         {
-//            auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
-
-//            return ModuleBase::call_function(&OneElectronIntegral::calculate_,
-//                                                  shell1, shell2,
-//                                                  ptrinfo.first, ptrinfo.second[0]);
+            const double* ints = ModuleBase::call_function(&TwoCenterIntegral::calculate_,
+                                                                shell1, shell2);
+            return memoryview_cast(ints,10000);
         }
 
 
@@ -216,15 +215,10 @@ class TwoCenterIntegral_Py : public TwoCenterIntegral
 
         virtual const double* calculate_(uint64_t shell1, uint64_t shell2)
         {
-            //! \todo untested
+            pybind11::buffer_info info =
+                call_py_override<pybind11::buffer>(this,"calculate_",shell1,shell2).request();
 
-//            pybind11::buffer_info buf(outbuffer,
-//                                      sizeof(double),
-//                                      pybind11::format_descriptor<double>::format(),
-//                                      1, { bufsize },
-//                                      { sizeof(double) });
-
-//            return call_py_override<uint64_t>(this, "calculate_", shell1, shell2, buf, bufsize);
+            return static_cast<const double*>(info.ptr);
         }
 
 

@@ -86,13 +86,13 @@ class FourCenterIntegral : public ModuleBase
          * \param [in] outbuffer Where to place the completed integrals
          * \return Number of integrals calculated
          */
-        const double* calculate_py(uint64_t shell1, uint64_t shell2,
-                              uint64_t shell3, uint64_t shell4)
+        pybind11::memoryview calculate_py(uint64_t shell1, uint64_t shell2,
+                                          uint64_t shell3, uint64_t shell4)
         {
-            //auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
-
-            //return ModuleBase::call_function(&FourCenterIntegral::calculate_,
-            //                                    shell1, shell2, shell3, shell4);
+               const double* ints =
+                ModuleBase::call_function(&FourCenterIntegral::calculate_,
+                                              shell1, shell2, shell3,shell4);
+               return memoryview_cast(ints,10000);
         }
 
 
@@ -242,16 +242,10 @@ class FourCenterIntegral_Py : public FourCenterIntegral
         virtual const double* calculate_(uint64_t shell1, uint64_t shell2,
                                     uint64_t shell3, uint64_t shell4)
         {
-//            //! \todo untested
+                pybind11::buffer_info info =
+                    call_py_override<pybind11::buffer>(this,"calculate_",shell1,shell2,shell3,shell4).request();
 
-//            pybind11::buffer_info buf(outbuffer,
-//                                      sizeof(double),
-//                                      pybind11::format_descriptor<double>::format(),
-//                                      1, { bufsize },
-//                                      { sizeof(double) });
-
-//            return call_py_override<uint64_t>(this, "calculate_", shell1, shell2, shell3, shell4,
-//                                              buf, bufsize);
+                return static_cast<const double*>(info.ptr);
         }
 
 

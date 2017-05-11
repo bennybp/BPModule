@@ -5,16 +5,15 @@
  */
 
 
-#ifndef PULSAR_GUARD_MODULEBASE__ONEELECTRONMATRIX_HPP_
-#define PULSAR_GUARD_MODULEBASE__ONEELECTRONMATRIX_HPP_
+#pragma once
 
 #include "pulsar/modulebase/ModuleBase.hpp"
 #include "pulsar/system/BasisSet.hpp"
 
 namespace pulsar{
 
-/*! \brief One-electron integral implementation
- *
+/*! \brief A module base type for building matrices from a wavefunction, and
+ *  two basis sets (one for the rows and one for the columns).
  */
 class MatrixBuilder : public ModuleBase
 {
@@ -72,5 +71,3 @@ class MatrixBuilder_Py : public MatrixBuilder
 };
 
 } // close namespace pulsar
-
-#endif
