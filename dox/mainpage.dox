@@ -15,6 +15,7 @@ is stuff you will likely want to know before reading further.
     - [Overview](@ref overview)
     - [Obtaining and Building](@ref building)
     - [Terminology](@ref terminology)
+    - [Workflows](@ref workflows)
   - User notes
     - [Making Modules and Supermodules](@ref makemod)
     - [Printing Things Out](@ref printing)
