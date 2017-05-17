@@ -19,7 +19,7 @@ class ThreeCenterIntegral : public ModuleBase
 {
     public:
         typedef ThreeCenterIntegral BaseType;
-
+        typedef std::string HashType;
         ThreeCenterIntegral(ID_t id)
             : ModuleBase(id, "ThreeCenterIntegral"), initialized_(false)
         { }
@@ -44,6 +44,14 @@ class ThreeCenterIntegral : public ModuleBase
             initialized_ = true;
         }
 
+        HashType my_hash(unsigned int deriv,
+                        const Wavefunction & wfn,
+                        const BasisSet & bs1,
+                        const BasisSet & bs2,
+                        const BasisSet & bs3)
+        {
+            return ModuleBase::call_function(&ThreeCenterIntegral::my_hash_,deriv,wfn,bs1,bs2,bs3);
+        }
 
         /*! Return the number of components calculated by this module
          *
@@ -138,6 +146,11 @@ class ThreeCenterIntegral : public ModuleBase
                                  const BasisSet & bs2,
                                  const BasisSet & bs3) = 0;
 
+        virtual HashType my_hash_(unsigned int deriv,
+                                  const Wavefunction& wfn,
+                                  const BasisSet & bs1,
+                                  const BasisSet & bs2,
+                                  const BasisSet & bs3)=0;
 
         //! \copydoc n_components
         virtual unsigned int n_components_(void) const
@@ -232,7 +245,14 @@ class ThreeCenterIntegral_Py : public ThreeCenterIntegral
             return static_cast<const double*>(info.ptr);
         }
 
-
+        virtual HashType my_hash_(unsigned int deriv,
+                                  const Wavefunction &wfn,
+                                  const BasisSet &bs1,
+                                  const BasisSet &bs2,
+                                  const BasisSet &bs3)
+        {
+            return call_py_override<HashType>(this,"my_hash_", deriv, wfn,bs1, bs2,bs3);
+        }
         virtual const double* calculate_multi_(const std::vector<uint64_t> & shells1,
                                           const std::vector<uint64_t> & shells2,
                                           const std::vector<uint64_t> & shells3)

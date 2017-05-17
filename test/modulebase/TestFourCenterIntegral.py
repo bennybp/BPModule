@@ -13,6 +13,9 @@ class Test4CInt(psr.FourCenterIntegral):
     def calculate_(self,shell1,shell2,shell3,shell4):
         return Mat1
 
+    def my_hash_(self,deriv,wf,bs1,bs2,bs3,bs4):
+        return ""
+
 def run_test():
     tester=psr.PyTester("Testing FourCenterIntegral Python Bindings")
     mm=psr.ModuleManager()

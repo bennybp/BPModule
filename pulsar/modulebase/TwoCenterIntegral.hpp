@@ -19,6 +19,7 @@ class TwoCenterIntegral : public ModuleBase
 {
     public:
         typedef TwoCenterIntegral BaseType;
+        typedef std::string HashType;
 
         TwoCenterIntegral(ID_t id)
             : ModuleBase(id, "TwoCenterIntegral"), initialized_(false)
@@ -42,7 +43,13 @@ class TwoCenterIntegral : public ModuleBase
             initialized_ = true; 
         }
 
-
+        HashType my_hash(unsigned int deriv,
+                         const Wavefunction & wfn,
+                         const BasisSet & bs1,
+                         const BasisSet & bs2)
+        {
+            return ModuleBase::call_function(&TwoCenterIntegral::my_hash_, deriv, wfn, bs1, bs2);
+        }
 
         /*! Return the number of components calculated by this module
          *
@@ -133,6 +140,10 @@ class TwoCenterIntegral : public ModuleBase
                                  const BasisSet & bs1,
                                  const BasisSet & bs2) = 0;
 
+        virtual HashType my_hash_(unsigned int deriv,
+                                  const Wavefunction& wfn,
+                                  const BasisSet & bs1,
+                                  const BasisSet & bs2)=0;
 
         //! \copydoc n_components
         virtual unsigned int n_components_(void) const
@@ -203,6 +214,13 @@ class TwoCenterIntegral_Py : public TwoCenterIntegral
             return call_py_override<void>(this, "initialize_", deriv, wfn, bs1, bs2);
         }
 
+        virtual HashType my_hash_(unsigned int deriv,
+                                  const Wavefunction &wfn,
+                                  const BasisSet &bs1,
+                                  const BasisSet &bs2)
+        {
+            return call_py_override<HashType>(this,"my_hash_", deriv, wfn,bs1, bs2);
+        }
 
         virtual unsigned int n_components_(void) const
         {

@@ -13,6 +13,9 @@ class Test3CInt(psr.ThreeCenterIntegral):
     def calculate_(self,shell1,shell2,shell3):
         return Mat1
 
+    def my_hash_(self,deriv,wf,bs1,bs2,bs3):
+        return ""
+
 def run_test():
     tester=psr.PyTester("Testing ThreeCenterIntegral Python Bindings")
     mm=psr.ModuleManager()

@@ -13,6 +13,9 @@ class Test2CInt(psr.TwoCenterIntegral):
     def calculate_(self,shell1,shell2):
         return Mat1
 
+    def my_hash_(self,deriv,wf,bs1,bs2):
+        return ""
+
 def run_test():
     tester=psr.PyTester("Testing TwoCenterIntegral Python Bindings")
     mm=psr.ModuleManager()

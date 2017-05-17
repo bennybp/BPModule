@@ -18,6 +18,14 @@ private:
     {
         return {corr_answer};
     }
+
+    HashType my_hash_(const std::string &,
+                      unsigned int,
+                      const Wavefunction&,
+                      const BasisSet&, const BasisSet&)
+    {
+        return "";
+    }
 };
 
 TEST_SIMPLE(TestMatrixBuilder){

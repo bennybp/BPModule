@@ -20,6 +20,14 @@ private:
 
     }
 
+    HashType my_hash_(unsigned int,
+                      const Wavefunction &,
+                      const BasisSet &,
+                      const BasisSet &,
+                      const BasisSet &){
+        return "";
+    }
+
     const double* calculate_(uint64_t, uint64_t, uint64_t)
     {
         return corr_answer.data();

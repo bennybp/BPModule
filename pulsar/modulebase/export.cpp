@@ -88,6 +88,7 @@ void export_modulebase(pybind11::module & m)
          .def("n_components", &TwoCenterIntegral::n_components)
          .def("calculate", &TwoCenterIntegral::calculate_py)
          .def("calculate_multi", &TwoCenterIntegral::calculate_multi_py)
+         .def("my_hash", &TwoCenterIntegral::my_hash)
          ;
 
     /////////////////////////

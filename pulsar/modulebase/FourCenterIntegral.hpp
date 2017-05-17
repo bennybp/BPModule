@@ -21,6 +21,7 @@ class FourCenterIntegral : public ModuleBase
 {
     public:
         typedef FourCenterIntegral BaseType;
+        typedef std::string HashType;
 
         FourCenterIntegral(ID_t id)
             : ModuleBase(id, "FourCenterIntegral"), initialized_(false)
@@ -46,6 +47,16 @@ class FourCenterIntegral : public ModuleBase
             ModuleBase::call_function(&FourCenterIntegral::uninitialized_or_throw_);
             ModuleBase::call_function(&FourCenterIntegral::initialize_, deriv, wfn, bs1, bs2, bs3, bs4);
             initialized_ = true;
+        }
+
+        HashType my_hash(unsigned int deriv,
+                        const Wavefunction & wfn,
+                        const BasisSet & bs1,
+                        const BasisSet & bs2,
+                        const BasisSet & bs3,
+                        const BasisSet & bs4)
+        {
+            return ModuleBase::call_function(&FourCenterIntegral::my_hash_,deriv,wfn,bs1,bs2,bs3,bs4);
         }
 
 
@@ -151,6 +162,12 @@ class FourCenterIntegral : public ModuleBase
                                  const BasisSet & bs3,
                                  const BasisSet & bs4) = 0;
 
+        virtual HashType my_hash_(unsigned int deriv,
+                        const Wavefunction & wfn,
+                        const BasisSet & bs1,
+                        const BasisSet & bs2,
+                        const BasisSet & bs3,
+                        const BasisSet & bs4)=0;
 
         //! \copydoc n_components
         virtual unsigned int n_components_(void) const
@@ -229,6 +246,16 @@ class FourCenterIntegral_Py : public FourCenterIntegral
             return call_py_override<void>(this, "initialize_", deriv, wfn, bs1, bs2, bs3, bs4);
         }
 
+        virtual HashType my_hash_(unsigned int deriv,
+                                 const Wavefunction & wfn,
+                                 const BasisSet & bs1,
+                                 const BasisSet & bs2,
+                                 const BasisSet & bs3,
+                                 const BasisSet & bs4)
+
+        {
+            return call_py_override<HashType>(this, "my_hash_", deriv, wfn, bs1, bs2, bs3, bs4);
+        }
 
         virtual unsigned int n_components_(void) const
         {

@@ -9,6 +9,8 @@ class TestMatrix(psr.MatrixBuilder):
 
     def calculate_(self,key,deriv,wf,bs1,bs2):
         return Mat1
+    def my_hash_(self,key,deriv,wf,bs1,bs2):
+        return ""
 
 def run_test():
     tester=psr.PyTester("Testing MatrixBuilder Python Bindings")
