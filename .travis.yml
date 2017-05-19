@@ -1,7 +1,6 @@
-language: python
-python:
-  - "3.3"
+language: cpp
 sudo: required
+
 
 #Blocklist
 branches:
@@ -12,6 +11,9 @@ branches:
 matrix:
   include:
   - os: linux
+    compiler: gcc
+    python:
+      - "3.4"
     addons:
       apt:
         sources:
