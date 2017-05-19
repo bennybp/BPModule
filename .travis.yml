@@ -22,6 +22,7 @@ matrix:
         - g++-4.9
         - libdb-dev
         - libmpich1.0-dev
+        - libeigen3-dev
     env: CXX_COMPILER='g++-4.9'
 
 script:
