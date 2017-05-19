@@ -79,40 +79,68 @@ void export_modulebase(pybind11::module & m)
     /////////////////////////
     // One electron integral implementation
     /////////////////////////
-    pybind11::class_<OneElectronIntegral, std::unique_ptr<OneElectronIntegral>, OneElectronIntegral_Py> oneel(m, "OneElectronIntegral", mbase);
+    pybind11::class_<TwoCenterIntegral, std::unique_ptr<TwoCenterIntegral>, TwoCenterIntegral_Py> oneel(m, "TwoCenterIntegral", mbase);
     oneel.def(pybind11::init<ID_t>())
-         .def_readonly("out", &OneElectronIntegral_Py::out, pybind11::return_value_policy::reference_internal)
-         .def("cache", &OneElectronIntegral_Py::cache, pybind11::return_value_policy::reference_internal)
-         .def("module_manager", &OneElectronIntegral_Py::module_manager, pybind11::return_value_policy::reference_internal)
-         .def("initialize", &OneElectronIntegral::initialize)
-         .def("n_components", &OneElectronIntegral::n_components)
-         .def("calculate", &OneElectronIntegral::calculate_py)
-         .def("calculate_multi", &OneElectronIntegral::calculate_multi_py)
+         .def_readonly("out", &TwoCenterIntegral_Py::out, pybind11::return_value_policy::reference_internal)
+         .def("cache", &TwoCenterIntegral_Py::cache, pybind11::return_value_policy::reference_internal)
+         .def("module_manager", &TwoCenterIntegral_Py::module_manager, pybind11::return_value_policy::reference_internal)
+         .def("initialize", &TwoCenterIntegral::initialize)
+         .def("n_components", &TwoCenterIntegral::n_components)
+         .def("calculate", &TwoCenterIntegral::calculate_py)
+         .def("calculate_multi", &TwoCenterIntegral::calculate_multi_py)
+         .def("my_hash", &TwoCenterIntegral::my_hash)
+         ;
+
+    /////////////////////////
+    // One electron integral implementation
+    /////////////////////////
+    pybind11::class_<ThreeCenterIntegral, std::unique_ptr<ThreeCenterIntegral>, ThreeCenterIntegral_Py> threeel(m, "ThreeCenterIntegral", mbase);
+    threeel.def(pybind11::init<ID_t>())
+         .def_readonly("out", &ThreeCenterIntegral_Py::out, pybind11::return_value_policy::reference_internal)
+         .def("cache", &ThreeCenterIntegral_Py::cache, pybind11::return_value_policy::reference_internal)
+         .def("module_manager", &ThreeCenterIntegral_Py::module_manager, pybind11::return_value_policy::reference_internal)
+         .def("initialize", &ThreeCenterIntegral::initialize)
+         .def("n_components", &ThreeCenterIntegral::n_components)
+         .def("calculate", &ThreeCenterIntegral::calculate_py)
+         .def("calculate_multi", &ThreeCenterIntegral::calculate_multi_py)
          ;
 
     ///////////////////////////
     // One electron cacher
     ///////////////////////////
-    pybind11::class_<OneElectronMatrix, std::unique_ptr<OneElectronMatrix>, OneElectronMatrix_Py> oneelcache(m, "OneElectronMatrix", mbase);
+    pybind11::class_<MatrixBuilder, std::unique_ptr<MatrixBuilder>, MatrixBuilder_Py> oneelcache(m, "MatrixBuilder", mbase);
     oneelcache.def(pybind11::init<ID_t>())
-              .def_readonly("out", &OneElectronMatrix_Py::out, pybind11::return_value_policy::reference_internal)
-              .def("cache", &OneElectronMatrix_Py::cache, pybind11::return_value_policy::reference_internal)
-              .def("module_manager", &OneElectronMatrix_Py::module_manager, pybind11::return_value_policy::reference_internal)
-              .def("calculate", &OneElectronMatrix::calculate)
+              .def_readonly("out", &MatrixBuilder_Py::out, pybind11::return_value_policy::reference_internal)
+              .def("cache", &MatrixBuilder_Py::cache, pybind11::return_value_policy::reference_internal)
+              .def("module_manager", &MatrixBuilder_Py::module_manager, pybind11::return_value_policy::reference_internal)
+              .def("calculate", &MatrixBuilder::calculate)
          ;
+
+    ///////////////////////////
+    // Rank 3 Tensor Builder
+    ///////////////////////////
+    pybind11::class_<Rank3Builder,std::unique_ptr<Rank3Builder>, Rank3Builder_Py>(m, "Rank3Builder", mbase)
+              .def(pybind11::init<ID_t>())
+              .def_readonly("out", &Rank3Builder_Py::out, pybind11::return_value_policy::reference_internal)
+              .def("cache", &Rank3Builder_Py::cache, pybind11::return_value_policy::reference_internal)
+              .def("module_manager", &Rank3Builder_Py::module_manager, pybind11::return_value_policy::reference_internal)
+              .def("calculate", &Rank3Builder::calculate)
+         ;
+
+
 
     /////////////////////////
     // Two electron integral implementation
     /////////////////////////
-    pybind11::class_<TwoElectronIntegral, std::unique_ptr<TwoElectronIntegral>, TwoElectronIntegral_Py> twoel(m, "TwoElectronIntegral", mbase);
+    pybind11::class_<FourCenterIntegral, std::unique_ptr<FourCenterIntegral>, FourCenterIntegral_Py> twoel(m, "FourCenterIntegral", mbase);
     twoel.def(pybind11::init<ID_t>())
-         .def_readonly("out", &TwoElectronIntegral_Py::out, pybind11::return_value_policy::reference_internal)
-         .def("cache", &TwoElectronIntegral_Py::cache, pybind11::return_value_policy::reference_internal)
-         .def("module_manager", &TwoElectronIntegral_Py::module_manager, pybind11::return_value_policy::reference_internal)
-         .def("initialize", &TwoElectronIntegral::initialize)
-         .def("n_components", &TwoElectronIntegral::n_components)
-         .def("calculate", &TwoElectronIntegral::calculate_py)
-         .def("calculate_multi", &TwoElectronIntegral::calculate_multi_py)
+         .def_readonly("out", &FourCenterIntegral_Py::out, pybind11::return_value_policy::reference_internal)
+         .def("cache", &FourCenterIntegral_Py::cache, pybind11::return_value_policy::reference_internal)
+         .def("module_manager", &FourCenterIntegral_Py::module_manager, pybind11::return_value_policy::reference_internal)
+         .def("initialize", &FourCenterIntegral::initialize)
+         .def("n_components", &FourCenterIntegral::n_components)
+         .def("calculate", &FourCenterIntegral::calculate_py)
+         .def("calculate_multi", &FourCenterIntegral::calculate_multi_py)
          ;
 
     ///////////////////////

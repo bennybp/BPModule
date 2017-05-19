@@ -5,24 +5,24 @@
  */
 
 
-#ifndef PULSAR_GUARD_MODULEBASE__ONEELECTRONMATRIX_HPP_
-#define PULSAR_GUARD_MODULEBASE__ONEELECTRONMATRIX_HPP_
+#pragma once
 
 #include "pulsar/modulebase/ModuleBase.hpp"
 #include "pulsar/system/BasisSet.hpp"
 
 namespace pulsar{
 
-/*! \brief One-electron integral implementation
- *
+/*! \brief A module base type for building matrices from a wavefunction, and
+ *  two basis sets (one for the rows and one for the columns).
  */
-class OneElectronMatrix : public ModuleBase
+class MatrixBuilder : public ModuleBase
 {
     public:
-        typedef OneElectronMatrix BaseType;
+        typedef MatrixBuilder BaseType;
+        typedef std::string HashType;
         typedef std::vector<std::shared_ptr<const MatrixDImpl>> ReturnType;
 
-        OneElectronMatrix(ID_t id)
+        MatrixBuilder(ID_t id)
             : ModuleBase(id, "OneElectronMatrix")
         { }
 
@@ -39,7 +39,20 @@ class OneElectronMatrix : public ModuleBase
                              unsigned int deriv, const Wavefunction & wfn,
                              const BasisSet & bs1, const BasisSet & bs2)
         {
-            return ModuleBase::call_function(&OneElectronMatrix::calculate_,
+            auto hash=my_hash(key,deriv,wfn,bs1,bs2);
+            auto cache_value=cache().get<ReturnType>(hash,false);
+            if(cache_value)return *cache_value;
+            auto rv = ModuleBase::call_function(&MatrixBuilder::calculate_,
+                                                key, deriv, wfn, bs1, bs2);
+            cache().set(hash,rv,CacheMap::CachePolicy::CheckpointLocal);
+            return rv;
+        }
+
+        HashType my_hash(const std::string & key,
+                                  unsigned int deriv, const Wavefunction & wfn,
+                                  const BasisSet & bs1, const BasisSet & bs2)
+        {
+            return ModuleBase::call_function(&MatrixBuilder::my_hash_,
                                                 key, deriv, wfn, bs1, bs2);
         }
 
@@ -53,13 +66,16 @@ class OneElectronMatrix : public ModuleBase
                                       unsigned int deriv, const Wavefunction & wfn,
                                       const BasisSet & bs1, const BasisSet & bs2) = 0;
 
+        //! \copydoc calculate
+        virtual HashType my_hash_(const std::string & key,
+                                      unsigned int deriv, const Wavefunction & wfn,
+                                      const BasisSet & bs1, const BasisSet & bs2)=0;
 };
 
-
-class OneElectronMatrix_Py : public OneElectronMatrix
+class MatrixBuilder_Py : public MatrixBuilder
 {
     public:
-        using OneElectronMatrix::OneElectronMatrix;
+        using MatrixBuilder::MatrixBuilder;
 
         MODULEBASE_FORWARD_PROTECTED_TO_PY
 
@@ -69,8 +85,13 @@ class OneElectronMatrix_Py : public OneElectronMatrix
         {
             return call_py_override<ReturnType>(this, "calculate_", key, deriv, wfn, bs1, bs2);
         }
+
+        virtual HashType my_hash_(const std::string & key,
+                                      unsigned int deriv, const Wavefunction & wfn,
+                                      const BasisSet & bs1, const BasisSet & bs2)
+        {
+            return call_py_override<HashType>(this, "my_hash_", key, deriv, wfn, bs1, bs2);
+        }
 };
 
 } // close namespace pulsar
-
-#endif

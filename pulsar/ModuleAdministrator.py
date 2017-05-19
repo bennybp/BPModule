@@ -10,12 +10,14 @@ class ModuleAdministrator(ModuleManager):
 
     Attributes:
         paths: A list of places to look for modules
+        supermodules: A dictionary of supermodules that have been loaded
     """
 
     def __init__(self):
         """Initializes an empty ModuleAdministrator."""
         super(ModuleAdministrator, self).__init__()
         self.paths = [ ]
+        self.supermodules = { }
 
 
     def __enter__(self):
@@ -24,23 +26,19 @@ class ModuleAdministrator(ModuleManager):
 
     def __exit__(self, exc_type, exc_value, traceback):
         pass
-        
+
 
     def add_path(self, path):
         """Adds path to the list of paths to search"""
         self.paths.append(path)
 
+    def load_supermodule(self,supermodule):
+        if not supermodule :
+            raise PulsarException("Provied an empty supermodule name\n")
+        if supermodule in self.supermodules:
+            raise PulsarException("Supermodule is already loaded")
 
-    def load_module(self, supermodule, modulename, modulekey):
-        print_global_output("Importing {} module from supermodule {} under key {}\n".format(modulename, supermodule, modulekey))
-
-        if supermodule == "" or supermodule == None:
-            raise PulsarException("Empty supermodule given to LoadModule") 
-        if modulename == "" or modulename == None:
-            raise PulsarException("Empty modulename given to LoadModule") 
-        if modulekey == "" or modulekey == None:
-            raise PulsarException("Empty modulekey given to LoadModule") 
-
+        print_global_output("Importing supermodule {} \n".format(supermodule))
         try:
             # update the paths
             oldpath = sys.path
@@ -72,6 +70,30 @@ class ModuleAdministrator(ModuleManager):
                                              "supermodule", supermodule,
                                              "exception", str(e)) from None
 
+        #Must be before next call to avoid infinite recursion
+        self.supermodules[supermodule]=m
+
+        #See if supermodule has an initialize function and if it does call it
+        if hasattr(m,"initialize") and callable(getattr( m, "initialize")):
+            m.initialize(self)
+
+
+
+    def load_module(self, supermodule, modulename, modulekey):
+        print_global_output("Importing {} module from supermodule {} under key {}\n".format(modulename, supermodule, modulekey))
+
+        if not supermodule:
+            raise PulsarException("Empty supermodule given to LoadModule")
+        if not modulename:
+            raise PulsarException("Empty modulename given to LoadModule")
+        if not modulekey:
+            raise PulsarException("Empty modulekey given to LoadModule")
+
+        if supermodule not in self.supermodules:
+            self.load_supermodule(supermodule)
+
+        m = self.supermodules[supermodule]
+
         # Check to see if this supermodule actually contains
         # the desired module
         if not modulename in m.minfo:
@@ -80,7 +102,7 @@ class ModuleAdministrator(ModuleManager):
                                              "modulename", modulename)
 
 
-        
+
         # Extract the module info for the desired module
         minfo = m.minfo[modulename]
 
@@ -91,7 +113,7 @@ class ModuleAdministrator(ModuleManager):
         # And fill it
         cppminfo = ModuleInfo()
         cppminfo.name = modulename
-        cppminfo.path = spath
+        cppminfo.path = os.path.dirname(m.__file__)
         cppminfo.type = minfo["type"]
         cppminfo.version = minfo["version"]
         cppminfo.description = minfo["description"]
@@ -111,8 +133,8 @@ class ModuleAdministrator(ModuleManager):
                 dtmp.update(minfo["options"])
 
                 minfo["options"] = dtmp
-                
-            
+
+
 
         # Modpath is used for C++ SO modules
         # if it exists, append it
@@ -123,7 +145,7 @@ class ModuleAdministrator(ModuleManager):
         # Create the options object
         for optkey,opt in minfo["options"].items():
             cppminfo.options.add_option(optkey, opt[0], opt[2], opt[3], opt[4], opt[1])
-        
+
 
         # Now we can actually load it
         super(ModuleAdministrator, self).load_module_from_minfo(cppminfo, modulekey)
@@ -134,4 +156,4 @@ class ModuleAdministrator(ModuleManager):
 
     def sanity_check(self):
         # TODO May add more here
-        super(ModuleAdministrator, self).test_all() 
+        super(ModuleAdministrator, self).test_all()

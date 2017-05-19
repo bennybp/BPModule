@@ -1,18 +1,20 @@
 INPUT+=  dox/basic.md \
          dox/basisset.md \
          dox/building.md \
+         dox/cache.md \
          dox/documenting.md \
          dox/exceptions.md \
          dox/finitediff.md \
-         dox/cache.md \
          dox/makingamodule.md \
+         dox/moduleadvanced.md \
          dox/modulebasics.md \
+         dox/moduletypes.md \
          dox/options.md \
+         dox/overview.md \
          dox/philosophy.md \
-         dox/serialization.md \
-         dox/shared.md \
          dox/printing.md \
          dox/python_wrapping.md \
+         dox/serialization.md \
          dox/shared.md \
          dox/symmetry.md \
          dox/system_fragger.md \

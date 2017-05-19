@@ -212,5 +212,34 @@ Ret call_py_func_attr(const pybind11::object & obj, const char * attribute, Targ
 /*! \brief Determines if a pybind11 object is pickleable*/
 bool is_pickleable(const pybind11::object& obj);
 
+
+/*! \brief Casts a raw pointer to a pybind11::memoryview object
+ *
+ *  This memoryview comes with all the usual problems including:
+ *    - Python is not supposed to change it, but can
+ *
+ *  \param[in] ptr The pointer we are wrapping.  You must not delete the memory
+ *  pointed to until the memorview goes out of scope.
+ *  \param[in] size An optional size argument that specifies the length of the
+ *  buffer, in number of T instances, i.e. size is 3 for a buffer of three
+ *  integers.
+ *
+ *  \note My Python implementation crashes when we do
+ *        std::numeric_limits<size_t>::max()
+ */
+template<typename T>
+pybind11::memoryview memoryview_cast(const T* ptr,size_t size)
+{
+    return pybind11::memoryview(pybind11::buffer_info(
+                    const_cast<T*>(ptr),
+                    sizeof(T),
+                    pybind11::format_descriptor<T>::format(),
+                    1,
+                    {size},
+                    {sizeof(T)}
+    ));
+}
+
+
 } // close namespace pulsar
 

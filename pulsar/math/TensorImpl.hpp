@@ -126,9 +126,10 @@ std::ostream& operator<<(std::ostream& os, const TensorImpl<Rank,DataType>& t)
 {
    return t.print(os);
 }
-
+typedef TensorImpl<3, double> Rank3DImpl;
 typedef TensorImpl<2, double> MatrixDImpl;
 typedef TensorImpl<1, double> VectorDImpl;
+using PyRank3DImpl=TensorImpl_Py<3,double>;
 using PyMatrixDImpl=TensorImpl_Py<2,double>;
 using PyVectorDImpl=TensorImpl_Py<1,double>;
 

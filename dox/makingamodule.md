@@ -207,3 +207,18 @@ Briefly these considerations are:
             }
         };
 ~~~
+
+# Troubleshooting
+## `dynamic module does not define module export function`
+
+Typically this error looks like:
+
+~~~
+pulsar.exception.PulsarException.PulsarException: Unable to load supermodule
+             supermodule : <supermodule_name>
+               exception : dynamic module does not define module export function (PyInit_<supermodule_name>)
+~~~
+
+Common causes:
+- The name of the library does not match the supermodule name
+- In `__init__.py` you are trying to import a pure C++ library
