@@ -21,7 +21,7 @@ matrix:
         - cmake-data
         - g++-4.9
         - libdb-dev
-        - libmpich-dev
+        - libmpich1.0-dev
     env: CXX_COMPILER='g++-4.9'
 
 script:
