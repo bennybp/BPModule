@@ -20,7 +20,7 @@ matrix:
         - cmake
         - cmake-data
         - g++-4.9
-        - libdb4.6-dev
+        - libdb-dev
     env: CXX_COMPILER='g++-4.9'
 
 script:
