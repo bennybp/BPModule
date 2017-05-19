@@ -1,8 +1,12 @@
 language: cpp
 sudo: required
+
+#Blocklist
 branches:
   except:
   - gh-pages
+
+#TODO: other compilers/python
 matrix:
   include:
   - os: linux
@@ -16,24 +20,50 @@ matrix:
         - cmake
         - cmake-data
         - g++-4.9
+        - libdb4.6-dev
     env: CXX_COMPILER='g++-4.9'
+
+script:
+- cd ${HOME}
+- ls
+#####################################
+#Build Pulsar-Meta for dependencies #
+#####################################
+
+#TODO: investigate TravisCI cache-ing
+- git clone https://github.com/pulsar-chem/Pulsar-Meta.git
+- cd Pulsar-Meta
+- cmake -H -Bbuild -DCMAKE_CXX_COMPILER=${CXX_COMPILER}
+                   -DCMAKE_BUILD_TYPE=Release
+                   -DCMAKE_INSTALL_PREFIX=${HOME}
+                   -DPYTHON_EXECUTABLE=python3
+                   -DENABLE_PULSAR=False
+- cd build && make install
+#####################
+#Build Pulsar-Core  #
+#####################
+- cd ${HOME}/Pulsar-Core
+- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=${CXX_COMPILER}
+                    -DCMAKE_BUILD_TYPE=Release
+                    -DPYTHON_EXECUTABLE=python3
+                    -DCMAKE_PREFIX_PATH=${HOME}
+                    -DCMAKE_INSTALL_RPATH=${HOME}
+- cd build && make
+- ctest
+- cd -
+
 before_install:
-- openssl aes-256-cbc 
-  -K $encrypted_92294f6245f4_key 
+- openssl aes-256-cbc
+  -K $encrypted_92294f6245f4_key
   -iv $encrypted_92294f6245f4_iv
-  -in scripts/travisci_rsa.enc 
-  -out scripts/travisci_rsa 
+  -in scripts/travisci_rsa.enc
+  -out scripts/travisci_rsa
   -d
 - chmod 0600 scripts/travisci_rsa
 - cp scripts/travisci_rsa ~/.ssh/id_rsa
 install:
 - cmake -version
 - sudo apt-get install --yes doxygen graphviz
-script:
-- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=${CXX_COMPILER} -DCMAKE_BUILD_TYPE=Release
-- cd build && make
-- ctest
-- cd -
 after_failure:
 - cat Testing/Temporary/LastTest.log
 after_success:
