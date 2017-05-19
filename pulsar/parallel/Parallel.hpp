@@ -10,13 +10,11 @@
 
 #include <cstddef> //For size_t
 #include <functional>
-#include <LibTaskForce/LibTaskForce.hpp>
+#include <mpi.h>
 
 
 namespace pulsar {
 
-//Returns the current environment
-const LibTaskForce::HybridEnv& get_env();    
     
 /*! \brief Initialize the parallelization functionality
  *

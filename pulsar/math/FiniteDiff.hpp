@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <cstdlib>
-#include <LibTaskForce/LibTaskForce.hpp>
 #include "pulsar/exception/PulsarException.hpp"
 
 namespace pulsar{
@@ -80,7 +79,6 @@ struct FDiffVisitor{
 template<typename VarType,typename ResultType>
 class FiniteDiff{
    private:
-      std::unique_ptr<LibTaskForce::HybridComm> Comm_;///<Comm for parallel
       typedef FiniteDiff<VarType,ResultType> My_t;//The type of this class
    protected:
       ///Function to generate the coefs, minor tweaks for central
@@ -102,11 +100,7 @@ class FiniteDiff{
       FiniteDiff(const My_t&)=delete;///<One time use class
       FiniteDiff(const My_t&&)=delete;///<One time use class
       My_t& operator=(const My_t&)=delete;///<One time use class
-      
-      ///Makes a new FDiff that can run in parallel on Comm
-      FiniteDiff(std::unique_ptr<LibTaskForce::HybridComm>&& Comm)
-        :Comm_(std::move(Comm)){}
-      
+            
       ///Normal FDiff, no parallel
       FiniteDiff(){}
       
@@ -190,32 +184,15 @@ std::vector<ResultType> FiniteDiff<VarType,ResultType>::Run(Fxn_t Fxn2Run,
                 Fxn_.scale(result,Coef_);
                 return result;
             }
-            //Wrapper for TaskForce
-            ResultType operator()(const LibTaskForce::HybridComm&)const{
-                return (*this)();
-            }
     };
-    //Will store our derivatives
-    std::vector<LibTaskForce::HybridFuture<ResultType>> Derivs;
-    
-    //This is for parallel, note need to complete loop before assigning results
-    for(size_t i=0;i<NVars && Comm_;++i){
-        VarType Old=Fxn2Run.coord(i);
-        for(size_t j=0;j<NCalcs(NPoints);++j){
-            const double da_shift=Shift(j,NPoints);
-            FDWrapper wrap(Fxn2Run,Coefs[j],Fxn2Run.shift(Old,H,da_shift),i);
-            Derivs.push_back(std::move(Comm_->add_task<ResultType>(std::move(wrap))));
-        }
-    }
-    
+
     std::vector<ResultType> Result(NVars);
     for(size_t i=0;i<NVars;++i){
         VarType Old=Fxn2Run.coord(i);
         for(size_t j=0;j<NCalcs(NPoints);++j){
             const double da_shift=Shift(j,NPoints);
             FDWrapper wrap(Fxn2Run,Coefs[j],Fxn2Run.shift(Old,H,da_shift),i);
-            ResultType DerivI=(Comm_?
-                Derivs[i*NCalcs(NPoints)+j].get():wrap());
+            ResultType DerivI=wrap();
             Fxn2Run.update(Result[i],DerivI,i,H);
         }
     }

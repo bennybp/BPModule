@@ -39,7 +39,7 @@ find_package(PythonInterp 3.3 REQUIRED)
 # Others
 list(APPEND PULSAR_CORE_DEPS 
             MPI BerkeleyDB Eigen3
-            pybind11 memwatch bphash bpprint libtaskforce)
+            pybind11 memwatch bphash bpprint)
 foreach(pkg ${PULSAR_CORE_DEPS})
     find_package(${pkg} REQUIRED)
 endforeach()
@@ -74,7 +74,6 @@ list(APPEND PULSAR_CORE_LINK_FLAGS
             memwatch
             bphash
             bpprint
-            libtaskforce
 )
 
 # Print out lots of info for the user
@@ -91,7 +90,6 @@ message(STATUS "BerkeleyDB libraries    ${BerkeleyDB_LIBRARIES}")
 message(STATUS "Python executable:      ${PYTHON_EXECUTABLE}")
 message(STATUS "Python version:         ${PYTHON_VERSION_STRING}")
 message(STATUS "Pybind11 path:          ${pybind11_DIR}")
-message(STATUS "LibTaskForce path:      ${libtaskforce_DIR}")
 message(STATUS "BPHash path:            ${bphash_DIR}")
 message(STATUS "BPPrint path:           ${bpprint_DIR}")
 message(STATUS "Memwatch path:          ${memwatch_DIR}")
