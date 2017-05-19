@@ -22,12 +22,20 @@ matrix:
         - g++-4.9
         - libdb-dev
         - libmpich1.0-dev
-        - libeigen3-dev
     env: CXX_COMPILER='g++-4.9'
 
 script:
 - cd ${HOME}
-- ls
+###################################################
+# Build Eigen because CMake doesn't support https #
+###################################################
+- wget http://bitbucket.org/eigen/eigen/get/3.3.2.tar.bz2
+- tar -xf 3.3.2.tar.bz2
+- cd eigen-eigen-da9b4e14c255
+- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=${CXX_COMPILER}
+                    -DCMAKE_BUILD_TYPE=Release
+                    -DCMAKE_INSTALL_PREFIX=${HOME}
+- cd build && make install
 #####################################
 #Build Pulsar-Meta for dependencies #
 #####################################
@@ -40,6 +48,7 @@ script:
                     -DMPI_C_COMPILER=mpicc
                     -DCMAKE_BUILD_TYPE=Release
                     -DCMAKE_INSTALL_PREFIX=${HOME}
+                    -DCMAKE_PREFIX_PATH=${HOME}
                     -DPYTHON_EXECUTABLE=python3
                     -DENABLE_PULSAR=False
 - cd build && make install
