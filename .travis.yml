@@ -22,7 +22,9 @@ matrix:
         - g++-4.9
         - libdb-dev
         - libmpich1.0-dev
-    env: CXX_COMPILER='g++-4.9'
+    env:
+       - CXX_COMPILER='g++-4.9'
+       - PYTHON_VER='3.5'
 
 script:
 - cd ${HOME}
