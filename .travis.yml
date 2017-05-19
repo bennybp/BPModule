@@ -22,9 +22,9 @@ matrix:
         - g++-4.9
         - libdb-dev
         - libmpich1.0-dev
+        - python3-dev
     env:
        - CXX_COMPILER='g++-4.9'
-       - PYTHON_VER='3.5'
 
 script:
 - cd ${HOME}
@@ -38,6 +38,7 @@ script:
                     -DCMAKE_BUILD_TYPE=Release
                     -DCMAKE_INSTALL_PREFIX=${HOME}
 - cd build && make install
+
 #####################################
 #Build Pulsar-Meta for dependencies #
 #####################################
@@ -54,6 +55,7 @@ script:
                     -DPYTHON_EXECUTABLE=python3
                     -DENABLE_PULSAR=False
 - cd build && make install
+
 #####################
 #Build Pulsar-Core  #
 #####################
@@ -81,10 +83,15 @@ before_install:
   -d
 - chmod 0600 scripts/travisci_rsa
 - cp scripts/travisci_rsa ~/.ssh/id_rsa
+
 install:
-- cmake -version
 - sudo apt-get install --yes doxygen graphviz
+
 after_failure:
 - cat Testing/Temporary/LastTest.log
+
 after_success:
+########################################################
+# Build the documentation and commit it back to GitHub #
+########################################################
 - scripts/publish-doxygen.sh
