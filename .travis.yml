@@ -36,7 +36,7 @@ script:
 - cd Pulsar-Meta
 - cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=${CXX_COMPILER}
                     -DMPI_CXX_COMPILER=mpicxx
-                    -MPI_C_COMPILER=mpicc
+                    -DMPI_C_COMPILER=mpicc
                     -DCMAKE_BUILD_TYPE=Release
                     -DCMAKE_INSTALL_PREFIX=${HOME}
                     -DPYTHON_EXECUTABLE=python3
@@ -49,7 +49,7 @@ script:
 - cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=${CXX_COMPILER}
                     -DCMAKE_BUILD_TYPE=Release
                     -DMPI_CXX_COMPILER=mpicxx
-                    -MPI_C_COMPILER=mpicc
+                    -DMPI_C_COMPILER=mpicc
                     -DPYTHON_EXECUTABLE=python3
                     -DCMAKE_PREFIX_PATH=${HOME}
                     -DCMAKE_INSTALL_RPATH=${HOME}
