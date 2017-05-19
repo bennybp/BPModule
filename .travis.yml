@@ -1,4 +1,6 @@
-language: cpp
+language: python
+python:
+  - "3.3"
 sudo: required
 
 #Blocklist
@@ -10,7 +12,6 @@ branches:
 matrix:
   include:
   - os: linux
-    compiler: gcc
     addons:
       apt:
         sources:
@@ -22,7 +23,6 @@ matrix:
         - g++-4.9
         - libdb-dev
         - libmpich1.0-dev
-        - python3.4-dev
     env:
        - CXX_COMPILER='g++-4.9'
 
