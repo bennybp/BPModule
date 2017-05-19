@@ -22,7 +22,6 @@ matrix:
         - g++-4.9
         - libdb-dev
         - libmpich1.0-dev
-        - python3-dev
     env:
        - CXX_COMPILER='g++-4.9'
 
@@ -52,7 +51,7 @@ script:
                     -DCMAKE_BUILD_TYPE=Release
                     -DCMAKE_INSTALL_PREFIX=${HOME}
                     -DCMAKE_PREFIX_PATH=${HOME}
-                    -DPYTHON_EXECUTABLE=python3
+                    -DPYTHON_EXECUTABLE=/usr/bin/python3
                     -DENABLE_PULSAR=False
 - cd build && make install
 
@@ -64,7 +63,7 @@ script:
                     -DCMAKE_BUILD_TYPE=Release
                     -DMPI_CXX_COMPILER=mpicxx
                     -DMPI_C_COMPILER=mpicc
-                    -DPYTHON_EXECUTABLE=python3
+                    -DPYTHON_EXECUTABLE=/usr/bin/python3
                     -DCMAKE_PREFIX_PATH=${HOME}
                     -DCMAKE_INSTALL_RPATH=${HOME}
 - cd build && make
