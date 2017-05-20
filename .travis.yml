@@ -23,7 +23,7 @@ addons:
       - deadsnakes
     packages:
       - ${PY_EXE}
-      - cmake-3.2
+      - cmake
       - cmake-data
       - libdb-dev
       - ${CXX_COMPILER}
