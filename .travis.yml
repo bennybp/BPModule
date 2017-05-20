@@ -16,18 +16,22 @@ matrix:
   env:
     - PY_EXE=python3.5 CXX_COMPILER='g++-4.9'
   addons:
-    apt:
-      sources:
-        - ubuntu-toolchain-r-test
-        - george-edison55-precise-backports
-        - deadsnakes
-      packages:
-        - cmake-3.2
-        - cmake-data
-        - libdb-dev
-        - ${CXX_COMPILER}
-        - ${PY_EXE}
-        - libmpich1.0-dev
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - george-edison55-precise-backports
+    packages:
+      - cmake-3.2
+      - cmake-data
+      - libdb-dev
+      - ${CXX_COMPILER}
+      - libmpich1.0-dev
+  apt:
+    sources:
+      - deadsnakes
+    packages:
+      - ${PY_EXE}
+
 
 
 script:
