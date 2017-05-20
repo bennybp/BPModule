@@ -6,7 +6,12 @@ branches:
   except:
   - gh-pages
 
-#Common dependencies
+############################################
+# On Ubuntu g++ packages are named g++-X.Y #
+############################################
+
+#TODO: loop over values of X and Y
+
 addons:
   apt:
     sources:
@@ -16,12 +21,13 @@ addons:
     - cmake
     - cmake-data
     - libdb-dev
+    - g++-4.9
     - libmpich1.0-dev
 env:
   matrix:
-    - PY=3.5  CXX_COMPILER='g++-4.9'
+    - PY=3.5 CXX_COMPILER='g++-4.9'
 
-#TODO: other compilers/python
+#TODO: other python
 
 
 script:
