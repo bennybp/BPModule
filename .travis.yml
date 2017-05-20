@@ -9,37 +9,26 @@ branches:
 ############################################
 # On Ubuntu g++ packages are named g++-X.Y #
 ############################################
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-      - george-edison55-precise-backports
-      - deadsnakes
+
+#TODO: loop over values of X and Y
+
+matrix:
+  env:
+    - PY_EXE=python3.5 CXX_COMPILER='g++-4.9'
+  addons:
+    apt:
+      sources:
+        - ubuntu-toolchain-r-test
+        - george-edison55-precise-backports
+        - deadsnakes
       packages:
         - cmake
         - cmake-data
         - libdb-dev
+        - ${CXX_COMPILER}
+        - ${PY_EXE}
         - libmpich1.0-dev
-#TODO: loop over values of X and Y
-matrix:
-  env:
-    - PY_VERSION=3.5 CXX_VERSION='4.9'
 
-before_install:
-##################################################
-# Decode the rsa key so Travis can SSH to GitHub #
-##################################################
-- openssl aes-256-cbc
-  -K $encrypted_92294f6245f4_key
-  -iv $encrypted_92294f6245f4_iv
-  -in scripts/travisci_rsa.enc
-  -out scripts/travisci_rsa
-  -d
-- chmod 0600 scripts/travisci_rsa
-- cp scripts/travisci_rsa ~/.ssh/id_rsa
-
-install:
-- sudo apt-get install --yes doxygen graphviz g++-${CXX_VERSION} python${PY_VERSION}
 
 script:
 - cd ${HOME}
@@ -68,7 +57,7 @@ script:
                     -DCMAKE_BUILD_TYPE=Release
                     -DCMAKE_INSTALL_PREFIX=${HOME}
                     -DCMAKE_PREFIX_PATH=${HOME}
-                    -DPYTHON_EXECUTABLE=python${PY}
+                    -DPYTHON_EXECUTABLE=${PY_EXE}
                     -DENABLE_PULSAR=False
 - cd build && make install
 
@@ -80,14 +69,28 @@ script:
                     -DCMAKE_BUILD_TYPE=Release
                     -DMPI_CXX_COMPILER=mpicxx
                     -DMPI_C_COMPILER=mpicc
-                    -DPYTHON_EXECUTABLE=/usr/bin/python3
+                    -DPYTHON_EXECUTABLE=${PY_EXE}
                     -DCMAKE_PREFIX_PATH=${HOME}
                     -DCMAKE_INSTALL_RPATH=${HOME}
 - cd build && make
 - ctest
 - cd -
 
+before_install:
+##################################################
+# Decode the rsa key so Travis can SSH to GitHub #
+##################################################
+- openssl aes-256-cbc
+  -K $encrypted_92294f6245f4_key
+  -iv $encrypted_92294f6245f4_iv
+  -in scripts/travisci_rsa.enc
+  -out scripts/travisci_rsa
+  -d
+- chmod 0600 scripts/travisci_rsa
+- cp scripts/travisci_rsa ~/.ssh/id_rsa
 
+install:
+- sudo apt-get install --yes doxygen graphviz
 
 after_failure:
 - cat Testing/Temporary/LastTest.log
