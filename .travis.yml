@@ -22,11 +22,11 @@ addons:
       - george-edison55-precise-backports
       - deadsnakes
     packages:
-      - ${PY_EXE}
+      - python3.5
       - cmake
       - cmake-data
       - libdb-dev
-      - ${CXX_COMPILER}
+      - g++-4.9
       - libmpich1.0-dev
 script:
 - cd ${HOME}
