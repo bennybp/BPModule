@@ -9,26 +9,37 @@ branches:
 ############################################
 # On Ubuntu g++ packages are named g++-X.Y #
 ############################################
-
-#TODO: loop over values of X and Y
-
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
-    - george-edison55-precise-backports
-    packages:
-    - cmake
-    - cmake-data
-    - libdb-dev
-    - g++-4.9
-    - libmpich1.0-dev
-env:
-  matrix:
-    - PY=3.5 CXX_COMPILER='g++-4.9'
+      - ubuntu-toolchain-r-test
+      - george-edison55-precise-backports
+      - deadsnakes
+      packages:
+        - cmake
+        - cmake-data
+        - libdb-dev
+        - libmpich1.0-dev
+#TODO: loop over values of X and Y
+matrix:
+  env:
+    - PY_VERSION=3.5 CXX_VERSION='4.9'
 
-#TODO: other python
+before_install:
+##################################################
+# Decode the rsa key so Travis can SSH to GitHub #
+##################################################
+- openssl aes-256-cbc
+  -K $encrypted_92294f6245f4_key
+  -iv $encrypted_92294f6245f4_iv
+  -in scripts/travisci_rsa.enc
+  -out scripts/travisci_rsa
+  -d
+- chmod 0600 scripts/travisci_rsa
+- cp scripts/travisci_rsa ~/.ssh/id_rsa
 
+install:
+- sudo apt-get install --yes doxygen graphviz g++-${CXX_VERSION} python${PY_VERSION}
 
 script:
 - cd ${HOME}
@@ -76,21 +87,7 @@ script:
 - ctest
 - cd -
 
-before_install:
-##################################################
-# Decode the rsa key so Travis can SSH to GitHub #
-##################################################
-- openssl aes-256-cbc
-  -K $encrypted_92294f6245f4_key
-  -iv $encrypted_92294f6245f4_iv
-  -in scripts/travisci_rsa.enc
-  -out scripts/travisci_rsa
-  -d
-- chmod 0600 scripts/travisci_rsa
-- cp scripts/travisci_rsa ~/.ssh/id_rsa
 
-install:
-- sudo apt-get install --yes doxygen graphviz
 
 after_failure:
 - cat Testing/Temporary/LastTest.log
