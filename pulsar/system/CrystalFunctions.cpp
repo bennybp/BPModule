@@ -26,7 +26,7 @@ AtomSetUniverse Frac2Cart(const AtomSetUniverse& DaU,const Space& DaSpace){
     Vector_t CosA,Angles(DaSpace.lattice_angles);
     const Vector_t& Sides=DaSpace.lattice_sides;
     std::for_each(Angles.begin(),Angles.end(),ToRadian);                 
-    std::transform(Angles.begin(),Angles.end(),CosA.begin(),cos);
+    std::transform(Angles.begin(),Angles.end(),CosA.begin(),static_cast<double(*)(double)>(std::cos));
     double CosBG=CosA[1]*CosA[2],SinG=sin(Angles[2]);
     double v=sqrt(1-CosA[0]*CosA[0]-CosA[1]*CosA[1]-CosA[2]*CosA[2]
                   -2*CosA[0]*CosBG);
