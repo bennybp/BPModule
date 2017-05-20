@@ -41,13 +41,13 @@ script:
 - cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=${CXX_COMPILER}
                     -DCMAKE_BUILD_TYPE=Release
                     -DCMAKE_INSTALL_PREFIX=${HOME}
-                    -DPYTHON_EXECUTABLE=python${PY}
 - cd build && make install
 
 #####################################
 #Build Pulsar-Meta for dependencies #
 #####################################
 
+- ls /usr/bin
 #TODO: investigate TravisCI cache-ing
 - git clone https://github.com/pulsar-chem/Pulsar-Meta.git
 - cd Pulsar-Meta
