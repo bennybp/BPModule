@@ -25,6 +25,70 @@ The steps to making a module can roughly be described as:
 
 ## Making Your Module ###
 
+### Module info (minfo)
+
+Within this python package, a `minfo` structure is required. The `minfo`
+is a dictionary containing information about all the modules contained within
+the supermodule. The keys in the dictionary represent the name of the
+module. The values corresponding to the keys contain information about
+the module with that name. The keys for this inner dictionary are:
+
+ Key           |     Type         |   Description
+---------------|------------------|----------------------------------------------------------
+\b language    | string           | Language of the module. Must be 'c_module' or 'python_module'
+\b base        | string           | Base class of the module (ie, what this module does)
+\b modpath     | string           | (required only for 'c_module') Path to the module/plugin library file
+\b version     | string           | Version of the module (for the end user's information)
+\b description | string           | Description of what the module does
+\b authors     | list of strings  | Authors associated with the module
+\b refs        | list of strings  | Any references (websites, publications, etc) corresponding to the module
+\b options     | dictionary       | Options for the module (see below)
+
+
+In practice, this file is contained in a separate python file and imported into the
+`__init__.py` file.
+
+### Options
+
+Options are located in the `minfo` dictionary under a module's key. The options are
+themselves specified as a dictionary, with the key being the option's key/name.
+The value is a tuple containing 5 elements:
+
+Element  |   Type                          |  Description
+---------|---------------------------------|---------------------------------------------
+1        | OptionType                      | What type of option it is (see below)
+2        | Depends on OptionType (or None) | Default of the option (required if optional). Must match the OptionType
+3        | bool                            | Is the option required (True) or optional (False)
+4        | object (see below)              | Validator to be run for the option
+5        | string                          | A help string or description of the option
+
+The OptionType is imported from the pulsar package. Valid OptionTypes are:
+
+OptionType            | C++ mapping   | Python mapping   | Description
+----------------------|---------------|------------------|---------------------
+\b OptionType.Int     | long long int | int              | Plain integer
+\b OptionType.Float   | double        | float            | Floating-point type
+\b OptionType.Bool    | bool          | bool             | Boolean type
+\b OptionType.String  | std::string   | str              | An arbitrary string
+
+In addition, vectors/lists, sets, and associative containers of the above are allowed
+(with \i X and \i Y representing Int, Float, Bool, or String)
+
+OptionType                      | C++ mapping                  | Python mapping   
+--------------------------------|------------------------------|------------------
+<b>OptionType.List</b><i>X</i>  | std::vector<<i>X</i>>        | list of <i>X</i> 
+<b>OptionType.Set</b><i>X</i>   | std::set<<i></i>X>           | set of <i>X</i>  
+<b>OptionType.Dict</b><i>XY</i> | std::map<<i>X</i>, <i>Y</i>> | dict(<i>X</i>, <i>Y</i>)       
+
+\warning If the default value is specified and its type does not match the given OptionType,
+or if the default value is not valid (according to a supplied validator), the
+supermodule will fail to load.
+
+
+### Example of a minfo
+
+\todo Make external example file and include here
+
 ### C++ Instructions ###
 
 In C++, simply derive from the module base type you are implementing.  Each 

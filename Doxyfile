@@ -2362,8 +2362,3 @@ GENERATE_LEGEND        = YES
 
 DOT_CLEANUP            = YES
 
-
-# Include other doxygen configuration
-#@INCLUDE = wiki/developers.doxcfg
-
-
