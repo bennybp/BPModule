@@ -88,6 +88,8 @@ script: #This step is meant to test the built project
 - ctest
 
 after_failure:
+- ls ${HOME}
+- ls ${HOME}/lib
 - cat Testing/Temporary/LastTest.log
 
 after_success:
