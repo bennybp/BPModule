@@ -26,33 +26,30 @@ facets of computational chemistry.  Nevertheless the situation has not changed
 within thes monolithic packages and it becomes increasingly hard to support
 these libraries (or fully incoroporate them).  This is where Pulsar comes in.
 
-Pulsar is a framework in the computer science sense of the word.  Meaning it is
-an entire computational chemistry package, except for the computational
-chemistry details.  What this means is it knows that there are approximate
-methods for computing the energy of a chemical system, and what they look like
-(they take a wavefunction and output an energy and a new wavefunction), but it
-doesn't know how that method actually works.  This is where the highly-optimized
-libraries come in.  Via a small wrapper-function (a goal for the community is to
-come to a community consensus on what the interface should look like, and in
-turn relegate the need for such a wrapper-function) the wavefunction object is
-unpacked into a form the library understands, and then the result of the library
-is translated into the return form Pulsar understands.  Pulsar simply calls this
-wrapper-function when it needs the energy and never needs to know the details of
-your method.
-
-Pulsar Features
+What is Pulsar?
 ---------------
 
-Pulsar's features nearly all stem from the fact that it looks functions up at
-runtime.  The exact mechanism behind how Pulsar does this is described on
-another page of this documentation (TODO: add reference), but for our present
-purposes it suffices to say as long as your function has the expected signature
-and Pulsar knows where your library resides, it can pull that function in at
-runtime.
+Pulsar is a framework in the computer science sense of the word.  Meaning it is
+an entire computational chemistry package, except for the computational
+chemistry part.  More specifically, Pulsar has ideas about many computational
+chemistry concepts, such as what it means to compute the energy of a system,
+what it means to compute a shell quartet, *etc.* but it doesn't know how to
+actually do any of that.  Instead, it allows you to tell it to call your
+function when Pulsar needs an energy or an integral . At first this may be a bit
+hard to grasp, so let's consider what the typical call stack looks like.
 
-The big benefit of this comes from simplified builds.  Each function does not
-have to link against every other function, nor does it have to link against the
-Pulsar framework (you'll need the header files for the signature, but that's
-it).
+\image html images/pulsar_idea.png
 
-TODO: Finish me
+As Pulsar runs it comes to a point where it needs, say, the energy of a chemical
+system.  Not knowing any computational chemistry, it calls your function,
+which has some agreed upon input API.  Your method computes the energy and then
+returns the energy to Pulsar using the return API.  Superficially this looks
+very similar to a normal call stack, but what makes Pulsar special is that the
+binding of your function to the input and output APIs happens at runtime.  In
+turn, Pulsar can call your function, or really any function satisfying those
+APIs, without having to be compiled against it.  This allows you to change out
+the guts of an algorithm on-the-fly.
+
+
+
+

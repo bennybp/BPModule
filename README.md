@@ -1,4 +1,9 @@
 # Pulsar Computational Chemistry Framework
 
-We are undergoing a transition to where the information usually contained here
-is instead contained on a seperate website, built from the documentation.
+[![Build Status](https://travis-ci.org/pulsar-chem/Pulsar-Core.svg?branch=master
+)](https://travis-ci.org/pulsar-chem/Pulsar-Core)
+
+The official up to date documentation is located :link:[here](
+http://pulsar-chem.github.io/Pulsar-Core/).
+
+
