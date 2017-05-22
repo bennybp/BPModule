@@ -34,7 +34,7 @@ TEST_SIMPLE(TestModuleManager){
                             &mm,minfo,mod_name);
     minfo.path="a/fake/path";
     tester.test_member_call("No handler",false,load_module,&mm,minfo,mod_name);
-    minfo.type="c_module";
+    minfo.language="c_module";
     tester.test_member_call("Not a path",false,load_module,&mm,minfo,mod_name);
     char cwd[1026];
     getcwd(cwd, sizeof(cwd));

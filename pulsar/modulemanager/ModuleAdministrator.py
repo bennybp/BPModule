@@ -114,7 +114,17 @@ class ModuleAdministrator(ModuleManager):
         cppminfo = ModuleInfo()
         cppminfo.name = modulename
         cppminfo.path = os.path.dirname(m.__file__)
-        cppminfo.type = minfo["type"]
+
+        # TODO: This handles the deprecated 'type' key. Remove in the future
+        if "type" in minfo:
+            cppminfo.language = minfo["type"]
+            print_global_warning("Module {} from {} uses \"type\" rather than "
+                                 "\"language\" in its module info. This "
+                                 "is deprecated\n".format(modulename, supermodule, modulekey))
+            
+        else:
+            cppminfo.language = minfo["language"]
+
         cppminfo.version = minfo["version"]
         cppminfo.description = minfo["description"]
         cppminfo.authors = minfo["authors"]
