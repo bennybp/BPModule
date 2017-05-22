@@ -54,6 +54,9 @@ before_install: #This step is meant to gather dependencies
 - cd eigen-eigen-da9b4e14c255
 - cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOME}
 - cd build && make install
+- cd ${HOME}
+- which python
+- python --version
 #####################################
 #Build Pulsar-Meta for dependencies #
 #####################################
