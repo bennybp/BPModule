@@ -31,7 +31,7 @@ addons:
       - cmake-data
       - libdb-dev
       - g++-4.9
-      - mpich2
+      - libmpich2-dev
 
 before_install: #This step is meant to gather dependencies
 ##################################################
@@ -75,8 +75,6 @@ before_install: #This step is meant to gather dependencies
 #####################################
 - git clone https://github.com/pulsar-chem/Pulsar-Meta.git
 - cd Pulsar-Meta
-- which mpicc
-- which mpicxx
 - cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9
                     -DMPI_CXX_COMPILER=mpicxx
                     -DMPI_C_COMPILER=mpicc
