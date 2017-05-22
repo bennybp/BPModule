@@ -31,7 +31,7 @@ addons:
       - cmake-data
       - libdb-dev
       - g++-4.9
-      - libopenmpi-dev
+      - mpich2
 
 before_install: #This step is meant to gather dependencies
 ##################################################
@@ -82,14 +82,12 @@ install: #This step is meant to build the project to be tested
 #####################
 - cd ${TRAVIS_BUILD_DIR}
 - cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DMPI_CXX_COMPILER=mpicxx -DMPI_C_COMPILER=mpicc -DPYTHON_EXECUTABLE=${HOME}/miniconda/envs/test-environment/bin/python -DCMAKE_PREFIX_PATH=${HOME} -DCMAKE_INSTALL_RPATH=${HOME}/lib
-- cd build && make
+- cd build && make -j2
 
 script: #This step is meant to test the built project
 - ctest
 
 after_failure:
-- ls ${HOME}
-- ls ${HOME}/lib
 - cat Testing/Temporary/LastTest.log
 
 after_success:
