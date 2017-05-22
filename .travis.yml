@@ -16,6 +16,23 @@ matrix:
 # The below commands are run for each entry of the build matrix #
 #################################################################
 
+################################################################
+# Apt dependencies.  Doing it this way loads them from images. #
+################################################################
+addons:
+  apt:
+    sources:
+      - george-edison55-precise-backports
+      - ubuntu-toolchain-r-test
+    packages:
+      - doxygen
+      - graphviz
+      - cmake
+      - cmake-data
+      - libdb-dev
+      - g++-4.9
+      - libmpich1.0-dev
+
 before_install: #This step is meant to gather dependencies
 ##################################################
 # Decode the rsa key so Travis can SSH to GitHub #
@@ -28,10 +45,6 @@ before_install: #This step is meant to gather dependencies
   -d
 - chmod 0600 scripts/travisci_rsa
 - cp scripts/travisci_rsa ~/.ssh/id_rsa
-- sudo apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
-- sudo  apt-add-repository -y "ppa:george-edison55/precise-backports"
-- sudo apt-get update -qq
-- sudo apt-get install -y doxygen graphviz cmake cmake-data libdb-dev g++-4.9 libmpich1.0-dev
 - cd ${HOME}
 #####################################
 # Get Miniconda for python versions #
@@ -55,14 +68,12 @@ before_install: #This step is meant to gather dependencies
 - cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOME}
 - cd build && make install
 - cd ${HOME}
-- which python
-- python --version
 #####################################
 #Build Pulsar-Meta for dependencies #
 #####################################
 - git clone https://github.com/pulsar-chem/Pulsar-Meta.git
 - cd Pulsar-Meta
-- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DMPI_CXX_COMPILER=mpicxx -DMPI_C_COMPILER=mpicc -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOME} -DCMAKE_PREFIX_PATH=${HOME} -DPYTHON_EXECUTABLE=python3 -DENABLE_PULSAR=False
+- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DMPI_CXX_COMPILER=mpicxx -DMPI_C_COMPILER=mpicc -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOME} -DCMAKE_PREFIX_PATH=${HOME} -DPYTHON_EXECUTABLE=python -DENABLE_PULSAR=False
 - cd build && make install
 
 install: #This step is meant to build the project to be tested
@@ -70,7 +81,7 @@ install: #This step is meant to build the project to be tested
 #Build Pulsar-Core  #
 #####################
 - cd ${TRAVIS_BUILD_DIR}
-- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DMPI_CXX_COMPILER=mpicxx -DMPI_C_COMPILER=mpicc -DPYTHON_EXECUTABLE=python3 -DCMAKE_PREFIX_PATH=${HOME} -DCMAKE_INSTALL_RPATH=${HOME}
+- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DMPI_CXX_COMPILER=mpicxx -DMPI_C_COMPILER=mpicc -DPYTHON_EXECUTABLE=python -DCMAKE_PREFIX_PATH=${HOME} -DCMAKE_INSTALL_RPATH=${HOME}
 - cd build && make
 
 script: #This step is meant to test the built project
