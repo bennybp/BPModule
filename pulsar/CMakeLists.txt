@@ -46,7 +46,7 @@ endforeach()
 
 # For some reason, this sometimes has a leading whitespace
 string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
-
+string(STRIP "${MPI_CXX_COMPILE_FLAGS}" MPI_CXX_COMPILE_FLAGS)
 
 #########################################
 # Includes, compile flags, and linking
