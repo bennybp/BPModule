@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
 # Settings
-REPO_PATH=https://github.com/pulsar-chem/Pulsar-Core.git
-HTML_PATH=html
+REPO_PATH=git@github.com:pulsar-chem/Pulsar-Core.git
+HTML_PATH=doc/html
 COMMIT_USER="Documentation Builder"
 CHANGESET=$(git rev-parse --verify HEAD)
 

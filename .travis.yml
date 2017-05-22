@@ -1,54 +1,30 @@
 language: cpp
 sudo: required
-
-#Blocklist
 branches:
   except:
   - gh-pages
-
-#TODO: Other compilers
-
 matrix:
   env:
-    - PY_VER=3.5 CXX_COMPILER='g++-4.9'
-
-#################################################################
-# The below commands are run for each entry of the build matrix #
-#################################################################
-
-################################################################
-# Apt dependencies.  Doing it this way loads them from images. #
-################################################################
+  - PY_VER=3.5 CXX_COMPILER='g++-4.9'
 addons:
   apt:
     sources:
-      - george-edison55-precise-backports
-      - ubuntu-toolchain-r-test
+    - george-edison55-precise-backports
+    - ubuntu-toolchain-r-test
     packages:
-      - doxygen
-      - graphviz
-      - cmake
-      - cmake-data
-      - libdb-dev
-      - g++-4.9
-      - libmpich2-dev
-
-before_install: #This step is meant to gather dependencies
-##################################################
-# Decode the rsa key so Travis can SSH to GitHub #
-##################################################
-- openssl aes-256-cbc
-  -K $encrypted_92294f6245f4_key
-  -iv $encrypted_92294f6245f4_iv
-  -in .travis/travisci_rsa.enc
-  -out .travis/travisci_rsa
-  -d
+    - doxygen
+    - graphviz
+    - cmake
+    - cmake-data
+    - libdb-dev
+    - g++-4.9
+    - libmpich2-dev
+before_install:
+- openssl aes-256-cbc -K $encrypted_adda173482de_key -iv $encrypted_adda173482de_iv
+  -in .travis/travisci_rsa.enc -out .travis/travisci_rsa -d
 - chmod 0600 .travis/travisci_rsa
 - cp .travis/travisci_rsa ~/.ssh/id_rsa
 - cd ${HOME}
-#####################################
-# Get Miniconda for python versions #
-#####################################
 - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
 - bash miniconda.sh -b -p $HOME/miniconda
 - export PATH="$HOME/miniconda/bin:$PATH"
@@ -60,49 +36,28 @@ before_install: #This step is meant to gather dependencies
 - source activate test-environment
 - conda install --yes  numpy
 - cd ${HOME}
-###################################################
-# Build Eigen because CMake doesn't support https #
-###################################################
 - wget http://bitbucket.org/eigen/eigen/get/3.3.2.tar.bz2
 - tar -xf 3.3.2.tar.bz2
 - cd eigen-eigen-da9b4e14c255
-- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9
-                    -DCMAKE_BUILD_TYPE=Release
-                    -DCMAKE_INSTALL_PREFIX=${HOME}
+- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOME}
 - cd build && make install
 - cd ${HOME}
-#####################################
-#Build Pulsar-Meta for dependencies #
-#####################################
 - git clone https://github.com/pulsar-chem/Pulsar-Meta.git
 - cd Pulsar-Meta
-- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9
-                    -DMPI_CXX_COMPILER=mpicxx
-                    -DMPI_C_COMPILER=mpicc
-                    -DCMAKE_BUILD_TYPE=Release
-                    -DCMAKE_INSTALL_PREFIX=${HOME}
-                    -DCMAKE_PREFIX_PATH=${HOME}
-                    -DPYTHON_EXECUTABLE=${HOME}/miniconda/envs/test-environment/bin/python
-                    -DENABLE_PULSAR=False
+- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DMPI_CXX_COMPILER=mpicxx -DMPI_C_COMPILER=mpicc
+  -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOME} -DCMAKE_PREFIX_PATH=${HOME}
+  -DPYTHON_EXECUTABLE=${HOME}/miniconda/envs/test-environment/bin/python -DENABLE_PULSAR=False
 - cd build && make install
-
-install: #This step is meant to build the project to be tested
-#####################
-#Build Pulsar-Core  #
-#####################
+install:
 - cd ${TRAVIS_BUILD_DIR}
-- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DMPI_CXX_COMPILER=mpicxx -DMPI_C_COMPILER=mpicc -DPYTHON_EXECUTABLE=${HOME}/miniconda/envs/test-environment/bin/python -DCMAKE_PREFIX_PATH=${HOME} -DCMAKE_INSTALL_RPATH=${HOME}/lib
+- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DMPI_CXX_COMPILER=mpicxx
+  -DMPI_C_COMPILER=mpicc -DPYTHON_EXECUTABLE=${HOME}/miniconda/envs/test-environment/bin/python
+  -DCMAKE_PREFIX_PATH=${HOME} -DCMAKE_INSTALL_RPATH=${HOME}/lib
 - cd build && make -j2
-
-script: #This step is meant to test the built project
+script:
 - ctest
-
 after_failure:
 - cat Testing/Temporary/LastTest.log
-
 after_success:
-########################################################
-# Build the documentation and commit it back to GitHub #
-########################################################
 - cd -
-- .travis/publish-doxygen.sh
+- ".travis/publish-doxygen.sh"
