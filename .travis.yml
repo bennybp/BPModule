@@ -82,7 +82,7 @@ install: #This step is meant to build the project to be tested
 #####################
 - cd ${TRAVIS_BUILD_DIR}
 - cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DMPI_CXX_COMPILER=mpicxx -DMPI_C_COMPILER=mpicc -DPYTHON_EXECUTABLE=${HOME}/miniconda/envs/test-environment/bin/python -DCMAKE_PREFIX_PATH=${HOME} -DCMAKE_INSTALL_RPATH=${HOME}
-- cd build && make
+- cd build && VERBOSE=1 make
 
 script: #This step is meant to test the built project
 - ctest
