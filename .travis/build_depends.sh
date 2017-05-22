@@ -1,7 +1,7 @@
 #!/bin/sh
 # This script expects two arguments compiler version and python version
-PY_VER=$1
-CXX_COMPILER=g++-$2
+PY_VER=$2
+CXX_COMPILER=g++-$1
 g++ --version
 cd ${HOME}
 #####################################
