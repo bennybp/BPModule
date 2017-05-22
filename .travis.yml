@@ -6,28 +6,52 @@ branches:
   except:
   - gh-pages
 
-############################################
-# On Ubuntu g++ packages are named g++-X.Y #
-############################################
-
-#TODO: loop over values of X and Y
+#TODO: Other compilers
 
 matrix:
   env:
-    - PY_EXE=python3.5 CXX_COMPILER='g++-4.9'
+    - PY_VER=python3.5 CXX_COMPILER='g++-4.9'
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
       - george-edison55-precise-backports
-      - deadsnakes
     packages:
-      - python3.5
       - cmake
       - cmake-data
       - libdb-dev
       - g++-4.9
       - libmpich1.0-dev
+
+before_install:
+##################################################
+# Decode the rsa key so Travis can SSH to GitHub #
+##################################################
+- openssl aes-256-cbc
+  -K $encrypted_92294f6245f4_key
+  -iv $encrypted_92294f6245f4_iv
+  -in scripts/travisci_rsa.enc
+  -out scripts/travisci_rsa
+  -d
+- chmod 0600 scripts/travisci_rsa
+- cp scripts/travisci_rsa ~/.ssh/id_rsa
+
+install:
+- sudo apt-get install --yes doxygen graphviz
+- cd ${HOME}
+#####################################
+# Get Miniconda for python versions #
+#####################################
+- wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+- bash miniconda.sh -b -p $HOME/miniconda
+- export PATH="$HOME/miniconda/bin:$PATH"
+- hash -r
+- conda config --set always_yes yes --set changeps1 no
+- conda update -q conda
+- conda info -a
+- conda create -q -n test-environment python=${PY_VER}
+- source activate test-environment
+
 script:
 - cd ${HOME}
 ###################################################
@@ -54,7 +78,7 @@ script:
                     -DCMAKE_BUILD_TYPE=Release
                     -DCMAKE_INSTALL_PREFIX=${HOME}
                     -DCMAKE_PREFIX_PATH=${HOME}
-                    -DPYTHON_EXECUTABLE=${PY_EXE}
+                    -DPYTHON_EXECUTABLE=python3
                     -DENABLE_PULSAR=False
 - cd build && make install
 
@@ -66,28 +90,12 @@ script:
                     -DCMAKE_BUILD_TYPE=Release
                     -DMPI_CXX_COMPILER=mpicxx
                     -DMPI_C_COMPILER=mpicc
-                    -DPYTHON_EXECUTABLE=${PY_EXE}
+                    -DPYTHON_EXECUTABLE=python3
                     -DCMAKE_PREFIX_PATH=${HOME}
                     -DCMAKE_INSTALL_RPATH=${HOME}
 - cd build && make
 - ctest
 - cd -
-
-before_install:
-##################################################
-# Decode the rsa key so Travis can SSH to GitHub #
-##################################################
-- openssl aes-256-cbc
-  -K $encrypted_92294f6245f4_key
-  -iv $encrypted_92294f6245f4_iv
-  -in scripts/travisci_rsa.enc
-  -out scripts/travisci_rsa
-  -d
-- chmod 0600 scripts/travisci_rsa
-- cp scripts/travisci_rsa ~/.ssh/id_rsa
-
-install:
-- sudo apt-get install --yes doxygen graphviz
 
 after_failure:
 - cat Testing/Temporary/LastTest.log
