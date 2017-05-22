@@ -12,7 +12,11 @@ matrix:
   env:
     - PY_VER=3.5 CXX_COMPILER='g++-4.9'
 
-before_install:
+#################################################################
+# The below commands are run for each entry of the build matrix #
+#################################################################
+
+before_install: #This step is meant to gather dependencies
 ##################################################
 # Decode the rsa key so Travis can SSH to GitHub #
 ##################################################
@@ -24,12 +28,10 @@ before_install:
   -d
 - chmod 0600 scripts/travisci_rsa
 - cp scripts/travisci_rsa ~/.ssh/id_rsa
-- sudo add-apt-repository ppa:ubuntu-toolchain-r-test
-- sudo add-apt-repository ppa:george-edison55-precise-backports
-- sudo apt-get update
-
-install:
-- sudo apt-get install --yes doxygen graphviz cmake cmake-data libdb-dev g++-4.9 libmpich1.0-dev
+- sudo apt-add-repository -y "ppa:ubuntu-toolchain-r/test"
+- sudo  apt-add-repository -y "ppa:george-edison55/precise-backports"
+- sudo apt-get update -qq
+- sudo apt-get install -y doxygen graphviz cmake cmake-data libdb-dev g++-4.9 libmpich1.0-dev
 - cd ${HOME}
 #####################################
 # Get Miniconda for python versions #
@@ -52,7 +54,6 @@ install:
 - cd eigen-eigen-da9b4e14c255
 - cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOME}
 - cd build && make install
-
 #####################################
 #Build Pulsar-Meta for dependencies #
 #####################################
@@ -61,13 +62,15 @@ install:
 - cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DMPI_CXX_COMPILER=mpicxx -DMPI_C_COMPILER=mpicc -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOME} -DCMAKE_PREFIX_PATH=${HOME} -DPYTHON_EXECUTABLE=python3 -DENABLE_PULSAR=False
 - cd build && make install
 
-script:
+install: #This step is meant to build the project to be tested
 #####################
 #Build Pulsar-Core  #
 #####################
 - cd ${TRAVIS_BUILD_DIR}
 - cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DMPI_CXX_COMPILER=mpicxx -DMPI_C_COMPILER=mpicc -DPYTHON_EXECUTABLE=python3 -DCMAKE_PREFIX_PATH=${HOME} -DCMAKE_INSTALL_RPATH=${HOME}
 - cd build && make
+
+script: #This step is meant to test the built project
 - ctest
 - cd -
 
