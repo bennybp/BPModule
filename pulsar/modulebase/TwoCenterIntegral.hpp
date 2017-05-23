@@ -10,6 +10,7 @@
 
 #include "pulsar/modulebase/ModuleBase.hpp"
 #include "pulsar/system/BasisSet.hpp"
+#include "pulsar/util/PythonIntegralHelper.hpp"
 
 namespace pulsar{
 
@@ -17,7 +18,9 @@ namespace pulsar{
  */
 class TwoCenterIntegral : public ModuleBase
 {
-    public:
+protected:
+    PythonIntegralHelper helper_;
+public:
         typedef TwoCenterIntegral BaseType;
         typedef std::string HashType;
 
@@ -40,6 +43,7 @@ class TwoCenterIntegral : public ModuleBase
         {
             ModuleBase::call_function(&TwoCenterIntegral::uninitialized_or_throw_);
             ModuleBase::call_function(&TwoCenterIntegral::initialize_, deriv, wfn, bs1, bs2);
+            helper_.initialize(bs1,bs2);
             initialized_ = true; 
         }
 
@@ -77,23 +81,6 @@ class TwoCenterIntegral : public ModuleBase
                                               shell1, shell2);
         }
 
-
-        /*! \brief calculate an integral (for use from python)
-         *
-         * \param [in] shell1 Shell index on the first center
-         * \param [in] shell2 Shell index on the second center
-         * \return the completed integrals in a python buffer
-         *
-         * \warning This segfaults if I go above 10,000
-         */
-        pybind11::memoryview calculate_py(uint64_t shell1, uint64_t shell2)
-        {
-            const double* ints = ModuleBase::call_function(&TwoCenterIntegral::calculate_,
-                                                                shell1, shell2);
-            return memoryview_cast(ints,10000);
-        }
-
-
         /*! \brief calculate multiple integrals
          *
          * \param [in] shells1 Shell indices on the first center
@@ -112,21 +99,34 @@ class TwoCenterIntegral : public ModuleBase
         }
 
 
+        /*! \brief calculate an integral (for use from python)
+         *
+         * \param [in] shell1 Shell index on the first center
+         * \param [in] shell2 Shell index on the second center
+         * \return Integrals in a Python list
+         */
+        pybind11::list calculate_py(uint64_t shell1, uint64_t shell2)
+        {
+               const double* ints =
+                ModuleBase::call_function(&TwoCenterIntegral::calculate_,
+                                              shell1, shell2);
+               return helper_.int_2_py(ints,shell1,shell2);
+        }
+
+
         /*! \brief calculate multiple integrals (for use from python)
          *
          * \param [in] shells1 Shell indicies on the first center
          * \param [in] shells2 Shell indicies on the second center
-         * \param [in] outbuffer Where to place the completed integrals
-         * \return Number of integrals calculated
+         * \return The integrals in a Python list
          */
-        uint64_t calculate_multi_py(const std::vector<uint64_t> & shells1,
+        pybind11::list calculate_multi_py(const std::vector<uint64_t> & shells1,
                                     const std::vector<uint64_t> & shells2)
         {
-//            auto ptrinfo = python_buffer_to_ptr<double>(outbuffer, 1);
-
-//            return ModuleBase::call_function(&OneElectronIntegral::calculate_multi_,
-//                                                  shells1, shells2,
-//                                                  ptrinfo.first, ptrinfo.second[0]);
+            const double* ints=
+              ModuleBase::call_function(&TwoCenterIntegral::calculate_multi_,
+                                           shells1, shells2);
+            return helper_.multi_int_2_py(ints,shells1,shells2);
         }
 
 
@@ -155,8 +155,8 @@ class TwoCenterIntegral : public ModuleBase
         virtual const double* calculate_(uint64_t shell1, uint64_t shell2) = 0;
 
         //! \copydoc calculate_multi
-        virtual const double* calculate_multi_(const std::vector<uint64_t> & shells1,
-                                          const std::vector<uint64_t> & shells2)
+        virtual const double* calculate_multi_(const std::vector<uint64_t> & /*shells1*/,
+                                          const std::vector<uint64_t> & /*shells2*/)
         {
 //            //////////////////////////////////////////////////////////
 //            // default implementation - just loop over and do them all
@@ -166,8 +166,10 @@ class TwoCenterIntegral : public ModuleBase
 
 //            for(uint64_t s1 : shells1)
 //            for(uint64_t s2 : shells2)
+//            for(uint64_t s3 : shells3)
+//            for(uint64_t s4 : shells4)
 //            {
-//                uint64_t nbatch = calculate_(s1, s2, outbuffer, bufsize);
+//                uint64_t nbatch = calculate_(s1, s2, s3, s4);
 //                ntotal += nbatch;
 //                outbuffer += nbatch;
 
@@ -175,7 +177,7 @@ class TwoCenterIntegral : public ModuleBase
 //                bufsize = ( (nbatch >= bufsize) ? 0 : (bufsize - nbatch) );
 //            }
 
-//            return ntotal;
+            return nullptr;
         }
 
 
@@ -233,32 +235,25 @@ class TwoCenterIntegral_Py : public TwoCenterIntegral
 
         virtual const double* calculate_(uint64_t shell1, uint64_t shell2)
         {
-            pybind11::buffer_info info =
-                call_py_override<pybind11::buffer>(this,"calculate_",shell1,shell2).request();
+                pybind11::list ints =
+                    call_py_override<pybind11::list>(this,"calculate_",shell1,shell2);
 
-            return static_cast<const double*>(info.ptr);
+                return helper_.py_2_int(ints);
         }
 
 
         virtual const double* calculate_multi_(const std::vector<uint64_t> & shells1,
                                           const std::vector<uint64_t> & shells2)
         {
-//            if(has_py_override(this, "calculate_multi_"))
-//            {
-//                //! \todo untested
 
-//                pybind11::buffer_info pybuf(outbuffer,
-//                                            sizeof(double),
-//                                            pybind11::format_descriptor<double>::format(),
-//                                            1, { bufsize },
-//                                            { sizeof(double) });
+              if(has_py_override<TwoCenterIntegral>(this, "calculate_multi_"))
+              {
+                  pybind11::list ints=
+                          call_py_override<pybind11::list>(this,"calculate_multi_",shells1,shells2);
+                  return helper_.py_2_int(ints);
+              }
 
-//                return call_py_override<uint64_t>(this, "calculate_multi_",
-//                                                shells1, shells2, pybuf, bufsize);
-//            }
-//            else
-//                return OneElectronIntegral::calculate_multi_(shells1, shells2,
-//                                                             outbuffer, bufsize);
+              return TwoCenterIntegral::calculate_multi_(shells1, shells2);
         }
 };
 
