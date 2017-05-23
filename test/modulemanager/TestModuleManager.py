@@ -20,7 +20,7 @@ def run_test():
     tester.test_call("No path causes failure",False,load_module,minfo,mod_name)
     minfo.path="a/fake/path"
     tester.test_call("No handler",False,load_module,minfo,mod_name)
-    minfo.type="c_module"
+    minfo.language="c_module"
     tester.test_call("Not a path",False,load_module,minfo,mod_name)
     cwd=os.path.dirname(os.path.realpath(__file__))
     minfo.path=os.path.join(cwd,"CXXModule.so")

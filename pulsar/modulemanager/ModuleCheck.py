@@ -226,14 +226,21 @@ def check_supermodule(supermodule):
             print_global_error(" -> " + indent2 + "Module key is not a string")
             ok = False            
 
-        
-        ok = ok and TestStringItem(minfo, "type", True)
+
+        # TODO: Handling of deprecated "type" key. Remove eventually
+        if "type" in minfo:
+            ok = ok and TestStringItem(minfo, "type", True)
+            minfo_lang = minfo["type"]
+        else:
+            ok = ok and TestStringItem(minfo, "language", True)
+            minfo_lang = minfo["language"]
+
         ok = ok and TestStringItem(minfo, "version", True)
         ok = ok and TestStringItem(minfo, "description", True)
         ok = ok and TestListStringItem(minfo, "refs", True)
         ok = ok and TestListStringItem(minfo, "authors", True)
 
-        if minfo["type"] == "c_module":
+        if minfo_lang == "c_module":
             ok = ok and TestStringItem(minfo, "soname", True)
             ok = ok and TestFile("soname", os.path.join(supermodule, minfo["soname"]))
 

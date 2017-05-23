@@ -24,7 +24,7 @@ namespace pulsar{
 struct ModuleInfo
 {
     std::string name;                  //!< Some descriptive name for the module
-    std::string type;                  //!< Type of the supermodule (c_module, python_module, etc)
+    std::string language;              //!< The programming language the module is written in
     std::string base;                  //!< Base class of this module (EnergyMethod, etc)
     std::string path;                  //!< Full path for the supermodule (including the filename for an SO file)
     std::string version;               //!< Arbitrary version string of the supermodule
@@ -62,7 +62,7 @@ struct ModuleInfo
         template<class Archive>
         void serialize(Archive & ar)
         {
-            ar(name, type, base, path);
+            ar(name, language, base, path);
             ar(version, description, authors, refs, options);
         }
 

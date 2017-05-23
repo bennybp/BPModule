@@ -21,7 +21,7 @@ void ModuleInfo::print(std::ostream & os) const
     print_output(os, "\n");
     print_output(os, "  ++ Module: %?\n", name);
     print_output(os, "         Version: %?\n", version);
-    print_output(os, "            Type: %?\n", type);
+    print_output(os, "        Language: %?\n", language);
     print_output(os, "            Base: %?\n", base);
     print_output(os, "            Path: %?\n", path);
 
@@ -48,14 +48,14 @@ bphash::HashValue ModuleInfo::my_hash(void) const
 
 void ModuleInfo::hash(bphash::Hasher & h) const
 {
-    h(name, type, base, path, version, description,
+    h(name, language, base, path, version, description,
       authors, refs, options); 
 }
 
 bool ModuleInfo::operator==(const ModuleInfo & rhs) const
 {
     return (name == rhs.name &&
-            type == rhs.type &&
+            language == rhs.language &&
             base == rhs.base &&
             path == rhs.path &&
             version == rhs.version &&

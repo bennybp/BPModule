@@ -222,12 +222,12 @@ void ModuleManager::load_module_from_minfo(const ModuleInfo & minfo, const std::
                                   "modulekey", modulekey);
 
     // Using the handler, load the module
-    if(!loadhandlers_.count(minfo.type))
+    if(!loadhandlers_.count(minfo.language))
         throw PulsarException("Cannot load module: unknown module type",
-                                  "modulepath", minfo.path, "modulename", minfo.name, "type", minfo.type);
+                                  "modulepath", minfo.path, "modulename", minfo.name, "language", minfo.language);
 
     // may throw an exception. Exception should be a PulsarException
-    const ModuleCreationFuncs & mcf = loadhandlers_.at(minfo.type)->load_supermodule(minfo.path);
+    const ModuleCreationFuncs & mcf = loadhandlers_.at(minfo.language)->load_supermodule(minfo.path);
     load_module_from_mcf_(minfo,modulekey,mcf);
 }
 

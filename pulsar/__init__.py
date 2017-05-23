@@ -19,6 +19,8 @@ from .datastore.OptionValidators import *
 from .exception.PulsarException import *
 from .modulebase.base_options import *
 from .modulemanager.ModuleTreePrinters import *
+from .modulemanager.ModuleCheck import *
+from .modulemanager.ModuleAdministrator import *
 from .system.BasisSetParsers import *
 from .system.ApplyBasisSet import *
 from .system.MakeSystem import *
@@ -34,8 +36,6 @@ sys.setdlopenflags(olddl)
 ##########################################
 # Load other python stuff from this directory
 ##########################################
-from .ModuleCheck import *
-from .ModuleAdministrator import *
 
 
 
