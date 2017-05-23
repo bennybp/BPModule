@@ -157,7 +157,7 @@ class EigenTensorImpl : public TensorImpl<rank,double>
         ///True if the underlying Eigen matrices are the same
         bool operator==(const EigenTensorImpl<rank>& rhs)const
         {
-            return mat_==mat_;
+            return mat_==rhs.mat_;
         }
 
         ///True if the underlying Eigen matrices are not the same
@@ -222,7 +222,7 @@ class EigenTensorImpl : public TensorImpl<rank,double>
             archive(cereal::base_class<TensorImpl<rank,double>>(this));
         }
 
-        void hash(bphash::Hasher & h) const
+        void hash(bphash::Hasher &) const
         {
            // h(*mat_);
         }
