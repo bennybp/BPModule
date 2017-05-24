@@ -2,6 +2,7 @@ INPUT+=  dox/basic.md \
          dox/basisset.md \
          dox/building.md \
          dox/cache.md \
+         dox/development.md \
          dox/documenting.md \
          dox/exceptions.md \
          dox/finitediff.md \

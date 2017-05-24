@@ -1,35 +1,63 @@
 language: cpp
 sudo: required
+branches:
+  except:
+  - gh-pages
 matrix:
-  include:
-  - os: linux
-    compiler: gcc
-    addons:
-      apt:
-        sources:
-        - ubuntu-toolchain-r-test
-        - george-edison55-precise-backports
-        packages:
-        - cmake
-        - cmake-data
-        - g++-4.9
-    env: CXX_COMPILER='g++-4.9'
+  env:
+  - PY_VER=3.5 CXX_COMPILER='g++-4.9'
+addons:
+  apt:
+    sources:
+    - george-edison55-precise-backports
+    - ubuntu-toolchain-r-test
+    packages:
+    - doxygen
+    - graphviz
+    - cmake
+    - cmake-data
+    - libdb-dev
+    - g++-4.9
+    - libmpich2-dev
 before_install:
-  - openssl aes-256-cbc -K $encrypted_4d3c47dc5509_key -iv $encrypted_4d3c47dc5509_iv
-    -in travisci_rsa.enc -out travisci_rsa -d
-  - chmod 0600 travisci_rsa
-  - cp travisci_rsa ~/.ssh/id_rsa
+- openssl aes-256-cbc -K $encrypted_adda173482de_key -iv $encrypted_adda173482de_iv
+  -in .travis/travisci_rsa.enc -out .travis/travisci_rsa -d
+- chmod 0600 .travis/travisci_rsa
+- cp .travis/travisci_rsa ~/.ssh/id_rsa
+- cd ${HOME}
+- wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+- bash miniconda.sh -b -p $HOME/miniconda
+- export PATH="$HOME/miniconda/bin:$PATH"
+- hash -r
+- conda config --set always_yes yes --set changeps1 no
+- conda update -q conda
+- conda info -a
+- conda create -q -n test-environment python=3.5
+- source activate test-environment
+- conda install --yes  numpy
+- cd ${HOME}
+- wget http://bitbucket.org/eigen/eigen/get/3.3.2.tar.bz2
+- tar -xf 3.3.2.tar.bz2
+- cd eigen-eigen-da9b4e14c255
+- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOME}
+- cd build && make install
+- cd ${HOME}
+- git clone https://github.com/pulsar-chem/Pulsar-Meta.git
+- cd Pulsar-Meta
+- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DMPI_CXX_COMPILER=mpicxx -DMPI_C_COMPILER=mpicc
+  -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${HOME} -DCMAKE_PREFIX_PATH=${HOME}
+  -DPYTHON_EXECUTABLE=${HOME}/miniconda/envs/test-environment/bin/python -DENABLE_PULSAR=False
+- cd build && make install
 install:
-  - cmake -version
-  - sudo apt-get install --yes doxygen graphviz
+- cd ${TRAVIS_BUILD_DIR}
+- cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=g++-4.9 -DCMAKE_BUILD_TYPE=Release -DMPI_CXX_COMPILER=mpicxx
+  -DMPI_C_COMPILER=mpicc -DPYTHON_EXECUTABLE=${HOME}/miniconda/envs/test-environment/bin/python
+  -DCMAKE_PREFIX_PATH=${HOME} -DCMAKE_INSTALL_RPATH=${HOME}/lib
+- cd build && make -j2
 script:
-  - cmake -H. -Bbuild -DCMAKE_CXX_COMPILER=${CXX_COMPILER}
-    -DCMAKE_BUILD_TYPE=Release
-  - cd build && make
-  - ctest
-  - cd -
+- ctest
 after_failure:
-  - cat Testing/Temporary/LastTest.log
+- cat Testing/Temporary/LastTest.log
 after_success:
-  - scripts/publish-doxygen.sh
-
+- cd -
+- ".travis/publish-doxygen.sh"

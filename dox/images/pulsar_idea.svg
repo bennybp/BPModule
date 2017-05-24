@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="291.21716mm"
+   height="258.95682mm"
+   viewBox="0 0 1031.8718 917.56352"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="pulsar_idea.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.35"
+     inkscape:cx="480.51012"
+     inkscape:cy="400.21034"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1313"
+     inkscape:window-height="744"
+     inkscape:window-x="53"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(368.80432,-15.008988)">
+    <rect
+       style="opacity:1;fill:#b50000;fill-opacity:1;stroke:#0e232e;stroke-width:6.13500023;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect3336"
+       width="560"
+       height="168.57143"
+       x="100"
+       y="18.076488" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:45.51169205px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       x="175.23073"
+       y="119.32909"
+       id="text3344"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3346"
+         x="175.23073"
+         y="119.32909">Pulsar Framework</tspan></text>
+    <path
+       style="opacity:1;fill:#2d2d2d;fill-opacity:1;stroke:#0e232e;stroke-width:3.15174007;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 205.0506,468.89327 62.35273,62.35273 -19.76589,19.76589 88.02882,23.58799 -23.588,-88.0288 -20.80388,20.80388 -62.35274,-62.35274 -23.87104,23.87105 z"
+       id="rect3360-3"
+       inkscape:connector-curvature="0"
+       inkscape:transform-center-x="-97.142842"
+       inkscape:transform-center-y="-17.142872" />
+    <g
+       id="g3365"
+       transform="translate(-350.90857,31.428571)">
+      <rect
+         y="318.07651"
+         x="229.48"
+         height="88.571426"
+         width="368.57144"
+         id="rect3338"
+         style="opacity:1;fill:#009100;fill-opacity:1;stroke:#0e232e;stroke-width:6.13500023;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3348"
+         y="379.54211"
+         x="265.6355"
+         style="font-style:normal;font-weight:normal;font-size:65.95014954px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="379.54211"
+           x="265.6355"
+           id="tspan3350"
+           sodipodi:role="line">Input API</tspan></text>
+    </g>
+    <path
+       style="opacity:1;fill:#2d2d2d;fill-opacity:1;stroke:#0e232e;stroke-width:3.15174007;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 155.48805,667.65742 -44.09,76.36612 -24.208166,-13.9766 -7.2e-4,91.13433 78.924266,-45.56779 -25.47945,-14.71057 44.09,-76.36612 -29.23593,-16.87937 z"
+       id="rect3360-6"
+       inkscape:connector-curvature="0" />
+    <g
+       id="g3375"
+       transform="translate(-12.857162,134.28571)">
+      <rect
+         y="460.93362"
+         x="211.42859"
+         height="102.85714"
+         width="362.85715"
+         id="rect3340"
+         style="opacity:1;fill:#ff6600;fill-opacity:1;stroke:#0e232e;stroke-width:6.13500023;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3352"
+         y="531.68604"
+         x="264.29715"
+         style="font-style:normal;font-weight:normal;font-size:51.83401489px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="531.68604"
+           x="264.29715"
+           id="tspan3354"
+           sodipodi:role="line">Your Code</tspan></text>
+    </g>
+    <g
+       id="g3370"
+       transform="translate(-262.85713,222.85714)">
+      <rect
+         y="598.07648"
+         x="214.28571"
+         height="108.57143"
+         width="360"
+         id="rect3342"
+         style="opacity:1;fill:#ba00ff;fill-opacity:1;stroke:#0e232e;stroke-width:6.13500023;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3356"
+         y="674.58661"
+         x="231.91393"
+         style="font-style:normal;font-weight:normal;font-size:62.17977142px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         xml:space="preserve"><tspan
+           y="674.58661"
+           x="231.91393"
+           id="tspan3358"
+           sodipodi:role="line">Return API</tspan></text>
+    </g>
+    <path
+       style="opacity:1;fill:#2d2d2d;fill-opacity:1;stroke:#0e232e;stroke-width:3.15174007;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m 292.63093,184.58229 -44.09004,76.36619 -24.20817,-13.97659 -7.2e-4,91.13432 78.92427,-45.56779 -25.47945,-14.71056 44.09004,-76.36619 -29.23593,-16.87938 z"
+       id="rect3360"
+       inkscape:connector-curvature="0"
+       inkscape:transform-center-x="-76.854464"
+       inkscape:transform-center-y="19.711577" />
+    <path
+       style="opacity:1;fill:#2d2d2d;fill-opacity:1;stroke:#0e232e;stroke-width:6.13500023;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       d="m -129.34934,38.521484 0,70.212896 a 262.85715,405.71429 0 0 0 -201.14841,200.76953 262.85715,405.71429 0 0 0 0,405.71484 262.85715,405.71429 0 0 0 227.64061,202.85742 l 0,-61.46484 a 223.77275,345.3884 0 0 1 -179.03907,-171.55469 223.77275,345.3884 0 0 1 0,-345.38867 223.77275,345.3884 0 0 1 152.54687,-166.11524 l 0,75.50782 L 52.982697,143.79102 -129.34934,38.521484 Z"
+       id="path3401"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

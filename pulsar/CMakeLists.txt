@@ -46,7 +46,7 @@ endforeach()
 
 # For some reason, this sometimes has a leading whitespace
 string(STRIP "${MPI_CXX_LINK_FLAGS}" MPI_CXX_LINK_FLAGS)
-
+string(STRIP "${MPI_CXX_COMPILE_FLAGS}" MPI_CXX_COMPILE_FLAGS)
 
 #########################################
 # Includes, compile flags, and linking
@@ -63,7 +63,7 @@ list(APPEND PULSAR_CORE_SYSTEM_INCLUDES
 )
 
 # Add the mpi flags to the other flags
-list(APPEND CMAKE_CXX_FLAGS ${MPI_CXX_COMPILE_FLAGS})
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${MPI_CXX_COMPILE_FLAGS}")
 
 # Libraries and link flags (including interface libraries)
 list(APPEND PULSAR_CORE_LINK_FLAGS
