@@ -14,9 +14,10 @@ convert_to_eigen(const MatrixDImpl & ten)
         return test->get_matrix();
 
     // otherwise, convert elementwise
-    auto ret = std::make_shared<MatrixXd>();
-
     auto sizes = ten.sizes();
+    auto ret = std::make_shared<MatrixXd>(sizes[0],sizes[1]);
+
+
     for(size_t i = 0; i < sizes[0]; i++)
     for(size_t j = 0; j < sizes[1]; j++)
         (*ret)(i,j) = ten.get_value({i,j});
