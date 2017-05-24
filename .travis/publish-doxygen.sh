@@ -2,7 +2,7 @@
 
 # Settings
 REPO_PATH=git@github.com:pulsar-chem/Pulsar-Core.git
-HTML_PATH=doc/html
+HTML_PATH=html
 COMMIT_USER="Documentation Builder"
 CHANGESET=$(git rev-parse --verify HEAD)
 
@@ -21,7 +21,7 @@ doxygen
 
 # Create and commit the documentation repo.
 cd ${HTML_PATH}
-git add .
+git add -A
 git config user.name "${COMMIT_USER}"
 git config user.email "<>"
 git commit -m "Automated documentation build for changeset ${CHANGESET}."
