@@ -7,12 +7,12 @@ COMMIT_USER="Documentation Builder"
 CHANGESET=$(git rev-parse --verify HEAD)
 
 # Get a clean version of the HTML documentation repo.
-rm -rf ${HTML_PATH}
+#rm -rf ${HTML_PATH}
 mkdir -p ${HTML_PATH}
-ls
 git clone -b gh-pages "${REPO_PATH}" --single-branch ${HTML_PATH}
 
 # rm all the files through git to prevent stale files.
+ls
 cd ${HTML_PATH}
 #git rm -rf .
 cd -
