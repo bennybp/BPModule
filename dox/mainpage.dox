@@ -19,9 +19,9 @@ and core developers.
     - [Terminology](@ref terminology)
     - [Basic Filesystem Layout](@ref filesystem)
   - User documentation
-    - Module Basics
-      - [Basic Structure](@ref modulebasics)
-      - [Loading and Using] (@ref moduleloading)
+    - [Initializing] (@ref pulsarinit)
+    - [Module Administrator] (@ref moduleadministrator)
+    - [Module Basics and Module Loading](@ref modulebasics)
     - [Running Calculations](@ref workflows)
     - [Common Issues](@ref userissues)
   - Module Developers

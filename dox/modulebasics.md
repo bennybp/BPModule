@@ -29,7 +29,7 @@ module is then stored for use by other modules.
 On the other hand, *creating* a module means using that stored
 information to create or instantiate an object of that module.
 
-## Structure of a supermodule
+## A note about the structure of a supermodule
 
 A supermodule is, in practice, a Python package. Therefore, it must include
 an `__init__.py` file. The supermodule is imported by Pulsar through Python's
