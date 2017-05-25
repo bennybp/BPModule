@@ -2,6 +2,8 @@ import re
 import math
 from copy import deepcopy
 import pulsar as psr
+from . import ApplyBasisSet
+
 
 def make_system(SomeString):
     """This function turns a string into a system object, which it then returns
@@ -125,4 +127,27 @@ def make_system(SomeString):
     DaSys.multiplicity=Mult[0]
     return DaSys
 
+def make_wf(bs,sysstring):
+    """This is a convenience function for making a default input
+       wavefunction.
 
+       params:
+           bs : string giving the name of the basis set
+           sysstring: string to pass to make_system
+
+       example:
+           wfn = make_wf("aug-cc-pvdz", <triple_quote>
+                 H 0.0 0.0 0.0
+                 H 0.0 0.0 0.89
+                 <triple_quote>)
+    """
+    temp_sys = make_system(sysstring)
+    temp_sys = ApplyBasisSet.apply_single_basis("PRIMARY",bs,temp_sys)
+    try: #Try to put a fitting basis on it
+        sys = psr.apply_single_basis("FITTING",bs+"-jkfit",temp_sys)
+        temp_sys = sys
+    except:
+        pass
+    wf = psr.Wavefunction()
+    wf.system = temp_sys
+    return wf
