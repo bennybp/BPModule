@@ -105,6 +105,34 @@ paths should be joined with a semicolon.
         /path/to/Pulsar-Core
 \endcode
 
+### RPATH to dependencies
+
+`RPATH` contains paths that are hard-coded into shared object files.
+These paths are searched for other shared object libraries when
+required (that is, they can be thought of as hard-coded `LD_LIBRARY_PATH`).
+
+The `RPATH` that Pulsar is going to be installed with can be changed by
+specifying the `CMAKE_INSTALL_RPATH` variable on the command line. This
+is useful when you are using external dependencies (for BPHash, BPPrint, etc)
+and don't want to always specify the path to those libraries via `LD_LIBRARY_PATH`.
+
+By default, the `RPATH` is \b not set by the Pulsar build. This is due to the
+fact that it may be build by other meta-build packages, in which case
+Pulsar may be temporarily installed with its dependencies in a staging directory.
+In that case, the `RPATH` (which must be an absolute path) will be incorrect, and
+would need to be manually changed upon final installation. For details about the
+`RPATH`, see the \ref shared
+
+Typically, the `RPATH` will be set to the `lib` or `lib64` directory
+of a path or paths specified as the `CMAKE_PREFIX_PATH`
+ 
+\code{.sh}
+  cmake -DCMAKE_INSTALL_PREFIX=/path/to/install/to \
+        -DCMAKE_PREFIX_PATH="/some/path;/some/path2" \
+        -DCMAKE_INSTALL_RPATH="/some/path/lib;/some/path2/lib" \
+        /path/to/Pulsar-Core
+\endcode
+ 
 
 ### Special compilation flags
 
