@@ -141,18 +141,24 @@ install(FILES ${CMAKE_BINARY_DIR}/pulsarConfig.cmake
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/bin/"
         DESTINATION bin)
 
+# Install other files, such as basis set
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib/
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pulsar)
+
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         DESTINATION lib/pulsar/modules
         FILES_MATCHING
         REGEX ".*\.py$"
-        PATTERN bin EXCLUDE)
+        PATTERN bin EXCLUDE
+        PATTERN lib EXCLUDE)
 
 # Install all headers (for all core modules)
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         DESTINATION include
         FILES_MATCHING
         REGEX ".*\.h(pp)?$"
-        PATTERN bin EXCLUDE)
+        PATTERN bin EXCLUDE
+        PATTERN lib EXCLUDE)
 
 # Install helper cmake scripts
 install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/cmake/"
