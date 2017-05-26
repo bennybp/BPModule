@@ -7,14 +7,12 @@ COMMIT_USER="Documentation Builder"
 CHANGESET=$(git rev-parse --verify HEAD)
 
 # Get a clean version of the HTML documentation repo.
-mkdir -p ${HTML_PATH}
 git clone -b gh-pages "${REPO_PATH}" --single-branch ${HTML_PATH}
 
 # rm all the files through git to prevent stale files.
-#uncomment once we get a successful build
-#cd ${HTML_PATH}
-#git rm -rf .
-#cd -
+cd ${HTML_PATH}
+git rm -rf .
+cd -
 
 # Generate the HTML documentation.
 doxygen
