@@ -124,9 +124,6 @@ file(WRITE ${CMAKE_BINARY_DIR}/CTestTestfile.cmake "subdirs(test_stage)")
 install(DIRECTORY ${CMAKE_BINARY_DIR}/stage/${CMAKE_INSTALL_PREFIX}/ 
         DESTINATION ${CMAKE_INSTALL_PREFIX} USE_SOURCE_PERMISSIONS)
 
-# Install other files, such as basis set
-install(DIRECTORY lib/basis DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pulsar)
-install(DIRECTORY lib/systems DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/pulsar)
 
 #####################
 # uninstall target

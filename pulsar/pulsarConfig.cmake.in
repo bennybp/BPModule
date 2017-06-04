@@ -91,7 +91,9 @@ set_target_properties(pulsar PROPERTIES
 #######################################
 set(PULSAR_BIN_PATH "${PULSAR_PREFIX}/bin")
 set(PULSAR_RUNTEST "${PULSAR_BIN_PATH}/pulsar_runtest.py")
+set(PULSAR_RUNEXAMPLE "${PULSAR_BIN_PATH}/pulsar_runexample.py")
 set(PULSAR_MODULE_DIR "${PULSAR_PREFIX}/lib/pulsar/modules")
+
 #######################################
 # Include the macros for testing
 # (should be in this directory)

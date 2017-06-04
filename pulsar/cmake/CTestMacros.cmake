@@ -7,7 +7,13 @@ function(pulsar_runtest test_name test_path)
   add_test(NAME ${test_name}
       COMMAND ${PYTHON_EXECUTABLE} ${PULSAR_RUNTEST} ${test_path} ${extra_paths}
   )
+endfunction()
 
+# Macro for running a full input (ie, an example)
+function(pulsar_runexample example_name example_path)
+  set(extra_paths ${ARGN})
+  add_test(NAME Example_${example_name}
+      COMMAND ${PYTHON_EXECUTABLE} ${PULSAR_RUNEXAMPLE} ${example_path} ${extra_paths})
 endfunction()
 
 #Macro for building a library that will be used for testing
@@ -35,4 +41,11 @@ endfunction()
 function(pulsar_test dir test_name)
   pulsar_py_test(${dir} ${test_name} ${ARGN})
   pulsar_cxx_test(${dir} ${test_name} ${ARGN})
+endfunction()
+
+# Macro for defining an example being run as a test
+function(pulsar_example dir example_name)
+  # This path is relative to the lib/pulsar/examples directory
+  set(${example_name}_EX_PATH ${dir}/${example_name}.py)
+  pulsar_runexample(${example_name} ${${example_name}_EX_PATH} ${ARGN})
 endfunction()

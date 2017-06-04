@@ -3,28 +3,37 @@
 /////////////////////////
 /*! \mainpage
 
-Welcome to the Pulsar user / developer manual.  We have attempted to separate
-topics by whether they are of interest to users (people looking to interface
-to Pulsar by contributing modules) or developers (people who want to contribute
-to the core of Pulsar).  We also have a section on the basics of Pulsar, which
-is stuff you will likely want to know before reading further.
+Welcome to the Pulsar user / developer manual.
+
+We have attempted to separate topics by whether they are of interest to
+users (people who would would like to run calculations), module developers,
+and core developers.
 
 \section main_sec Contents
 
   - Pulsar Basics
     - [Overview](@ref overview)
-    - [Obtaining and Building](@ref building)
+    - [Bug Reporting](@ref bugreport)
+    - [Building](@ref building)
+      - [Common Build Issues](@ref buildissues)
     - [Terminology](@ref terminology)
-    - [Workflows](@ref workflows)
-  - User notes
+    - [Basic Filesystem Layout](@ref filesystem)
+  - User documentation
+    - [Initializing] (@ref pulsarinit)
+    - [Module Administrator] (@ref moduleadministrator)
+    - [Module Basics and Module Loading](@ref modulebasics)
+    - [Running Calculations](@ref workflows)
+    - [Common Issues](@ref userissues)
+  - Module Developers
     - [Making Modules and Supermodules](@ref makemod)
     - [Printing Things Out](@ref printing)
-    - [Making and Using Systems](@ref systems)
-    - [Making and Using Basis Sets](@ref basisset)
-    - [Making and Using Wavefunctions](@ref wavefunction)
-    - [Using and Setting Options](@ref Options)
-    - [Interfacing Custom Tensors](@ref tensors)
-    - [Understanding the Graph and the Cache](@ref graphcache)
+    - Making and Using Common components
+      - [Options](@ref Options)
+      - [Systems](@ref systems)
+      - [Basis Sets](@ref basisset)
+      - [Wavefunctions](@ref wavefunction)
+      - [Interfacing Custom Tensors](@ref tensors)
+      - [Cache and Checkpointing](@ref cache)
     - Module Base Types
       - [Summary](@ref module_types)
       - Indepth Module Type APIs
@@ -34,9 +43,10 @@ is stuff you will likely want to know before reading further.
         - OneElectronMatrix
         - PropertyCalculator
         - SCFIterator
-        - [SystemFragmenter](@ref system_fragger)
-        - TwoElectronIntegral
-  - Developer notes
+        - [SystemFragmenter](@ref base_sysfrag)
+        - [Integrals](@ref base_integrals) (TwoCenterIntegral, ThreeCenterIntegral, FourCenterIntegral)
+  - Core Developer notes
+    - [Modules and Module Loading](@ref moduledetails)
     - Good Practices
       - [Testing](@ref testing)
       - [Documenting](@ref documenting)
@@ -45,12 +55,9 @@ is stuff you will likely want to know before reading further.
       - [Understanding Shared Libraries](@ref shared)
       - [Molecular Symmetry](@ref symmetry)
       - [Serialization](@ref serialization)
-    - Pulsar Conventions
-      - [Basic Filesystem Layout](@ref basic)
-    - [Using Pulsar in a Typical Development Workflow](@ref devwork)
+  - Miscellaneous Notes
     - [Finite Difference](@ref fdiff)
-    - [Module Basics](@ref modulebasics)
-    - [Program Philosophy](@ref philosophy)
+    - [Molecular Symmetry](@ref symmetry)
 
 
 \section Authors

@@ -1,4 +1,4 @@
-System Fragmenters                                             {#system_fragger}
+System Fragmenters                                             {#base_sysfrag}
 ==================
 
 Many methods in electronic structure theory rely on decomposing a system into a
