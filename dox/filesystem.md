@@ -18,9 +18,10 @@ installing from the Pulsar-Meta package.
   Pulsar CMake configuration files (for use when building modules).
 - \b lib The core of Pulsar itself (contained under the `pulsar` subdirectory)
   - \b basis Common basis sets in computational chemistry
-  - \b systems Common systems (useful for testing)
+  - \b examples Examples (for the user and for documentation)
   - \b modules Actual modules used by Pulsar (including the core). Each
        directory represents a supermodule, with the directory being the name.
+  - \b systems Common systems (useful for testing)
 
 In `lib/pulsar/modules/pulsar` is the actual code for the pulsar core. This
 is the top of a python package and the heart of the framework.
@@ -33,6 +34,7 @@ This is what we call the root directory.  At the moment the folders inside are:
 
 - \b lib Some common data/library files
   - \b basis Basis sets for calculations
+  - \b examples Examples (for the user and for documentation)
   - \b systems Various systems useful for tests
 - \b dox The source files for the documentation
 - \b pulsar The main source directory for the Pulsar framework
